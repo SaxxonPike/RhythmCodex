@@ -5,18 +5,18 @@ using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Ssq.Streamers
 {
-    public class SsqStreamer : IStreamer<IList<IChunk>, IEnumerable<IChunk>>
+    public class SsqStreamer : IStreamer<IEnumerable<Chunk?>>
     {
-        private readonly IStreamer<IChunk, IChunk> _chunkStreamer;
+        private readonly IStreamer<Chunk?> _chunkStreamer;
 
-        public SsqStreamer(IStreamer<IChunk, IChunk> chunkStreamer)
+        public SsqStreamer(IStreamer<Chunk?> chunkStreamer)
         {
             _chunkStreamer = chunkStreamer;
         }
         
-        public IList<IChunk> Read(Stream stream)
+        public IEnumerable<Chunk?> Read(Stream stream)
         {
-            var result = new List<IChunk>();
+            var result = new List<Chunk?>();
             
             while (true)
             {
@@ -28,7 +28,7 @@ namespace RhythmCodex.Ssq.Streamers
             }
         }
 
-        public void Write(Stream stream, IEnumerable<IChunk> data)
+        public void Write(Stream stream, IEnumerable<Chunk?> data)
         {
             foreach (var chunk in data)
                 _chunkStreamer.Write(stream, chunk);

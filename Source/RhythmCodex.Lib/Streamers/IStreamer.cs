@@ -2,9 +2,9 @@
 
 namespace RhythmCodex.Streamers
 {
-    public interface IStreamer<out TRead, in TWrite>
+    public interface IStreamer<TData>
     {
-        TRead Read(Stream stream);
-        void Write(Stream stream, TWrite data);
+        TData Read(Stream stream);
+        void Write(Stream stream, TData data);
     }
 }

@@ -7,7 +7,13 @@ namespace RhythmCodex
 {
     public class BaseTestFixture
     {
-        private readonly Lazy<Fixture> _fixture = new Lazy<Fixture>(() => new Fixture());
+        private readonly Lazy<Fixture> _fixture = new Lazy<Fixture>(() =>
+        {
+            var fixture = new Fixture();
+            new SupportMutableValueTypesCustomization().Customize(fixture);
+            return fixture;
+        });
+        
         private readonly Lazy<Mocker> _mocker = new Lazy<Mocker>(() => new Mocker());
 
         protected Fixture Fixture => _fixture.Value;

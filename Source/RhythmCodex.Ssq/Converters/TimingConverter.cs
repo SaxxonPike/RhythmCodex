@@ -6,7 +6,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class TimingConverter : IConverter<byte[], List<Timing>>, IConverter<IEnumerable<ITiming>, byte[]>
+    public class TimingConverter : IConverter<byte[], List<Timing>>, IConverter<IEnumerable<Timing>, byte[]>
     {
         public List<Timing> Convert(byte[] data)
         {
@@ -36,7 +36,7 @@ namespace RhythmCodex.Ssq.Converters
             }
         }
 
-        public byte[] Convert(IEnumerable<ITiming> timings)
+        public byte[] Convert(IEnumerable<Timing> timings)
         {
             var timingList = timings.ToArray();
             var count = timingList.Length;

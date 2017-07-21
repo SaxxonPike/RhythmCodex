@@ -4,9 +4,9 @@ using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Ssq.Streamers
 {
-    public class ChunkStreamer : IStreamer<IChunk, IChunk>
+    public class ChunkStreamer : IStreamer<Chunk?>
     {
-        public IChunk Read(Stream stream)
+        public Chunk? Read(Stream stream)
         {
             var reader = new BinaryReader(stream);
             var length = reader.ReadInt32();
@@ -22,7 +22,7 @@ namespace RhythmCodex.Ssq.Streamers
             };
         }
 
-        public void Write(Stream stream, IChunk chunk)
+        public void Write(Stream stream, Chunk? chunk)
         {
             var writer = new BinaryWriter(stream);
 
@@ -32,16 +32,18 @@ namespace RhythmCodex.Ssq.Streamers
                 return;
             }
 
-            var parameter0 = (short)chunk.Parameter0;
-            var parameter1 = (short)chunk.Parameter1;
-            var length = chunk.Data?.Length ?? 0;
+            var value = chunk.Value;
+
+            var parameter0 = value.Parameter0;
+            var parameter1 = value.Parameter1;
+            var length = value.Data?.Length ?? 0;
 
             writer.Write(length + 8);
             writer.Write(parameter0);
             writer.Write(parameter1);
             
-            if (chunk.Data != null)
-                writer.Write(chunk.Data);
+            if (value.Data != null)
+                writer.Write(value.Data);
         }
     }
 }

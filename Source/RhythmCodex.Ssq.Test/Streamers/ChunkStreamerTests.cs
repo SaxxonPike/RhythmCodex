@@ -40,11 +40,12 @@ namespace RhythmCodex.Ssq.Streamers
             
             // Act.
             var result = Subject.Read(stream);
-            
+
             // Assert.
-            result.Parameter0.Should().Be(param0);
-            result.Parameter1.Should().Be(param1);
-            result.Data.ShouldAllBeEquivalentTo(data);
+            result.Should().NotBe(null);
+            result.Value.Parameter0.Should().Be(param0);
+            result.Value.Parameter1.Should().Be(param1);
+            result.Value.Data.ShouldAllBeEquivalentTo(data);
         }
 
         [Test]
