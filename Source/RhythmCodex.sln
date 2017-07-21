@@ -1,17 +1,49 @@
-Microsoft Visual Studio Solution File, Format Version 12.00  
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13  
-MinimumVisualStudioVersion = 10.0.40219.1  
-Global  
-    GlobalSection(SolutionConfigurationPlatforms) = preSolution
-        Debug|Any CPU = Debug|Any CPU
-        Release|Any CPU = Release|Any CPU
-    EndGlobalSection
-    GlobalSection(ProjectConfigurationPlatforms) = postSolution
-    EndGlobalSection
-    GlobalSection(SolutionProperties) = preSolution
-        HideSolutionNode = FALSE
-    EndGlobalSection
-    GlobalSection(NestedProjects) = preSolution
-    EndGlobalSection
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Ssq", "RhythmCodex.Ssq\RhythmCodex.Ssq.csproj", "{21EC8DC8-EF46-4B51-A707-6F5117BC82D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{67686204-29B7-469A-ADA6-40BABA8D3F25}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CA5B22D7-6992-4458-A162-3AC980DC032C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Ssq.Test", "RhythmCodex.Ssq.Test\RhythmCodex.Ssq.Test.csproj", "{0609581F-279B-40FA-93C4-8F5481A680FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex", "RhythmCodex.Lib\RhythmCodex.csproj", "{0A5952D3-92B8-43A4-B0E8-35C6F40DC320}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Test", "RhythmCodex.Lib.Test\RhythmCodex.Test.csproj", "{9D5105F8-416E-4991-817D-6888ADB02CF1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21EC8DC8-EF46-4B51-A707-6F5117BC82D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21EC8DC8-EF46-4B51-A707-6F5117BC82D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21EC8DC8-EF46-4B51-A707-6F5117BC82D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21EC8DC8-EF46-4B51-A707-6F5117BC82D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0609581F-279B-40FA-93C4-8F5481A680FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0609581F-279B-40FA-93C4-8F5481A680FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0609581F-279B-40FA-93C4-8F5481A680FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0609581F-279B-40FA-93C4-8F5481A680FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A5952D3-92B8-43A4-B0E8-35C6F40DC320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A5952D3-92B8-43A4-B0E8-35C6F40DC320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A5952D3-92B8-43A4-B0E8-35C6F40DC320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A5952D3-92B8-43A4-B0E8-35C6F40DC320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D5105F8-416E-4991-817D-6888ADB02CF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D5105F8-416E-4991-817D-6888ADB02CF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D5105F8-416E-4991-817D-6888ADB02CF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D5105F8-416E-4991-817D-6888ADB02CF1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{21EC8DC8-EF46-4B51-A707-6F5117BC82D4} = {67686204-29B7-469A-ADA6-40BABA8D3F25}
+		{0609581F-279B-40FA-93C4-8F5481A680FF} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
+		{0A5952D3-92B8-43A4-B0E8-35C6F40DC320} = {67686204-29B7-469A-ADA6-40BABA8D3F25}
+		{9D5105F8-416E-4991-817D-6888ADB02CF1} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
+	EndGlobalSection
 EndGlobal

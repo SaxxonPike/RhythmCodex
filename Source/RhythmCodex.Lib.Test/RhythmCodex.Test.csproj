@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">  
+  <PropertyGroup>
+    <TargetFrameworks>net45</TargetFrameworks>
+    <RootNamespace>RhythmCodex</RootNamespace>
+  </PropertyGroup>  
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="3.50.3" />
+    <PackageReference Include="BigRationalLibrary" Version="1.0.0" />
+    <PackageReference Include="FluentAssertions" Version="4.19.3" />
+    <PackageReference Include="Moqzilla" Version="1.0.3" />
+    <PackageReference Include="NUnit" Version="3.7.1" />
+  </ItemGroup>
+</Project>  
