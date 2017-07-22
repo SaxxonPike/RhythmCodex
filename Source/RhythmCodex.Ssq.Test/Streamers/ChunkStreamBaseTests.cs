@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using NUnit.Framework;
 
 namespace RhythmCodex.Ssq.Streamers
@@ -8,7 +9,11 @@ namespace RhythmCodex.Ssq.Streamers
     {
         protected static byte[] PrepareChunk(short param0, short param1, byte[] data)
         {
-            return PrepareChunk(data.Length + 8, param0, param1, data);
+            var newLength = ((data.Length + 3) >> 2) << 2;
+            var newData = new byte[newLength];
+            Array.Copy(data, newData, data.Length);
+            
+            return PrepareChunk(newLength + 8, param0, param1, newData);
         }
 
         protected static byte[] PrepareChunk(int totalLength, short param0, short param1, byte[] data)
