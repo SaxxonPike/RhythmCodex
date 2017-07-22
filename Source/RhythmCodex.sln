@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Ssq", "RhythmCodex.Ssq\RhythmCodex.Ssq.csproj", "{21EC8DC8-EF46-4B51-A707-6F5117BC82D4}"
 EndProject
@@ -13,6 +13,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex", "RhythmCodex.Lib\RhythmCodex.csproj", "{0A5952D3-92B8-43A4-B0E8-35C6F40DC320}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Test", "RhythmCodex.Lib.Test\RhythmCodex.Test.csproj", "{9D5105F8-416E-4991-817D-6888ADB02CF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{C6204E35-6693-496E-95E0-E58D986E09E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Cli", "RhythmCodex.Cli\RhythmCodex.Cli.csproj", "{2188AAFC-E5CB-4AAA-8112-A9B7A59C4661}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Ioc", "RhythmCodex.Ioc\RhythmCodex.Ioc.csproj", "{5A3E9DA0-4B31-4FDA-A157-05E81B2AD205}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +42,14 @@ Global
 		{9D5105F8-416E-4991-817D-6888ADB02CF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D5105F8-416E-4991-817D-6888ADB02CF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D5105F8-416E-4991-817D-6888ADB02CF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2188AAFC-E5CB-4AAA-8112-A9B7A59C4661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2188AAFC-E5CB-4AAA-8112-A9B7A59C4661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2188AAFC-E5CB-4AAA-8112-A9B7A59C4661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2188AAFC-E5CB-4AAA-8112-A9B7A59C4661}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A3E9DA0-4B31-4FDA-A157-05E81B2AD205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A3E9DA0-4B31-4FDA-A157-05E81B2AD205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A3E9DA0-4B31-4FDA-A157-05E81B2AD205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A3E9DA0-4B31-4FDA-A157-05E81B2AD205}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,5 +59,7 @@ Global
 		{0609581F-279B-40FA-93C4-8F5481A680FF} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
 		{0A5952D3-92B8-43A4-B0E8-35C6F40DC320} = {67686204-29B7-469A-ADA6-40BABA8D3F25}
 		{9D5105F8-416E-4991-817D-6888ADB02CF1} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
+		{2188AAFC-E5CB-4AAA-8112-A9B7A59C4661} = {C6204E35-6693-496E-95E0-E58D986E09E2}
+		{5A3E9DA0-4B31-4FDA-A157-05E81B2AD205} = {C6204E35-6693-496E-95E0-E58D986E09E2}
 	EndGlobalSection
 EndGlobal

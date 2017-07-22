@@ -6,7 +6,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class StepConverter : IConverter<byte[], List<Step>>, IConverter<IEnumerable<Step>, byte[]>
+    public class StepDecoder : IConverter<byte[], List<Step>>
     {
         public List<Step> Convert(byte[] data)
         {
@@ -31,29 +31,6 @@ namespace RhythmCodex.Ssq.Converters
                         ExtraPanels = panels[i] == 0 ? reader.ReadByte() : (byte?)null
                     })
                     .ToList();
-            }
-        }
-        
-        public byte[] Convert(IEnumerable<Step> steps)
-        {
-            var stepList = steps.ToList();
-            var count = stepList.Count;
-
-            using (var mem = new MemoryStream())
-            using (var writer = new BinaryWriter(mem))
-            {
-                writer.Write(count);
-                
-                foreach (var offset in stepList.Select(s => s.MetricOffset))
-                    writer.Write(offset);
-                
-                foreach (var panel in stepList.Select(s => s.Panels))
-                    writer.Write(panel);
-                
-                foreach (var extraPanel in stepList.Where(s => s.ExtraPanels != null).Select(s => (byte)s.ExtraPanels))
-                    writer.Write(extraPanel);
-
-                return mem.ToArray();
             }
         }
     }

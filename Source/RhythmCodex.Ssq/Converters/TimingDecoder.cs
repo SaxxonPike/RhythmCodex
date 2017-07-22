@@ -6,7 +6,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class TimingConverter : IConverter<byte[], List<Timing>>, IConverter<IEnumerable<Timing>, byte[]>
+    public class TimingDecoder : IConverter<byte[], List<Timing>>
     {
         public List<Timing> Convert(byte[] data)
         {
@@ -33,28 +33,6 @@ namespace RhythmCodex.Ssq.Converters
                         MetricOffset = metricOffsets[i]
                     })
                     .ToList();
-            }
-        }
-
-        public byte[] Convert(IEnumerable<Timing> timings)
-        {
-            var timingList = timings.ToArray();
-            var count = timingList.Length;
-
-            using (var mem = new MemoryStream())
-            using (var writer = new BinaryWriter(mem))
-            {
-                writer.Write(count);
-                
-                foreach (var offset in timingList.Select(t => t.MetricOffset))
-                    writer.Write(offset);
-
-                foreach (var offset in timingList.Select(t => t.LinearOffset))
-                    writer.Write(offset);
-                
-                writer.Flush();
-
-                return mem.ToArray();
             }
         }
     }

@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace RhythmCodex.Ssq.Model
+﻿namespace RhythmCodex.Ssq.Model
 {
     public struct Chunk
     {

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">  
+  <PropertyGroup>
+    <OutputType>exe</OutputType>
+    <TargetFrameworks>net45</TargetFrameworks>
+    <ApplicationIcon />
+    <OutputTypeEx>exe</OutputTypeEx>
+    <StartupObject />
+  </PropertyGroup>  
+  <ItemGroup>
+    <PackageReference Include="BigRationalLibrary" Version="1.0.0" />
+  </ItemGroup>  
+  <ItemGroup>
+    <ProjectReference Include="..\RhythmCodex.Ioc\RhythmCodex.Ioc.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Ssq\RhythmCodex.Ssq.csproj" />
+  </ItemGroup>
+</Project>  
