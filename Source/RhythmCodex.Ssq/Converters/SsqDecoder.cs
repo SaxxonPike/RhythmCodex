@@ -7,7 +7,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class SsqDecoder
+    public class SsqDecoder : ISsqDecoder
     {
         private readonly ITimingChunkDecoder _timingChunkDecoder;
         private readonly ITimingEventDecoder _timingEventDecoder;

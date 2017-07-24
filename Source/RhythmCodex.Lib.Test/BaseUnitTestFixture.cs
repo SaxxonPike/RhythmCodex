@@ -13,6 +13,10 @@ namespace RhythmCodex
         protected Mock<TMock> Mock<TMock>() 
             where TMock : class 
             => Mocker.Mock<TMock>();
+
+        protected Mock<TMock> Mock<TMock>(Action<Mock<TMock>> func)
+            where TMock : class
+            => Mocker.Mock(func);
     }
 
     public class BaseUnitTestFixture<TSubject> : BaseUnitTestFixture
