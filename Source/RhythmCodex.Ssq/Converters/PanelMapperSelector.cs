@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
@@ -15,7 +16,7 @@ namespace RhythmCodex.Ssq.Converters
         
         public IPanelMapper Select(IEnumerable<Step> steps)
         {
-            var stepList = steps.ToList();
+            var stepList = steps.AsList();
             return _panelMappers
                 .First(pm => stepList.Select(s => pm.Map(s.Panels)).All(m => m != null));
         }

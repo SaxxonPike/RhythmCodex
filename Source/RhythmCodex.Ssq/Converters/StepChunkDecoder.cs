@@ -8,7 +8,7 @@ namespace RhythmCodex.Ssq.Converters
 {
     public class StepChunkDecoder : IStepChunkDecoder
     {
-        public List<Step> Convert(byte[] data)
+        public IList<Step> Convert(byte[] data)
         {
             using (var mem = new MemoryStream(data))
             using (var reader = new BinaryReader(mem))
@@ -30,7 +30,7 @@ namespace RhythmCodex.Ssq.Converters
                         Panels = panels[i],
                         ExtraPanels = panels[i] == 0 ? reader.ReadByte() : (byte?)null
                     })
-                    .ToList();
+                    .AsList();
             }
         }
     }

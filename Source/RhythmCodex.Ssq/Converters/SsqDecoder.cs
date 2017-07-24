@@ -45,7 +45,7 @@ namespace RhythmCodex.Ssq.Converters
         {
             var events = _timingEventDecoder.Decode(timings, ticksPerSecond)
                 .Concat(_stepEventDecoder.Decode(steps))
-                .ToList();
+                .AsList();
 
             return new Chart
             {

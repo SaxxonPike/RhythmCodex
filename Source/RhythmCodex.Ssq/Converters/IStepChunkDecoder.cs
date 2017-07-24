@@ -5,6 +5,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface IStepChunkDecoder
     {
-        List<Step> Convert(byte[] data);
+        IList<Step> Convert(byte[] data);
     }
 }

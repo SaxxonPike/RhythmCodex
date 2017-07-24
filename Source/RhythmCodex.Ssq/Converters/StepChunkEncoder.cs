@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
@@ -9,7 +10,7 @@ namespace RhythmCodex.Ssq.Converters
     {
         public byte[] Convert(IEnumerable<Step> steps)
         {
-            var stepList = steps.ToList();
+            var stepList = steps.AsList();
             var count = stepList.Count;
 
             using (var mem = new MemoryStream())

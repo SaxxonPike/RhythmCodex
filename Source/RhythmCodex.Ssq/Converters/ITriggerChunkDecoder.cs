@@ -5,6 +5,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ITriggerChunkDecoder
     {
-        List<Trigger> Convert(byte[] data);
+        IList<Trigger> Convert(byte[] data);
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
     public class TriggerChunkDecoder : ITriggerChunkDecoder
     {
-        public List<Trigger> Convert(byte[] data)
+        public IList<Trigger> Convert(byte[] data)
         {
             using (var mem = new MemoryStream(data))
             using (var reader = new BinaryReader(mem))
@@ -21,7 +22,7 @@ namespace RhythmCodex.Ssq.Converters
                         Type = reader.ReadByte(),
                         Parameter = reader.ReadByte()
                     })
-                    .ToList();
+                    .AsList();
             }
         }
     }

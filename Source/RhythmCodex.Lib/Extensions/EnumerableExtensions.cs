@@ -10,7 +10,7 @@ namespace RhythmCodex.Extensions
     {
         public static IList<T> AsList<T>(this IEnumerable<T> enumerable)
         {
-            return (enumerable as IList<T>) ?? enumerable.ToList();
+            return enumerable as IList<T> ?? enumerable.ToList();
         }
     }
 }

@@ -18,15 +18,22 @@ namespace RhythmCodex.Ssq.Converters
                 new Chunk { Data = Fixture.Create<byte[]>(), Parameter0 = Parameter0.Timings },
                 new Chunk { Data = Fixture.Create<byte[]>(), Parameter0 = Parameter0.Steps },
             };
+            
             var timings = Fixture.CreateMany<Timing>().ToList();
+            var steps = Fixture.CreateMany<Step>().ToList();
             
             Mock<ITimingChunkDecoder>(mock =>
             {
                 mock.Setup(m => m.Convert(It.IsAny<byte[]>())).Returns(timings);
             });
 
+            Mock<IStepChunkDecoder>(mock =>
+            {
+                mock.Setup(m => m.Convert(It.IsAny<byte[]>())).Returns(steps);
+            });
+
             // Act.
-            Subject.Decode(chunks);
+            var result = Subject.Decode(chunks).ToList();
             
             // Assert.
             

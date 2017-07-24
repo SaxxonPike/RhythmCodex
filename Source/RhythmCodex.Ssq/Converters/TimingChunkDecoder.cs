@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
     public class TimingChunkDecoder : ITimingChunkDecoder
     {
-        public List<Timing> Convert(byte[] data)
+        public IList<Timing> Convert(byte[] data)
         {
             using (var mem = new MemoryStream(data))
             using (var reader = new BinaryReader(mem))
@@ -31,7 +32,7 @@ namespace RhythmCodex.Ssq.Converters
                         LinearOffset = linearOffsets[i],
                         MetricOffset = metricOffsets[i]
                     })
-                    .ToList();
+                    .AsList();
             }
         }
     }

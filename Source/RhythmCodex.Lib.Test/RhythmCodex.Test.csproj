@@ -10,5 +10,8 @@
     <PackageReference Include="Moqzilla" Version="1.0.3" />
     <PackageReference Include="NUnit" Version="3.7.1" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+  </ItemGroup>  
+  <ItemGroup>
+    <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
   </ItemGroup>
 </Project>  

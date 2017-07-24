@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
@@ -9,7 +10,7 @@ namespace RhythmCodex.Ssq.Converters
     {
         public byte[] Convert(IEnumerable<Trigger> triggers)
         {
-            var triggerList = triggers.ToList();
+            var triggerList = triggers.AsList();
             var count = triggerList.Count;
 
             using (var mem = new MemoryStream())
