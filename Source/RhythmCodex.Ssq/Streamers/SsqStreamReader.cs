@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Ssq.Model;
-using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Ssq.Streamers
 {
-    public class SsqStreamReader : IStreamReader<IEnumerable<Chunk?>>
+    public class SsqStreamReader : ISsqStreamReader
     {
-        private readonly IStreamReader<Chunk?> _chunkStreamReader;
+        private readonly IChunkStreamReader _chunkStreamReader;
 
-        public SsqStreamReader(IStreamReader<Chunk?> chunkStreamReader)
+        public SsqStreamReader(IChunkStreamReader chunkStreamReader)
         {
             _chunkStreamReader = chunkStreamReader;
         }

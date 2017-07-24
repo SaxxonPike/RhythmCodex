@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Converters;
+using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class StepDecoder : IConverter<byte[], List<Step>>
+    public class StepChunkDecoder : IStepChunkDecoder
     {
         public List<Step> Convert(byte[] data)
         {
@@ -18,7 +18,7 @@ namespace RhythmCodex.Ssq.Converters
                 var metricOffsets = Enumerable
                     .Range(0, count)
                     .Select(i => reader.ReadInt32())
-                    .ToArray();
+                    .AsList();
 
                 var panels = reader.ReadBytes(count);
 

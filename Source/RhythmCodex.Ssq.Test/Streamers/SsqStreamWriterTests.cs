@@ -6,19 +6,18 @@ using Moq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using RhythmCodex.Ssq.Model;
-using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Ssq.Streamers
 {
     [TestFixture]
-    public class SsqStreamWriterTests : BaseTestFixture<SsqStreamWriter>
+    public class SsqStreamWriterTests : BaseUnitTestFixture<SsqStreamWriter>
     {
         [Test]
         public void Write_WritesAllChunks()
         {
             // Arrange.
             var chunks = Fixture.CreateMany<Chunk>().Cast<Chunk?>().Concat(new Chunk?[] { null }).ToList();
-            var chunkStreamer = Mock<IStreamWriter<Chunk?>>();
+            var chunkStreamer = Mock<IChunkStreamWriter>();
             var stream = new MemoryStream();
             var result = new List<Chunk?>();
             chunkStreamer.Setup(x => x.Write(It.IsAny<Stream>(), It.IsAny<Chunk?>()))

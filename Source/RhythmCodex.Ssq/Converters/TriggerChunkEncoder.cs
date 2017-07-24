@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Converters;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class TriggerEncoder : IConverter<IEnumerable<Trigger>, byte[]>
+    public class TriggerChunkEncoder : ITriggerChunkEncoder
     {
         public byte[] Convert(IEnumerable<Trigger> triggers)
         {

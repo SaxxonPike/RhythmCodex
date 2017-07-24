@@ -2,7 +2,6 @@
 using Autofac;
 using RhythmCodex.Ssq.Model;
 using RhythmCodex.Ssq.Streamers;
-using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Ioc.Modules
 {
@@ -13,19 +12,19 @@ namespace RhythmCodex.Ioc.Modules
             base.Load(builder);
 
             builder.RegisterType<ChunkStreamReader>()
-                .As<IStreamReader<Chunk?>>()
+                .As<IChunkStreamReader>()
                 .SingleInstance();
 
             builder.RegisterType<ChunkStreamWriter>()
-                .As<IStreamWriter<Chunk?>>()
+                .As<IChunkStreamWriter>()
                 .SingleInstance();
 
             builder.RegisterType<SsqStreamReader>()
-                .As<IStreamReader<IEnumerable<Chunk?>>>()
+                .As<ISsqStreamReader>()
                 .SingleInstance();
 
             builder.RegisterType<SsqStreamWriter>()
-                .As<IStreamWriter<IEnumerable<Chunk?>>>()
+                .As<ISsqStreamWriter>()
                 .SingleInstance();
         }
     }

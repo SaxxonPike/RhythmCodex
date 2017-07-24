@@ -7,7 +7,7 @@ using Ploeh.AutoFixture;
 namespace RhythmCodex.Ssq.Streamers
 {
     [TestFixture]
-    public class ChunkStreamerTests : ChunkStreamBaseTests<ChunkStreamReader>
+    public class ChunkStreamReaderTests : ChunkStreamBaseTests<ChunkStreamReader>
     {
         [Test]
         public void Read_ReadsValidChunk()

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Converters;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class TimingDecoder : IConverter<byte[], List<Timing>>
+    public class TimingChunkDecoder : ITimingChunkDecoder
     {
         public List<Timing> Convert(byte[] data)
         {

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using RhythmCodex.Ssq.Model;
-using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Ssq.Streamers
 {
-    public class ChunkStreamWriter : IStreamWriter<Chunk?>
+    public class ChunkStreamWriter : IChunkStreamWriter
     {
         public void Write(Stream stream, Chunk? chunk)
         {

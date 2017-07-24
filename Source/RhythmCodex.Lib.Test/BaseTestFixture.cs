@@ -1,6 +1,7 @@
 ﻿using System;
-using Moq;
-using Moqzilla;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using Ploeh.AutoFixture;
 
 namespace RhythmCodex
@@ -13,25 +14,41 @@ namespace RhythmCodex
             new SupportMutableValueTypesCustomization().Customize(fixture);
             return fixture;
         });
-        
-        private readonly Lazy<Mocker> _mocker = new Lazy<Mocker>(() => new Mocker());
 
         protected Fixture Fixture => _fixture.Value;
-        protected Mocker Mocker => _mocker.Value;
-
-        protected Mock<TMock> Mock<TMock>() 
-            where TMock : class 
-            => Mocker.Mock<TMock>();
-    }
-
-    public class BaseTestFixture<TSubject> : BaseTestFixture
-        where TSubject : class
-    {
-        private readonly Lazy<TSubject> _subject;
-
-        protected TSubject Subject => _subject.Value;
         
-        public BaseTestFixture() 
-            => _subject = new Lazy<TSubject>(() => Mocker.Create<TSubject>());
+        protected byte[] GetEmbeddedResource(string name)
+        {
+            var assembly = GetType().Assembly;
+
+            using (var stream = assembly.GetManifestResourceStream(name))
+            using (var mem = new MemoryStream())
+            {
+                stream.CopyTo(mem);
+                return mem.ToArray();
+            }
+        }
+
+        protected IDictionary<string, byte[]> GetArchiveResource(string name)
+        {
+            var output = new Dictionary<string, byte[]>();
+            
+            using (var mem = new MemoryStream(GetEmbeddedResource(name)))
+            using (var archive = new ZipArchive(mem, ZipArchiveMode.Read, false))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    using (var entryStream = entry.Open())
+                    using (var entryCopy = new MemoryStream())
+                    {
+                        entryStream.CopyTo(entryCopy);
+                        entryCopy.Flush();
+                        output[entry.FullName] = entryCopy.ToArray();
+                    }
+                }
+            }
+
+            return output;
+        }
     }
 }

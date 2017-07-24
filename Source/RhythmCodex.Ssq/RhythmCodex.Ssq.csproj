@@ -7,5 +7,8 @@
   </ItemGroup>  
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+  </ItemGroup>  
+  <ItemGroup>
+    <Folder Include="Converters\Components\" />
   </ItemGroup>
 </Project>  

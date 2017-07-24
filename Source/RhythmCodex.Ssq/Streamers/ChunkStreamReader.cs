@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using RhythmCodex.Ssq.Model;
-using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Ssq.Streamers
 {
-    public class ChunkStreamReader : IStreamReader<Chunk?>
+    public class ChunkStreamReader : IChunkStreamReader
     {
         public Chunk? Read(Stream stream)
         {
