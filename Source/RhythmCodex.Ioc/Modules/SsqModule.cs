@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Autofac;
-using RhythmCodex.Ssq.Model;
+﻿using Autofac;
 using RhythmCodex.Ssq.Streamers;
 
 namespace RhythmCodex.Ioc.Modules

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
@@ -8,17 +7,16 @@ namespace RhythmCodex.Ssq.Converters
 {
     public class StepEventDecoder : IStepEventDecoder
     {
-        private readonly IPanelMapperSelector _panelMapperSelector;
+        private readonly IPanelMapper _panelMapper;
 
-        public StepEventDecoder(IPanelMapperSelector panelMapperSelector)
+        public StepEventDecoder(IPanelMapper panelMapper)
         {
-            _panelMapperSelector = panelMapperSelector;
+            _panelMapper = panelMapper;
         }
 
         public IEnumerable<IEvent> Decode(IEnumerable<Step> steps)
         {
             var stepList = steps.AsList();
-            var panelMapper = _panelMapperSelector.Select(stepList);
             
             foreach (var step in stepList)
             {
@@ -44,7 +42,7 @@ namespace RhythmCodex.Ssq.Converters
                 {
                     if ((panels & 1) != 0)
                     {
-                        var mappedPanel = panelMapper.Map(panelNumber);
+                        var mappedPanel = _panelMapper.Map(panelNumber);
                         var isMapped = mappedPanel.HasValue;
 
                         var ev = new Event

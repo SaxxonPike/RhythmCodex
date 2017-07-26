@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
@@ -15,12 +13,6 @@ namespace RhythmCodex.Ssq.Converters
         [Test]
         public void Decode_ConvertsStepsCorrectly()
         {
-            Mock<IPanelMapperSelector>(mock =>
-            {
-                mock.Setup(x => x.Select(It.IsAny<IEnumerable<Step>>()))
-                    .Returns(Mock<IPanelMapper>().Object);
-            });
-
             Mock<IPanelMapper>(mock =>
             {
                 mock.Setup(x => x.Map(0)).Returns<int>(i => new PanelMapping { Panel = 11, Player = 1 });
