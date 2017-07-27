@@ -15,12 +15,17 @@ namespace RhythmCodex.Ssq.Converters
             {
                 var count = reader.ReadInt32();
 
+                var metricOffsets = Enumerable
+                    .Range(0, count)
+                    .Select(i => reader.ReadInt32())
+                    .ToArray();
+
                 return Enumerable
                     .Range(0, count)
                     .Select(i => new Trigger
                     {
-                        Type = reader.ReadByte(),
-                        Parameter = reader.ReadByte()
+                        Id = reader.ReadInt16(),
+                        MetricOffset = metricOffsets[i]
                     })
                     .AsList();
             }

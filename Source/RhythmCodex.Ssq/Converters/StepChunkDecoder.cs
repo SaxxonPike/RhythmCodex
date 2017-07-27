@@ -21,14 +21,17 @@ namespace RhythmCodex.Ssq.Converters
                     .AsList();
 
                 var panels = reader.ReadBytes(count);
-
+                var padding = count & 1;
+                reader.ReadBytes(padding);
+                
                 return Enumerable
                     .Range(0, count)
                     .Select(i => new Step
                     {
                         MetricOffset = metricOffsets[i],
                         Panels = panels[i],
-                        ExtraPanels = panels[i] == 0 ? reader.ReadByte() : (byte?)null
+                        ExtraPanels = panels[i] == 0 ? reader.ReadByte() : (byte?)null,
+                        ExtraPanelInfo = panels[i] == 0 ? reader.ReadByte() : (byte?)null
                     })
                     .AsList();
             }

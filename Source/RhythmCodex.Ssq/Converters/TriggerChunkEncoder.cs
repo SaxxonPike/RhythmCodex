@@ -16,12 +16,12 @@ namespace RhythmCodex.Ssq.Converters
             using (var writer = new BinaryWriter(mem))
             {
                 writer.Write(count);
+                
+                foreach (var trigger in triggerList)
+                    writer.Write(trigger.MetricOffset);
 
                 foreach (var trigger in triggerList)
-                {
-                    writer.Write(trigger.Type);
-                    writer.Write(trigger.Parameter);
-                }
+                    writer.Write(trigger.Id);
 
                 return mem.ToArray();
             }

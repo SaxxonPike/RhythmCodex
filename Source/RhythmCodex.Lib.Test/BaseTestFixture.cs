@@ -1,13 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using NUnit.Framework;
 using Ploeh.AutoFixture;
 
 namespace RhythmCodex
 {
     public class BaseTestFixture
     {
+        [SetUp]
+        public void __Setup()
+        {
+            _stopwatch = new Stopwatch();
+            _stopwatch.Start();
+        }
+
+        [TearDown]
+        public void __Teardown()
+        {
+            _stopwatch.Stop();
+            TestContext.Out.WriteLine($"{TestContext.CurrentContext.Test.FullName}: {_stopwatch.ElapsedMilliseconds}ms");
+        }
+
+        private Stopwatch _stopwatch;
+        
         private readonly Lazy<Fixture> _fixture = new Lazy<Fixture>(() =>
         {
             var fixture = new Fixture();

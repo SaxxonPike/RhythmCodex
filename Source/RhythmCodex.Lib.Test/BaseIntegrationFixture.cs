@@ -1,6 +1,6 @@
 ﻿namespace RhythmCodex
 {
-    public class BaseIntegrationFixture
+    public class BaseIntegrationFixture : BaseTestFixture
     {
     }
 }

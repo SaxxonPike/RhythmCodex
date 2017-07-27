@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
+using Numerics;
 using NUnit.Framework;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
@@ -31,13 +32,58 @@ namespace RhythmCodex.Ssq.Converters
 
             var expected = new[]
             {
-                new Event {[NumericData.MetricOffset] = 1234, [NumericData.Panel] = 11, [NumericData.SourcePanel] = 0, [NumericData.Player] = 1 },
-                new Event {[NumericData.MetricOffset] = 2345, [NumericData.Panel] = 22, [NumericData.SourcePanel] = 1, [NumericData.Player] = 2 },
-                new Event {[NumericData.MetricOffset] = 2345, [NumericData.SourcePanel] = 4},
-                new Event {[NumericData.MetricOffset] = 3456, [NumericData.Panel] = 33, [NumericData.SourcePanel] = 2, [NumericData.Player] = 3 },
-                new Event {[NumericData.MetricOffset] = 3456, [NumericData.SourcePanel] = 6},
-                new Event {[NumericData.MetricOffset] = 4567, [NumericData.Panel] = 11, [NumericData.SourcePanel] = 0, [NumericData.Player] = 1 },
-                new Event {[NumericData.MetricOffset] = 4567, [NumericData.Panel] = 44, [NumericData.SourcePanel] = 3, [NumericData.Player] = 4 }
+                new Event
+                {
+                    [NumericData.MetricOffset] = (BigRational) 1234 / 4096,
+                    [NumericData.Column] = 11,
+                    [NumericData.SourceColumn] = 0,
+                    [NumericData.Player] = 1,
+                    [FlagData.Note] = true
+                },
+                new Event
+                {
+                    [NumericData.MetricOffset] = (BigRational) 2345 / 4096,
+                    [NumericData.Column] = 22,
+                    [NumericData.SourceColumn] = 1,
+                    [NumericData.Player] = 2,
+                    [FlagData.Note] = true
+                },
+                new Event
+                {
+                    [NumericData.MetricOffset] = (BigRational) 2345 / 4096,
+                    [NumericData.SourceColumn] = 4,
+                    [FlagData.Note] = true
+                },
+                new Event
+                {
+                    [NumericData.MetricOffset] = (BigRational) 3456 / 4096,
+                    [NumericData.Column] = 33,
+                    [NumericData.SourceColumn] = 2,
+                    [NumericData.Player] = 3,
+                    [FlagData.Note] = true
+                },
+                new Event
+                {
+                    [NumericData.MetricOffset] = (BigRational) 3456 / 4096,
+                    [NumericData.SourceColumn] = 6,
+                    [FlagData.Note] = true
+                },
+                new Event
+                {
+                    [NumericData.MetricOffset] = (BigRational) 4567 / 4096,
+                    [NumericData.Column] = 11,
+                    [NumericData.SourceColumn] = 0,
+                    [NumericData.Player] = 1,
+                    [FlagData.Note] = true
+                },
+                new Event
+                {
+                    [NumericData.MetricOffset] = (BigRational) 4567 / 4096,
+                    [NumericData.Column] = 44,
+                    [NumericData.SourceColumn] = 3,
+                    [NumericData.Player] = 4,
+                    [FlagData.Note] = true
+                }
             };
 
             // Act.

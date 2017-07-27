@@ -15,14 +15,20 @@ namespace RhythmCodex.Ssq.Converters
                 .ThenBy(t => t.MetricOffset)
                 .ToArray();
 
-            var previous = orderedTimings.First();
+            var firstOrderedTiming = orderedTimings.First();
+
+            var previous = new
+            {
+                firstOrderedTiming.MetricOffset,
+                firstOrderedTiming.LinearOffset
+            };
 
             foreach (var timing in orderedTimings.Skip(1))
             {
                 var ev = new Event
                 {
-                    [NumericData.MetricOffset] = previous.MetricOffset,
-                    [NumericData.LinearOffset] = previous.LinearOffset
+                    [NumericData.MetricOffset] = (BigRational)previous.MetricOffset / SsqConstants.MeasureLength,
+                    [NumericData.LinearOffset] = (BigRational)previous.LinearOffset / ticksPerSecond
                 };
 
                 BigRational deltaOffset = timing.MetricOffset - previous.MetricOffset;
@@ -31,9 +37,15 @@ namespace RhythmCodex.Ssq.Converters
                 if (deltaOffset == 0)
                     ev[NumericData.Stop] = deltaTicks / ticksPerSecond;
                 else
-                    ev[NumericData.Tempo] = deltaOffset / 4096 / (deltaTicks / ticksPerSecond / 240);
+                    ev[NumericData.Bpm] = deltaOffset / SsqConstants.MeasureLength / (deltaTicks / ticksPerSecond / 240);
 
                 yield return ev;
+
+                previous = new
+                {
+                    timing.MetricOffset,
+                    timing.LinearOffset
+                };
             }
         }
     }

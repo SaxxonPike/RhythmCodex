@@ -2,7 +2,7 @@
 {
     public struct Trigger
     {
-        public byte Type { get; set; }
-        public byte Parameter { get; set; }
+        public short Id { get; set; }
+        public int MetricOffset { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Numerics;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
@@ -22,22 +23,37 @@ namespace RhythmCodex.Ssq.Converters
             {
                 var panels = step.Panels;
                 var freeze = false;
-                var shock = false;
+                var metricOffset = (BigRational) step.MetricOffset / SsqConstants.MeasureLength;
 
-                switch (panels)
+                if (panels == 0x00)
                 {
-                    case 0x00:
-                        freeze = true;
-                        panels = step.ExtraPanels ?? 0;
-                        break;
-                    case 0xFF:
-                        shock = true;
-                        panels = 1;
-                        break;
+                    freeze = true;
+                    panels = step.ExtraPanels ?? 0;
+                }
+
+                if ((panels & 0x0F) == 0x0F)
+                {
+                    yield return new Event
+                    {
+                        [NumericData.MetricOffset] = metricOffset,
+                        [NumericData.Player] = 1,
+                        [FlagData.Shock] = true
+                    };
+                    panels &= 0xF0;
+                }
+
+                if ((panels & 0xF0) == 0xF0)
+                {
+                    yield return new Event
+                    {
+                        [NumericData.MetricOffset] = metricOffset,
+                        [NumericData.Player] = 2,
+                        [FlagData.Shock] = true
+                    };
+                    panels &= 0x0F;
                 }
 
                 var panelNumber = 0;
-
                 while (panels > 0)
                 {
                     if ((panels & 1) != 0)
@@ -45,24 +61,15 @@ namespace RhythmCodex.Ssq.Converters
                         var mappedPanel = _panelMapper.Map(panelNumber);
                         var isMapped = mappedPanel.HasValue;
 
-                        var ev = new Event
+                        yield return new Event
                         {
-                            [NumericData.MetricOffset] = step.MetricOffset,
-                            [NumericData.SourcePanel] = panelNumber
+                            [NumericData.MetricOffset] = metricOffset,
+                            [NumericData.SourceColumn] = panelNumber,
+                            [NumericData.Column] = isMapped ? mappedPanel.Value.Panel : (BigRational?)null,
+                            [NumericData.Player] = isMapped ? mappedPanel.Value.Player : (BigRational?)null,
+                            [FlagData.Freeze] = freeze ? true : (bool?)null,
+                            [FlagData.Note] = freeze ? (bool?)null : true
                         };
-
-                        if (freeze)
-                            ev[FlagData.Freeze] = true;
-
-                        if (shock)
-                            ev[FlagData.Shock] = true;
-                        else if (isMapped)
-                            ev[NumericData.Panel] = mappedPanel.Value.Panel;
-
-                        if (isMapped)
-                            ev[NumericData.Player] = mappedPanel.Value.Player;
-
-                        yield return ev;
                     }
 
                     panels >>= 1;

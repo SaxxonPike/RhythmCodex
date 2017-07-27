@@ -23,9 +23,15 @@ namespace RhythmCodex.Ssq.Converters
                 
                 foreach (var panel in stepList.Select(s => s.Panels))
                     writer.Write(panel);
+
+                if ((count & 1) != 0)
+                    writer.Write((byte)0);
                 
-                foreach (var extraPanel in stepList.Where(s => s.ExtraPanels != null).Select(s => (byte)s.ExtraPanels))
-                    writer.Write(extraPanel);
+                foreach (var extraPanel in stepList.Where(s => s.ExtraPanels != null || s.ExtraPanelInfo != null))
+                {
+                    writer.Write(extraPanel.ExtraPanels ?? 0);
+                    writer.Write(extraPanel.ExtraPanelInfo ?? 0);
+                }
 
                 return mem.ToArray();
             }

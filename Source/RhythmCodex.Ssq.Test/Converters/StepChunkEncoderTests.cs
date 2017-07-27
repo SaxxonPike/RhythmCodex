@@ -28,7 +28,9 @@ namespace RhythmCodex.Ssq.Converters
 
                 0x01,
                 0x10,
-                0x40
+                0x40,
+                
+                0x00
             };
 
             // Act.
@@ -44,9 +46,9 @@ namespace RhythmCodex.Ssq.Converters
             // Arrange.
             var steps = new[]
             {
-                new Step {MetricOffset = 0x123456, Panels = 0x00, ExtraPanels = 0x02 },
-                new Step {MetricOffset = 0x234567, Panels = 0x00, ExtraPanels = 0x20 },
-                new Step {MetricOffset = 0x345678, Panels = 0x00, ExtraPanels = 0x80 }
+                new Step {MetricOffset = 0x123456, Panels = 0x00, ExtraPanels = 0x02, ExtraPanelInfo = 0x01},
+                new Step {MetricOffset = 0x234567, Panels = 0x00, ExtraPanels = 0x20, ExtraPanelInfo = 0x02},
+                new Step {MetricOffset = 0x345678, Panels = 0x00, ExtraPanels = 0x80, ExtraPanelInfo = 0x03}
             };
 
             var expected = new[]
@@ -61,9 +63,11 @@ namespace RhythmCodex.Ssq.Converters
                 0x00,
                 0x00,
                 
-                0x02,
-                0x20,
-                0x80
+                0x00,
+                
+                0x02, 0x01,
+                0x20, 0x02,
+                0x80, 0x03
             };
 
             // Act.

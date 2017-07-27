@@ -4,11 +4,13 @@
     {
         LinearOffset,
         MetricOffset,
-        Tempo,
+        Bpm,
         Stop,
-        Panel,
+        Column,
         Player,
         Id,
-        SourcePanel,
+        SourceColumn,
+        AnnouncerSound,
+        Trigger
     }
 }
