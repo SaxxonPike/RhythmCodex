@@ -7,19 +7,19 @@ namespace RhythmCodex.Charting
 {
     public class Metadata
     {
-        private readonly IDictionary<StringData, string> _stringDatas;
+        private readonly IDictionary<string, string> _stringDatas;
         private readonly IDictionary<NumericData, BigRational> _numericDatas;
         private readonly IDictionary<FlagData, bool> _flagDatas;
 
         public Metadata()
         {
-            _stringDatas = new Dictionary<StringData, string>();
+            _stringDatas = new Dictionary<string, string>();
             _numericDatas = new Dictionary<NumericData, BigRational>();
             _flagDatas = new Dictionary<FlagData, bool>();
         }
 
         private Metadata(
-            IDictionary<StringData, string> stringDatas, 
+            IDictionary<string, string> stringDatas, 
             IDictionary<NumericData, BigRational> numericDatas, 
             IDictionary<FlagData, bool> flagDatas)
         {
@@ -30,7 +30,7 @@ namespace RhythmCodex.Charting
         
         public bool MetadataEquals(Metadata other)
         {
-            return Enum.GetValues(typeof(StringData)).Cast<StringData>().All(v => this[v] == other[v]) &&
+            return _stringDatas.Count == other._stringDatas.Count && !_stringDatas.Except(other._stringDatas).Any() &&
                 Enum.GetValues(typeof(NumericData)).Cast<NumericData>().All(v => this[v] == other[v]) &&
                 Enum.GetValues(typeof(FlagData)).Cast<FlagData>().All(v => this[v] == other[v]);
         }
@@ -40,15 +40,23 @@ namespace RhythmCodex.Charting
             return new Metadata(_stringDatas, _numericDatas, _flagDatas);
         }
         
-        public string this[StringData type]
+        public string this[string key]
         {
-            get => _stringDatas.ContainsKey(type) ? _stringDatas[type] : null;
+            get
+            {
+                var actualKey = _stringDatas.Keys
+                    .FirstOrDefault(k => k.Equals(key, StringComparison.OrdinalIgnoreCase));
+                return actualKey == null ? null : _stringDatas[actualKey];
+            } 
             set
             {
+                var actualKey = _stringDatas.Keys
+                    .FirstOrDefault(k => k.Equals(key, StringComparison.OrdinalIgnoreCase))
+                    ?? key;
                 if (value == null)
-                    _stringDatas.Remove(type);
+                    _stringDatas.Remove(actualKey);
                 else
-                    _stringDatas[type] = value;
+                    _stringDatas[actualKey] = value;
             }
         }
 
