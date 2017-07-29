@@ -1,16 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Streamers
 {
-    public class SmStreamReader
+    public class SmStreamReader : ISmStreamReader
     {
-        public void Test1()
+        public IEnumerable<Command> Read(Stream source)
         {
+            var lines = ReadAllLines(source);
+            var commands = ExtractCommands(lines);
+
+            return commands
+                .Select(c => c.Split(':'))
+                .Select(cl => new Command {Name = cl.First(), Values = cl.Skip(1).ToArray()});
+        }
+
+        private static IEnumerable<string> ExtractCommands(IEnumerable<string> lines)
+        {
+            var commandMode = false;
+            var commandBuilder = new StringBuilder();
             
+            foreach (var line in lines)
+            {
+                foreach (var c in line)
+                {
+                    if (!commandMode)
+                    {
+                        switch (c)
+                        {
+                            case '#':
+                                commandMode = true;
+                                continue;
+                        }
+                    }
+                    else
+                    {
+                        switch (c)
+                        {
+                            case ';':
+                                commandMode = false;
+                                if (commandBuilder.Length > 0)
+                                {
+                                    yield return commandBuilder.ToString();
+                                    commandBuilder.Clear();
+                                }
+                                continue;
+                        }
+                        
+                        commandBuilder.Append(c);
+                    }
+                }
+
+                if (commandBuilder.Length > 0)
+                    commandBuilder.AppendLine();
+            }
+
+            if (commandBuilder.Length > 0)
+                yield return commandBuilder.ToString();
+        }
+
+        private static IEnumerable<string> ReadAllLines(Stream source)
+        {
+            var reader = new StreamReader(source);
+            while (true)
+            {
+                var line = reader.ReadLine();
+                if (line == null)
+                    yield break;
+                yield return line.Trim();
+            }
         }
     }
 }

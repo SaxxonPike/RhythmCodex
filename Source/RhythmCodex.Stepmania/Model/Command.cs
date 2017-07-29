@@ -2,7 +2,7 @@
 
 namespace RhythmCodex.Stepmania.Model
 {
-    public class TagLine
+    public class Command
     {
         public string Name { get; set; }
         public IList<string> Values { get; set; }
