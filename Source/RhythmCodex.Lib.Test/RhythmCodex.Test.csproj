@@ -13,5 +13,10 @@
   </ItemGroup>  
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Ssq\RhythmCodex.Ssq.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Stepmania\RhythmCodex.Stepmania.csproj" />
+  </ItemGroup>  
+  <ItemGroup>
+    <Folder Include="Integration\" />
   </ItemGroup>
 </Project>  

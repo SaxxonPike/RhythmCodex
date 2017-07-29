@@ -11,6 +11,7 @@
         Id,
         SourceColumn,
         AnnouncerSound,
-        Trigger
+        Trigger,
+        PlayLevel
     }
 }

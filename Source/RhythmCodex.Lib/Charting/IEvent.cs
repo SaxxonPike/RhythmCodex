@@ -1,11 +1,6 @@
-﻿using Numerics;
-
-namespace RhythmCodex.Charting
+﻿namespace RhythmCodex.Charting
 {
-    public interface IEvent
+    public interface IEvent : IMetadata
     {
-        string this[string key] { get; set; }
-        BigRational? this[NumericData type] { get; set; }
-        bool? this[FlagData type] { get; set; }
     }
 }

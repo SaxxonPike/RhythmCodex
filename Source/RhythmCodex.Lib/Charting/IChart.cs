@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
-using Numerics;
 
 namespace RhythmCodex.Charting
 {
-    public interface IChart
+    public interface IChart : IMetadata
     {
-        string this[string key] { get; set; }
-        BigRational? this[NumericData type] { get; set; }
-        bool? this[FlagData type] { get;set; }
         IList<IEvent> Events { get; }
     }
 }

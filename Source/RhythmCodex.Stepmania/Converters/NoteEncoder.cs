@@ -9,11 +9,11 @@ namespace RhythmCodex.Stepmania.Converters
 {
     public class NoteEncoder : INoteEncoder
     {
-        public IEnumerable<Note> Encode(IEnumerable<Event> events)
+        public IEnumerable<Note> Encode(IEnumerable<IEvent> events)
         {
             var result = new List<Note>();
             var eventList = events.AsList();
-            var columnCount = (int)eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero);
+            var columnCount = (int)eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
 
             foreach (var ev in eventList.Where(e => e[NumericData.MetricOffset] != null))
             {
@@ -21,7 +21,7 @@ namespace RhythmCodex.Stepmania.Converters
                 
                 if (ev[NumericData.Column] != null)
                 {
-                    var column = (int)ev[NumericData.Column].Value;
+                    var column = (int)ev[NumericData.Column].Value + (int)(ev[NumericData.Player] ?? BigRational.Zero) * columnCount;
                     
                     if (ev[FlagData.Note] == true)
                     {
