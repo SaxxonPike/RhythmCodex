@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">  
+  <PropertyGroup>
+    <TargetFrameworks>net45</TargetFrameworks>
+    <AssemblyName>RhythmCodex.Djmain.Test</AssemblyName>
+    <RootNamespace>RhythmCodex.Djmain</RootNamespace>
+  </PropertyGroup>  
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="3.50.3" />
+    <PackageReference Include="FluentAssertions" Version="4.19.3" />
+    <PackageReference Include="Moqzilla" Version="1.0.3" />
+    <PackageReference Include="NUnit" Version="3.7.1" />
+  </ItemGroup>  
+  <ItemGroup>
+    <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Djmain\RhythmCodex.Djmain.csproj" />
+  </ItemGroup>  
+</Project>  
