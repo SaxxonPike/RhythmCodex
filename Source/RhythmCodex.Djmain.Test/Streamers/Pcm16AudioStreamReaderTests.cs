@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DpcmStreamReaderTests : BaseUnitTestFixture<DpcmAudioStreamReader>
+    public class Pcm16AudioStreamReaderTests : BaseUnitTestFixture<Pcm16AudioStreamReader>
     {
         [Test]
         public void Read_EndsImmediatelyWithNoData()
@@ -26,7 +26,13 @@ namespace RhythmCodex.Djmain.Streamers
         public void Read_EndsImmediatelyOnImmediateEndMarker()
         {
             // Arrange.
-            var data = new byte[] { 0x88, 0x88, 0x88, 0x88 };
+            var data = new byte[]
+            {
+                0x00, 0x80, 0x00, 0x80,
+                0x00, 0x80, 0x00, 0x80,
+                0x00, 0x80, 0x00, 0x80,
+                0x00, 0x80, 0x00, 0x80
+            };
             var stream = new MemoryStream(data);
 
             // Act.
@@ -55,7 +61,13 @@ namespace RhythmCodex.Djmain.Streamers
         {
             // Arrange.
             var expected = new byte[] { 0x12, 0x34, 0x56, 0x78 };
-            var data = expected.Concat(new byte[] { 0x88, 0x88, 0x88, 0x88 }).ToArray();
+            var data = expected.Concat(new byte[]
+            {
+                0x00, 0x80, 0x00, 0x80,
+                0x00, 0x80, 0x00, 0x80,
+                0x00, 0x80, 0x00, 0x80,
+                0x00, 0x80, 0x00, 0x80
+            }).ToArray();
             var stream = new MemoryStream(data);
 
             // Act.
@@ -70,7 +82,7 @@ namespace RhythmCodex.Djmain.Streamers
         {
             // Arrange.
             var expected = new byte[] { 0x12, 0x34, 0x56, 0x78 };
-            var data = expected.Concat(new byte[] { 0x88, 0x88 }).ToArray();
+            var data = expected.Concat(new byte[] { 0x00, 0x80, 0x00, 0x80 }).ToArray();
             var stream = new MemoryStream(data);
 
             // Act.

@@ -5,6 +5,10 @@
         Note,
         Freeze,
         Mine,
-        Shock
+        Shock,
+        Measure,
+        FreeZone,
+        Scratch,
+        End
     }
 }

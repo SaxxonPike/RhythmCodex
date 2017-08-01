@@ -7,7 +7,7 @@ namespace RhythmCodex.Djmain.Converters
     {
         public IList<float> Decode(IEnumerable<byte> data)
         {
-            return data.Select(b => (b ^ 0x80) / 256f).ToArray();
+            return data.Select(b => ((b ^ 0x80) - 0x80) / 128f).ToArray();
         }
     }
 }

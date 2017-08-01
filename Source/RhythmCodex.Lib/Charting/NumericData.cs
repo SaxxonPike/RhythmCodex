@@ -11,6 +11,14 @@
         Id,
         SourceColumn,
         AnnouncerSound,
-        Trigger
+        Trigger,
+        PlaySound,
+        LoadSound,
+        JudgeNumber,
+        JudgeTiming,
+        JudgeSound,
+        Panning,
+        Volume,
+        Phrase
     }
 }

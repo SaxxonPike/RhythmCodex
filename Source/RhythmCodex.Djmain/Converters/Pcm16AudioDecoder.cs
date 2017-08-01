@@ -14,17 +14,16 @@ namespace RhythmCodex.Djmain.Converters
         {
             using (var e = data.GetEnumerator())
             {
-                if (!e.MoveNext())
-                    yield break;
+                while (true)
+                {
+                    if (!e.MoveNext())
+                        yield break;
 
-                var low = e.Current;
-                
-                if (!e.MoveNext())
-                    yield break;
-
-                var high = e.Current;
-
-                yield return low | (high << 8);
+                    var low = e.Current;
+                    var high = e.MoveNext() ? e.Current : 0;
+                    
+                    yield return (((low | (high << 8)) << 16) >> 16) / 32768f;
+                }
             }
         }
     }

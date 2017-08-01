@@ -24,9 +24,9 @@ namespace RhythmCodex.Djmain.Converters
             foreach (var b in data)
             {
                 accumulator = (accumulator + DpcmTable[b & 0xF]) & 0xFF;
-                yield return (accumulator ^ 0x80) / 256f;
+                yield return ((accumulator ^ 0x80) - 0x80) / 128f;
                 accumulator = (accumulator + DpcmTable[b >> 4]) & 0xFF;
-                yield return (accumulator ^ 0x80) / 256f;
+                yield return ((accumulator ^ 0x80) - 0x80) / 128f;
             }
         }
     }

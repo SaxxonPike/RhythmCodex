@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RhythmCodex.Djmain.Streamers
 {
-    public class Pcm16StreamReader : IPcm16StreamReader
+    public class Pcm16AudioStreamReader : IPcm16AudioStreamReader
     {
         private const long EndOfStream = 0x4000400040004000 << 1;
 
