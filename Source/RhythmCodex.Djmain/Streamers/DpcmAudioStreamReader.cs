@@ -6,8 +6,6 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public class DpcmAudioStreamReader : IDpcmAudioStreamReader
     {
-        private const int EndOfStream = 0x44444444 << 1;
-        
         public IList<byte> Read(Stream stream)
         {
             return ReadStream(stream).ToArray();
@@ -15,7 +13,8 @@ namespace RhythmCodex.Djmain.Streamers
 
         private static IEnumerable<byte> ReadStream(Stream stream)
         {
-            var buffer = EndOfStream;
+            var marker = DjmainConstants.DpcmEndMarker;
+            var buffer = marker;
 
             void Fetch()
             {
@@ -29,7 +28,7 @@ namespace RhythmCodex.Djmain.Streamers
             for (var i = 0; i < 4; i++)
                 Fetch();
 
-            while (buffer != EndOfStream)
+            while (buffer != marker)
             {
                 yield return unchecked((byte) buffer);
                 Fetch();

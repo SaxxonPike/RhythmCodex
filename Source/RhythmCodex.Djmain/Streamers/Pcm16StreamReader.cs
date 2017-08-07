@@ -6,8 +6,6 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public class Pcm16StreamReader : IPcm16StreamReader
     {
-        private const long EndOfStream = 0x4000400040004000 << 1;
-
         public IList<byte> Read(Stream stream)
         {
             return DecodeStream(stream).ToArray();
@@ -15,8 +13,9 @@ namespace RhythmCodex.Djmain.Streamers
 
         private static IEnumerable<byte> DecodeStream(Stream stream)
         {
-            var buffer0 = EndOfStream;
-            var buffer1 = EndOfStream;
+            var marker = DjmainConstants.Pcm16EndMarker;
+            var buffer0 = marker;
+            var buffer1 = marker;
 
             void Fetch()
             {
@@ -39,7 +38,7 @@ namespace RhythmCodex.Djmain.Streamers
                 Fetch();
 
             // Load sample.
-            while (buffer0 != EndOfStream || buffer1 != EndOfStream)
+            while (buffer0 != marker || buffer1 != marker)
             {
                 yield return unchecked((byte)buffer0);
                 yield return unchecked((byte)(buffer0 >> 8));

@@ -6,13 +6,11 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public class DjmainSampleDefinitionStreamReader : IDjmainSampleDefinitionStreamReader
     {
-        private const int MaxDefinitionCount = 256;
-        
         public IEnumerable<DjmainSampleDefinition> Read(Stream stream)
         {
             var reader = new BinaryReader(stream);
 
-            for (var i = 0; i < MaxDefinitionCount; i++)
+            for (var i = 0; i < DjmainConstants.MaxSampleDefinitions; i++)
             {
                 var result = new DjmainSampleDefinition
                 {
