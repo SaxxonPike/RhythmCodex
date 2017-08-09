@@ -1,4 +1,4 @@
-﻿namespace RhythmCodex.Charting
+﻿namespace RhythmCodex.Attributes
 {
     public enum FlagData
     {

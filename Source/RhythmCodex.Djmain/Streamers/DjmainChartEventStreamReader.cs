@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using RhythmCodex.Djmain.Model;
 
 namespace RhythmCodex.Djmain.Streamers
@@ -7,8 +8,13 @@ namespace RhythmCodex.Djmain.Streamers
     public class DjmainChartEventStreamReader : IDjmainChartEventStreamReader
     {
         private const int MaxEventCount = 0x1000;
-        
-        public IEnumerable<DjmainChartEvent> Read(Stream stream)
+
+        public IList<DjmainChartEvent> Read(Stream stream)
+        {
+            return ReadInternal(stream).ToArray();
+        }
+
+        private static IEnumerable<DjmainChartEvent> ReadInternal(Stream stream)
         {
             var reader = new BinaryReader(stream);
 

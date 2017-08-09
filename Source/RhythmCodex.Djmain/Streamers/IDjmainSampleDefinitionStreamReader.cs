@@ -6,6 +6,6 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public interface IDjmainSampleDefinitionStreamReader
     {
-        IEnumerable<DjmainSampleDefinition> Read(Stream stream);
+        IDictionary<int, DjmainSampleDefinition> Read(Stream stream);
     }
 }
