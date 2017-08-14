@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Numerics;
+using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
 

@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Numerics;
 using NUnit.Framework;
+using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;

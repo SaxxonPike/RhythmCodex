@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using RhythmCodex.Attributes;
 
 namespace RhythmCodex.Charting
 {

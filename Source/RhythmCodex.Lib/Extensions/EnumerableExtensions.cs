@@ -9,5 +9,10 @@ namespace RhythmCodex.Extensions
         {
             return enumerable as IList<T> ?? enumerable.ToList();
         }
+
+        public static T[] AsArray<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable as T[] ?? enumerable.ToArray();
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Numerics;
 
-namespace RhythmCodex.Charting
+namespace RhythmCodex.Attributes
 {
     public class Metadata : IMetadata
     {
