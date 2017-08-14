@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Ssq", "RhythmCodex.Ssq\RhythmCodex.Ssq.csproj", "{21EC8DC8-EF46-4B51-A707-6F5117BC82D4}"
 EndProject

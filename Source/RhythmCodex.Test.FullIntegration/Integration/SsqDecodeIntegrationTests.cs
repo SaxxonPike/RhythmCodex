@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Converters;

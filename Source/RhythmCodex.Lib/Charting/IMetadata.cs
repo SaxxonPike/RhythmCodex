@@ -1,4 +1,5 @@
 ﻿using Numerics;
+using RhythmCodex.Attributes;
 
 namespace RhythmCodex.Charting
 {
