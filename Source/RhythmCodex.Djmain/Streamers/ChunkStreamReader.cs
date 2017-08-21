@@ -7,9 +7,16 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public class ChunkStreamReader : IChunkStreamReader
     {
+        private readonly IDjmainConfiguration _djmainConfiguration;
+
+        public ChunkStreamReader(IDjmainConfiguration djmainConfiguration)
+        {
+            _djmainConfiguration = djmainConfiguration;
+        }
+
         public IEnumerable<DjmainChunk> Read(Stream stream)
         {
-            var length = DjmainConstants.ChunkSize;
+            var length = _djmainConfiguration.ChunkSize;
             var buffer = new byte[length];
             var id = 0;
 

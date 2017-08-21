@@ -5,6 +5,5 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public interface IPcm8StreamReader
     {
-        IList<byte> Read(Stream stream);
     }
 }

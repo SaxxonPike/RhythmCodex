@@ -9,10 +9,17 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public class DjmainSampleDefinitionStreamWriter : IDjmainSampleDefinitionStreamWriter
     {
+        private readonly IDjmainConfiguration _djmainConfiguration;
+
+        public DjmainSampleDefinitionStreamWriter(IDjmainConfiguration djmainConfiguration)
+        {
+            _djmainConfiguration = djmainConfiguration;
+        }
+
         public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> definitions)
         {
             var defs = definitions.AsList();
-            var count = Math.Max(0, Math.Min(defs.Any() ? defs.Max(d => d.Key) + 1 : 0, DjmainConstants.MaxSampleDefinitions));
+            var count = Math.Max(0, Math.Min(defs.Any() ? defs.Max(d => d.Key) + 1 : 0, _djmainConfiguration.MaxSampleDefinitions));
 
             var writer = new BinaryWriter(stream);
 

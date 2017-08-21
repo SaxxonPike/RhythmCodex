@@ -24,8 +24,8 @@ namespace RhythmCodex.Djmain.Streamers
         public void Read_ReadsProperChunks()
         {
             // Arrange.
-            var chunkSize = DjmainConstants.ChunkSize;
-            var input = GenerateRandomBytes(DjmainConstants.ChunkSize);
+            var chunkSize = DjmainConfiguration.Default.ChunkSize;
+            var input = GenerateRandomBytes(chunkSize);
 
             // Act.
             using (var mem = new MemoryStream(input))
@@ -53,7 +53,7 @@ namespace RhythmCodex.Djmain.Streamers
         public void Read_ReadsOnlyWholeChunks()
         {
             // Arrange.
-            var chunkSize = DjmainConstants.ChunkSize;
+            var chunkSize = DjmainConfiguration.Default.ChunkSize;
             var input = GenerateRandomBytes(chunkSize * 3 / 2);
 
             // Act.

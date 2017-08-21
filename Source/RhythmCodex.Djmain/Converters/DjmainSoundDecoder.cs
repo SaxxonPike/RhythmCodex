@@ -13,12 +13,9 @@ namespace RhythmCodex.Djmain.Converters
 {
     public class DjmainSoundDecoder
     {
-        private readonly IDpcmAudioDecoder _dpcmAudioDecoder;
-        private readonly IPcm8AudioDecoder _pcm8AudioDecoder;
-        private readonly IPcm16AudioDecoder _pcm16AudioDecoder;
-        private readonly IDpcmAudioStreamReader _dpcmAudioStreamReader;
-        private readonly IPcm8StreamReader _pcm8StreamReader;
-        private readonly IPcm16StreamReader _pcm16StreamReader;
+        private readonly IAudioDecoder _audioDecoder;
+        private readonly IAudioStreamReader _audioStreamReader;
+        private readonly IDjmainConfiguration _djmainConfiguration;
 
         private static readonly Lazy<BigRational[]> VolumeTable = new Lazy<BigRational[]>(() =>
         {
@@ -42,19 +39,13 @@ namespace RhythmCodex.Djmain.Converters
         });
 
         public DjmainSoundDecoder(
-            IDpcmAudioDecoder dpcmAudioDecoder,
-            IPcm8AudioDecoder pcm8AudioDecoder,
-            IPcm16AudioDecoder pcm16AudioDecoder,
-            IDpcmAudioStreamReader dpcmAudioStreamReader,
-            IPcm8StreamReader pcm8StreamReader,
-            IPcm16StreamReader pcm16StreamReader)
+            IAudioDecoder audioDecoder,
+            IAudioStreamReader audioStreamReader,
+            IDjmainConfiguration djmainConfiguration)
         {
-            _dpcmAudioDecoder = dpcmAudioDecoder;
-            _pcm8AudioDecoder = pcm8AudioDecoder;
-            _pcm16AudioDecoder = pcm16AudioDecoder;
-            _dpcmAudioStreamReader = dpcmAudioStreamReader;
-            _pcm8StreamReader = pcm8StreamReader;
-            _pcm16StreamReader = pcm16StreamReader;
+            _audioDecoder = audioDecoder;
+            _audioStreamReader = audioStreamReader;
+            _djmainConfiguration = djmainConfiguration;
         }
 
         public IList<ISound> Decode(IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> definitions, Stream stream, int offset)
@@ -73,17 +64,17 @@ namespace RhythmCodex.Djmain.Converters
                 switch (def.Value.SampleType & 0xC)
                 {
                     case 0x0:
-                        sample.Data = _pcm8AudioDecoder.Decode(_pcm8StreamReader.Read(stream));
+                        sample.Data = _audioDecoder.DecodePcm8(_audioStreamReader.ReadPcm8(stream));
                         break;
                     case 0x4:
-                        sample.Data = _pcm16AudioDecoder.Decode(_pcm16StreamReader.Read(stream));
+                        sample.Data = _audioDecoder.DecodePcm16(_audioStreamReader.ReadPcm16(stream));
                         break;
                     case 0x8:
-                        sample.Data = _dpcmAudioDecoder.Decode(_dpcmAudioStreamReader.Read(stream));
+                        sample.Data = _audioDecoder.DecodeDpcm(_audioStreamReader.ReadDpcm(stream));
                         break;
                 }
 
-                sample[NumericData.Rate] = DjmainConstants.SampleRateMultiplier * def.Value.Frequency;
+                sample[NumericData.Rate] = _djmainConfiguration.SampleRateMultiplier * def.Value.Frequency;
 
                 yield return new Sound
                 {

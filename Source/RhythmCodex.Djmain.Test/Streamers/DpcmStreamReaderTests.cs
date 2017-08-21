@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DpcmStreamReaderTests : BaseUnitTestFixture<DpcmAudioStreamReader>
+    public class DpcmStreamReaderTests : BaseUnitTestFixture<AudioStreamReader>
     {
         [Test]
         public void Read_EndsImmediatelyWithNoData()
@@ -16,7 +16,7 @@ namespace RhythmCodex.Djmain.Streamers
             var stream = new MemoryStream(data);
 
             // Act.
-            var result = Subject.Read(stream);
+            var result = Subject.ReadDpcm(stream);
 
             // Assert.
             result.Should().BeEmpty();
@@ -30,7 +30,7 @@ namespace RhythmCodex.Djmain.Streamers
             var stream = new MemoryStream(data);
 
             // Act.
-            var result = Subject.Read(stream);
+            var result = Subject.ReadDpcm(stream);
 
             // Assert.
             result.Should().BeEmpty();
@@ -44,7 +44,7 @@ namespace RhythmCodex.Djmain.Streamers
             var stream = new MemoryStream(expected);
 
             // Act.
-            var result = Subject.Read(stream);
+            var result = Subject.ReadDpcm(stream);
 
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);
@@ -59,7 +59,7 @@ namespace RhythmCodex.Djmain.Streamers
             var stream = new MemoryStream(data);
 
             // Act.
-            var result = Subject.Read(stream);
+            var result = Subject.ReadDpcm(stream);
 
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);
@@ -74,7 +74,7 @@ namespace RhythmCodex.Djmain.Streamers
             var stream = new MemoryStream(data);
 
             // Act.
-            var result = Subject.Read(stream);
+            var result = Subject.ReadDpcm(stream);
 
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);

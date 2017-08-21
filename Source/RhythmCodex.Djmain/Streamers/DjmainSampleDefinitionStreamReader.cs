@@ -7,12 +7,19 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public class DjmainSampleDefinitionStreamReader : IDjmainSampleDefinitionStreamReader
     {
+        private readonly IDjmainConfiguration _djmainConfiguration;
+
+        public DjmainSampleDefinitionStreamReader(IDjmainConfiguration djmainConfiguration)
+        {
+            _djmainConfiguration = djmainConfiguration;
+        }
+
         public IDictionary<int, DjmainSampleDefinition> Read(Stream stream)
         {
             return ReadInternal(stream).ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        private static IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> ReadInternal(Stream stream)
+        private IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> ReadInternal(Stream stream)
         {
             var buffer = new byte[11];
 
@@ -20,7 +27,7 @@ namespace RhythmCodex.Djmain.Streamers
             {
                 var reader = new BinaryReader(mem);
 
-                for (var i = 0; i < DjmainConstants.MaxSampleDefinitions; i++)
+                for (var i = 0; i < _djmainConfiguration.MaxSampleDefinitions; i++)
                 {
                     reader.BaseStream.Position = 0;
 
