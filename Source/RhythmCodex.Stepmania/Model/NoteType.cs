@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RhythmCodex.Stepmania.Model
+﻿namespace RhythmCodex.Stepmania.Model
 {
     public static class NoteType
     {

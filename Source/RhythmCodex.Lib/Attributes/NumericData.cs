@@ -15,6 +15,12 @@
         Rate,
         Volume,
         Panning,
-        PlayLevel
+        PlayLevel,
+        LoadSound,
+        PlaySound,
+        JudgeNumber,
+        JudgeTiming,
+        JudgeSound,
+        Phrase
     }
 }

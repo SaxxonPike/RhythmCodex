@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Numerics;
+using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Djmain.Model;
 

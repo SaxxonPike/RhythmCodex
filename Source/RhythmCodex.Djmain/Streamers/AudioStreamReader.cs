@@ -6,13 +6,6 @@ namespace RhythmCodex.Djmain.Streamers
 {
     public class AudioStreamReader : IAudioStreamReader
     {
-        private readonly IDjmainConfiguration _djmainConfiguration;
-
-        public AudioStreamReader(IDjmainConfiguration djmainConfiguration)
-        {
-            _djmainConfiguration = djmainConfiguration;
-        }
-
         public IList<byte> ReadDpcm(Stream stream)
         {
             return ReadDpcmStream(stream).ToArray();
@@ -20,7 +13,7 @@ namespace RhythmCodex.Djmain.Streamers
 
         private IEnumerable<byte> ReadDpcmStream(Stream stream)
         {
-            var marker = _djmainConfiguration.DpcmEndMarker;
+            var marker = DjmainConstants.DpcmEndMarker;
             var buffer = marker;
 
             void Fetch()
@@ -49,7 +42,7 @@ namespace RhythmCodex.Djmain.Streamers
 
         private IEnumerable<byte> DecodePcm16Stream(Stream stream)
         {
-            var marker = _djmainConfiguration.Pcm16EndMarker;
+            var marker = DjmainConstants.Pcm16EndMarker;
             var buffer0 = marker;
             var buffer1 = marker;
 
@@ -89,7 +82,7 @@ namespace RhythmCodex.Djmain.Streamers
 
         private IEnumerable<byte> DecodePcm8Stream(Stream stream)
         {
-            var marker = _djmainConfiguration.Pcm8EndMarker;
+            var marker = DjmainConstants.Pcm8EndMarker;
             var buffer = marker;
 
             void Fetch()

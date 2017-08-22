@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Converters
 {
     [TestFixture]
-    public class Pcm8AudioDecoderTests : BaseUnitTestFixture<Pcm8AudioDecoder>
+    public class Pcm8AudioDecoderTests : BaseUnitTestFixture<AudioDecoder>
     {
         [Test]
         public void Decode_DecodesData()
@@ -15,7 +15,7 @@ namespace RhythmCodex.Djmain.Converters
             var expected = data.Select(v => ((v ^ 0x80) - 0x80) / 128f);
             
             // Act.
-            var result = Subject.Decode(data);
+            var result = Subject.DecodePcm8(data);
             
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);

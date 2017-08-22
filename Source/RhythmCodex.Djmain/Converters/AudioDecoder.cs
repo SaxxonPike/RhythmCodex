@@ -20,7 +20,7 @@ namespace RhythmCodex.Djmain.Converters
 
         public IList<float> DecodePcm8(IEnumerable<byte> data)
         {
-            return data.Select(b => (b ^ 0x80) / 256f).ToArray();
+            return data.Select(b => ((b ^ 0x80) - 0x80) / 128f).ToArray();
         }
 
         public IList<float> DecodePcm16(IEnumerable<byte> data)
@@ -32,29 +32,28 @@ namespace RhythmCodex.Djmain.Converters
         {
             using (var e = data.GetEnumerator())
             {
-                if (!e.MoveNext())
-                    yield break;
+                while (true)
+                {
+                    if (!e.MoveNext())
+                        yield break;
 
-                var low = e.Current;
+                    var low = e.Current;
+                    var high = e.MoveNext() ? e.Current : 0;
 
-                if (!e.MoveNext())
-                    yield break;
-
-                var high = e.Current;
-
-                yield return low | (high << 8);
+                    yield return (((low | (high << 8)) << 16) >> 16) / 32768f;
+                }
             }
         }
 
         private static IEnumerable<float> DecodeDpcmData(IEnumerable<byte> data)
         {
-            var accumulator = 0;
+            var accumulator = 0x00;
             foreach (var b in data)
             {
                 accumulator = (accumulator + DpcmTable[b & 0xF]) & 0xFF;
-                yield return (accumulator ^ 0x80) / 256f;
+                yield return ((accumulator ^ 0x80) - 0x80) / 128f;
                 accumulator = (accumulator + DpcmTable[b >> 4]) & 0xFF;
-                yield return (accumulator ^ 0x80) / 256f;
+                yield return ((accumulator ^ 0x80) - 0x80) / 128f;
             }
         }
     }

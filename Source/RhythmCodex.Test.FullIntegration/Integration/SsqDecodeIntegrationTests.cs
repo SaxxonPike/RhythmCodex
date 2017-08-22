@@ -11,7 +11,7 @@ using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Streamers;
 
-namespace RhythmCodex.Ssq.Integration
+namespace RhythmCodex.Integration
 {
     [TestFixture]
     public class SsqDecodeIntegrationTests : BaseIntegrationFixture

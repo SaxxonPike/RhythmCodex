@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Converters
 {
     [TestFixture]
-    public class Pcm16AudioDecoderTests : BaseUnitTestFixture<Pcm16AudioDecoder>
+    public class Pcm16AudioDecoderTests : BaseUnitTestFixture<AudioDecoder>
     {
         [Test]
         public void Decode_DecodesData()
@@ -14,7 +14,7 @@ namespace RhythmCodex.Djmain.Converters
             var expected = new[] {0x3412 / 32768f, 0x7856 / 32768f};
 
             // Act.
-            var result = Subject.Decode(data);
+            var result = Subject.DecodePcm16(data);
 
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);
@@ -28,7 +28,7 @@ namespace RhythmCodex.Djmain.Converters
             var expected = new[] { 0x3412 / 32768f, 0x0056 / 32768f };
 
             // Act.
-            var result = Subject.Decode(data);
+            var result = Subject.DecodePcm16(data);
 
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);

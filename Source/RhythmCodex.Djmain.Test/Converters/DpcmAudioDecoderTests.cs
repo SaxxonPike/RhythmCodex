@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 
 namespace RhythmCodex.Djmain.Converters
 {
     [TestFixture]
-    public class DpcmAudioDecoderTests : BaseUnitTestFixture<DpcmAudioDecoder>
+    public class DpcmAudioDecoderTests : BaseUnitTestFixture<AudioDecoder>
     {
         [Test]
         public void Decode_DecodesData()
@@ -19,7 +14,7 @@ namespace RhythmCodex.Djmain.Converters
             var expected = new[] {2/128f, 3/128f};
 
             // Act.
-            var result = Subject.Decode(data);
+            var result = Subject.DecodeDpcm(data);
 
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);
@@ -49,7 +44,7 @@ namespace RhythmCodex.Djmain.Converters
             var expected = new[] {expectedValue, expectedValue};
 
             // Act.
-            var result = Subject.Decode(data);
+            var result = Subject.DecodeDpcm(data);
 
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);
