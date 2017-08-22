@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Numerics;
+using RhythmCodex.Charting;
 
-namespace RhythmCodex.Charting
+namespace RhythmCodex.Attributes
 {
-    public class Metadata
+    public class Metadata : IMetadata
     {
         private readonly IDictionary<string, string> _stringDatas;
         private readonly IDictionary<NumericData, BigRational> _numericDatas;
@@ -90,7 +91,7 @@ namespace RhythmCodex.Charting
             foreach (var item in _numericDatas)
                 output[item.Key.ToString()] = $"{(decimal)item.Value}";
             foreach (var item in _stringDatas)
-                output[item.Key.ToString()] = $"{item.Value}";
+                output[item.Key] = $"{item.Value}";
             foreach (var item in _flagDatas)
                 output[item.Key.ToString()] = $"{item.Value}";
 

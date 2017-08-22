@@ -3,8 +3,8 @@ using System.IO;
 
 namespace RhythmCodex.Djmain.Streamers
 {
-    public interface IDpcmAudioStreamReader
+    public interface IDpcmAudioStreamWriter
     {
-        IList<byte> Read(Stream stream);
+        void Write(Stream stream, IEnumerable<byte> data);
     }
 }

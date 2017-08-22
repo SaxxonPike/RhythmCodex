@@ -1,4 +1,4 @@
-﻿namespace RhythmCodex.Charting
+﻿namespace RhythmCodex.Attributes
 {
     public enum NumericData
     {
@@ -12,13 +12,9 @@
         SourceColumn,
         AnnouncerSound,
         Trigger,
-        PlaySound,
-        LoadSound,
-        JudgeNumber,
-        JudgeTiming,
-        JudgeSound,
-        Panning,
+        Rate,
         Volume,
-        Phrase
+        Panning,
+        PlayLevel
     }
 }
