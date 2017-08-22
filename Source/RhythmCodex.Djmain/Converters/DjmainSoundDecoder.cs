@@ -6,15 +6,12 @@ using Numerics;
 using RhythmCodex.Attributes;
 using RhythmCodex.Audio;
 using RhythmCodex.Djmain.Model;
-using RhythmCodex.Djmain.Streamers;
 
 namespace RhythmCodex.Djmain.Converters
 {
     public class DjmainSoundDecoder
     {
         private readonly IAudioDecoder _audioDecoder;
-        private readonly IAudioStreamReader _audioStreamReader;
-        private readonly IDjmainConfiguration _djmainConfiguration;
 
         private static readonly Lazy<BigRational[]> VolumeTable = new Lazy<BigRational[]>(() =>
         {
@@ -38,48 +35,46 @@ namespace RhythmCodex.Djmain.Converters
         });
 
         public DjmainSoundDecoder(
-            IAudioDecoder audioDecoder,
-            IAudioStreamReader audioStreamReader,
-            IDjmainConfiguration djmainConfiguration)
+            IAudioDecoder audioDecoder)
         {
             _audioDecoder = audioDecoder;
-            _audioStreamReader = audioStreamReader;
-            _djmainConfiguration = djmainConfiguration;
         }
 
-        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> definitions, Stream stream, int offset)
+        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> definitions, Stream stream, int offset)
         {
-            return DecodeInternal(definitions, stream, offset).ToList();
+            return DecodeInternal(definitions).ToList();
         }
 
-        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> definitions, Stream stream, int offset)
+        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> definitions)
         {
             foreach (var def in definitions)
             {
+                var info = def.Value.Info;
+                var data = def.Value.Data;
+
                 var sample = new Sample();
 
-                stream.Position = (def.Value.Offset + offset) & 0xFFFFFF;
-
-                switch (def.Value.SampleType & 0xC)
+                switch (def.Value.Info.SampleType & 0xC)
                 {
                     case 0x0:
-                        sample.Data = _audioDecoder.DecodePcm8(_audioStreamReader.ReadPcm8(stream));
+                        sample.Data = _audioDecoder.DecodePcm8(data);
                         break;
                     case 0x4:
-                        sample.Data = _audioDecoder.DecodePcm16(_audioStreamReader.ReadPcm16(stream));
+                        sample.Data = _audioDecoder.DecodePcm16(data);
                         break;
                     case 0x8:
-                        sample.Data = _audioDecoder.DecodeDpcm(_audioStreamReader.ReadDpcm(stream));
+                        sample.Data = _audioDecoder.DecodeDpcm(data);
                         break;
                 }
 
-                sample[NumericData.Rate] = _djmainConfiguration.SampleRateMultiplier * def.Value.Frequency;
+                sample.Data = sample.Data ?? new List<float>();
 
                 yield return new Sound
                 {
                     Samples = new List<ISample> { sample },
-                    [NumericData.Volume] = VolumeTable.Value[def.Value.Volume],
-                    [NumericData.Panning] = PanningTable.Value[def.Value.Panning & 0xF]
+                    [NumericData.Volume] = VolumeTable.Value[info.Volume],
+                    [NumericData.Panning] = PanningTable.Value[info.Panning & 0xF],
+                    [NumericData.Rate] = DjmainConstants.SampleRateMultiplier * info.Frequency
                 };
             }
         }

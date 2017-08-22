@@ -8,7 +8,7 @@ using RhythmCodex.Djmain.Model;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<DjmainSampleDefinitionStreamWriter>
+    public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<DjmainSampleInfoStreamWriter>
     {
         [Test]
         public void Write_WritesSampleDefinitions()
@@ -16,7 +16,7 @@ namespace RhythmCodex.Djmain.Streamers
             // Arrange.
             var input = new[]
             {
-                new DjmainSampleDefinition
+                new DjmainSampleInfo
                 {
                     Channel = 0x12,
                     Frequency = 0x3456,
@@ -27,7 +27,7 @@ namespace RhythmCodex.Djmain.Streamers
                     SampleType = 0x90,
                     Flags = 0x12
                 },
-                new DjmainSampleDefinition
+                new DjmainSampleInfo
                 {
                     Channel = 0x34,
                     Frequency = 0x5678,
@@ -40,7 +40,7 @@ namespace RhythmCodex.Djmain.Streamers
                 }
             };
 
-            var pairs = input.Select((e, i) => new KeyValuePair<int, DjmainSampleDefinition>(i, e));
+            var pairs = input.Select((e, i) => new KeyValuePair<int, DjmainSampleInfo>(i, e));
 
             var expected = new byte[]
             {

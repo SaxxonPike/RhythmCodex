@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using RhythmCodex.Charting;
 
 namespace RhythmCodex.Audio
 {
-    public interface ISample
+    public interface ISample : IMetadata
     {
-        IEnumerable<float> Data { get; set; }
+        IList<float> Data { get; set; }
     }
 }

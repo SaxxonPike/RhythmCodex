@@ -7,16 +7,16 @@ using RhythmCodex.Extensions;
 
 namespace RhythmCodex.Djmain.Streamers
 {
-    public class DjmainSampleDefinitionStreamWriter : IDjmainSampleDefinitionStreamWriter
+    public class DjmainSampleInfoStreamWriter : IDjmainSampleDefinitionStreamWriter
     {
         private readonly IDjmainConfiguration _djmainConfiguration;
 
-        public DjmainSampleDefinitionStreamWriter(IDjmainConfiguration djmainConfiguration)
+        public DjmainSampleInfoStreamWriter(IDjmainConfiguration djmainConfiguration)
         {
             _djmainConfiguration = djmainConfiguration;
         }
 
-        public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> definitions)
+        public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions)
         {
             var defs = definitions.AsList();
             var count = Math.Max(0, Math.Min(defs.Any() ? defs.Max(d => d.Key) + 1 : 0, _djmainConfiguration.MaxSampleDefinitions));

@@ -5,6 +5,6 @@ namespace RhythmCodex.Audio
 {
     public class Sample : Metadata, ISample
     {
-        public IEnumerable<float> Data { get; set; }
+        public IList<float> Data { get; set; }
     }
 }

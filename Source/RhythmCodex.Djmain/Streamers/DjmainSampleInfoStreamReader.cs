@@ -5,21 +5,21 @@ using RhythmCodex.Djmain.Model;
 
 namespace RhythmCodex.Djmain.Streamers
 {
-    public class DjmainSampleDefinitionStreamReader : IDjmainSampleDefinitionStreamReader
+    public class DjmainSampleInfoStreamReader : IDjmainSampleDefinitionStreamReader
     {
         private readonly IDjmainConfiguration _djmainConfiguration;
 
-        public DjmainSampleDefinitionStreamReader(IDjmainConfiguration djmainConfiguration)
+        public DjmainSampleInfoStreamReader(IDjmainConfiguration djmainConfiguration)
         {
             _djmainConfiguration = djmainConfiguration;
         }
 
-        public IDictionary<int, DjmainSampleDefinition> Read(Stream stream)
+        public IDictionary<int, DjmainSampleInfo> Read(Stream stream)
         {
             return ReadInternal(stream).ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        private IEnumerable<KeyValuePair<int, DjmainSampleDefinition>> ReadInternal(Stream stream)
+        private IEnumerable<KeyValuePair<int, DjmainSampleInfo>> ReadInternal(Stream stream)
         {
             var buffer = new byte[11];
 
@@ -35,7 +35,7 @@ namespace RhythmCodex.Djmain.Streamers
                     if (bytesRead < 11)
                         yield break;
 
-                    var result = new DjmainSampleDefinition
+                    var result = new DjmainSampleInfo
                     {
                         Channel = reader.ReadByte(),
                         Frequency = reader.ReadUInt16(),
@@ -46,7 +46,7 @@ namespace RhythmCodex.Djmain.Streamers
                         SampleType = reader.ReadByte(),
                         Flags = reader.ReadByte()
                     };
-                    yield return new KeyValuePair<int, DjmainSampleDefinition>(i, result);
+                    yield return new KeyValuePair<int, DjmainSampleInfo>(i, result);
 
                 }
             }
