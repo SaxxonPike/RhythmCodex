@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RhythmCodex.Audio;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
 
@@ -13,38 +9,57 @@ namespace RhythmCodex.Djmain.Converters
     public class DjmainSampleDecoder
     {
         private readonly IAudioStreamReader _audioStreamReader;
-        private readonly IDjmainSampleDefinitionStreamReader _djmainSampleDefinitionStreamReader;
-        private readonly IDjmainConfiguration _djmainConfiguration;
 
         public DjmainSampleDecoder(
-            IAudioStreamReader audioStreamReader,
-            IDjmainSampleDefinitionStreamReader djmainSampleDefinitionStreamReader,
-            IDjmainConfiguration djmainConfiguration)
+            IAudioStreamReader audioStreamReader)
         {
             _audioStreamReader = audioStreamReader;
-            _djmainSampleDefinitionStreamReader = djmainSampleDefinitionStreamReader;
-            _djmainConfiguration = djmainConfiguration;
         }
 
-        public IList<DjmainSample> Decode(byte[] data, int sampleOffset)
+        public IDictionary<int, DjmainSample> Decode(
+            byte[] data, 
+            IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos, 
+            int sampleOffset)
         {
-            return DecodeInternal(data, sampleOffset).ToList();
+            return DecodeInternal(data, infos, sampleOffset)
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        private IEnumerable<DjmainSample> DecodeInternal(byte[] data, int sampleOffset)
+        private IEnumerable<KeyValuePair<int, DjmainSample>> DecodeInternal(
+            byte[] data, 
+            IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos, 
+            int sampleOffset)
         {
             using (var mem = new MemoryStream(data))
             {
-                mem.Position = 0;
-
-                var infos = _djmainSampleDefinitionStreamReader.Read(mem);
-
-                var samples = infos.Select(info =>
+                foreach (var info in infos)
                 {
-                    var id = info.Key;
                     var props = info.Value;
 
-                });
+                    IList<byte> GetSampleData()
+                    {
+                        switch (props.SampleType & 0xC)
+                        {
+                            case 0x0:
+                                return _audioStreamReader.ReadPcm8(mem);
+                            case 0x4:
+                                return _audioStreamReader.ReadPcm16(mem);
+                            case 0x8:
+                                return _audioStreamReader.ReadDpcm(mem);
+                            default:
+                                return new List<byte>();
+                        }
+                    }
+
+                    mem.Position = sampleOffset + props.Offset;
+
+                    yield return new KeyValuePair<int, DjmainSample>(info.Key,
+                        new DjmainSample
+                        {
+                            Data = GetSampleData(),
+                            Info = props
+                        });
+                }
             }
         }
     }

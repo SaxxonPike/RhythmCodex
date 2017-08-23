@@ -40,14 +40,14 @@ namespace RhythmCodex.Djmain.Converters
             _audioDecoder = audioDecoder;
         }
 
-        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> definitions, Stream stream, int offset)
+        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples, Stream stream, int offset)
         {
-            return DecodeInternal(definitions).ToList();
+            return DecodeInternal(samples).ToList();
         }
 
-        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> definitions)
+        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
         {
-            foreach (var def in definitions)
+            foreach (var def in samples)
             {
                 var info = def.Value.Info;
                 var data = def.Value.Data;
