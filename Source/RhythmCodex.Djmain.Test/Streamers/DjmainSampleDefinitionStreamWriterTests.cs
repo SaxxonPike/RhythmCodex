@@ -14,6 +14,8 @@ namespace RhythmCodex.Djmain.Streamers
         public void Write_WritesSampleDefinitions()
         {
             // Arrange.
+            Mock<IDjmainConfiguration>().Setup(x => x.MaxSampleDefinitions).Returns(3);
+
             var input = new[]
             {
                 new DjmainSampleInfo
