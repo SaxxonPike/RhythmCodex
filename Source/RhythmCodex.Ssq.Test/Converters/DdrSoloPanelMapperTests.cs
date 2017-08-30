@@ -13,7 +13,7 @@ namespace RhythmCodex.Ssq.Converters
         public void Map_Int_CorrectlyMaps()
         {
             // Arrange.
-            var expected = new PanelMapping?[]
+            var expected = new[]
             {
                 new PanelMapping {Player = 0, Panel = 0},
                 new PanelMapping {Player = 0, Panel = 2},

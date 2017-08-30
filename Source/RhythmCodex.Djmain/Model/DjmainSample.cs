@@ -2,9 +2,9 @@
 
 namespace RhythmCodex.Djmain.Model
 {
-    public struct DjmainSample
+    public class DjmainSample : IDjmainSample
     {
-        public DjmainSampleInfo Info { get; set; }
+        public IDjmainSampleInfo Info { get; set; }
         public IList<byte> Data { get; set; }
     }
 }

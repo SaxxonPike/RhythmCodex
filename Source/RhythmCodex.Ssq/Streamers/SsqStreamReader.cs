@@ -13,9 +13,9 @@ namespace RhythmCodex.Ssq.Streamers
             _chunkStreamReader = chunkStreamReader;
         }
         
-        public IEnumerable<Chunk?> Read(Stream stream)
+        public IEnumerable<IChunk> Read(Stream stream)
         {
-            var result = new List<Chunk?>();
+            var result = new List<IChunk>();
             
             while (true)
             {

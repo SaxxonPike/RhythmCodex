@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
+using Ploeh.AutoFixture;
 using RhythmCodex.Djmain.Model;
 
 namespace RhythmCodex.Djmain.Converters
@@ -22,25 +25,42 @@ namespace RhythmCodex.Djmain.Converters
         [TestCase(0xD, false)]
         [TestCase(0xE, false)]
         [TestCase(0xF, false)]
-        public void Test1(int command, bool expectedInclusion)
+        public void Filter_ShouldAcceptOnlyEventsWithSounds(int command, bool expectedInclusion)
         {
             // Arrange.
+            var allIds = CreateMany<byte>();
+            var expectedSample = Create<DjmainSampleInfo>();
+            command |= Create<int>() & 0xF0;
+
             var inputSamples = new Dictionary<int, DjmainSampleInfo>
             {
-                { 1, new DjmainSampleInfo() },
-                { 2, new DjmainSampleInfo() }
+                {allIds[0], expectedSample},
+                {allIds[1], Create<DjmainSampleInfo>()}
             };
 
-            var inputEvents = new List<DjmainChartEvent>
+            var inputEvents = new[]
             {
-                new DjmainChartEvent { Offset = 0x1234, Param0 = (byte)command, Param1 = Create<byte>() }
+                Build<DjmainChartEvent>()
+                    .With(x => x.Param0, (byte)command)
+                    .With(x => x.Param1, allIds.First())
+                    .Create()
             };
 
             // Act.
             var result = Subject.Filter(inputSamples, inputEvents);
 
             // Assert.
-            
+            if (expectedInclusion)
+            {
+                result.Should()
+                    .HaveCount(1)
+                    .And.Contain(new KeyValuePair<int, DjmainSampleInfo>(allIds[0], expectedSample));
+            }
+            else
+            {
+                result.Should()
+                    .BeEmpty();
+            }
         }
     }
 }

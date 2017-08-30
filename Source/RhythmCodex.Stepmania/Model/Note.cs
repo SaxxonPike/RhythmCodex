@@ -2,7 +2,7 @@
 
 namespace RhythmCodex.Stepmania.Model
 {
-    public struct Note
+    public class Note : INote
     {
         public BigRational MetricOffset { get; set; }
         public int Column { get; set; }

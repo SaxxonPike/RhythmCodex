@@ -32,9 +32,9 @@ namespace RhythmCodex.Ssq.Converters
             _triggerEventDecoder = triggerEventDecoder;
         }
         
-        public IEnumerable<IChart> Decode(IEnumerable<Chunk?> data)
+        public IEnumerable<IChart> Decode(IEnumerable<IChunk> data)
         {
-            var chunks = data.Where(c => c.HasValue).Select(c => c.Value).AsList();
+            var chunks = data.AsList();
             var timings = chunks.Where(c => c.Parameter0 == Parameter0.Timings)
                 .SelectMany(tc => _timingChunkDecoder.Convert(tc.Data))
                 .AsList();

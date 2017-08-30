@@ -13,7 +13,7 @@ namespace RhythmCodex.Ssq.Streamers
             _chunkStreamWriter = chunkStreamWriter;
         }
 
-        public void Write(Stream stream, IEnumerable<Chunk?> chunks)
+        public void Write(Stream stream, IEnumerable<IChunk> chunks)
         {
             foreach (var chunk in chunks)
                 _chunkStreamWriter.Write(stream, chunk);

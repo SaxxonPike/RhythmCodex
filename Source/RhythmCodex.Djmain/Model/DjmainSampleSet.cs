@@ -2,7 +2,7 @@
 
 namespace RhythmCodex.Djmain.Model
 {
-    public struct DjmainSampleSet
+    public class DjmainSampleSet : IDjmainSampleSet
     {
         public int DataOffset { get; set; }
         public IDictionary<int, DjmainSample> Samples { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace RhythmCodex.Ssq.Model
 {
-    public struct Step
+    public class Step : IStep
     {
         public int MetricOffset { get; set; }
         public byte Panels { get; set; }

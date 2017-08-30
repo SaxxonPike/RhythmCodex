@@ -12,7 +12,7 @@ namespace RhythmCodex.Ssq.Converters
         public void Decode_DoesStuff()
         {
             // Arrange.
-            var chunks = new Chunk?[]
+            var chunks = new[]
             {
                 new Chunk { Data = Create<byte[]>(), Parameter0 = Parameter0.Timings },
                 new Chunk { Data = Create<byte[]>(), Parameter0 = Parameter0.Steps },

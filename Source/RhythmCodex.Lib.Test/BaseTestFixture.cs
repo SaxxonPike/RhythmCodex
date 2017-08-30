@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Dsl;
@@ -78,14 +79,14 @@ namespace RhythmCodex
             return _fixture.Value.Create<T>();
         }
 
-        protected IEnumerable<T> CreateMany<T>()
+        protected T[] CreateMany<T>()
         {
-            return _fixture.Value.CreateMany<T>();
+            return _fixture.Value.CreateMany<T>().ToArray();
         }
 
-        protected IEnumerable<T> CreateMany<T>(int count)
+        protected T[] CreateMany<T>(int count)
         {
-            return _fixture.Value.CreateMany<T>(count);
+            return _fixture.Value.CreateMany<T>(count).ToArray();
         }
     }
 }

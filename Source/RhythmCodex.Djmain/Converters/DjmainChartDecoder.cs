@@ -10,7 +10,7 @@ namespace RhythmCodex.Djmain.Converters
 {
     public class DjmainChartDecoder
     {
-        public IChart Decode(IEnumerable<DjmainChartEvent> events)
+        public IChart Decode(IEnumerable<IDjmainChartEvent> events)
         {
             return new Chart
             {
@@ -18,7 +18,7 @@ namespace RhythmCodex.Djmain.Converters
             };
         }
 
-        private static IEnumerable<IEvent> DecodeEvents(IEnumerable<DjmainChartEvent> events)
+        private static IEnumerable<IEvent> DecodeEvents(IEnumerable<IDjmainChartEvent> events)
         {
             var noteCount = true;
             

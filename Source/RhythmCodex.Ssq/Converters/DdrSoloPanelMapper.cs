@@ -4,7 +4,7 @@ namespace RhythmCodex.Ssq.Converters
 {
     public class DdrSoloPanelMapper : IPanelMapper
     {
-        public PanelMapping? Map(int panel)
+        public IPanelMapping Map(int panel)
         {
             switch (panel)
             {
@@ -18,7 +18,7 @@ namespace RhythmCodex.Ssq.Converters
             }
         }
 
-        public int? Map(PanelMapping mapping)
+        public int? Map(IPanelMapping mapping)
         {
             switch (mapping.Player)
             {

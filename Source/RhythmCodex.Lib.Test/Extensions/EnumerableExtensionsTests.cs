@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -11,7 +11,7 @@ namespace RhythmCodex.Extensions
         public void AsList_ConvertsNonListsToList()
         {
             // Arrange.
-            var data = new HashSet<int> {1, 2, 3};
+            var data = CreateMany<int>().Select(i => i);
             
             // Act.
             var output = data.AsList();
@@ -25,7 +25,7 @@ namespace RhythmCodex.Extensions
         public void AsList_DoesNotConvertLists()
         {
             // Arrange.
-            var data = new List<int> {1, 2, 3};
+            var data = CreateMany<int>();
 
             // Act.
             var output = data.AsList();

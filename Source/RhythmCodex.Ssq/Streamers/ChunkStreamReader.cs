@@ -5,7 +5,7 @@ namespace RhythmCodex.Ssq.Streamers
 {
     public class ChunkStreamReader : IChunkStreamReader
     {
-        public Chunk? Read(Stream stream)
+        public IChunk Read(Stream stream)
         {
             var reader = new BinaryReader(stream);
             var length = reader.ReadInt32();

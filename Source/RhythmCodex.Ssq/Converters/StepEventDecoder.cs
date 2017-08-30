@@ -60,14 +60,14 @@ namespace RhythmCodex.Ssq.Converters
                     if ((panels & 1) != 0)
                     {
                         var mappedPanel = _panelMapper.Map(panelNumber);
-                        var isMapped = mappedPanel.HasValue;
+                        var isMapped = mappedPanel != null;
 
                         yield return new Event
                         {
                             [NumericData.MetricOffset] = metricOffset,
                             [NumericData.SourceColumn] = panelNumber,
-                            [NumericData.Column] = isMapped ? mappedPanel.Value.Panel : (BigRational?)null,
-                            [NumericData.Player] = isMapped ? mappedPanel.Value.Player : (BigRational?)null,
+                            [NumericData.Column] = isMapped ? mappedPanel.Panel : (BigRational?)null,
+                            [NumericData.Player] = isMapped ? mappedPanel.Player : (BigRational?)null,
                             [FlagData.Freeze] = freeze ? true : (bool?)null,
                             [FlagData.Note] = freeze ? (bool?)null : true
                         };
