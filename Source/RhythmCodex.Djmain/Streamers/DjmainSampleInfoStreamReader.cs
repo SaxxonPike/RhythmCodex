@@ -14,12 +14,12 @@ namespace RhythmCodex.Djmain.Streamers
             _djmainConfiguration = djmainConfiguration;
         }
 
-        public IDictionary<int, DjmainSampleInfo> Read(Stream stream)
+        public IDictionary<int, IDjmainSampleInfo> Read(Stream stream)
         {
             return ReadInternal(stream).ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        private IEnumerable<KeyValuePair<int, DjmainSampleInfo>> ReadInternal(Stream stream)
+        private IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> ReadInternal(Stream stream)
         {
             var buffer = new byte[11];
 
