@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Ploeh.AutoFixture;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Streamers

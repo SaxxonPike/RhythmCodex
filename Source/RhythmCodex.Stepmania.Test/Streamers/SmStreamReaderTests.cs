@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Ploeh.AutoFixture;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Streamers

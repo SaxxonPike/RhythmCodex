@@ -1,6 +1,4 @@
-﻿using Numerics;
-
-namespace RhythmCodex.Djmain
+﻿namespace RhythmCodex.Djmain
 {
     public class DjmainConfiguration : IDjmainConfiguration
     {
