@@ -13,9 +13,9 @@ namespace RhythmCodex.Ssq.Streamers
         public void Read_ReadsValidChunk()
         {
             // Arrange.
-            var param0 = Fixture.Create<short>();
-            var param1 = Fixture.Create<short>();
-            var data = Fixture.CreateMany<byte>().ToArray();
+            var param0 = Create<short>();
+            var param1 = Create<short>();
+            var data = CreateMany<byte>().ToArray();
             var stream = new MemoryStream(PrepareChunk(param0, param1, data));
             
             // Act.

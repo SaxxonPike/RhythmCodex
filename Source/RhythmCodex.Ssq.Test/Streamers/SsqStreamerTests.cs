@@ -15,7 +15,7 @@ namespace RhythmCodex.Ssq.Streamers
         public void Read_ReadsAllChunks()
         {
             // Arrange.
-            var chunks = Fixture.CreateMany<Chunk>().Cast<Chunk?>().Concat(new Chunk?[] {null}).ToList();
+            var chunks = CreateMany<Chunk>().Cast<Chunk?>().Concat(new Chunk?[] {null}).ToList();
             var chunkStreamer = Mock<IChunkStreamReader>();
             var chunkIndex = 0;
             var stream = new MemoryStream();

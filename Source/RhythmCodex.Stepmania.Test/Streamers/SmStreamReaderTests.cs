@@ -19,9 +19,9 @@ namespace RhythmCodex.Stepmania.Streamers
                 // Arrange.
                 var expected = new[]
                 {
-                    new Command {Name = Fixture.Create<string>(), Values = Fixture.CreateMany<string>().ToArray()},
-                    new Command {Name = Fixture.Create<string>(), Values = Fixture.CreateMany<string>().ToArray()},
-                    new Command {Name = Fixture.Create<string>(), Values = Fixture.CreateMany<string>().ToArray()}
+                    new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()},
+                    new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()},
+                    new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()}
                 };
                 
                 var input = string.Join(Environment.NewLine, expected.Select(c => $"#{c.Name}:{string.Join(":", c.Values)};"));
@@ -48,13 +48,13 @@ namespace RhythmCodex.Stepmania.Streamers
                 {
                     new Command
                     {
-                        Name = Fixture.Create<string>(),
-                        Values = new[] {string.Join(Environment.NewLine, Fixture.CreateMany<string>())}
+                        Name = Create<string>(),
+                        Values = new[] {string.Join(Environment.NewLine, CreateMany<string>())}
                     },
                     new Command
                     {
-                        Name = Fixture.Create<string>(),
-                        Values = new[] {string.Join(Environment.NewLine, Fixture.CreateMany<string>())}
+                        Name = Create<string>(),
+                        Values = new[] {string.Join(Environment.NewLine, CreateMany<string>())}
                     },
                 };
 

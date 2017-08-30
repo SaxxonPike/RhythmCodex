@@ -15,12 +15,12 @@ namespace RhythmCodex.Ssq.Converters
             // Arrange.
             var chunks = new Chunk?[]
             {
-                new Chunk { Data = Fixture.Create<byte[]>(), Parameter0 = Parameter0.Timings },
-                new Chunk { Data = Fixture.Create<byte[]>(), Parameter0 = Parameter0.Steps },
+                new Chunk { Data = Create<byte[]>(), Parameter0 = Parameter0.Timings },
+                new Chunk { Data = Create<byte[]>(), Parameter0 = Parameter0.Steps },
             };
             
-            var timings = Fixture.CreateMany<Timing>().ToList();
-            var steps = Fixture.CreateMany<Step>().ToList();
+            var timings = CreateMany<Timing>().ToList();
+            var steps = CreateMany<Step>().ToList();
             
             Mock<ITimingChunkDecoder>(mock =>
             {

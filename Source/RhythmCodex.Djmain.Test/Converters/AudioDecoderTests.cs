@@ -1,11 +1,54 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace RhythmCodex.Djmain.Converters
 {
     [TestFixture]
-    public class DpcmAudioDecoderTests : BaseUnitTestFixture<AudioDecoder>
+    public class AudioDecoderTests : BaseUnitTestFixture<AudioDecoder>
     {
+        [Test]
+        public void DecodePcm8_DecodesData()
+        {
+            // Arrange.
+            var data = new byte[] { 0x12, 0x34, 0x56, 0x78 };
+            var expected = data.Select(v => ((v ^ 0x80) - 0x80) / 128f);
+
+            // Act.
+            var result = Subject.DecodePcm8(data);
+
+            // Assert.
+            result.ShouldAllBeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void DecodePcm16_DecodesData()
+        {
+            // Arrange.
+            var data = new byte[] { 0x12, 0x34, 0x56, 0x78 };
+            var expected = new[] { 0x3412 / 32768f, 0x7856 / 32768f };
+
+            // Act.
+            var result = Subject.DecodePcm16(data);
+
+            // Assert.
+            result.ShouldAllBeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void DecodePcm16_DecodesPartialData()
+        {
+            // Arrange.
+            var data = new byte[] { 0x12, 0x34, 0x56 };
+            var expected = new[] { 0x3412 / 32768f, 0x0056 / 32768f };
+
+            // Act.
+            var result = Subject.DecodePcm16(data);
+
+            // Assert.
+            result.ShouldAllBeEquivalentTo(expected);
+        }
+
         [Test]
         public void Decode_DecodesData()
         {

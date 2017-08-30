@@ -16,7 +16,7 @@ namespace RhythmCodex.Ssq.Streamers
         public void Write_WritesAllChunks()
         {
             // Arrange.
-            var chunks = Fixture.CreateMany<Chunk>().Cast<Chunk?>().Concat(new Chunk?[] { null }).ToList();
+            var chunks = CreateMany<Chunk>().Cast<Chunk?>().Concat(new Chunk?[] { null }).ToList();
             var chunkStreamer = Mock<IChunkStreamWriter>();
             var stream = new MemoryStream();
             var result = new List<Chunk?>();

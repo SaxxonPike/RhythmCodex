@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.Dsl;
 
 namespace RhythmCodex
 {
@@ -33,8 +34,6 @@ namespace RhythmCodex
             return fixture;
         });
 
-        protected Fixture Fixture => _fixture.Value;
-        
         protected byte[] GetEmbeddedResource(string name)
         {
             var assembly = GetType().Assembly;
@@ -67,6 +66,26 @@ namespace RhythmCodex
             }
 
             return output;
+        }
+
+        protected ICustomizationComposer<T> Build<T>()
+        {
+            return _fixture.Value.Build<T>();
+        }
+
+        protected T Create<T>()
+        {
+            return _fixture.Value.Create<T>();
+        }
+
+        protected IEnumerable<T> CreateMany<T>()
+        {
+            return _fixture.Value.CreateMany<T>();
+        }
+
+        protected IEnumerable<T> CreateMany<T>(int count)
+        {
+            return _fixture.Value.CreateMany<T>(count);
         }
     }
 }
