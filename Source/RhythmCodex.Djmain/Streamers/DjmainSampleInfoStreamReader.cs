@@ -46,7 +46,7 @@ namespace RhythmCodex.Djmain.Streamers
                         SampleType = reader.ReadByte(),
                         Flags = reader.ReadByte()
                     };
-                    yield return new KeyValuePair<int, DjmainSampleInfo>(i, result);
+                    yield return new KeyValuePair<int, IDjmainSampleInfo>(i, result);
 
                 }
             }
