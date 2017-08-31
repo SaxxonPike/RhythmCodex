@@ -13,7 +13,7 @@ namespace RhythmCodex.Djmain.Streamers
 
         private IEnumerable<byte> ReadDpcmStream(Stream stream)
         {
-            var marker = DjmainConstants.DpcmEndMarker;
+            const int marker = DjmainConstants.DpcmEndMarker;
             var buffer = marker;
 
             void Fetch()
@@ -42,7 +42,7 @@ namespace RhythmCodex.Djmain.Streamers
 
         private IEnumerable<byte> DecodePcm16Stream(Stream stream)
         {
-            var marker = DjmainConstants.Pcm16EndMarker;
+            const long marker = DjmainConstants.Pcm16EndMarker;
             var buffer0 = marker;
             var buffer1 = marker;
 
@@ -82,7 +82,7 @@ namespace RhythmCodex.Djmain.Streamers
 
         private IEnumerable<byte> DecodePcm8Stream(Stream stream)
         {
-            var marker = DjmainConstants.Pcm8EndMarker;
+            const long marker = DjmainConstants.Pcm8EndMarker;
             var buffer = marker;
 
             void Fetch()

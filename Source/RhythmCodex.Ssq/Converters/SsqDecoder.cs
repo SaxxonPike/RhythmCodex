@@ -69,7 +69,7 @@ namespace RhythmCodex.Ssq.Converters
             return new Chart
             {
                 Events = events,
-                [NumericData.Id] = id,
+                [NumericData.Id] = id
             };
         }
     }

@@ -33,7 +33,7 @@ namespace RhythmCodex.Stepmania.Converters
 
         private static IEnumerable<char[][]> EncodeMeasures(IEnumerable<Note> notes)
         {
-            var multiplier = 192;
+            const int multiplier = 192;
             var half = new BigRational(1, multiplier * 2);
 
             var notesList = notes.AsList();

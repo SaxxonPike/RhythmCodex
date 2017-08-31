@@ -21,6 +21,8 @@
         JudgeNumber,
         JudgeTiming,
         JudgeSound,
-        Phrase
+        Phrase,
+        SourceCommand,
+        SourceData
     }
 }

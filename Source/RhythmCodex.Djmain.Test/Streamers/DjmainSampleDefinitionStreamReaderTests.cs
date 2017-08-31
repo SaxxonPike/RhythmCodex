@@ -29,7 +29,7 @@ namespace RhythmCodex.Djmain.Streamers
                 
                 // Assert.
                 output.Should().HaveCount(2);
-                output[0].Should().Be(new KeyValuePair<int, DjmainSampleInfo>(0, new DjmainSampleInfo
+                output[0].Should().Be(new KeyValuePair<int, IDjmainSampleInfo>(0, new DjmainSampleInfo
                 {
                     Channel = 0x12,
                     Frequency = 0x5634,
@@ -40,7 +40,7 @@ namespace RhythmCodex.Djmain.Streamers
                     SampleType = 0x90,
                     Flags = 0x12
                 }));
-                output[1].Should().Be(new KeyValuePair<int, DjmainSampleInfo>(1, new DjmainSampleInfo
+                output[1].Should().Be(new KeyValuePair<int, IDjmainSampleInfo>(1, new DjmainSampleInfo
                 {
                     Channel = 0x34,
                     Frequency = 0x7856,

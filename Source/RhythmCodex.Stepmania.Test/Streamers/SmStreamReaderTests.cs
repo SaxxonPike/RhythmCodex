@@ -54,7 +54,7 @@ namespace RhythmCodex.Stepmania.Streamers
                     {
                         Name = Create<string>(),
                         Values = new[] {string.Join(Environment.NewLine, CreateMany<string>())}
-                    },
+                    }
                 };
 
                 var input = string.Join(Environment.NewLine, expected.Select(c => $"#{c.Name}:{string.Join(":", c.Values)};"));

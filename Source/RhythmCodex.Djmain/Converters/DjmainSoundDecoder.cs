@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Numerics;
 using RhythmCodex.Attributes;
@@ -34,18 +33,17 @@ namespace RhythmCodex.Djmain.Converters
                 .ToArray();
         });
 
-        public DjmainSoundDecoder(
-            IAudioDecoder audioDecoder)
+        public DjmainSoundDecoder(IAudioDecoder audioDecoder)
         {
             _audioDecoder = audioDecoder;
         }
 
-        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples, Stream stream, int offset)
+        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
         {
             return DecodeInternal(samples).ToList();
         }
 
-        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
+        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
         {
             foreach (var def in samples)
             {
@@ -65,9 +63,10 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x8:
                         sample.Data = _audioDecoder.DecodeDpcm(data);
                         break;
+                    default:
+                        sample.Data = new List<float>();
+                        break;
                 }
-
-                sample.Data = sample.Data ?? new List<float>();
 
                 yield return new Sound
                 {

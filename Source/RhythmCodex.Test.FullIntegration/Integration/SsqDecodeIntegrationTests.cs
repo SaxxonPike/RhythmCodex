@@ -36,14 +36,16 @@ namespace RhythmCodex.Integration
             }
         }
 
-        private string EncodeCharts(IList<IChart> charts)
+        private string EncodeCharts(IEnumerable<IChart> charts)
         {
+            var chartList = charts.AsList();
+            
             var smEncoder = new SmEncoder(
                 new NoteEncoder(), 
                 new NoteCommandStringEncoder(), 
                 new GrooveRadarEncoder());
 
-            var commands = smEncoder.Encode(new Metadata(), charts).AsList();
+            var commands = smEncoder.Encode(new Metadata(), chartList).AsList();
 
             var smStreamer = new SmStreamWriter();
 

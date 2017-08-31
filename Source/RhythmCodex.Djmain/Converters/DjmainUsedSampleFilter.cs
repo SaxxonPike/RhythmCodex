@@ -24,8 +24,9 @@ namespace RhythmCodex.Djmain.Converters
                 case 0x1:
                 case 0x5:
                     return true;
+                default:
+                    return false;
             }
-            return false;
         }
     }
 }

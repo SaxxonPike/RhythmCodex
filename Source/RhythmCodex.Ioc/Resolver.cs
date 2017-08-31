@@ -39,10 +39,9 @@ namespace RhythmCodex.Ioc
         public T Resolve<T>()
             where T : class
         {
-            if (_container.Value.IsRegistered(typeof(T)))
-                return _container.Value.Resolve<T>();
-
-            return ResolveUnregistered<T>(Enumerable.Empty<Parameter>());
+            return _container.Value.IsRegistered(typeof(T)) 
+                ? _container.Value.Resolve<T>() 
+                : ResolveUnregistered<T>(Enumerable.Empty<Parameter>());
         }
     }
 }

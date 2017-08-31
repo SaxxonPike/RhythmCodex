@@ -47,9 +47,11 @@ namespace RhythmCodex.Stepmania.Converters
             ChartTag.FgChangesTag
         };
 
-        private IEnumerable<Command> GetTimingCommands(IList<IChart> charts)
+        private IEnumerable<Command> GetTimingCommands(IEnumerable<IChart> charts)
         {
-            var bpms = charts
+            var chartList = charts.AsList();
+            
+            var bpms = chartList
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
                 .Select(g => g.First());
@@ -60,7 +62,7 @@ namespace RhythmCodex.Stepmania.Converters
                 Values = new[] { string.Join(",", bpms.Select(ev => $"{(decimal)(ev[NumericData.MetricOffset].Value * 4)}={(decimal)ev[NumericData.Bpm].Value}")) }
             };
 
-            var stops = charts
+            var stops = chartList
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Stop] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
                 .Select(g => g.First());

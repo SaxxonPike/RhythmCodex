@@ -47,6 +47,8 @@ namespace RhythmCodex.Djmain.Converters
                             case 0xB:
                                 yield return new Event
                                 {
+                                    [NumericData.SourceCommand] = ev.Param0,
+                                    [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [FlagData.Scratch] = true,
@@ -58,6 +60,8 @@ namespace RhythmCodex.Djmain.Converters
                             case 0xD:
                                 yield return new Event
                                 {
+                                    [NumericData.SourceCommand] = ev.Param0,
+                                    [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [FlagData.Measure] = true,
@@ -68,6 +72,8 @@ namespace RhythmCodex.Djmain.Converters
                             case 0xF:
                                 yield return new Event
                                 {
+                                    [NumericData.SourceCommand] = ev.Param0,
+                                    [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [FlagData.FreeZone] = true,
@@ -77,6 +83,8 @@ namespace RhythmCodex.Djmain.Converters
                             default:
                                 yield return new Event
                                 {
+                                    [NumericData.SourceCommand] = ev.Param0,
+                                    [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [NumericData.Column] = param0 >> 1,
@@ -93,6 +101,8 @@ namespace RhythmCodex.Djmain.Converters
                             case 0xB:
                                 yield return new Event
                                 {
+                                    [NumericData.SourceCommand] = ev.Param0,
+                                    [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [FlagData.Scratch] = true,
@@ -112,6 +122,8 @@ namespace RhythmCodex.Djmain.Converters
                             case 0x9:
                                 yield return new Event
                                 {
+                                    [NumericData.SourceCommand] = ev.Param0,
+                                    [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [NumericData.Column] = param0 >> 1,
@@ -122,6 +134,8 @@ namespace RhythmCodex.Djmain.Converters
                             default:
                                 yield return new Event
                                 {
+                                    [NumericData.SourceCommand] = ev.Param0,
+                                    [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [NumericData.LoadSound] = param1,
@@ -134,6 +148,8 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x2:
                         yield return new Event
                         {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [NumericData.Bpm] = param1 | (param0 << 8)
                         };
@@ -141,6 +157,8 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x4:
                         yield return new Event
                         {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [FlagData.End] = true
                         };
@@ -148,6 +166,8 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x5:
                         yield return new Event
                         {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [NumericData.Panning] = new BigRational(Math.Max(param0 - 1, 0), 15),
                             [NumericData.PlaySound] = param1
@@ -156,6 +176,8 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x6:
                         yield return new Event
                         {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [NumericData.JudgeNumber] = param0,
                             [NumericData.JudgeTiming] = param1,
@@ -165,6 +187,8 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x7:
                         yield return new Event
                         {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [NumericData.JudgeNumber] = param0 & 0x7,
                             [NumericData.Player] = param0 >> 3,
@@ -175,6 +199,8 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x8:
                         yield return new Event
                         {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [NumericData.Player] = param0 >> 3,
                             [NumericData.SourceColumn] = param0,
@@ -184,9 +210,19 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x9:
                         yield return new Event
                         {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [NumericData.SourceColumn] = param0,
                             [NumericData.Phrase] = param1
+                        };
+                        break;
+                    default:
+                        yield return new Event
+                        {
+                            [NumericData.SourceCommand] = ev.Param0,
+                            [NumericData.SourceData] = ev.Param1,
+                            [NumericData.LinearOffset] = offset
                         };
                         break;
                 }
