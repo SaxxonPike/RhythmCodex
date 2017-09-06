@@ -30,7 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BigRationalLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da">
+      <HintPath>..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="BigRationalLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\BigRationalLibrary.1.0.0.0\lib\NETFramework40\BigRationalLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=4.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -86,8 +89,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\freeze.zip" />
-    <EmbeddedResource Include="Data\shock.zip" />
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

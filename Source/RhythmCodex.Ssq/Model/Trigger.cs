@@ -1,5 +1,8 @@
-﻿namespace RhythmCodex.Ssq.Model
+﻿using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Ssq.Model
 {
+    [Model]
     public class Trigger : ITrigger
     {
         public short Id { get; set; }

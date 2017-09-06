@@ -5,43 +5,27 @@ using System.Linq;
 
 namespace RhythmCodex.Cli
 {
-    public class App
+    // ReSharper disable once ClassNeverInstantiated.Global
+    public class App : IApp
     {
         private readonly TextWriter _logger;
-        private IEnumerable<ICliModule> _modules;
+        private readonly IEnumerable<ICliModule> _modules;
 
-        public App(TextWriter logger)
+        public App(TextWriter logger, IEnumerable<ICliModule> modules)
         {
             _logger = logger;
+            _modules = modules;
         }
 
-        private string AppName
-        {
-            get
-            {
-                var name = AppDomain.CurrentDomain.FriendlyName.Split('.');
-                return string.Join(".", name.Take(name.Length - 1));
-            }
-        }
-
-        private string AppVersion
-        {
-            get
-            {
-                var ver = GetType().Assembly.GetName().Version;
-                return $"{ver.Major}.{ver.Minor}.{ver.Revision}.{ver.Build}";
-            }
-        }
+        private static string AppName => "RhythmCodex";
 
         private bool InvariantStringMatch(string a, string b)
         {
             return string.Equals(a, b, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        public void Run(string[] args, IEnumerable<ICliModule> modules)
+        public void Run(string[] args)
         {
-            _modules = modules;
-            
             if (args.Length < 1)
             {
                 OutputModuleList();
@@ -114,7 +98,7 @@ namespace RhythmCodex.Cli
 
         private void OutputCommandList(ICliModule module)
         {
-            _logger.WriteLine($"{AppName} v{AppVersion}");
+            _logger.WriteLine($"{AppName}");
             _logger.WriteLine($"Available commands for {module.Name}:");
             _logger.WriteLine();
             
@@ -130,7 +114,7 @@ namespace RhythmCodex.Cli
 
         private void OutputModuleList()
         {
-            _logger.WriteLine($"{AppName} v{AppVersion}");
+            _logger.WriteLine($"{AppName}");
             _logger.WriteLine("Available modules:");
             _logger.WriteLine();
 

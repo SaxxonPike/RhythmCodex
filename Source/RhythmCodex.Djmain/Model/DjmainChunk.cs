@@ -1,5 +1,8 @@
-﻿namespace RhythmCodex.Djmain.Model
+﻿using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Djmain.Model
 {
+    [Model]
     public class DjmainChunk : IDjmainChunk
     {
         public byte[] Data { get; set; }

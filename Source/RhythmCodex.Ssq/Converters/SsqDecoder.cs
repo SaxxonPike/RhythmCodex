@@ -32,7 +32,7 @@ namespace RhythmCodex.Ssq.Converters
             _triggerEventDecoder = triggerEventDecoder;
         }
         
-        public IEnumerable<IChart> Decode(IEnumerable<IChunk> data)
+        public IList<IChart> Decode(IEnumerable<IChunk> data)
         {
             var chunks = data.AsList();
             var timings = chunks.Where(c => c.Parameter0 == Parameter0.Timings)
@@ -50,7 +50,8 @@ namespace RhythmCodex.Ssq.Converters
                 _stepChunkDecoder.Convert(sc.Data).AsList(),
                 triggers,
                 sc.Parameter1,
-                timingRate));
+                timingRate))
+                .ToArray();
         }
 
         private IChart DecodeChart(

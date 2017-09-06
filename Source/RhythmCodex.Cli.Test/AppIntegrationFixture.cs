@@ -4,12 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class Program
+    public class AppIntegrationFixture : BaseIntegrationFixture
     {
         private static readonly IEnumerable<Type> IocTypes = new[]
         {
@@ -20,24 +20,35 @@ namespace RhythmCodex.Cli
             typeof(Stepmania.Streamers.SmStreamReader)
         };
         
-        public static void Main(string[] args)
+        protected IContainer AppContainer { get; private set; }
+        protected FakeFileSystem FileSystem { get; private set; }
+        
+        [SetUp]
+        public void __SetupApp()
         {
-            BuildContainer().Resolve<IApp>().Run(args);
-        }
-
-        private static IContainer BuildContainer()
-        {
+            FileSystem = new FakeFileSystem();
+            
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(Console.Out).As<TextWriter>();
-
+            builder.RegisterInstance(TestContext.Out).As<TextWriter>();
+            builder.RegisterInstance(FileSystem).As<IFileSystem>();
+            
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
             {
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType != typeof(ModelAttribute)))
-                    .AsImplementedInterfaces();                
+                    .Except<FileSystem>()
+                    .AsSelf()
+                    .AsImplementedInterfaces();
             }
             
-            return builder.Build();
+            AppContainer = builder.Build();
+        }
+
+        [TearDown]
+        public void __TeardownApp()
+        {
+            FileSystem = null;
+            AppContainer = null;
         }
     }
 }

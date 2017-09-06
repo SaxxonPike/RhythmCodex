@@ -1,5 +1,8 @@
-﻿namespace RhythmCodex.Ssq.Model
+﻿using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Ssq.Model
 {
+    [Model]
     public class Chunk : IChunk
     {
         public short Parameter0 { get; set; }
