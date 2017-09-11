@@ -11,6 +11,7 @@ namespace RhythmCodex.Stepmania.Streamers
             var writer = new StreamWriter(stream);
             foreach (var command in commands)
                 writer.WriteLine($"#{command.Name}:{string.Join(":", command.Values)};");
+            writer.Flush();
         }
     }
 }
