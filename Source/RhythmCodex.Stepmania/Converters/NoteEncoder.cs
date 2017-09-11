@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Numerics;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Converters
@@ -18,7 +19,11 @@ namespace RhythmCodex.Stepmania.Converters
 
             foreach (var ev in eventList.Where(e => e[NumericData.MetricOffset] != null))
             {
-                var offset = ev[NumericData.MetricOffset].Value;
+                var offset = ev[NumericData.MetricOffset];
+                if (offset == null)
+                    throw new RhythmCodexException($"{nameof(NumericData.MetricOffset)} must be present.");
+                
+                var offsetValue = offset.Value;
                 
                 if (ev[NumericData.Column] != null)
                 {
@@ -28,7 +33,7 @@ namespace RhythmCodex.Stepmania.Converters
                     {
                         result.Add(new Note
                         {
-                            MetricOffset = offset,
+                            MetricOffset = offsetValue,
                             Type = NoteType.Step,
                             Column = column
                         });
@@ -39,7 +44,7 @@ namespace RhythmCodex.Stepmania.Converters
                     {
                         result.Add(new Note
                         {
-                            MetricOffset = offset,
+                            MetricOffset = offsetValue,
                             Type = NoteType.Tail,
                             Column = column
                         });
@@ -51,7 +56,7 @@ namespace RhythmCodex.Stepmania.Converters
                 {
                     result.AddRange(Enumerable.Range(0, columnCount).Select(i => new Note
                     {
-                        MetricOffset = offset,
+                        MetricOffset = offsetValue,
                         Type = NoteType.Mine,
                         Column = i
                     }));

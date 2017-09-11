@@ -11,10 +11,10 @@ namespace RhythmCodex.Extensions
         public void AsList_ConvertsNonListsToList()
         {
             // Arrange.
-            var data = CreateMany<int>().Select(i => i);
+            var data = CreateMany<int>().Select(i => i).ToArray();
             
             // Act.
-            var output = data.AsList();
+            var output = data.Select(d => d).AsList();
             
             // Assert.
             output.ShouldAllBeEquivalentTo(data);
@@ -25,7 +25,7 @@ namespace RhythmCodex.Extensions
         public void AsList_DoesNotConvertLists()
         {
             // Arrange.
-            var data = CreateMany<int>();
+            var data = CreateMany<int>().ToArray();
 
             // Act.
             var output = data.AsList();

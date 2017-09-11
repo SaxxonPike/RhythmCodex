@@ -1,5 +1,4 @@
-﻿using Numerics;
-using RhythmCodex.Infrastructure;
+﻿using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Stepmania.Model
 {

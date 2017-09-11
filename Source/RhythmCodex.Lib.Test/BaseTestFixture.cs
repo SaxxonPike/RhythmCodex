@@ -42,6 +42,9 @@ namespace RhythmCodex
             using (var stream = assembly.GetManifestResourceStream(name))
             using (var mem = new MemoryStream())
             {
+                if (stream == null)
+                    throw new IOException($"Embedded resource {name} was not found.");
+                
                 stream.CopyTo(mem);
                 return mem.ToArray();
             }
