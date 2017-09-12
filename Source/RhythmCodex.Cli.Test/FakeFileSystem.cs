@@ -1,14 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli
 {
     public class FakeFileSystem : IFileSystem
     {
+        private readonly IFileSystem _fileSystem;
+
+        public FakeFileSystem(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+        
         private readonly IDictionary<string, MemoryStream> _files = new Dictionary<string, MemoryStream>();
         
-        public string GetFileName(string path) => Path.GetFileName(path);
+        public string GetFileName(string path) => _fileSystem.GetFileName(path);
 
         public Stream OpenRead(string path)
         {
@@ -29,7 +37,7 @@ namespace RhythmCodex.Cli
             return result;
         }
 
-        public string CombinePath(params string[] paths) => Path.Combine(paths);
+        public string CombinePath(params string[] paths) => _fileSystem.CombinePath(paths);
 
         public string CurrentPath => new string(Path.DirectorySeparatorChar, 1);
         
@@ -45,5 +53,23 @@ namespace RhythmCodex.Cli
         {
             _files[path] = new MemoryStream(data);
         }
+
+        public void CreateDirectory(string path)
+        {
+        }
+
+        public IEnumerable<string> GetFileNames(string path)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<string> GetDirectoryNames(string path)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string GetDirectory(string path) => _fileSystem.GetDirectory(path);
+
+        public string GetSafeFileName(string fileName) => _fileSystem.GetSafeFileName(fileName);
     }
 }

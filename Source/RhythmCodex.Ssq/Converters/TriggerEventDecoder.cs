@@ -7,6 +7,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class TriggerEventDecoder : ITriggerEventDecoder
     {
         public IEnumerable<IEvent> Decode(IEnumerable<Trigger> triggers)

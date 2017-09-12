@@ -2,9 +2,11 @@
 using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class DjmainSampleInfoStreamReader : IDjmainSampleDefinitionStreamReader
     {
         private readonly IDjmainConfiguration _djmainConfiguration;

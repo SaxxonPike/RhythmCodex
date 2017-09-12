@@ -1,7 +1,9 @@
 ﻿using RhythmCodex.Charting;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Stepmania.Converters
 {
+    [Service]
     public class GrooveRadarEncoder : IGrooveRadarEncoder
     {
         public string Encode(IMetadata metadata)

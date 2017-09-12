@@ -3,9 +3,11 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Converters
 {
+    [Service]
     public class DjmainSampleDecoder
     {
         private readonly IAudioStreamReader _audioStreamReader;

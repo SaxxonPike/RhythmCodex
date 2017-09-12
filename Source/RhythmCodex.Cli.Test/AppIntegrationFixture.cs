@@ -26,7 +26,7 @@ namespace RhythmCodex.Cli
         [SetUp]
         public void __SetupApp()
         {
-            FileSystem = new FakeFileSystem();
+            FileSystem = new FakeFileSystem(new FileSystem());
             
             var builder = new ContainerBuilder();
             builder.RegisterInstance(TestContext.Out).As<TextWriter>();
@@ -35,7 +35,7 @@ namespace RhythmCodex.Cli
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
             {
                 builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType != typeof(ModelAttribute)))
+                    .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
                     .Except<FileSystem>()
                     .AsSelf()
                     .AsImplementedInterfaces();

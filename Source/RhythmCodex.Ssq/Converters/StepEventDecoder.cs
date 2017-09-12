@@ -7,6 +7,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class StepEventDecoder : IStepEventDecoder
     {
         private readonly IPanelMapper _panelMapper;

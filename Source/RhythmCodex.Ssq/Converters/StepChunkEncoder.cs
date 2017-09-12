@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class StepChunkEncoder : IStepChunkEncoder
     {
         public byte[] Convert(IEnumerable<Step> steps)

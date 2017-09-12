@@ -8,6 +8,7 @@ using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Converters
 {
+    [Service]
     public class SmEncoder : ISmEncoder
     {
         private readonly INoteEncoder _noteEncoder;

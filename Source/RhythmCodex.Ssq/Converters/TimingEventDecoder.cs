@@ -7,6 +7,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class TimingEventDecoder : ITimingEventDecoder
     {
         public IEnumerable<IEvent> Decode(IEnumerable<Timing> timings, int ticksPerSecond)

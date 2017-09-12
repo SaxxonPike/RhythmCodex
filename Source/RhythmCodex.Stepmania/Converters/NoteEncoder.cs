@@ -9,6 +9,7 @@ using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Converters
 {
+    [Service]
     public class NoteEncoder : INoteEncoder
     {
         public IEnumerable<Note> Encode(IEnumerable<IEvent> events)

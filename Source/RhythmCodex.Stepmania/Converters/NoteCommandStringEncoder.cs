@@ -9,6 +9,7 @@ using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Converters
 {
+    [Service]
     public class NoteCommandStringEncoder : INoteCommandStringEncoder
     {
         private static readonly BigInteger MinimumQuantization = 4;

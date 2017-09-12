@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Streamers
 {
+    [Service]
     public class SmStreamReader : ISmStreamReader
     {
         public IEnumerable<Command> Read(Stream source)

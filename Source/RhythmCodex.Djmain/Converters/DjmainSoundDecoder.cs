@@ -8,6 +8,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Converters
 {
+    [Service]
     public class DjmainSoundDecoder
     {
         private readonly IAudioDecoder _audioDecoder;

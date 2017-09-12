@@ -2,9 +2,11 @@
 using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class DjmainChartEventStreamReader : IDjmainChartEventStreamReader
     {
         private const int MaxEventCount = 0x1000;

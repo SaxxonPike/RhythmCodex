@@ -3,10 +3,12 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class SsqDecoder : ISsqDecoder
     {
         private readonly ITimingChunkDecoder _timingChunkDecoder;

@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class DjmainSampleInfoStreamWriter : IDjmainSampleDefinitionStreamWriter
     {
         private readonly IDjmainConfiguration _djmainConfiguration;

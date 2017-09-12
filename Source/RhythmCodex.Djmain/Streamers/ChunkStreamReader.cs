@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class ChunkStreamReader : IChunkStreamReader
     {
         public IEnumerable<DjmainChunk> Read(Stream stream)

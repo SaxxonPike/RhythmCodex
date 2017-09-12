@@ -1,7 +1,9 @@
-﻿using RhythmCodex.Ssq.Model;
+﻿using RhythmCodex.Infrastructure;
+using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class DdrStandardPanelMapper : IPanelMapper
     {
         public IPanelMapping Map(int panel)

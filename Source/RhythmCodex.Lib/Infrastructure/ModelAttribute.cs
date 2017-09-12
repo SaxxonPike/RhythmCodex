@@ -3,9 +3,9 @@
 namespace RhythmCodex.Infrastructure
 {
     /// <summary>
-    /// Indicates that the class is a model and shouldn't be
-    /// handled like a service.
+    /// Marks a class or struct as a data model.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class ModelAttribute : Attribute
     {
     }

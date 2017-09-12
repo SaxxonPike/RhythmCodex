@@ -6,6 +6,10 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Charting
 {
+    /// <summary>
+    /// Quantizes BigRational values for efficient representation within a metric time system.
+    /// </summary>
+    [Service]
     public class Quantizer : IQuantizer
     {
         public int GetQuantization(IEnumerable<BigRational> rationals)
