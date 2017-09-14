@@ -19,7 +19,7 @@ namespace RhythmCodex.Djmain.Converters
                 .ToDictionary(i => i, i => samples[i]);
         }
 
-        private bool IsNote(DjmainChartEvent ev)
+        private static bool IsNote(DjmainChartEvent ev)
         {
             switch (ev.Param0 & 0xF)
             {

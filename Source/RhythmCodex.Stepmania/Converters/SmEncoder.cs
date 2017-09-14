@@ -14,15 +14,18 @@ namespace RhythmCodex.Stepmania.Converters
         private readonly INoteEncoder _noteEncoder;
         private readonly INoteCommandStringEncoder _noteCommandStringEncoder;
         private readonly IGrooveRadarEncoder _grooveRadarEncoder;
+        private readonly INumberFormatter _numberFormatter;
 
         public SmEncoder(
             INoteEncoder noteEncoder,
             INoteCommandStringEncoder noteCommandStringEncoder,
-            IGrooveRadarEncoder grooveRadarEncoder)
+            IGrooveRadarEncoder grooveRadarEncoder,
+            INumberFormatter numberFormatter)
         {
             _noteEncoder = noteEncoder;
             _noteCommandStringEncoder = noteCommandStringEncoder;
             _grooveRadarEncoder = grooveRadarEncoder;
+            _numberFormatter = numberFormatter;
         }
 
         private static readonly IEnumerable<string> TagsToEncode = new[]
@@ -51,7 +54,8 @@ namespace RhythmCodex.Stepmania.Converters
         private IEnumerable<Command> GetTimingCommands(IEnumerable<IChart> charts)
         {
             var chartList = charts.AsList();
-            
+            var places = StepmaniaConstants.DecimalPlaces;
+
             var bpms = chartList
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
@@ -60,7 +64,16 @@ namespace RhythmCodex.Stepmania.Converters
             yield return new Command
             {
                 Name = ChartTag.BpmsTag,
-                Values = new[] { string.Join(",", bpms.Select(ev => $"{(decimal)(ev[NumericData.MetricOffset].Value * 4)}={(decimal)ev[NumericData.Bpm].Value}")) }
+                Values = new[]
+                {
+                    string.Join(",",
+                        bpms.Select(ev =>
+                        {
+                            var key = _numberFormatter.Format(ev[NumericData.MetricOffset].Value * 4, places);
+                            var value = _numberFormatter.Format(ev[NumericData.Bpm].Value, places);
+                            return $"{key}={value}";
+                        }))
+                }
             };
 
             var stops = chartList
@@ -71,7 +84,16 @@ namespace RhythmCodex.Stepmania.Converters
             yield return new Command
             {
                 Name = ChartTag.StopsTag,
-                Values = new[] { string.Join(",", stops.Select(ev => $"{(decimal)(ev[NumericData.MetricOffset].Value * 4)}={(decimal)ev[NumericData.Stop].Value}")) }
+                Values = new[]
+                {
+                    string.Join(",",
+                        stops.Select(ev =>
+                        {
+                            var key = _numberFormatter.Format(ev[NumericData.MetricOffset].Value * 4, places);
+                            var value = _numberFormatter.Format(ev[NumericData.Stop].Value, places);
+                            return $"{key}={value}";
+                        }))
+                }
             };
         }
 

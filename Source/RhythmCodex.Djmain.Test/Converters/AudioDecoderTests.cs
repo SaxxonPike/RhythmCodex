@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Converters
 {
     [TestFixture]
-    public class AudioDecoderTests : BaseUnitTestFixture<AudioDecoder>
+    public class AudioDecoderTests : BaseUnitTestFixture<AudioDecoder, IAudioDecoder>
     {
         [Test]
         public void DecodePcm8_DecodesData()

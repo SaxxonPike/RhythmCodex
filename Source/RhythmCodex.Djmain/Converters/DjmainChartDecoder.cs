@@ -9,7 +9,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Converters
 {
     [Service]
-    public class DjmainChartDecoder
+    public class DjmainChartDecoder : IDjmainChartDecoder
     {
         public IChart Decode(IEnumerable<IDjmainChartEvent> events)
         {

@@ -10,7 +10,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder>
+    public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder, IStepEventDecoder>
     {
         [Test]
         public void Decode_ConvertsStepsCorrectly()

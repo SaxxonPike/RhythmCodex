@@ -5,7 +5,9 @@ using NUnit.Framework;
 namespace RhythmCodex.Ssq.Streamers
 {
     [TestFixture]
-    public abstract class ChunkStreamBaseTests<TSubject> : BaseUnitTestFixture<TSubject> where TSubject : class
+    public abstract class ChunkStreamBaseTests<TSubject, TInterface> : BaseUnitTestFixture<TSubject, TInterface> 
+        where TSubject : class, TInterface
+        where TInterface : class
     {
         protected static byte[] PrepareChunk(short param0, short param1, byte[] data)
         {

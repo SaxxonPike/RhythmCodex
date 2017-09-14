@@ -7,7 +7,7 @@ using RhythmCodex.Djmain.Model;
 
 namespace RhythmCodex.Djmain.Converters
 {
-    public class DjmainUserSampleFilterTests : BaseUnitTestFixture<DjmainUsedSampleFilter>
+    public class DjmainUserSampleFilterTests : BaseUnitTestFixture<DjmainUsedSampleFilter, IDjmainUsedSampleFilter>
     {
         [TestCase(0x0, false)]
         [TestCase(0x1, true)]

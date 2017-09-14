@@ -9,7 +9,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Streamers
 {
     [TestFixture]
-    public class SsqStreamWriterTests : BaseUnitTestFixture<SsqStreamWriter>
+    public class SsqStreamWriterTests : BaseUnitTestFixture<SsqStreamWriter, ISsqStreamWriter>
     {
         [Test]
         public void Write_WritesAllChunks()

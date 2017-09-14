@@ -40,7 +40,7 @@ namespace RhythmCodex.Stepmania.Converters
                 else
                     isFirst = false;
 
-                resultBuilder.Append(measureBuilder.ToString());
+                resultBuilder.Append(measureBuilder);
             }
 
             return resultBuilder.ToString();

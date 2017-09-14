@@ -5,7 +5,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class TimingChunkEncoderTests : BaseUnitTestFixture<TimingChunkEncoder>
+    public class TimingChunkEncoderTests : BaseUnitTestFixture<TimingChunkEncoder, ITimingChunkEncoder>
     {
         [Test]
         public void Convert_EncodesTimings()

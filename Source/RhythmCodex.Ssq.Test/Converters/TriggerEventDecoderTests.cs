@@ -9,7 +9,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class TriggerEventDecoderTests : BaseUnitTestFixture<TriggerEventDecoder>
+    public class TriggerEventDecoderTests : BaseUnitTestFixture<TriggerEventDecoder, ITriggerEventDecoder>
     {
         [Test]
         public void Decode_ConvertsTriggersCorrectly()

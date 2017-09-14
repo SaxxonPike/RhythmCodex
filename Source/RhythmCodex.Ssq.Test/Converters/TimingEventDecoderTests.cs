@@ -8,7 +8,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class TimingEventDecoderTests : BaseUnitTestFixture<TimingEventDecoder>
+    public class TimingEventDecoderTests : BaseUnitTestFixture<TimingEventDecoder, ITimingEventDecoder>
     {
         [Test]
         public void Decode_ConvertsTimingsCorrectly()

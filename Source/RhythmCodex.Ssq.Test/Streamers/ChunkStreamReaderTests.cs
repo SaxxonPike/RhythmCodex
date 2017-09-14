@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Ssq.Streamers
 {
     [TestFixture]
-    public class ChunkStreamReaderTests : ChunkStreamBaseTests<ChunkStreamReader>
+    public class ChunkStreamReaderTests : ChunkStreamBaseTests<ChunkStreamReader, IChunkStreamReader>
     {
         [Test]
         public void Read_ReadsValidChunk()

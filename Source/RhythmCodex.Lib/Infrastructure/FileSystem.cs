@@ -9,7 +9,7 @@ namespace RhythmCodex.Infrastructure
     {
         private const char SafeChar = '_';
 
-        private readonly char[] InvalidChars = Path
+        private readonly char[] _invalidChars = Path
             .GetInvalidFileNameChars()
             .Concat(Path.GetInvalidPathChars())
             .Distinct()
@@ -61,6 +61,6 @@ namespace RhythmCodex.Infrastructure
 
         /// <inheritdoc />
         public string GetSafeFileName(string fileName) => 
-            new string(fileName.Select(c => InvalidChars.Contains(c) ? SafeChar : c).ToArray());
+            new string(fileName.Select(c => _invalidChars.Contains(c) ? SafeChar : c).ToArray());
     }
 }

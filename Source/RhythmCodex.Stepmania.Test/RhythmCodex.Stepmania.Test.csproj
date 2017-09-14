@@ -17,7 +17,4 @@
     <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj" />
     <ProjectReference Include="..\RhythmCodex.Stepmania\RhythmCodex.Stepmania.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
 </Project>

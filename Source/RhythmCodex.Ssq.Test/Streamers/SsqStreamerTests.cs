@@ -8,7 +8,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Streamers
 {
     [TestFixture]
-    public class SsqStreamerTests : BaseUnitTestFixture<SsqStreamReader>
+    public class SsqStreamerTests : BaseUnitTestFixture<SsqStreamReader, ISsqStreamReader>
     {
         [Test]
         public void Read_ReadsAllChunks()

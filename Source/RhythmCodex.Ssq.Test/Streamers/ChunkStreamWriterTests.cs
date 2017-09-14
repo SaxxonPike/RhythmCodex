@@ -6,7 +6,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Streamers
 {
-    public class ChunkStreamWriterTests : ChunkStreamBaseTests<ChunkStreamWriter>
+    public class ChunkStreamWriterTests : ChunkStreamBaseTests<ChunkStreamWriter, IChunkStreamWriter>
     {
         [Test]
         public void Write_WritesValidChunk()

@@ -31,27 +31,22 @@ namespace RhythmCodex.Stepmania.Streamers
                 {
                     if (!commandMode)
                     {
-                        switch (c)
-                        {
-                            case '#':
-                                commandMode = true;
-                                continue;
-                        }
+                        if (c == '#')
+                            commandMode = true;
                     }
                     else
                     {
-                        switch (c)
+                        if (c == ';')
                         {
-                            case ';':
-                                commandMode = false;
-                                if (commandBuilder.Length > 0)
-                                {
-                                    yield return commandBuilder.ToString();
-                                    commandBuilder.Clear();
-                                }
-                                continue;
+                            commandMode = false;
+                            if (commandBuilder.Length > 0)
+                            {
+                                yield return commandBuilder.ToString();
+                                commandBuilder.Clear();
+                            }
+                            continue;
                         }
-                        
+
                         commandBuilder.Append(c);
                     }
                 }

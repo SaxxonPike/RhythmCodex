@@ -7,7 +7,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Statistics
 {
-    public class EventCounter
+    public class EventCounter : IEventCounter
     {
         private static IEnumerable<IGrouping<BigRational?, IEvent>> GroupEventsByTime(IList<IEvent> eventList)
         {

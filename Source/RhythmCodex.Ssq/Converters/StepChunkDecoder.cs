@@ -19,6 +19,7 @@ namespace RhythmCodex.Ssq.Converters
 
                 var metricOffsets = Enumerable
                     .Range(0, count)
+                    // ReSharper disable once AccessToDisposedClosure
                     .Select(i => reader.ReadInt32())
                     .AsList();
 
@@ -32,8 +33,14 @@ namespace RhythmCodex.Ssq.Converters
                     {
                         MetricOffset = metricOffsets[i],
                         Panels = panels[i],
-                        ExtraPanels = panels[i] == 0 ? reader.ReadByte() : (byte?)null,
-                        ExtraPanelInfo = panels[i] == 0 ? reader.ReadByte() : (byte?)null
+                        // ReSharper disable once AccessToDisposedClosure
+                        ExtraPanels = panels[i] == 0 
+                            ? reader.ReadByte() 
+                            : (byte?)null,
+                        // ReSharper disable once AccessToDisposedClosure
+                        ExtraPanelInfo = panels[i] == 0 
+                            ? reader.ReadByte() 
+                            : (byte?)null
                     })
                     .AsList();
             }

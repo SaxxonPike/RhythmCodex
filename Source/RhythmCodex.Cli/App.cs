@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Cli.Helpers;
 
 namespace RhythmCodex.Cli
 {
@@ -10,16 +11,18 @@ namespace RhythmCodex.Cli
     {
         private readonly TextWriter _logger;
         private readonly IEnumerable<ICliModule> _modules;
+        private readonly IArgParser _argParser;
 
-        public App(TextWriter logger, IEnumerable<ICliModule> modules)
+        public App(TextWriter logger, IEnumerable<ICliModule> modules, IArgParser argParser)
         {
             _logger = logger;
             _modules = modules;
+            _argParser = argParser;
         }
 
         private static string AppName => "RhythmCodex";
 
-        private bool InvariantStringMatch(string a, string b)
+        private static bool InvariantStringMatch(string a, string b)
         {
             return string.Equals(a, b, StringComparison.CurrentCultureIgnoreCase);
         }
@@ -54,47 +57,9 @@ namespace RhythmCodex.Cli
                 return;
             }
 
-            command.Execute(ParseArgs(args.Skip(2)));
+            command.Execute(_argParser.Parse(args.Skip(2)));
         }
 
-        private IDictionary<string, string[]> ParseArgs(IEnumerable<string> args)
-        {
-            var result = new Dictionary<string, List<string>>();
-            var current = string.Empty;
-            var optsEnabled = true;
-            
-            foreach (var arg in args)
-            {
-                var addValue = true;
-                
-                if (arg == "--")
-                {
-                    current = string.Empty;
-                    optsEnabled = false;
-                    continue;
-                }
-
-                if (optsEnabled)
-                {
-                    if (arg == "-")
-                        continue;
-                    
-                    if (arg.StartsWith("-"))
-                    {
-                        current = arg.Substring(1);
-                        addValue = false;
-                    }
-                }
-                
-                if (!result.ContainsKey(current))
-                    result[current] = new List<string>();
-                
-                if (addValue)
-                    result[current].Add(arg);
-            }
-
-            return result.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray());
-        }
 
         private void OutputCommandList(ICliModule module)
         {

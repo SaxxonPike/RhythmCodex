@@ -37,7 +37,7 @@ namespace RhythmCodex.Cli.Modules
         }
 
         public string Name => "SSQ";
-        
+
         public string Description => "Encodes and decodes the SSQ format.";
 
         public IEnumerable<ICommand> Commands => new ICommand[]
@@ -56,15 +56,22 @@ namespace RhythmCodex.Cli.Modules
             }
         };
 
-        private string[] GetInputFiles(IDictionary<string, string[]> args)
+        private static string[] GetInputFiles(IDictionary<string, string[]> args)
         {
-            return (args.ContainsKey(string.Empty) ? args[string.Empty] : Enumerable.Empty<string>()).ToArray();
+            return (args.ContainsKey(string.Empty)
+                ? args[string.Empty]
+                : Enumerable.Empty<string>()).ToArray();
         }
 
         private string GetOutputDirectory(IDictionary<string, string[]> args)
         {
-            var value = args.ContainsKey("o") ? args["o"].FirstOrDefault() : null;
-            return !string.IsNullOrEmpty(value) ? value : _fileSystem.CurrentPath;
+            var value = args.ContainsKey("o") 
+                ? args["o"].FirstOrDefault() 
+                : null;
+            
+            return !string.IsNullOrEmpty(value) 
+                ? value 
+                : _fileSystem.CurrentPath;
         }
 
         private void Encode(IDictionary<string, string[]> args)
@@ -82,7 +89,7 @@ namespace RhythmCodex.Cli.Modules
                 _logger.WriteLine("No input files specified.");
                 return;
             }
-            
+
             _logger.WriteLine($"Using output directory: {outputDirectory}");
 
             foreach (var inputFile in inputFiles)
@@ -92,15 +99,15 @@ namespace RhythmCodex.Cli.Modules
                 {
                     var outFileName = _fileSystem.GetFileName(inputFile) + ".sm";
                     var outFilePath = _fileSystem.CombinePath(outputDirectory, outFileName);
-                    
+
                     var chunks = _ssqStreamReader.Read(inFile);
                     _logger.WriteLine($"Found {chunks.Count} total chunks");
                     var charts = _ssqDecoder.Decode(chunks);
                     _logger.WriteLine($"Found {charts.Count} charts");
-                    
-                    _logger.WriteLine($"Encoding SM");
+
+                    _logger.WriteLine("Encoding SM");
                     var encoded = _smEncoder.Encode(new Metadata(), charts);
-                    
+
                     _logger.WriteLine($"Writing {outFileName}");
                     using (var outFile = _fileSystem.OpenWrite(outFilePath))
                     {

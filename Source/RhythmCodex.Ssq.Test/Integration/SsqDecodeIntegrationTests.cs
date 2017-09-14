@@ -14,7 +14,7 @@ namespace RhythmCodex.Ssq.Integration
     [TestFixture]
     public class SsqDecodeIntegrationTests : BaseIntegrationFixture
     {
-        private IEnumerable<IChart> DecodeCharts(byte[] data)
+        private static IEnumerable<IChart> DecodeCharts(byte[] data)
         {
             var ssqDecoder = new SsqDecoder(
                 new TimingChunkDecoder(),

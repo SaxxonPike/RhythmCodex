@@ -8,7 +8,7 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Stepmania.Streamers
 {
     [TestFixture]
-    public class SmStreamReaderTests : BaseUnitTestFixture<SmStreamReader>
+    public class SmStreamReaderTests : BaseUnitTestFixture<SmStreamReader, ISmStreamReader>
     {
         [Test]
         public void Read_ReadsCommands()

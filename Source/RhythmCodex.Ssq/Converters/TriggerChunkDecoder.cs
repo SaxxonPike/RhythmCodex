@@ -26,6 +26,7 @@ namespace RhythmCodex.Ssq.Converters
                     .Range(0, count)
                     .Select(i => new Trigger
                     {
+                        // ReSharper disable once AccessToDisposedClosure
                         Id = reader.ReadInt16(),
                         MetricOffset = metricOffsets[i]
                     })

@@ -132,31 +132,28 @@ namespace RhythmCodex.Infrastructure
         /// <summary>
         /// Gets the integer value.
         /// </summary>
-        public BigInteger GetWholePart()
-        {
-            return BigInteger.Divide(Numerator, Denominator);
-        }
+        public BigInteger GetWholePart() => 
+            BigInteger.Divide(Numerator, Denominator);
 
         /// <summary>
         /// Gets the fractional value.
         /// </summary>
-        public BigRational GetFractionPart()
-        {
-            return new BigRational(BigInteger.Remainder(Numerator, Denominator), Denominator);
-        }
+        public BigRational GetFractionPart() => 
+            new BigRational(BigInteger.Remainder(Numerator, Denominator), Denominator);
 
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (!(obj is BigRational))
                 return false;
+            
             return Equals((BigRational) obj);
         }
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return (Numerator / Denominator).GetHashCode();
+            return unchecked(Numerator.GetHashCode() * 17 + Denominator.GetHashCode());
         }
 
         /// <inheritdoc />
@@ -164,8 +161,10 @@ namespace RhythmCodex.Infrastructure
         {
             if (obj == null)
                 return 1;
+            
             if (!(obj is BigRational))
                 throw new ArgumentException("Argument must be of type BigRational", nameof(obj));
+            
             return Compare(this, (BigRational) obj);
         }
 
@@ -176,23 +175,15 @@ namespace RhythmCodex.Infrastructure
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            var ret = new StringBuilder();
-            ret.Append(Numerator.ToString("R", CultureInfo.InvariantCulture));
-            ret.Append(Solidus);
-            ret.Append(Denominator.ToString("R", CultureInfo.InvariantCulture));
-            return ret.ToString();
-        }
+        public override string ToString() => $"{Numerator:R}{Solidus}{Denominator:R}";
 
         /// <inheritdoc />
         public bool Equals(BigRational other)
         {
             // a/b = c/d, iff ad = bc
-            if (Denominator == other.Denominator)
-                return Numerator == other.Numerator;
-            else
-                return Numerator * other.Denominator == (Denominator * other.Numerator);
+            return Denominator == other.Denominator
+                ? Numerator == other.Numerator
+                : Numerator * other.Denominator == Denominator * other.Numerator;
         }
 
         #endregion Public Instance Methods
@@ -216,13 +207,10 @@ namespace RhythmCodex.Infrastructure
         public BigRational(double value)
         {
             if (double.IsNaN(value))
-            {
                 throw new ArgumentException("Argument is not a number", nameof(value));
-            }
-            else if (double.IsInfinity(value))
-            {
+            
+            if (double.IsInfinity(value))
                 throw new ArgumentException("Argument is infinity", nameof(value));
-            }
 
             SplitDoubleIntoParts(value, out var sign, out var exponent, out var significand, out _);
 
@@ -236,17 +224,12 @@ namespace RhythmCodex.Infrastructure
             Denominator = 1 << 52;
 
             if (exponent > 0)
-            {
                 Numerator = BigInteger.Pow(Numerator, exponent);
-            }
             else if (exponent < 0)
-            {
                 Denominator = BigInteger.Pow(Denominator, -exponent);
-            }
+            
             if (sign < 0)
-            {
                 Numerator = BigInteger.Negate(Numerator);
-            }
 
             var simplified = Simplify(Numerator, Denominator);
             (Numerator, Denominator) = simplified;
@@ -295,10 +278,9 @@ namespace RhythmCodex.Infrastructure
         public BigRational(BigInteger numerator, BigInteger denominator)
         {
             if (denominator.Sign == 0)
-            {
                 throw new DivideByZeroException();
-            }
-            else if (numerator.Sign == 0)
+            
+            if (numerator.Sign == 0)
             {
                 // 0/m -> 0/1
                 Numerator = BigInteger.Zero;
@@ -357,69 +339,72 @@ namespace RhythmCodex.Infrastructure
         /// <summary>
         /// Gets the absolute value of a BigRational object.
         /// </summary>
-        public static BigRational Abs(BigRational r)
-        {
-            return (r.Numerator.Sign < 0 ? new BigRational(BigInteger.Abs(r.Numerator), r.Denominator) : r);
-        }
+        public static BigRational Abs(BigRational r) => 
+            (r.Numerator.Sign < 0 ? new BigRational(BigInteger.Abs(r.Numerator), r.Denominator) : r);
 
         /// <summary>
         /// Negates a specified BigRational value.
         /// </summary>
-        public static BigRational Negate(BigRational r)
-        {
-            return new BigRational(BigInteger.Negate(r.Numerator), r.Denominator);
-        }
+        public static BigRational Negate(BigRational r) => 
+            new BigRational(BigInteger.Negate(r.Numerator), r.Denominator);
 
         /// <summary>
         /// Reciprocates the BigRational value.
         /// </summary>
-        public static BigRational Invert(BigRational r) => new BigRational(r.Denominator, r.Numerator);
+        public static BigRational Invert(BigRational r) => 
+            new BigRational(r.Denominator, r.Numerator);
 
         /// <summary>
         /// Adds two BigRational values.
         /// </summary>
-        public static BigRational Add(BigRational x, BigRational y) => x + y;
+        public static BigRational Add(BigRational x, BigRational y) => 
+            x + y;
         
         /// <summary>
         /// Subtracts two BigRational values.
         /// </summary>
-        public static BigRational Subtract(BigRational x, BigRational y) => x - y;
+        public static BigRational Subtract(BigRational x, BigRational y) => 
+            x - y;
         
         /// <summary>
         /// Multiplies two BigRational values.
         /// </summary>
-        public static BigRational Multiply(BigRational x, BigRational y) => x * y;
+        public static BigRational Multiply(BigRational x, BigRational y) => 
+            x * y;
         
         /// <summary>
         /// Divides two BigRational values.
         /// </summary>
-        public static BigRational Divide(BigRational dividend, BigRational divisor) => dividend / divisor;
+        public static BigRational Divide(BigRational dividend, BigRational divisor) => 
+            dividend / divisor;
         
         /// <summary>
         /// Divides two BigRational values and returns the remainder.
         /// </summary>
-        public static BigRational Remainder(BigRational dividend, BigRational divisor) => dividend % divisor;
+        public static BigRational Remainder(BigRational dividend, BigRational divisor) => 
+            dividend % divisor;
         
         /// <summary>
         /// Returns the greater of two BigRational values.
         /// </summary>
-        public static BigRational Max(BigRational left, BigRational right) => left > right ? left : right;
+        public static BigRational Max(BigRational left, BigRational right) => 
+            left > right ? left : right;
         
         /// <summary>
         /// Returns the lesser of two BigRational values.
         /// </summary>
-        public static BigRational Min(BigRational left, BigRational right) => left < right ? left : right;
+        public static BigRational Min(BigRational left, BigRational right) => 
+            left < right ? left : right;
 
         /// <summary>
-        /// Exponentiates the BigRational value.
+        /// Returns e raised to the specified power.
         /// </summary>
         public static BigRational Exp(BigRational val)
         {
             var e = (double) val;
             if (e > 700)
-            {
                 e = 700;
-            }
+            
             return Math.Exp(e);
         }
 
@@ -483,33 +468,32 @@ namespace RhythmCodex.Infrastructure
         public static BigRational Sqrt(BigRational baseValue)
         {
             if (baseValue < 0)
-            {
                 throw new ArgumentException("Negative argument.");
-            }
+            
             // square roots of 0 and 1 are trivial and
             // y == 0 will cause a divide-by-zero exception
             if (baseValue == 0 || baseValue == 1)
-            {
                 return baseValue;
-            } // end if
 
             // check for perfect squares
             if (baseValue.Denominator == 1)
             {
                 var ps = Isqrt(baseValue.Numerator);
                 if (ps * ps == baseValue.Numerator)
-                {
                     return ps;
-                }
             }
+            
             BigRational temp = 1;
             const int precision = 21;
+            
             while (true)
             {
                 if (temp.Numerator.ToString().Length >= precision)
                     break;
+                
                 temp = ((baseValue / temp) + temp) / 2;
             }
+            
             return temp;
         }
 
@@ -518,6 +502,7 @@ namespace RhythmCodex.Infrastructure
             var b = 15; // this is the next bit we try 
             BigInteger r = 0; // r will contain the result
             BigInteger r2 = 0; // here we maintain r squared
+            
             while (b >= 0)
             {
                 var sr2 = r2;
@@ -547,12 +532,12 @@ namespace RhythmCodex.Infrastructure
                 // n^0 -> 1
                 return One;
             }
-            else if (exponent.Sign < 0)
+            
+            if (exponent.Sign < 0)
             {
                 if (baseValue == Zero)
-                {
                     throw new ArgumentException("Cannot raise zero to a negative power.", nameof(baseValue));
-                }
+                
                 // n^(-e) -> (1/n)^e
                 baseValue = Invert(baseValue);
                 exponent = BigInteger.Negate(exponent);
@@ -602,58 +587,57 @@ namespace RhythmCodex.Infrastructure
 
         #region Operator Overloads
 
-        public static bool operator ==(BigRational x, BigRational y) => Compare(x, y) == 0;
+        public static bool operator ==(BigRational x, BigRational y) => 
+            Compare(x, y) == 0;
 
-        public static bool operator !=(BigRational x, BigRational y) => Compare(x, y) != 0;
+        public static bool operator !=(BigRational x, BigRational y) => 
+            Compare(x, y) != 0;
 
-        public static bool operator <(BigRational x, BigRational y) => Compare(x, y) < 0;
+        public static bool operator <(BigRational x, BigRational y) => 
+            Compare(x, y) < 0;
 
-        public static bool operator <=(BigRational x, BigRational y) => Compare(x, y) <= 0;
+        public static bool operator <=(BigRational x, BigRational y) => 
+            Compare(x, y) <= 0;
 
-        public static bool operator >(BigRational x, BigRational y) => Compare(x, y) > 0;
+        public static bool operator >(BigRational x, BigRational y) => 
+            Compare(x, y) > 0;
 
-        public static bool operator >=(BigRational x, BigRational y) => Compare(x, y) >= 0;
+        public static bool operator >=(BigRational x, BigRational y) => 
+            Compare(x, y) >= 0;
 
         public static BigRational operator +(BigRational r) => r;
 
-        public static BigRational operator -(BigRational r) => new BigRational(-r.Numerator, r.Denominator);
+        public static BigRational operator -(BigRational r) => 
+            new BigRational(-r.Numerator, r.Denominator);
 
-        public static BigRational operator ++(BigRational r) => r + One;
+        public static BigRational operator ++(BigRational r) => 
+            r + One;
 
-        public static BigRational operator --(BigRational r) => r - One;
+        public static BigRational operator --(BigRational r) => 
+            r - One;
 
-        public static BigRational operator +(BigRational r1, BigRational r2)
-        {
-            // a/b + c/d  == (ad + bc)/bd
-            return new BigRational(r1.Numerator * r2.Denominator + r1.Denominator * r2.Numerator,
+        // a/b + c/d  == (ad + bc)/bd
+        public static BigRational operator +(BigRational r1, BigRational r2) =>
+            new BigRational(r1.Numerator * r2.Denominator + r1.Denominator * r2.Numerator,
                 r1.Denominator * r2.Denominator);
-        }
 
-        public static BigRational operator -(BigRational r1, BigRational r2)
-        {
-            // a/b - c/d  == (ad - bc)/bd
-            return new BigRational(r1.Numerator * r2.Denominator - r1.Denominator * r2.Numerator,
+        // a/b - c/d  == (ad - bc)/bd
+        public static BigRational operator -(BigRational r1, BigRational r2) =>
+            new BigRational(r1.Numerator * r2.Denominator - r1.Denominator * r2.Numerator,
                 r1.Denominator * r2.Denominator);
-        }
 
-        public static BigRational operator *(BigRational r1, BigRational r2)
-        {
-            // a/b * c/d  == (ac)/(bd)
-            return new BigRational(r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator);
-        }
+        // a/b * c/d  == (ac)/(bd)
+        public static BigRational operator *(BigRational r1, BigRational r2) => 
+            new BigRational(r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator);
 
-        public static BigRational operator /(BigRational r1, BigRational r2)
-        {
-            // a/b / c/d  == (ad)/(bc)
-            return new BigRational(r1.Numerator * r2.Denominator, r1.Denominator * r2.Numerator);
-        }
+        // a/b / c/d  == (ad)/(bc)
+        public static BigRational operator /(BigRational r1, BigRational r2) => 
+            new BigRational(r1.Numerator * r2.Denominator, r1.Denominator * r2.Numerator);
 
-        public static BigRational operator %(BigRational r1, BigRational r2)
-        {
-            // a/b % c/d  == (ad % bc)/bd
-            return new BigRational(r1.Numerator * r2.Denominator % (r1.Denominator * r2.Numerator),
+        // a/b % c/d  == (ad % bc)/bd
+        public static BigRational operator %(BigRational r1, BigRational r2) =>
+            new BigRational(r1.Numerator * r2.Denominator % (r1.Denominator * r2.Numerator),
                 r1.Denominator * r2.Denominator);
-        }
 
         #endregion Operator Overloads
 
@@ -688,23 +672,19 @@ namespace RhythmCodex.Infrastructure
         public static explicit operator BigInteger(BigRational value) =>
             BigInteger.Divide(value.Numerator, value.Denominator);
 
-        public static explicit operator float(BigRational value)
-        {
-            // The Single value type represents a single-precision 32-bit number with
-            // values ranging from negative 3.402823e38 to positive 3.402823e38      
-            // values that do not fit into this range are returned as Infinity
-            return (float) ((double) value);
-        }
+        // The Single value type represents a single-precision 32-bit number with
+        // values ranging from negative 3.402823e38 to positive 3.402823e38      
+        // values that do not fit into this range are returned as Infinity
+        public static explicit operator float(BigRational value) => 
+            (float) (double) value;
 
+        // The Double value type represents a double-precision 64-bit number with
+        // values ranging from -1.79769313486232e308 to +1.79769313486232e308
+        // values that do not fit into this range are returned as +/-Infinity
         public static explicit operator double(BigRational value)
         {
-            // The Double value type represents a double-precision 64-bit number with
-            // values ranging from -1.79769313486232e308 to +1.79769313486232e308
-            // values that do not fit into this range are returned as +/-Infinity
             if (SafeCastToDouble(value.Numerator) && SafeCastToDouble(value.Denominator))
-            {
                 return (double) value.Numerator / (double) value.Denominator;
-            }
 
             // scale the numerator to preseve the fraction part through the integer division
             var denormalized = (value.Numerator * DoublePrecision) / value.Denominator;
@@ -735,28 +715,24 @@ namespace RhythmCodex.Infrastructure
                 scale--;
             }
 
-            if (!isDouble)
-                return (value.Sign < 0) ? double.NegativeInfinity : double.PositiveInfinity;
-            else
-                return result;
+            return !isDouble 
+                ? ((value.Sign < 0) ? double.NegativeInfinity : double.PositiveInfinity) 
+                : result;
         }
 
+        // The Decimal value type represents decimal numbers ranging
+        // from +79,228,162,514,264,337,593,543,950,335 to -79,228,162,514,264,337,593,543,950,335
+        // the binary representation of a Decimal value is of the form, ((-2^96 to 2^96) / 10^(0 to 28))
         public static explicit operator decimal(BigRational value)
         {
-            // The Decimal value type represents decimal numbers ranging
-            // from +79,228,162,514,264,337,593,543,950,335 to -79,228,162,514,264,337,593,543,950,335
-            // the binary representation of a Decimal value is of the form, ((-2^96 to 2^96) / 10^(0 to 28))
             if (SafeCastToDecimal(value.Numerator) && SafeCastToDecimal(value.Denominator))
-            {
                 return (decimal) value.Numerator / (decimal) value.Denominator;
-            }
 
             // scale the numerator to preseve the fraction part through the integer division
             var denormalized = (value.Numerator * DecimalPrecision) / value.Denominator;
             if (denormalized.IsZero)
-            {
                 return decimal.Zero; // underflow - fraction is too small to fit in a decimal
-            }
+            
             for (var scale = DecimalMaxScale; scale >= 0; scale--)
             {
                 if (!SafeCastToDecimal(denormalized))
@@ -803,9 +779,7 @@ namespace RhythmCodex.Infrastructure
             // * if the numerator is {0, +1, -1} then the fraction is already reduced
             // * if the denominator is {+1} then the fraction is already reduced
             if (num == BigInteger.Zero)
-            {
                 den = BigInteger.One;
-            }
 
             var gcd = BigInteger.GreatestCommonDivisor(num, den);
             if (gcd > BigInteger.One)
@@ -837,24 +811,25 @@ namespace RhythmCodex.Infrastructure
             sign = 1 - ((int) (du.uu >> 62) & 2);
             man = du.uu & 0x000FFFFFFFFFFFFF;
             exp = (int) (du.uu >> 52) & 0x7FF;
-            if (exp == 0)
+
+            switch (exp)
             {
-                // Denormalized number.
-                isFinite = true;
-                if (man != 0)
-                    exp = -1074;
-            }
-            else if (exp == 0x7FF)
-            {
-                // NaN or Infinite.
-                isFinite = false;
-                exp = int.MaxValue;
-            }
-            else
-            {
-                isFinite = true;
-                man |= 0x0010000000000000; // mask in the implied leading 53rd significand bit
-                exp -= 1075;
+                case 0:
+                    // Denormalized number.
+                    isFinite = true;
+                    if (man != 0)
+                        exp = -1074;
+                    break;
+                case 0x7FF:
+                    // NaN or Infinite.
+                    isFinite = false;
+                    exp = int.MaxValue;
+                    break;
+                default:
+                    isFinite = true;
+                    man |= 0x0010000000000000; // mask in the implied leading 53rd significand bit
+                    exp -= 1075;
+                    break;
             }
         }
 

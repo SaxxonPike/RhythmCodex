@@ -6,7 +6,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class SsqDecoderTests : BaseUnitTestFixture<SsqDecoder>
+    public class SsqDecoderTests : BaseUnitTestFixture<SsqDecoder, ISsqDecoder>
     {
         [Test]
         public void Decode_DoesStuff()

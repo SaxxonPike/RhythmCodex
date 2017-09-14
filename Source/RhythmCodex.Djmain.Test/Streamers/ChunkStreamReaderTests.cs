@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class ChunkStreamReaderTests : BaseUnitTestFixture<ChunkStreamReader>
+    public class ChunkStreamReaderTests : BaseUnitTestFixture<ChunkStreamReader, IChunkStreamReader>
     {
         private static byte[] GenerateRandomBytes(int length)
         {

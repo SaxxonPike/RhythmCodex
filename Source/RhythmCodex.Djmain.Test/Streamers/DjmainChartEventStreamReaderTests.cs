@@ -7,7 +7,7 @@ using RhythmCodex.Djmain.Model;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DjmainChartEventStreamReaderTests : BaseUnitTestFixture<DjmainChartEventStreamReader>
+    public class DjmainChartEventStreamReaderTests : BaseUnitTestFixture<DjmainChartEventStreamReader, IDjmainChartEventStreamReader>
     {
         [Test]
         public void Read_ReadsUntilEndMarker()

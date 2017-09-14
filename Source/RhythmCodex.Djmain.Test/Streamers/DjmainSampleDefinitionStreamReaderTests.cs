@@ -8,7 +8,7 @@ using RhythmCodex.Djmain.Model;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<DjmainSampleInfoStreamReader>
+    public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<DjmainSampleInfoStreamReader, IDjmainSampleDefinitionStreamReader>
     {
         [Test]
         public void Read_ShouldReadAllDefinitions()

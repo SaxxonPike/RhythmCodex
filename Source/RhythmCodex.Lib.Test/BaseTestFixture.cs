@@ -10,7 +10,7 @@ using Ploeh.AutoFixture.Dsl;
 
 namespace RhythmCodex
 {
-    public class BaseTestFixture
+    public abstract class BaseTestFixture
     {
         [SetUp]
         public void __Setup()

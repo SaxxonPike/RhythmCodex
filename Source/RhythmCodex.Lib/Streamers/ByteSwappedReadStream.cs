@@ -23,16 +23,13 @@ namespace RhythmCodex.Streamers
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            switch (origin)
-            {
-                case SeekOrigin.Begin:
-                    _baseStream.Seek(offset & ~1L, SeekOrigin.Begin);
-                    _secondByte = (offset & 1) != 0;
-                    _bufferReady = false;
-                    return offset;
-                default:
-                    throw new NotImplementedException();
-            }
+            if (origin != SeekOrigin.Begin) 
+                throw new NotImplementedException();
+            
+            _baseStream.Seek(offset & ~1L, SeekOrigin.Begin);
+            _secondByte = (offset & 1) != 0;
+            _bufferReady = false;
+            return offset;
         }
 
         public override void SetLength(long value) => _baseStream.SetLength(value);

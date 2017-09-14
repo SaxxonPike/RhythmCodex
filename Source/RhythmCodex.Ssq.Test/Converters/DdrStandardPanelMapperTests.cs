@@ -7,7 +7,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class DdrStandardPanelMapperTests : BaseUnitTestFixture<DdrStandardPanelMapper>
+    public class DdrStandardPanelMapperTests : BaseUnitTestFixture<DdrStandardPanelMapper, IPanelMapper>
     {
         [Test]
         public void Map_Int_CorrectlyMaps()

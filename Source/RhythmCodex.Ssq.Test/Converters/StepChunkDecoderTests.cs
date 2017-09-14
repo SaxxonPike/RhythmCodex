@@ -5,7 +5,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class StepChunkDecoderTests : BaseUnitTestFixture<StepChunkDecoder>
+    public class StepChunkDecoderTests : BaseUnitTestFixture<StepChunkDecoder, IStepChunkDecoder>
     {
         [Test]
         public void Convert_DecodesRegularSteps()
