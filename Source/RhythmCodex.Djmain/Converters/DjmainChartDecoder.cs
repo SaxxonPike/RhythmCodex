@@ -100,6 +100,8 @@ namespace RhythmCodex.Djmain.Converters
                         {
                             case 0xA:
                             case 0xB:
+                            case 0xE:
+                            case 0xF:
                                 yield return new Event
                                 {
                                     [NumericData.SourceCommand] = ev.Param0,
@@ -170,7 +172,7 @@ namespace RhythmCodex.Djmain.Converters
                             [NumericData.SourceCommand] = ev.Param0,
                             [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
-                            [NumericData.Panning] = new BigRational(Math.Max(param0 - 1, 0), 15),
+                            [NumericData.Panning] = new BigRational(Math.Max(param0 - 1, 0), 14),
                             [NumericData.PlaySound] = param1
                         };
                         break;
