@@ -240,7 +240,7 @@ namespace RhythmCodex.Infrastructure
         {
             var bits = decimal.GetBits(value);
             if (bits == null || bits.Length != 4 || (bits[3] & ~(DecimalSignMask | DecimalScaleMask)) != 0 ||
-                (bits[3] & DecimalScaleMask) > (28 << 16))
+                (bits[3] & DecimalScaleMask) > 28 << 16)
             {
                 throw new ArgumentException("Invalid Decimal", nameof(value));
             }
@@ -316,12 +316,12 @@ namespace RhythmCodex.Infrastructure
             else if (denominator.Sign < 0)
             {
                 Denominator = BigInteger.Negate(denominator);
-                Numerator = (BigInteger.Negate(whole) * Denominator) + BigInteger.Negate(numerator);
+                Numerator = BigInteger.Negate(whole) * Denominator + BigInteger.Negate(numerator);
             }
             else
             {
                 Denominator = denominator;
-                Numerator = (whole * denominator) + numerator;
+                Numerator = whole * denominator + numerator;
             }
 
             var simplified = Simplify(Numerator, Denominator);
@@ -338,7 +338,9 @@ namespace RhythmCodex.Infrastructure
         /// Gets the absolute value of a BigRational object.
         /// </summary>
         public static BigRational Abs(BigRational r) => 
-            (r.Numerator.Sign < 0 ? new BigRational(BigInteger.Abs(r.Numerator), r.Denominator) : r);
+            r.Numerator.Sign < 0 
+                ? new BigRational(BigInteger.Abs(r.Numerator), r.Denominator) 
+            git    : r;
 
         /// <summary>
         /// Negates a specified BigRational value.
@@ -489,7 +491,7 @@ namespace RhythmCodex.Infrastructure
                 if (temp.Numerator.ToString().Length >= precision)
                     break;
                 
-                temp = ((baseValue / temp) + temp) / 2;
+                temp = (baseValue / temp + temp) / 2;
             }
             
             return temp;
@@ -569,7 +571,7 @@ namespace RhythmCodex.Infrastructure
         public static BigInteger LeastCommonDenominator(BigRational x, BigRational y)
         {
             // LCD( a/b, c/d ) == (bd) / gcd(b,d)
-            return (x.Denominator * y.Denominator) / BigInteger.GreatestCommonDivisor(x.Denominator, y.Denominator);
+            return x.Denominator * y.Denominator / BigInteger.GreatestCommonDivisor(x.Denominator, y.Denominator);
         }
 
         /// <summary>
@@ -644,28 +646,28 @@ namespace RhythmCodex.Infrastructure
         #region explicit conversions from BigRational
 
         public static explicit operator sbyte(BigRational value) =>
-            (sbyte) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (sbyte) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator ushort(BigRational value) =>
-            (ushort) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (ushort) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator uint(BigRational value) =>
-            (uint) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (uint) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator ulong(BigRational value) =>
-            (ulong) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (ulong) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator byte(BigRational value) =>
-            (byte) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (byte) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator short(BigRational value) =>
-            (short) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (short) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator int(BigRational value) =>
-            (int) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (int) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator long(BigRational value) =>
-            (long) (BigInteger.Divide(value.Numerator, value.Denominator));
+            (long) BigInteger.Divide(value.Numerator, value.Denominator);
 
         public static explicit operator BigInteger(BigRational value) =>
             BigInteger.Divide(value.Numerator, value.Denominator);
@@ -685,9 +687,9 @@ namespace RhythmCodex.Infrastructure
                 return (double) value.Numerator / (double) value.Denominator;
 
             // scale the numerator to preseve the fraction part through the integer division
-            var denormalized = (value.Numerator * DoublePrecision) / value.Denominator;
+            var denormalized = value.Numerator * DoublePrecision / value.Denominator;
             if (denormalized.IsZero)
-                return (value.Sign < 0)
+                return value.Sign < 0
                     ? BitConverter.Int64BitsToDouble(unchecked((long) 0x8000000000000000))
                     : 0d; // underflow to -+0
 
@@ -714,7 +716,7 @@ namespace RhythmCodex.Infrastructure
             }
 
             return !isDouble 
-                ? ((value.Sign < 0) ? double.NegativeInfinity : double.PositiveInfinity) 
+                ? (value.Sign < 0 ? double.NegativeInfinity : double.PositiveInfinity) 
                 : result;
         }
 
@@ -727,7 +729,7 @@ namespace RhythmCodex.Infrastructure
                 return (decimal) value.Numerator / (decimal) value.Denominator;
 
             // scale the numerator to preseve the fraction part through the integer division
-            var denormalized = (value.Numerator * DecimalPrecision) / value.Denominator;
+            var denormalized = value.Numerator * DecimalPrecision / value.Denominator;
             if (denormalized.IsZero)
                 return decimal.Zero; // underflow - fraction is too small to fit in a decimal
             

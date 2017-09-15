@@ -20,7 +20,7 @@ namespace RhythmCodex.Djmain.Converters
                 new DjmainChartEvent
                 {
                     Offset = timingValue
-                }, 
+                } 
             };
             
             // Act.
