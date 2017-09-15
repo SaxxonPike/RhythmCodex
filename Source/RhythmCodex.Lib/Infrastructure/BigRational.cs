@@ -340,7 +340,7 @@ namespace RhythmCodex.Infrastructure
         public static BigRational Abs(BigRational r) => 
             r.Numerator.Sign < 0 
                 ? new BigRational(BigInteger.Abs(r.Numerator), r.Denominator) 
-            git    : r;
+                : r;
 
         /// <summary>
         /// Negates a specified BigRational value.
