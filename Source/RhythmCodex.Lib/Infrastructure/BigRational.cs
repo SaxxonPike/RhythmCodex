@@ -33,10 +33,8 @@
 namespace RhythmCodex.Infrastructure
 {
     using System;
-    using System.Globalization;
     using System.Numerics;
     using System.Runtime.InteropServices;
-    using System.Text;
 
     /// <summary>
     /// Represents an arbitrary precision rational number.

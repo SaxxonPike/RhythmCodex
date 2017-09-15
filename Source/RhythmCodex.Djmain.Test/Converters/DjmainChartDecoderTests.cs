@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Ploeh.AutoFixture;
 using RhythmCodex.Attributes;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
