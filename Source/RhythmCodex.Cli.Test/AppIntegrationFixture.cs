@@ -9,7 +9,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli
 {
-    public class AppIntegrationFixture : BaseIntegrationFixture
+    public class AppIntegrationFixture : BaseTestFixture
     {
         private static readonly IEnumerable<Type> IocTypes = new[]
         {

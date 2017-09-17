@@ -2,7 +2,7 @@
 using System.IO;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Cli
+namespace RhythmCodex
 {
     public class FakeFileSystem : IFileSystem
     {

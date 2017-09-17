@@ -11,27 +11,21 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class SsqDecoder : ISsqDecoder
     {
+        private readonly ISsqEventDecoder _ssqEventDecoder;
         private readonly ITimingChunkDecoder _timingChunkDecoder;
-        private readonly ITimingEventDecoder _timingEventDecoder;
         private readonly IStepChunkDecoder _stepChunkDecoder;
-        private readonly IStepEventDecoder _stepEventDecoder;
         private readonly ITriggerChunkDecoder _triggerChunkDecoder;
-        private readonly ITriggerEventDecoder _triggerEventDecoder;
 
         public SsqDecoder(
+            ISsqEventDecoder ssqEventDecoder,
             ITimingChunkDecoder timingDecoder,
-            ITimingEventDecoder timingEventDecoder,
             IStepChunkDecoder stepChunkDecoder,
-            IStepEventDecoder stepEventDecoder,
-            ITriggerChunkDecoder triggerChunkDecoder,
-            ITriggerEventDecoder triggerEventDecoder)
+            ITriggerChunkDecoder triggerChunkDecoder)
         {
+            _ssqEventDecoder = ssqEventDecoder;
             _timingChunkDecoder = timingDecoder;
-            _timingEventDecoder = timingEventDecoder;
             _stepChunkDecoder = stepChunkDecoder;
-            _stepEventDecoder = stepEventDecoder;
             _triggerChunkDecoder = triggerChunkDecoder;
-            _triggerEventDecoder = triggerEventDecoder;
         }
         
         public IList<IChart> Decode(IEnumerable<IChunk> data)
@@ -47,33 +41,17 @@ namespace RhythmCodex.Ssq.Converters
                 .AsList();
             var timingRate = chunks.First(c => c.Parameter0 == Parameter0.Timings).Parameter1;
 
-            return stepChunks.Select(sc => DecodeChart(
-                timings, 
-                _stepChunkDecoder.Convert(sc.Data).AsList(),
-                triggers,
-                sc.Parameter1,
-                timingRate))
-                .ToArray();
-        }
-
-        private IChart DecodeChart(
-            IEnumerable<Timing> timings,
-            IEnumerable<Step> steps, 
-            IEnumerable<Trigger> triggers,
-            int id, 
-            int ticksPerSecond)
-        {
-            var events = _timingEventDecoder.Decode(timings, ticksPerSecond)
-                .Concat(_stepEventDecoder.Decode(steps))
-                .Concat(_triggerEventDecoder.Decode(triggers))
-                .OrderBy(ev => ev[NumericData.MetricOffset])
-                .AsList();
-
-            return new Chart
+            var charts = stepChunks.Select(sc => new Chart
             {
-                Events = events,
-                [NumericData.Id] = id
-            };
+                Events = _ssqEventDecoder.Decode(
+                    timings,
+                    _stepChunkDecoder.Convert(sc.Data),
+                    triggers,
+                    timingRate).AsList(),
+                [NumericData.Id] = sc.Parameter1
+            });
+
+            return charts.Cast<IChart>().AsList();
         }
     }
 }
