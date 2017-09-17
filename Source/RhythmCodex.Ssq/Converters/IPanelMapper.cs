@@ -6,5 +6,7 @@ namespace RhythmCodex.Ssq.Converters
     {
         IPanelMapping Map(int panel);
         int? Map(IPanelMapping mapping);
+        int PanelCount { get; }
+        int PlayerCount { get; }
     }
 }

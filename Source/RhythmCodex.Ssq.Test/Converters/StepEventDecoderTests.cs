@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
@@ -15,7 +16,13 @@ namespace RhythmCodex.Ssq.Converters
         [Test]
         public void Decode_ConvertsStepsCorrectly()
         {
-            Mock<IPanelMapper>(mock =>
+            Mock<IStepPanelSplitter>(mock =>
+            {
+                var splitter = new StepPanelSplitter();
+                mock.Setup(x => x.Split(It.IsAny<int>())).Returns<int>(splitter.Split);
+            });
+            
+            var panelMapper = Mock<IPanelMapper>(mock =>
             {
                 mock.Setup(x => x.Map(0)).Returns<int>(i => new PanelMapping { Panel = 11, Player = 1 });
                 mock.Setup(x => x.Map(1)).Returns<int>(i => new PanelMapping { Panel = 22, Player = 2 });
@@ -88,7 +95,7 @@ namespace RhythmCodex.Ssq.Converters
             };
 
             // Act.
-            var result = Subject.Decode(steps).AsList();
+            var result = Subject.Decode(steps, panelMapper.Object).AsList();
             
             // Assert.
             result.Should().HaveCount(expected.Length);

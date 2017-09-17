@@ -16,5 +16,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Test.Data\RhythmCodex.Test.Data.csproj">
+      <Project>{F9081CEF-87B1-496D-95D3-E6FE6D7E290E}</Project>
+      <Name>RhythmCodex.Test.Data</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

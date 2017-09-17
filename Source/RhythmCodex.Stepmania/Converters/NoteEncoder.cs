@@ -15,20 +15,22 @@ namespace RhythmCodex.Stepmania.Converters
         {
             var result = new List<Note>();
             var eventList = events.AsList();
-            var columnCount = (int)eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
+            var columnCount = (int) eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
+            var playerCount = (int) eventList.Max(e => e[NumericData.Player] ?? BigRational.Zero) + 1;
 
             foreach (var ev in eventList.Where(e => e[NumericData.MetricOffset] != null))
             {
                 var offset = ev[NumericData.MetricOffset];
                 if (offset == null)
                     throw new RhythmCodexException($"{nameof(NumericData.MetricOffset)} must be present.");
-                
+
                 var offsetValue = offset.Value;
-                
+
                 if (ev[NumericData.Column] != null)
                 {
-                    var column = (int)ev[NumericData.Column].Value + (int)(ev[NumericData.Player] ?? BigRational.Zero) * columnCount;
-                    
+                    var column = (int) ev[NumericData.Column].Value +
+                                 (int) (ev[NumericData.Player] ?? BigRational.Zero) * columnCount;
+
                     if (ev[FlagData.Note] == true)
                     {
                         result.Add(new Note
@@ -54,7 +56,7 @@ namespace RhythmCodex.Stepmania.Converters
 
                 if (ev[FlagData.Shock] == true)
                 {
-                    result.AddRange(Enumerable.Range(0, columnCount).Select(i => new Note
+                    result.AddRange(Enumerable.Range(0, columnCount * playerCount).Select(i => new Note
                     {
                         MetricOffset = offsetValue,
                         Type = NoteType.Mine,
@@ -62,7 +64,7 @@ namespace RhythmCodex.Stepmania.Converters
                     }));
                 }
             }
-            
+
             return result;
         }
     }

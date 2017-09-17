@@ -7,9 +7,13 @@ using System.Linq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Dsl;
+using RhythmCodex.Test;
 
 namespace RhythmCodex
 {
+    /// <summary>
+    /// Contains features available to all tests.
+    /// </summary>
     public abstract class BaseTestFixture
     {
         [SetUp]
@@ -35,11 +39,12 @@ namespace RhythmCodex
             return fixture;
         });
 
+        /// <summary>
+        /// Retrieves an embedded resource by name.
+        /// </summary>
         protected byte[] GetEmbeddedResource(string name)
         {
-            var assembly = GetType().Assembly;
-
-            using (var stream = assembly.GetManifestResourceStream(name))
+            using (var stream = typeof(TestDataBeacon).Assembly.GetManifestResourceStream($"RhythmCodex.Test.Data.{name}"))
             using (var mem = new MemoryStream())
             {
                 if (stream == null)
@@ -50,6 +55,9 @@ namespace RhythmCodex
             }
         }
 
+        /// <summary>
+        /// Retrieves an embedded resource by name as an archive and extracts the first file from it.
+        /// </summary>
         protected IDictionary<string, byte[]> GetArchiveResource(string name)
         {
             var output = new Dictionary<string, byte[]>();
@@ -69,24 +77,36 @@ namespace RhythmCodex
                 }
             }
 
-            return output;
+            return output;            
         }
 
+        /// <summary>
+        /// Gets an AutoFixture builder which can be used to customize a created object.
+        /// </summary>
         protected ICustomizationComposer<T> Build<T>()
         {
             return _fixture.Value.Build<T>();
         }
 
+        /// <summary>
+        /// Creates an object of the specified type with randomized properties.
+        /// </summary>
         protected T Create<T>()
         {
             return _fixture.Value.Create<T>();
         }
 
+        /// <summary>
+        /// Creates many objects of the specified type all with randomized properties.
+        /// </summary>
         protected T[] CreateMany<T>()
         {
             return _fixture.Value.CreateMany<T>().ToArray();
         }
 
+        /// <summary>
+        /// Creates a specified number of objects of the specified type all with randomized properties.
+        /// </summary>
         protected T[] CreateMany<T>(int count)
         {
             return _fixture.Value.CreateMany<T>(count).ToArray();

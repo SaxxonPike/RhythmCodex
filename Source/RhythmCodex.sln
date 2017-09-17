@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Djmain.Test", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Cli.Test", "RhythmCodex.Cli.Test\RhythmCodex.Cli.Test.csproj", "{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Test.Data", "RhythmCodex.Test.Data\RhythmCodex.Test.Data.csproj", "{F9081CEF-87B1-496D-95D3-E6FE6D7E290E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9081CEF-87B1-496D-95D3-E6FE6D7E290E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9081CEF-87B1-496D-95D3-E6FE6D7E290E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9081CEF-87B1-496D-95D3-E6FE6D7E290E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9081CEF-87B1-496D-95D3-E6FE6D7E290E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,5 +95,6 @@ Global
 		{D9AD0144-A437-4EA3-877F-B243639A5260} = {67686204-29B7-469A-ADA6-40BABA8D3F25}
 		{69704011-657D-40DD-BA8C-85420EC52D9E} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
+		{F9081CEF-87B1-496D-95D3-E6FE6D7E290E} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
 	EndGlobalSection
 EndGlobal

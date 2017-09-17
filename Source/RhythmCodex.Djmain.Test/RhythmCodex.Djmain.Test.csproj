@@ -18,4 +18,7 @@
     <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj" />
     <ProjectReference Include="..\RhythmCodex.Djmain\RhythmCodex.Djmain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data" />
+  </ItemGroup>
 </Project>

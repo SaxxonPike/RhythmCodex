@@ -32,7 +32,7 @@ namespace RhythmCodex.Ssq.Integration
             var expectedCombos = new[] {264, 373, 555, 85, 263, 347, 485};
             var expectedFreezes = new[] {2, 35, 2, 0, 8, 5, 2};
             var expectedShocks = new[] {0, 0, 0, 0, 0, 0, 0};
-            var data = GetArchiveResource("RhythmCodex.Ssq.Data.freeze.zip")
+            var data = GetArchiveResource("Ssq.freeze.zip")
                 .First()
                 .Value;
             
@@ -53,7 +53,7 @@ namespace RhythmCodex.Ssq.Integration
             var expectedCombos = new[] {99, 180, 258, 368, 343, 207, 256, 336, 323};
             var expectedFreezes = new[] {4, 8, 3, 0, 0, 2, 7, 1, 1};
             var expectedShocks = new[] {0, 0, 0, 0, 37, 0, 0, 0, 29};
-            var data = GetArchiveResource("RhythmCodex.Ssq.Data.shock.zip")
+            var data = GetArchiveResource("Ssq.shock.zip")
                 .First()
                 .Value;
 

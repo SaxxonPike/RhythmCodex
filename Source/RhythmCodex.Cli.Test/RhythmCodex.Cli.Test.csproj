@@ -5,14 +5,6 @@
     <RootNamespace>RhythmCodex.Cli</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Data\freeze.zip" />
-    <None Remove="Data\shock.zip" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\freeze.zip" />
-    <EmbeddedResource Include="Data\shock.zip" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
@@ -23,6 +15,7 @@
     <ProjectReference Include="..\RhythmCodex.Djmain\RhythmCodex.Djmain.csproj" />
     <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj" />
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Ssq.Test\RhythmCodex.Ssq.Test.csproj" />
     <ProjectReference Include="..\RhythmCodex.Ssq\RhythmCodex.Ssq.csproj" />
     <ProjectReference Include="..\RhythmCodex.Stepmania\RhythmCodex.Stepmania.csproj" />
   </ItemGroup>

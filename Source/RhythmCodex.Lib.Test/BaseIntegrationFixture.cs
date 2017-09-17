@@ -3,12 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
-using Moq;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex
 {
+    /// <summary>
+    /// Base test fixture for all integration tests that use a simple container.
+    /// </summary>
     public class BaseIntegrationFixture<TSubject> : BaseTestFixture
     {
         public BaseIntegrationFixture()
@@ -44,11 +46,17 @@ namespace RhythmCodex
         }
         
         private readonly Lazy<IContainer> _container;
-        protected IContainer Container => _container.Value;
-        
+        private IContainer Container => _container.Value;
         private readonly Lazy<TSubject> _subject;
+        
+        /// <summary>
+        /// Gets the test subject from the container.
+        /// </summary>
         protected TSubject Subject => _subject.Value;
 
+        /// <summary>
+        /// Gets an object from the container of the specified type.
+        /// </summary>
         protected TObject Resolve<TObject>() => Container.Resolve<TObject>();
     }
 }

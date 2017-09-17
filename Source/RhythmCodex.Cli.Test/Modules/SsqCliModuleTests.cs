@@ -12,11 +12,14 @@ namespace RhythmCodex.Cli.Modules
     {
         [Test]
         [Explicit("Writes output to the desktop.")]
-        public void Test1()
+        [TestCase("freeze")]
+        [TestCase("shock")]
+        [TestCase("solo")]
+        public void Test1(string name)
         {
             // Arrange.
-            const string archiveFileName = "RhythmCodex.Cli.Data.freeze.zip";
-            const string inputFileName = "freeze.ssq";
+            var archiveFileName = $"Ssq.{name}.zip";
+            var inputFileName = $"{name}.ssq";
             
             var inputFile = GetArchiveResource(archiveFileName).Single().Value;
             FileSystem.WriteAllBytes(inputFileName, inputFile);
@@ -34,9 +37,9 @@ namespace RhythmCodex.Cli.Modules
                 .Execute(args);
             
             // Assert.
-            var outputFileName = $"{Path.DirectorySeparatorChar}freeze.ssq.sm";
+            var outputFileName = $"{Path.DirectorySeparatorChar}{name}.ssq.sm";
             File.WriteAllBytes(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "output.sm"), 
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{name}.sm"), 
                 FileSystem.ReadAllBytes(outputFileName));
         }
     }

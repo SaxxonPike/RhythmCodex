@@ -39,5 +39,8 @@ namespace RhythmCodex.Ssq.Converters
                     return null;
             }
         }
+
+        public int PanelCount => 6;
+        public int PlayerCount => 1;
     }
 }

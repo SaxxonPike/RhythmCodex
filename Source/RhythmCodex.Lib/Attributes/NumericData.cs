@@ -23,6 +23,7 @@
         JudgeSound,
         Phrase,
         SourceCommand,
-        SourceData
+        SourceData,
+        Difficulty
     }
 }

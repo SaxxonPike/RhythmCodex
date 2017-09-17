@@ -15,7 +15,10 @@ namespace RhythmCodex.Ssq.Converters
         private readonly IStepEventDecoder _stepEventDecoder;
         private readonly ITriggerEventDecoder _triggerEventDecoder;
 
-        public SsqEventDecoder(ITimingEventDecoder timingEventDecoder, IStepEventDecoder stepEventDecoder, ITriggerEventDecoder triggerEventDecoder)
+        public SsqEventDecoder(
+            ITimingEventDecoder timingEventDecoder, 
+            IStepEventDecoder stepEventDecoder, 
+            ITriggerEventDecoder triggerEventDecoder)
         {
             _timingEventDecoder = timingEventDecoder;
             _stepEventDecoder = stepEventDecoder;
@@ -26,10 +29,11 @@ namespace RhythmCodex.Ssq.Converters
             IEnumerable<Timing> timings,
             IEnumerable<Step> steps, 
             IEnumerable<Trigger> triggers,
+            IPanelMapper panelMapper,
             int ticksPerSecond)
         {
             return _timingEventDecoder.Decode(timings, ticksPerSecond)
-                .Concat(_stepEventDecoder.Decode(steps))
+                .Concat(_stepEventDecoder.Decode(steps, panelMapper))
                 .Concat(_triggerEventDecoder.Decode(triggers))
                 .OrderBy(ev => ev[NumericData.MetricOffset])
                 .AsList();

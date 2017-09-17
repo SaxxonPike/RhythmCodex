@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <AssemblyName>RhythmCodex.Test.Data</AssemblyName>
+    <RootNamespace>RhythmCodex.Test</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Djmain\chart.zip" />
+    <EmbeddedResource Include="Data\Ssq\freeze.zip" />
+    <EmbeddedResource Include="Data\Ssq\shock.zip" />
+    <EmbeddedResource Include="Data\Ssq\solo.zip" />
+  </ItemGroup>
+</Project>

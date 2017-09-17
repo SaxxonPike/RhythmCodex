@@ -10,6 +10,7 @@ namespace RhythmCodex.Ssq.Converters
             IEnumerable<Timing> timings,
             IEnumerable<Step> steps,
             IEnumerable<Trigger> triggers,
+            IPanelMapper panelMapper,
             int ticksPerSecond);
     }
 }
