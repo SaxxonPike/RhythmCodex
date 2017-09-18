@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ISsqDecoder
     {
-        IList<IChart> Decode(IEnumerable<IChunk> data);
+        IList<IChart> Decode(IEnumerable<Chunk> data);
     }
 }

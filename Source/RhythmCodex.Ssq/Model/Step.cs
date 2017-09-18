@@ -3,7 +3,7 @@
 namespace RhythmCodex.Ssq.Model
 {
     [Model]
-    public class Step : IStep
+    public class Step
     {
         public int MetricOffset { get; set; }
         public byte Panels { get; set; }

@@ -3,7 +3,7 @@
 namespace RhythmCodex.Ssq.Model
 {
     [Model]
-    public class Chunk : IChunk
+    public class Chunk
     {
         public short Parameter0 { get; set; }
         public short Parameter1 { get; set; }

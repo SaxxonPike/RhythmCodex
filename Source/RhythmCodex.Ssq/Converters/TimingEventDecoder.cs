@@ -10,8 +10,11 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class TimingEventDecoder : ITimingEventDecoder
     {
-        public IEnumerable<IEvent> Decode(IEnumerable<Timing> timings, int ticksPerSecond)
+        public IEnumerable<IEvent> Decode(TimingChunk timingChunk)
         {
+            var timings = timingChunk.Timings;
+            var ticksPerSecond = timingChunk.Rate;
+            
             var orderedTimings = timings
                 .OrderBy(t => t.LinearOffset)
                 .ThenBy(t => t.MetricOffset)

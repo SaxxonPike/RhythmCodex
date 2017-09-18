@@ -8,7 +8,7 @@ namespace RhythmCodex.Ssq.Streamers
     [Service]
     public class ChunkStreamWriter : IChunkStreamWriter
     {
-        public void Write(Stream stream, IChunk chunk)
+        public void Write(Stream stream, Chunk chunk)
         {
             var writer = new BinaryWriter(stream);
             

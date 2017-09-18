@@ -4,8 +4,8 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface IPanelMapper
     {
-        IPanelMapping Map(int panel);
-        int? Map(IPanelMapping mapping);
+        PanelMapping Map(int panel);
+        int? Map(PanelMapping mapping);
         int PanelCount { get; }
         int PlayerCount { get; }
     }

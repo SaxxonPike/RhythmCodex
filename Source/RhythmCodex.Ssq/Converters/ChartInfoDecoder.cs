@@ -11,11 +11,13 @@ namespace RhythmCodex.Ssq.Converters
             switch (param1 & 0xFF)
             {
                 case 0x14:
-                    return "dance-single";
+                    return "Single";
                 case 0x16:
-                    return "dance-solo";
+                    return "Solo";
                 case 0x18:
-                    return "dance-double";
+                    return "Double";
+                case 0x24:
+                    return "Couple";
                 default:
                     return null;
             }
@@ -35,6 +37,9 @@ namespace RhythmCodex.Ssq.Converters
                     return "Beginner";
                 case 0x06:
                     return "Challenge";
+                case 0x10:
+                    // TODO: Couple charts use this value. This doesn't seem right.
+                    return "Medium";
                 default:
                     return "Edit";
             }
@@ -50,6 +55,8 @@ namespace RhythmCodex.Ssq.Converters
                     return 6;
                 case 0x18:
                     return 4;
+                case 0x24:
+                    return 4;
                 default:
                     return null;
             }
@@ -64,6 +71,8 @@ namespace RhythmCodex.Ssq.Converters
                 case 0x16:
                     return 1;
                 case 0x18:
+                    return 2;
+                case 0x24:
                     return 2;
                 default:
                     return null;

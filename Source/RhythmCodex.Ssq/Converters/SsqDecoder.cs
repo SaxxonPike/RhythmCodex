@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
@@ -17,6 +16,7 @@ namespace RhythmCodex.Ssq.Converters
         private readonly ITriggerChunkDecoder _triggerChunkDecoder;
         private readonly IPanelMapperSelector _panelMapperSelector;
         private readonly IChartInfoDecoder _chartInfoDecoder;
+        private readonly ISsqChunkFilter _ssqChunkFilter;
 
         public SsqDecoder(
             ISsqEventDecoder ssqEventDecoder,
@@ -24,7 +24,8 @@ namespace RhythmCodex.Ssq.Converters
             IStepChunkDecoder stepChunkDecoder,
             ITriggerChunkDecoder triggerChunkDecoder,
             IPanelMapperSelector panelMapperSelector,
-            IChartInfoDecoder chartInfoDecoder)
+            IChartInfoDecoder chartInfoDecoder,
+            ISsqChunkFilter ssqChunkFilter)
         {
             _ssqEventDecoder = ssqEventDecoder;
             _timingChunkDecoder = timingDecoder;
@@ -32,37 +33,32 @@ namespace RhythmCodex.Ssq.Converters
             _triggerChunkDecoder = triggerChunkDecoder;
             _panelMapperSelector = panelMapperSelector;
             _chartInfoDecoder = chartInfoDecoder;
+            _ssqChunkFilter = ssqChunkFilter;
         }
 
-        public IList<IChart> Decode(IEnumerable<IChunk> data)
+        public IList<IChart> Decode(IEnumerable<Chunk> data)
         {
             var chunks = data.AsList();
-            var timings = chunks.Where(c => c.Parameter0 == Parameter0.Timings)
-                .SelectMany(tc => _timingChunkDecoder.Convert(tc.Data))
-                .AsList();
-            var triggers = chunks.Where(c => c.Parameter0 == Parameter0.Triggers)
-                .SelectMany(tc => _triggerChunkDecoder.Convert(tc.Data))
-                .AsList();
-            var stepChunks = chunks.Where(c => c.Parameter0 == Parameter0.Steps)
-                .AsList();
-            var timingRate = chunks.First(c => c.Parameter0 == Parameter0.Timings).Parameter1;
 
-            var charts = stepChunks.Select(sc =>
+            var timings = _ssqChunkFilter.GetTimings(chunks);
+            var triggers = _ssqChunkFilter.GetTriggers(chunks);
+            var steps = _ssqChunkFilter.GetSteps(chunks);
+
+            var charts = steps.Select(sc =>
             {
-                var steps = _stepChunkDecoder.Convert(sc.Data).AsList();
-                var info = _chartInfoDecoder.Decode(sc.Parameter1);
+                var info = _chartInfoDecoder.Decode(sc.Id);
                 
                 return new Chart
                 {
                     Events = _ssqEventDecoder.Decode(
                         timings,
-                        steps,
+                        sc.Steps,
                         triggers,
-                        _panelMapperSelector.Select(steps, info),
-                        timingRate).AsList(),
-                    [NumericData.Id] = sc.Parameter1,
+                        _panelMapperSelector.Select(sc.Steps, info))
+                        .AsList(),
+                    [NumericData.Id] = sc.Id,
                     ["Difficulty"] = info.Difficulty,
-                    ["Type"] = info.Type
+                    ["Type"] = $"dance-{info.Type.ToLowerInvariant()}"
                 };
             });
 

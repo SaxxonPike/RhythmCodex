@@ -5,6 +5,6 @@ namespace RhythmCodex.Ssq.Streamers
 {
     public interface IChunkStreamReader
     {
-        IChunk Read(Stream stream);
+        Chunk Read(Stream stream);
     }
 }

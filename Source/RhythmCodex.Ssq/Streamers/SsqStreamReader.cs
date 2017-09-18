@@ -16,12 +16,12 @@ namespace RhythmCodex.Ssq.Streamers
             _chunkStreamReader = chunkStreamReader;
         }
         
-        public IList<IChunk> Read(Stream stream)
+        public IList<Chunk> Read(Stream stream)
         {
             return ReadInternal(stream).ToArray();
         }
 
-        private IEnumerable<IChunk> ReadInternal(Stream stream)
+        private IEnumerable<Chunk> ReadInternal(Stream stream)
         {
             while (true)
             {

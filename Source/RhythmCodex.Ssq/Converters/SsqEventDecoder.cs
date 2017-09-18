@@ -26,13 +26,12 @@ namespace RhythmCodex.Ssq.Converters
         }
         
         public IEnumerable<IEvent> Decode(
-            IEnumerable<Timing> timings,
+            TimingChunk timings,
             IEnumerable<Step> steps, 
             IEnumerable<Trigger> triggers,
-            IPanelMapper panelMapper,
-            int ticksPerSecond)
+            IPanelMapper panelMapper)
         {
-            return _timingEventDecoder.Decode(timings, ticksPerSecond)
+            return _timingEventDecoder.Decode(timings)
                 .Concat(_stepEventDecoder.Decode(steps, panelMapper))
                 .Concat(_triggerEventDecoder.Decode(triggers))
                 .OrderBy(ev => ev[NumericData.MetricOffset])
