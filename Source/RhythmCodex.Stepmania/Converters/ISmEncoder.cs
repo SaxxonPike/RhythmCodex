@@ -6,6 +6,6 @@ namespace RhythmCodex.Stepmania.Converters
 {
     public interface ISmEncoder
     {
-        IEnumerable<Command> Encode(IMetadata metaData, IEnumerable<IChart> charts);
+        IEnumerable<Command> Encode(ChartSet chartSet);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Attributes;
@@ -6,6 +7,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Stepmania.Converters;
+using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
 
 namespace RhythmCodex.Cli.Modules
@@ -106,7 +108,7 @@ namespace RhythmCodex.Cli.Modules
                     _logger.WriteLine($"Found {charts.Count} charts");
 
                     _logger.WriteLine("Encoding SM");
-                    var encoded = _smEncoder.Encode(new Metadata(), charts);
+                    var encoded = _smEncoder.Encode(new ChartSet { Metadata = new Metadata(), Charts = charts });
 
                     _logger.WriteLine($"Writing {outFileName}");
                     using (var outFile = _fileSystem.OpenWrite(outFilePath))

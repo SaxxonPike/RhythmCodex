@@ -97,15 +97,15 @@ namespace RhythmCodex.Stepmania.Converters
             };
         }
 
-        public IEnumerable<Command> Encode(IMetadata metaData, IEnumerable<IChart> charts)
+        public IEnumerable<Command> Encode(ChartSet chartSet)
         {
-            var chartList = charts.AsList();
+            var chartList = chartSet.Charts.AsList();
 
             var metaCommands = TagsToEncode
                 .Select(s => new Command
                 {
                     Name = s,
-                    Values = new[] {metaData[s] ?? string.Empty}
+                    Values = new[] {chartSet.Metadata[s] ?? string.Empty}
                 });
 
             var timingCommands = GetTimingCommands(chartList);
