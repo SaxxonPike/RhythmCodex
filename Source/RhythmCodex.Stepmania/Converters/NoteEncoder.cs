@@ -11,6 +11,13 @@ namespace RhythmCodex.Stepmania.Converters
     [Service]
     public class NoteEncoder : INoteEncoder
     {
+        private readonly ILogger _logger;
+
+        public NoteEncoder(ILogger logger)
+        {
+            _logger = logger;
+        }
+        
         public IEnumerable<Note> Encode(IEnumerable<IEvent> events)
         {
             var result = new List<Note>();
@@ -64,8 +71,31 @@ namespace RhythmCodex.Stepmania.Converters
                     }));
                 }
             }
-
+            
+            ApplyFreezeHeads(result);
             return result;
+        }
+
+        private void ApplyFreezeHeads(IEnumerable<Note> notes)
+        {
+            var freezeColumns = new HashSet<int>();
+            foreach (var note in notes.Reverse())
+            {
+                if (note.Type == NoteType.Tail)
+                {
+                    freezeColumns.Add(note.Column);                    
+                }
+                else if (note.Type == NoteType.Step && freezeColumns.Contains(note.Column))
+                {
+                    freezeColumns.Remove(note.Column);
+                    note.Type = NoteType.Freeze;
+                }
+            }
+            
+            foreach (var column in freezeColumns)
+            {
+                _logger.Warning($"Column {column} has a freeze tail but no suitable freeze head");
+            }
         }
     }
 }

@@ -69,9 +69,9 @@ namespace RhythmCodex
         }
 
         /// <inheritdoc />
-        public IEnumerable<string> GetFileNames(string path)
+        public IEnumerable<string> GetFileNames(string path, string pattern)
         {
-            throw new System.NotImplementedException();
+            yield return path;
         }
 
         /// <inheritdoc />

@@ -14,18 +14,18 @@ namespace RhythmCodex.Stepmania.Converters
         private readonly INoteEncoder _noteEncoder;
         private readonly INoteCommandStringEncoder _noteCommandStringEncoder;
         private readonly IGrooveRadarEncoder _grooveRadarEncoder;
-        private readonly INumberFormatter _numberFormatter;
+        private readonly ITimedCommandStringEncoder _timedCommandStringEncoder;
 
         public SmEncoder(
             INoteEncoder noteEncoder,
             INoteCommandStringEncoder noteCommandStringEncoder,
             IGrooveRadarEncoder grooveRadarEncoder,
-            INumberFormatter numberFormatter)
+            ITimedCommandStringEncoder timedCommandStringEncoder)
         {
             _noteEncoder = noteEncoder;
             _noteCommandStringEncoder = noteCommandStringEncoder;
             _grooveRadarEncoder = grooveRadarEncoder;
-            _numberFormatter = numberFormatter;
+            _timedCommandStringEncoder = timedCommandStringEncoder;
         }
 
         private static readonly IEnumerable<string> TagsToEncode = new[]
@@ -54,46 +54,29 @@ namespace RhythmCodex.Stepmania.Converters
         private IEnumerable<Command> GetTimingCommands(IEnumerable<IChart> charts)
         {
             var chartList = charts.AsList();
-            var places = StepmaniaConstants.DecimalPlaces;
 
             var bpms = chartList
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
-                .Select(g => g.First());
+                .Select(g => g.First())
+                .Select(ev => new TimedEvent { Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value });
 
             yield return new Command
             {
                 Name = ChartTag.BpmsTag,
-                Values = new[]
-                {
-                    string.Join(",",
-                        bpms.Select(ev =>
-                        {
-                            var key = _numberFormatter.Format(ev[NumericData.MetricOffset].Value * 4, places);
-                            var value = _numberFormatter.Format(ev[NumericData.Bpm].Value, places);
-                            return $"{key}={value}";
-                        }))
-                }
+                Values = new[] {_timedCommandStringEncoder.Encode(bpms)}
             };
 
             var stops = chartList
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Stop] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
-                .Select(g => g.First());
+                .Select(g => g.First())
+                .Select(ev => new TimedEvent { Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Stop].Value });
 
             yield return new Command
             {
                 Name = ChartTag.StopsTag,
-                Values = new[]
-                {
-                    string.Join(",",
-                        stops.Select(ev =>
-                        {
-                            var key = _numberFormatter.Format(ev[NumericData.MetricOffset].Value * 4, places);
-                            var value = _numberFormatter.Format(ev[NumericData.Stop].Value, places);
-                            return $"{key}={value}";
-                        }))
-                }
+                Values = new[] {_timedCommandStringEncoder.Encode(stops)}
             };
         }
 

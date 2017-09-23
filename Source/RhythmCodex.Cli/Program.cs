@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,13 +23,31 @@ namespace RhythmCodex.Cli
         
         public static void Main(string[] args)
         {
-            BuildContainer().Resolve<IApp>().Run(args);
+            var container = BuildContainer();
+            var app = container.Resolve<IApp>();
+            
+            if (Debugger.IsAttached)
+            {
+                app.Run(args);
+            }
+            else
+            {
+                try
+                {
+                    app.Run(args);
+                }
+                catch (Exception e)
+                {
+                    container.Resolve<ILogger>()?.Error(e.ToString());
+                }
+            }
         }
 
         private static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(Console.Out).As<TextWriter>();
+            builder.RegisterType<TextWriterLogger>().As<ILogger>();
 
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
             {

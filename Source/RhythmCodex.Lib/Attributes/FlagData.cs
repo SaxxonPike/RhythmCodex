@@ -9,6 +9,9 @@
         Measure,
         FreeZone,
         Scratch,
-        End
+        End,
+        Roll,
+        Lift,
+        Fake
     }
 }

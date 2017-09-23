@@ -16,12 +16,12 @@ namespace RhythmCodex.Stepmania.Converters
         private static readonly BigInteger MaximumQuantization = 192;
 
         private readonly IQuantizer _quantizer;
-        
+
         public NoteCommandStringEncoder(IQuantizer quantizer)
         {
             _quantizer = quantizer;
         }
-        
+
         public string Encode(IEnumerable<Note> notes)
         {
             var resultBuilder = new StringBuilder();
@@ -31,7 +31,7 @@ namespace RhythmCodex.Stepmania.Converters
             {
                 var measureBuilder = new StringBuilder();
                 measureBuilder.AppendLine();
-                
+
                 foreach (var row in measure)
                     measureBuilder.AppendLine(new string(row));
 
@@ -57,14 +57,16 @@ namespace RhythmCodex.Stepmania.Converters
             {
                 var measure = measures.FirstOrDefault(m => m.Key == measureNumber) ?? Enumerable.Empty<Note>();
                 var measureNotes = measure.ToArray();
-                var quantization = _quantizer.GetQuantization(measureNotes.Select(n => n.MetricOffset), MinimumQuantization, MaximumQuantization);
+                var quantization = _quantizer.GetQuantization(measureNotes.Select(n => n.MetricOffset),
+                    MinimumQuantization, MaximumQuantization);
                 var half = new BigRational(1, quantization * 2);
-                
-                var grid = Enumerable.Range(0, quantization).Select(i => Enumerable.Repeat(NoteType.None, columns).ToArray()).ToArray();
+
+                var grid = Enumerable.Range(0, quantization)
+                    .Select(i => Enumerable.Repeat(NoteType.None, columns).ToArray()).ToArray();
 
                 foreach (var note in measureNotes)
                 {
-                    var row = (int)(note.MetricOffset.GetFractionPart() * quantization + half);
+                    var row = (int) (note.MetricOffset.GetFractionPart() * quantization + half);
                     if (row < 0)
                         row = 0;
                     if (row >= quantization)

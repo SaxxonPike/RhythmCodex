@@ -44,7 +44,12 @@ namespace RhythmCodex.Infrastructure
         }
 
         /// <inheritdoc />
-        public IEnumerable<string> GetFileNames(string path) => Directory.GetFiles(path).Select(Path.GetFileName);
+        public IEnumerable<string> GetFileNames(string path, string pattern)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                path = ".\\";
+            return Directory.GetFiles(path, pattern);            
+        }
 
         /// <inheritdoc />
         public IEnumerable<string> GetDirectoryNames(string path) => Directory.GetDirectories(path).Select(Path.GetFileName);
@@ -52,11 +57,11 @@ namespace RhythmCodex.Infrastructure
         /// <inheritdoc />
         public string GetDirectory(string path)
         {
-            var unrootedPath = Path.IsPathRooted(path)
-                ? path.Substring(Path.GetPathRoot(path).Length)
-                : path;
+//            var rootedPath = Path.IsPathRooted(path)
+//                ? path
+//                : Path.Combine(Path.GetPathRoot(CurrentPath), path);
 
-            return Path.GetDirectoryName(unrootedPath);
+            return Path.GetDirectoryName(path);
         }
 
         /// <inheritdoc />

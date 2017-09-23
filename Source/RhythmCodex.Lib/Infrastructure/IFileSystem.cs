@@ -48,7 +48,7 @@ namespace RhythmCodex.Infrastructure
         /// <summary>
         /// Get all file names from the specified directory path.
         /// </summary>
-        IEnumerable<string> GetFileNames(string path);
+        IEnumerable<string> GetFileNames(string path, string pattern);
         
         /// <summary>
         /// Get all subdirectory names from the specified directory path.

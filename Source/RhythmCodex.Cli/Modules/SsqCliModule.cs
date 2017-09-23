@@ -9,13 +9,14 @@ using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
+using RhythmCodex.Extensions;
 
 namespace RhythmCodex.Cli.Modules
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class SsqCliModule : ICliModule
     {
-        private readonly TextWriter _logger;
+        private readonly ILogger _logger;
         private readonly ISsqDecoder _ssqDecoder;
         private readonly ISsqStreamReader _ssqStreamReader;
         private readonly ISmEncoder _smEncoder;
@@ -23,7 +24,7 @@ namespace RhythmCodex.Cli.Modules
         private readonly IFileSystem _fileSystem;
 
         public SsqCliModule(
-            TextWriter logger,
+            ILogger logger,
             ISsqDecoder ssqDecoder,
             ISsqStreamReader ssqStreamReader,
             ISmEncoder smEncoder,
@@ -58,11 +59,16 @@ namespace RhythmCodex.Cli.Modules
             }
         };
 
-        private static string[] GetInputFiles(IDictionary<string, string[]> args)
+        private string[] GetInputFiles(IDictionary<string, string[]> args)
         {
-            return (args.ContainsKey(string.Empty)
-                ? args[string.Empty]
+            var files = (args.ContainsKey(string.Empty)
+                ? args[string.Empty].SelectMany(a => _fileSystem.GetFileNames(a)).ToArray()
                 : Enumerable.Empty<string>()).ToArray();
+            foreach (var inputFile in files)
+            {
+                _logger.Debug($"Input file: {inputFile}");
+            }
+            return files;
         }
 
         private string GetOutputDirectory(IDictionary<string, string[]> args)
@@ -78,7 +84,7 @@ namespace RhythmCodex.Cli.Modules
 
         private void Encode(IDictionary<string, string[]> args)
         {
-            _logger.WriteLine("Todo: write encoder.");
+            _logger.Warning("Todo: write encoder.");
         }
 
         private void Decode(IDictionary<string, string[]> args)
@@ -88,29 +94,29 @@ namespace RhythmCodex.Cli.Modules
 
             if (!inputFiles.Any())
             {
-                _logger.WriteLine("No input files specified.");
+                _logger.Error("No input files specified.");
                 return;
             }
 
-            _logger.WriteLine($"Using output directory: {outputDirectory}");
+            _logger.Info($"Using output directory: {outputDirectory}");
 
             foreach (var inputFile in inputFiles)
             {
-                _logger.WriteLine($"Converting {inputFile}");
+                _logger.Info($"Converting {inputFile}");
                 using (var inFile = _fileSystem.OpenRead(inputFile))
                 {
                     var outFileName = _fileSystem.GetFileName(inputFile) + ".sm";
                     var outFilePath = _fileSystem.CombinePath(outputDirectory, outFileName);
 
                     var chunks = _ssqStreamReader.Read(inFile);
-                    _logger.WriteLine($"Found {chunks.Count} total chunks");
+                    _logger.Debug($"Found {chunks.Count} total chunks");
                     var charts = _ssqDecoder.Decode(chunks);
-                    _logger.WriteLine($"Found {charts.Count} charts");
+                    _logger.Debug($"Found {charts.Count} charts");
 
-                    _logger.WriteLine("Encoding SM");
+                    _logger.Debug("Encoding SM");
                     var encoded = _smEncoder.Encode(new ChartSet { Metadata = new Metadata(), Charts = charts });
 
-                    _logger.WriteLine($"Writing {outFileName}");
+                    _logger.Info($"Writing {outFileName}");
                     using (var outFile = _fileSystem.OpenWrite(outFilePath))
                     {
                         _smStreamWriter.Write(outFile, encoded);

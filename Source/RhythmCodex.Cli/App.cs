@@ -9,13 +9,13 @@ namespace RhythmCodex.Cli
     // ReSharper disable once ClassNeverInstantiated.Global
     public class App : IApp
     {
-        private readonly TextWriter _logger;
+        private readonly TextWriter _console;
         private readonly IEnumerable<ICliModule> _modules;
         private readonly IArgParser _argParser;
 
-        public App(TextWriter logger, IEnumerable<ICliModule> modules, IArgParser argParser)
+        public App(TextWriter console, IEnumerable<ICliModule> modules, IArgParser argParser)
         {
-            _logger = logger;
+            _console = console;
             _modules = modules;
             _argParser = argParser;
         }
@@ -63,34 +63,34 @@ namespace RhythmCodex.Cli
 
         private void OutputCommandList(ICliModule module)
         {
-            _logger.WriteLine($"{AppName}");
-            _logger.WriteLine($"Available commands for {module.Name}:");
-            _logger.WriteLine();
+            _console.WriteLine($"{AppName}");
+            _console.WriteLine($"Available commands for {module.Name}:");
+            _console.WriteLine();
             
             foreach (var command in module.Commands.OrderBy(c => c.Name))
             {
-                _logger.WriteLine($"{command.Name.PadRight(20)}{command.Description}");
+                _console.WriteLine($"{command.Name.PadRight(20)}{command.Description}");
             }
             
-            _logger.WriteLine();
-            _logger.WriteLine("To learn more about a command:");
-            _logger.WriteLine($"{AppName} {module.Name.ToLower()} <command>");
+            _console.WriteLine();
+            _console.WriteLine("To learn more about a command:");
+            _console.WriteLine($"{AppName} {module.Name.ToLower()} <command>");
         }
 
         private void OutputModuleList()
         {
-            _logger.WriteLine($"{AppName}");
-            _logger.WriteLine("Available modules:");
-            _logger.WriteLine();
+            _console.WriteLine($"{AppName}");
+            _console.WriteLine("Available modules:");
+            _console.WriteLine();
 
             foreach (var module in _modules)
             {
-                _logger.WriteLine($"{module.Name.PadRight(20)}{module.Description}");
+                _console.WriteLine($"{module.Name.PadRight(20)}{module.Description}");
             }
             
-            _logger.WriteLine();
-            _logger.WriteLine("To obtain a list of commands for a module:");
-            _logger.WriteLine($"{AppName} <module>");
+            _console.WriteLine();
+            _console.WriteLine("To obtain a list of commands for a module:");
+            _console.WriteLine($"{AppName} <module>");
         }
     }
 }
