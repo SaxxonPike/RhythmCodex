@@ -12,9 +12,6 @@ namespace RhythmCodex.Cli.Modules
     public class SsqCliModuleTests : AppIntegrationFixture
     {
         [Test]
-        [TestCase("freeze")]
-        [TestCase("shock")]
-        [TestCase("solo")]
         public void Decode_DoesNotThrowOnValidData(string name)
         {
             // Arrange.

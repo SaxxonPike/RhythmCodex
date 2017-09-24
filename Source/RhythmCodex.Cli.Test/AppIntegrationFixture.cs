@@ -14,6 +14,7 @@ using RhythmCodex.Stepmania.Streamers;
 namespace RhythmCodex.Cli
 {
     [DoNotCover]
+    [Explicit]
     public class AppIntegrationFixture : BaseTestFixture
     {
         private static readonly IEnumerable<Type> IocTypes = new[]
