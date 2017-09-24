@@ -5,7 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using RhythmCodex.Charting;
+using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Ssq.Converters;
+using RhythmCodex.Stepmania.Streamers;
 
 namespace RhythmCodex.Cli
 {
@@ -15,23 +19,20 @@ namespace RhythmCodex.Cli
         private static readonly IEnumerable<Type> IocTypes = new[]
         {
             typeof(App),
-            typeof(Charting.Chart),
-            typeof(Djmain.Model.DjmainChunk),
-            typeof(Ssq.Converters.SsqDecoder),
-            typeof(Stepmania.Streamers.SmStreamReader)
+            typeof(Chart),
+            typeof(DjmainChunk),
+            typeof(SsqDecoder),
+            typeof(SmStreamReader)
         };
-        
+
         public static void Main(string[] args)
         {
             var container = BuildContainer();
             var app = container.Resolve<IApp>();
-            
+
             if (Debugger.IsAttached)
-            {
                 app.Run(args);
-            }
             else
-            {
                 try
                 {
                     app.Run(args);
@@ -40,7 +41,6 @@ namespace RhythmCodex.Cli
                 {
                     container.Resolve<ILogger>()?.Error(e.ToString());
                 }
-            }
         }
 
         private static IContainer BuildContainer()
@@ -50,12 +50,10 @@ namespace RhythmCodex.Cli
             builder.RegisterType<TextWriterLogger>().As<ILogger>();
 
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
-            {
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
-                    .AsImplementedInterfaces();                
-            }
-            
+                    .AsImplementedInterfaces();
+
             return builder.Build();
         }
     }

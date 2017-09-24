@@ -13,6 +13,16 @@ namespace RhythmCodex.Djmain.Streamers
             return ReadDpcmStream(stream).ToArray();
         }
 
+        public IList<byte> ReadPcm16(Stream stream)
+        {
+            return DecodePcm16Stream(stream).ToArray();
+        }
+
+        public IList<byte> ReadPcm8(Stream stream)
+        {
+            return DecodePcm8Stream(stream).ToArray();
+        }
+
         private static IEnumerable<byte> ReadDpcmStream(Stream stream)
         {
             const int marker = DjmainConstants.DpcmEndMarker;
@@ -37,11 +47,6 @@ namespace RhythmCodex.Djmain.Streamers
             }
         }
 
-        public IList<byte> ReadPcm16(Stream stream)
-        {
-            return DecodePcm16Stream(stream).ToArray();
-        }
-
         private static IEnumerable<byte> DecodePcm16Stream(Stream stream)
         {
             const long marker = DjmainConstants.Pcm16EndMarker;
@@ -56,12 +61,12 @@ namespace RhythmCodex.Djmain.Streamers
                 var newByte = stream.ReadByte();
                 if (newByte == -1)
                     newByte = 0x00;
-                buffer1 |= (long)newByte << 48;
+                buffer1 |= (long) newByte << 48;
 
                 newByte = stream.ReadByte();
                 if (newByte == -1)
                     newByte = 0x80;
-                buffer1 |= (long)newByte << 56;
+                buffer1 |= (long) newByte << 56;
             }
 
             // Preload buffer.
@@ -71,15 +76,10 @@ namespace RhythmCodex.Djmain.Streamers
             // Load sample.
             while (buffer0 != marker || buffer1 != marker)
             {
-                yield return unchecked((byte)buffer0);
-                yield return unchecked((byte)(buffer0 >> 8));
+                yield return unchecked((byte) buffer0);
+                yield return unchecked((byte) (buffer0 >> 8));
                 Fetch();
             }
-        }
-
-        public IList<byte> ReadPcm8(Stream stream)
-        {
-            return DecodePcm8Stream(stream).ToArray();
         }
 
         private static IEnumerable<byte> DecodePcm8Stream(Stream stream)
@@ -102,7 +102,7 @@ namespace RhythmCodex.Djmain.Streamers
             // Load sample.
             while (buffer != marker)
             {
-                yield return unchecked((byte)buffer);
+                yield return unchecked((byte) buffer);
                 Fetch();
             }
         }

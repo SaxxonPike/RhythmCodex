@@ -58,7 +58,7 @@ namespace RhythmCodex.Stepmania.Converters
                         break;
                 }
 
-                yield return result;                
+                yield return result;
             }
         }
     }

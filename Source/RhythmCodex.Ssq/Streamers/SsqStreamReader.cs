@@ -15,7 +15,7 @@ namespace RhythmCodex.Ssq.Streamers
         {
             _chunkStreamReader = chunkStreamReader;
         }
-        
+
         public IList<Chunk> Read(Stream stream)
         {
             return ReadInternal(stream).ToArray();
@@ -28,9 +28,9 @@ namespace RhythmCodex.Ssq.Streamers
                 var chunk = _chunkStreamReader.Read(stream);
                 if (chunk == null)
                     yield break;
-                
+
                 yield return chunk;
-            }            
+            }
         }
     }
 }

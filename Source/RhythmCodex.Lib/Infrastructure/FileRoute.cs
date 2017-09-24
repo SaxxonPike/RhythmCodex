@@ -6,7 +6,7 @@
     {
         /// <inheritdoc />
         public string Name { get; set; }
-        
+
         /// <inheritdoc />
         public byte[] Data { get; set; }
     }

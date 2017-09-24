@@ -20,7 +20,7 @@ namespace RhythmCodex.Ssq.Converters
         public IEnumerable<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
         {
             var stepList = steps.AsList();
-            
+
             foreach (var step in stepList)
             {
                 var panels = step.Panels;
@@ -64,10 +64,10 @@ namespace RhythmCodex.Ssq.Converters
                     {
                         [NumericData.MetricOffset] = metricOffset,
                         [NumericData.SourceColumn] = panelNumber,
-                        [NumericData.Column] = isMapped ? mappedPanel.Panel : (BigRational?)null,
-                        [NumericData.Player] = isMapped ? mappedPanel.Player : (BigRational?)null,
-                        [FlagData.Freeze] = freeze ? true : (bool?)null,
-                        [FlagData.Note] = freeze ? (bool?)null : true
+                        [NumericData.Column] = isMapped ? mappedPanel.Panel : (BigRational?) null,
+                        [NumericData.Player] = isMapped ? mappedPanel.Player : (BigRational?) null,
+                        [FlagData.Freeze] = freeze ? true : (bool?) null,
+                        [FlagData.Note] = freeze ? (bool?) null : true
                     };
                 }
             }

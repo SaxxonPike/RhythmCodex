@@ -8,7 +8,9 @@ namespace RhythmCodex.Extensions
     public static class ChartExtensions
     {
         private static BigRational GetLinearRate(BigRational bpm)
-            => new BigRational(bpm.Denominator * 240, bpm.Numerator);
+        {
+            return new BigRational(bpm.Denominator * 240, bpm.Numerator);
+        }
 
         public static void PopulateMetricOffsets(this IChart chart)
         {

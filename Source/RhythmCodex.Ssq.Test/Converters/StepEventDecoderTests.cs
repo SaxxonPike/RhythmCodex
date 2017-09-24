@@ -21,13 +21,13 @@ namespace RhythmCodex.Ssq.Converters
                 var splitter = new StepPanelSplitter();
                 mock.Setup(x => x.Split(It.IsAny<int>())).Returns<int>(splitter.Split);
             });
-            
+
             var panelMapper = Mock<IPanelMapper>(mock =>
             {
-                mock.Setup(x => x.Map(0)).Returns<int>(i => new PanelMapping { Panel = 11, Player = 1 });
-                mock.Setup(x => x.Map(1)).Returns<int>(i => new PanelMapping { Panel = 22, Player = 2 });
-                mock.Setup(x => x.Map(2)).Returns<int>(i => new PanelMapping { Panel = 33, Player = 3 });
-                mock.Setup(x => x.Map(3)).Returns<int>(i => new PanelMapping { Panel = 44, Player = 4 });
+                mock.Setup(x => x.Map(0)).Returns<int>(i => new PanelMapping {Panel = 11, Player = 1});
+                mock.Setup(x => x.Map(1)).Returns<int>(i => new PanelMapping {Panel = 22, Player = 2});
+                mock.Setup(x => x.Map(2)).Returns<int>(i => new PanelMapping {Panel = 33, Player = 3});
+                mock.Setup(x => x.Map(3)).Returns<int>(i => new PanelMapping {Panel = 44, Player = 4});
             });
 
             var steps = new[]
@@ -96,7 +96,7 @@ namespace RhythmCodex.Ssq.Converters
 
             // Act.
             var result = Subject.Decode(steps, panelMapper.Object).AsList();
-            
+
             // Assert.
             result.Should().HaveCount(expected.Length);
             var resultMatches = Enumerable.Range(0, expected.Length)

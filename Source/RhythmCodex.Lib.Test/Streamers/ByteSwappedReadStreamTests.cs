@@ -18,7 +18,7 @@ namespace RhythmCodex.Streamers
             var subject = new ByteSwappedReadStream(stream);
             var result = new byte[3];
             subject.Read(result, 0, result.Length);
-            
+
             // Assert.
             result.ShouldAllBeEquivalentTo(new[] {data[1], data[0], data[3]});
         }

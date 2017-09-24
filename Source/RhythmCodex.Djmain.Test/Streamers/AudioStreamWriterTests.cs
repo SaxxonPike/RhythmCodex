@@ -36,35 +36,6 @@ namespace RhythmCodex.Djmain.Streamers
         }
 
         [Test]
-        public void WritePcm8_WritesAllDataPlusEndMarker()
-        {
-            // Arrange.
-            var data = new byte[]
-            {
-                0x12, 0x34, 0x56, 0x78
-            };
-
-            var expected = new byte[]
-            {
-                0x12, 0x34, 0x56, 0x78,
-                0x80, 0x80, 0x80, 0x80,
-                0x80, 0x80, 0x80, 0x80
-            };
-
-            // Act.
-            byte[] output;
-            using (var mem = new MemoryStream())
-            {
-                Subject.WritePcm8(mem, data);
-                mem.Flush();
-                output = mem.ToArray();
-            }
-
-            // Assert.
-            output.ShouldAllBeEquivalentTo(expected);
-        }
-
-        [Test]
         public void WritePcm16_WritesAllDataPlusEndMarker()
         {
             // Arrange.
@@ -126,5 +97,33 @@ namespace RhythmCodex.Djmain.Streamers
             output.ShouldAllBeEquivalentTo(expected);
         }
 
+        [Test]
+        public void WritePcm8_WritesAllDataPlusEndMarker()
+        {
+            // Arrange.
+            var data = new byte[]
+            {
+                0x12, 0x34, 0x56, 0x78
+            };
+
+            var expected = new byte[]
+            {
+                0x12, 0x34, 0x56, 0x78,
+                0x80, 0x80, 0x80, 0x80,
+                0x80, 0x80, 0x80, 0x80
+            };
+
+            // Act.
+            byte[] output;
+            using (var mem = new MemoryStream())
+            {
+                Subject.WritePcm8(mem, data);
+                mem.Flush();
+                output = mem.ToArray();
+            }
+
+            // Assert.
+            output.ShouldAllBeEquivalentTo(expected);
+        }
     }
 }

@@ -11,16 +11,14 @@ namespace RhythmCodex.Djmain.Converters
     [Service]
     public class DjmainSoundDecoder
     {
-        private readonly IAudioDecoder _audioDecoder;
-
         private static readonly Lazy<BigRational[]> VolumeTable = new Lazy<BigRational[]>(() =>
         {
             const double referenceDecibels = -36d;
             const double referenceVolume = 0x40;
             const double attenuation = 20d;
 
-            return Enumerable.Range(0, 256).Select(i => 
-                new BigRational(Math.Pow(10d, referenceDecibels * i / referenceVolume / attenuation)))
+            return Enumerable.Range(0, 256).Select(i =>
+                    new BigRational(Math.Pow(10d, referenceDecibels * i / referenceVolume / attenuation)))
                 .ToArray();
         });
 
@@ -30,9 +28,11 @@ namespace RhythmCodex.Djmain.Converters
             const int range = 0xE;
 
             return Enumerable.Range(0, 15).Select(i =>
-                BigRational.One - new BigRational(Math.Max(0, i - minimum), range))
+                    BigRational.One - new BigRational(Math.Max(0, i - minimum), range))
                 .ToArray();
         });
+
+        private readonly IAudioDecoder _audioDecoder;
 
         public DjmainSoundDecoder(IAudioDecoder audioDecoder)
         {
@@ -71,7 +71,7 @@ namespace RhythmCodex.Djmain.Converters
 
                 yield return new Sound
                 {
-                    Samples = new List<ISample> { sample },
+                    Samples = new List<ISample> {sample},
                     [NumericData.Volume] = VolumeTable.Value[info.Volume],
                     [NumericData.Panning] = PanningTable.Value[info.Panning & 0xF],
                     [NumericData.Rate] = DjmainConstants.SampleRateMultiplier * info.Frequency

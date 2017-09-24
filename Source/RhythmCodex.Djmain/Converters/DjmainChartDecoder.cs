@@ -22,18 +22,16 @@ namespace RhythmCodex.Djmain.Converters
         private static IEnumerable<IEvent> DecodeEvents(IEnumerable<IDjmainChartEvent> events)
         {
             var noteCount = true;
-            
+
             foreach (var ev in events)
             {
                 var command = ev.Param0 & 0xF;
-                
+
                 if (noteCount)
-                {
                     if (ev.Offset != 0 || command != 0)
                         noteCount = false;
                     else
                         continue;
-                }
 
                 var offset = new BigRational(ev.Offset, 58);
                 var param0 = ev.Param0 >> 4;
@@ -143,7 +141,6 @@ namespace RhythmCodex.Djmain.Converters
                                     [NumericData.LinearOffset] = offset,
                                     [NumericData.LoadSound] = param1,
                                     [NumericData.Player] = param0 & 1
-
                                 };
                                 break;
                         }

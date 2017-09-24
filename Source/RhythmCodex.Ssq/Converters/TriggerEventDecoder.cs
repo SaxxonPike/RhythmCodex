@@ -14,7 +14,7 @@ namespace RhythmCodex.Ssq.Converters
         {
             return triggers.Select(trigger => new Event
             {
-                [NumericData.MetricOffset] = (BigRational)trigger.MetricOffset / SsqConstants.MeasureLength,
+                [NumericData.MetricOffset] = (BigRational) trigger.MetricOffset / SsqConstants.MeasureLength,
                 [NumericData.Trigger] = trigger.Id
             });
         }

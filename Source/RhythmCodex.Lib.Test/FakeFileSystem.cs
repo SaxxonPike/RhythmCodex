@@ -1,32 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex
 {
     /// <summary>
-    /// A file system that doesn't actually write to disk.
+    ///     A file system that doesn't actually write to disk.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class FakeFileSystem : IFileSystem
     {
+        private readonly IDictionary<string, MemoryStream> _files = new Dictionary<string, MemoryStream>();
         private readonly IFileSystem _fileSystem;
 
         public FakeFileSystem(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
         }
-        
-        private readonly IDictionary<string, MemoryStream> _files = new Dictionary<string, MemoryStream>();
 
         /// <inheritdoc />
-        public string GetFileName(string path) => _fileSystem.GetFileName(path);
+        public string GetFileName(string path)
+        {
+            return _fileSystem.GetFileName(path);
+        }
 
         /// <inheritdoc />
         public Stream OpenRead(string path)
         {
-            if (!_files.ContainsKey(path)) 
+            if (!_files.ContainsKey(path))
                 throw new IOException($"File not found: {path}");
-            
+
             var result = new MemoryStream(_files[path].ToArray());
             return result;
         }
@@ -36,22 +42,25 @@ namespace RhythmCodex
         {
             if (_files.ContainsKey(path))
                 _files[path].Dispose();
-            
+
             var result = new MemoryStream();
             _files[path] = result;
             return result;
         }
 
         /// <inheritdoc />
-        public string CombinePath(params string[] paths) => _fileSystem.CombinePath(paths);
+        public string CombinePath(params string[] paths)
+        {
+            return _fileSystem.CombinePath(paths);
+        }
 
         /// <inheritdoc />
         public string CurrentPath => new string(Path.DirectorySeparatorChar, 1);
-        
+
         /// <inheritdoc />
         public byte[] ReadAllBytes(string path)
         {
-            if (!_files.ContainsKey(path)) 
+            if (!_files.ContainsKey(path))
                 throw new IOException($"File not found: {path}");
 
             return _files[path].ToArray();
@@ -71,19 +80,25 @@ namespace RhythmCodex
         /// <inheritdoc />
         public IEnumerable<string> GetFileNames(string path, string pattern)
         {
-            yield return path;
+            return _files.Where(f => f.Key.StartsWith(path, StringComparison.OrdinalIgnoreCase)).Select(f => f.Key);
         }
 
         /// <inheritdoc />
         public IEnumerable<string> GetDirectoryNames(string path)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public string GetDirectory(string path) => _fileSystem.GetDirectory(path);
+        public string GetDirectory(string path)
+        {
+            return _fileSystem.GetDirectory(path);
+        }
 
         /// <inheritdoc />
-        public string GetSafeFileName(string fileName) => _fileSystem.GetSafeFileName(fileName);
+        public string GetSafeFileName(string fileName)
+        {
+            return _fileSystem.GetSafeFileName(fileName);
+        }
     }
 }

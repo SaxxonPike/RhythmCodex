@@ -6,6 +6,17 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class ChartInfoDecoder : IChartInfoDecoder
     {
+        public ChartInfo Decode(int param1)
+        {
+            return new ChartInfo
+            {
+                Difficulty = GetDifficulty(param1),
+                PanelCount = GetPanelCount(param1) ?? 4,
+                PlayerCount = GetPlayerCount(param1) ?? 1,
+                Type = GetType(param1)
+            };
+        }
+
         private static string GetType(int param1)
         {
             switch (param1 & 0xFF)
@@ -22,7 +33,7 @@ namespace RhythmCodex.Ssq.Converters
                     return null;
             }
         }
-        
+
         private static string GetDifficulty(int param1)
         {
             switch ((param1 >> 8) & 0xFF)
@@ -77,17 +88,6 @@ namespace RhythmCodex.Ssq.Converters
                 default:
                     return null;
             }
-        }
-
-        public ChartInfo Decode(int param1)
-        {
-            return new ChartInfo
-            {
-                Difficulty = GetDifficulty(param1),
-                PanelCount = GetPanelCount(param1) ?? 4,
-                PlayerCount = GetPlayerCount(param1) ?? 1,
-                Type = GetType(param1)
-            };
         }
     }
 }

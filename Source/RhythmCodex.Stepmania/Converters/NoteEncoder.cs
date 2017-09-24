@@ -17,7 +17,7 @@ namespace RhythmCodex.Stepmania.Converters
         {
             _logger = logger;
         }
-        
+
         public IEnumerable<Note> Encode(IEnumerable<IEvent> events)
         {
             var result = new List<Note>();
@@ -62,16 +62,14 @@ namespace RhythmCodex.Stepmania.Converters
                 }
 
                 if (ev[FlagData.Shock] == true)
-                {
                     result.AddRange(Enumerable.Range(0, columnCount * playerCount).Select(i => new Note
                     {
                         MetricOffset = offsetValue,
                         Type = NoteType.Mine,
                         Column = i
                     }));
-                }
             }
-            
+
             ApplyFreezeHeads(result);
             return result;
         }
@@ -80,22 +78,18 @@ namespace RhythmCodex.Stepmania.Converters
         {
             var freezeColumns = new HashSet<int>();
             foreach (var note in notes.Reverse())
-            {
                 if (note.Type == NoteType.Tail)
                 {
-                    freezeColumns.Add(note.Column);                    
+                    freezeColumns.Add(note.Column);
                 }
                 else if (note.Type == NoteType.Step && freezeColumns.Contains(note.Column))
                 {
                     freezeColumns.Remove(note.Column);
                     note.Type = NoteType.Freeze;
                 }
-            }
-            
+
             foreach (var column in freezeColumns)
-            {
                 _logger.Warning($"Column {column} has a freeze tail but no suitable freeze head");
-            }
         }
     }
 }

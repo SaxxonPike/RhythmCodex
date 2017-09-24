@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
@@ -12,10 +11,10 @@ namespace RhythmCodex.Stepmania.Converters
     [Service]
     public class SmDecoder : ISmDecoder
     {
-        private readonly ITimedCommandStringDecoder _timedCommandStringDecoder;
+        private readonly ILogger _logger;
         private readonly INoteCommandStringDecoder _noteCommandStringDecoder;
         private readonly INoteDecoder _noteDecoder;
-        private readonly ILogger _logger;
+        private readonly ITimedCommandStringDecoder _timedCommandStringDecoder;
 
         public SmDecoder(
             ITimedCommandStringDecoder timedCommandStringDecoder,
@@ -36,7 +35,6 @@ namespace RhythmCodex.Stepmania.Converters
             var globalEvents = new List<IEvent>();
 
             foreach (var command in commands)
-            {
                 if (command.Name.Equals(ChartTag.BpmsTag, StringComparison.OrdinalIgnoreCase))
                 {
                     globalEvents.AddRange(_timedCommandStringDecoder
@@ -85,7 +83,6 @@ namespace RhythmCodex.Stepmania.Converters
                 {
                     metadata[command.Name] = string.Join(":", command.Values);
                 }
-            }
 
             return new ChartSet
             {

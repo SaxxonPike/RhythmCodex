@@ -10,7 +10,7 @@ namespace RhythmCodex.Infrastructure
         private readonly IFileSystem _fileSystem;
 
         /// <summary>
-        /// Create a FileRouter which will interface with the specified IFileSystem.
+        ///     Create a FileRouter which will interface with the specified IFileSystem.
         /// </summary>
         public FileRouter(IFileSystem fileSystem)
         {
@@ -21,7 +21,6 @@ namespace RhythmCodex.Infrastructure
         public void Export(string path, IEnumerable<IRoutable> routables)
         {
             foreach (var routable in routables)
-            {
                 switch (routable)
                 {
                     case IFileRoute file:
@@ -34,36 +33,30 @@ namespace RhythmCodex.Infrastructure
                         Export(subPath, directory.Entries);
                         break;
                 }
-            }
         }
 
         /// <inheritdoc />
         public IEnumerable<IRoutable> Import(string path)
         {
             foreach (var fileName in _fileSystem.GetFileNames(path))
-            {
                 yield return new FileRoute
                 {
                     Name = fileName,
                     Data = _fileSystem.ReadAllBytes(_fileSystem.CombinePath(path, fileName))
                 };
-            }
 
             foreach (var dirName in _fileSystem.GetDirectoryNames(path))
-            {
                 yield return new DirectoryRoute
                 {
                     Name = dirName,
                     Entries = Import(_fileSystem.CombinePath(path, dirName))
                 };
-            }
         }
 
         /// <inheritdoc />
         public IEnumerable<IFileRoute> Flatten(IEnumerable<IRoutable> routables)
         {
             foreach (var routable in routables)
-            {
                 switch (routable)
                 {
                     case IFileRoute file:
@@ -78,7 +71,6 @@ namespace RhythmCodex.Infrastructure
                             };
                         break;
                 }
-            }
         }
     }
 }

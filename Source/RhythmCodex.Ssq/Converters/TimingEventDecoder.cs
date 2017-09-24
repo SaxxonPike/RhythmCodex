@@ -14,7 +14,7 @@ namespace RhythmCodex.Ssq.Converters
         {
             var timings = timingChunk.Timings;
             var ticksPerSecond = timingChunk.Rate;
-            
+
             var orderedTimings = timings
                 .OrderBy(t => t.LinearOffset)
                 .ThenBy(t => t.MetricOffset)
@@ -32,8 +32,8 @@ namespace RhythmCodex.Ssq.Converters
             {
                 var ev = new Event
                 {
-                    [NumericData.MetricOffset] = (BigRational)previous.MetricOffset / SsqConstants.MeasureLength,
-                    [NumericData.LinearOffset] = (BigRational)previous.LinearOffset / ticksPerSecond
+                    [NumericData.MetricOffset] = (BigRational) previous.MetricOffset / SsqConstants.MeasureLength,
+                    [NumericData.LinearOffset] = (BigRational) previous.LinearOffset / ticksPerSecond
                 };
 
                 BigRational deltaOffset = timing.MetricOffset - previous.MetricOffset;
@@ -42,7 +42,8 @@ namespace RhythmCodex.Ssq.Converters
                 if (deltaOffset == 0)
                     ev[NumericData.Stop] = deltaTicks / ticksPerSecond;
                 else
-                    ev[NumericData.Bpm] = deltaOffset / SsqConstants.MeasureLength / (deltaTicks / ticksPerSecond / 240);
+                    ev[NumericData.Bpm] =
+                        deltaOffset / SsqConstants.MeasureLength / (deltaTicks / ticksPerSecond / 240);
 
                 yield return ev;
 

@@ -26,7 +26,7 @@ namespace RhythmCodex.Ssq.Converters
                 var panels = reader.ReadBytes(count);
                 var padding = count & 1;
                 reader.ReadBytes(padding);
-                
+
                 return Enumerable
                     .Range(0, count)
                     .Select(i => new Step
@@ -34,13 +34,13 @@ namespace RhythmCodex.Ssq.Converters
                         MetricOffset = metricOffsets[i],
                         Panels = panels[i],
                         // ReSharper disable once AccessToDisposedClosure
-                        ExtraPanels = panels[i] == 0 
-                            ? reader.ReadByte() 
-                            : (byte?)null,
+                        ExtraPanels = panels[i] == 0
+                            ? reader.ReadByte()
+                            : (byte?) null,
                         // ReSharper disable once AccessToDisposedClosure
-                        ExtraPanelInfo = panels[i] == 0 
-                            ? reader.ReadByte() 
-                            : (byte?)null
+                        ExtraPanelInfo = panels[i] == 0
+                            ? reader.ReadByte()
+                            : (byte?) null
                     })
                     .AsList();
             }

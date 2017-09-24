@@ -15,7 +15,7 @@ namespace RhythmCodex.Ssq.Streamers
         public void Write_WritesAllChunks()
         {
             // Arrange.
-            var chunks = CreateMany<Chunk>().Concat(new Chunk[] { null }).ToList();
+            var chunks = CreateMany<Chunk>().Concat(new Chunk[] {null}).ToList();
             var chunkStreamer = Mock<IChunkStreamWriter>();
             var stream = new MemoryStream();
             var result = new List<Chunk>();
@@ -26,7 +26,7 @@ namespace RhythmCodex.Ssq.Streamers
             Subject.Write(stream, chunks);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(chunks.Concat(new Chunk[] { null }));
+            result.ShouldAllBeEquivalentTo(chunks.Concat(new Chunk[] {null}));
         }
     }
 }

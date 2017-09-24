@@ -35,7 +35,7 @@ namespace RhythmCodex.Ssq.Integration
             var data = GetArchiveResource("Ssq.freeze.zip")
                 .First()
                 .Value;
-            
+
             // Act.
             var charts = DecodeCharts(data).AsList();
 

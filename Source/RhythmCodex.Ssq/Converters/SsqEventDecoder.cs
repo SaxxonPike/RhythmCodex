@@ -11,23 +11,23 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class SsqEventDecoder : ISsqEventDecoder
     {
-        private readonly ITimingEventDecoder _timingEventDecoder;
         private readonly IStepEventDecoder _stepEventDecoder;
+        private readonly ITimingEventDecoder _timingEventDecoder;
         private readonly ITriggerEventDecoder _triggerEventDecoder;
 
         public SsqEventDecoder(
-            ITimingEventDecoder timingEventDecoder, 
-            IStepEventDecoder stepEventDecoder, 
+            ITimingEventDecoder timingEventDecoder,
+            IStepEventDecoder stepEventDecoder,
             ITriggerEventDecoder triggerEventDecoder)
         {
             _timingEventDecoder = timingEventDecoder;
             _stepEventDecoder = stepEventDecoder;
             _triggerEventDecoder = triggerEventDecoder;
         }
-        
+
         public IEnumerable<IEvent> Decode(
             TimingChunk timings,
-            IEnumerable<Step> steps, 
+            IEnumerable<Step> steps,
             IEnumerable<Trigger> triggers,
             IPanelMapper panelMapper)
         {

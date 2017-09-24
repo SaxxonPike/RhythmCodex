@@ -3,8 +3,8 @@
 namespace RhythmCodex.Infrastructure
 {
     /// <summary>
-    /// This type of exception is used for all non-system exceptions within the base library
-    /// and supplemental libraries.
+    ///     This type of exception is used for all non-system exceptions within the base library
+    ///     and supplemental libraries.
     /// </summary>
     public class RhythmCodexException : Exception
     {

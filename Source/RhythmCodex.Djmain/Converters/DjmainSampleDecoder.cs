@@ -19,8 +19,8 @@ namespace RhythmCodex.Djmain.Converters
         }
 
         public IDictionary<int, IDjmainSample> Decode(
-            byte[] data, 
-            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos, 
+            byte[] data,
+            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
             int sampleOffset)
         {
             return DecodeInternal(data, infos, sampleOffset)
@@ -28,8 +28,8 @@ namespace RhythmCodex.Djmain.Converters
         }
 
         private IEnumerable<KeyValuePair<int, IDjmainSample>> DecodeInternal(
-            byte[] data, 
-            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos, 
+            byte[] data,
+            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
             int sampleOffset)
         {
             using (var mem = new MemoryStream(data))

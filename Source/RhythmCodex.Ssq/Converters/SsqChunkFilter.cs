@@ -7,9 +7,9 @@ namespace RhythmCodex.Ssq.Converters
 {
     public class SsqChunkFilter : ISsqChunkFilter
     {
+        private readonly IStepChunkDecoder _stepChunkDecoder;
         private readonly ITimingChunkDecoder _timingChunkDecoder;
         private readonly ITriggerChunkDecoder _triggerChunkDecoder;
-        private readonly IStepChunkDecoder _stepChunkDecoder;
 
         public SsqChunkFilter(
             ITimingChunkDecoder timingChunkDecoder,

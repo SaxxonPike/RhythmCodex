@@ -24,7 +24,7 @@ namespace RhythmCodex.Ssq.Converters
                 .SelectMany(_stepPanelSplitter.Split)
                 .Distinct()
                 .ToArray();
-            
+
             var eligibleMappers = _panelMappers
                 .Where(m => chartInfo.PlayerCount <= m.PlayerCount && chartInfo.PanelCount <= m.PanelCount)
                 .Where(m => panelsUsed.Select(m.Map).All(p => p != null))

@@ -14,7 +14,7 @@ namespace RhythmCodex.Ssq.Streamers
 
             if (length == 0)
                 return null;
-            
+
             return new Chunk
             {
                 Parameter0 = reader.ReadInt16(),

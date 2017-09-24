@@ -44,12 +44,11 @@ namespace RhythmCodex.Djmain.Streamers
                         ReverbVolume = reader.ReadByte(),
                         Volume = reader.ReadByte(),
                         Panning = reader.ReadByte(),
-                        Offset = reader.ReadUInt16() | ((uint)reader.ReadByte() << 16),
+                        Offset = reader.ReadUInt16() | ((uint) reader.ReadByte() << 16),
                         SampleType = reader.ReadByte(),
                         Flags = reader.ReadByte()
                     };
                     yield return new KeyValuePair<int, IDjmainSampleInfo>(i, result);
-
                 }
             }
         }

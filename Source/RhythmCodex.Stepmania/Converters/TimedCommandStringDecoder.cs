@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
@@ -15,7 +14,7 @@ namespace RhythmCodex.Stepmania.Converters
         {
             _logger = logger;
         }
-        
+
         /// <inheritdoc />
         public IEnumerable<TimedEvent> Decode(string events)
         {
@@ -25,7 +24,7 @@ namespace RhythmCodex.Stepmania.Converters
                 if (kv.Length != 2)
                 {
                     _logger.Warning($"Invalid timed command key/value pair: {ev}");
-                    continue;                    
+                    continue;
                 }
 
                 if (!double.TryParse(kv[0], out var beat))

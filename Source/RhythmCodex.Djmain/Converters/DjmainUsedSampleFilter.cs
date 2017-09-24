@@ -13,7 +13,7 @@ namespace RhythmCodex.Djmain.Converters
         {
             return events
                 .Where(IsNote)
-                .Select(ev => (int)ev.Param1)
+                .Select(ev => (int) ev.Param1)
                 .Distinct()
                 .Intersect(samples.Select(s => s.Key))
                 .ToDictionary(i => i, i => samples[i]);

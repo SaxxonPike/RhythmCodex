@@ -1,12 +1,12 @@
 ﻿namespace RhythmCodex.Infrastructure
 {
     /// <summary>
-    /// A routable element.
+    ///     A routable element.
     /// </summary>
     public interface IRoutable
     {
         /// <summary>
-        /// Name of the routable element.
+        ///     Name of the routable element.
         /// </summary>
         string Name { get; }
     }

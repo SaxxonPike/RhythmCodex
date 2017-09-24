@@ -41,7 +41,7 @@ namespace RhythmCodex.Djmain.Converters
             var inputEvents = new[]
             {
                 Build<DjmainChartEvent>()
-                    .With(x => x.Param0, (byte)command)
+                    .With(x => x.Param0, (byte) command)
                     .With(x => x.Param1, allIds.First())
                     .Create()
             };
@@ -51,16 +51,12 @@ namespace RhythmCodex.Djmain.Converters
 
             // Assert.
             if (expectedInclusion)
-            {
                 result.Should()
                     .HaveCount(1)
                     .And.Contain(new KeyValuePair<int, DjmainSampleInfo>(allIds[0], expectedSample));
-            }
             else
-            {
                 result.Should()
                     .BeEmpty();
-            }
         }
     }
 }

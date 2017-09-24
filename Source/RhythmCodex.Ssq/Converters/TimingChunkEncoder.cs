@@ -18,13 +18,13 @@ namespace RhythmCodex.Ssq.Converters
             using (var writer = new BinaryWriter(mem))
             {
                 writer.Write(count);
-                
+
                 foreach (var offset in timingList.Select(t => t.MetricOffset))
                     writer.Write(offset);
 
                 foreach (var offset in timingList.Select(t => t.LinearOffset))
                     writer.Write(offset);
-                
+
                 writer.Flush();
 
                 return mem.ToArray();

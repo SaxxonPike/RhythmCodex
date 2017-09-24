@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Ssq.Streamers
 {
     [TestFixture]
-    public abstract class ChunkStreamBaseTests<TSubject, TInterface> : BaseUnitTestFixture<TSubject, TInterface> 
+    public abstract class ChunkStreamBaseTests<TSubject, TInterface> : BaseUnitTestFixture<TSubject, TInterface>
         where TSubject : class, TInterface
         where TInterface : class
     {
@@ -14,7 +14,7 @@ namespace RhythmCodex.Ssq.Streamers
             var newLength = ((data.Length + 3) >> 2) << 2;
             var newData = new byte[newLength];
             Array.Copy(data, newData, data.Length);
-            
+
             return PrepareChunk(newLength + 8, param0, param1, newData);
         }
 

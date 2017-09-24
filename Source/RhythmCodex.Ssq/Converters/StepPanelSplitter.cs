@@ -9,14 +9,14 @@ namespace RhythmCodex.Ssq.Converters
         public IEnumerable<int> Split(int panels)
         {
             var n = 0;
-            
+
             if (panels == -1)
             {
                 yield return 0;
                 panels ^= int.MinValue;
                 n++;
             }
-            
+
             while (panels > 0)
             {
                 if ((panels & 1) != 0)

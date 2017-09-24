@@ -21,35 +21,6 @@ namespace RhythmCodex.Djmain.Streamers
         }
 
         [Test]
-        public void Read_ReadsProperChunks()
-        {
-            // Arrange.
-            const int chunkSize = DjmainConstants.ChunkSize;
-            var input = GenerateRandomBytes(chunkSize);
-
-            // Act.
-            using (var mem = new MemoryStream(input))
-            {
-                var output = Subject.Read(mem);
-
-                // Assert.
-                foreach (var chunk in output)
-                {
-                    var data = chunk.Data;
-                    var offset = chunk.Id * chunkSize;
-                    for (var i = 0; i < chunkSize; i++, offset++)
-                    {
-                        int d0 = data[i];
-                        int d1 = input[offset];
-                        if (d0 != d1)
-                            throw new Exception($"Expected {d1} but got {d0} at chunk {chunk.Id} index {i:X6}");
-                    }
-                }
-            }
-
-        }
-
-        [Test]
         public void Read_ReadsOnlyWholeChunks()
         {
             // Arrange.
@@ -76,8 +47,34 @@ namespace RhythmCodex.Djmain.Streamers
                     }
                 }
             }
-
         }
 
+        [Test]
+        public void Read_ReadsProperChunks()
+        {
+            // Arrange.
+            const int chunkSize = DjmainConstants.ChunkSize;
+            var input = GenerateRandomBytes(chunkSize);
+
+            // Act.
+            using (var mem = new MemoryStream(input))
+            {
+                var output = Subject.Read(mem);
+
+                // Assert.
+                foreach (var chunk in output)
+                {
+                    var data = chunk.Data;
+                    var offset = chunk.Id * chunkSize;
+                    for (var i = 0; i < chunkSize; i++, offset++)
+                    {
+                        int d0 = data[i];
+                        int d1 = input[offset];
+                        if (d0 != d1)
+                            throw new Exception($"Expected {d1} but got {d0} at chunk {chunk.Id} index {i:X6}");
+                    }
+                }
+            }
+        }
     }
 }

@@ -10,14 +10,14 @@ namespace RhythmCodex.Charting
     public class QuantizerTests : BaseUnitTestFixture<Quantizer, IQuantizer>
     {
         /// <summary>
-        /// Parse a string fraction such as "1/2" into a BigRational.
+        ///     Parse a string fraction such as "1/2" into a BigRational.
         /// </summary>
         private static BigRational Parse(string value)
         {
             var input = value.Split('/').Select(s => Convert.ToInt32(s)).ToArray();
             return new BigRational(input[0], input[1]);
         }
-        
+
         [Test]
         [TestCase("6/32", "12/32", "18/32", 16)]
         [TestCase("1/2", "1/4", "1/8", 8)]
@@ -32,10 +32,10 @@ namespace RhythmCodex.Charting
                 Parse(two),
                 Parse(three)
             };
-            
+
             // Act.
             var result = Subject.GetQuantization(data);
-            
+
             // Assert.
             result.Should().Be(expected);
         }

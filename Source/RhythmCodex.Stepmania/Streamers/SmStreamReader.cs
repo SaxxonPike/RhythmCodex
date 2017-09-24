@@ -24,11 +24,10 @@ namespace RhythmCodex.Stepmania.Streamers
         {
             var commandMode = false;
             var commandBuilder = new StringBuilder();
-            
+
             foreach (var line in lines)
             {
                 foreach (var c in line)
-                {
                     if (!commandMode)
                     {
                         if (c == '#')
@@ -49,7 +48,6 @@ namespace RhythmCodex.Stepmania.Streamers
 
                         commandBuilder.Append(c);
                     }
-                }
 
                 if (commandBuilder.Length > 0)
                     commandBuilder.AppendLine();

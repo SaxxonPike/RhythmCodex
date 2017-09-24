@@ -12,11 +12,11 @@ namespace RhythmCodex.Cli.Helpers
             var result = new Dictionary<string, List<string>>();
             var current = string.Empty;
             var optsEnabled = true;
-            
+
             foreach (var arg in args)
             {
                 var addValue = true;
-                
+
                 if (arg == "--")
                 {
                     current = string.Empty;
@@ -28,23 +28,22 @@ namespace RhythmCodex.Cli.Helpers
                 {
                     if (arg == "-")
                         continue;
-                    
+
                     if (arg.StartsWith("-"))
                     {
                         current = arg.Substring(1);
                         addValue = false;
                     }
                 }
-                
+
                 if (!result.ContainsKey(current))
                     result[current] = new List<string>();
-                
+
                 if (addValue)
                     result[current].Add(arg);
             }
 
             return result.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray());
         }
-        
     }
 }

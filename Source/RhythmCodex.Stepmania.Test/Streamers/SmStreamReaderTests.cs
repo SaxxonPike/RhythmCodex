@@ -22,8 +22,9 @@ namespace RhythmCodex.Stepmania.Streamers
                     new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()},
                     new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()}
                 };
-                
-                var input = string.Join(Environment.NewLine, expected.Select(c => $"#{c.Name}:{string.Join(":", c.Values)};"));
+
+                var input = string.Join(Environment.NewLine,
+                    expected.Select(c => $"#{c.Name}:{string.Join(":", c.Values)};"));
                 var writer = new StreamWriter(mem);
                 writer.Write(input);
                 writer.Flush();
@@ -57,7 +58,8 @@ namespace RhythmCodex.Stepmania.Streamers
                     }
                 };
 
-                var input = string.Join(Environment.NewLine, expected.Select(c => $"#{c.Name}:{string.Join(":", c.Values)};"));
+                var input = string.Join(Environment.NewLine,
+                    expected.Select(c => $"#{c.Name}:{string.Join(":", c.Values)};"));
                 var writer = new StreamWriter(mem);
                 writer.Write(input);
                 writer.Flush();

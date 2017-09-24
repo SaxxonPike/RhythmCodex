@@ -11,13 +11,24 @@ namespace RhythmCodex.Infrastructure
             _writer = writer;
         }
 
-        public void Debug(string message) => 
+        public void Debug(string message)
+        {
             _writer.WriteLine($"[debug]  {message}");
-        public void Info(string message) => 
+        }
+
+        public void Info(string message)
+        {
             _writer.WriteLine($"[info]   {message}");
-        public void Warning(string message) => 
+        }
+
+        public void Warning(string message)
+        {
             _writer.WriteLine($"[warn]   {message}");
-        public void Error(string message) => 
+        }
+
+        public void Error(string message)
+        {
             _writer.WriteLine($"[error]  {message}");
+        }
     }
 }

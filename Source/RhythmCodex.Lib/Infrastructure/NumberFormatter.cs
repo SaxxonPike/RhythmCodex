@@ -7,7 +7,9 @@ namespace RhythmCodex.Infrastructure
     public class NumberFormatter : INumberFormatter
     {
         /// <inheritdoc />
-        public string Format(BigRational value, int places) =>
-            ((decimal) value).ToString($"F{places}", CultureInfo.InvariantCulture);
+        public string Format(BigRational value, int places)
+        {
+            return ((decimal) value).ToString($"F{places}", CultureInfo.InvariantCulture);
+        }
     }
 }

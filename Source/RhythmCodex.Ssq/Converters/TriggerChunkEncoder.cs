@@ -18,7 +18,7 @@ namespace RhythmCodex.Ssq.Converters
             using (var writer = new BinaryWriter(mem))
             {
                 writer.Write(count);
-                
+
                 foreach (var trigger in triggerList)
                     writer.Write(trigger.MetricOffset);
 

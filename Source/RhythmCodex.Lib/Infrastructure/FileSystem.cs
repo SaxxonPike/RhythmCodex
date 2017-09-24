@@ -16,25 +16,43 @@ namespace RhythmCodex.Infrastructure
             .ToArray();
 
         /// <inheritdoc />
-        public string GetFileName(string path) => Path.GetFileName(path);
+        public string GetFileName(string path)
+        {
+            return Path.GetFileName(path);
+        }
 
         /// <inheritdoc />
-        public Stream OpenRead(string path) => File.OpenRead(path);
+        public Stream OpenRead(string path)
+        {
+            return File.OpenRead(path);
+        }
 
         /// <inheritdoc />
-        public Stream OpenWrite(string path) => File.OpenWrite(path);
+        public Stream OpenWrite(string path)
+        {
+            return File.OpenWrite(path);
+        }
 
         /// <inheritdoc />
-        public string CombinePath(params string[] paths) => Path.Combine(paths);
+        public string CombinePath(params string[] paths)
+        {
+            return Path.Combine(paths);
+        }
 
         /// <inheritdoc />
         public string CurrentPath => Directory.GetCurrentDirectory();
 
         /// <inheritdoc />
-        public byte[] ReadAllBytes(string path) => File.ReadAllBytes(path);
+        public byte[] ReadAllBytes(string path)
+        {
+            return File.ReadAllBytes(path);
+        }
 
         /// <inheritdoc />
-        public void WriteAllBytes(string path, byte[] data) => File.WriteAllBytes(path, data);
+        public void WriteAllBytes(string path, byte[] data)
+        {
+            File.WriteAllBytes(path, data);
+        }
 
         /// <inheritdoc />
         public void CreateDirectory(string path)
@@ -48,24 +66,25 @@ namespace RhythmCodex.Infrastructure
         {
             if (string.IsNullOrWhiteSpace(path))
                 path = ".\\";
-            return Directory.GetFiles(path, pattern);            
+            return Directory.GetFiles(path, pattern);
         }
 
         /// <inheritdoc />
-        public IEnumerable<string> GetDirectoryNames(string path) => Directory.GetDirectories(path).Select(Path.GetFileName);
+        public IEnumerable<string> GetDirectoryNames(string path)
+        {
+            return Directory.GetDirectories(path).Select(Path.GetFileName);
+        }
 
         /// <inheritdoc />
         public string GetDirectory(string path)
         {
-//            var rootedPath = Path.IsPathRooted(path)
-//                ? path
-//                : Path.Combine(Path.GetPathRoot(CurrentPath), path);
-
             return Path.GetDirectoryName(path);
         }
 
         /// <inheritdoc />
-        public string GetSafeFileName(string fileName) => 
-            new string(fileName.Select(c => _invalidChars.Contains(c) ? SafeChar : c).ToArray());
+        public string GetSafeFileName(string fileName)
+        {
+            return new string(fileName.Select(c => _invalidChars.Contains(c) ? SafeChar : c).ToArray());
+        }
     }
 }

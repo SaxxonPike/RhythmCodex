@@ -1,12 +1,12 @@
 ﻿namespace RhythmCodex.Infrastructure
 {
     /// <summary>
-    /// A routable file.
+    ///     A routable file.
     /// </summary>
     public interface IFileRoute : IRoutable
     {
         /// <summary>
-        /// Raw file data.
+        ///     Raw file data.
         /// </summary>
         byte[] Data { get; }
     }

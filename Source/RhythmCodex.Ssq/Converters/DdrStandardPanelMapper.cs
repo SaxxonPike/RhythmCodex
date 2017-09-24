@@ -10,14 +10,14 @@ namespace RhythmCodex.Ssq.Converters
         {
             switch (panel)
             {
-                case 0: return new PanelMapping { Panel = 0, Player = 0 };
-                case 1: return new PanelMapping { Panel = 1, Player = 0 };
-                case 2: return new PanelMapping { Panel = 2, Player = 0 };
-                case 3: return new PanelMapping { Panel = 3, Player = 0 };
-                case 4: return new PanelMapping { Panel = 0, Player = 1 };
-                case 5: return new PanelMapping { Panel = 1, Player = 1 };
-                case 6: return new PanelMapping { Panel = 2, Player = 1 };
-                case 7: return new PanelMapping { Panel = 3, Player = 1 };
+                case 0: return new PanelMapping {Panel = 0, Player = 0};
+                case 1: return new PanelMapping {Panel = 1, Player = 0};
+                case 2: return new PanelMapping {Panel = 2, Player = 0};
+                case 3: return new PanelMapping {Panel = 3, Player = 0};
+                case 4: return new PanelMapping {Panel = 0, Player = 1};
+                case 5: return new PanelMapping {Panel = 1, Player = 1};
+                case 6: return new PanelMapping {Panel = 2, Player = 1};
+                case 7: return new PanelMapping {Panel = 3, Player = 1};
                 default: return null;
             }
         }

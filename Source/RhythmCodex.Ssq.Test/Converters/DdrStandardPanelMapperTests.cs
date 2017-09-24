@@ -25,10 +25,10 @@ namespace RhythmCodex.Ssq.Converters
                 new PanelMapping {Player = 1, Panel = 3},
                 null
             };
-            
+
             // Act.
             var result = Enumerable.Range(0, expected.Length).Select(Subject.Map).AsList();
-            
+
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);
         }

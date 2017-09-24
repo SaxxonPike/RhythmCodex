@@ -11,7 +11,7 @@ namespace RhythmCodex.Ssq.Streamers
         public void Write(Stream stream, Chunk chunk)
         {
             var writer = new BinaryWriter(stream);
-            
+
             if (chunk == null)
             {
                 writer.Write(0);

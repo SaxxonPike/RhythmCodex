@@ -11,13 +11,13 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class SsqDecoder : ISsqDecoder
     {
-        private readonly ISsqEventDecoder _ssqEventDecoder;
-        private readonly ITimingChunkDecoder _timingChunkDecoder;
-        private readonly IStepChunkDecoder _stepChunkDecoder;
-        private readonly ITriggerChunkDecoder _triggerChunkDecoder;
-        private readonly IPanelMapperSelector _panelMapperSelector;
         private readonly IChartInfoDecoder _chartInfoDecoder;
+        private readonly IPanelMapperSelector _panelMapperSelector;
         private readonly ISsqChunkFilter _ssqChunkFilter;
+        private readonly ISsqEventDecoder _ssqEventDecoder;
+        private readonly IStepChunkDecoder _stepChunkDecoder;
+        private readonly ITimingChunkDecoder _timingChunkDecoder;
+        private readonly ITriggerChunkDecoder _triggerChunkDecoder;
 
         public SsqDecoder(
             ISsqEventDecoder ssqEventDecoder,
@@ -48,14 +48,14 @@ namespace RhythmCodex.Ssq.Converters
             var charts = steps.Select(sc =>
             {
                 var info = _chartInfoDecoder.Decode(sc.Id);
-                
+
                 return new Chart
                 {
                     Events = _ssqEventDecoder.Decode(
-                        timings,
-                        sc.Steps,
-                        triggers,
-                        _panelMapperSelector.Select(sc.Steps, info))
+                            timings,
+                            sc.Steps,
+                            triggers,
+                            _panelMapperSelector.Select(sc.Steps, info))
                         .AsList(),
                     [NumericData.Id] = sc.Id,
                     ["Difficulty"] = info.Difficulty,

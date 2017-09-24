@@ -12,10 +12,10 @@ namespace RhythmCodex.Extensions
         {
             // Arrange.
             var data = CreateMany<int>().Select(i => i).ToArray();
-            
+
             // Act.
             var output = data.Select(d => d).AsList();
-            
+
             // Assert.
             output.ShouldAllBeEquivalentTo(data);
             output.Should().NotBeSameAs(data);
@@ -34,6 +34,5 @@ namespace RhythmCodex.Extensions
             output.ShouldAllBeEquivalentTo(data);
             output.Should().BeSameAs(data);
         }
-
     }
 }
