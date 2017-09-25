@@ -34,7 +34,10 @@ namespace RhythmCodex
             var builder = new ContainerBuilder();
 
             builder.RegisterInstance(TestContext.Out).As<TextWriter>().SingleInstance();
-            builder.RegisterInstance(new FakeFileSystem(new FileSystem())).As<IFileSystem>().SingleInstance();
+            builder.Register(c => new FakeFileSystem(new FileSystem(c.Resolve<ILogger>()))).SingleInstance();
+            builder.Register(c => new LoggerConfiguration {VerbosityLevel = LoggerVerbosityLevel.Debug})
+                .As<ILoggerConfiguration>();
+            builder.RegisterType<TextWriterLogger>().As<ILogger>();
 
             var assemblies = new[]
             {

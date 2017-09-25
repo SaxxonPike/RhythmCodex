@@ -47,13 +47,21 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "encode",
                 Description = "Encodes an SSQ file.",
-                Execute = Encode
+                Execute = Encode,
+                Parameters = new[]
+                {
+                    new CommandParameter { Name = "-o <path>", Description = "Sets an output path." }
+                }
             },
             new Command
             {
                 Name = "decode",
                 Description = "Decodes an SSQ file.",
-                Execute = Decode
+                Execute = Decode,
+                Parameters = new[]
+                {
+                    new CommandParameter { Name = "-o <path>", Description = "Sets an output path." }
+                }
             }
         };
 
@@ -90,7 +98,7 @@ namespace RhythmCodex.Cli.Modules
 
             if (!inputFiles.Any())
             {
-                _logger.Error("No input files specified.");
+                _logger.Error("No input files.");
                 return;
             }
 
@@ -105,11 +113,7 @@ namespace RhythmCodex.Cli.Modules
                     var outFilePath = _fileSystem.CombinePath(outputDirectory, outFileName);
 
                     var chunks = _ssqStreamReader.Read(inFile);
-                    _logger.Debug($"Found {chunks.Count} total chunks");
                     var charts = _ssqDecoder.Decode(chunks);
-                    _logger.Debug($"Found {charts.Count} charts");
-
-                    _logger.Debug("Encoding SM");
                     var encoded = _smEncoder.Encode(new ChartSet {Metadata = new Metadata(), Charts = charts});
 
                     _logger.Info($"Writing {outFileName}");

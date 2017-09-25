@@ -7,6 +7,13 @@ namespace RhythmCodex.Infrastructure
     [Service]
     public class FileSystem : IFileSystem
     {
+        private readonly ILogger _logger;
+
+        public FileSystem(ILogger logger)
+        {
+            _logger = logger;
+        }
+        
         private const char SafeChar = '_';
 
         private readonly char[] _invalidChars = Path
@@ -24,12 +31,14 @@ namespace RhythmCodex.Infrastructure
         /// <inheritdoc />
         public Stream OpenRead(string path)
         {
+            _logger.Debug($"Open for read: {path}");
             return File.OpenRead(path);
         }
 
         /// <inheritdoc />
         public Stream OpenWrite(string path)
         {
+            _logger.Debug($"Open for write: {path}");
             return File.OpenWrite(path);
         }
 
@@ -45,12 +54,14 @@ namespace RhythmCodex.Infrastructure
         /// <inheritdoc />
         public byte[] ReadAllBytes(string path)
         {
+            _logger.Debug($"Reading all bytes: {path}");
             return File.ReadAllBytes(path);
         }
 
         /// <inheritdoc />
         public void WriteAllBytes(string path, byte[] data)
         {
+            _logger.Debug($"Writing all bytes: {path}");
             File.WriteAllBytes(path, data);
         }
 
@@ -58,7 +69,10 @@ namespace RhythmCodex.Infrastructure
         public void CreateDirectory(string path)
         {
             if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+            {
+                _logger.Debug($"Creating directory: {path}");
+                Directory.CreateDirectory(path);                
+            }
         }
 
         /// <inheritdoc />
@@ -66,12 +80,14 @@ namespace RhythmCodex.Infrastructure
         {
             if (string.IsNullOrWhiteSpace(path))
                 path = ".\\";
+            _logger.Debug($"Getting all files from path: {path} (with pattern {pattern})");
             return Directory.GetFiles(path, pattern);
         }
 
         /// <inheritdoc />
         public IEnumerable<string> GetDirectoryNames(string path)
         {
+            _logger.Debug($"Getting all directories from path: {path}");
             return Directory.GetDirectories(path).Select(Path.GetFileName);
         }
 

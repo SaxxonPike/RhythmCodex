@@ -6,7 +6,7 @@ namespace RhythmCodex.Ssq.Model
     [Model]
     public class StepChunk
     {
-        public IEnumerable<Step> Steps { get; set; }
+        public IList<Step> Steps { get; set; }
         public int Id { get; set; }
     }
 }

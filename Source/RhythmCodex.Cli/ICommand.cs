@@ -8,5 +8,6 @@ namespace RhythmCodex.Cli
         string Description { get; }
         Action<IDictionary<string, string[]>> Execute { get; }
         string Name { get; }
+        IEnumerable<ICommandParameter> Parameters { get; }
     }
 }

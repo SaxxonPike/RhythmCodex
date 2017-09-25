@@ -6,6 +6,13 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class ChartInfoDecoder : IChartInfoDecoder
     {
+        private readonly ILogger _logger;
+
+        public ChartInfoDecoder(ILogger logger)
+        {
+            _logger = logger;
+        }
+        
         public ChartInfo Decode(int param1)
         {
             return new ChartInfo
@@ -17,7 +24,7 @@ namespace RhythmCodex.Ssq.Converters
             };
         }
 
-        private static string GetType(int param1)
+        private string GetType(int param1)
         {
             switch (param1 & 0xFF)
             {
@@ -30,11 +37,12 @@ namespace RhythmCodex.Ssq.Converters
                 case 0x24:
                     return "Couple";
                 default:
+                    _logger.Warning($"Unrecognized chart type {param1 & 0xFF:X2}");
                     return null;
             }
         }
 
-        private static string GetDifficulty(int param1)
+        private string GetDifficulty(int param1)
         {
             switch ((param1 >> 8) & 0xFF)
             {
@@ -52,11 +60,12 @@ namespace RhythmCodex.Ssq.Converters
                     // TODO: Couple charts use this value. This doesn't seem right.
                     return "Medium";
                 default:
+                    _logger.Warning($"Unrecognized chart difficulty {(param1 >> 8) & 0xFF:X2}");
                     return "Edit";
             }
         }
 
-        private static int? GetPanelCount(int param1)
+        private int? GetPanelCount(int param1)
         {
             switch (param1 & 0xFF)
             {
@@ -69,11 +78,12 @@ namespace RhythmCodex.Ssq.Converters
                 case 0x24:
                     return 4;
                 default:
+                    _logger.Warning($"Unrecognized panel type {param1 & 0xFF:X2}");
                     return null;
             }
         }
 
-        private static int? GetPlayerCount(int param1)
+        private int? GetPlayerCount(int param1)
         {
             switch (param1 & 0xFF)
             {
@@ -86,6 +96,7 @@ namespace RhythmCodex.Ssq.Converters
                 case 0x24:
                     return 2;
                 default:
+                    _logger.Warning($"Unrecognized player count {param1 & 0xFF:X2}");
                     return null;
             }
         }

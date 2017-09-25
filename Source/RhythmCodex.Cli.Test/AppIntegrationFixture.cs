@@ -32,7 +32,12 @@ namespace RhythmCodex.Cli
         [SetUp]
         public void __SetupApp()
         {
-            FileSystem = new FakeFileSystem(new FileSystem());
+            var logger = new TextWriterLogger(TestContext.Out, new LoggerConfiguration
+            {
+                VerbosityLevel = LoggerVerbosityLevel.Debug
+            });
+            
+            FileSystem = new FakeFileSystem(new FileSystem(logger));
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(TestContext.Out).As<TextWriter>();
