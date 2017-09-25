@@ -39,8 +39,11 @@ namespace RhythmCodex.Cli.Helpers
                 if (!result.ContainsKey(current))
                     result[current] = new List<string>();
 
-                if (addValue)
-                    result[current].Add(arg);
+                if (!addValue) 
+                    continue;
+                
+                result[current].Add(arg);
+                current = string.Empty;
             }
 
             return result.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray());
