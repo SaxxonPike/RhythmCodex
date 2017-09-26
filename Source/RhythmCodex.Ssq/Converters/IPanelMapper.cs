@@ -1,4 +1,5 @@
-﻿using RhythmCodex.Ssq.Model;
+﻿using System.Collections.Generic;
+using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
@@ -8,5 +9,8 @@ namespace RhythmCodex.Ssq.Converters
         int PlayerCount { get; }
         PanelMapping Map(int panel);
         int? Map(PanelMapping mapping);
+
+        bool ShouldMap(IEnumerable<int> panels);
+        bool ShouldMap(IEnumerable<PanelMapping> panels);
     }
 }

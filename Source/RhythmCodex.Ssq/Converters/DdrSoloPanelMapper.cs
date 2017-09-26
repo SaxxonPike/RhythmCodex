@@ -1,4 +1,5 @@
-﻿using RhythmCodex.Infrastructure;
+﻿using System.Collections.Generic;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
@@ -38,6 +39,16 @@ namespace RhythmCodex.Ssq.Converters
                 default:
                     return null;
             }
+        }
+
+        public bool ShouldMap(IEnumerable<int> panels)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool ShouldMap(IEnumerable<PanelMapping> panels)
+        {
+            throw new System.NotImplementedException();
         }
 
         public int PanelCount => 6;
