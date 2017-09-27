@@ -1,6 +1,6 @@
 ﻿namespace RhythmCodex.Infrastructure
 {
-    public interface ILoggerConfiguration
+    public interface ILoggerConfigurationSource
     {
         LoggerVerbosityLevel VerbosityLevel { get; set; }
     }

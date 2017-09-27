@@ -2,38 +2,39 @@
 
 namespace RhythmCodex.Infrastructure
 {
+    [Service]
     public class TextWriterLogger : ILogger
     {
         private readonly TextWriter _writer;
-        private readonly ILoggerConfiguration _loggerConfiguration;
+        private readonly ILoggerConfigurationSource _loggerConfigurationSource;
 
-        public TextWriterLogger(TextWriter writer, ILoggerConfiguration loggerConfiguration)
+        public TextWriterLogger(TextWriter writer, ILoggerConfigurationSource loggerConfigurationSource)
         {
             _writer = writer;
-            _loggerConfiguration = loggerConfiguration;
+            _loggerConfigurationSource = loggerConfigurationSource;
         }
 
         public void Debug(string message)
         {
-            if (_loggerConfiguration.VerbosityLevel <= LoggerVerbosityLevel.Debug)
+            if (_loggerConfigurationSource.VerbosityLevel <= LoggerVerbosityLevel.Debug)
                 _writer.WriteLine($"[debug]  {message}");
         }
 
         public void Info(string message)
         {
-            if (_loggerConfiguration.VerbosityLevel <= LoggerVerbosityLevel.Info)
+            if (_loggerConfigurationSource.VerbosityLevel <= LoggerVerbosityLevel.Info)
                 _writer.WriteLine($"[info]   {message}");
         }
 
         public void Warning(string message)
         {
-            if (_loggerConfiguration.VerbosityLevel <= LoggerVerbosityLevel.Warning)
+            if (_loggerConfigurationSource.VerbosityLevel <= LoggerVerbosityLevel.Warning)
                 _writer.WriteLine($"[warn]   {message}");
         }
 
         public void Error(string message)
         {
-            if (_loggerConfiguration.VerbosityLevel <= LoggerVerbosityLevel.Error)
+            if (_loggerConfigurationSource.VerbosityLevel <= LoggerVerbosityLevel.Error)
                 _writer.WriteLine($"[error]  {message}");
         }
     }

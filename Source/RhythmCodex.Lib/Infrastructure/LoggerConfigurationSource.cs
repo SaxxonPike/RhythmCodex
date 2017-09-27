@@ -1,7 +1,7 @@
 ﻿namespace RhythmCodex.Infrastructure
 {
-    [Model]
-    public class LoggerConfiguration : ILoggerConfiguration
+    [Service]
+    public class LoggerConfigurationSource : ILoggerConfigurationSource
     {
         public LoggerVerbosityLevel VerbosityLevel { get; set; }
     }

@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Mappers
 {
     public interface IPanelMapper
     {
         int PanelCount { get; }
         int PlayerCount { get; }
-        PanelMapping Map(int panel);
-        int? Map(PanelMapping mapping);
+        IPanelMapping Map(int panel);
+        int? Map(IPanelMapping mapping);
 
         bool ShouldMap(IEnumerable<int> panels);
-        bool ShouldMap(IEnumerable<PanelMapping> panels);
+        bool ShouldMap(IEnumerable<IPanelMapping> panels);
     }
 }

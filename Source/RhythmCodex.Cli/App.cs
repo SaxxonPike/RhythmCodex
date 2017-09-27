@@ -13,7 +13,7 @@ namespace RhythmCodex.Cli
     public class App : IApp
     {
         private readonly IArgParser _argParser;
-        private readonly ILoggerConfiguration _loggerConfiguration;
+        private readonly ILoggerConfigurationSource _loggerConfigurationSource;
         private readonly TextWriter _console;
         private readonly IEnumerable<ICliModule> _modules;
 
@@ -21,12 +21,12 @@ namespace RhythmCodex.Cli
             TextWriter console, 
             IEnumerable<ICliModule> modules, 
             IArgParser argParser,
-            ILoggerConfiguration loggerConfiguration)
+            ILoggerConfigurationSource loggerConfigurationSource)
         {
             _console = console;
             _modules = modules;
             _argParser = argParser;
-            _loggerConfiguration = loggerConfiguration;
+            _loggerConfigurationSource = loggerConfigurationSource;
         }
 
         private string AppName => "RhythmCodex";
@@ -106,19 +106,19 @@ namespace RhythmCodex.Cli
             switch ((logLevel ?? string.Empty).ToLowerInvariant())
             {
                 case "debug":
-                    _loggerConfiguration.VerbosityLevel = LoggerVerbosityLevel.Debug;
+                    _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Debug;
                     break;
                 case "info":
-                    _loggerConfiguration.VerbosityLevel = LoggerVerbosityLevel.Info;
+                    _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Info;
                     break;
                 case "warning":
-                    _loggerConfiguration.VerbosityLevel = LoggerVerbosityLevel.Warning;
+                    _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Warning;
                     break;
                 case "error":
-                    _loggerConfiguration.VerbosityLevel = LoggerVerbosityLevel.Error;
+                    _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Error;
                     break;
             }
-            _console.WriteLine($"Using {_loggerConfiguration.VerbosityLevel} log level.");
+            _console.WriteLine($"Using {_loggerConfigurationSource.VerbosityLevel} log level.");
         }
 
         private static bool InvariantStringMatch(string a, string b)

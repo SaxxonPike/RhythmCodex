@@ -80,8 +80,14 @@ namespace RhythmCodex.Infrastructure
         {
             if (string.IsNullOrWhiteSpace(path))
                 path = ".\\";
-            _logger.Debug($"Getting all files from path: {path} (with pattern {pattern})");
-            return Directory.GetFiles(path, pattern);
+
+            _logger.Debug(string.IsNullOrWhiteSpace(pattern)
+                ? $"Getting all files from path: {path} (no pattern)"
+                : $"Getting all files from path: {path} (with pattern {pattern})");
+
+            return string.IsNullOrWhiteSpace(pattern) 
+                ? Directory.GetFiles(path) 
+                : Directory.GetFiles(path, pattern);
         }
 
         /// <inheritdoc />

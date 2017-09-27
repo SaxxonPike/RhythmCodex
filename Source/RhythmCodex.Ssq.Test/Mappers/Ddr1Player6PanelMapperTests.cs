@@ -4,10 +4,10 @@ using NUnit.Framework;
 using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Mappers
 {
     [TestFixture]
-    public class DdrStandardPanelMapperTests : BaseUnitTestFixture<DdrStandardPanelMapper, IPanelMapper>
+    public class Ddr1Player6PanelMapperTests : BaseUnitTestFixture<Ddr1Player6PanelMapper, IPanelMapper>
     {
         [Test]
         public void Map_Int_CorrectlyMaps()
@@ -16,13 +16,12 @@ namespace RhythmCodex.Ssq.Converters
             var expected = new[]
             {
                 new PanelMapping {Player = 0, Panel = 0},
-                new PanelMapping {Player = 0, Panel = 1},
                 new PanelMapping {Player = 0, Panel = 2},
                 new PanelMapping {Player = 0, Panel = 3},
-                new PanelMapping {Player = 1, Panel = 0},
-                new PanelMapping {Player = 1, Panel = 1},
-                new PanelMapping {Player = 1, Panel = 2},
-                new PanelMapping {Player = 1, Panel = 3},
+                new PanelMapping {Player = 0, Panel = 5},
+                new PanelMapping {Player = 0, Panel = 1},
+                null,
+                new PanelMapping {Player = 0, Panel = 4},
                 null
             };
 
@@ -37,20 +36,17 @@ namespace RhythmCodex.Ssq.Converters
         public void Map_PanelMapping_CorrectlyMaps()
         {
             // Arrange.
-            var expected = new int?[] {0, 1, 2, 3, 4, 5, 6, 7, null, null, null};
+            var expected = new int?[] {0, 1, 2, 3, 4, 6, null, null};
             var data = new[]
             {
                 new PanelMapping {Player = 0, Panel = 0},
-                new PanelMapping {Player = 0, Panel = 1},
                 new PanelMapping {Player = 0, Panel = 2},
                 new PanelMapping {Player = 0, Panel = 3},
-                new PanelMapping {Player = 1, Panel = 0},
-                new PanelMapping {Player = 1, Panel = 1},
-                new PanelMapping {Player = 1, Panel = 2},
-                new PanelMapping {Player = 1, Panel = 3},
+                new PanelMapping {Player = 0, Panel = 5},
+                new PanelMapping {Player = 0, Panel = 1},
                 new PanelMapping {Player = 0, Panel = 4},
-                new PanelMapping {Player = 1, Panel = 4},
-                new PanelMapping {Player = 2, Panel = 0}
+                new PanelMapping {Player = 0, Panel = 6},
+                new PanelMapping {Player = 1, Panel = 0}
             };
 
             // Act.

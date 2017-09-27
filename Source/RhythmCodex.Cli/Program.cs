@@ -45,14 +45,14 @@ namespace RhythmCodex.Cli
 
         private static IContainer BuildContainer()
         {
-            var loggerConfiguration = new LoggerConfiguration
+            var loggerConfiguration = new LoggerConfigurationSource
             {
                 VerbosityLevel = LoggerVerbosityLevel.Info
             };
             
             var builder = new ContainerBuilder();
             builder.RegisterInstance(Console.Out).As<TextWriter>();
-            builder.RegisterInstance(loggerConfiguration).As<ILoggerConfiguration>();
+            builder.RegisterInstance(loggerConfiguration).As<ILoggerConfigurationSource>();
             builder.RegisterType<TextWriterLogger>().As<ILogger>();
 
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())

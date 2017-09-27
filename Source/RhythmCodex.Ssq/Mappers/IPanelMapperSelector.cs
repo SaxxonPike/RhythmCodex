@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Mappers
 {
     public interface IPanelMapperSelector
     {

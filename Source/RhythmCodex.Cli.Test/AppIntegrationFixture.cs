@@ -32,21 +32,26 @@ namespace RhythmCodex.Cli
         [SetUp]
         public void __SetupApp()
         {
-            var logger = new TextWriterLogger(TestContext.Out, new LoggerConfiguration
+            var loggerConfig = new LoggerConfigurationSource
             {
                 VerbosityLevel = LoggerVerbosityLevel.Debug
-            });
+            };
+            var logger = new TextWriterLogger(TestContext.Out, loggerConfig);
             
             FileSystem = new FakeFileSystem(new FileSystem(logger));
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(TestContext.Out).As<TextWriter>();
             builder.RegisterInstance(FileSystem).As<IFileSystem>();
+            builder.RegisterInstance(logger).As<ILogger>();
+            builder.RegisterInstance(loggerConfig).As<ILoggerConfigurationSource>();
 
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
-                    .Except<FileSystem>()
+                    .Except<IFileSystem>()
+                    .Except<ILogger>()
+                    .Except<ILoggerConfigurationSource>()
                     .AsSelf()
                     .AsImplementedInterfaces();
 
