@@ -5,8 +5,10 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Cli.Helpers
 {
     [Service]
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class ArgParser : IArgParser
     {
+        /// <inheritdoc />
         public IDictionary<string, string[]> Parse(IEnumerable<string> args)
         {
             var result = new Dictionary<string, List<string>>();

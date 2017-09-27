@@ -14,52 +14,57 @@ using RhythmCodex.Stepmania.Streamers;
 namespace RhythmCodex.Cli
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class Program
+    internal class Program
     {
-        private static readonly IEnumerable<Type> IocTypes = new[]
-        {
-            typeof(App),
-            typeof(Chart),
-            typeof(DjmainChunk),
-            typeof(SsqDecoder),
-            typeof(SmStreamReader)
-        };
-
-        public static void Main(string[] args)
+        /// <summary>
+        /// Entry point for the application.
+        /// </summary>
+        private static void Main(string[] args)
         {
             var container = BuildContainer();
             var app = container.Resolve<IApp>();
+            var logger = container.Resolve<ILogger>();
+            
+            logger.Debug("IoC container initialized.");
 
             if (Debugger.IsAttached)
+            {
+                // The outer exception handler is not installed if we are debugging.
+                // This makes debugging in the IDE easier.
                 app.Run(args);
+            }
             else
+            {
                 try
                 {
                     app.Run(args);
                 }
                 catch (Exception e)
                 {
-                    container.Resolve<ILogger>()?.Error(e.ToString());
-                }
+                    logger.Debug(e.ToString());
+                    LogErrors(logger, e, 0);
+                    logger.Warning("An error occurred and the application cannot continue.");
+                }                
+            }
         }
 
+        /// <summary>
+        /// Print exception messages including indented inner exception messages.
+        /// </summary>
+        private static void LogErrors(ILogger logger, Exception exception, int level)
+        {
+            logger.Error($"{new string(' ', level)}{exception.Message}");
+            if (exception.InnerException != null)
+                LogErrors(logger, exception.InnerException, level + 2);
+        }
+
+        /// <summary>
+        /// Build IoC container.
+        /// </summary>
         private static IContainer BuildContainer()
         {
-            var loggerConfiguration = new LoggerConfigurationSource
-            {
-                VerbosityLevel = LoggerVerbosityLevel.Info
-            };
-            
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(Console.Out).As<TextWriter>();
-            builder.RegisterInstance(loggerConfiguration).As<ILoggerConfigurationSource>();
-            builder.RegisterType<TextWriterLogger>().As<ILogger>();
-
-            foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
-                builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
-                    .AsImplementedInterfaces();
-
+            builder.RegisterModule<AppAutofacModule>();
             return builder.Build();
         }
     }

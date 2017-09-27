@@ -9,7 +9,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
+    /// <inheritdoc />
     public class App : IApp
     {
         private readonly IArgParser _argParser;
@@ -17,9 +17,12 @@ namespace RhythmCodex.Cli
         private readonly TextWriter _console;
         private readonly IEnumerable<ICliModule> _modules;
 
+        /// <summary>
+        /// Create an instance of the main application container.
+        /// </summary>
         public App(
-            TextWriter console, 
-            IEnumerable<ICliModule> modules, 
+            TextWriter console,
+            IEnumerable<ICliModule> modules,
             IArgParser argParser,
             ILoggerConfigurationSource loggerConfigurationSource)
         {
@@ -38,10 +41,11 @@ namespace RhythmCodex.Cli
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                 .InformationalVersion;
 
+        /// <inheritdoc />
         public void Run(string[] args)
         {
             _console.WriteLine($"{AppName} {AppVersion}");
-            
+
             if (args.Length < 1)
             {
                 OutputModuleList();
@@ -71,18 +75,21 @@ namespace RhythmCodex.Cli
 
             var parameters = _argParser.Parse(args.Skip(2));
             var moduleParameters = ProcessSpecialArgs(parameters);
-            
+
             if (!moduleParameters.Any())
             {
                 OutputParameterList(module, command);
                 return;
             }
-            
+
             _console.WriteLine($"Executing {module.Name} {command.Name}.");
             command.Execute(moduleParameters);
             _console.WriteLine($"Task complete.");
         }
 
+        /// <summary>
+        /// Obtain special arguments that do not pertain to any one module.
+        /// </summary>
         private IDictionary<string, string[]> ProcessSpecialArgs(IDictionary<string, string[]> args)
         {
             var specialArgs = args.Where(a => a.Key.StartsWith("-"));
@@ -101,6 +108,9 @@ namespace RhythmCodex.Cli
             return filteredArgs.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
+        /// <summary>
+        /// Set the logger level, overriding the currently configured level.
+        /// </summary>
         private void SetLogLevel(string logLevel)
         {
             switch ((logLevel ?? string.Empty).ToLowerInvariant())
@@ -121,11 +131,17 @@ namespace RhythmCodex.Cli
             _console.WriteLine($"Using {_loggerConfigurationSource.VerbosityLevel} log level.");
         }
 
+        /// <summary>
+        /// Compare two strings, ignoring case.
+        /// </summary>
         private static bool InvariantStringMatch(string a, string b)
         {
             return string.Equals(a, b, StringComparison.CurrentCultureIgnoreCase);
         }
 
+        /// <summary>
+        /// Inform the user of parameters for a particular module's command.
+        /// </summary>
         private void OutputParameterList(ICliModule module, ICommand command)
         {
             _console.WriteLine($"Available parameters for {module.Name} {command.Name}:");
@@ -138,6 +154,9 @@ namespace RhythmCodex.Cli
             _console.WriteLine("Executing this command with any parameters will perform the action.");
         }
 
+        /// <summary>
+        /// Inform the user of commands available to a particular module.
+        /// </summary>
         private void OutputCommandList(ICliModule module)
         {
             _console.WriteLine($"Available commands for {module.Name}:");
@@ -151,6 +170,9 @@ namespace RhythmCodex.Cli
             _console.WriteLine($"{AppName} {module.Name.ToLower()} <command>");
         }
 
+        /// <summary>
+        /// Inform the user of the available modules.
+        /// </summary>
         private void OutputModuleList()
         {
             _console.WriteLine("Available modules:");

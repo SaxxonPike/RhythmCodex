@@ -13,12 +13,15 @@ namespace RhythmCodex.Infrastructure
             _path = path;
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
         }
 
+        /// <inheritdoc />
         public string GetPath(params string[] subpaths) => _fileSystem.CombinePath(subpaths);
 
+        /// <inheritdoc />
         public Stream OpenWrite(string path) => _fileSystem.OpenWrite(_fileSystem.CombinePath(_path, path));
     }
 }

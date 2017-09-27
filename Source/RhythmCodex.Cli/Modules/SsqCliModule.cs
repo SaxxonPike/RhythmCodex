@@ -12,6 +12,9 @@ using RhythmCodex.Stepmania.Streamers;
 namespace RhythmCodex.Cli.Modules
 {
     // ReSharper disable once ClassNeverInstantiated.Global
+    /// <summary>
+    /// A module which operates with the SSQ and other associated file formats.
+    /// </summary>
     public class SsqCliModule : ICliModule
     {
         private readonly IFileSystem _fileSystem;
@@ -21,6 +24,9 @@ namespace RhythmCodex.Cli.Modules
         private readonly ISsqDecoder _ssqDecoder;
         private readonly ISsqStreamReader _ssqStreamReader;
 
+        /// <summary>
+        /// Create an instance of the SSQ module.
+        /// </summary>
         public SsqCliModule(
             ILogger logger,
             ISsqDecoder ssqDecoder,
@@ -37,10 +43,13 @@ namespace RhythmCodex.Cli.Modules
             _fileSystem = fileSystem;
         }
 
+        /// <inheritdoc />
         public string Name => "SSQ";
 
+        /// <inheritdoc />
         public string Description => "Encodes and decodes the SSQ format.";
 
+        /// <inheritdoc />
         public IEnumerable<ICommand> Commands => new ICommand[]
         {
             new Command
@@ -65,6 +74,9 @@ namespace RhythmCodex.Cli.Modules
             }
         };
 
+        /// <summary>
+        /// Get all input files from command line args.
+        /// </summary>
         private string[] GetInputFiles(IDictionary<string, string[]> args)
         {
             var files = (args.ContainsKey(string.Empty)
@@ -75,6 +87,9 @@ namespace RhythmCodex.Cli.Modules
             return files;
         }
 
+        /// <summary>
+        /// Get output directory from command line args.
+        /// </summary>
         private string GetOutputDirectory(IDictionary<string, string[]> args)
         {
             var value = args.ContainsKey("o")
@@ -86,11 +101,17 @@ namespace RhythmCodex.Cli.Modules
                 : _fileSystem.CurrentPath;
         }
 
+        /// <summary>
+        /// Perform the ENCODE command.
+        /// </summary>
         private void Encode(IDictionary<string, string[]> args)
         {
             _logger.Warning("Todo: write encoder.");
         }
 
+        /// <summary>
+        /// Perform the DECODE command.
+        /// </summary>
         private void Decode(IDictionary<string, string[]> args)
         {
             var outputDirectory = GetOutputDirectory(args);
