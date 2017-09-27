@@ -64,6 +64,7 @@ namespace RhythmCodex.Cli
         private static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
+            builder.RegisterModule<AppInfrastructureAutofacModule>();
             builder.RegisterModule<AppAutofacModule>();
             return builder.Build();
         }

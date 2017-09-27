@@ -14,7 +14,7 @@ using RhythmCodex.Stepmania.Streamers;
 namespace RhythmCodex.Cli
 {
     /// <inheritdoc />
-    internal class AppAutofacModule : Autofac.Module
+    public class AppAutofacModule : Autofac.Module
     {
         /// <summary>
         /// A single type from each assembly that needs to be auto-loaded.
@@ -32,19 +32,10 @@ namespace RhythmCodex.Cli
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            
-            var loggerConfiguration = new LoggerConfigurationSource
-            {
-                VerbosityLevel = LoggerVerbosityLevel.Info
-            };
-
-            builder.RegisterInstance(Console.Out).As<TextWriter>();
-            builder.RegisterInstance(loggerConfiguration).As<ILoggerConfigurationSource>();
-            builder.RegisterType<TextWriterLogger>().As<ILogger>();
-
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
                 builder.RegisterAssemblyTypes(assembly)
                     .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
+                    .AsSelf()
                     .AsImplementedInterfaces()
                     .SingleInstance();
         }

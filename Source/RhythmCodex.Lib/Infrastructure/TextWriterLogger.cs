@@ -2,7 +2,7 @@
 
 namespace RhythmCodex.Infrastructure
 {
-    [Service]
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class TextWriterLogger : ILogger
     {
         private readonly TextWriter _writer;

@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace RhythmCodex.Infrastructure
 {
-    [Service]
     public class FileSystem : IFileSystem
     {
         private readonly ILogger _logger;

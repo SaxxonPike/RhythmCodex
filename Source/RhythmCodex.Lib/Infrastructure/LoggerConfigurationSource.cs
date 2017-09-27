@@ -5,7 +5,6 @@ namespace RhythmCodex.Infrastructure
     /// <summary>
     /// An in-memory logger configuration source.
     /// </summary>
-    [Service]
     public class LoggerConfigurationSource : ILoggerConfigurationSource
     {
         /// <summary>
