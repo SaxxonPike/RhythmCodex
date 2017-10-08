@@ -1,20 +1,72 @@
-﻿using RhythmCodex.Cli.Modules;
-using RhythmCodex.Ioc;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Autofac;
+using RhythmCodex.Charting;
+using RhythmCodex.Djmain.Model;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.Ssq.Converters;
+using RhythmCodex.Stepmania.Streamers;
 
 namespace RhythmCodex.Cli
 {
-    public class Program
+    // ReSharper disable once ClassNeverInstantiated.Global
+    internal class Program
     {
-        public static void Main(string[] args)
+        /// <summary>
+        /// Entry point for the application.
+        /// </summary>
+        private static void Main(string[] args)
         {
-            var resolver = new Resolver();
+            var container = BuildContainer();
+            var app = container.Resolve<IApp>();
+            var logger = container.Resolve<ILogger>();
             
-            var modules = new ICliModule[]
+            logger.Debug("IoC container initialized.");
+
+            if (Debugger.IsAttached)
             {
-                resolver.Resolve<SsqCliModule>()
-            };
-            
-            resolver.Resolve<App>().Run(args, modules);
+                // The outer exception handler is not installed if we are debugging.
+                // This makes debugging in the IDE easier.
+                app.Run(args);
+            }
+            else
+            {
+                try
+                {
+                    app.Run(args);
+                }
+                catch (Exception e)
+                {
+                    logger.Debug(e.ToString());
+                    LogErrors(logger, e, 0);
+                    logger.Warning("An error occurred and the application cannot continue.");
+                }                
+            }
+        }
+
+        /// <summary>
+        /// Print exception messages including indented inner exception messages.
+        /// </summary>
+        private static void LogErrors(ILogger logger, Exception exception, int level)
+        {
+            logger.Error($"{new string(' ', level)}{exception.Message}");
+            if (exception.InnerException != null)
+                LogErrors(logger, exception.InnerException, level + 2);
+        }
+
+        /// <summary>
+        /// Build IoC container.
+        /// </summary>
+        private static IContainer BuildContainer()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule<AppInfrastructureAutofacModule>();
+            builder.RegisterModule<AppAutofacModule>();
+            return builder.Build();
         }
     }
 }

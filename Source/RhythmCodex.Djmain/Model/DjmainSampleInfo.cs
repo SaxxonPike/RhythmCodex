@@ -1,6 +1,9 @@
-﻿namespace RhythmCodex.Djmain.Model
+﻿using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Djmain.Model
 {
-    public struct DjmainSampleInfo
+    [Model]
+    public class DjmainSampleInfo : IDjmainSampleInfo
     {
         public byte Channel { get; set; }
         public byte Flags { get; set; }

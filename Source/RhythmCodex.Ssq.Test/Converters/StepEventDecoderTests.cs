@@ -1,26 +1,34 @@
 ﻿using System.Linq;
 using FluentAssertions;
-using Numerics;
+using Moq;
 using NUnit.Framework;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder>
+    public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder, IStepEventDecoder>
     {
         [Test]
         public void Decode_ConvertsStepsCorrectly()
         {
-            Mock<IPanelMapper>(mock =>
+            Mock<IStepPanelSplitter>(mock =>
             {
-                mock.Setup(x => x.Map(0)).Returns<int>(i => new PanelMapping { Panel = 11, Player = 1 });
-                mock.Setup(x => x.Map(1)).Returns<int>(i => new PanelMapping { Panel = 22, Player = 2 });
-                mock.Setup(x => x.Map(2)).Returns<int>(i => new PanelMapping { Panel = 33, Player = 3 });
-                mock.Setup(x => x.Map(3)).Returns<int>(i => new PanelMapping { Panel = 44, Player = 4 });
+                var splitter = new StepPanelSplitter();
+                mock.Setup(x => x.Split(It.IsAny<int>())).Returns<int>(splitter.Split);
+            });
+
+            var panelMapper = Mock<IPanelMapper>(mock =>
+            {
+                mock.Setup(x => x.Map(0)).Returns<int>(i => new PanelMapping {Panel = 11, Player = 1});
+                mock.Setup(x => x.Map(1)).Returns<int>(i => new PanelMapping {Panel = 22, Player = 2});
+                mock.Setup(x => x.Map(2)).Returns<int>(i => new PanelMapping {Panel = 33, Player = 3});
+                mock.Setup(x => x.Map(3)).Returns<int>(i => new PanelMapping {Panel = 44, Player = 4});
             });
 
             var steps = new[]
@@ -88,8 +96,8 @@ namespace RhythmCodex.Ssq.Converters
             };
 
             // Act.
-            var result = Subject.Decode(steps).AsList();
-            
+            var result = Subject.Decode(steps, panelMapper.Object).AsList();
+
             // Assert.
             result.Should().HaveCount(expected.Length);
             var resultMatches = Enumerable.Range(0, expected.Length)

@@ -1,6 +1,9 @@
-﻿namespace RhythmCodex.Ssq.Model
+﻿using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Ssq.Model
 {
-    public struct Timing
+    [Model]
+    public class Timing
     {
         public int MetricOffset { get; set; }
         public int LinearOffset { get; set; }

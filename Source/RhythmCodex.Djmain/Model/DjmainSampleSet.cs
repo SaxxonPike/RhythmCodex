@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Model
 {
-    public struct DjmainSampleSet
+    [Model]
+    public class DjmainSampleSet : IDjmainSampleSet
     {
         public int DataOffset { get; set; }
         public IDictionary<int, DjmainSample> Samples { get; set; }

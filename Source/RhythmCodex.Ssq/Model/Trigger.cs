@@ -1,6 +1,9 @@
-﻿namespace RhythmCodex.Ssq.Model
+﻿using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Ssq.Model
 {
-    public struct Trigger
+    [Model]
+    public class Trigger
     {
         public short Id { get; set; }
         public int MetricOffset { get; set; }

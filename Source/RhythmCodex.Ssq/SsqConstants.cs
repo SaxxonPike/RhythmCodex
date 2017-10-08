@@ -2,6 +2,6 @@
 {
     public static class SsqConstants
     {
-        public static readonly int MeasureLength = 4096;
+        public static int MeasureLength => 4096;
     }
 }

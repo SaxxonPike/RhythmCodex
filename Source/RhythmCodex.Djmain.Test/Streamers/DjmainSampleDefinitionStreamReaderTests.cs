@@ -8,7 +8,8 @@ using RhythmCodex.Djmain.Model;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<DjmainSampleInfoStreamReader>
+    public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<DjmainSampleInfoStreamReader,
+        IDjmainSampleDefinitionStreamReader>
     {
         [Test]
         public void Read_ShouldReadAllDefinitions()
@@ -26,10 +27,10 @@ namespace RhythmCodex.Djmain.Streamers
             using (var mem = new MemoryStream(data))
             {
                 var output = Subject.Read(mem).ToArray();
-                
+
                 // Assert.
                 output.Should().HaveCount(2);
-                output[0].Should().Be(new KeyValuePair<int, DjmainSampleInfo>(0, new DjmainSampleInfo
+                output[0].ShouldBeEquivalentTo(new KeyValuePair<int, IDjmainSampleInfo>(0, new DjmainSampleInfo
                 {
                     Channel = 0x12,
                     Frequency = 0x5634,
@@ -40,7 +41,7 @@ namespace RhythmCodex.Djmain.Streamers
                     SampleType = 0x90,
                     Flags = 0x12
                 }));
-                output[1].Should().Be(new KeyValuePair<int, DjmainSampleInfo>(1, new DjmainSampleInfo
+                output[1].ShouldBeEquivalentTo(new KeyValuePair<int, IDjmainSampleInfo>(1, new DjmainSampleInfo
                 {
                     Channel = 0x34,
                     Frequency = 0x7856,

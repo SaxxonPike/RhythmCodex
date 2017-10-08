@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class AudioStreamReader : IAudioStreamReader
     {
         public IList<byte> ReadDpcm(Stream stream)
@@ -11,9 +13,19 @@ namespace RhythmCodex.Djmain.Streamers
             return ReadDpcmStream(stream).ToArray();
         }
 
-        private IEnumerable<byte> ReadDpcmStream(Stream stream)
+        public IList<byte> ReadPcm16(Stream stream)
         {
-            var marker = DjmainConstants.DpcmEndMarker;
+            return DecodePcm16Stream(stream).ToArray();
+        }
+
+        public IList<byte> ReadPcm8(Stream stream)
+        {
+            return DecodePcm8Stream(stream).ToArray();
+        }
+
+        private static IEnumerable<byte> ReadDpcmStream(Stream stream)
+        {
+            const int marker = DjmainConstants.DpcmEndMarker;
             var buffer = marker;
 
             void Fetch()
@@ -35,14 +47,9 @@ namespace RhythmCodex.Djmain.Streamers
             }
         }
 
-        public IList<byte> ReadPcm16(Stream stream)
+        private static IEnumerable<byte> DecodePcm16Stream(Stream stream)
         {
-            return DecodePcm16Stream(stream).ToArray();
-        }
-
-        private IEnumerable<byte> DecodePcm16Stream(Stream stream)
-        {
-            var marker = DjmainConstants.Pcm16EndMarker;
+            const long marker = DjmainConstants.Pcm16EndMarker;
             var buffer0 = marker;
             var buffer1 = marker;
 
@@ -54,12 +61,12 @@ namespace RhythmCodex.Djmain.Streamers
                 var newByte = stream.ReadByte();
                 if (newByte == -1)
                     newByte = 0x00;
-                buffer1 |= (long)newByte << 48;
+                buffer1 |= (long) newByte << 48;
 
                 newByte = stream.ReadByte();
                 if (newByte == -1)
                     newByte = 0x80;
-                buffer1 |= (long)newByte << 56;
+                buffer1 |= (long) newByte << 56;
             }
 
             // Preload buffer.
@@ -69,20 +76,15 @@ namespace RhythmCodex.Djmain.Streamers
             // Load sample.
             while (buffer0 != marker || buffer1 != marker)
             {
-                yield return unchecked((byte)buffer0);
-                yield return unchecked((byte)(buffer0 >> 8));
+                yield return unchecked((byte) buffer0);
+                yield return unchecked((byte) (buffer0 >> 8));
                 Fetch();
             }
         }
 
-        public IList<byte> ReadPcm8(Stream stream)
+        private static IEnumerable<byte> DecodePcm8Stream(Stream stream)
         {
-            return DecodePcm8Stream(stream).ToArray();
-        }
-
-        private IEnumerable<byte> DecodePcm8Stream(Stream stream)
-        {
-            var marker = DjmainConstants.Pcm8EndMarker;
+            const long marker = DjmainConstants.Pcm8EndMarker;
             var buffer = marker;
 
             void Fetch()
@@ -100,7 +102,7 @@ namespace RhythmCodex.Djmain.Streamers
             // Load sample.
             while (buffer != marker)
             {
-                yield return unchecked((byte)buffer);
+                yield return unchecked((byte) buffer);
                 Fetch();
             }
         }

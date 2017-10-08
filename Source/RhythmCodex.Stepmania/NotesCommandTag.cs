@@ -2,15 +2,13 @@
 {
     public static class NotesCommandTag
     {
-        public static readonly string TypeTag = "Type";
-        public static readonly string DescriptionTag = "Description";
-        public static readonly string DifficultyTag = "Difficulty";
-        public static readonly string StreamTag = "Stream";
-        public static readonly string VoltageTag = "Voltage";
-        public static readonly string AirTag = "Air";
-        public static readonly string ChaosTag = "Chaos";
-        public static readonly string FreezeTag = "Freeze";
-
-
+        public const string TypeTag = "Type";
+        public const string DescriptionTag = "Description";
+        public const string DifficultyTag = "Difficulty";
+        public const string StreamTag = "Stream";
+        public const string VoltageTag = "Voltage";
+        public const string AirTag = "Air";
+        public const string ChaosTag = "Chaos";
+        public const string FreezeTag = "Freeze";
     }
 }

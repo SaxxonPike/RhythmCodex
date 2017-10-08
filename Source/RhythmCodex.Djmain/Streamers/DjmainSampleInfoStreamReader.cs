@@ -2,9 +2,11 @@
 using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class DjmainSampleInfoStreamReader : IDjmainSampleDefinitionStreamReader
     {
         private readonly IDjmainConfiguration _djmainConfiguration;
@@ -14,12 +16,12 @@ namespace RhythmCodex.Djmain.Streamers
             _djmainConfiguration = djmainConfiguration;
         }
 
-        public IDictionary<int, DjmainSampleInfo> Read(Stream stream)
+        public IDictionary<int, IDjmainSampleInfo> Read(Stream stream)
         {
             return ReadInternal(stream).ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        private IEnumerable<KeyValuePair<int, DjmainSampleInfo>> ReadInternal(Stream stream)
+        private IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> ReadInternal(Stream stream)
         {
             var buffer = new byte[11];
 
@@ -42,12 +44,11 @@ namespace RhythmCodex.Djmain.Streamers
                         ReverbVolume = reader.ReadByte(),
                         Volume = reader.ReadByte(),
                         Panning = reader.ReadByte(),
-                        Offset = reader.ReadUInt16() | ((uint)reader.ReadByte() << 16),
+                        Offset = reader.ReadUInt16() | ((uint) reader.ReadByte() << 16),
                         SampleType = reader.ReadByte(),
                         Flags = reader.ReadByte()
                     };
-                    yield return new KeyValuePair<int, DjmainSampleInfo>(i, result);
-
+                    yield return new KeyValuePair<int, IDjmainSampleInfo>(i, result);
                 }
             }
         }

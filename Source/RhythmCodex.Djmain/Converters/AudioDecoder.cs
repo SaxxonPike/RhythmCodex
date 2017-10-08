@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Converters
 {
+    [Service]
     public class AudioDecoder : IAudioDecoder
     {
         private static readonly int[] DpcmTable =

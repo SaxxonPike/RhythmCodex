@@ -3,9 +3,11 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Converters
 {
+    [Service]
     public class DjmainSampleDecoder
     {
         private readonly IAudioStreamReader _audioStreamReader;
@@ -16,18 +18,18 @@ namespace RhythmCodex.Djmain.Converters
             _audioStreamReader = audioStreamReader;
         }
 
-        public IDictionary<int, DjmainSample> Decode(
-            byte[] data, 
-            IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos, 
+        public IDictionary<int, IDjmainSample> Decode(
+            byte[] data,
+            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
             int sampleOffset)
         {
             return DecodeInternal(data, infos, sampleOffset)
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        private IEnumerable<KeyValuePair<int, DjmainSample>> DecodeInternal(
-            byte[] data, 
-            IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos, 
+        private IEnumerable<KeyValuePair<int, IDjmainSample>> DecodeInternal(
+            byte[] data,
+            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
             int sampleOffset)
         {
             using (var mem = new MemoryStream(data))
@@ -53,7 +55,7 @@ namespace RhythmCodex.Djmain.Converters
 
                     mem.Position = sampleOffset + props.Offset;
 
-                    yield return new KeyValuePair<int, DjmainSample>(info.Key,
+                    yield return new KeyValuePair<int, IDjmainSample>(info.Key,
                         new DjmainSample
                         {
                             Data = GetSampleData(),

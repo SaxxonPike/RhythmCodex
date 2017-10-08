@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class AudioStreamWriter : IAudioStreamWriter
     {
         public void WriteDpcm(Stream stream, IEnumerable<byte> data)

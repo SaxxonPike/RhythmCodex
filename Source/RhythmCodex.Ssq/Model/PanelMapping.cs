@@ -1,6 +1,9 @@
-﻿namespace RhythmCodex.Ssq.Model
+﻿using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Ssq.Model
 {
-    public struct PanelMapping
+    [Model]
+    public class PanelMapping : IPanelMapping
     {
         public int Player { get; set; }
         public int Panel { get; set; }

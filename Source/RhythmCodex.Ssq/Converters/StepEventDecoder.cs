@@ -1,25 +1,27 @@
 ﻿using System.Collections.Generic;
-using Numerics;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class StepEventDecoder : IStepEventDecoder
     {
-        private readonly IPanelMapper _panelMapper;
+        private readonly IStepPanelSplitter _stepPanelSplitter;
 
-        public StepEventDecoder(IPanelMapper panelMapper)
+        public StepEventDecoder(IStepPanelSplitter stepPanelSplitter)
         {
-            _panelMapper = panelMapper;
+            _stepPanelSplitter = stepPanelSplitter;
         }
 
-        public IEnumerable<IEvent> Decode(IEnumerable<Step> steps)
+        public IEnumerable<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
         {
             var stepList = steps.AsList();
-            
+
             foreach (var step in stepList)
             {
                 var panels = step.Panels;
@@ -37,7 +39,7 @@ namespace RhythmCodex.Ssq.Converters
                     yield return new Event
                     {
                         [NumericData.MetricOffset] = metricOffset,
-                        [NumericData.Player] = 1,
+                        [NumericData.Player] = 0,
                         [FlagData.Shock] = true
                     };
                     panels &= 0xF0;
@@ -48,33 +50,26 @@ namespace RhythmCodex.Ssq.Converters
                     yield return new Event
                     {
                         [NumericData.MetricOffset] = metricOffset,
-                        [NumericData.Player] = 2,
+                        [NumericData.Player] = 1,
                         [FlagData.Shock] = true
                     };
                     panels &= 0x0F;
                 }
 
-                var panelNumber = 0;
-                while (panels > 0)
+                foreach (var panelNumber in _stepPanelSplitter.Split(panels))
                 {
-                    if ((panels & 1) != 0)
+                    var mappedPanel = panelMapper.Map(panelNumber);
+                    var isMapped = mappedPanel != null;
+
+                    yield return new Event
                     {
-                        var mappedPanel = _panelMapper.Map(panelNumber);
-                        var isMapped = mappedPanel.HasValue;
-
-                        yield return new Event
-                        {
-                            [NumericData.MetricOffset] = metricOffset,
-                            [NumericData.SourceColumn] = panelNumber,
-                            [NumericData.Column] = isMapped ? mappedPanel.Value.Panel : (BigRational?)null,
-                            [NumericData.Player] = isMapped ? mappedPanel.Value.Player : (BigRational?)null,
-                            [FlagData.Freeze] = freeze ? true : (bool?)null,
-                            [FlagData.Note] = freeze ? (bool?)null : true
-                        };
-                    }
-
-                    panels >>= 1;
-                    panelNumber++;
+                        [NumericData.MetricOffset] = metricOffset,
+                        [NumericData.SourceColumn] = panelNumber,
+                        [NumericData.Column] = isMapped ? mappedPanel.Panel : (BigRational?) null,
+                        [NumericData.Player] = isMapped ? mappedPanel.Player : (BigRational?) null,
+                        [FlagData.Freeze] = freeze ? true : (bool?) null,
+                        [FlagData.Note] = freeze ? (bool?) null : true
+                    };
                 }
             }
         }

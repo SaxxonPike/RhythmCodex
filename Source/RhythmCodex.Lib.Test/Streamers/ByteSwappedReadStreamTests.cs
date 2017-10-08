@@ -2,7 +2,6 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using Ploeh.AutoFixture;
 
 namespace RhythmCodex.Streamers
 {
@@ -12,14 +11,14 @@ namespace RhythmCodex.Streamers
         public void Read_ReadsCorrectBytes()
         {
             // Arrange.
-            var data = Fixture.CreateMany<byte>(4).ToArray();
+            var data = CreateMany<byte>(4).ToArray();
             var stream = new MemoryStream(data);
 
             // Act.
             var subject = new ByteSwappedReadStream(stream);
             var result = new byte[3];
             subject.Read(result, 0, result.Length);
-            
+
             // Assert.
             result.ShouldAllBeEquivalentTo(new[] {data[1], data[0], data[3]});
         }
@@ -28,7 +27,7 @@ namespace RhythmCodex.Streamers
         public void ReadByte_ReadsCorrectByte()
         {
             // Arrange.
-            var data = Fixture.CreateMany<byte>(4).ToArray();
+            var data = CreateMany<byte>(4).ToArray();
             var stream = new MemoryStream(data);
 
             // Act.

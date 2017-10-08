@@ -8,7 +8,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class TimingEventDecoderTests : BaseUnitTestFixture<TimingEventDecoder>
+    public class TimingEventDecoderTests : BaseUnitTestFixture<TimingEventDecoder, ITimingEventDecoder>
     {
         [Test]
         public void Decode_ConvertsTimingsCorrectly()
@@ -21,6 +21,12 @@ namespace RhythmCodex.Ssq.Converters
                 new Timing {LinearOffset = 150, MetricOffset = 8192}
             };
 
+            var timings = new TimingChunk
+            {
+                Timings = data,
+                Rate = 100
+            };
+
             var expected = new[]
             {
                 new Event {[NumericData.Bpm] = 240, [NumericData.LinearOffset] = 0, [NumericData.MetricOffset] = 0},
@@ -28,12 +34,12 @@ namespace RhythmCodex.Ssq.Converters
             };
 
             // Act.
-            var result = Subject.Decode(data, 100).ToArray();
+            var result = Subject.Decode(timings).ToArray();
 
             // Assert.
             result.Should().HaveCount(expected.Length);
             var resultMatches = Enumerable.Range(0, expected.Length)
-                .Select(i => ((Event)result[i]).MetadataEquals(expected[i]));
+                .Select(i => ((Event) result[i]).MetadataEquals(expected[i]));
             resultMatches.ShouldAllBeEquivalentTo(Enumerable.Repeat(true, expected.Length));
         }
     }

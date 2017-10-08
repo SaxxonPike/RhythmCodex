@@ -1,11 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">  
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
-  </PropertyGroup>  
+    <TargetFrameworks>netstandard1.4;net461</TargetFrameworks>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BigRationalLibrary" Version="1.0.0" />
-  </ItemGroup>  
+    <PackageReference Include="Microsoft.NETCore.Portable.Compatibility" Version="1.0.1" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
   </ItemGroup>
-</Project>  
+</Project>

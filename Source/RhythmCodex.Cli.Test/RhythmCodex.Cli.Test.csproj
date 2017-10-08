@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <AssemblyName>RhythmCodex.Cli.Test</AssemblyName>
+    <RootNamespace>RhythmCodex.Cli</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RhythmCodex.Cli\RhythmCodex.Cli.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Djmain\RhythmCodex.Djmain.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Ssq.Test\RhythmCodex.Ssq.Test.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Ssq\RhythmCodex.Ssq.csproj" />
+    <ProjectReference Include="..\RhythmCodex.Stepmania\RhythmCodex.Stepmania.csproj" />
+  </ItemGroup>
+</Project>

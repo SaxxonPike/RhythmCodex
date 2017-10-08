@@ -4,7 +4,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
-    public class TriggerChunkEncoderTests : BaseUnitTestFixture<TriggerChunkEncoder>
+    public class TriggerChunkEncoderTests : BaseUnitTestFixture<TriggerChunkEncoder, ITriggerChunkEncoder>
     {
         [Test]
         public void Convert_EncodesTriggers()
@@ -24,7 +24,7 @@ namespace RhythmCodex.Ssq.Converters
                 0x00, 0x10, 0x20, 0x30,
                 0x10, 0x20, 0x30, 0x40,
                 0x20, 0x30, 0x40, 0x50,
-                
+
                 0x12, 0x34,
                 0x56, 0x78,
                 0x90, 0x12

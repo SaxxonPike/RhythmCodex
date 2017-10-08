@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Streamers
 {
+    [Service]
     public class SsqStreamReader : ISsqStreamReader
     {
         private readonly IChunkStreamReader _chunkStreamReader;
@@ -12,18 +15,21 @@ namespace RhythmCodex.Ssq.Streamers
         {
             _chunkStreamReader = chunkStreamReader;
         }
-        
-        public IEnumerable<Chunk?> Read(Stream stream)
+
+        public IList<Chunk> Read(Stream stream)
         {
-            var result = new List<Chunk?>();
-            
+            return ReadInternal(stream).ToArray();
+        }
+
+        private IEnumerable<Chunk> ReadInternal(Stream stream)
+        {
             while (true)
             {
                 var chunk = _chunkStreamReader.Read(stream);
                 if (chunk == null)
-                    return result;
-                
-                result.Add(chunk);
+                    yield break;
+
+                yield return chunk;
             }
         }
     }

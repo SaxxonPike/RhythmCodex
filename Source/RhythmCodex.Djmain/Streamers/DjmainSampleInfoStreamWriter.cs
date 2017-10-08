@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Streamers
 {
+    [Service]
     public class DjmainSampleInfoStreamWriter : IDjmainSampleDefinitionStreamWriter
     {
         private readonly IDjmainConfiguration _djmainConfiguration;
@@ -19,7 +21,8 @@ namespace RhythmCodex.Djmain.Streamers
         public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions)
         {
             var defs = definitions.AsList();
-            var count = Math.Max(0, Math.Min(defs.Any() ? defs.Max(d => d.Key) + 1 : 0, _djmainConfiguration.MaxSampleDefinitions));
+            var count = Math.Max(0,
+                Math.Min(defs.Any() ? defs.Max(d => d.Key) + 1 : 0, _djmainConfiguration.MaxSampleDefinitions));
 
             var writer = new BinaryWriter(stream);
 
@@ -31,8 +34,8 @@ namespace RhythmCodex.Djmain.Streamers
                 writer.Write(definition.ReverbVolume);
                 writer.Write(definition.Volume);
                 writer.Write(definition.Panning);
-                writer.Write(unchecked((ushort)definition.Offset));
-                writer.Write(unchecked((byte)(definition.Offset >> 16)));
+                writer.Write(unchecked((ushort) definition.Offset));
+                writer.Write(unchecked((byte) (definition.Offset >> 16)));
                 writer.Write(definition.SampleType);
                 writer.Write(definition.Flags);
             }

@@ -5,7 +5,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class TriggerChunkDecoderTests : BaseUnitTestFixture<TriggerChunkDecoder>
+    public class TriggerChunkDecoderTests : BaseUnitTestFixture<TriggerChunkDecoder, ITriggerChunkDecoder>
     {
         [Test]
         public void Convert_DecodesTriggers()
@@ -14,7 +14,7 @@ namespace RhythmCodex.Ssq.Converters
             var data = new byte[]
             {
                 0x03, 0x00, 0x00, 0x00,
-                
+
                 0x00, 0x10, 0x20, 0x30,
                 0x10, 0x20, 0x30, 0x40,
                 0x20, 0x30, 0x40, 0x50,

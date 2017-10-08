@@ -6,36 +6,47 @@ namespace RhythmCodex.Streamers
     public class ByteSwappedReadStream : Stream
     {
         private readonly Stream _baseStream;
-        private int _buffer;
-        private bool _secondByte;
         private readonly BinaryReader _reader;
+        private int _buffer;
         private bool _bufferReady;
+        private bool _secondByte;
 
         public ByteSwappedReadStream(Stream baseStream)
         {
             _baseStream = baseStream;
             _reader = new BinaryReader(_baseStream);
         }
-        
+
+        public override bool CanRead => _baseStream.CanRead;
+        public override bool CanSeek => _baseStream.CanSeek;
+        public override bool CanWrite => false;
+        public override long Length => _baseStream.Length;
+
+        public override long Position
+        {
+            get => _baseStream.Position;
+            set => Seek(value, SeekOrigin.Begin);
+        }
+
         public override void Flush()
         {
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            switch (origin)
-            {
-                case SeekOrigin.Begin:
-                    _baseStream.Seek(offset & ~1L, SeekOrigin.Begin);
-                    _secondByte = (offset & 1) != 0;
-                    _bufferReady = false;
-                    return offset;
-                default:
-                    throw new NotImplementedException();
-            }
+            if (origin != SeekOrigin.Begin)
+                throw new NotImplementedException();
+
+            _baseStream.Seek(offset & ~1L, SeekOrigin.Begin);
+            _secondByte = (offset & 1) != 0;
+            _bufferReady = false;
+            return offset;
         }
 
-        public override void SetLength(long value) => _baseStream.SetLength(value);
+        public override void SetLength(long value)
+        {
+            _baseStream.SetLength(value);
+        }
 
         private byte ReadOne()
         {
@@ -48,12 +59,12 @@ namespace RhythmCodex.Streamers
             if (!_secondByte)
             {
                 _secondByte = true;
-                return unchecked((byte)(_buffer >> 8));
+                return unchecked((byte) (_buffer >> 8));
             }
-            
+
             _secondByte = false;
             _bufferReady = false;
-            return unchecked((byte)_buffer);
+            return unchecked((byte) _buffer);
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -76,7 +87,7 @@ namespace RhythmCodex.Streamers
                 // Shortcut for zero byte reads.
                 if (c <= 0)
                     return total;
-                
+
                 // Read pairs of bytes at once.
                 var inBuffer = new byte[c & ~1];
                 var i = 0;
@@ -101,7 +112,7 @@ namespace RhythmCodex.Streamers
             {
                 // End is ignored, just return what we have
             }
-            
+
             return total;
         }
 
@@ -117,18 +128,9 @@ namespace RhythmCodex.Streamers
             }
         }
 
-        public override void Write(byte[] buffer, int offset, int count) => 
-            throw new NotImplementedException();
-
-        public override bool CanRead => _baseStream.CanRead;
-        public override bool CanSeek => _baseStream.CanSeek;
-        public override bool CanWrite => false;
-        public override long Length => _baseStream.Length;
-
-        public override long Position
+        public override void Write(byte[] buffer, int offset, int count)
         {
-            get => _baseStream.Position;
-            set => Seek(value, SeekOrigin.Begin);
+            throw new NotImplementedException();
         }
     }
 }

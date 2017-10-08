@@ -1,26 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">  
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
     <AssemblyName>RhythmCodex.Ssq.Test</AssemblyName>
     <RootNamespace>RhythmCodex.Ssq</RootNamespace>
-  </PropertyGroup>  
+  </PropertyGroup>
   <ItemGroup>
-    <None Remove="Data\freeze.zip" />
-    <None Remove="Data\shock.zip" />
-  </ItemGroup>  
-  <ItemGroup>
-    <EmbeddedResource Include="Data\freeze.zip" />
-    <EmbeddedResource Include="Data\shock.zip" />
-  </ItemGroup>  
-  <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="3.50.3" />
-    <PackageReference Include="BigRationalLibrary" Version="1.0.0" />
-    <PackageReference Include="FluentAssertions" Version="4.19.3" />
+    <PackageReference Include="Autofac" Version="4.6.1" />
+    <PackageReference Include="AutoFixture" Version="3.50.6" />
+    <PackageReference Include="FluentAssertions" Version="4.19.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="Moqzilla" Version="1.0.3" />
-    <PackageReference Include="NUnit" Version="3.7.1" />
-  </ItemGroup>  
+    <PackageReference Include="NUnit" Version="3.8.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj" />
     <ProjectReference Include="..\RhythmCodex.Ssq\RhythmCodex.Ssq.csproj" />
   </ItemGroup>
-</Project>  
+</Project>

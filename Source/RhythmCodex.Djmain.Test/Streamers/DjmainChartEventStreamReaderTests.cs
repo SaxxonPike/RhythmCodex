@@ -7,7 +7,9 @@ using RhythmCodex.Djmain.Model;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DjmainChartEventStreamReaderTests : BaseUnitTestFixture<DjmainChartEventStreamReader>
+    public class
+        DjmainChartEventStreamReaderTests : BaseUnitTestFixture<DjmainChartEventStreamReader,
+            IDjmainChartEventStreamReader>
     {
         [Test]
         public void Read_ReadsUntilEndMarker()
@@ -24,16 +26,18 @@ namespace RhythmCodex.Djmain.Streamers
 
             var expected = new[]
             {
-                new DjmainChartEvent { Offset = 0x0000, Param0 = 0x00, Param1 = 0x10 },
-                new DjmainChartEvent { Offset = 0x0000, Param0 = 0x12, Param1 = 0x34 },
-                new DjmainChartEvent { Offset = 0x3412, Param0 = 0x56, Param1 = 0x78 },
-                new DjmainChartEvent { Offset = 0x7856, Param0 = 0x90, Param1 = 0x12 }
+                new DjmainChartEvent {Offset = 0x0000, Param0 = 0x00, Param1 = 0x10},
+                new DjmainChartEvent {Offset = 0x0000, Param0 = 0x12, Param1 = 0x34},
+                new DjmainChartEvent {Offset = 0x3412, Param0 = 0x56, Param1 = 0x78},
+                new DjmainChartEvent {Offset = 0x7856, Param0 = 0x90, Param1 = 0x12}
             };
 
             // Act.
             DjmainChartEvent[] events;
             using (var mem = new MemoryStream(data))
+            {
                 events = Subject.Read(mem).ToArray();
+            }
 
             // Assert.
             events.ShouldAllBeEquivalentTo(expected);

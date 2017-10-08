@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Streamers
 {
     public interface ISsqStreamReader
     {
-        IEnumerable<Chunk?> Read(Stream stream);
+        IList<Chunk> Read(Stream stream);
     }
 }

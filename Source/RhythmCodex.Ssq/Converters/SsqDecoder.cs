@@ -3,74 +3,68 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class SsqDecoder : ISsqDecoder
     {
-        private readonly ITimingChunkDecoder _timingChunkDecoder;
-        private readonly ITimingEventDecoder _timingEventDecoder;
+        private readonly IChartInfoDecoder _chartInfoDecoder;
+        private readonly IPanelMapperSelector _panelMapperSelector;
+        private readonly ISsqChunkFilter _ssqChunkFilter;
+        private readonly ISsqEventDecoder _ssqEventDecoder;
         private readonly IStepChunkDecoder _stepChunkDecoder;
-        private readonly IStepEventDecoder _stepEventDecoder;
+        private readonly ITimingChunkDecoder _timingChunkDecoder;
         private readonly ITriggerChunkDecoder _triggerChunkDecoder;
-        private readonly ITriggerEventDecoder _triggerEventDecoder;
 
         public SsqDecoder(
+            ISsqEventDecoder ssqEventDecoder,
             ITimingChunkDecoder timingDecoder,
-            ITimingEventDecoder timingEventDecoder,
             IStepChunkDecoder stepChunkDecoder,
-            IStepEventDecoder stepEventDecoder,
             ITriggerChunkDecoder triggerChunkDecoder,
-            ITriggerEventDecoder triggerEventDecoder)
+            IPanelMapperSelector panelMapperSelector,
+            IChartInfoDecoder chartInfoDecoder,
+            ISsqChunkFilter ssqChunkFilter)
         {
+            _ssqEventDecoder = ssqEventDecoder;
             _timingChunkDecoder = timingDecoder;
-            _timingEventDecoder = timingEventDecoder;
             _stepChunkDecoder = stepChunkDecoder;
-            _stepEventDecoder = stepEventDecoder;
             _triggerChunkDecoder = triggerChunkDecoder;
-            _triggerEventDecoder = triggerEventDecoder;
-        }
-        
-        public IEnumerable<IChart> Decode(IEnumerable<Chunk?> data)
-        {
-            var chunks = data.Where(c => c.HasValue).Select(c => c.Value).AsList();
-            var timings = chunks.Where(c => c.Parameter0 == Parameter0.Timings)
-                .SelectMany(tc => _timingChunkDecoder.Convert(tc.Data))
-                .AsList();
-            var triggers = chunks.Where(c => c.Parameter0 == Parameter0.Triggers)
-                .SelectMany(tc => _triggerChunkDecoder.Convert(tc.Data))
-                .AsList();
-            var stepChunks = chunks.Where(c => c.Parameter0 == Parameter0.Steps)
-                .AsList();
-            var timingRate = chunks.First(c => c.Parameter0 == Parameter0.Timings).Parameter1;
-
-            return stepChunks.Select(sc => DecodeChart(
-                timings, 
-                _stepChunkDecoder.Convert(sc.Data).AsList(),
-                triggers,
-                sc.Parameter1,
-                timingRate));
+            _panelMapperSelector = panelMapperSelector;
+            _chartInfoDecoder = chartInfoDecoder;
+            _ssqChunkFilter = ssqChunkFilter;
         }
 
-        private IChart DecodeChart(
-            IEnumerable<Timing> timings,
-            IEnumerable<Step> steps, 
-            IEnumerable<Trigger> triggers,
-            int id, 
-            int ticksPerSecond)
+        public IList<IChart> Decode(IEnumerable<Chunk> data)
         {
-            var events = _timingEventDecoder.Decode(timings, ticksPerSecond)
-                .Concat(_stepEventDecoder.Decode(steps))
-                .Concat(_triggerEventDecoder.Decode(triggers))
-                .OrderBy(ev => ev[NumericData.MetricOffset])
-                .AsList();
+            var chunks = data.AsList();
 
-            return new Chart
+            var timings = _ssqChunkFilter.GetTimings(chunks);
+            var triggers = _ssqChunkFilter.GetTriggers(chunks);
+            var steps = _ssqChunkFilter.GetSteps(chunks);
+
+            var charts = steps.Select(sc =>
             {
-                Events = events,
-                [NumericData.Id] = id,
-            };
+                var info = _chartInfoDecoder.Decode(sc.Id);
+
+                return new Chart
+                {
+                    Events = _ssqEventDecoder.Decode(
+                            timings,
+                            sc.Steps,
+                            triggers,
+                            _panelMapperSelector.Select(sc.Steps, info))
+                        .AsList(),
+                    [NumericData.Id] = sc.Id,
+                    ["Difficulty"] = info.Difficulty,
+                    ["Type"] = $"dance-{info.Type.ToLowerInvariant()}"
+                };
+            });
+
+            return charts.Cast<IChart>().AsList();
         }
     }
 }

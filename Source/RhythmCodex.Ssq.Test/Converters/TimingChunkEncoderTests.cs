@@ -5,7 +5,7 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters
 {
     [TestFixture]
-    public class TimingChunkEncoderTests : BaseUnitTestFixture<TimingChunkEncoder>
+    public class TimingChunkEncoderTests : BaseUnitTestFixture<TimingChunkEncoder, ITimingChunkEncoder>
     {
         [Test]
         public void Convert_EncodesTimings()
@@ -21,19 +21,19 @@ namespace RhythmCodex.Ssq.Converters
             var expected = new byte[]
             {
                 0x03, 0x00, 0x00, 0x00,
-                
+
                 0x78, 0x56, 0x34, 0x00,
                 0x89, 0x67, 0x45, 0x00,
                 0x90, 0x78, 0x56, 0x00,
-                
+
                 0x56, 0x34, 0x12, 0x00,
                 0x67, 0x45, 0x23, 0x00,
                 0x78, 0x56, 0x34, 0x00
             };
-            
+
             // Act.
             var result = Subject.Convert(timings);
-            
+
             // Assert.
             result.ShouldAllBeEquivalentTo(expected);
         }

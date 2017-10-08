@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Numerics;
 using RhythmCodex.Attributes;
 using RhythmCodex.Audio;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Converters
 {
+    [Service]
     public class DjmainSoundDecoder
     {
-        private readonly IAudioDecoder _audioDecoder;
-
         private static readonly Lazy<BigRational[]> VolumeTable = new Lazy<BigRational[]>(() =>
         {
             const double referenceDecibels = -36d;
             const double referenceVolume = 0x40;
             const double attenuation = 20d;
 
-            return Enumerable.Range(0, 256).Select(i => 
-                new BigRational(Math.Pow(10d, referenceDecibels * i / referenceVolume / attenuation)))
+            return Enumerable.Range(0, 256).Select(i =>
+                    new BigRational(Math.Pow(10d, referenceDecibels * i / referenceVolume / attenuation)))
                 .ToArray();
         });
 
@@ -30,22 +28,23 @@ namespace RhythmCodex.Djmain.Converters
             const int range = 0xE;
 
             return Enumerable.Range(0, 15).Select(i =>
-                BigRational.One - new BigRational(Math.Max(0, i - minimum), range))
+                    BigRational.One - new BigRational(Math.Max(0, i - minimum), range))
                 .ToArray();
         });
 
-        public DjmainSoundDecoder(
-            IAudioDecoder audioDecoder)
+        private readonly IAudioDecoder _audioDecoder;
+
+        public DjmainSoundDecoder(IAudioDecoder audioDecoder)
         {
             _audioDecoder = audioDecoder;
         }
 
-        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples, Stream stream, int offset)
+        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
         {
             return DecodeInternal(samples).ToList();
         }
 
-        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
+        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
         {
             foreach (var def in samples)
             {
@@ -65,13 +64,14 @@ namespace RhythmCodex.Djmain.Converters
                     case 0x8:
                         sample.Data = _audioDecoder.DecodeDpcm(data);
                         break;
+                    default:
+                        sample.Data = new List<float>();
+                        break;
                 }
-
-                sample.Data = sample.Data ?? new List<float>();
 
                 yield return new Sound
                 {
-                    Samples = new List<ISample> { sample },
+                    Samples = new List<ISample> {sample},
                     [NumericData.Volume] = VolumeTable.Value[info.Volume],
                     [NumericData.Panning] = PanningTable.Value[info.Panning & 0xF],
                     [NumericData.Rate] = DjmainConstants.SampleRateMultiplier * info.Frequency

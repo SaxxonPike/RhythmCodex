@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class StepChunkEncoder : IStepChunkEncoder
     {
         public byte[] Convert(IEnumerable<Step> steps)
@@ -17,16 +19,16 @@ namespace RhythmCodex.Ssq.Converters
             using (var writer = new BinaryWriter(mem))
             {
                 writer.Write(count);
-                
+
                 foreach (var offset in stepList.Select(s => s.MetricOffset))
                     writer.Write(offset);
-                
+
                 foreach (var panel in stepList.Select(s => s.Panels))
                     writer.Write(panel);
 
                 if ((count & 1) != 0)
-                    writer.Write((byte)0);
-                
+                    writer.Write((byte) 0);
+
                 foreach (var extraPanel in stepList.Where(s => s.ExtraPanels != null || s.ExtraPanelInfo != null))
                 {
                     writer.Write(extraPanel.ExtraPanels ?? 0);

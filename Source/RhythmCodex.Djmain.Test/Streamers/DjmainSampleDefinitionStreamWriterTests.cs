@@ -8,7 +8,8 @@ using RhythmCodex.Djmain.Model;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<DjmainSampleInfoStreamWriter>
+    public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<DjmainSampleInfoStreamWriter,
+        IDjmainSampleDefinitionStreamWriter>
     {
         [Test]
         public void Write_WritesSampleDefinitions()

@@ -2,10 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Streamers
 {
+    [Service]
     public class SmStreamReader : ISmStreamReader
     {
         public IEnumerable<Command> Read(Stream source)
@@ -22,37 +24,30 @@ namespace RhythmCodex.Stepmania.Streamers
         {
             var commandMode = false;
             var commandBuilder = new StringBuilder();
-            
+
             foreach (var line in lines)
             {
                 foreach (var c in line)
-                {
                     if (!commandMode)
                     {
-                        switch (c)
-                        {
-                            case '#':
-                                commandMode = true;
-                                continue;
-                        }
+                        if (c == '#')
+                            commandMode = true;
                     }
                     else
                     {
-                        switch (c)
+                        if (c == ';')
                         {
-                            case ';':
-                                commandMode = false;
-                                if (commandBuilder.Length > 0)
-                                {
-                                    yield return commandBuilder.ToString();
-                                    commandBuilder.Clear();
-                                }
-                                continue;
+                            commandMode = false;
+                            if (commandBuilder.Length > 0)
+                            {
+                                yield return commandBuilder.ToString();
+                                commandBuilder.Clear();
+                            }
+                            continue;
                         }
-                        
+
                         commandBuilder.Append(c);
                     }
-                }
 
                 if (commandBuilder.Length > 0)
                     commandBuilder.AppendLine();
