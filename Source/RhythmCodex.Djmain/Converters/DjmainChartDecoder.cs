@@ -38,13 +38,13 @@ namespace RhythmCodex.Djmain.Converters
                 var param0 = ev.Param0 >> 4;
                 var param1 = ev.Param1;
 
-                switch (command)
+                switch ((DjmainEventType)command)
                 {
-                    case 0x0:
-                        switch (param0)
+                    case DjmainEventType.Marker:
+                        switch ((DjmainColumnType)param0)
                         {
-                            case 0xA:
-                            case 0xB:
+                            case DjmainColumnType.Player0Scratch:
+                            case DjmainColumnType.Player1Scratch:
                                 yield return new Event
                                 {
                                     [NumericData.SourceColumn] = param0,
@@ -54,8 +54,8 @@ namespace RhythmCodex.Djmain.Converters
                                     [NumericData.Player] = param0 & 1
                                 };
                                 break;
-                            case 0xC:
-                            case 0xD:
+                            case DjmainColumnType.Player0Measure:
+                            case DjmainColumnType.Player1Measure:
                                 yield return new Event
                                 {
                                     [NumericData.SourceColumn] = param0,
@@ -64,8 +64,8 @@ namespace RhythmCodex.Djmain.Converters
                                     [NumericData.Player] = param0 & 1
                                 };
                                 break;
-                            case 0xE:
-                            case 0xF:
+                            case DjmainColumnType.Player0FreeScratch:
+                            case DjmainColumnType.Player1FreeScratch:
                                 yield return new Event
                                 {
                                     [NumericData.SourceColumn] = param0,
@@ -86,11 +86,11 @@ namespace RhythmCodex.Djmain.Converters
                                 break;
                         }
                         break;
-                    case 0x1:
-                        switch (param0)
+                    case DjmainEventType.SoundSelect:
+                        switch ((DjmainColumnType)param0)
                         {
-                            case 0xA:
-                            case 0xB:
+                            case DjmainColumnType.Player0Scratch:
+                            case DjmainColumnType.Player1Scratch:
                                 yield return new Event
                                 {
                                     [NumericData.SourceColumn] = param0,
@@ -100,16 +100,16 @@ namespace RhythmCodex.Djmain.Converters
                                     [NumericData.Player] = param0 & 1
                                 };
                                 break;
-                            case 0x0:
-                            case 0x1:
-                            case 0x2:
-                            case 0x3:
-                            case 0x4:
-                            case 0x5:
-                            case 0x6:
-                            case 0x7:
-                            case 0x8:
-                            case 0x9:
+                            case DjmainColumnType.Player0Key0:
+                            case DjmainColumnType.Player1Key0:
+                            case DjmainColumnType.Player0Key1:
+                            case DjmainColumnType.Player1Key1:
+                            case DjmainColumnType.Player0Key2:
+                            case DjmainColumnType.Player1Key2:
+                            case DjmainColumnType.Player0Key3:
+                            case DjmainColumnType.Player1Key3:
+                            case DjmainColumnType.Player0Key4:
+                            case DjmainColumnType.Player1Key4:
                                 yield return new Event
                                 {
                                     [NumericData.SourceColumn] = param0,
@@ -131,21 +131,21 @@ namespace RhythmCodex.Djmain.Converters
                                 break;
                         }
                         break;
-                    case 0x2:
+                    case DjmainEventType.Bpm:
                         yield return new Event
                         {
                             [NumericData.LinearOffset] = offset,
                             [NumericData.Bpm] = param1 | (param0 << 8)
                         };
                         break;
-                    case 0x4:
+                    case DjmainEventType.End:
                         yield return new Event
                         {
                             [NumericData.LinearOffset] = offset,
                             [FlagData.End] = true
                         };
                         break;
-                    case 0x5:
+                    case DjmainEventType.Bgm:
                         yield return new Event
                         {
                             [NumericData.LinearOffset] = offset,
@@ -153,7 +153,7 @@ namespace RhythmCodex.Djmain.Converters
                             [NumericData.PlaySound] = param1
                         };
                         break;
-                    case 0x6:
+                    case DjmainEventType.JudgeTiming:
                         yield return new Event
                         {
                             [NumericData.LinearOffset] = offset,
@@ -162,7 +162,7 @@ namespace RhythmCodex.Djmain.Converters
                             [NumericData.SourceColumn] = param0
                         };
                         break;
-                    case 0x7:
+                    case DjmainEventType.JudgeSound:
                         yield return new Event
                         {
                             [NumericData.LinearOffset] = offset,
@@ -172,7 +172,7 @@ namespace RhythmCodex.Djmain.Converters
                             [NumericData.JudgeSound] = param1
                         };
                         break;
-                    case 0x8:
+                    case DjmainEventType.JudgeTrigger:
                         yield return new Event
                         {
                             [NumericData.LinearOffset] = offset,
@@ -181,7 +181,7 @@ namespace RhythmCodex.Djmain.Converters
                             [NumericData.Trigger] = param1
                         };
                         break;
-                    case 0x9:
+                    case DjmainEventType.PhraseSelect:
                         yield return new Event
                         {
                             [NumericData.LinearOffset] = offset,
