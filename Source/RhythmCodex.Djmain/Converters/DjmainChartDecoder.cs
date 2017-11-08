@@ -96,15 +96,8 @@ namespace RhythmCodex.Djmain.Converters
                     case DjmainEventType.SoundSelect:
                         switch ((DjmainColumnType)param0)
                         {
-<<<<<<< HEAD
                             case DjmainColumnType.Player0Scratch:
                             case DjmainColumnType.Player1Scratch:
-=======
-                            case 0xA:
-                            case 0xB:
-                            case 0xE:
-                            case 0xF:
->>>>>>> 785b246661d71c847b2e99eb4301f6a0883ee0f1
                                 yield return new Event
                                 {
                                     [NumericData.SourceCommand] = ev.Param0,
