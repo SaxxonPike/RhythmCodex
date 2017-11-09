@@ -12,11 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Cli\RhythmCodex.Cli.csproj" />
-    <ProjectReference Include="..\RhythmCodex.Djmain\RhythmCodex.Djmain.csproj" />
     <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj" />
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
-    <ProjectReference Include="..\RhythmCodex.Ssq.Test\RhythmCodex.Ssq.Test.csproj" />
-    <ProjectReference Include="..\RhythmCodex.Ssq\RhythmCodex.Ssq.csproj" />
-    <ProjectReference Include="..\RhythmCodex.Stepmania\RhythmCodex.Stepmania.csproj" />
   </ItemGroup>
 </Project>

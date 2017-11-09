@@ -13,9 +13,6 @@
     <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RhythmCodex.Djmain\RhythmCodex.Djmain.csproj" />
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
-    <ProjectReference Include="..\RhythmCodex.Ssq\RhythmCodex.Ssq.csproj" />
-    <ProjectReference Include="..\RhythmCodex.Stepmania\RhythmCodex.Stepmania.csproj" />
   </ItemGroup>
 </Project>

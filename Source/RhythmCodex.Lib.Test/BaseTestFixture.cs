@@ -7,7 +7,7 @@ using System.Linq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Dsl;
-using RhythmCodex.Test;
+using RhythmCodex.Data;
 
 namespace RhythmCodex
 {
@@ -46,7 +46,7 @@ namespace RhythmCodex
         protected byte[] GetEmbeddedResource(string name)
         {
             using (var stream =
-                typeof(TestDataBeacon).Assembly.GetManifestResourceStream($"RhythmCodex.Test.Data.{name}"))
+                typeof(TestDataBeacon).Assembly.GetManifestResourceStream($"RhythmCodex.Data.{name}"))
             using (var mem = new MemoryStream())
             {
                 if (stream == null)
