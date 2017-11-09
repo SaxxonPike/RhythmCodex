@@ -16,7 +16,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
-
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Djmain\chart.zip" />
+    <EmbeddedResource Include="Data\Ssq\freeze.zip" />
+    <EmbeddedResource Include="Data\Ssq\shock.zip" />
+    <EmbeddedResource Include="Data\Ssq\solo.zip" />  
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Djmain" />
