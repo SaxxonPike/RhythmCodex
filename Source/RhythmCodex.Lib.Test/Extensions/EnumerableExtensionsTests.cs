@@ -17,7 +17,7 @@ namespace RhythmCodex.Extensions
             var output = data.Select(d => d).AsList();
 
             // Assert.
-            output.Should().AllBeEquivalentTo(data);
+            output.Should().BeEquivalentTo(data);
             output.Should().NotBeSameAs(data);
         }
 
@@ -31,7 +31,7 @@ namespace RhythmCodex.Extensions
             var output = data.AsList();
 
             // Assert.
-            output.Should().AllBeEquivalentTo(data);
+            output.Should().BeEquivalentTo(data);
             output.Should().BeSameAs(data);
         }
     }
