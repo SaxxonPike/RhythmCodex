@@ -41,7 +41,7 @@ namespace RhythmCodex.Ssq.Converters
             var result = Subject.Convert(steps);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace RhythmCodex.Ssq.Converters
             var result = Subject.Convert(steps);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
     }
 }

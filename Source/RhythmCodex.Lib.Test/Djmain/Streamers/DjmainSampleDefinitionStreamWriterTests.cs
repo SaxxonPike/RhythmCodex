@@ -58,7 +58,7 @@ namespace RhythmCodex.Djmain.Streamers
 
                 // Assert.
                 var output = mem.ToArray();
-                output.ShouldAllBeEquivalentTo(expected);
+                output.Should().BeEquivalentTo(expected);
             }
         }
     }

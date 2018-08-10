@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using Ploeh.AutoFixture;
 using RhythmCodex.Djmain.Model;
 
 namespace RhythmCodex.Djmain.Converters

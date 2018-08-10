@@ -34,7 +34,7 @@ namespace RhythmCodex.Stepmania.Streamers
                 var result = Subject.Read(mem).ToArray();
 
                 // Assert.
-                result.ShouldAllBeEquivalentTo(expected);
+                result.Should().BeEquivalentTo(expected);
             }
         }
 
@@ -69,7 +69,7 @@ namespace RhythmCodex.Stepmania.Streamers
                 var result = Subject.Read(mem).ToArray();
 
                 // Assert.
-                result.ShouldAllBeEquivalentTo(expected);
+                result.Should().BeEquivalentTo(expected);
             }
         }
     }

@@ -25,7 +25,7 @@ namespace RhythmCodex.Ssq.Streamers
             var result = Subject.Read(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(chunks.TakeWhile(c => c != null));
+            result.Should().BeEquivalentTo(chunks.TakeWhile(c => c != null));
         }
     }
 }

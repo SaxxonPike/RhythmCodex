@@ -20,7 +20,7 @@ namespace RhythmCodex.Streamers
             subject.Read(result, 0, result.Length);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(new[] {data[1], data[0], data[3]});
+            result.Should().BeEquivalentTo(new[] {data[1], data[0], data[3]});
         }
 
         [Test]

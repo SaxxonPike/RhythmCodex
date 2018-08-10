@@ -26,7 +26,7 @@ namespace RhythmCodex.Ssq.Streamers
             Subject.Write(stream, chunks);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(chunks.Concat(new Chunk[] {null}));
+            result.Should().BeEquivalentTo(chunks.Concat(new Chunk[] {null}));
         }
     }
 }

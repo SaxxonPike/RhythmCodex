@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using AutoFixture;
+using AutoFixture.Dsl;
 using NUnit.Framework;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.Dsl;
 using RhythmCodex.Data;
 
 namespace RhythmCodex

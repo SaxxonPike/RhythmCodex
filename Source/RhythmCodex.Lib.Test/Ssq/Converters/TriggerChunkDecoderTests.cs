@@ -35,7 +35,7 @@ namespace RhythmCodex.Ssq.Converters
             var result = Subject.Convert(data);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
     }
 }

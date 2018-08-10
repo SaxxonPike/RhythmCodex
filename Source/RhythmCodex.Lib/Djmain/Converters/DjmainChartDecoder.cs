@@ -96,6 +96,8 @@ namespace RhythmCodex.Djmain.Converters
                     case DjmainEventType.SoundSelect:
                         switch ((DjmainColumnType)param0)
                         {
+                            case DjmainColumnType.Player0FreeScratch:
+                            case DjmainColumnType.Player1FreeScratch:
                             case DjmainColumnType.Player0Scratch:
                             case DjmainColumnType.Player1Scratch:
                                 yield return new Event

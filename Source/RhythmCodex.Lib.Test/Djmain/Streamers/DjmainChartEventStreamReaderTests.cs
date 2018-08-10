@@ -40,7 +40,7 @@ namespace RhythmCodex.Djmain.Streamers
             }
 
             // Assert.
-            events.ShouldAllBeEquivalentTo(expected);
+            events.Should().BeEquivalentTo(expected);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace RhythmCodex.Stepmania.Converters
             var output = Subject.Encode(data);
 
             // Assert.
-            output.ShouldBeEquivalentTo($"{stream},{voltage},{air},{freeze},{chaos}");
+            output.Should().BeEquivalentTo($"{stream},{voltage},{air},{freeze},{chaos}");
         }
     }
 }

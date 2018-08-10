@@ -37,7 +37,7 @@ namespace RhythmCodex.Cli.Modules
                 .Execute(args);
 
             // Assert.
-            act.ShouldNotThrow();
+            act.Should().NotThrow();
         }
     }
 }

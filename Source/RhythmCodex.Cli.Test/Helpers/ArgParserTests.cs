@@ -34,7 +34,7 @@ namespace RhythmCodex.Cli.Helpers
 
             // Assert.
             output.Should().HaveCount(1);
-            output[$"{argKind}"].ShouldBeEquivalentTo(new[] {argValue});
+            output[$"{argKind}"].Should().BeEquivalentTo(new[] {argValue});
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace RhythmCodex.Cli.Helpers
 
             // Assert.
             output.Should().HaveCount(1);
-            output[$"{argKind}"].ShouldBeEquivalentTo(argValues);
+            output[$"{argKind}"].Should().BeEquivalentTo(argValues);
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace RhythmCodex.Cli.Helpers
 
             // Assert.
             output.Should().HaveCount(2);
-            output[$"{argKinds[0]}"].ShouldBeEquivalentTo(new[] {argValues[0]});
-            output[$"{argKinds[1]}"].ShouldBeEquivalentTo(new[] {argValues[1]});
+            output[$"{argKinds[0]}"].Should().BeEquivalentTo(new[] {argValues[0]});
+            output[$"{argKinds[1]}"].Should().BeEquivalentTo(new[] {argValues[1]});
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace RhythmCodex.Cli.Helpers
 
             // Assert.
             output.Should().HaveCount(1);
-            output[string.Empty].ShouldBeEquivalentTo(new[] {argValue});
+            output[string.Empty].Should().BeEquivalentTo(new[] {argValue});
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace RhythmCodex.Cli.Helpers
 
             // Assert.
             output.Should().HaveCount(1);
-            output[string.Empty].ShouldBeEquivalentTo(argValues);
+            output[string.Empty].Should().BeEquivalentTo(argValues);
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace RhythmCodex.Cli.Helpers
             
             // Assert.
             output.Should().HaveCount(3);
-            output[string.Empty].ShouldBeEquivalentTo(defaultValues);
+            output[string.Empty].Should().BeEquivalentTo(defaultValues);
             output[$"{argKinds[0]}"].Should().BeEquivalentTo(argValues[0]);
             output[$"{argKinds[1]}"].Should().BeEquivalentTo(argValues[1]);
         }
@@ -131,7 +131,7 @@ namespace RhythmCodex.Cli.Helpers
             
             // Assert.
             output.Should().HaveCount(1);
-            output[string.Empty].ShouldBeEquivalentTo(defaultValues);
+            output[string.Empty].Should().BeEquivalentTo(defaultValues);
         }
     }
 }

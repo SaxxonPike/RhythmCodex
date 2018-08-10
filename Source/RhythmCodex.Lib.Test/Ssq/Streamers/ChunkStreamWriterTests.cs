@@ -20,7 +20,7 @@ namespace RhythmCodex.Ssq.Streamers
 
             // Assert.
             var observed = stream.ToArray();
-            observed.ShouldAllBeEquivalentTo(new byte[] {0, 0, 0, 0});
+            observed.Should().BeEquivalentTo(new byte[] {0, 0, 0, 0});
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace RhythmCodex.Ssq.Streamers
 
             // Assert.
             var observed = stream.ToArray();
-            observed.ShouldAllBeEquivalentTo(expected);
+            observed.Should().BeEquivalentTo(expected);
         }
     }
 }

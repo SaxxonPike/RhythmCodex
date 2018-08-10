@@ -30,7 +30,7 @@ namespace RhythmCodex.Ssq.Mappers
             var result = Enumerable.Range(0, expected.Length).Select(Subject.Map).AsList();
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace RhythmCodex.Ssq.Mappers
             var result = data.Select(Subject.Map).AsList();
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
     }
 }

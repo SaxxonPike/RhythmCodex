@@ -102,7 +102,7 @@ namespace RhythmCodex.Ssq.Converters
             result.Should().HaveCount(expected.Length);
             var resultMatches = Enumerable.Range(0, expected.Length)
                 .Select(i => ((Event) result[i]).MetadataEquals(expected[i]));
-            resultMatches.ShouldAllBeEquivalentTo(Enumerable.Repeat(true, expected.Length));
+            resultMatches.Should().BeEquivalentTo(Enumerable.Repeat(true, expected.Length));
         }
     }
 }

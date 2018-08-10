@@ -37,7 +37,7 @@ namespace RhythmCodex.Ssq.Streamers
             result.Should().NotBe(null);
             result.Parameter0.Should().Be(param0);
             result.Parameter1.Should().Be(param1);
-            result.Data.Take(data.Length).ShouldAllBeEquivalentTo(data);
+            result.Data.Take(data.Length).Should().BeEquivalentTo(data);
         }
     }
 }

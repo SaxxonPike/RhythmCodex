@@ -48,7 +48,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadDpcm(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadDpcm(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadDpcm(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadPcm16(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadPcm16(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -161,7 +161,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadPcm16(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -204,7 +204,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadPcm8(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -218,7 +218,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadPcm8(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -233,7 +233,7 @@ namespace RhythmCodex.Djmain.Streamers
             var result = Subject.ReadPcm8(stream);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
     }
 }

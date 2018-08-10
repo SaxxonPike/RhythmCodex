@@ -32,7 +32,7 @@ namespace RhythmCodex.Djmain.Streamers
             }
 
             // Assert.
-            output.ShouldAllBeEquivalentTo(expected);
+            output.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace RhythmCodex.Djmain.Streamers
             }
 
             // Assert.
-            output.ShouldAllBeEquivalentTo(expected);
+            output.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace RhythmCodex.Djmain.Streamers
             }
 
             // Assert.
-            output.ShouldAllBeEquivalentTo(expected);
+            output.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace RhythmCodex.Djmain.Streamers
             }
 
             // Assert.
-            output.ShouldAllBeEquivalentTo(expected);
+            output.Should().BeEquivalentTo(expected);
         }
     }
 }

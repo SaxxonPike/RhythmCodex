@@ -18,7 +18,7 @@ namespace RhythmCodex.Djmain.Converters
             var result = Subject.DecodeDpcm(data);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace RhythmCodex.Djmain.Converters
             var result = Subject.DecodeDpcm(data);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace RhythmCodex.Djmain.Converters
             var result = Subject.DecodePcm16(data);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace RhythmCodex.Djmain.Converters
             var result = Subject.DecodePcm16(data);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace RhythmCodex.Djmain.Converters
             var result = Subject.DecodePcm8(data);
 
             // Assert.
-            result.ShouldAllBeEquivalentTo(expected);
+            result.Should().BeEquivalentTo(expected);
         }
     }
 }

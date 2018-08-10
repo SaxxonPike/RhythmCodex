@@ -27,9 +27,9 @@ namespace RhythmCodex.Stepmania.Converters
             var output = Subject.Decode(data, columnCount).Single();
 
             // Assert.
-            output[NumericData.SourceColumn].ShouldBeEquivalentTo(new BigRational(sourceColumn, 1));
-            output[NumericData.Player].ShouldBeEquivalentTo(new BigRational(expectedPlayer, 1));
-            output[NumericData.Column].ShouldBeEquivalentTo(new BigRational(expectedColumn, 1));
+            output[NumericData.SourceColumn].Should().BeEquivalentTo(new BigRational(sourceColumn, 1));
+            output[NumericData.Player].Should().BeEquivalentTo(new BigRational(expectedPlayer, 1));
+            output[NumericData.Column].Should().BeEquivalentTo(new BigRational(expectedColumn, 1));
         }
     }
 }
