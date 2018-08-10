@@ -1,12 +1,7 @@
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Charting;
 using RhythmCodex.Djmain.Converters;
 using RhythmCodex.Djmain.Model;
-using RhythmCodex.Djmain.Streamers;
-using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Djmain.Integration
 {
@@ -15,17 +10,11 @@ namespace RhythmCodex.Djmain.Integration
     {
         private IDjmainArchive DecodeChunk(byte[] data, DjmainChunkFormat format)
         {
-            var decoder = Resolve<DjmainDecoder>();
-
-            using (var mem = new ByteSwappedReadStream(new MemoryStream(data)))
-            using (var reader = new BinaryReader(mem))
+            return Subject.Decode(new DjmainChunk
             {
-                return Subject.Decode(new DjmainChunk
-                {
-                    Data = reader.ReadBytes((int)mem.Length),
-                    Format = format
-                });
-            }
+                Data = data,
+                Format = format
+            });
         }
 
         [Test]
