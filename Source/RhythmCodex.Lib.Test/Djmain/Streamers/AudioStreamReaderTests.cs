@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class AudioStreamReaderTests : BaseUnitTestFixture<AudioStreamReader, IAudioStreamReader>
+    public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReader, IDjmainAudioStreamReader>
     {
         [Test]
         public void ReadDpcm_EndsImmediatelyOnImmediateEndMarker()

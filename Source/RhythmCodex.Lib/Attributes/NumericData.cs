@@ -24,6 +24,7 @@
         Phrase,
         SourceCommand,
         SourceData,
-        Difficulty
+        Difficulty,
+        ByteOffset
     }
 }

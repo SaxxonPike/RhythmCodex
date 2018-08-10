@@ -6,6 +6,7 @@ using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
+    [Service]
     public class SsqChunkFilter : ISsqChunkFilter
     {
         private readonly IStepChunkDecoder _stepChunkDecoder;

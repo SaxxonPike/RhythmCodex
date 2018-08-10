@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
-    public class AudioStreamWriterTests : BaseUnitTestFixture<AudioStreamWriter, IAudioStreamWriter>
+    public class AudioStreamWriterTests : BaseUnitTestFixture<DjmainAudioStreamWriter, IDjmainAudioStreamWriter>
     {
         [Test]
         public void WriteDpcm_WritesAllDataPlusEndMarker()

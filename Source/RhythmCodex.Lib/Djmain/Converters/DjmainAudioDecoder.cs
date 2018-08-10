@@ -5,7 +5,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Converters
 {
     [Service]
-    public class AudioDecoder : IAudioDecoder
+    public class DjmainAudioDecoder : IDjmainAudioDecoder
     {
         private static readonly int[] DpcmTable =
         {

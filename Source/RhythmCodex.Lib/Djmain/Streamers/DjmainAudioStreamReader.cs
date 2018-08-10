@@ -6,7 +6,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Streamers
 {
     [Service]
-    public class AudioStreamReader : IAudioStreamReader
+    public class DjmainAudioStreamReader : IDjmainAudioStreamReader
     {
         public IList<byte> ReadDpcm(Stream stream)
         {

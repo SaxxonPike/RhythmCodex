@@ -2,7 +2,7 @@
 
 namespace RhythmCodex.Djmain.Converters
 {
-    public interface IAudioDecoder
+    public interface IDjmainAudioDecoder
     {
         IList<float> DecodeDpcm(IEnumerable<byte> data);
         IList<float> DecodePcm8(IEnumerable<byte> data);

@@ -34,7 +34,7 @@ namespace RhythmCodex.Cli
             base.Load(builder);
             foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
                 builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
+                    .Where(t => t.GetTypeInfo().CustomAttributes.Any(a => a.AttributeType == typeof(ServiceAttribute)))
                     .AsSelf()
                     .AsImplementedInterfaces()
                     .SingleInstance();

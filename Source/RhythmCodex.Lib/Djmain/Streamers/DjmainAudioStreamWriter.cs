@@ -6,7 +6,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Streamers
 {
     [Service]
-    public class AudioStreamWriter : IAudioStreamWriter
+    public class DjmainAudioStreamWriter : IDjmainAudioStreamWriter
     {
         public void WriteDpcm(Stream stream, IEnumerable<byte> data)
         {

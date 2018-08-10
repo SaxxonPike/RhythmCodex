@@ -9,7 +9,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Converters
 {
     [Service]
-    public class DjmainSoundDecoder
+    public class DjmainSoundDecoder : IDjmainSoundDecoder
     {
         private static readonly Lazy<BigRational[]> VolumeTable = new Lazy<BigRational[]>(() =>
         {
@@ -32,11 +32,11 @@ namespace RhythmCodex.Djmain.Converters
                 .ToArray();
         });
 
-        private readonly IAudioDecoder _audioDecoder;
+        private readonly IDjmainAudioDecoder _djmainAudioDecoder;
 
-        public DjmainSoundDecoder(IAudioDecoder audioDecoder)
+        public DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder)
         {
-            _audioDecoder = audioDecoder;
+            _djmainAudioDecoder = djmainAudioDecoder;
         }
 
         public IList<ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
@@ -56,13 +56,13 @@ namespace RhythmCodex.Djmain.Converters
                 switch (def.Value.Info.SampleType & 0xC)
                 {
                     case 0x0:
-                        sample.Data = _audioDecoder.DecodePcm8(data);
+                        sample.Data = _djmainAudioDecoder.DecodePcm8(data);
                         break;
                     case 0x4:
-                        sample.Data = _audioDecoder.DecodePcm16(data);
+                        sample.Data = _djmainAudioDecoder.DecodePcm16(data);
                         break;
                     case 0x8:
-                        sample.Data = _audioDecoder.DecodeDpcm(data);
+                        sample.Data = _djmainAudioDecoder.DecodeDpcm(data);
                         break;
                     default:
                         sample.Data = new List<float>();

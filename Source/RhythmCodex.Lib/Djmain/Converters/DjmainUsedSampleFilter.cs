@@ -21,10 +21,10 @@ namespace RhythmCodex.Djmain.Converters
 
         private static bool IsNote(DjmainChartEvent ev)
         {
-            switch (ev.Param0 & 0xF)
+            switch ((DjmainEventType)(ev.Param0 & 0xF))
             {
-                case 0x1:
-                case 0x5:
+                case DjmainEventType.SoundSelect:
+                case DjmainEventType.Bgm:
                     return true;
                 default:
                     return false;

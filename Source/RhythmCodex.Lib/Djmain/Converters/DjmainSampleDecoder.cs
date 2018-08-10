@@ -8,14 +8,14 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Converters
 {
     [Service]
-    public class DjmainSampleDecoder
+    public class DjmainSampleDecoder : IDjmainSampleDecoder
     {
-        private readonly IAudioStreamReader _audioStreamReader;
+        private readonly IDjmainAudioStreamReader _djmainAudioStreamReader;
 
         public DjmainSampleDecoder(
-            IAudioStreamReader audioStreamReader)
+            IDjmainAudioStreamReader djmainAudioStreamReader)
         {
-            _audioStreamReader = audioStreamReader;
+            _djmainAudioStreamReader = djmainAudioStreamReader;
         }
 
         public IDictionary<int, IDjmainSample> Decode(
@@ -43,11 +43,11 @@ namespace RhythmCodex.Djmain.Converters
                         switch (props.SampleType & 0xC)
                         {
                             case 0x0:
-                                return _audioStreamReader.ReadPcm8(mem);
+                                return _djmainAudioStreamReader.ReadPcm8(mem);
                             case 0x4:
-                                return _audioStreamReader.ReadPcm16(mem);
+                                return _djmainAudioStreamReader.ReadPcm16(mem);
                             case 0x8:
-                                return _audioStreamReader.ReadDpcm(mem);
+                                return _djmainAudioStreamReader.ReadDpcm(mem);
                             default:
                                 return new List<byte>();
                         }

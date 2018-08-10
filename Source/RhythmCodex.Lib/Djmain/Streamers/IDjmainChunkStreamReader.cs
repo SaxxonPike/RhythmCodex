@@ -4,7 +4,7 @@ using RhythmCodex.Djmain.Model;
 
 namespace RhythmCodex.Djmain.Streamers
 {
-    public interface IChunkStreamReader
+    public interface IDjmainChunkStreamReader
     {
         IEnumerable<DjmainChunk> Read(Stream stream);
     }

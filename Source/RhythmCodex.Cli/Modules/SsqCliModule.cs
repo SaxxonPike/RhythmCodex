@@ -15,6 +15,7 @@ namespace RhythmCodex.Cli.Modules
     /// <summary>
     /// A module which operates with the SSQ and other associated file formats.
     /// </summary>
+    [Service]
     public class SsqCliModule : ICliModule
     {
         private readonly IFileSystem _fileSystem;
