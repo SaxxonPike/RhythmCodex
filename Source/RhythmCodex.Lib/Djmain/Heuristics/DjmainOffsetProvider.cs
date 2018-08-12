@@ -11,6 +11,8 @@ namespace RhythmCodex.Djmain.Heuristics
         {
             switch (format)
             {
+                case DjmainChunkFormat.Unknown:
+                    throw new RhythmCodexException("Can't get chart offsets for unknown format.");
                 case DjmainChunkFormat.First:
                 case DjmainChunkFormat.Second:
                     return new List<int> {0x000400};
@@ -28,6 +30,8 @@ namespace RhythmCodex.Djmain.Heuristics
         {
             switch (format)
             {
+                case DjmainChunkFormat.Unknown:
+                    throw new RhythmCodexException("Can't get sound offsets for unknown format.");
                 case DjmainChunkFormat.Final:
                     return 0x020000;
                 default:
@@ -39,6 +43,8 @@ namespace RhythmCodex.Djmain.Heuristics
         {
             switch (format)
             {
+                case DjmainChunkFormat.Unknown:
+                    throw new RhythmCodexException("Can't get sample map offsets for unknown format.");
                 case DjmainChunkFormat.First:
                 case DjmainChunkFormat.Second:
                 case DjmainChunkFormat.Third:
@@ -55,6 +61,8 @@ namespace RhythmCodex.Djmain.Heuristics
         {
             switch (format)
             {
+                case DjmainChunkFormat.Unknown:
+                    throw new RhythmCodexException("Can't get chart names for unknown format.");
                 case DjmainChunkFormat.First:
                 case DjmainChunkFormat.Second:
                     return new List<string> {"normal"};
@@ -66,13 +74,5 @@ namespace RhythmCodex.Djmain.Heuristics
         }
 
         
-    }
-
-    public interface IDjmainOffsetProvider
-    {
-        ICollection<int> GetChartOffsets(DjmainChunkFormat format);
-        int GetSoundOffset(DjmainChunkFormat format);
-        ICollection<int> GetSampleMapOffsets(DjmainChunkFormat format);
-        ICollection<string> GetChartNames(DjmainChunkFormat format);
     }
 }

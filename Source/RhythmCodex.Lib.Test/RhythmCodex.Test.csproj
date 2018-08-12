@@ -18,8 +18,12 @@
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Djmain\chart.zip" />
     <EmbeddedResource Include="Data\Djmain\bm1st.zip" />
+    <EmbeddedResource Include="Data\Djmain\bm7th.zip" />
+    <EmbeddedResource Include="Data\Djmain\bmcm.zip" />
+    <EmbeddedResource Include="Data\Djmain\bmcm2.zip" />
+    <EmbeddedResource Include="Data\Djmain\bmfinal.zip" />
+    <EmbeddedResource Include="Data\Djmain\chart.zip" />
     <EmbeddedResource Include="Data\Ssq\freeze.zip" />
     <EmbeddedResource Include="Data\Ssq\shock.zip" />
     <EmbeddedResource Include="Data\Ssq\solo.zip" />  
