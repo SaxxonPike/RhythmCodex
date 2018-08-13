@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Extensions
 {
@@ -77,5 +78,29 @@ namespace RhythmCodex.Extensions
 
             yield return buffer.ToString();
         }
+
+        /// <summary>
+        /// Convert a string to bytes using Codepage 932.
+        /// </summary>
+        public static byte[] GetShiftJisBytes(this string s) 
+            => Encodings.CP932.GetBytes(s);
+        
+        /// <summary>
+        /// Convert a string from bytes using Codepage 932.
+        /// </summary>
+        public static string GetShiftJisString(this byte[] b) 
+            => Encodings.CP932.GetString(b);
+        
+        /// <summary>
+        /// Convert a string to bytes using Codepage 437.
+        /// </summary>
+        public static byte[] GetBytes(this string s) 
+            => Encodings.CP437.GetBytes(s);
+        
+        /// <summary>
+        /// Convert a string from bytes using Codepage 437.
+        /// </summary>
+        public static string GetString(this byte[] b) 
+            => Encodings.CP437.GetString(b);
     }
 }

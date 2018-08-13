@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Heuristics
@@ -32,7 +33,7 @@ namespace RhythmCodex.Djmain.Heuristics
             }
 
             var format =
-                GetFormat(Encoding.ASCII.GetString(new[] {chunk[1], chunk[0], chunk[3], chunk[2], chunk[5]}));
+                GetFormat(new[] {chunk[1], chunk[0], chunk[3], chunk[2], chunk[5]}.GetString());
             if (format != DjmainChunkFormat.Unknown)
                 return new DjmainHddDescription
                 {
@@ -41,7 +42,7 @@ namespace RhythmCodex.Djmain.Heuristics
                 };
 
             format = 
-                GetFormat(Encoding.ASCII.GetString(new[] {chunk[0], chunk[1], chunk[2], chunk[3], chunk[4]}));
+                GetFormat(new[] {chunk[0], chunk[1], chunk[2], chunk[3], chunk[4]}.GetString());
             if (format != DjmainChunkFormat.Unknown)
                 return new DjmainHddDescription
                 {

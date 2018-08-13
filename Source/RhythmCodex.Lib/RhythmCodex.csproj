@@ -7,6 +7,7 @@
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 </Project>
