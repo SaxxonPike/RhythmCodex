@@ -107,7 +107,7 @@ namespace RhythmCodex.Djmain.Converters
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [FlagData.Scratch] = true,
-                                    [NumericData.LoadSound] = param1,
+                                    [NumericData.LoadSound] = param1 - 1,
                                     [NumericData.Player] = param0 & 1
                                 };
                                 break;
@@ -128,7 +128,7 @@ namespace RhythmCodex.Djmain.Converters
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
                                     [NumericData.Column] = param0 >> 1,
-                                    [NumericData.LoadSound] = param1,
+                                    [NumericData.LoadSound] = param1 - 1,
                                     [NumericData.Player] = param0 & 1
                                 };
                                 break;
@@ -139,7 +139,7 @@ namespace RhythmCodex.Djmain.Converters
                                     [NumericData.SourceData] = ev.Param1,
                                     [NumericData.SourceColumn] = param0,
                                     [NumericData.LinearOffset] = offset,
-                                    [NumericData.LoadSound] = param1,
+                                    [NumericData.LoadSound] = param1 - 1,
                                     [NumericData.Player] = param0 & 1
                                 };
                                 break;
@@ -170,7 +170,7 @@ namespace RhythmCodex.Djmain.Converters
                             [NumericData.SourceData] = ev.Param1,
                             [NumericData.LinearOffset] = offset,
                             [NumericData.Panning] = new BigRational(Math.Max(param0 - 1, 0), 14),
-                            [NumericData.PlaySound] = param1
+                            [NumericData.PlaySound] = param1 - 1
                         };
                         break;
                     case DjmainEventType.JudgeTiming:
@@ -193,7 +193,7 @@ namespace RhythmCodex.Djmain.Converters
                             [NumericData.JudgeNumber] = param0 & 0x7,
                             [NumericData.Player] = param0 >> 3,
                             [NumericData.SourceColumn] = param0,
-                            [NumericData.JudgeSound] = param1
+                            [NumericData.JudgeSound] = param1 - 1
                         };
                         break;
                     case DjmainEventType.JudgeTrigger:

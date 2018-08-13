@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Audio;
+using RhythmCodex.Audio.Converters;
 using RhythmCodex.Charting;
 using RhythmCodex.Djmain.Heuristics;
 using RhythmCodex.Djmain.Model;
@@ -24,6 +25,7 @@ namespace RhythmCodex.Djmain.Converters
         private readonly IDjmainSampleDecoder _sampleDecoder;
         private readonly IDjmainSampleMapConsolidator _sampleMapConsolidator;
         private readonly IDjmainUsedSampleFilter _usedSampleFilter;
+        private readonly ISoundAmplifier _soundAmplifier;
 
         public DjmainDecoder(
             IDjmainChartDecoder chartDecoder,
@@ -33,7 +35,8 @@ namespace RhythmCodex.Djmain.Converters
             IDjmainSampleInfoStreamReader sampleInfoStreamReader,
             IDjmainSampleDecoder sampleDecoder,
             IDjmainSampleMapConsolidator sampleMapConsolidator,
-            IDjmainUsedSampleFilter usedSampleFilter)
+            IDjmainUsedSampleFilter usedSampleFilter,
+            ISoundAmplifier soundAmplifier)
         {
             _chartDecoder = chartDecoder;
             _chartEventStreamReader = chartEventStreamReader;
@@ -43,6 +46,7 @@ namespace RhythmCodex.Djmain.Converters
             _sampleDecoder = sampleDecoder;
             _sampleMapConsolidator = sampleMapConsolidator;
             _usedSampleFilter = usedSampleFilter;
+            _soundAmplifier = soundAmplifier;
         }
 
         public IDjmainArchive Decode(IDjmainChunk chunk)
@@ -61,8 +65,8 @@ namespace RhythmCodex.Djmain.Converters
                 var chartSoundMap = _offsetProvider.GetSampleChartMap(chunk.Format)
                     .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
                     .ToDictionary(kv => kv.Key, kv => kv.Value);
-                var rawCharts = ExtractCharts(stream, chunk.Format);
-                var decodedCharts = DecodeCharts(rawCharts);
+                var rawCharts = ExtractCharts(stream, chunk.Format).Where(c => c.Value != null).ToList();
+                var decodedCharts = DecodeCharts(rawCharts, chartSoundMap);
                 var sounds = DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts)
                     .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
                 //var consolidated = _sampleMapConsolidator.Consolidate(sounds, decodedCharts, chartSoundMap);
@@ -70,7 +74,7 @@ namespace RhythmCodex.Djmain.Converters
                 return new DjmainArchive
                 {
                     Charts = decodedCharts.Select(c => c.Value).ToList(),
-                    Samples = sounds.First().Value.Select(s => s.Value).ToList()
+                    Samples = sounds.SelectMany(s => s.Value).Select(s => s.Value).ToList()
                 };
             }
         }
@@ -90,18 +94,22 @@ namespace RhythmCodex.Djmain.Converters
             
         }
 
-        private IDictionary<int, IChart> DecodeCharts(IDictionary<int, IEnumerable<IDjmainChartEvent>> events)
+        private IDictionary<int, IChart> DecodeCharts(IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> events, IReadOnlyDictionary<int, int> chartSoundMap)
         {
             return events.ToDictionary(x => x.Key, x =>
             {
+                if (x.Value == null)
+                    return null;
+                
                 var chart = _chartDecoder.Decode(x.Value);
                 chart[NumericData.Id] = x.Key;
+                chart[NumericData.SampleMap] = chartSoundMap[x.Key];
                 return chart;
             });
         }
         
         private IDictionary<int, IDictionary<int, ISound>> DecodeSounds(Stream stream, DjmainChunkFormat format,
-            IReadOnlyDictionary<int, int> chartSoundMap, IDictionary<int, IEnumerable<IDjmainChartEvent>> charts)
+            IReadOnlyDictionary<int, int> chartSoundMap, IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> charts)
         {
             return _offsetProvider.GetSampleMapOffsets(format)
                 .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
@@ -112,7 +120,16 @@ namespace RhythmCodex.Djmain.Converters
                         .SelectMany(c => c.Value)
                         .ToList();
                     var samples = DecodeSamples(stream, format, kv.Value, chartData);
-                    return _soundDecoder.Decode(samples);
+                    var decodedSamples = _soundDecoder.Decode(samples);
+
+                    foreach (var sample in decodedSamples)
+                    {
+                        var s = sample.Value;
+                        s[NumericData.SampleMap] = kv.Key;
+                        _soundAmplifier.Amplify(s, (float)(s[NumericData.Volume] ?? 1), (float)(s[NumericData.Panning] ?? 0.5f));
+                    }
+
+                    return decodedSamples;
                 });
         }
 

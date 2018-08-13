@@ -41,11 +41,12 @@ namespace RhythmCodex.Audio.Streamers
             
             writer.Write("RIFF".GetBytes());
             writer.Write(length);
-            writer.Write(container.Format);
+            writer.Write(container.Format.GetBytes());
 
             foreach (var chunk in container.Chunks)
             {
                 writer.Write(chunk.Id.GetBytes());
+                writer.Write(chunk.Data.Length);
                 writer.Write(chunk.Data);
             }
 

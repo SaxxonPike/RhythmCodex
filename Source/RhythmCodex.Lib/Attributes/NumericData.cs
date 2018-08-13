@@ -25,6 +25,7 @@
         SourceCommand,
         SourceData,
         Difficulty,
-        ByteOffset
+        ByteOffset,
+        SampleMap
     }
 }

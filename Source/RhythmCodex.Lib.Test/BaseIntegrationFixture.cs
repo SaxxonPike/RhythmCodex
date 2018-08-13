@@ -8,6 +8,52 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex
 {
+    public class BaseIntegrationFixture : BaseTestFixture
+    {
+        private readonly Lazy<IContainer> _container;
+
+        public BaseIntegrationFixture()
+        {
+            _container = new Lazy<IContainer>(BuildContainer);
+        }
+
+        private IContainer Container => _container.Value;
+
+        private static IContainer BuildContainer()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterInstance(TestContext.Out).As<TextWriter>().SingleInstance();
+            builder.Register(c => new FakeFileSystem(new FileSystem(c.Resolve<ILogger>()))).SingleInstance();
+            builder.Register(c => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
+                .As<ILoggerConfigurationSource>();
+            builder.RegisterType<TextWriterLogger>().As<ILogger>();
+
+            var assemblies = new[]
+            {
+                typeof(ServiceAttribute).Assembly
+            };
+
+            foreach (var assembly in assemblies)
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
+                    .Except<FileSystem>()
+                    .AsSelf()
+                    .AsImplementedInterfaces()
+                    .SingleInstance();
+
+            return builder.Build();
+        }
+
+        /// <summary>
+        ///     Gets an object from the container of the specified type.
+        /// </summary>
+        protected TObject Resolve<TObject>()
+        {
+            return Container.Resolve<TObject>();
+        }        
+    }
+    
     /// <summary>
     ///     Base test fixture for all integration tests that use a simple container.
     /// </summary>

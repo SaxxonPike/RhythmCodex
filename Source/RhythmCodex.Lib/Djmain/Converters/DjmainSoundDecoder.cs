@@ -18,8 +18,10 @@ namespace RhythmCodex.Djmain.Converters
             const double attenuation = 20d;
 
             return Enumerable.Range(0, 256).Select(i =>
-                    new BigRational(Math.Pow(10d, referenceDecibels * i / referenceVolume / attenuation)))
-                .ToArray();
+            {
+                var value = (float)Math.Pow(10d, referenceDecibels * i / referenceVolume / attenuation);
+                return new BigRational((decimal)value);
+            }).ToArray();
         });
 
         private static readonly Lazy<BigRational[]> PanningTable = new Lazy<BigRational[]>(() =>

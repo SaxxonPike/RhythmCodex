@@ -8,9 +8,9 @@ namespace RhythmCodex.Attributes
 {
     public class Metadata : IMetadata
     {
-        private readonly IDictionary<FlagData, bool> _flagDatas;
-        private readonly IDictionary<NumericData, BigRational> _numericDatas;
-        private readonly IDictionary<string, string> _stringDatas;
+        private IDictionary<FlagData, bool> _flagDatas;
+        private IDictionary<NumericData, BigRational> _numericDatas;
+        private IDictionary<string, string> _stringDatas;
 
         public Metadata()
         {
@@ -83,6 +83,14 @@ namespace RhythmCodex.Attributes
         public Metadata CloneMetadata()
         {
             return new Metadata(_stringDatas, _numericDatas, _flagDatas);
+        }
+
+        public void CloneMetadataFrom(Metadata other)
+        {
+            var metadata = other.CloneMetadata();
+            _stringDatas = metadata._stringDatas;
+            _numericDatas = metadata._numericDatas;
+            _flagDatas = metadata._flagDatas;
         }
 
         public override string ToString()

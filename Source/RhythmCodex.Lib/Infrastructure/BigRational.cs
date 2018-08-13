@@ -209,35 +209,8 @@ namespace RhythmCodex.Infrastructure
         /// <summary>
         ///     Create a BigRational with the specified floating point value.
         /// </summary>
-        public BigRational(double value)
+        public BigRational(double value) : this((decimal)value)
         {
-            if (double.IsNaN(value))
-                throw new ArgumentException("Argument is not a number", nameof(value));
-
-            if (double.IsInfinity(value))
-                throw new ArgumentException("Argument is infinity", nameof(value));
-
-            SplitDoubleIntoParts(value, out var sign, out var exponent, out var significand, out _);
-
-            if (significand == 0)
-            {
-                this = Zero;
-                return;
-            }
-
-            Numerator = significand;
-            Denominator = 1 << 52;
-
-            if (exponent > 0)
-                Numerator = BigInteger.Pow(Numerator, exponent);
-            else if (exponent < 0)
-                Denominator = BigInteger.Pow(Denominator, -exponent);
-
-            if (sign < 0)
-                Numerator = BigInteger.Negate(Numerator);
-
-            var simplified = Simplify(Numerator, Denominator);
-            (Numerator, Denominator) = simplified;
         }
 
         /// <summary>

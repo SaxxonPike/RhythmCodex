@@ -49,15 +49,17 @@ namespace RhythmCodex.Audio.Converters
             {
                 for (var i = 0; i < totalSamples; i++)
                 {
-                    foreach (var sample in sound.Samples)
+                    for (var j = 0; j < sound.Samples.Count; j++)
                     {
+                        var sample = sound.Samples[j];
                         var source = sample.Data;
-                        var value = source.Count < i ? source[i] * 32767 : 0;
-                        if (value > 32767)
-                            value = 32767;
-                        else if (value < -32767)
-                            value = -32767;
-                        writer.Write((short)value);
+                        var sourceValue = i < source.Count ? source[i] : 0f;
+                        var value = Math.Round(sourceValue * 32767f);
+                        if (value > 32767f)
+                            value = 32767f;
+                        else if (value < -32767f)
+                            value = -32767f;
+                        writer.Write((short) value);
                     }
                 }
                 

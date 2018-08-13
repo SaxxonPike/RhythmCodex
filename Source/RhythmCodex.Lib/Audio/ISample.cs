@@ -6,5 +6,6 @@ namespace RhythmCodex.Audio
     public interface ISample : IMetadata
     {
         IList<float> Data { get; set; }
+        ISample Clone();
     }
 }
