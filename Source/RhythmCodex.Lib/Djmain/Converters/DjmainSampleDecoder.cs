@@ -19,49 +19,46 @@ namespace RhythmCodex.Djmain.Converters
         }
 
         public IDictionary<int, IDjmainSample> Decode(
-            byte[] data,
+            Stream stream,
             IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
             int sampleOffset)
         {
-            return DecodeInternal(data, infos, sampleOffset)
+            return DecodeInternal(stream, infos, sampleOffset)
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
         private IEnumerable<KeyValuePair<int, IDjmainSample>> DecodeInternal(
-            byte[] data,
+            Stream stream,
             IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
             int sampleOffset)
         {
-            using (var mem = new MemoryStream(data))
+            foreach (var info in infos)
             {
-                foreach (var info in infos)
+                var props = info.Value;
+
+                IList<byte> GetSampleData()
                 {
-                    var props = info.Value;
-
-                    IList<byte> GetSampleData()
+                    switch (props.SampleType & 0xC)
                     {
-                        switch (props.SampleType & 0xC)
-                        {
-                            case 0x0:
-                                return _djmainAudioStreamReader.ReadPcm8(mem);
-                            case 0x4:
-                                return _djmainAudioStreamReader.ReadPcm16(mem);
-                            case 0x8:
-                                return _djmainAudioStreamReader.ReadDpcm(mem);
-                            default:
-                                return new List<byte>();
-                        }
+                        case 0x0:
+                            return _djmainAudioStreamReader.ReadPcm8(stream);
+                        case 0x4:
+                            return _djmainAudioStreamReader.ReadPcm16(stream);
+                        case 0x8:
+                            return _djmainAudioStreamReader.ReadDpcm(stream);
+                        default:
+                            return new List<byte>();
                     }
-
-                    mem.Position = sampleOffset + props.Offset;
-
-                    yield return new KeyValuePair<int, IDjmainSample>(info.Key,
-                        new DjmainSample
-                        {
-                            Data = GetSampleData(),
-                            Info = props
-                        });
                 }
+
+                stream.Position = sampleOffset + props.Offset;
+
+                yield return new KeyValuePair<int, IDjmainSample>(info.Key,
+                    new DjmainSample
+                    {
+                        Data = GetSampleData(),
+                        Info = props
+                    });
             }
         }
     }

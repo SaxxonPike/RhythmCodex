@@ -7,6 +7,22 @@ namespace RhythmCodex.Djmain.Heuristics
     [Service]
     public class DjmainOffsetProvider : IDjmainOffsetProvider
     {
+        public IList<int> GetSampleChartMap(DjmainChunkFormat format)
+        {
+            switch (format)
+            {
+                case DjmainChunkFormat.Unknown:
+                    throw new RhythmCodexException("Can't get sample chart map for unknown format.");
+                case DjmainChunkFormat.Final:
+                    return new List<int> {0, 0, 0, 1, 1, 1};
+                case DjmainChunkFormat.First:
+                case DjmainChunkFormat.Second:
+                    return new List<int> {0};
+                default:
+                    return new List<int> {0, 0, 0};
+            }
+        }
+        
         public ICollection<int> GetChartOffsets(DjmainChunkFormat format)
         {
             switch (format)

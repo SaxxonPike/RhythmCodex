@@ -9,7 +9,7 @@ namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
     public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<DjmainSampleInfoStreamReader,
-        IDjmainSampleDefinitionStreamReader>
+        IDjmainSampleInfoStreamReader>
     {
         [Test]
         public void Read_ShouldReadAllDefinitions()

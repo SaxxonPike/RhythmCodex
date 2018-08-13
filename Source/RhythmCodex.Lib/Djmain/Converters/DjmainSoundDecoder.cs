@@ -27,7 +27,7 @@ namespace RhythmCodex.Djmain.Converters
             const int minimum = 0x1;
             const int range = 0xE;
 
-            return Enumerable.Range(0, 15).Select(i =>
+            return Enumerable.Range(0, 16).Select(i =>
                     BigRational.One - new BigRational(Math.Max(0, i - minimum), range))
                 .ToArray();
         });
@@ -39,9 +39,9 @@ namespace RhythmCodex.Djmain.Converters
             _djmainAudioDecoder = djmainAudioDecoder;
         }
 
-        public IList<ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
+        public IDictionary<int, ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
         {
-            return DecodeInternal(samples).ToList();
+            return DecodeInternal(samples).ToDictionary(s => (int)s[NumericData.Id].Value, s => s);
         }
 
         private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
@@ -73,8 +73,9 @@ namespace RhythmCodex.Djmain.Converters
                 {
                     Samples = new List<ISample> {sample},
                     [NumericData.Volume] = VolumeTable.Value[info.Volume],
-                    [NumericData.Panning] = PanningTable.Value[info.Panning & 0xF],
-                    [NumericData.Rate] = DjmainConstants.SampleRateMultiplier * info.Frequency
+                    [NumericData.Panning] = PanningTable.Value[(info.Panning & 0xF)],
+                    [NumericData.Rate] = DjmainConstants.SampleRateMultiplier * info.Frequency,
+                    [NumericData.Id] = def.Key
                 };
             }
         }

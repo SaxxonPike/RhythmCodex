@@ -9,7 +9,7 @@ namespace RhythmCodex.Djmain.Streamers
 {
     [TestFixture]
     public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<DjmainSampleInfoStreamWriter,
-        IDjmainSampleDefinitionStreamWriter>
+        IDjmainSampleInfoStreamWriter>
     {
         [Test]
         public void Write_WritesSampleDefinitions()

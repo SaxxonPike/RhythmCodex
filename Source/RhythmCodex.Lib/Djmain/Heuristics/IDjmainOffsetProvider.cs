@@ -9,5 +9,6 @@ namespace RhythmCodex.Djmain.Heuristics
         int GetSoundOffset(DjmainChunkFormat format);
         ICollection<int> GetSampleMapOffsets(DjmainChunkFormat format);
         ICollection<string> GetChartNames(DjmainChunkFormat format);
+        IList<int> GetSampleChartMap(DjmainChunkFormat format);
     }
 }

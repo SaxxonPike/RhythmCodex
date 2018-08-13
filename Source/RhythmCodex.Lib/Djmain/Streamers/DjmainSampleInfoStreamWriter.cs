@@ -9,7 +9,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Streamers
 {
     [Service]
-    public class DjmainSampleInfoStreamWriter : IDjmainSampleDefinitionStreamWriter
+    public class DjmainSampleInfoStreamWriter : IDjmainSampleInfoStreamWriter
     {
         private readonly IDjmainConfiguration _djmainConfiguration;
 

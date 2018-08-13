@@ -32,7 +32,7 @@ namespace RhythmCodex.Djmain.Converters
             var expectedSample = Create<DjmainSampleInfo>();
             command |= Create<int>() & 0xF0;
 
-            var inputSamples = new Dictionary<int, DjmainSampleInfo>
+            var inputSamples = new Dictionary<int, IDjmainSampleInfo>
             {
                 {allIds[0], expectedSample},
                 {allIds[1], Create<DjmainSampleInfo>()}
@@ -53,7 +53,7 @@ namespace RhythmCodex.Djmain.Converters
             if (expectedInclusion)
                 result.Should()
                     .HaveCount(1)
-                    .And.Contain(new KeyValuePair<int, DjmainSampleInfo>(allIds[0], expectedSample));
+                    .And.Contain(new KeyValuePair<int, IDjmainSampleInfo>(allIds[0], expectedSample));
             else
                 result.Should()
                     .BeEmpty();

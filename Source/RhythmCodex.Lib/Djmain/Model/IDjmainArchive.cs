@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RhythmCodex.Audio;
 using RhythmCodex.Charting;
 
 namespace RhythmCodex.Djmain.Model
@@ -7,6 +8,6 @@ namespace RhythmCodex.Djmain.Model
     {
         int Id { get; }
         IList<IChart> Charts { get; }
-        IList<IDjmainSample> Samples { get; }
+        IList<ISound> Samples { get; }
     }
 }

@@ -6,6 +6,6 @@ namespace RhythmCodex.Djmain.Converters
 {
     public interface IDjmainSoundDecoder
     {
-        IList<ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples);
+        IDictionary<int, ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples);
     }
 }
