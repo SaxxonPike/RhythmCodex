@@ -5,6 +5,7 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Audio;
 using RhythmCodex.Audio.Converters;
+using RhythmCodex.Audio.Processing;
 using RhythmCodex.Charting;
 using RhythmCodex.Djmain.Heuristics;
 using RhythmCodex.Djmain.Model;
@@ -23,9 +24,9 @@ namespace RhythmCodex.Djmain.Converters
         private readonly IDjmainSoundDecoder _soundDecoder;
         private readonly IDjmainSampleInfoStreamReader _sampleInfoStreamReader;
         private readonly IDjmainSampleDecoder _sampleDecoder;
-        private readonly IDjmainSampleMapConsolidator _sampleMapConsolidator;
         private readonly IDjmainUsedSampleFilter _usedSampleFilter;
         private readonly ISoundAmplifier _soundAmplifier;
+        private readonly ISoundConsolidator _soundConsolidator;
 
         public DjmainDecoder(
             IDjmainChartDecoder chartDecoder,
@@ -34,9 +35,9 @@ namespace RhythmCodex.Djmain.Converters
             IDjmainSoundDecoder soundDecoder,
             IDjmainSampleInfoStreamReader sampleInfoStreamReader,
             IDjmainSampleDecoder sampleDecoder,
-            IDjmainSampleMapConsolidator sampleMapConsolidator,
             IDjmainUsedSampleFilter usedSampleFilter,
-            ISoundAmplifier soundAmplifier)
+            ISoundAmplifier soundAmplifier,
+            ISoundConsolidator soundConsolidator)
         {
             _chartDecoder = chartDecoder;
             _chartEventStreamReader = chartEventStreamReader;
@@ -44,9 +45,9 @@ namespace RhythmCodex.Djmain.Converters
             _soundDecoder = soundDecoder;
             _sampleInfoStreamReader = sampleInfoStreamReader;
             _sampleDecoder = sampleDecoder;
-            _sampleMapConsolidator = sampleMapConsolidator;
             _usedSampleFilter = usedSampleFilter;
             _soundAmplifier = soundAmplifier;
+            _soundConsolidator = soundConsolidator;
         }
 
         public IDjmainArchive Decode(IDjmainChunk chunk)
@@ -67,7 +68,7 @@ namespace RhythmCodex.Djmain.Converters
                     .ToDictionary(kv => kv.Key, kv => kv.Value);
                 var rawCharts = ExtractCharts(stream, chunk.Format).Where(c => c.Value != null).ToList();
                 var decodedCharts = DecodeCharts(rawCharts, chartSoundMap);
-                var sounds = DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts)
+                var sounds = DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts)
                     .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
                 //var consolidated = _sampleMapConsolidator.Consolidate(sounds, decodedCharts, chartSoundMap);
                 
@@ -108,8 +109,12 @@ namespace RhythmCodex.Djmain.Converters
             });
         }
         
-        private IDictionary<int, IDictionary<int, ISound>> DecodeSounds(Stream stream, DjmainChunkFormat format,
-            IReadOnlyDictionary<int, int> chartSoundMap, IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> charts)
+        private IDictionary<int, IDictionary<int, ISound>> DecodeSounds(
+            Stream stream, 
+            DjmainChunkFormat format,
+            IReadOnlyDictionary<int, int> chartSoundMap,
+            IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> charts,
+            IEnumerable<KeyValuePair<int, IChart>> decodedCharts)
         {
             return _offsetProvider.GetSampleMapOffsets(format)
                 .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
@@ -121,13 +126,17 @@ namespace RhythmCodex.Djmain.Converters
                         .ToList();
                     var samples = DecodeSamples(stream, format, kv.Value, chartData);
                     var decodedSamples = _soundDecoder.Decode(samples);
+                    _soundConsolidator.Consolidate(decodedSamples.Values, decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<IEvent>()));
 
-                    foreach (var sample in decodedSamples)
+                    foreach (var sample in decodedSamples.Where(s => s.Value.Samples.Any()))
                     {
                         var s = sample.Value;
                         s[NumericData.SampleMap] = kv.Key;
                         _soundAmplifier.Amplify(s, (float)(s[NumericData.Volume] ?? 1), (float)(s[NumericData.Panning] ?? 0.5f));
                     }
+
+                    foreach (var discardedSample in decodedSamples.Where(s => !s.Value.Samples.Any()).ToList())
+                        decodedSamples.Remove(discardedSample);
 
                     return decodedSamples;
                 });

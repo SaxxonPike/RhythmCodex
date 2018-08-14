@@ -1,4 +1,4 @@
-namespace RhythmCodex.Audio.Converters
+namespace RhythmCodex.Audio.Processing
 {
     public interface ISoundAmplifier
     {

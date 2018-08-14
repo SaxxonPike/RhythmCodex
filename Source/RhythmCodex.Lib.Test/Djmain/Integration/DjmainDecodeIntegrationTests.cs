@@ -24,11 +24,11 @@ namespace RhythmCodex.Djmain.Integration
         [Test]
         public void Test1()
         {
-            var data = GetArchiveResource("Djmain.bmcm.zip")
+            var data = GetArchiveResource("Djmain.bmcm2.zip")
                 .First()
                 .Value;
 
-            var archive = DecodeChunk(data, DjmainChunkFormat.Complete);
+            var archive = DecodeChunk(data, DjmainChunkFormat.Complete2);
             
             var sounds = archive.Samples.ToDictionary(
                 s => $"{(int)s[NumericData.SampleMap]:00}_{(int)s[NumericData.Id]:0000}.wav", 
