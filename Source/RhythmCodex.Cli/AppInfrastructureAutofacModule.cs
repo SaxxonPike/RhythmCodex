@@ -23,6 +23,10 @@ namespace RhythmCodex.Cli
                 .AsImplementedInterfaces()
                 .AsSelf()
                 .SingleInstance();
+            builder.RegisterType<FileSystem>()
+                .AsImplementedInterfaces()
+                .AsSelf()
+                .SingleInstance();
         }
     }
 }

@@ -10,6 +10,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Cli
 {
     /// <inheritdoc />
+    [Service]
     public class App : IApp
     {
         private readonly IArgParser _argParser;

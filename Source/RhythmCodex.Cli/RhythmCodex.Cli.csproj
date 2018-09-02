@@ -15,4 +15,9 @@
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="RhythmCodex.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
