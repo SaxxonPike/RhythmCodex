@@ -59,7 +59,7 @@ namespace RhythmCodex.Stepmania.Converters
                 .Select(s => new Command
                 {
                     Name = s,
-                    Values = new[] {chartSet.Metadata[s] ?? string.Empty}
+                    Values = new[] {chartSet.Metadata?[s] ?? string.Empty}
                 });
 
             var timingCommands = GetTimingCommands(chartList);

@@ -26,9 +26,13 @@
     <EmbeddedResource Include="Data\Djmain\chart.zip" />
     <EmbeddedResource Include="Data\Ssq\freeze.zip" />
     <EmbeddedResource Include="Data\Ssq\shock.zip" />
-    <EmbeddedResource Include="Data\Ssq\solo.zip" />  
+    <EmbeddedResource Include="Data\Ssq\solo.zip" />
+    <EmbeddedResource Include="Data\Step2\couple.zip" />
+    <EmbeddedResource Include="Data\Step2\double.zip" />
+    <EmbeddedResource Include="Data\Step2\single.zip" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Data\Step2" />
     <Folder Include="Ssq" />
     <Folder Include="Stepmania" />
   </ItemGroup>
