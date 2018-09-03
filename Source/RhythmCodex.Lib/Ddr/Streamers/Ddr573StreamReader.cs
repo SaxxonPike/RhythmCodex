@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Archives;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Ddr.Streamers
 {
@@ -12,6 +13,7 @@ namespace RhythmCodex.Ddr.Streamers
     // DCT: 0x100800*
     // * uses a strange 0x1000 interleave block of 256 bytes at the end for some reason?
     
+    [Service]
     public class Ddr573StreamReader : IDdr573StreamReader
     {
         public Ddr573Image Read(Stream gameDatStream, int gameDatLength)

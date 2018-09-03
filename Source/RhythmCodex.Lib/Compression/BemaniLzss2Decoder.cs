@@ -1,7 +1,9 @@
 using System.IO;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Compression
 {
+    [Service]
     public class BemaniLzss2Decoder : IBemaniLzss2Decoder
     {
         private enum BemaniLzss2Type

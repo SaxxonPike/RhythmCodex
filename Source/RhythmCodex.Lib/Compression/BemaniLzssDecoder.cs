@@ -1,7 +1,9 @@
 using System.IO;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Compression
 {
+    [Service]
     public class BemaniLzssDecoder : IBemaniLzssDecoder
     {
         private const int BufferMask = 0x3FFF; // 14 bits window
