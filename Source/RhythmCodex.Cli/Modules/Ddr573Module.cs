@@ -124,7 +124,7 @@ namespace RhythmCodex.Cli.Modules
 
             foreach (var file in files)
             {
-                var outFileName = $"{file.Module:X4}{file.Offset:X6}.bin";
+                var outFileName = $"{file.Module:X4}{file.Offset:X7}.bin";
                 var outFilePath = _fileSystem.CombinePath(outputDirectory, outFileName);
 
                 _logger.Info($"Writing {outFileName}");

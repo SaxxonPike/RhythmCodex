@@ -63,7 +63,7 @@ namespace RhythmCodex.Ddr.Converters
                                 }
                                 catch (Exception e)
                                 {
-                                    _logger.Warning($"Entry Id={entry.Id:X8} Offset={entry.Offset:X6} could not be decompressed. It will be extracted as-is.");
+                                    _logger.Warning($"Entry Id={entry.Id:X8} Module={entry.Module:X4} Offset={entry.Offset:X7} could not be decompressed. It will be extracted as-is.");
                                 }
                             }
 
