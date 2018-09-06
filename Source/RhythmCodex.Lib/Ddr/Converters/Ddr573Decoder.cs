@@ -61,7 +61,7 @@ namespace RhythmCodex.Ddr.Converters
                                     decompressedStream.Flush();
                                     data = decompressedStream.ToArray();
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     _logger.Warning($"Entry Id={entry.Id:X8} Module={entry.Module:X4} Offset={entry.Offset:X7} could not be decompressed. It will be extracted as-is.");
                                 }

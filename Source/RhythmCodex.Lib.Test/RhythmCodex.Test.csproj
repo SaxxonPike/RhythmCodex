@@ -27,6 +27,9 @@
     <EmbeddedResource Include="Data\Ssq\freeze.zip" />
     <EmbeddedResource Include="Data\Ssq\shock.zip" />
     <EmbeddedResource Include="Data\Ssq\solo.zip" />
+    <EmbeddedResource Include="Data\Step1\2nd.zip" />
+    <EmbeddedResource Include="Data\Step1\picky.zip" />
+    <EmbeddedResource Include="Data\Step1\solo.zip" />
     <EmbeddedResource Include="Data\Step2\couple.zip" />
     <EmbeddedResource Include="Data\Step2\double.zip" />
     <EmbeddedResource Include="Data\Step2\single.zip" />

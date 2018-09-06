@@ -32,7 +32,7 @@ namespace RhythmCodex.Ssq.Mappers
                 .ToArray();
 
             var eligibleMappers = _panelMappers
-                .Where(m => chartInfo.PlayerCount == m.PlayerCount && chartInfo.PanelCount == m.PanelCount)
+                .Where(m => (chartInfo?.PlayerCount == null || chartInfo.PlayerCount == m.PlayerCount) && (chartInfo?.PanelCount == null || chartInfo.PanelCount == m.PanelCount))
                 .Where(m => panelsUsed.Select(m.Map).All(p => p != null))
                 .ToArray();
 
