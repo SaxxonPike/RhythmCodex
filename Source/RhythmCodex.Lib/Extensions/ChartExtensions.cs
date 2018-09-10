@@ -2,15 +2,14 @@
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Extensions
 {
     public static class ChartExtensions
     {
         private static BigRational GetLinearRate(BigRational bpm)
-        {
-            return new BigRational(bpm.Denominator * 240, bpm.Numerator);
-        }
+            => new BigRational(bpm.Denominator * 240, bpm.Numerator);
 
         public static void PopulateMetricOffsets(this IChart chart)
         {
@@ -19,11 +18,35 @@ namespace RhythmCodex.Extensions
 
             var bpm = chart[NumericData.Bpm] ??
                       chart.Events.FirstOrDefault(
-                          ev => ev[NumericData.Bpm] != null && ev[NumericData.LinearOffset] == 0)?[NumericData.Bpm];
+                          ev => ev[NumericData.Bpm] != null && 
+                                ev[NumericData.Bpm] > BigRational.Zero && 
+                                ev[NumericData.LinearOffset] == 0)?[NumericData.Bpm];
 
             if (bpm == null)
                 throw new RhythmCodexException(
                     $"Either the chart or a zero-time event must specify {nameof(NumericData.Bpm)}.");
+
+            BigRational? referenceMetric = BigRational.Zero;
+            BigRational? referenceLinear = BigRational.Zero;
+            var linearRate = GetLinearRate(bpm.Value);
+
+            foreach (var ev in chart.Events.OrderBy(e => e[NumericData.LinearOffset]))
+            {
+                ev[NumericData.MetricOffset] = (ev[NumericData.LinearOffset] - referenceLinear) / linearRate +
+                                               referenceMetric;
+
+                if (ev[NumericData.Stop] is BigRational newStop && newStop > BigRational.Zero)
+                {
+                    referenceLinear += newStop;
+                }
+                
+                if (ev[NumericData.Bpm] is BigRational newTempo && newTempo > BigRational.Zero)
+                {
+                    linearRate = GetLinearRate(newTempo);
+                    referenceMetric = ev[NumericData.MetricOffset];
+                    referenceLinear = ev[NumericData.LinearOffset];
+                }
+            }
         }
 
         public static void PopulateLinearOffsets(this IChart chart)
@@ -33,7 +56,9 @@ namespace RhythmCodex.Extensions
 
             var bpm = chart[NumericData.Bpm] ??
                       chart.Events.FirstOrDefault(
-                          ev => ev[NumericData.Bpm] != null && ev[NumericData.MetricOffset] == 0)?[NumericData.Bpm];
+                          ev => ev[NumericData.Bpm] != null && 
+                                ev[NumericData.Bpm] > BigRational.Zero && 
+                                ev[NumericData.LinearOffset] == 0)?[NumericData.Bpm];
 
             if (bpm == null)
                 throw new RhythmCodexException(
@@ -55,14 +80,14 @@ namespace RhythmCodex.Extensions
                 ev[NumericData.LinearOffset] = (ev[NumericData.MetricOffset] - referenceMetric) * linearRate +
                                                referenceLinear;
 
-                if (ev[NumericData.Stop] is BigRational newStop)
+                if (ev[NumericData.Stop] is BigRational newStop && newStop > BigRational.Zero)
                 {
                     pendingStop = newStop;
                     referenceMetric = ev[NumericData.MetricOffset];
                     referenceLinear = ev[NumericData.LinearOffset];
                 }
 
-                if (ev[NumericData.Bpm] is BigRational newTempo)
+                if (ev[NumericData.Bpm] is BigRational newTempo && newTempo > BigRational.Zero)
                 {
                     linearRate = GetLinearRate(newTempo);
                     referenceMetric = ev[NumericData.MetricOffset];

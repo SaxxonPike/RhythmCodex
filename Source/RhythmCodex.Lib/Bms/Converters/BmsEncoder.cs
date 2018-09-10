@@ -65,7 +65,7 @@ namespace RhythmCodex.Bms.Converters
 
             var bpmMap = bpms
                 .Distinct()
-                .Select((e, i) => new KeyValuePair<decimal, int>())
+                .Select((e, i) => new KeyValuePair<decimal, int>(e, i + 1))
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
 
             foreach (var kv in bpmMap)

@@ -7,7 +7,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.BeatmaniaPsx.Streamers
 {
     [Service]
-    public class BeatmaniaPsxChartEventStreamReader
+    public class BeatmaniaPsxChartEventStreamReader : IBeatmaniaPsxChartEventStreamReader
     {
         public IList<DjmainChartEvent> Read(Stream stream, int length)
         {

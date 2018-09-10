@@ -4,6 +4,9 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.BeatmaniaPsx.Streamers;
 using RhythmCodex.Bms.Converters;
+using RhythmCodex.Bms.Streamers;
+using RhythmCodex.Djmain.Converters;
+using RhythmCodex.Extensions;
 
 namespace RhythmCodex.BeatmaniaPsx.Integration
 {
@@ -16,7 +19,10 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
         public void Test1(string fileName)
         {
             var reader = Resolve<IBeatmaniaPsxBmDataStreamReader>();
-            var encoder = Resolve<IBmsEncoder>();
+            var chartReader = Resolve<IBeatmaniaPsxChartEventStreamReader>();
+            var chartDecoder = Resolve<IDjmainChartDecoder>();
+            var chartEncoder = Resolve<IBmsEncoder>();
+            var chartWriter = Resolve<IBmsStreamWriter>();
             
             using (var file = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {
@@ -35,9 +41,16 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
 
                         if (data.Length >= 4 && data.Skip(data.Length - 4)
                                 .SequenceEqual(new byte[] {0xFF, 0x7F, 0x00, 0x00}))
-                            extension = "cs5";
-                        
-                        File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.{extension}"), folderFile.Data);
+                        {
+                            using (var chartStream = new MemoryStream())
+                            {
+                                var chart = chartDecoder.Decode(chartReader.Read(new MemoryStream(data), data.Length));
+                                chart.PopulateMetricOffsets();
+                                chartWriter.Write(chartStream, chartEncoder.Encode(chart));
+                                File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.bme"), chartStream.ToArray());
+                            }
+                        }
+                        //File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.{extension}"), folderFile.Data);
                         fileIndex++;
                     }
 
