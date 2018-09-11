@@ -2,10 +2,10 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Attributes;
-using RhythmCodex.Audio.Converters;
-using RhythmCodex.Audio.Streamers;
 using RhythmCodex.Djmain.Converters;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Riff.Converters;
+using RhythmCodex.Riff.Streamers;
 
 namespace RhythmCodex.Djmain.Integration
 {

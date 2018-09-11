@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Attributes;
-using RhythmCodex.Audio;
-using RhythmCodex.Audio.Converters;
-using RhythmCodex.Audio.Processing;
 using RhythmCodex.Charting;
 using RhythmCodex.Djmain.Heuristics;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.Riff;
+using RhythmCodex.Riff.Processing;
 using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Djmain.Converters

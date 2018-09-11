@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Attributes;
-using RhythmCodex.Audio;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.Riff;
 
 namespace RhythmCodex.Djmain.Converters
 {
