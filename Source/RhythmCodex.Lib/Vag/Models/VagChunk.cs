@@ -8,5 +8,6 @@ namespace RhythmCodex.Vag.Models
         public byte[] Data { get; set; }
         public int Channels { get; set; }
         public int Interleave { get; set; }
+        public long? Length { get; set; }
     }
 }
