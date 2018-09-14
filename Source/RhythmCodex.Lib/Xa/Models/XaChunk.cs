@@ -1,5 +1,8 @@
+using RhythmCodex.Infrastructure;
+
 namespace RhythmCodex.Xa.Models
 {
+    [Model]
     public class XaChunk
     {
         public byte[] Data { get; set; }
