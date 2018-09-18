@@ -12,14 +12,17 @@ namespace RhythmCodex.Xa.Converters
     public class XaDecoder : IXaDecoder
     {
         private readonly IDeinterleaver _deinterleaver;
+        private readonly IXaFrameSplitter _xaFrameSplitter;
+        
         // Reference: https://github.com/kode54/vgmstream/blob/master/src/coding/xa_decoder.c
 
         private static readonly int[] K0 = {0, 240, 460, 392};
         private static readonly int[] K1 = {0, 0, -208, -220};
 
-        public XaDecoder(IDeinterleaver deinterleaver)
+        public XaDecoder(IDeinterleaver deinterleaver, IXaFrameSplitter xaFrameSplitter)
         {
             _deinterleaver = deinterleaver;
+            _xaFrameSplitter = xaFrameSplitter;
         }
 
         public IList<ISound> Decode(XaChunk chunk)
@@ -66,20 +69,18 @@ namespace RhythmCodex.Xa.Converters
 
         private void DecodeFrame(byte[] frame, float[] buffer, XaState state)
         {
-            var channelOffset = 0x10 + (state.Channel >> 1);
-            var dataShift = (state.Channel & 1) << 2;
-            var status = frame[(state.Channel & 3) | ((state.Channel & 4) << 1)];
-            var i0 = status & 0xF;
-            var i1 = status >> 4;
+            var status = _xaFrameSplitter.GetStatus(frame, state.Channel);
+            var magnitude = status & 0xF;
+            var filter = status >> 4;
             var p1 = state.Prev1;
             var p2 = state.Prev2;
+            var i = 0;
 
-            for (var i = 0; i < 28; i++)
+            foreach (var data in _xaFrameSplitter.GetData(frame, state.Channel))
             {
-                var data = frame[channelOffset + (i << 2)] >> dataShift;
-                var p0 = (data * (1 << (12 - i0)) +
-                          K0[i1] * p1 +
-                          K1[i1] * p2) >> 8;
+                var p0 = (data * (1 << (12 - magnitude)) +
+                          K0[filter] * p1 +
+                          K1[filter] * p2) >> 8;
                 if (p0 > 32767)
                     p0 = 32767;
                 else if (p0 < -32768)
@@ -87,6 +88,7 @@ namespace RhythmCodex.Xa.Converters
                 buffer[i] = p0 / 32768f;
                 p1 = p0;
                 p2 = p1;
+                i++;
             }
 
             state.Prev1 = p1;
