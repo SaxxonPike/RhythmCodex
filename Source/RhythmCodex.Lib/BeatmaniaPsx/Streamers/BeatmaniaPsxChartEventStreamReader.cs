@@ -28,7 +28,17 @@ namespace RhythmCodex.BeatmaniaPsx.Streamers
                 };
 
                 if (result.Offset == 0x7FFF)
-                    continue;
+                    yield break;
+
+                var isSound = (result.Param0 & 0xF) == 0x1 || (result.Param0 & 0xF) == 0x5;
+
+                if (isSound)
+                {
+                    if ((result.Param1 & 0x80) == 0)
+                        continue;
+
+                    result.Param1 &= 0x7F;
+                }
 
                 yield return result;
             }

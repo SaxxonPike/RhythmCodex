@@ -11,6 +11,7 @@ using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Vag.Converters;
 using RhythmCodex.Vag.Streamers;
 using RhythmCodex.Xa.Converters;
+using RhythmCodex.Xa.Heuristics;
 using RhythmCodex.Xa.Models;
 
 namespace RhythmCodex.Xa.Integration
@@ -57,44 +58,39 @@ namespace RhythmCodex.Xa.Integration
         [Explicit]
         public void Test_Xa_Via_Bin()
         {
-            var data = File.ReadAllBytes(@"\\tamarat\Games\PS1\Beatmania 2nd Mix CD B Append.img");
+            var data = File.ReadAllBytes(@"\\tamarat\Games\PS1\Beatmania Gotta Mix 2 Append.img");
 
             var isoReader = Resolve<IIsoSectorStreamReader>();
             var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
-            var channelGroups = isoReader
-                .Read(new MemoryStream(data), data.Length)
-                .Select(s => isoInfoDecoder.Decode(s))
-                .Where(s => s.IsAudio ?? false)
-                .OrderBy(s => (s.Minutes << 16) | (s.Seconds << 8) | s.Frames)
-                .GroupBy(s => s.Channel)
-                .ToList();
-            
             var decoder = Resolve<IXaDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
             var slicer = Resolve<ISlicer>();
-            var index = 0;
+            var streamFinder = Resolve<IXaIsoStreamFinder>();
+            
+            var streams = streamFinder.Find(isoReader
+                .Read(new MemoryStream(data), data.Length)
+                .Select(s => isoInfoDecoder.Decode(s)));
 
-            foreach (var channelGroup in channelGroups)
+            var index = 0;
+            
+            foreach (var xa in streams)
             {
-                var rawData = channelGroup.SelectMany(c => slicer.Slice(c.Data, c.UserDataOffset, c.UserDataLength)).ToArray();
-                var xa = new XaChunk
-                {
-                    Channels = channelGroup.First().AudioChannels.Value,
-                    Data = rawData
-                };
-                
                 var decoded = decoder.Decode(xa);
 
                 foreach (var sound in decoded)
                 {
-                    sound[NumericData.Rate] = channelGroup.First().AudioRate;
+                    sound[NumericData.Rate] = xa.Rate;
                     var encoded = encoder.Encode(sound);
+                    var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa");
+                    if (!Directory.Exists(outfolder))
+                        Directory.CreateDirectory(outfolder);
+                    
                     using (var outStream = new MemoryStream())
                     {
                         writer.Write(outStream, encoded);
                         outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"xa-{index}.wav"), outStream.ToArray());
+                        File.WriteAllBytes(Path.Combine(outfolder, $"{index:000}.wav"), outStream.ToArray());
                         index++;
                     }
                 }

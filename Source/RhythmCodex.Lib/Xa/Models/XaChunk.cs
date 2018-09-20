@@ -7,5 +7,6 @@ namespace RhythmCodex.Xa.Models
     {
         public byte[] Data { get; set; }
         public int Channels { get; set; }
+        public int Rate { get; set; }
     }
 }

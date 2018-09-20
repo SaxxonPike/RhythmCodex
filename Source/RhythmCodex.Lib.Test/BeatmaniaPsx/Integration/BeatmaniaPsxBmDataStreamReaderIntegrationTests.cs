@@ -2,11 +2,15 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Attributes;
 using RhythmCodex.BeatmaniaPsx.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Djmain.Converters;
 using RhythmCodex.Extensions;
+using RhythmCodex.Riff.Converters;
+using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Vag.Converters;
 
 namespace RhythmCodex.BeatmaniaPsx.Integration
 {
@@ -15,7 +19,7 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
     {
         [Test]
         [Explicit]
-        [TestCase(@"Z:\BMDATA.PAK")]
+        [TestCase(@"E:\BMDATA.PAK")]
         public void Test1(string fileName)
         {
             var reader = Resolve<IBeatmaniaPsxBmDataStreamReader>();
@@ -23,6 +27,11 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
             var chartDecoder = Resolve<IDjmainChartDecoder>();
             var chartEncoder = Resolve<IBmsEncoder>();
             var chartWriter = Resolve<IBmsStreamWriter>();
+            var keysoundReader = Resolve<IBeatmaniaPsxKeysoundStreamReader>();
+            var keysoundDecoder = Resolve<IVagDecoder>();
+            var keysoundEncoder = Resolve<IRiffPcm16SoundEncoder>();
+            var keysoundWriter = Resolve<IRiffStreamWriter>();
+            var alphabet = Resolve<IAlphabetConverter>();
             
             using (var file = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {
@@ -42,6 +51,7 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
                         if (data.Length >= 4 && data.Skip(data.Length - 4)
                                 .SequenceEqual(new byte[] {0xFF, 0x7F, 0x00, 0x00}))
                         {
+                            extension = "cs5";
                             using (var chartStream = new MemoryStream())
                             {
                                 var chart = chartDecoder.Decode(chartReader.Read(new MemoryStream(data), data.Length));
@@ -50,7 +60,36 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
                                 File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.bme"), chartStream.ToArray());
                             }
                         }
-                        //File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.{extension}"), folderFile.Data);
+
+                        else if (data.Length >= 4 && data.Skip(data.Length - 4).SequenceEqual(new byte[] {0x77, 0x77, 0x77, 0x77}))
+                        {
+                            var keyOutFolder = Path.Combine(outputFolder, $"{folderIndex:X4}", $"key_{fileIndex:X4}");
+                            if (!Directory.Exists(keyOutFolder))
+                                Directory.CreateDirectory(keyOutFolder);
+
+                            using (var keyStream = new MemoryStream(data))
+                            {
+                                var keysounds = keysoundReader.Read(keyStream);
+                                var keyIndex = 1;
+                
+                                foreach (var keysound in keysounds)
+                                {
+                    
+                                    var decoded = keysoundDecoder.Decode(keysound.Data);
+                                    decoded[NumericData.Rate] = 32000;
+                                    var encoded = keysoundEncoder.Encode(decoded);
+                                    using (var outStream = new MemoryStream())
+                                    {
+                                        keysoundWriter.Write(outStream, encoded);
+                                        outStream.Flush();
+                                        File.WriteAllBytes(Path.Combine(keyOutFolder, $"{alphabet.EncodeAlphanumeric(keyIndex, 2)}.wav"), outStream.ToArray());
+                                        keyIndex++;
+                                    }
+                                }
+                            }
+                            
+                        }
+                        File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.{extension}"), folderFile.Data);
                         fileIndex++;
                     }
 
