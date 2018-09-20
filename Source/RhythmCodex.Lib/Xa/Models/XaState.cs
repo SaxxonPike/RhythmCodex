@@ -5,7 +5,6 @@ namespace RhythmCodex.Xa.Models
     [Model]
     public class XaState
     {
-        public int Channel { get; set; }
         public int Prev1 { get; set; }
         public int Prev2 { get; set; }
     }
