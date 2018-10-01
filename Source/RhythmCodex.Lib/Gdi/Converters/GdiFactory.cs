@@ -1,9 +1,11 @@
 using System.Drawing;
 using System.Drawing.Imaging;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Gdi.Converters
 {
+    [Service]
     public class GdiFactory : IGdiFactory
     {
         public IGdiAdapter CreateAdapter(RawBitmap bitmap) => 

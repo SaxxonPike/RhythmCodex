@@ -36,7 +36,7 @@ namespace RhythmCodex.Cli.Modules
         public string Name => "DDR573";
 
         /// <inheritdoc />
-        public string Description => "Manipulates flash images for 573-based DDR.";
+        public string Description => "Manipulates flash images for 573-based DDR. (1stMix-8thMix)";
 
         /// <inheritdoc />
         public IEnumerable<ICommand> Commands => new ICommand[]
@@ -99,6 +99,11 @@ namespace RhythmCodex.Cli.Modules
                 _logger.Error("Using more than 2 input files is not supported yet.");
                 return;
             }
+            
+            _logger.Info($"Using GAME image: {inputFiles[0]}");
+
+            if (inputFiles.Length > 1)
+                _logger.Info($"Using CARD image: {inputFiles[1]}");
 
             _logger.Info($"Using output directory: {outputDirectory}");
             _fileSystem.CreateDirectory(outputDirectory);

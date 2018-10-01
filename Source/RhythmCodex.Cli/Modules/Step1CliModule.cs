@@ -3,8 +3,10 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Step2.Converters;
-using RhythmCodex.Step2.Streamers;
+using RhythmCodex.Ssq.Converters;
+using RhythmCodex.Ssq.Streamers;
+using RhythmCodex.Step1.Converters;
+using RhythmCodex.Step1.Streamers;
 using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
@@ -16,39 +18,39 @@ namespace RhythmCodex.Cli.Modules
     /// A module which operates with the SSQ and other associated file formats.
     /// </summary>
     [Service]
-    public class Step2CliModule : ICliModule
+    public class Step1CliModule : ICliModule
     {
         private readonly IFileSystem _fileSystem;
-        private readonly IStep2StreamReader _step2StreamReader;
         private readonly ILogger _logger;
         private readonly ISmEncoder _smEncoder;
         private readonly ISmStreamWriter _smStreamWriter;
-        private readonly IStep2Decoder _step2Decoder;
+        private readonly IStep1Decoder _step1Decoder;
+        private readonly IStep1StreamReader _step1StreamReader;
 
         /// <summary>
         /// Create an instance of the SSQ module.
         /// </summary>
-        public Step2CliModule(
+        public Step1CliModule(
             ILogger logger,
-            IStep2Decoder step2Decoder,
+            IStep1Decoder step1Decoder,
+            IStep1StreamReader step1StreamReader,
             ISmEncoder smEncoder,
             ISmStreamWriter smStreamWriter,
-            IFileSystem fileSystem,
-            IStep2StreamReader step2StreamReader)
+            IFileSystem fileSystem)
         {
             _logger = logger;
-            _step2Decoder = step2Decoder;
+            _step1Decoder = step1Decoder;
+            _step1StreamReader = step1StreamReader;
             _smEncoder = smEncoder;
             _smStreamWriter = smStreamWriter;
             _fileSystem = fileSystem;
-            _step2StreamReader = step2StreamReader;
         }
 
         /// <inheritdoc />
-        public string Name => "Step2";
+        public string Name => "STEP";
 
         /// <inheritdoc />
-        public string Description => "Decodes the STEP2 format. (1stMix)";
+        public string Description => "Encodes and decodes the STEP format. (2nd-3rdPlus, SoloBass)";
 
         /// <inheritdoc />
         public IEnumerable<ICommand> Commands => new ICommand[]
@@ -56,7 +58,7 @@ namespace RhythmCodex.Cli.Modules
             new Command
             {
                 Name = "decode",
-                Description = "Decodes a STEP2 file.",
+                Description = "Decodes a STEP file.",
                 Execute = Decode,
                 Parameters = new[]
                 {
@@ -116,9 +118,9 @@ namespace RhythmCodex.Cli.Modules
                     var outFileName = _fileSystem.GetFileName(inputFile) + ".sm";
                     var outFilePath = _fileSystem.CombinePath(outputDirectory, outFileName);
 
-                    var chunk = _step2StreamReader.Read(inFile, (int) inFile.Length);
-                    var chart = _step2Decoder.Decode(chunk);
-                    var encoded = _smEncoder.Encode(new ChartSet {Metadata = new Metadata(), Charts = new[] {chart}});
+                    var chunks = _step1StreamReader.Read(inFile);
+                    var charts = _step1Decoder.Decode(chunks);
+                    var encoded = _smEncoder.Encode(new ChartSet {Metadata = new Metadata(), Charts = charts});
 
                     _logger.Info($"Writing {outFileName}");
                     using (var outFile = _fileSystem.OpenWrite(outFilePath))

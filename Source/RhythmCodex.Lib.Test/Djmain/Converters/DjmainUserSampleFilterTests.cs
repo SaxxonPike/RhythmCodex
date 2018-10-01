@@ -42,7 +42,7 @@ namespace RhythmCodex.Djmain.Converters
             {
                 Build<DjmainChartEvent>()
                     .With(x => x.Param0, (byte) command)
-                    .With(x => x.Param1, allIds.First())
+                    .With(x => x.Param1, allIds.First() + 1)
                     .Create()
             };
 

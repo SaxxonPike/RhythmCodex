@@ -48,7 +48,7 @@ namespace RhythmCodex.Djmain.Converters
             // Assert.
             output.Events.Should().HaveCount(1);
             var ev = output.Events.Single();
-            ev[NumericData.PlaySound].Value.Should().Be(param1);
+            ev[NumericData.PlaySound].Value.Should().Be(param1 - 1);
             ev[NumericData.Panning].Value.Should().Be(new BigRational(expectedPanning, 14));
         }
 
@@ -203,7 +203,7 @@ namespace RhythmCodex.Djmain.Converters
             // Assert.
             output.Events.Should().HaveCount(1);
             var ev = output.Events.Single();
-            ev[NumericData.LoadSound].Value.Should().Be(param1);
+            ev[NumericData.LoadSound].Value.Should().Be(param1 - 1);
             ev[NumericData.Player].Value.Should().Be(expectedPlayer);
             ev[NumericData.Column].Value.Should().Be(expectedColumn);
         }
@@ -263,7 +263,7 @@ namespace RhythmCodex.Djmain.Converters
             output.Events.Should().HaveCount(1);
             var ev = output.Events.Single();
             ev[FlagData.Scratch].Value.Should().BeTrue();
-            ev[NumericData.LoadSound].Value.Should().Be(param1);
+            ev[NumericData.LoadSound].Value.Should().Be(param1 - 1);
             ev[NumericData.Player].Value.Should().Be(expectedPlayer);
         }
 
