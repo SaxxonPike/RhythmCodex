@@ -22,7 +22,7 @@ namespace RhythmCodex.Vag.Integration
                 .Value;
 
             var decoder = Resolve<IVagDecoder>();
-            var streamer = Resolve<ISvagStreamReader>();
+            var streamer = Resolve<IXa2StreamReader>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
@@ -30,7 +30,7 @@ namespace RhythmCodex.Vag.Integration
             {
                 var vag = streamer.Read(stream);
                 var decoded = decoder.Decode(vag.VagChunk);
-                decoded[NumericData.Rate] = vag.SampleRate;
+                decoded[NumericData.Rate] = 44100;
                 var encoded = encoder.Encode(decoded);
                 using (var outStream = new MemoryStream())
                 {

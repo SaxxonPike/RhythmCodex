@@ -4,6 +4,7 @@ using RhythmCodex.Vag.Models;
 
 namespace RhythmCodex.Vag.Streamers
 {
+    [Service]
     public class SvagStreamReader : ISvagStreamReader
     {
         private readonly IVagStreamReader _vagStreamReader;
