@@ -28,6 +28,7 @@
     <EmbeddedResource Include="Data\Djmain\bmfinal.zip" />
     <EmbeddedResource Include="Data\Djmain\chart.zip" />
     <EmbeddedResource Include="Data\ImaAdpcm\RawXboxAdpcm.zip" />
+    <EmbeddedResource Include="Data\Iso\test-iso.zip" />
     <EmbeddedResource Include="Data\Ssq\freeze.zip" />
     <EmbeddedResource Include="Data\Ssq\shock.zip" />
     <EmbeddedResource Include="Data\Ssq\solo.zip" />
