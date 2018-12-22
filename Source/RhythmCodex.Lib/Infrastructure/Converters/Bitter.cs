@@ -18,5 +18,10 @@ namespace RhythmCodex.Infrastructure.Converters
             Array.Copy(data, buffer, data.Length);
             return ToInt32(buffer[0], buffer[1], buffer[2], buffer[3]);
         }
+
+        public int ToInt32(Span<byte> bytes)
+        {
+            return ToInt32(bytes[0], bytes[1], bytes[2], bytes[3]);
+        }
     }
 }

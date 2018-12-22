@@ -60,8 +60,8 @@ namespace RhythmCodex.Xa.Integration
         {
             var data = File.ReadAllBytes(@"\\tamarat\Games\PS1\Beatmania Gotta Mix 2 Append.img");
 
-            var isoReader = Resolve<IIsoSectorStreamReader>();
-            var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
+            var isoReader = Resolve<ICdSectorStreamReader>();
+            var isoInfoDecoder = Resolve<ICdSectorInfoDecoder>();
             var decoder = Resolve<IXaDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
@@ -69,7 +69,7 @@ namespace RhythmCodex.Xa.Integration
             var streamFinder = Resolve<IXaIsoStreamFinder>();
             
             var streams = streamFinder.Find(isoReader
-                .Read(new MemoryStream(data), data.Length)
+                .Read(new MemoryStream(data), data.Length, true)
                 .Select(s => isoInfoDecoder.Decode(s)));
 
             var index = 0;

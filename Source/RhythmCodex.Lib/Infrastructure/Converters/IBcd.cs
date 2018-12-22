@@ -6,5 +6,6 @@ namespace RhythmCodex.Infrastructure.Converters
     {
         int FromBcd(IEnumerable<byte> bytes);
         int FromBcd(byte b);
+        byte ToBcd(int data);
     }
 }

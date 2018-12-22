@@ -17,7 +17,7 @@ namespace RhythmCodex.Xa.Heuristics
             _slicer = slicer;
         }
         
-        public IList<XaChunk> Find(IEnumerable<IsoSectorInfo> sectors)
+        public IList<XaChunk> Find(IEnumerable<Iso9660SectorInfo> sectors)
         {
             var result = new List<XaChunk>();
             var mode2Sectors = sectors
@@ -27,7 +27,7 @@ namespace RhythmCodex.Xa.Heuristics
             var currentStreams = mode2Sectors
                 .Where(s => s.Channel != null)
                 .GroupBy(s => s.Channel)
-                .ToDictionary(g => g.Key, g => new List<IsoSectorInfo>());
+                .ToDictionary(g => g.Key, g => new List<Iso9660SectorInfo>());
             var streamCount = currentStreams.Max(s => s.Key).Value + 1;
             var currentStream = 0;
 

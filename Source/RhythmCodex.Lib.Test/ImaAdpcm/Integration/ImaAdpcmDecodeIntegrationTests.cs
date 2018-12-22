@@ -15,7 +15,7 @@ namespace RhythmCodex.ImaAdpcm.Integration
     public class ImaAdpcmDecodeIntegrationTests : BaseIntegrationFixture
     {
         [Test]
-        public void Test1()
+        public void TestXboxAdpcm()
         {
             var decoder = Resolve<IImaAdpcmDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();

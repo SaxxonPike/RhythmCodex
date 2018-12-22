@@ -1,6 +1,12 @@
+using System;
+using System.Diagnostics;
+using RhythmCodex.Infrastructure;
+
 namespace RhythmCodex.Iso.Model
 {
-    public class IsoSectorInfo
+    [DebuggerStepThrough]
+    [Model]
+    public class Iso9660SectorInfo
     {
         public int Number { get; set; }
         public byte[] Data { get; set; }
@@ -26,5 +32,12 @@ namespace RhythmCodex.Iso.Model
         public int? AudioRate { get; set; }
         public int? AudioBitsPerSample { get; set; }
         public bool? AudioEmphasis { get; set; }
+
+        public Span<byte> UserData => Data.AsSpan(UserDataOffset, UserDataLength);
+
+        public override string ToString()
+        {
+            return $"Mode={Mode} Time={Minutes}:{Seconds}:{Frames}";
+        }
     }
 }

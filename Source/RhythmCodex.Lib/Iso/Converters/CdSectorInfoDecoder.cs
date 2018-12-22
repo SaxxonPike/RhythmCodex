@@ -5,18 +5,18 @@ using RhythmCodex.Iso.Model;
 namespace RhythmCodex.Iso.Converters
 {
     [Service]
-    public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
+    public class CdSectorInfoDecoder : ICdSectorInfoDecoder
     {
         private readonly IBcd _bcd;
 
-        public IsoSectorInfoDecoder(IBcd bcd)
+        public CdSectorInfoDecoder(IBcd bcd)
         {
             _bcd = bcd;
         }
         
-        public IsoSectorInfo Decode(IsoSector sector)
+        public Iso9660SectorInfo Decode(ICdSector sector)
         {
-            var result = new IsoSectorInfo
+            var result = new Iso9660SectorInfo
             {
                 Number = sector.Number,
                 Data = sector.Data,

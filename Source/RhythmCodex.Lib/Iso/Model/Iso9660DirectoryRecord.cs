@@ -1,6 +1,6 @@
 namespace RhythmCodex.Iso.Model
 {
-    public class IsoDirectoryRecord
+    public class Iso9660DirectoryRecord
     {
         
     }

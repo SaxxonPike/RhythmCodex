@@ -18,5 +18,10 @@ namespace RhythmCodex.Infrastructure.Converters
 
         public int FromBcd(byte b) => 
             (b & 0xF) + (b >> 4) * 10;
+
+        public byte ToBcd(int data)
+        {
+            return unchecked((byte) (((data / 10) << 4) | (data % 10)));
+        }
     }
 }
