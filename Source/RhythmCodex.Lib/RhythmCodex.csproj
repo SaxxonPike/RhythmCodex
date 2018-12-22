@@ -7,6 +7,7 @@
     <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="System.Memory" Version="4.5.1" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
@@ -14,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bms\Model" />
+    <Folder Include="ImaAdpcm\Streamers" />
     <Folder Include="Step1\Mappers" />
   </ItemGroup>
 </Project>

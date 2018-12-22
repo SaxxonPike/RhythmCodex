@@ -12,6 +12,7 @@
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+    <PackageReference Include="System.Memory" Version="4.5.1" />
     <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
@@ -26,6 +27,7 @@
     <EmbeddedResource Include="Data\Djmain\bmcm2.zip" />
     <EmbeddedResource Include="Data\Djmain\bmfinal.zip" />
     <EmbeddedResource Include="Data\Djmain\chart.zip" />
+    <EmbeddedResource Include="Data\ImaAdpcm\RawXboxAdpcm.zip" />
     <EmbeddedResource Include="Data\Ssq\freeze.zip" />
     <EmbeddedResource Include="Data\Ssq\shock.zip" />
     <EmbeddedResource Include="Data\Ssq\solo.zip" />
@@ -41,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Step2" />
+    <Folder Include="ImaAdpcm\Converters" />
     <Folder Include="Ssq" />
     <Folder Include="Stepmania" />
   </ItemGroup>
