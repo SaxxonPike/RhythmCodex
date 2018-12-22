@@ -23,33 +23,31 @@ namespace RhythmCodex.Vag.Converters
 
         public ISound Decode(VagChunk chunk)
         {
-            var channelData = _deinterleaver.Deinterleave(chunk.Data, chunk.Interleave, chunk.Channels);
-            var samples = channelData.SelectMany(d =>
+            using (var mem = new MemoryStream(chunk.Data))
+            using (var stream = new VagStream(mem, new VagConfig
             {
-                using (var mem = new MemoryStream(chunk.Data))
-                using (var stream = new VagStream(mem, new VagConfig
-                {
-                    Channels = chunk.Channels,
-                    Interleave = chunk.Interleave,
-                    MaximumLength = chunk.Length ?? long.MaxValue
-                }))
-                {
-                    var data = stream.ReadAllBytes();
-                    var shorts = new short[data.Length / 2];
-                    Buffer.BlockCopy(data, 0, shorts, 0, shorts.Length * 2);
-                    return _deinterleaver
-                        .Deinterleave(shorts.Select(s => (float) s / 32768f), 1, chunk.Channels)
-                        .Select(floats => new Sample
-                        {
-                            Data = floats
-                        });
-                }
-            }).Cast<ISample>().ToList();
-
-            return new Sound
+                Channels = chunk.Channels,
+                Interleave = chunk.Interleave,
+                MaximumLength = chunk.Length ?? long.MaxValue
+            }))
             {
-                Samples = samples
-            };
+                var data = stream.ReadAllBytes();
+                var shorts = new short[data.Length / 2];
+                Buffer.BlockCopy(data, 0, shorts, 0, shorts.Length * 2);
+                var output = _deinterleaver
+                    .Deinterleave(shorts.Select(s => (float) s / 32768f), 1, chunk.Channels)
+                    .Select(floats => new Sample
+                    {
+                        Data = floats
+                    })
+                    .Cast<ISample>()
+                    .ToArray();
+                
+                return new Sound
+                {
+                    Samples = output
+                };
+            }
         }
     }
 }
