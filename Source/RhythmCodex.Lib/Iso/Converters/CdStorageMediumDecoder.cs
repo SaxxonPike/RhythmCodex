@@ -12,13 +12,11 @@ namespace RhythmCodex.Iso.Converters
     {
         private static readonly byte[] StandardIdentifier = {0x43, 0x44, 0x30, 0x30, 0x31};
         
-        private readonly ISlicer _slicer;
         private readonly IBitter _bitter;
         private readonly IBcd _bcd;
 
-        public CdStorageMediumDecoder(ISlicer slicer, IBitter bitter, IBcd bcd)
+        public CdStorageMediumDecoder(IBitter bitter, IBcd bcd)
         {
-            _slicer = slicer;
             _bitter = bitter;
             _bcd = bcd;
         }

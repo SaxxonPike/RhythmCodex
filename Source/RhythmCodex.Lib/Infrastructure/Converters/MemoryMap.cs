@@ -7,6 +7,36 @@ namespace RhythmCodex.Infrastructure.Converters
 {
     public sealed class MemoryMap<T> : IReadOnlyList<T>
     {
+        private class MemoryMapEnumerator : IEnumerator<T>
+        {
+            private readonly IEnumerable<Memory<T>> _memories;
+            private int _offset;
+
+            public MemoryMapEnumerator(IEnumerable<Memory<T>> memories)
+            {
+                _memories = memories;
+            }
+            
+            public bool MoveNext()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Reset()
+            {
+                throw new NotImplementedException();
+            }
+
+            public T Current { get; }
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                throw new NotImplementedException();
+            }
+        }
+        
         private readonly IEnumerable<Memory<T>> _memories;
 
         public MemoryMap()

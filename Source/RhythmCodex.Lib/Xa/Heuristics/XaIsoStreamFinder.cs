@@ -10,13 +10,6 @@ namespace RhythmCodex.Xa.Heuristics
     [Service]
     public class XaIsoStreamFinder : IXaIsoStreamFinder
     {
-        private readonly ISlicer _slicer;
-
-        public XaIsoStreamFinder(ISlicer slicer)
-        {
-            _slicer = slicer;
-        }
-        
         public IList<XaChunk> Find(IEnumerable<Iso9660SectorInfo> sectors)
         {
             var result = new List<XaChunk>();
@@ -38,7 +31,7 @@ namespace RhythmCodex.Xa.Heuristics
                     result.Add(new XaChunk
                     {
                         Channels = currentStreams[currentStream].First().AudioChannels.Value,
-                        Data = currentStreams[currentStream].SelectMany(s => _slicer.Slice(s.Data, s.UserDataOffset, s.UserDataLength)).ToArray(),
+                        Data = currentStreams[currentStream].SelectMany(s => s.Data.Slice(s.UserDataOffset, s.UserDataLength)).ToArray(),
                         Rate = currentStreams[currentStream].First().AudioRate.Value
                     });                    
                 }
