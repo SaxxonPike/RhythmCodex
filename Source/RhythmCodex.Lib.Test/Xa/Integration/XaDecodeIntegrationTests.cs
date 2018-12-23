@@ -65,7 +65,6 @@ namespace RhythmCodex.Xa.Integration
             var decoder = Resolve<IXaDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
-            var slicer = Resolve<ISlicer>();
             var streamFinder = Resolve<IXaIsoStreamFinder>();
             
             var streams = streamFinder.Find(isoReader
