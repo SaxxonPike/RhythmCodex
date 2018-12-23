@@ -18,7 +18,7 @@ namespace RhythmCodex.Cli.Modules
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Create an instance of the SSQ module.
+        /// Create an instance of the 573 module.
         /// </summary>
         public Ddr573Module(
             ILogger logger,
