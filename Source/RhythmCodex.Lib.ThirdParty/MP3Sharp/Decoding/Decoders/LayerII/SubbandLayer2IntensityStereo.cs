@@ -21,8 +21,10 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
     /// </summary>
     internal sealed class SubbandLayer2IntensityStereo : SubbandLayer2
     {
-        protected internal float channel2_scalefactor1, channel2_scalefactor2, channel2_scalefactor3;
-        protected internal int channel2_scfsi;
+        private float channel2_scalefactor1;
+        private float channel2_scalefactor2;
+        private float channel2_scalefactor3;
+        private int channel2_scfsi;
 
         /// <summary>
         ///     Constructor

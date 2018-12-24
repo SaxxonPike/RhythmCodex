@@ -170,17 +170,17 @@ namespace MP3Sharp.Decoding
             return m_Output;
         }
 
-        protected internal DecoderException NewDecoderException(int errorcode)
+        private DecoderException NewDecoderException(int errorcode)
         {
             return new DecoderException(errorcode, null);
         }
 
-        protected internal DecoderException NewDecoderException(int errorcode, Exception throwable)
+        private DecoderException NewDecoderException(int errorcode, Exception throwable)
         {
             return new DecoderException(errorcode, throwable);
         }
 
-        protected internal IFrameDecoder RetrieveDecoder(Header header, Bitstream stream, int layer)
+        private IFrameDecoder RetrieveDecoder(Header header, Bitstream stream, int layer)
         {
             IFrameDecoder decoder = null;
 

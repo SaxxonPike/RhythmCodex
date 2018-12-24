@@ -53,7 +53,7 @@ namespace MP3Sharp.Decoding
             m_Errorcode = errorcode;
         }
 
-        protected BitstreamException(SerializationInfo info, StreamingContext context) : base(info, context)
+        private BitstreamException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             m_Errorcode = info.GetInt32("ErrorCode");
         }

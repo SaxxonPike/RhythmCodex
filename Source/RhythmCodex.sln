@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RhythmCodex.Cli", "RhythmCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Cli.Test", "RhythmCodex.Cli.Test\RhythmCodex.Cli.Test.csproj", "{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Thirdparty", "RhythmCodex.Lib.ThirdParty\RhythmCodex.Thirdparty.csproj", "{85602756-21B5-456D-951E-CB2C58068D0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85602756-21B5-456D-951E-CB2C58068D0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85602756-21B5-456D-951E-CB2C58068D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85602756-21B5-456D-951E-CB2C58068D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85602756-21B5-456D-951E-CB2C58068D0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,5 +53,6 @@ Global
 		{9D5105F8-416E-4991-817D-6888ADB02CF1} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
 		{2188AAFC-E5CB-4AAA-8112-A9B7A59C4661} = {C6204E35-6693-496E-95E0-E58D986E09E2}
 		{E9FD0B65-B340-4150-A11C-D5DA759CA8D6} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
+		{85602756-21B5-456D-951E-CB2C58068D0F} = {67686204-29B7-469A-ADA6-40BABA8D3F25}
 	EndGlobalSection
 EndGlobal

@@ -21,16 +21,20 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
     /// </summary>
     internal sealed class SubbandLayer2Stereo : SubbandLayer2
     {
-        protected internal int channel2_allocation;
-        protected internal float[] channel2_c = { 0 };
+        private int channel2_allocation;
+
+        private float[] channel2_c = { 0 };
         //protected boolean	 	channel2_grouping;  ???? Never used!
-        protected internal int[] channel2_codelength = { 0 };
-        protected internal float[] channel2_d = { 0 };
+        private int[] channel2_codelength = { 0 };
+
+        private float[] channel2_d = { 0 };
         //protected float[][] 	channel2_groupingtable = {{0},{0}};
-        protected internal float[] channel2_factor = { 0 };
-        protected internal float[] channel2_samples;
-        protected internal float channel2_scalefactor1, channel2_scalefactor2, channel2_scalefactor3;
-        protected internal int channel2_scfsi;
+        private float[] channel2_factor = { 0 };
+        private float[] channel2_samples;
+        private float channel2_scalefactor1;
+        private float channel2_scalefactor2;
+        private float channel2_scalefactor3;
+        private int channel2_scfsi;
 
         /// <summary>
         ///     Constructor

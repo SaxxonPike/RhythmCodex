@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.Portable.Compatibility" Version="1.0.1" />
@@ -17,5 +17,8 @@
     <Folder Include="Bms\Model" />
     <Folder Include="ImaAdpcm\Streamers" />
     <Folder Include="Step1\Mappers" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RhythmCodex.Lib.ThirdParty\RhythmCodex.Thirdparty.csproj" />
   </ItemGroup>
 </Project>

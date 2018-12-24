@@ -34,13 +34,13 @@ namespace MP3Sharp
         private readonly Stream m_SourceStream;
         private readonly int m_BackStreamByteCountRep = 0;
         private short m_ChannelCountRep = -1;
-        protected SoundFormat FormatRep;
+        private SoundFormat FormatRep;
         private int m_FrequencyRep = -1;
 
         public bool IsEOF
         {
             get; 
-            protected set;
+            private set;
         }
 
         /// <summary>
