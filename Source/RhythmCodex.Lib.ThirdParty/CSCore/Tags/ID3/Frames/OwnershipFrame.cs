@@ -17,8 +17,7 @@
             if (content.Length < 10)
                 throw new ID3Exception("Invalid Contentlength");
 
-            int read;
-            Price = ID3Utils.ReadString(content, offset, -1, ID3Utils.Iso88591, out read);
+            Price = ID3Utils.ReadString(content, offset, -1, ID3Utils.Iso88591, out var read);
             offset += read;
 
             PurchaseDate = ID3Utils.ReadString(content, offset, 8, ID3Utils.Iso88591);

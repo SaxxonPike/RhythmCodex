@@ -272,8 +272,7 @@ namespace NVorbis
 
         internal int DecodeScalar(DataPacket packet)
         {
-            int bitCnt;
-            var bits = (int)packet.TryPeekBits(PrefixBitLength, out bitCnt);
+            var bits = (int)packet.TryPeekBits(PrefixBitLength, out var bitCnt);
             if (bitCnt == 0) return -1;
 
             // try to get the value from the prefix list...

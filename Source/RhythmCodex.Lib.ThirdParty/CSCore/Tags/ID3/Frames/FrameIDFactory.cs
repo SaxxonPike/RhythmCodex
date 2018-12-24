@@ -17,13 +17,13 @@ namespace CSCore.Tags.ID3.Frames
                 case ID3Version.ID3v1:
                     throw new ArgumentException("version");
                 case ID3Version.ID3v2_2:
-                    return Frames.Where((x) => !String.IsNullOrEmpty(x.ID3v2ID) && x.ID3v2ID.Equals(id, StringComparison.InvariantCultureIgnoreCase)).First();
+                    return Frames.Where((x) => !string.IsNullOrEmpty(x.ID3v2ID) && x.ID3v2ID.Equals(id, StringComparison.InvariantCultureIgnoreCase)).First();
 
                 case ID3Version.ID3v2_3:
-                    return Frames.Where((x) => !String.IsNullOrEmpty(x.ID3v3ID) && x.ID3v3ID.Equals(id, StringComparison.InvariantCultureIgnoreCase)).First();
+                    return Frames.Where((x) => !string.IsNullOrEmpty(x.ID3v3ID) && x.ID3v3ID.Equals(id, StringComparison.InvariantCultureIgnoreCase)).First();
 
                 case ID3Version.ID3v2_4:
-                    return Frames.Where((x) => !String.IsNullOrEmpty(x.ID3v4ID) && x.ID3v4ID.Equals(id, StringComparison.InvariantCultureIgnoreCase)).First();
+                    return Frames.Where((x) => !string.IsNullOrEmpty(x.ID3v4ID) && x.ID3v4ID.Equals(id, StringComparison.InvariantCultureIgnoreCase)).First();
 
                 default:
                     throw new ArgumentException("Unknown version");
@@ -1033,10 +1033,10 @@ namespace CSCore.Tags.ID3.Frames
                 else if (version == ID3Version.ID3v2_4)
                     sid = e.ID3v4ID;
                 else
-                    throw new InvalidOperationException(String.Format("FrameID {0} is not supported on version {1}", id, version));
+                    throw new InvalidOperationException($"FrameID {id} is not supported on version {version}");
 
                 if (sid == null)
-                    throw new InvalidOperationException(String.Format("FrameID {0} is not supported on version {1}", id, version));
+                    throw new InvalidOperationException($"FrameID {id} is not supported on version {version}");
                 return sid;
             }
 

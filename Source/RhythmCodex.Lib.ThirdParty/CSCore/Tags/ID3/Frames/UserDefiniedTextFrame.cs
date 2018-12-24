@@ -25,8 +25,7 @@ namespace CSCore.Tags.ID3.Frames
             if (url)
                 encoding1 = ID3Utils.Iso88591;
 
-            int read;
-            Description = ID3Utils.ReadString(content, 1, -1, encoding0, out read);
+            Description = ID3Utils.ReadString(content, 1, -1, encoding0, out var read);
 
             if (content.Length < read + 1)
                 throw new ID3Exception("Frame does not contain any text");

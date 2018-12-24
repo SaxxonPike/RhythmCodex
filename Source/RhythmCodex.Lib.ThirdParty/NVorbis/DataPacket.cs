@@ -336,8 +336,7 @@ using System.Collections.Generic;
             // short-circuit 0
             if (count == 0) return 0UL;
 
-            int temp;
-            var value = TryPeekBits(count, out temp);
+            var value = TryPeekBits(count, out var temp);
 
             SkipBits(count);
 
@@ -350,8 +349,7 @@ using System.Collections.Generic;
         /// <returns>The byte read from the packet.</returns>
         public byte PeekByte()
         {
-            int temp;
-            return (byte)TryPeekBits(8, out temp);
+            return (byte)TryPeekBits(8, out var temp);
         }
 
         /// <summary>
@@ -393,8 +391,7 @@ using System.Collections.Generic;
             if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException(nameof(index));
             for (var i = 0; i < count; i++)
             {
-                int cnt;
-                var val = (byte)TryPeekBits(8, out cnt);
+                var val = (byte)TryPeekBits(8, out var cnt);
                 if (cnt == 0)
                 {
                     return i;

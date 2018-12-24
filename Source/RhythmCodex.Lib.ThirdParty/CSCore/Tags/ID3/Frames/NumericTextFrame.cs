@@ -15,7 +15,7 @@ namespace CSCore.Tags.ID3.Frames
             base.Decode(content);
             foreach (var str in Strings)
             {
-                if (!Char.IsNumber(str, 0))
+                if (!char.IsNumber(str, 0))
                     throw new ID3Exception("Invalid value: \"{0}\". Only numbers are allowed", str);
             }
         }

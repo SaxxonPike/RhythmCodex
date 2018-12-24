@@ -49,7 +49,7 @@ namespace CSCore.Codecs.FLAC
             }
             else
             {
-                Debug.WriteLine(String.Format("Invalid Flac-SubframeType. SubframeType: 0x{0:x}.", subframeType));
+                Debug.WriteLine($"Invalid Flac-SubframeType. SubframeType: 0x{subframeType:x}.");
                 return null;
             }
 

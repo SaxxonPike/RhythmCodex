@@ -17,10 +17,9 @@ namespace CSCore.Tags.ID3.Frames
 
         protected override void Decode(byte[] content)
         {
-            int read;
             var encoding = ID3Utils.GetEncoding(content, 0, 4);
             Language = ID3Utils.ReadString(content, 1, 3, ID3Utils.Iso88591);
-            Description = ID3Utils.ReadString(content, 4, -1, encoding, out read);
+            Description = ID3Utils.ReadString(content, 4, -1, encoding, out var read);
             Text = ID3Utils.ReadString(content, read + 4, -1, encoding);
         }
     }

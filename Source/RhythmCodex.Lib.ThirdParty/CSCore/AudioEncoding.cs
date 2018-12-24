@@ -9,43 +9,43 @@ namespace CSCore
     /// </summary>
     public enum AudioEncoding : short
     {
-        /// <summary>WAVE_FORMAT_UNKNOWN,	Microsoft Corporation</summary>
+        /// <summary>WAVE_FORMAT_UNKNOWN,   Microsoft Corporation</summary>
         Unknown = 0x0000,
 
-        /// <summary>WAVE_FORMAT_PCM		Microsoft Corporation</summary>
+        /// <summary>WAVE_FORMAT_PCM        Microsoft Corporation</summary>
         Pcm = 0x0001,
 
-        /// <summary>WAVE_FORMAT_ADPCM		Microsoft Corporation</summary>
+        /// <summary>WAVE_FORMAT_ADPCM      Microsoft Corporation</summary>
         Adpcm = 0x0002,
 
         /// <summary>WAVE_FORMAT_IEEE_FLOAT Microsoft Corporation</summary>
         IeeeFloat = 0x0003,
 
-        /// <summary>WAVE_FORMAT_VSELP		Compaq Computer Corp.</summary>
+        /// <summary>WAVE_FORMAT_VSELP      Compaq Computer Corp.</summary>
         Vselp = 0x0004,
 
-        /// <summary>WAVE_FORMAT_IBM_CVSD	IBM Corporation</summary>
+        /// <summary>WAVE_FORMAT_IBM_CVSD   IBM Corporation</summary>
         IbmCvsd = 0x0005,
 
-        /// <summary>WAVE_FORMAT_ALAW		Microsoft Corporation</summary>
+        /// <summary>WAVE_FORMAT_ALAW       Microsoft Corporation</summary>
         ALaw = 0x0006,
 
-        /// <summary>WAVE_FORMAT_MULAW		Microsoft Corporation</summary>
+        /// <summary>WAVE_FORMAT_MULAW      Microsoft Corporation</summary>
         MuLaw = 0x0007,
 
-        /// <summary>WAVE_FORMAT_DTS		Microsoft Corporation</summary>
+        /// <summary>WAVE_FORMAT_DTS        Microsoft Corporation</summary>
         Dts = 0x0008,
 
-        /// <summary>WAVE_FORMAT_DRM		Microsoft Corporation</summary>
+        /// <summary>WAVE_FORMAT_DRM        Microsoft Corporation</summary>
         Drm = 0x0009,
 
         /// <summary>WAVE_FORMAT_WMAVOICE9 </summary>
         WmaVoice9 = 0x000A,
 
-        /// <summary>WAVE_FORMAT_OKI_ADPCM	OKI</summary>
+        /// <summary>WAVE_FORMAT_OKI_ADPCM  OKI</summary>
         OkiAdpcm = 0x0010,
 
-        /// <summary>WAVE_FORMAT_DVI_ADPCM	Intel Corporation</summary>
+        /// <summary>WAVE_FORMAT_DVI_ADPCM  Intel Corporation</summary>
         DviAdpcm = 0x0011,
 
         /// <summary>WAVE_FORMAT_IMA_ADPCM  Intel Corporation</summary>

@@ -58,8 +58,7 @@ namespace CSCore.Codecs.FLAC
 
         public bool ReadUTF8_64Signed(out long result)
         {
-            ulong r;
-            var returnValue = ReadUTF8_64(out r);
+            var returnValue = ReadUTF8_64(out var r);
             result = (long) r;
             return returnValue;
         }
@@ -130,8 +129,7 @@ namespace CSCore.Codecs.FLAC
 
         public bool ReadUTF8_32Signed(out int result)
         {
-            uint r;
-            var returnValue = ReadUTF8_32(out r);
+            var returnValue = ReadUTF8_32(out var r);
             result = (int) r;
             return returnValue;
         }

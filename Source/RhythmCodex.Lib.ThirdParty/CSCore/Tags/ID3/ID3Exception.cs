@@ -8,17 +8,17 @@ namespace CSCore.Tags.ID3
     [Serializable]
     public class ID3Exception : Exception
     {
-        internal ID3Exception(String message, params Object[] args)
-            : this(String.Format(message, args))
+        internal ID3Exception(string message, params object[] args)
+            : this(string.Format(message, args))
         {
         }
 
-        internal ID3Exception(String message)
+        internal ID3Exception(string message)
             : base(message)
         {
         }
 
-        internal ID3Exception(String message, Exception innerException)
+        internal ID3Exception(string message, Exception innerException)
             : base(message, innerException)
         {
         }

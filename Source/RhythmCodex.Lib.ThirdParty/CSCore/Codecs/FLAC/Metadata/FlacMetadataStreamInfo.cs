@@ -44,7 +44,7 @@ namespace CSCore.Codecs.FLAC
                 Channels = 1 + (int)bitreader.ReadBits(3);
                 BitsPerSample = 1 + (int)bitreader.ReadBits(5);
                 TotalSamples = (long)bitreader.ReadBits64(36);
-                Md5 = new String(reader.ReadChars(16));
+                Md5 = new string(reader.ReadChars(16));
             }
         }
 

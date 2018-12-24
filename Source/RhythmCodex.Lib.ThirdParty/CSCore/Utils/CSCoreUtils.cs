@@ -43,7 +43,7 @@ namespace CSCore.Utils
 
 #if DEBUG
                 var after = pp[i];
-                Debug.WriteLine(String.Format("{0} -> {1}", prev, after));
+                Debug.WriteLine($"{prev} -> {after}");
 #endif
             }
             return ptr;
@@ -56,8 +56,7 @@ namespace CSCore.Utils
 
             var z = new IntPtr(pp);
 
-            PatchedVtable vtable;
-            if (_patchedVtables.TryGetValue(z, out vtable))
+            if (_patchedVtables.TryGetValue(z, out var vtable))
             {
                 return vtable.ReleaseFunc(ptr);
             }

@@ -33,7 +33,7 @@ namespace CSCore.Utils
                     else
                         crc = crc << 1;
                 }
-                crc_table[i] = (UInt16) (crc & bitmask);
+                crc_table[i] = (ushort) (crc & bitmask);
             }
         }
 

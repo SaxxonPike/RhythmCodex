@@ -23,7 +23,7 @@ namespace CSCore.Tags.ID3.Frames
                 DateTime result;
                 if (str == null)
                     throw new ID3Exception("Timestamp-String is null");
-                if (String.IsNullOrEmpty(str))
+                if (string.IsNullOrEmpty(str))
                 {
                     result = DateTime.MinValue;
                 }
@@ -38,8 +38,8 @@ namespace CSCore.Tags.ID3.Frames
                     }
                     catch (FormatException ex)
                     {
-                        throw new ID3Exception(String.Format("Could not parse [{0}] with format [{1}] to Datetime. For details see Innerexception",
-                            str, format), ex);
+                        throw new ID3Exception(
+                            $"Could not parse [{str}] with format [{format}] to Datetime. For details see Innerexception", ex);
                     }
                 }
 

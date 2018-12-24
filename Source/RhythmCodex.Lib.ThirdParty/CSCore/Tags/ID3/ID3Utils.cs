@@ -13,7 +13,7 @@ namespace CSCore.Tags.ID3
         public static readonly Encoding Utf16Big = new UnicodeEncoding(true, true);
         public static readonly Encoding Utf8 = new UTF8Encoding();
 
-        public static unsafe Int32 ReadInt32(byte[] array, int offset, bool sync, int length = 4)
+        public static unsafe int ReadInt32(byte[] array, int offset, bool sync, int length = 4)
         {
             /*fixed (byte* ptr = array)
             {
@@ -39,7 +39,7 @@ namespace CSCore.Tags.ID3
             return Math.Max(value, 0);
         }
 
-        public static Int32 ReadInt32(Stream stream, bool sync, int length = 4)
+        public static int ReadInt32(Stream stream, bool sync, int length = 4)
         {
             var buffer = new byte[4];
             if (stream.Read(buffer, 0, buffer.Length) < buffer.Length)
@@ -58,8 +58,7 @@ namespace CSCore.Tags.ID3
 
         public static string ReadString(byte[] buffer, int offset, int count, Encoding encoding)
         {
-            int read;
-            return ReadString(buffer, offset, count, encoding, out read);
+            return ReadString(buffer, offset, count, encoding, out var read);
         }
 
         public static string ReadString(byte[] buffer, int offset, int count, Encoding encoding, out int read)

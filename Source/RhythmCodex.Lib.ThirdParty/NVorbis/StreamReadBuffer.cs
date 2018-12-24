@@ -239,9 +239,7 @@ namespace NVorbis
             }
 
             // figure up the new buffer parameters...
-            int readStart;
-            int readEnd;
-            CalcBuffer(offset, count, out readStart, out readEnd);
+            CalcBuffer(offset, count, out var readStart, out var readEnd);
 
             // fill the buffer...
             // if we did a reverse seek, there will be data still in end of the buffer...  Make sure to fill everything between

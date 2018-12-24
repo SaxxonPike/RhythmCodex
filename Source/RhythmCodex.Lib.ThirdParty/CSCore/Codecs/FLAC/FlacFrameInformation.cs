@@ -16,7 +16,7 @@ namespace CSCore.Codecs.FLAC
         /// <summary>
         /// Gets a value which indicates whether the described frame is the first frame of the flac stream. True means that the described frame is the first frame of the flac stream. False means that the described frame is not the first frame of the flac stream.
         /// </summary>
-        public Boolean IsFirstFrame { get; set; }
+        public bool IsFirstFrame { get; set; }
 
         /// <summary>
         /// Gets the offset in bytes at which the frame starts in the flac stream (including the header of the frame).

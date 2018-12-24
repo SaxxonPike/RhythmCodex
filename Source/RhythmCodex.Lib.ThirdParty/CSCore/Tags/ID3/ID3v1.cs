@@ -64,16 +64,15 @@ namespace CSCore.Tags.ID3
         private ID3v1(Stream stream)
         {
             var reader = new BinaryReader(stream);
-            Title = new string(reader.ReadChars(30)).Replace("\0", String.Empty).TrimEnd();
-            Artist = new string(reader.ReadChars(30)).Replace("\0", String.Empty).TrimEnd();
-            Album = new string(reader.ReadChars(30)).Replace("\0", String.Empty).TrimEnd();
-            int year;
-            var parseResult = Int32.TryParse(new string(reader.ReadChars(4)), out year);
+            Title = new string(reader.ReadChars(30)).Replace("\0", string.Empty).TrimEnd();
+            Artist = new string(reader.ReadChars(30)).Replace("\0", string.Empty).TrimEnd();
+            Album = new string(reader.ReadChars(30)).Replace("\0", string.Empty).TrimEnd();
+            var parseResult = int.TryParse(new string(reader.ReadChars(4)), out var year);
             if (parseResult)
                 Year = year;
             else
                 Year = null;
-            Comment = new string(reader.ReadChars(30)).Replace("\0", String.Empty).TrimEnd();
+            Comment = new string(reader.ReadChars(30)).Replace("\0", string.Empty).TrimEnd();
             Genre = (ID3Genre)reader.ReadByte();
         }
 

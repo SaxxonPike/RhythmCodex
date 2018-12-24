@@ -17,8 +17,7 @@ namespace CSCore.Tags.ID3.Frames
                 return;
 
             var encoding = ID3Utils.GetEncoding(content, 0, 1);
-            int read;
-            Decode(content, 0, -1, encoding, out read);
+            Decode(content, 0, -1, encoding, out var read);
         }
 
         protected void Decode(byte[] content, int offset, int count, Encoding encoding, out int read)

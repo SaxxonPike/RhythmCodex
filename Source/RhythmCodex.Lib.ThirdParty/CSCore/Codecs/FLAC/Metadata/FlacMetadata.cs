@@ -78,7 +78,7 @@ namespace CSCore.Codecs.FLAC
         /// <summary>
         /// Gets a value indicating whether this instance is the last <see cref="FlacMetadata"/> block.
         /// </summary>
-        public Boolean IsLastMetaBlock { get; private set; }
+        public bool IsLastMetaBlock { get; private set; }
 
         /// <summary>
         /// Gets the length of the <see cref="FlacMetadata"/> block inside of the stream in bytes.

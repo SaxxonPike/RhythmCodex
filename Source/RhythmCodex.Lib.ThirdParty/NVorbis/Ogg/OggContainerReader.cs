@@ -101,8 +101,7 @@ namespace NVorbis.Ogg
         /// <exception cref="ArgumentOutOfRangeException">The specified stream serial was not found.</exception>
         public IPacketProvider GetStream(int streamSerial)
         {
-            PacketReader provider;
-            if (!_packetReaders.TryGetValue(streamSerial, out provider))
+            if (!_packetReaders.TryGetValue(streamSerial, out var provider))
             {
                 throw new ArgumentOutOfRangeException(nameof(streamSerial));
             }
@@ -339,8 +338,7 @@ namespace NVorbis.Ogg
         private bool AddPage(PageHeader hdr)
         {
             // get our packet reader (create one if we have to)
-            PacketReader packetReader;
-            if (!_packetReaders.TryGetValue(hdr.StreamSerial, out packetReader))
+            if (!_packetReaders.TryGetValue(hdr.StreamSerial, out var packetReader))
             {
                 packetReader = new PacketReader(this, hdr.StreamSerial);
             }

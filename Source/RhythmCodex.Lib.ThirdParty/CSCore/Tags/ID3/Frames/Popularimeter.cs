@@ -23,9 +23,8 @@
         protected override void Decode(byte[] content)
         {
             var offset = 0;
-            int read;
 
-            UserEmail = ID3Utils.ReadString(content, 0, -1, ID3Utils.Iso88591, out read);
+            UserEmail = ID3Utils.ReadString(content, 0, -1, ID3Utils.Iso88591, out var read);
             offset += read;
 
             Rating = content[offset];

@@ -70,7 +70,7 @@ namespace CSCore
         /// <summary>
         ///     Gets a bitmask specifying the assignment of channels in the stream to speaker positions.
         /// </summary>
-        public ChannelMask ChannelMask { get; protected internal set; }
+        public ChannelMask ChannelMask { get; }
 
         /// <summary>
         ///     Subformat of the data, such as <see cref="AudioSubTypes.Pcm" />. The subformat information is similar to

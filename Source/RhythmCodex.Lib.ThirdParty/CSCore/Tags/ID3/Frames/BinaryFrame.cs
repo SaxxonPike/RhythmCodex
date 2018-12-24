@@ -4,7 +4,7 @@ namespace CSCore.Tags.ID3.Frames
 {
     public class BinaryFrame : Frame
     {
-        public Byte[] Data { get; private set; }
+        public byte[] Data { get; private set; }
 
         public BinaryFrame(FrameHeader header)
             : base(header)

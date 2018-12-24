@@ -19,8 +19,7 @@ namespace CSCore.Tags.ID3.Frames
             if (content.Length == 0)
                 throw new ID3Exception("Contentlength is zero");
 
-            int read;
-            OwnerIdentifier = ID3Utils.ReadString(content, 0, content.Length, ID3Utils.Iso88591, out read);
+            OwnerIdentifier = ID3Utils.ReadString(content, 0, content.Length, ID3Utils.Iso88591, out var read);
             Data = new byte[content.Length - read];
             if (Data.Length > 0)
             {

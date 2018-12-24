@@ -33,7 +33,7 @@ namespace CSCore.Tags.ID3.Frames
             }
 
             if (Strings.Count == 0)
-                Strings.Add(String.Empty);
+                Strings.Add(string.Empty);
         }
 
         public override string Text => Strings[0];

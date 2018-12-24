@@ -88,9 +88,8 @@ namespace CSCore.Codecs.FLAC.Metadata
         private FlacMetadata CreateFlacMetadataInstance(FlacMetaDataType flacMetadataType)
         {
             var flacMetadataTypeAsInt = (int) flacMetadataType;
-            Type type;
 
-            if (!_registeredmetadataTypes.TryGetValue(flacMetadataTypeAsInt, out type))
+            if (!_registeredmetadataTypes.TryGetValue(flacMetadataTypeAsInt, out var type))
             {
                 return new DefaultFlacMetadata(flacMetadataType);
             }

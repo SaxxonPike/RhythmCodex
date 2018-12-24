@@ -28,8 +28,7 @@ namespace CSCore.Tags.ID3.Frames
         protected override void Decode(byte[] content)
         {
             var offset = 1;
-            int read;
-            Price = ID3Utils.ReadString(content, offset, -1, ID3Utils.Iso88591, out read);
+            Price = ID3Utils.ReadString(content, offset, -1, ID3Utils.Iso88591, out var read);
             offset += read;
 
             IsValidUntil = ID3Utils.ReadString(content, offset, -1, ID3Utils.Iso88591, out read);

@@ -152,33 +152,33 @@ namespace CSCore.Utils
             return result;
         }
 
-        public Int16 ReadInt16()
+        public short ReadInt16()
         {
-            return (Int16) ReadBitsSigned(16);
+            return (short) ReadBitsSigned(16);
         }
 
-        public UInt16 ReadUInt16()
+        public ushort ReadUInt16()
         {
-            return (UInt16) ReadBits(16);
+            return (ushort) ReadBits(16);
         }
 
-        public Int32 ReadInt32()
+        public int ReadInt32()
         {
             return ReadBitsSigned(32);
         }
 
 
-        public UInt32 ReadUInt32()
+        public uint ReadUInt32()
         {
             return ReadBits(32);
         }
 
-        public UInt64 ReadUInt64()
+        public ulong ReadUInt64()
         {
             return ReadBits64(64);
         }
 
-        public Int64 ReadInt64()
+        public long ReadInt64()
         {
             return ReadBits64Signed(64);
         }

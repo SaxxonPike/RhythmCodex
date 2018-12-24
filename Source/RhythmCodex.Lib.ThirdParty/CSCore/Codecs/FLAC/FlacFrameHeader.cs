@@ -326,8 +326,7 @@ namespace CSCore.Codecs.FLAC
                 if ((headerBuffer[1] & 0x01) != 0 ||
                     (streamInfo != null && streamInfo.MinBlockSize != streamInfo.MaxBlockSize))
                 {
-                    ulong samplenumber;
-                    if (reader.ReadUTF8_64(out samplenumber) && samplenumber != ulong.MaxValue)
+                    if (reader.ReadUTF8_64(out var samplenumber) && samplenumber != ulong.MaxValue)
                     {
                         BlockingStrategy = BlockingStrategy.VariableBlockSize;
                         SampleNumber = (long) samplenumber;
@@ -340,9 +339,7 @@ namespace CSCore.Codecs.FLAC
                 }
                 else //fixed blocksize
                 {
-                    uint framenumber;
-
-                    if (reader.ReadUTF8_32(out framenumber) && framenumber != uint.MaxValue)
+                    if (reader.ReadUTF8_32(out var framenumber) && framenumber != uint.MaxValue)
                     {
                         BlockingStrategy = BlockingStrategy.FixedBlockSize;
                         FrameNumber = (int) framenumber;
