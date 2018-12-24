@@ -49,14 +49,14 @@ namespace NVorbis
 
         internal void CopyTo(float[] buffer, int index, int count)
         {
-            if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException("index");
+            if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException(nameof(index));
 
             var start = _start;
             RemoveItems(count);
 
             // this is used to pull data out of the buffer, so we'll update the start position too...
             var len = (_end - start + _bufLen) % _bufLen;
-            if (count > len) throw new ArgumentOutOfRangeException("count");
+            if (count > len) throw new ArgumentOutOfRangeException(nameof(count));
 
             var cnt = Math.Min(count, _bufLen - start);
             Buffer.BlockCopy(_buffer, start * sizeof(float), buffer, index * sizeof(float), cnt * sizeof(float));

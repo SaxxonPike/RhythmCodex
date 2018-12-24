@@ -862,13 +862,13 @@ namespace NVorbis
         {
             if (!_packetProvider.CanSeek) throw new NotSupportedException();
 
-            if (granulePos < 0) throw new ArgumentOutOfRangeException("granulePos");
+            if (granulePos < 0) throw new ArgumentOutOfRangeException(nameof(granulePos));
 
             DataPacket packet;
             if (granulePos > 0)
             {
                 packet = _packetProvider.FindPacket(granulePos, GetPacketLength);
-                if (packet == null) throw new ArgumentOutOfRangeException("granulePos");
+                if (packet == null) throw new ArgumentOutOfRangeException(nameof(granulePos));
             }
             else
             {

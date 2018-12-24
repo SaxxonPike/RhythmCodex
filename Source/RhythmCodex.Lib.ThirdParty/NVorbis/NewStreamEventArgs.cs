@@ -21,7 +21,7 @@ namespace NVorbis
         /// <param name="packetProvider">An <see cref="IPacketProvider"/> instance.</param>
         public NewStreamEventArgs(IPacketProvider packetProvider)
         {
-            if (packetProvider == null) throw new ArgumentNullException("packetProvider");
+            if (packetProvider == null) throw new ArgumentNullException(nameof(packetProvider));
 
             PacketProvider = packetProvider;
         }

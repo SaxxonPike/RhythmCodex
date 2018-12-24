@@ -108,7 +108,7 @@ namespace NVorbis.Ogg
             PacketReader provider;
             if (!_packetReaders.TryGetValue(streamSerial, out provider))
             {
-                throw new ArgumentOutOfRangeException("streamSerial");
+                throw new ArgumentOutOfRangeException(nameof(streamSerial));
             }
             return provider;
         }
@@ -481,7 +481,7 @@ namespace NVorbis.Ogg
 
         internal void GatherNextPage(int streamSerial)
         {
-            if (!_packetReaders.ContainsKey(streamSerial)) throw new ArgumentOutOfRangeException("streamSerial");
+            if (!_packetReaders.ContainsKey(streamSerial)) throw new ArgumentOutOfRangeException(nameof(streamSerial));
 
             int nextSerial;
             do

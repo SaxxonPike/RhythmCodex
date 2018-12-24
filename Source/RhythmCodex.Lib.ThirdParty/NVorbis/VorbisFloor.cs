@@ -463,7 +463,7 @@ namespace NVorbis
             internal override void Apply(PacketData packetData, float[] residue)
             {
                 var data = packetData as PacketData1;
-                if (data == null) throw new ArgumentException("Incorrect packet data!", "packetData");
+                if (data == null) throw new ArgumentException("Incorrect packet data!", nameof(packetData));
 
                 var n = data.BlockSize / 2;
 

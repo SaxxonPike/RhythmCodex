@@ -179,10 +179,10 @@ namespace NVorbis
         /// <returns>The number of bytes read.</returns>
         public int Read(long offset, byte[] buffer, int index, int count)
         {
-            if (offset < 0L) throw new ArgumentOutOfRangeException("offset");
-            if (buffer == null) throw new ArgumentNullException("buffer");
-            if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException("index");
-            if (count < 0) throw new ArgumentOutOfRangeException("count");
+            if (offset < 0L) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+            if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException(nameof(index));
+            if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
             if (offset >= _wrapper.EofOffset) return 0;
 
             var startIdx = EnsureAvailable(offset, ref count, false);
@@ -194,7 +194,7 @@ namespace NVorbis
 
         internal int ReadByte(long offset)
         {
-            if (offset < 0L) throw new ArgumentOutOfRangeException("offset");
+            if (offset < 0L) throw new ArgumentOutOfRangeException(nameof(offset));
             if (offset >= _wrapper.EofOffset) return -1;
 
             int count = 1;

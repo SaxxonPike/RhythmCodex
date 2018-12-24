@@ -48,7 +48,7 @@ namespace RhythmCodex.Infrastructure
             var input = ReadBytes(2);
             short result = input[0];
             result <<= 8;
-            result |= input[1];
+            result |= (short)input[1];
             _bitsLeft = 0;
             return result;
         }

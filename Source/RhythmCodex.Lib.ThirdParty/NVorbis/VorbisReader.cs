@@ -208,8 +208,8 @@ namespace NVorbis
         /// <returns>The number of samples written</returns>
         public int ReadSamples(float[] buffer, int offset, int count)
         {
-            if (offset < 0) throw new ArgumentOutOfRangeException("offset");
-            if (count < 0 || offset + count > buffer.Length) throw new ArgumentOutOfRangeException("count");
+            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (count < 0 || offset + count > buffer.Length) throw new ArgumentOutOfRangeException(nameof(count));
 
             count = ActiveDecoder.ReadSamples(buffer, offset, count);
 
@@ -258,7 +258,7 @@ namespace NVorbis
         /// <returns><c>True</c> if the properties of the logical stream differ from those of the one previously being decoded. Otherwise, <c>False</c>.</returns>
         public bool SwitchStreams(int index)
         {
-            if (index < 0 || index >= StreamCount) throw new ArgumentOutOfRangeException("index");
+            if (index < 0 || index >= StreamCount) throw new ArgumentOutOfRangeException(nameof(index));
 
             if (_decoders == null) throw new ObjectDisposedException("VorbisReader");
 

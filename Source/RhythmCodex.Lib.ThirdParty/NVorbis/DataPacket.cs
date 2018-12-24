@@ -124,7 +124,7 @@ using System.Collections.Generic;
         {
             ulong value = 0;
 
-            if (count < 0 || count > 64) throw new ArgumentOutOfRangeException("count");
+            if (count < 0 || count > 64) throw new ArgumentOutOfRangeException(nameof(count));
             if (count == 0)
             {
                 bitsRead = 0;
@@ -413,7 +413,7 @@ using System.Collections.Generic;
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is less than 0 or <paramref name="index"/> + <paramref name="count"/> is past the end of <paramref name="buffer"/>.</exception>
         public int Read(byte[] buffer, int index, int count)
         {
-            if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException("index");
+            if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException(nameof(index));
             for (int i = 0; i < count; i++)
             {
                 int cnt;

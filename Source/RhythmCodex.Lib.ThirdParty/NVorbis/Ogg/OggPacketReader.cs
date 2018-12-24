@@ -20,7 +20,7 @@ namespace NVorbis.Ogg
 
             public DebugView(PacketReader reader)
             {
-                if (reader == null) throw new ArgumentNullException("reader");
+                if (reader == null) throw new ArgumentNullException(nameof(reader));
                 _reader = reader;
             }
 
@@ -138,7 +138,7 @@ namespace NVorbis.Ogg
                 else
                 {
                     var p = packet as Packet;
-                    if (p == null) throw new ArgumentException("Wrong packet datatype", "packet");
+                    if (p == null) throw new ArgumentException("Wrong packet datatype", nameof(packet));
 
                     if (_first == null)
                     {
@@ -409,7 +409,7 @@ namespace NVorbis.Ogg
             // Please note, the spec actually calls for a bisection search, but the result here should be the same.
 
             // don't look for any position before 0!
-            if (granulePos < 0) throw new ArgumentOutOfRangeException("granulePos");
+            if (granulePos < 0) throw new ArgumentOutOfRangeException(nameof(granulePos));
 
             Packet foundPacket = null;
 
@@ -452,16 +452,16 @@ namespace NVorbis.Ogg
 
         public void SeekToPacket(DataPacket packet, int preRoll)
         {
-            if (preRoll < 0) throw new ArgumentOutOfRangeException("preRoll");
+            if (preRoll < 0) throw new ArgumentOutOfRangeException(nameof(preRoll));
             if (packet == null) throw new ArgumentNullException("granulePos");
 
             var op = packet as Packet;
-            if (op == null) throw new ArgumentException("Incorrect packet type!", "packet");
+            if (op == null) throw new ArgumentException("Incorrect packet type!", nameof(packet));
 
             while (--preRoll >= 0)
             {
                 op = op.Prev;
-                if (op == null) throw new ArgumentOutOfRangeException("preRoll");
+                if (op == null) throw new ArgumentOutOfRangeException(nameof(preRoll));
             }
 
             // _current always points to the last packet returned by PeekNextPacketInternal

@@ -42,7 +42,7 @@ namespace NVorbis
 
         public BufferedReadStream(Stream baseStream, int initialSize, int maxBufferSize, bool minimalRead)
         {
-            if (baseStream == null) throw new ArgumentNullException("baseStream");
+            if (baseStream == null) throw new ArgumentNullException(nameof(baseStream));
             if (!baseStream.CanRead) throw new ArgumentException("baseStream");
 
             if (maxBufferSize < 1) maxBufferSize = 1;
