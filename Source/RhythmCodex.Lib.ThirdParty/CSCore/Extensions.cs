@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using CSCore.Codecs.WAV;
 
 namespace CSCore
 {
@@ -187,53 +186,6 @@ namespace CSCore
                 throw new ArgumentOutOfRangeException(nameof(milliseconds));
 
             return GetRawElements(source, TimeSpan.FromMilliseconds(milliseconds));
-        }
-
-        /// <summary>
-        /// Creates a new file, writes all audio data of the <paramref name="source" /> to the file, and then closes the file. If the target file already exists, it is overwritten.
-        /// </summary>
-        /// <param name="source">Source which provides the audio data to write to the file.</param>
-        /// <param name="filename">The file to write to.</param>
-        /// <exception cref="System.ArgumentNullException">source</exception>
-        public static void WriteToFile(this IWaveSource source, string filename)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            using (FileStream stream = File.OpenWrite(filename))
-            {
-                WriteToWaveStream(source, stream);
-            }
-        }
-
-        /// <summary>
-        /// Writes all audio data of the <paramref name="source" /> to a wavestream (including a wav header).
-        /// </summary>
-        /// <param name="source">Source which provides the audio data to write to the <paramref name="stream" />.</param>
-        /// <param name="stream"><see cref="Stream" /> to store the audio data in.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// source
-        /// or
-        /// stream
-        /// </exception>
-        /// <exception cref="System.ArgumentException">Stream is not writeable.;stream</exception>
-        public static void WriteToWaveStream(this IWaveSource source, Stream stream)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-            if (stream == null)
-                throw new ArgumentNullException(nameof(stream));
-            if (!stream.CanWrite)
-                throw new ArgumentException("Stream is not writeable.", nameof(stream));
-
-            using (var writer = new WaveWriter(stream, source.WaveFormat))
-            {
-                int read;
-                var buffer = new byte[source.WaveFormat.BytesPerSecond];
-                while ((read = source.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    writer.Write(buffer, 0, read);
-                }
-            }
         }
 
         /// <summary>

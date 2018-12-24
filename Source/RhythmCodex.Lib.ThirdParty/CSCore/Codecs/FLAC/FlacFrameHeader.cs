@@ -150,7 +150,6 @@ namespace CSCore.Codecs.FLAC
         /// <param name="buffer">The raw byte-data which contains the <see cref="FlacFrameHeader"/>.</param>
         /// <param name="streamInfo">The stream-info-metadata-block of the flac stream which provides some basic information about the flac framestream. Can be set to null.</param>
         /// <param name="doCrc">A value which indicates whether the crc8 checksum of the <see cref="FlacFrameHeader"/> should be calculated.</param>
-        [CLSCompliant(false)]
         public unsafe FlacFrameHeader(ref byte* buffer, FlacMetadataStreamInfo streamInfo, bool doCrc)
             : this(ref buffer, streamInfo, doCrc, true)
         {

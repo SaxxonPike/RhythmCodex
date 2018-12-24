@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using CSCore.DSP;
 using CSCore.Streams;
 using CSCore.Streams.SampleConverter;
 
