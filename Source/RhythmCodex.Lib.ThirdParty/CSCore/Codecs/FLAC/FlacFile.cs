@@ -13,7 +13,7 @@ namespace CSCore.Codecs.FLAC
     /// <summary>
     ///     Provides a decoder for decoding flac (Free Lostless Audio Codec) data.
     /// </summary>
-    public class FlacFile : IWaveSource
+    public class FlacFile : IReadableAudioSource<byte>
     {
         private readonly Stream _stream;
         private readonly WaveFormat _waveFormat;
