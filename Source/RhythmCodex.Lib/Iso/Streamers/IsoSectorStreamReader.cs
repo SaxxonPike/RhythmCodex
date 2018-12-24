@@ -18,7 +18,7 @@ namespace RhythmCodex.Iso.Streamers
         {
             _bcd = bcd;
         }
-        
+
         public IEnumerable<ICdSector> Read(Stream stream, int length, bool keepOnDisk)
         {
             if (keepOnDisk)
@@ -27,25 +27,26 @@ namespace RhythmCodex.Iso.Streamers
                 return new CdSectorOnDiskCollection(length / InputSectorLength, i =>
                 {
                     stream.Position = i * (long) InputSectorLength;
-                    var totalFrame = 150 + i; 
-                    return ExpandSector(totalFrame / 4500, (totalFrame / 75) % 60, totalFrame % 75, reader.ReadBytes(InputSectorLength));
+                    var totalFrame = 150 + i;
+                    return ExpandSector(totalFrame / 4500, (totalFrame / 75) % 60, totalFrame % 75,
+                        reader.ReadBytes(InputSectorLength));
                 });
             }
-            
+
             return ReadInternal(stream, length);
         }
 
-        private byte[] ExpandSector(int minute, int second, int frame, byte[] sector)
+        private byte[] ExpandSector(int minute, int second, int frame, ReadOnlySpan<byte> sector)
         {
             var data = new byte[OutputSectorLength];
-            Array.Copy(sector, 0, data, 0x0010, InputSectorLength);
-            Array.Copy(new byte[]
+            sector.Slice(InputSectorLength).CopyTo(data.AsSpan(0x0010));
+            new byte[]
             {
                 0x00, 0xFF, 0xFF, 0xFF,
                 0xFF, 0xFF, 0xFF, 0xFF,
                 0xFF, 0xFF, 0xFF, 0x00,
                 _bcd.ToBcd(minute), _bcd.ToBcd(second), _bcd.ToBcd(frame), 0x01
-            }, data, 16);
+            }.AsSpan().CopyTo(data);
             return data;
         }
 
@@ -57,7 +58,7 @@ namespace RhythmCodex.Iso.Streamers
             byte minute = 0;
             byte second = 2;
             byte frame = 0;
-            
+
             while (offset < length - InputSectorLength - 1)
             {
                 var sector = reader.ReadBytes(InputSectorLength);
@@ -74,7 +75,7 @@ namespace RhythmCodex.Iso.Streamers
                         minute++;
                     }
                 }
-                
+
                 yield return new CdSector
                 {
                     Data = data,
@@ -82,7 +83,7 @@ namespace RhythmCodex.Iso.Streamers
                 };
 
                 number++;
-            }            
+            }
         }
     }
 }

@@ -1,10 +1,11 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Extensions
 {
     public static class ByteArrayExtensions
     {
-        public static void Swap16(this byte[] array)
+        public static void Swap16(this Span<byte> array)
         {
             if ((array.Length & 1) != 0)
                 throw new RhythmCodexException("Array must have an even length in order to byte-swap 16-bit words.");

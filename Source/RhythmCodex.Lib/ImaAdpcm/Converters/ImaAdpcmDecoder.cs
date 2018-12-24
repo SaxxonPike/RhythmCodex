@@ -62,7 +62,7 @@ namespace RhythmCodex.ImaAdpcm.Converters
             return sounds;            
         }
 
-        private int DecodeFrame(Span<byte> frame, float[] buffer, int channel, int channelCount)
+        private int DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, int channelCount)
         {
             var index = channel << 2;
             var sample = ((frame[index] | (frame[index + 1] << 8)) << 16) >> 16;
@@ -75,7 +75,7 @@ namespace RhythmCodex.ImaAdpcm.Converters
 
             while (index < max)
             {
-                void DecodeNybble(int data)
+                float DecodeNybble(int data)
                 {
                     var step = StepTable[control];
                     var delta = step >> 3;
@@ -91,13 +91,12 @@ namespace RhythmCodex.ImaAdpcm.Converters
                         sample = 32767;
                 
                     sample += delta;
-                    buffer[bufferIndex++] = sample / 32768f;
-                    
                     control += IndexTable[data & 0x7];
                     if (control < 0)
                         control = 0;
                     if (control > 88)
                         control = 88;
+                    return sample / 32768f;
                 }
 
                 if (nybbleIndex == 8)
@@ -109,11 +108,11 @@ namespace RhythmCodex.ImaAdpcm.Converters
                 }
                 
                 if (channelIndex == channel)
-                    DecodeNybble(frame[index]);
+                    buffer[bufferIndex++] = DecodeNybble(frame[index]);
                 nybbleIndex++;
 
                 if (channelIndex == channel)
-                    DecodeNybble(frame[index] >> 4);
+                    buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
                 nybbleIndex++;
                 
                 index++;

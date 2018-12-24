@@ -58,7 +58,8 @@ namespace RhythmCodex.Ssq.Converters
 
                 0x01, // step 1
                 0x10, // step 2
-                0x40 // step 3
+                0x40, // step 3
+                0x00, // padding
             };
 
             var expected = new[]

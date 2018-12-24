@@ -42,13 +42,13 @@ namespace RhythmCodex.Djmain.Streamers
                     offset += bytesRead;
                 }
 
-                Array.Copy(buffer, output, length);
+                buffer.AsSpan(0, length).CopyTo(output);
 
                 if (format == null)
                     format = _djmainHddDescriptionHeuristic.Get(output);
 
                 if (format.BytesAreSwapped)
-                    output.Swap16();
+                    output.AsSpan().Swap16();
                 
                 yield return new DjmainChunk
                 {

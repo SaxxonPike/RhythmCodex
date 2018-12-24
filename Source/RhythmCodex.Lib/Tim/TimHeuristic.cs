@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Tim
@@ -8,7 +9,7 @@ namespace RhythmCodex.Tim
         public string Description => "Playstation TIM image";
         public string FileExtension => "TIM";
         
-        public bool IsMatch(byte[] data)
+        public bool IsMatch(ReadOnlySpan<byte> data)
         {
             if (data.Length < 8)
                 return false;

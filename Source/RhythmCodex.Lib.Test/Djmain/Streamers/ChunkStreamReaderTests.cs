@@ -1,8 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using AutoFixture;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
+using RhythmCodex.Djmain.Heuristics;
+using RhythmCodex.Djmain.Model;
 
 namespace RhythmCodex.Djmain.Streamers
 {
@@ -26,6 +30,13 @@ namespace RhythmCodex.Djmain.Streamers
             // Arrange.
             const int chunkSize = DjmainConstants.ChunkSize;
             var input = GenerateRandomBytes(chunkSize * 3 / 2);
+            Mock<IDjmainHddDescriptionHeuristic>(m =>
+            {
+                m.Setup(x => x.Get(It.IsAny<byte[]>())).Returns(
+                    Build<DjmainHddDescription>()
+                        .With(x => x.BytesAreSwapped, false)
+                        .Create());
+            });
 
             // Act.
             using (var mem = new MemoryStream(input))
@@ -55,6 +66,13 @@ namespace RhythmCodex.Djmain.Streamers
             // Arrange.
             const int chunkSize = DjmainConstants.ChunkSize;
             var input = GenerateRandomBytes(chunkSize);
+            Mock<IDjmainHddDescriptionHeuristic>(m =>
+            {
+                m.Setup(x => x.Get(It.IsAny<byte[]>())).Returns(
+                    Build<DjmainHddDescription>()
+                        .With(x => x.BytesAreSwapped, false)
+                        .Create());
+            });
 
             // Act.
             using (var mem = new MemoryStream(input))

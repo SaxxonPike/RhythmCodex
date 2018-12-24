@@ -15,7 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bms\Model" />
-    <Folder Include="ImaAdpcm\Streamers" />
     <Folder Include="Step1\Mappers" />
   </ItemGroup>
   <ItemGroup>

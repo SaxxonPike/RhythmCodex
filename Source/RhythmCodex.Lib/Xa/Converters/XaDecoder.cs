@@ -1,9 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Extensions;
-using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Converters;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Xa.Models;
 
@@ -54,7 +52,7 @@ namespace RhythmCodex.Xa.Converters
             return sounds;
         }
 
-        private void DecodeFrame(byte[] frame, float[] buffer, int channel, XaState state)
+        private void DecodeFrame(ReadOnlyMemory<byte> frame, Span<float> buffer, int channel, XaState state)
         {
             var status = _xaFrameSplitter.GetStatus(frame, channel);
             var magnitude = status & 0x0F;
