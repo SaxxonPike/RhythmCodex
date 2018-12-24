@@ -234,7 +234,7 @@ namespace NVorbis
             _vendor = Encoding.UTF8.GetString(packet.ReadBytes(packet.ReadInt32()));
 
             _comments = new string[packet.ReadInt32()];
-            for (int i = 0; i < _comments.Length; i++)
+            for (var i = 0; i < _comments.Length; i++)
             {
                 _comments[i] = Encoding.UTF8.GetString(packet.ReadBytes(packet.ReadInt32()));
             }
@@ -260,7 +260,7 @@ namespace NVorbis
 
             // get books
             Books = new VorbisCodebook[packet.ReadByte() + 1];
-            for (int i = 0; i < Books.Length; i++)
+            for (var i = 0; i < Books.Length; i++)
             {
                 Books[i] = VorbisCodebook.Init(this, packet, i);
             }
@@ -270,7 +270,7 @@ namespace NVorbis
 
             // get times
             Times = new VorbisTime[(int)packet.ReadBits(6) + 1];
-            for (int i = 0; i < Times.Length; i++)
+            for (var i = 0; i < Times.Length; i++)
             {
                 Times[i] = VorbisTime.Init(this, packet);
             }
@@ -280,7 +280,7 @@ namespace NVorbis
 
             // get floor
             Floors = new VorbisFloor[(int)packet.ReadBits(6) + 1];
-            for (int i = 0; i < Floors.Length; i++)
+            for (var i = 0; i < Floors.Length; i++)
             {
                 Floors[i] = VorbisFloor.Init(this, packet);
             }
@@ -290,7 +290,7 @@ namespace NVorbis
 
             // get residue
             Residues = new VorbisResidue[(int)packet.ReadBits(6) + 1];
-            for (int i = 0; i < Residues.Length; i++)
+            for (var i = 0; i < Residues.Length; i++)
             {
                 Residues[i] = VorbisResidue.Init(this, packet);
             }
@@ -300,7 +300,7 @@ namespace NVorbis
 
             // get map
             Maps = new VorbisMapping[(int)packet.ReadBits(6) + 1];
-            for (int i = 0; i < Maps.Length; i++)
+            for (var i = 0; i < Maps.Length; i++)
             {
                 Maps[i] = VorbisMapping.Init(this, packet);
             }
@@ -310,7 +310,7 @@ namespace NVorbis
 
             // get mode settings
             Modes = new VorbisMode[(int)packet.ReadBits(6) + 1];
-            for (int i = 0; i < Modes.Length; i++)
+            for (var i = 0; i < Modes.Length; i++)
             {
                 Modes[i] = VorbisMode.Init(this, packet);
             }
@@ -384,7 +384,7 @@ namespace NVorbis
                 _floorData = new VorbisFloor.PacketData[_channels];
 
                 _residue = new float[_channels][];
-                for (int i = 0; i < _channels; i++)
+                for (var i = 0; i < _channels; i++)
                 {
                     _residue[i] = new float[Block1Size];
                 }
@@ -436,7 +436,7 @@ namespace NVorbis
             var halfBlockSize = _mode.BlockSize / 2;
 
             // read the noise floor data (but don't decode yet)
-            for (int i = 0; i < _channels; i++)
+            for (var i = 0; i < _channels; i++)
             {
                 _floorData[i] = _mode.Mapping.ChannelSubmap[i].Floor.UnpackPacket(packet, _mode.BlockSize, i);
                 _noExecuteChannel[i] = !_floorData[i].ExecuteChannel;
@@ -460,7 +460,7 @@ namespace NVorbis
 
             foreach (var subMap in _mode.Mapping.Submaps)
             {
-                for (int j = 0; j < _channels; j++)
+                for (var j = 0; j < _channels; j++)
                 {
                     if (_mode.Mapping.ChannelSubmap[j] != subMap)
                     {
@@ -469,11 +469,11 @@ namespace NVorbis
                 }
 
                 var rTemp = subMap.Residue.Decode(packet, _noExecuteChannel, _channels, _mode.BlockSize);
-                for (int c = 0; c < _channels; c++)
+                for (var c = 0; c < _channels; c++)
                 {
                     var r = _residue[c];
                     var rt = rTemp[c];
-                    for (int i = 0; i < halfBlockSize; i++)
+                    for (var i = 0; i < halfBlockSize; i++)
                     {
                         r[i] += rt[i];
                     }
@@ -496,7 +496,7 @@ namespace NVorbis
             // inverse coupling
             var steps = _mode.Mapping.CouplingSteps;
             var halfSizeW = _mode.BlockSize / 2;
-            for (int i = steps.Length - 1; i >= 0; i--)
+            for (var i = steps.Length - 1; i >= 0; i--)
             {
                 if (_floorData[steps[i].Angle].ExecuteChannel || _floorData[steps[i].Magnitude].ExecuteChannel)
                 {
@@ -504,7 +504,7 @@ namespace NVorbis
                     var angle = _residue[steps[i].Angle];
 
                     // we only have to do the first half; MDCT ignores the last half
-                    for (int j = 0; j < halfSizeW; j++)
+                    for (var j = 0; j < halfSizeW; j++)
                     {
                         float newM, newA;
 
@@ -542,7 +542,7 @@ namespace NVorbis
             }
 
             // apply floor / dot product / MDCT (only run if we have sound energy in that channel)
-            for (int c = 0; c < _channels; c++)
+            for (var c = 0; c < _channels; c++)
             {
                 var floorData = _floorData[c];
                 var res = _residue[c];
@@ -781,7 +781,7 @@ namespace NVorbis
 
         internal int ReadSamples(float[] buffer, int offset, int count)
         {
-            int samplesRead = 0;
+            var samplesRead = 0;
 
             lock (_seekLock)
             {
@@ -814,7 +814,7 @@ namespace NVorbis
                     throw new InvalidOperationException("Currently pending a parameter change.  Read new parameters before requesting further samples!");
                 }
 
-                int minSize = count + Block1Size * _channels;
+                var minSize = count + Block1Size * _channels;
                 _outputBuffer.EnsureSize(minSize);
 
                 while (_preparedLength * _channels < count && !_eosFound && !_isParameterChange)
@@ -845,7 +845,7 @@ namespace NVorbis
 
         internal bool IsParameterChange
         {
-            get { return _isParameterChange; }
+            get => _isParameterChange;
             set
             {
                 if (value) throw new InvalidOperationException("Only clearing is supported!");
@@ -853,10 +853,7 @@ namespace NVorbis
             }
         }
 
-        internal bool CanSeek
-        {
-            get { return _packetProvider.CanSeek; }
-        }
+        internal bool CanSeek => _packetProvider.CanSeek;
 
         internal void SeekTo(long granulePos)
         {
@@ -904,7 +901,7 @@ namespace NVorbis
 
         internal long CurrentPosition
         {
-            get { return _reportedPosition; }
+            get => _reportedPosition;
             private set
             {
                 _reportedPosition = value;
@@ -922,10 +919,7 @@ namespace NVorbis
             return _packetProvider.GetGranuleCount();
         }
 
-        internal long ContainerBits
-        {
-            get { return _packetProvider.ContainerBits; }
-        }
+        internal long ContainerBits => _packetProvider.ContainerBits;
 
         public void ResetStats()
         {
@@ -970,59 +964,20 @@ namespace NVorbis
             }
         }
 
-        public TimeSpan PageLatency
-        {
-            get
-            {
-                return TimeSpan.FromTicks(_sw.ElapsedTicks / PagesRead);
-            }
-        }
+        public TimeSpan PageLatency => TimeSpan.FromTicks(_sw.ElapsedTicks / PagesRead);
 
-        public TimeSpan PacketLatency
-        {
-            get
-            {
-                return TimeSpan.FromTicks(_sw.ElapsedTicks / _packetCount);
-            }
-        }
+        public TimeSpan PacketLatency => TimeSpan.FromTicks(_sw.ElapsedTicks / _packetCount);
 
-        public TimeSpan SecondLatency
-        {
-            get
-            {
-                return TimeSpan.FromTicks((_sw.ElapsedTicks / _samples) * _sampleRate);
-            }
-        }
+        public TimeSpan SecondLatency => TimeSpan.FromTicks((_sw.ElapsedTicks / _samples) * _sampleRate);
 
-        public long OverheadBits
-        {
-            get
-            {
-                return _glueBits + _metaBits + _timeHdrBits + _wasteHdrBits + _wasteBits + _packetProvider.ContainerBits;
-            }
-        }
+        public long OverheadBits => _glueBits + _metaBits + _timeHdrBits + _wasteHdrBits + _wasteBits + _packetProvider.ContainerBits;
 
-        public long AudioBits
-        {
-            get
-            {
-                return _bookBits + _floorHdrBits + _resHdrBits + _mapHdrBits + _modeHdrBits + _modeBits + _floorBits + _resBits;
-            }
-        }
+        public long AudioBits => _bookBits + _floorHdrBits + _resHdrBits + _mapHdrBits + _modeHdrBits + _modeBits + _floorBits + _resBits;
 
-        public int PagesRead
-        {
-            get { return _pagesSeen.IndexOf(_lastPageSeen) + 1; }
-        }
+        public int PagesRead => _pagesSeen.IndexOf(_lastPageSeen) + 1;
 
-        public int TotalPages
-        {
-            get { return _packetProvider.GetTotalPageCount(); }
-        }
+        public int TotalPages => _packetProvider.GetTotalPageCount();
 
-        public bool Clipped
-        {
-            get { return _clipped; }
-        }
+        public bool Clipped => _clipped;
     }
 }

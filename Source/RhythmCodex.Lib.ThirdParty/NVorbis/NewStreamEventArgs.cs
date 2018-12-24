@@ -21,15 +21,13 @@ namespace NVorbis
         /// <param name="packetProvider">An <see cref="IPacketProvider"/> instance.</param>
         public NewStreamEventArgs(IPacketProvider packetProvider)
         {
-            if (packetProvider == null) throw new ArgumentNullException(nameof(packetProvider));
-
-            PacketProvider = packetProvider;
+            PacketProvider = packetProvider ?? throw new ArgumentNullException(nameof(packetProvider));
         }
 
         /// <summary>
         /// Gets new the <see cref="IPacketProvider"/> instance.
         /// </summary>
-        public IPacketProvider PacketProvider { get; private set; }
+        public IPacketProvider PacketProvider { get; }
 
         /// <summary>
         /// Gets or sets whether to ignore the logical stream associated with the packet provider.

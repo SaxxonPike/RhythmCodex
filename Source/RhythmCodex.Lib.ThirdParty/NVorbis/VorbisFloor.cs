@@ -37,24 +37,20 @@ namespace NVorbis
             _vorbis = vorbis;
         }
 
-        abstract protected void Init(DataPacket packet);
+        protected abstract void Init(DataPacket packet);
 
-        abstract internal PacketData UnpackPacket(DataPacket packet, int blockSize, int channel);
+        internal abstract PacketData UnpackPacket(DataPacket packet, int blockSize, int channel);
 
-        abstract internal void Apply(PacketData packetData, float[] residue);
+        internal abstract void Apply(PacketData packetData, float[] residue);
 
-        abstract internal class PacketData
+        internal abstract class PacketData
         {
             internal int BlockSize;
-            abstract protected bool HasEnergy { get; }
+            protected abstract bool HasEnergy { get; }
             internal bool ForceEnergy { get; set; }
             internal bool ForceNoEnergy { get; set; }
 
-            internal bool ExecuteChannel
-            {
-                // if we have energy or are forcing energy, return !ForceNoEnergy, else false
-                get { return (ForceEnergy | HasEnergy) & !ForceNoEnergy; }
-            }
+            internal bool ExecuteChannel => (ForceEnergy | HasEnergy) & !ForceNoEnergy;
         }
 
         private class Floor0 : VorbisFloor
@@ -81,7 +77,7 @@ namespace NVorbis
 
                 _ampDiv = (1 << _ampBits) - 1;
 
-                for (int i = 0; i < _books.Length; i++)
+                for (var i = 0; i < _books.Length; i++)
                 {
                     var num = (int)packet.ReadBits(8);
                     if (num < 0 || num >= _vorbis.Books.Length) throw new InvalidDataException();
@@ -102,7 +98,7 @@ namespace NVorbis
                 _wMap[_vorbis.Block1Size] = SynthesizeWDelMap(_vorbis.Block1Size / 2);
 
                 _reusablePacketData = new PacketData0[_vorbis._channels];
-                for (int i = 0; i < _reusablePacketData.Length; i++)
+                for (var i = 0; i < _reusablePacketData.Length; i++)
                 {
                     _reusablePacketData[i] = new PacketData0() { Coeff = new float[_order + 1] };
                 }
@@ -114,7 +110,7 @@ namespace NVorbis
 
                 var map = new int[n + 1];
 
-                for (int i = 0; i < n - 1; i++)
+                for (var i = 0; i < n - 1; i++)
                 {
                     map[i] = Math.Min(_bark_map_size - 1, (int)Math.Floor(toBARK((_rate / 2f) / n * i) * scale));
                 }
@@ -132,7 +128,7 @@ namespace NVorbis
                 var wdel = (float)(Math.PI / _bark_map_size);
 
                 var map = new float[n];
-                for (int i = 0; i < n; i++)
+                for (var i = 0; i < n; i++)
                 {
                     map[i] = 2f * (float)Math.Cos(wdel * i);
                 }
@@ -141,10 +137,7 @@ namespace NVorbis
 
             private class PacketData0 : PacketData
             {
-                protected override bool HasEnergy
-                {
-                    get { return Amp > 0f; }
-                }
+                protected override bool HasEnergy => Amp > 0f;
 
                 internal float[] Coeff;
                 internal float Amp;
@@ -177,7 +170,7 @@ namespace NVorbis
                     var book = _books[bookNum];
 
                     // first, the book decode...
-                    for (int i = 0; i < _order; )
+                    for (var i = 0; i < _order; )
                     {
                         var entry = book.DecodeScalar(packet);
                         if (entry == -1)
@@ -186,7 +179,7 @@ namespace NVorbis
                             data.Amp = 0;
                             return data;
                         }
-                        for (int j = 0; i < _order && j < book.Dimensions; j++, i++)
+                        for (var j = 0; i < _order && j < book.Dimensions; j++, i++)
                         {
                             data.Coeff[i] = book[entry, j];
                         }
@@ -194,9 +187,9 @@ namespace NVorbis
 
                     // then, the "averaging"
                     var last = 0f;
-                    for (int j = 0; j < _order; )
+                    for (var j = 0; j < _order; )
                     {
-                        for (int k = 0; j < _order && k < book.Dimensions; j++, k++)
+                        for (var k = 0; j < _order && k < book.Dimensions; j++, k++)
                         {
                             data.Coeff[j] += last;
                         }
@@ -219,7 +212,7 @@ namespace NVorbis
                     var barkMap = _barkMaps[data.BlockSize];
                     var wMap = _wMap[data.BlockSize];
 
-                    int i = 0;
+                    var i = 0;
                     for (i = 0; i < _order; i++)
                     {
                         data.Coeff[i] = 2f * (float)Math.Cos(data.Coeff[i]);
@@ -286,7 +279,7 @@ namespace NVorbis
             protected override void Init(DataPacket packet)
             {
                 _partitionClass = new int[(int)packet.ReadBits(5)];
-                for (int i = 0; i < _partitionClass.Length; i++)
+                for (var i = 0; i < _partitionClass.Length; i++)
                 {
                     _partitionClass[i] = (int)packet.ReadBits(4);
                 }
@@ -298,7 +291,7 @@ namespace NVorbis
                 _classMasterBookIndex = new int[maximum_class + 1];
                 _subclassBooks = new VorbisCodebook[maximum_class + 1][];
                 _subclassBookIndex = new int[maximum_class + 1][];
-                for (int i = 0; i <= maximum_class; i++)
+                for (var i = 0; i <= maximum_class; i++)
                 {
                     _classDimensions[i] = (int)packet.ReadBits(3) + 1;
                     _classSubclasses[i] = (int)packet.ReadBits(2);
@@ -310,7 +303,7 @@ namespace NVorbis
 
                     _subclassBooks[i] = new VorbisCodebook[1 << _classSubclasses[i]];
                     _subclassBookIndex[i] = new int[_subclassBooks[i].Length];
-                    for (int j = 0; j < _subclassBooks[i].Length; j++)
+                    for (var j = 0; j < _subclassBooks[i].Length; j++)
                     {
                         var bookNum = (int)packet.ReadBits(8) - 1;
                         if (bookNum >= 0) _subclassBooks[i][j] = _vorbis.Books[bookNum];
@@ -331,10 +324,10 @@ namespace NVorbis
                 xList.Add(0);
                 xList.Add(1 << rangeBits);
                 
-                for (int i = 0; i < _partitionClass.Length; i++)
+                for (var i = 0; i < _partitionClass.Length; i++)
                 {
                     var classNum = _partitionClass[i];
-                    for (int j = 0; j < _classDimensions[classNum]; j++)
+                    for (var j = 0; j < _classDimensions[classNum]; j++)
                     {
                         xList.Add((int)packet.ReadBits(rangeBits));
                     }
@@ -347,12 +340,12 @@ namespace NVorbis
                 _sortIdx = new int[xList.Count];
                 _sortIdx[0] = 0;
                 _sortIdx[1] = 1;
-                for (int i = 2; i < _lNeigh.Length; i++)
+                for (var i = 2; i < _lNeigh.Length; i++)
                 {
                     _lNeigh[i] = 0;
                     _hNeigh[i] = 1;
                     _sortIdx[i] = i;
-                    for (int j = 2; j < i; j++)
+                    for (var j = 2; j < i; j++)
                     {
                         var temp = _xList[j];
                         if (temp < _xList[i])
@@ -367,9 +360,9 @@ namespace NVorbis
                 }
 
                 // precalc the sort table
-                for (int i = 0; i < _sortIdx.Length - 1; i++)
+                for (var i = 0; i < _sortIdx.Length - 1; i++)
                 {
-                    for (int j = i + 1; j < _sortIdx.Length; j++)
+                    for (var j = i + 1; j < _sortIdx.Length; j++)
                     {
                         if (_xList[i] == _xList[j]) throw new InvalidDataException();
 
@@ -385,7 +378,7 @@ namespace NVorbis
 
                 // pre-create our packet data instances
                 _reusablePacketData = new PacketData1[_vorbis._channels];
-                for (int i = 0; i < _reusablePacketData.Length; i++)
+                for (var i = 0; i < _reusablePacketData.Length; i++)
                 {
                     _reusablePacketData[i] = new PacketData1();
                 }
@@ -393,10 +386,7 @@ namespace NVorbis
 
             private class PacketData1 : PacketData
             {
-                protected override bool HasEnergy
-                {
-                    get { return PostCount > 0; }
-                }
+                protected override bool HasEnergy => PostCount > 0;
 
                 public int[] Posts = new int[64];
                 public int PostCount;
@@ -420,7 +410,7 @@ namespace NVorbis
                     data.Posts[0] = (int)packet.ReadBits(_yBits);
                     data.Posts[1] = (int)packet.ReadBits(_yBits);
 
-                    for (int i = 0; i < _partitionClass.Length; i++)
+                    for (var i = 0; i < _partitionClass.Length; i++)
                     {
                         var clsNum = _partitionClass[i];
                         var cdim = _classDimensions[clsNum];
@@ -436,7 +426,7 @@ namespace NVorbis
                                 break;
                             }
                         }
-                        for (int j = 0; j < cdim; j++)
+                        for (var j = 0; j < cdim; j++)
                         {
                             var book = _subclassBooks[clsNum][cval & csub];
                             cval >>= cbits;
@@ -473,7 +463,7 @@ namespace NVorbis
 
                     var lx = 0;
                     var ly = data.Posts[0] * _multiplier;
-                    for (int i = 1; i < data.PostCount; i++)
+                    for (var i = 1; i < data.PostCount; i++)
                     {
                         var idx = _sortIdx[i];
 
@@ -512,7 +502,7 @@ namespace NVorbis
                 _finalY[0] = data.Posts[0];
                 _finalY[1] = data.Posts[1];
 
-                for (int i = 2; i < data.PostCount; i++)
+                for (var i = 2; i < data.PostCount; i++)
                 {
                     var lowOfs = _lNeigh[i];
                     var highOfs = _hNeigh[i];
@@ -569,7 +559,7 @@ namespace NVorbis
                     }
                 }
 
-                for (int i = 0; i < data.PostCount; i++)
+                for (var i = 0; i < data.PostCount; i++)
                 {
                     data.Posts[i] = _finalY[i];
                 }

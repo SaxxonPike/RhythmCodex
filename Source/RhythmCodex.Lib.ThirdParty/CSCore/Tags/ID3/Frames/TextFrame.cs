@@ -16,7 +16,7 @@ namespace CSCore.Tags.ID3.Frames
             if (content == null || content.Length < 1)
                 return;
 
-            Encoding encoding = ID3Utils.GetEncoding(content, 0, 1);
+            var encoding = ID3Utils.GetEncoding(content, 0, 1);
             int read;
             Decode(content, 0, -1, encoding, out read);
         }

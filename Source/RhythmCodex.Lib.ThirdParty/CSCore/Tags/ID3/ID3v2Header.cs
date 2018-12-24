@@ -13,11 +13,11 @@ namespace CSCore.Tags.ID3
             if (!stream.CanRead) throw new ArgumentException("stream not readable");
             if (!stream.CanSeek) throw new ArgumentException("stream not seekable");
 
-            BinaryReader reader = new BinaryReader(stream);
+            var reader = new BinaryReader(stream);
             ID3v2Header header;
 
-            byte[] buffer = new byte[HeaderLength];
-            int read = stream.Read(buffer, 0, buffer.Length);
+            var buffer = new byte[HeaderLength];
+            var read = stream.Read(buffer, 0, buffer.Length);
             if (read < 10)
                 throw new EndOfStreamException();
 
@@ -57,9 +57,6 @@ namespace CSCore.Tags.ID3
 
         public ID3v2HeaderFlags Flags { get; private set; }
 
-        public bool IsUnsync 
-        { 
-            get { return (Flags & ID3v2HeaderFlags.Unsynchronisation) == ID3v2HeaderFlags.Unsynchronisation; } 
-        }
+        public bool IsUnsync => (Flags & ID3v2HeaderFlags.Unsynchronisation) == ID3v2HeaderFlags.Unsynchronisation;
     }
 }

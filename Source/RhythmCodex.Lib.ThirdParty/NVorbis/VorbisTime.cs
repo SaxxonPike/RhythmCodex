@@ -33,7 +33,7 @@ namespace NVorbis
             _vorbis = vorbis;
         }
 
-        abstract protected void Init(DataPacket packet);
+        protected abstract void Init(DataPacket packet);
 
         private class Time0 : VorbisTime
         {

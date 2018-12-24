@@ -99,10 +99,8 @@ namespace MP3Sharp.Decoding
         internal Bitstream(PushbackStream stream)
         {
             InitBlock();
-            if (stream == null)
-                throw new NullReferenceException("in stream is null");
 
-            m_SourceStream = stream;
+            m_SourceStream = stream ?? throw new NullReferenceException("in stream is null");
 
             CloseFrame();
         }

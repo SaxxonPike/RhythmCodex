@@ -7,20 +7,20 @@ namespace CSCore.Tags.ID3.Frames
     {
         public static Frame FromStream(Stream stream, ID3v2 tag)
         {
-            bool result = false;
-            FrameHeader header = new FrameHeader(stream, tag.Header.Version);
-            long streamPosition = stream.Position + header.FrameSize;
+            var result = false;
+            var header = new FrameHeader(stream, tag.Header.Version);
+            var streamPosition = stream.Position + header.FrameSize;
             var frame = FrameFactory.Instance.TryGetFrame(header, tag.Header.Version, stream, out result);
             stream.Position = streamPosition;
 
             return frame;
         }
 
-        public FrameHeader Header { get; private set; }
+        public FrameHeader Header { get; }
 
-        public string FrameId { get { return Header.FrameID; } }
+        public string FrameId => Header.FrameID;
 
-        public int FrameSize { get { return Header.FrameSize; } }
+        public int FrameSize => Header.FrameSize;
 
         protected Frame(FrameHeader header)
         {

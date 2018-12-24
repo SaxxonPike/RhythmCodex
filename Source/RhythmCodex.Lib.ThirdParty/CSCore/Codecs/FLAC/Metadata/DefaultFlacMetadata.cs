@@ -9,15 +9,13 @@ namespace CSCore.Codecs.FLAC
     /// </summary>
     public sealed class DefaultFlacMetadata : FlacMetadata
     {
-        private readonly FlacMetaDataType _metadataType;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FlacMetadata"/> class.
         /// </summary>
         /// <param name="metadataType">The type of the metadata.</param>
         public DefaultFlacMetadata(FlacMetaDataType metadataType)
         {
-            _metadataType = metadataType;
+            MetaDataType = metadataType;
         }
 
         /// <summary>
@@ -31,9 +29,6 @@ namespace CSCore.Codecs.FLAC
         /// <summary>
         /// Gets the type of the <see cref="FlacMetadata"/>.
         /// </summary>
-        public override FlacMetaDataType MetaDataType
-        {
-            get { return _metadataType; }
-        }
+        public override FlacMetaDataType MetaDataType { get; }
     }
 }

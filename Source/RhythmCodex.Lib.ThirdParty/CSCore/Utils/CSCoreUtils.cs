@@ -24,7 +24,7 @@ namespace CSCore.Utils
             var pp = (IntPtr*)(void*)ptr;
             pp = (IntPtr*)pp[0];
 
-            IntPtr z = new IntPtr(pp);
+            var z = new IntPtr(pp);
 
             //since the same vtable applies to all com objects of the same type -> make sure to only patch it once
             if (_patchedVtables.ContainsKey(z))
@@ -34,15 +34,15 @@ namespace CSCore.Utils
 
             _patchedVtables.Add(z, new PatchedVtable(pp));
 
-            for (int i = 0; i < finalVtableLength; i++)
+            for (var i = 0; i < finalVtableLength; i++)
             {
 #if DEBUG
-                IntPtr prev = pp[i];
+                var prev = pp[i];
 #endif
                 pp[i] = pp[i + replaceCount];
 
 #if DEBUG
-                IntPtr after = pp[i];
+                var after = pp[i];
                 Debug.WriteLine(String.Format("{0} -> {1}", prev, after));
 #endif
             }
@@ -54,7 +54,7 @@ namespace CSCore.Utils
             var pp = (IntPtr*)(void*)ptr;
             pp = (IntPtr*)pp[0];
 
-            IntPtr z = new IntPtr(pp);
+            var z = new IntPtr(pp);
 
             PatchedVtable vtable;
             if (_patchedVtables.TryGetValue(z, out vtable))
@@ -81,9 +81,9 @@ namespace CSCore.Utils
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
             public delegate int Release(IntPtr thisPtr);
 
-            private IntPtr ReleasePtr { get; set; }
+            private IntPtr ReleasePtr { get; }
 
-            public Release ReleaseFunc { get; private set; }
+            public Release ReleaseFunc { get; }
 
             public unsafe PatchedVtable(IntPtr* ptr)
             {

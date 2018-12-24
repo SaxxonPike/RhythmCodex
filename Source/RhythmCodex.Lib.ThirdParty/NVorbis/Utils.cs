@@ -9,9 +9,9 @@ namespace NVorbis
 {
     internal static class Utils
     {
-        static internal int ilog(int x)
+        internal static int ilog(int x)
         {
-            int cnt = 0;
+            var cnt = 0;
             while (x > 0)
             {
                 ++cnt;
@@ -20,12 +20,12 @@ namespace NVorbis
             return cnt;
         }
 
-        static internal uint BitReverse(uint n)
+        internal static uint BitReverse(uint n)
         {
             return BitReverse(n, 32);
         }
 
-        static internal uint BitReverse(uint n, int bits)
+        internal static uint BitReverse(uint n, int bits)
         {
             n = ((n & 0xAAAAAAAA) >> 1) | ((n & 0x55555555) << 1);
             n = ((n & 0xCCCCCCCC) >> 2) | ((n & 0x33333333) << 2);
@@ -44,7 +44,7 @@ namespace NVorbis
             public uint Bits;
         }
 
-        static internal float ClipValue(float value, ref bool clipped)
+        internal static float ClipValue(float value, ref bool clipped)
         {
             /************
              * There is some magic happening here... IEEE 754 single precision floats are built such that:
@@ -67,7 +67,7 @@ namespace NVorbis
             return fb.Float;
         }
 
-        static internal float ConvertFromVorbisFloat32(uint bits)
+        internal static float ConvertFromVorbisFloat32(uint bits)
         {
             // do as much as possible with bit tricks in integer math
             var sign = ((int)bits >> 31);   // sign-extend to the full 32-bits
@@ -84,10 +84,10 @@ namespace NVorbis
         }
 
         // this is a no-allocation way to sum an int queue
-        static internal int Sum(System.Collections.Generic.Queue<int> queue)
+        internal static int Sum(System.Collections.Generic.Queue<int> queue)
         {
             var value = 0;
-            for (int i = 0; i < queue.Count; i++)
+            for (var i = 0; i < queue.Count; i++)
             {
                 var temp = queue.Dequeue();
                 value += temp;

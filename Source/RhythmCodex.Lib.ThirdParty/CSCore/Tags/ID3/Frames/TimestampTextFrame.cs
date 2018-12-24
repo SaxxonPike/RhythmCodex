@@ -7,10 +7,7 @@ namespace CSCore.Tags.ID3.Frames
     {
         private List<DateTime> _dateTimes;
 
-        public List<DateTime> DateTimes
-        {
-            get { return _dateTimes ?? (_dateTimes = new List<DateTime>()); }
-        }
+        public List<DateTime> DateTimes => _dateTimes ?? (_dateTimes = new List<DateTime>());
 
         public TimestampTextFrame(FrameHeader header)
             : base(header)

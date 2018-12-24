@@ -13,7 +13,7 @@
 
         protected override void Decode(byte[] content)
         {
-            int offset = 1;
+            var offset = 1;
             if (content.Length < 10)
                 throw new ID3Exception("Invalid Contentlength");
 

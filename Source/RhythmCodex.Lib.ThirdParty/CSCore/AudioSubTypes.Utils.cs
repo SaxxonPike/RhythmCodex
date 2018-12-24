@@ -16,7 +16,7 @@ namespace CSCore
         public static AudioEncoding EncodingFromSubType(Guid audioSubType)
         {
             var bytes = audioSubType.ToByteArray();
-            int value = BitConverter.ToInt32(bytes, 0);
+            var value = BitConverter.ToInt32(bytes, 0);
             if (Enum.IsDefined(typeof(AudioEncoding), (short)value))
                 return (AudioEncoding)value;
 

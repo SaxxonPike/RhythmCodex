@@ -45,13 +45,7 @@ namespace MP3Sharp
         /// <summary>
         ///     Gets the number of bytes remaining from the current position on the buffer.
         /// </summary>
-        public int BytesLeft
-        {
-            get
-            {
-                return m_End - m_Offset;
-            }
-        }
+        public int BytesLeft => m_End - m_Offset;
 
         /// <summary>
         ///     Reads a sequence of bytes from the buffer and advances the position of the 
@@ -148,7 +142,7 @@ namespace MP3Sharp
         /// <summary>
         ///     This implementation does not clear the buffer.
         /// </summary>
-        public override sealed void ClearBuffer()
+        public sealed override void ClearBuffer()
         {
             m_Offset = 0;
             m_End = 0;

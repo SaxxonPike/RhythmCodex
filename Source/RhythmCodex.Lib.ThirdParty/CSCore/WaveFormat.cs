@@ -25,9 +25,9 @@ namespace CSCore
         ///     Gets the number of channels in the waveform-audio data. Mono data uses one channel and stereo data uses two
         ///     channels.
         /// </summary>
-        public virtual int Channels
+        public int Channels
         {
-            get { return _channels; }
+            get => _channels;
             protected internal set
             {
                 _channels = (short) value;
@@ -38,9 +38,9 @@ namespace CSCore
         /// <summary>
         ///     Gets the sample rate, in samples per second (hertz).
         /// </summary>
-        public virtual int SampleRate
+        public int SampleRate
         {
-            get { return _sampleRate; }
+            get => _sampleRate;
             protected internal set
             {
                 _sampleRate = value;
@@ -53,10 +53,10 @@ namespace CSCore
         ///     average data rate of 176,400 bytes per second (2 channels — 2 bytes per sample per channel — 44,100 samples per
         ///     second).
         /// </summary>
-        public virtual int BytesPerSecond
+        public int BytesPerSecond
         {
-            get { return _bytesPerSecond; }
-            protected internal set { _bytesPerSecond = value; }
+            get => _bytesPerSecond;
+            protected internal set => _bytesPerSecond = value;
         }
 
         /// <summary>
@@ -64,18 +64,18 @@ namespace CSCore
         ///     alignment is the number of bytes used by a single sample, including data for both channels if the data is stereo.
         ///     For example, the block alignment for 16-bit stereo PCM is 4 bytes (2 channels x 2 bytes per sample).
         /// </summary>
-        public virtual int BlockAlign
+        public int BlockAlign
         {
-            get { return _blockAlign; }
-            protected internal set { _blockAlign = (short) value; }
+            get => _blockAlign;
+            protected internal set => _blockAlign = (short) value;
         }
 
         /// <summary>
         ///     Gets the number of bits, used to store one sample.
         /// </summary>
-        public virtual int BitsPerSample
+        public int BitsPerSample
         {
-            get { return _bitsPerSample; }
+            get => _bitsPerSample;
             protected internal set
             {
                 _bitsPerSample = (short) value;
@@ -86,36 +86,30 @@ namespace CSCore
         /// <summary>
         ///     Gets the size (in bytes) of extra information. This value is mainly used for marshalling.
         /// </summary>
-        public virtual int ExtraSize
+        public int ExtraSize
         {
-            get { return _extraSize; }
-            protected internal set { _extraSize = (short) value; }
+            get => _extraSize;
+            protected internal set => _extraSize = (short) value;
         }
 
         /// <summary>
         ///     Gets the number of bytes, used to store one sample.
         /// </summary>
-        public virtual int BytesPerSample
-        {
-            get { return BitsPerSample / 8; }
-        }
+        public int BytesPerSample => BitsPerSample / 8;
 
         /// <summary>
         ///     Gets the number of bytes, used to store one block. This value equals <see cref="BytesPerSample" /> multiplied with
         ///     <see cref="Channels" />.
         /// </summary>
-        public virtual int BytesPerBlock
-        {
-            get { return BytesPerSample * Channels; }
-        }
+        public int BytesPerBlock => BytesPerSample * Channels;
 
         /// <summary>
         ///     Gets the waveform-audio format type.
         /// </summary>
-        public virtual AudioEncoding WaveFormatTag
+        public AudioEncoding WaveFormatTag
         {
-            get { return _encoding; }
-            protected internal set { _encoding = value; }
+            get => _encoding;
+            protected internal set => _encoding = value;
         }
 
         /// <summary>
@@ -206,7 +200,7 @@ namespace CSCore
         /// </summary>
         /// <param name="other">The <see cref="WaveFormat"/> to compare with this <see cref="WaveFormat"/>.</param>
         /// <returns>true if the current object is equal to the other parameter; otherwise, false.</returns>
-        public virtual bool Equals(WaveFormat other)
+        public bool Equals(WaveFormat other)
         {
             return Channels == other.Channels &&
                    SampleRate == other.SampleRate &&
@@ -240,7 +234,7 @@ namespace CSCore
             WaveFormatTag = waveFormatTag;
         }
 
-        internal virtual void SetBitsPerSampleAndFormatProperties(int bitsPerSample)
+        internal void SetBitsPerSampleAndFormatProperties(int bitsPerSample)
         {
             BitsPerSample = bitsPerSample;
             UpdateProperties();
@@ -249,7 +243,7 @@ namespace CSCore
         /// <summary>
         /// Updates the <see cref="BlockAlign"/>- and the <see cref="BytesPerSecond"/>-property.
         /// </summary>
-        internal protected virtual void UpdateProperties()
+        protected internal void UpdateProperties()
         {
             BlockAlign = (BitsPerSample / 8) * Channels;
             BytesPerSecond = BlockAlign * SampleRate;

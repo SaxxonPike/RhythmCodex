@@ -32,10 +32,6 @@ namespace MP3Sharp
         // local variables.
         private readonly Buffer16BitStereo m_Buffer;
         private readonly Stream m_SourceStream;
-        private readonly int m_BackStreamByteCountRep = 0;
-        private short m_ChannelCountRep = -1;
-        private SoundFormat FormatRep;
-        private int m_FrequencyRep = -1;
 
         public bool IsEOF
         {
@@ -75,7 +71,7 @@ namespace MP3Sharp
         public MP3Stream(Stream sourceStream, int chunkSize)
         {
             IsEOF = false;
-            FormatRep = SoundFormat.Pcm16BitStereo;
+            Format = SoundFormat.Pcm16BitStereo;
             m_SourceStream = sourceStream;
             m_BitStream = new Bitstream(new PushbackStream(m_SourceStream, chunkSize));
             m_Buffer = new Buffer16BitStereo();
@@ -88,42 +84,27 @@ namespace MP3Sharp
         /// <summary>
         ///     Gets the chunk size.
         /// </summary>
-        public int ChunkSize
-        {
-            get { return m_BackStreamByteCountRep; }
-        }
+        public int ChunkSize { get; } = 0;
 
         /// <summary>
         ///     Gets a value indicating whether the current stream supports reading.
         /// </summary>
-        public override bool CanRead
-        {
-            get { return m_SourceStream.CanRead; }
-        }
+        public override bool CanRead => m_SourceStream.CanRead;
 
         /// <summary>
         ///     Gets a value indicating whether the current stream supports seeking.
         /// </summary>
-        public override bool CanSeek
-        {
-            get { return m_SourceStream.CanSeek; }
-        }
+        public override bool CanSeek => m_SourceStream.CanSeek;
 
         /// <summary>
         ///     Gets a value indicating whether the current stream supports writing.
         /// </summary>
-        public override bool CanWrite
-        {
-            get { return m_SourceStream.CanWrite; }
-        }
+        public override bool CanWrite => m_SourceStream.CanWrite;
 
         /// <summary>
         ///     Gets the length in bytes of the stream.
         /// </summary>
-        public override long Length
-        {
-            get { return m_SourceStream.Length; }
-        }
+        public override long Length => m_SourceStream.Length;
 
         /// <summary>
         ///     Gets or sets the position of the source stream.  This is relative to the number of bytes in the MP3 file, rather
@@ -131,40 +112,26 @@ namespace MP3Sharp
         /// </summary>
         public override long Position
         {
-            get { return m_SourceStream.Position; }
-            set { m_SourceStream.Position = value; }
+            get => m_SourceStream.Position;
+            set => m_SourceStream.Position = value;
         }
 
         /// <summary>
         ///     Gets the frequency of the audio being decoded. Updated every call to Read() or DecodeFrames(),
         ///     to reflect the most recent header information from the MP3 Stream.
         /// </summary>
-        public int Frequency
-        {
-            get { return m_FrequencyRep; }
-        }
+        public int Frequency { get; private set; } = -1;
 
         /// <summary>
         ///     Gets the number of channels available in the audio being decoded. Updated every call to Read() or DecodeFrames(),
         ///     to reflect the most recent header information from the MP3 Stream.
         /// </summary>
-        public short ChannelCount
-        {
-            get { return m_ChannelCountRep; }
-        }
+        public short ChannelCount { get; private set; } = -1;
 
         /// <summary>
         ///     Gets the PCM output format of this stream.
         /// </summary>
-        public SoundFormat Format
-        {
-            get { return FormatRep; }
-
-            // Note: the buffers are stored in an optimized format--changing
-            // the Format involves flushing the buffers and so on, so 
-            // let's just not, OK?
-            // set { FormatRep = value; } 
-        }
+        public SoundFormat Format { get; }
 
         /// <summary>
         /// Clears all buffers for this stream and causes any buffered data to be written to the underlying device.
@@ -273,11 +240,11 @@ namespace MP3Sharp
             {
                 // Set the channel count and frequency values for the stream.
                 if (header.mode() == Header.SINGLE_CHANNEL)
-                    m_ChannelCountRep = 1;
+                    ChannelCount = 1;
                 else
-                    m_ChannelCountRep = 2;
+                    ChannelCount = 2;
 
-                m_FrequencyRep = header.frequency();
+                Frequency = header.frequency();
 
                 // Decode the frame.
                 var decoderOutput = m_Decoder.DecodeFrame(header, m_BitStream);

@@ -15,42 +15,30 @@ namespace CSCore.Tags.ID3
             _stream = stream;
         }
 
-        public override bool CanRead
-        {
-            get { return true; }
-        }
+        public override bool CanRead => true;
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
+        public override bool CanWrite => false;
 
         public override void Flush()
         {
             _stream.Flush();
         }
 
-        public override long Length
-        {
-            get { throw new NotSupportedException(); }
-        }
+        public override long Length => throw new NotSupportedException();
 
         public override long Position
         {
-            get { throw new NotSupportedException(); }
-            set { throw new NotSupportedException(); }
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
         }
 
         private int _svalue = 0;
 
         public override int ReadByte()
         {
-            int value = _stream.ReadByte();
+            var value = _stream.ReadByte();
             if (_svalue == 0xFF && value == 0x00)
             {
                 value = _stream.ReadByte();
@@ -63,8 +51,8 @@ namespace CSCore.Tags.ID3
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int value = 0;
-            int i = offset;
+            var value = 0;
+            var i = offset;
             while (i < offset + count && value != -1)
             {
                 value = _stream.ReadByte();

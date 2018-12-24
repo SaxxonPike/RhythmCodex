@@ -17,11 +17,11 @@ namespace CSCore.Tags.ID3.Frames
                 throw new ID3Exception("Contentlength is zero");
 
             var info = Header.GetFrameInformation();
-            bool url = false;
+            var url = false;
             url = (info != null) && info.ID == FrameID.UserURLLinkFrame;
 
             var encoding0 = ID3Utils.GetEncoding(content, 0, 1);
-            Encoding encoding1 = encoding0;
+            var encoding1 = encoding0;
             if (url)
                 encoding1 = ID3Utils.Iso88591;
 

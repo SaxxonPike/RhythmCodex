@@ -21,9 +21,6 @@ namespace CSCore
 
         private short _samplesUnion;
 
-        private ChannelMask _channelMask;
-        private Guid _subFormat;
-
 
         /// <summary>
         ///     Returns the SubType-Guid of a <paramref name="waveFormat" />. If the specified <paramref name="waveFormat" /> does
@@ -34,11 +31,15 @@ namespace CSCore
         /// <returns>SubType-Guid of the specified <paramref name="waveFormat" />.</returns>
         public static Guid SubTypeFromWaveFormat(WaveFormat waveFormat)
         {
-            if (waveFormat == null)
-                throw new ArgumentNullException(nameof(waveFormat));
-            if (waveFormat is WaveFormatExtensible)
-                return ((WaveFormatExtensible) waveFormat).SubFormat;
-            return AudioSubTypes.SubTypeFromEncoding(waveFormat.WaveFormatTag);
+            switch (waveFormat)
+            {
+                case null:
+                    throw new ArgumentNullException(nameof(waveFormat));
+                case WaveFormatExtensible wfe:
+                    return wfe.SubFormat;
+                default:
+                    return AudioSubTypes.SubTypeFromEncoding(waveFormat.WaveFormatTag);
+            }
         }
 
         /// <summary>
@@ -50,8 +51,8 @@ namespace CSCore
         /// </summary>
         public int ValidBitsPerSample
         {
-            get { return _samplesUnion; }
-            internal protected set { _samplesUnion = (short) value; }
+            get => _samplesUnion;
+            protected internal set => _samplesUnion = (short) value;
         }
 
         /// <summary>
@@ -62,28 +63,20 @@ namespace CSCore
         /// </summary>
         public int SamplesPerBlock
         {
-            get { return _samplesUnion; }
-            internal protected set { _samplesUnion = (short) value; }
+            get => _samplesUnion;
+            protected internal set => _samplesUnion = (short) value;
         }
 
         /// <summary>
         ///     Gets a bitmask specifying the assignment of channels in the stream to speaker positions.
         /// </summary>
-        public ChannelMask ChannelMask
-        {
-            get { return _channelMask; }
-            internal protected set { _channelMask = value; }
-        }
+        public ChannelMask ChannelMask { get; protected internal set; }
 
         /// <summary>
         ///     Subformat of the data, such as <see cref="AudioSubTypes.Pcm" />. The subformat information is similar to
         ///     that provided by the tag in the <see cref="WaveFormat" /> class's <see cref="WaveFormat.WaveFormatTag" /> member.
         /// </summary>
-        public Guid SubFormat
-        {
-            get { return _subFormat; }
-            internal protected set { _subFormat = value; }
-        }
+        public Guid SubFormat { get; protected internal set; }
 
         internal WaveFormatExtensible()
         {
@@ -109,15 +102,15 @@ namespace CSCore
             : base(sampleRate, bits, channels, AudioEncoding.Extensible, WaveFormatExtensibleExtraSize)
         {
             _samplesUnion = (short) bits;
-            _subFormat = SubTypeFromWaveFormat(this);
-            int cm = 0;
-            for (int i = 0; i < channels; i++)
+            SubFormat = SubTypeFromWaveFormat(this);
+            var cm = 0;
+            for (var i = 0; i < channels; i++)
             {
                 cm |= (1 << i);
             }
 
-            _channelMask = (ChannelMask) cm;
-            _subFormat = subFormat;
+            ChannelMask = (ChannelMask) cm;
+            SubFormat = subFormat;
         }
 
         /// <summary>
@@ -143,9 +136,9 @@ namespace CSCore
         public WaveFormatExtensible(int sampleRate, int bits, int channels, Guid subFormat, ChannelMask channelMask)
             : this(sampleRate, bits, channels, subFormat)
         {
-            Array totalChannelMaskValues = Enum.GetValues(typeof (ChannelMask));
-            int valuesSet = 0;
-            for (int i = 0; i < totalChannelMaskValues.Length; i++)
+            var totalChannelMaskValues = Enum.GetValues(typeof (ChannelMask));
+            var valuesSet = 0;
+            for (var i = 0; i < totalChannelMaskValues.Length; i++)
             {
                 if ((channelMask & (ChannelMask) totalChannelMaskValues.GetValue(i)) ==
                     (ChannelMask) totalChannelMaskValues.GetValue(i))
@@ -155,7 +148,7 @@ namespace CSCore
             if (channels != valuesSet)
                 throw new ArgumentException("Channels has to equal the set flags in the channelmask.");
 
-            _channelMask = channelMask;
+            ChannelMask = channelMask;
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace CSCore.Codecs.FLAC
                 throw new FlacException(e, FlacLayer.Metadata);
             }
             const int bytesToRead = (240 / 8) - 16;
-            byte[] buffer = reader.ReadBytes(bytesToRead);
+            var buffer = reader.ReadBytes(bytesToRead);
             if (buffer.Length != bytesToRead)
             {
                 throw new FlacException(new EndOfStreamException("Could not read StreamInfo-content"),
@@ -51,10 +51,7 @@ namespace CSCore.Codecs.FLAC
         /// <summary>
         /// Gets the type of the <see cref="FlacMetadata"/>.
         /// </summary>
-        public override FlacMetaDataType MetaDataType
-        {
-            get { return FlacMetaDataType.StreamInfo; }
-        }
+        public override FlacMetaDataType MetaDataType => FlacMetaDataType.StreamInfo;
 
         /// <summary>
         /// Gets the minimum size of the block in samples.

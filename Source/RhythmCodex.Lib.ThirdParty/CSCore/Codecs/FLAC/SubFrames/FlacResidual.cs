@@ -10,11 +10,11 @@ namespace CSCore.Codecs.FLAC
 #endif
         public FlacResidual(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int order)
         {
-            FlacResidualCodingMethod codingMethod = (FlacResidualCodingMethod)reader.ReadBits(2); // 2 Bit
+            var codingMethod = (FlacResidualCodingMethod)reader.ReadBits(2); // 2 Bit
 
             if (codingMethod == FlacResidualCodingMethod.PartitionedRice || codingMethod == FlacResidualCodingMethod.PartitionedRice2)
             {
-                int partitionOrder = (int)reader.ReadBits(4); //"Partition order." see https://xiph.org/flac/format.html#partitioned_rice and https://xiph.org/flac/format.html#partitioned_rice2
+                var partitionOrder = (int)reader.ReadBits(4); //"Partition order." see https://xiph.org/flac/format.html#partitioned_rice and https://xiph.org/flac/format.html#partitioned_rice2
 
                 FlacPartitionedRice.ProcessResidual(reader, header, data, order, partitionOrder, codingMethod);
 

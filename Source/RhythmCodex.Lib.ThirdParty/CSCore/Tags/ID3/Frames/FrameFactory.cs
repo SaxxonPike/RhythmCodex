@@ -7,10 +7,7 @@ namespace CSCore.Tags.ID3.Frames
     {
         private static FrameFactory _instance;
 
-        public static FrameFactory Instance
-        {
-            get { return _instance ?? (_instance = new FrameFactory()); }
-        }
+        public static FrameFactory Instance => _instance ?? (_instance = new FrameFactory());
 
         private FrameFactory()
         {
@@ -40,7 +37,7 @@ namespace CSCore.Tags.ID3.Frames
 
         private Frame GetFrame(string id, ID3Version version, FrameHeader header)
         {
-            FrameID frameID = FrameIDFactory.GetFrameEntry(id, version).ID;
+            var frameID = FrameIDFactory.GetFrameEntry(id, version).ID;
             switch (frameID)
             {
                 case FrameID.Length:

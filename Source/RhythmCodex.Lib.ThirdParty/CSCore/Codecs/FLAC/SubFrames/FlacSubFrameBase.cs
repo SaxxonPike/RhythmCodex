@@ -5,11 +5,11 @@ namespace CSCore.Codecs.FLAC
 {
     internal class FlacSubFrameBase
     {
-        public unsafe static FlacSubFrameBase GetSubFrame(FlacBitReader reader, FlacSubFrameData data, FlacFrameHeader header, int bitsPerSample)
+        public static unsafe FlacSubFrameBase GetSubFrame(FlacBitReader reader, FlacSubFrameData data, FlacFrameHeader header, int bitsPerSample)
         {
             int wastedBits = 0, order;
 
-            uint firstByte = reader.ReadBits(8);
+            var firstByte = reader.ReadBits(8);
 
             if ((firstByte & 0x80) != 0) //Zero bit padding, to prevent sync-fooling string of 1s
             {
@@ -17,10 +17,10 @@ namespace CSCore.Codecs.FLAC
                 return null;
             }
 
-            bool hasWastedBits = (firstByte & 1) != 0; //Wasted bits-per-sample' flag
+            var hasWastedBits = (firstByte & 1) != 0; //Wasted bits-per-sample' flag
             if (hasWastedBits)
             {
-                int k = (int)reader.ReadUnary();
+                var k = (int)reader.ReadUnary();
                 wastedBits = k + 1; //"k-1" follows -> add 1
                 bitsPerSample -= wastedBits;
             }
@@ -55,8 +55,8 @@ namespace CSCore.Codecs.FLAC
 
             if (hasWastedBits)
             {
-                int* destination = data.DestinationBuffer;
-                for (int i = 0; i < header.BlockSize; i++)
+                var destination = data.DestinationBuffer;
+                for (var i = 0; i < header.BlockSize; i++)
                 {
                     *(destination++) <<= wastedBits;
                 }

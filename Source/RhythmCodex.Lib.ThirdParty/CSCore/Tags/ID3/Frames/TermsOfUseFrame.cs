@@ -11,7 +11,7 @@
 
         protected override void Decode(byte[] content)
         {
-            int offset = 0;
+            var offset = 0;
             var encoding = ID3Utils.GetEncoding(content, 0, 4);
             offset++;
 

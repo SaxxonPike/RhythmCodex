@@ -54,7 +54,7 @@ namespace NVorbis
             _wrapper = wrapper;
             _data = new byte[initialSize];
             _maxSize = maxSize;
-            _minimalRead = minimalRead;
+            MinimalRead = minimalRead;
 
             _savedBuffers = new List<SavedBuffer>();
         }
@@ -78,8 +78,6 @@ namespace NVorbis
         private int _end;
         private int _discardCount;
 
-        private bool _minimalRead;
-
         // we're locked already when we enter, so we can do whatever we need to do without worrying about it...
         private class SavedBuffer
         {
@@ -96,18 +94,14 @@ namespace NVorbis
         /// <summary>
         /// Gets or Sets whether to limit reads to the smallest size possible.
         /// </summary>
-        public bool MinimalRead
-        {
-            get { return _minimalRead; }
-            set { _minimalRead = value; }
-        }
+        public bool MinimalRead { get; set; }
 
         /// <summary>
         /// Gets or Sets the maximum size of the buffer.  This is not a hard limit.
         /// </summary>
         public int MaxSize
         {
-            get { return _maxSize; }
+            get => _maxSize;
             set
             {
                 if (value < 1) throw new ArgumentOutOfRangeException("Must be greater than zero.");
@@ -134,26 +128,17 @@ namespace NVorbis
         /// <summary>
         /// Gets the offset of the start of the buffered data.  Reads to offsets before this are likely to require a seek.
         /// </summary>
-        public long BaseOffset
-        {
-            get { return _baseOffset + _discardCount; }
-        }
+        public long BaseOffset => _baseOffset + _discardCount;
 
         /// <summary>
         /// Gets the number of bytes currently buffered.
         /// </summary>
-        public int BytesFilled
-        {
-            get { return _end - _discardCount; }
-        }
+        public int BytesFilled => _end - _discardCount;
 
         /// <summary>
         /// Gets the number of bytes the buffer can hold.
         /// </summary>
-        public int Length
-        {
-            get { return _data.Length; }
-        }
+        public int Length => _data.Length;
 
         internal long BufferEndOffset
         {
@@ -197,7 +182,7 @@ namespace NVorbis
             if (offset < 0L) throw new ArgumentOutOfRangeException(nameof(offset));
             if (offset >= _wrapper.EofOffset) return -1;
 
-            int count = 1;
+            var count = 1;
             var startIdx = EnsureAvailable(offset, ref count, false);
             if (count == 1)
             {
@@ -229,7 +214,7 @@ namespace NVorbis
             // can we satisfy the request with a saved buffer?
             if (!isRecursion)
             {
-                for (int i = 0; i < _savedBuffers.Count; i++)
+                for (var i = 0; i < _savedBuffers.Count; i++)
                 {
                     var tempS = _savedBuffers[i].BaseOffset - offset;
                     if ((tempS < 0 && _savedBuffers[i].End + tempS > 0) || (tempS > 0 && count - tempS > 0))
@@ -364,7 +349,7 @@ namespace NVorbis
 
         private void EnsureBufferSize(int reqSize, bool copyContents, int copyOffset)
         {
-            byte[] newBuf = _data;
+            var newBuf = _data;
             if (reqSize > _data.Length)
             {
                 if (reqSize > _maxSize)
@@ -464,7 +449,7 @@ namespace NVorbis
                 {
                     count = Math.Max(0, (int)(_baseOffset + _end - offset));
                 }
-                else if (!_minimalRead && _end < _data.Length)
+                else if (!MinimalRead && _end < _data.Length)
                 {
                     // try to finish filling the buffer
                     readCount = _data.Length - _end;

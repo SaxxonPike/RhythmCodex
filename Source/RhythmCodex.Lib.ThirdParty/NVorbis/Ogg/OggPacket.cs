@@ -15,29 +15,21 @@ namespace NVorbis.Ogg
         private int _length;                        // 4
         private int _curOfs;                        // 4
         private Packet _mergedPacket;               // IntPtr.Size
-        private Packet _next;                       // IntPtr.Size
-        private Packet _prev;                       // IntPtr.Size
         private ContainerReader _containerReader;   // IntPtr.Size
 
-        internal Packet Next
-        {
-            get { return _next; }
-            set { _next = value; }
-        }
-        internal Packet Prev
-        {
-            get { return _prev; }
-            set { _prev = value; }
-        }
+        internal Packet Next { get; set; }
+
+        internal Packet Prev { get; set; }
+
         internal bool IsContinued
         {
-            get { return GetFlag(PacketFlags.User1); }
-            set { SetFlag(PacketFlags.User1, value); }
+            get => GetFlag(PacketFlags.User1);
+            set => SetFlag(PacketFlags.User1, value);
         }
         internal bool IsContinuation
         {
-            get { return GetFlag(PacketFlags.User2); }
-            set { SetFlag(PacketFlags.User2, value); }
+            get => GetFlag(PacketFlags.User2);
+            set => SetFlag(PacketFlags.User2, value);
         }
 
         internal Packet(ContainerReader containerReader, long streamOffset, int length)

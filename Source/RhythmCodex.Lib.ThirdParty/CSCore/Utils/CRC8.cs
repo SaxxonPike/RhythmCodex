@@ -13,15 +13,12 @@
             CalcTable(8);
         }
 
-        public static CRC8 Instance
-        {
-            get { return _instance ?? (_instance = new CRC8()); }
-        }
+        public static CRC8 Instance => _instance ?? (_instance = new CRC8());
 
         public override byte CalcCheckSum(byte[] buffer, int offset, int count)
         {
-            int res = 0;
-            for (int i = offset; i < offset + count; i++)
+            var res = 0;
+            for (var i = offset; i < offset + count; i++)
             {
                 res = crc_table[res ^ buffer[i]];
             }
@@ -34,8 +31,8 @@
             //byte[] buff = new byte[count];
             //System.Runtime.InteropServices.Marshal.Copy(new IntPtr(buffer), buff, offset, count);
             //return CalcCheckSum(buff, 0, buff.Length);
-            int res = 0;
-            for (int i = offset; i < offset + count; i++)
+            var res = 0;
+            for (var i = offset; i < offset + count; i++)
             {
                 res = crc_table[res ^ buffer[i]];
             }

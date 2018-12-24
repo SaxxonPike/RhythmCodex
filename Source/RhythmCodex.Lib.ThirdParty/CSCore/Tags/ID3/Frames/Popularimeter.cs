@@ -22,7 +22,7 @@
 
         protected override void Decode(byte[] content)
         {
-            int offset = 0;
+            var offset = 0;
             int read;
 
             UserEmail = ID3Utils.ReadString(content, 0, -1, ID3Utils.Iso88591, out read);
@@ -33,8 +33,8 @@
 
             if (offset < content.Length)
             {
-                int pos = 0;
-                for (int i = offset; i < content.Length; i++)
+                var pos = 0;
+                for (var i = offset; i < content.Length; i++)
                 {
                     PlayedCounter |= ((uint)(content[i] << pos)); //cast to uint to fix warning CS0675
                     pos += 8;

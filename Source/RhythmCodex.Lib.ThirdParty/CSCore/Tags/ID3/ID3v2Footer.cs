@@ -13,11 +13,11 @@ namespace CSCore.Tags.ID3
             if (!stream.CanRead) throw new ArgumentException("stream not readable");
             if (!stream.CanSeek) throw new ArgumentException("stream not seekable");
 
-            BinaryReader reader = new BinaryReader(stream);
+            var reader = new BinaryReader(stream);
             ID3v2Footer footer;
 
-            byte[] buffer = new byte[FooterLength];
-            int read = stream.Read(buffer, 0, buffer.Length);
+            var buffer = new byte[FooterLength];
+            var read = stream.Read(buffer, 0, buffer.Length);
             if (read < 10)
                 throw new EndOfStreamException();
 

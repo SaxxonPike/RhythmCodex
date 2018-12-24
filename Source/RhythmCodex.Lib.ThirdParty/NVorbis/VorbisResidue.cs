@@ -49,7 +49,7 @@ namespace NVorbis
             _vorbis = vorbis;
 
             _residue = new float[_vorbis._channels][];
-            for (int i = 0; i < _vorbis._channels; i++)
+            for (var i = 0; i < _vorbis._channels; i++)
             {
                 _residue[i] = new float[_vorbis.Block1Size];
             }
@@ -63,16 +63,16 @@ namespace NVorbis
                 temp = new float[channels][];
                 Array.Copy(_residue, temp, channels);
             }
-            for (int i = 0; i < channels; i++)
+            for (var i = 0; i < channels; i++)
             {
                 Array.Clear(temp[i], 0, temp[i].Length);
             }
             return temp;
         }
 
-        abstract internal float[][] Decode(DataPacket packet, bool[] doNotDecode, int channels, int blockSize);
+        internal abstract float[][] Decode(DataPacket packet, bool[] doNotDecode, int channels, int blockSize);
 
-        abstract protected void Init(DataPacket packet);
+        protected abstract void Init(DataPacket packet);
 
         // residue type 0... samples are grouped by channel, then stored with non-interleaved dimensions (d0, d0, d0, d0, ..., d1, d1, d1, d1, ..., d2, d2, d2, d2, etc...)
         private class Residue0 : VorbisResidue
@@ -103,7 +103,7 @@ namespace NVorbis
 
                 _cascade = new int[_classifications];
                 var acc = 0;
-                for (int i = 0; i < _classifications; i++)
+                for (var i = 0; i < _classifications; i++)
                 {
                     var low_bits = (int)packet.ReadBits(3);
                     if (packet.ReadBit())
@@ -142,14 +142,14 @@ namespace NVorbis
                 acc = 0;
                 var maxstage = 0;
                 int stages;
-                for (int j = 0; j < _classifications; j++)
+                for (var j = 0; j < _classifications; j++)
                 {
                     stages = Utils.ilog(_cascade[j]);
                     _books[j] = new VorbisCodebook[stages];
                     if (stages > 0)
                     {
                         maxstage = Math.Max(maxstage, stages);
-                        for (int k = 0; k < stages; k++)
+                        for (var k = 0; k < stages; k++)
                         {
                             if ((_cascade[j] & (1 << k)) > 0)
                             {
@@ -161,12 +161,12 @@ namespace NVorbis
                 _maxStages = maxstage;
 
                 _decodeMap = new int[partvals][];
-                for (int j = 0; j < partvals; j++)
+                for (var j = 0; j < partvals; j++)
                 {
                     var val = j;
                     var mult = partvals / _classifications;
                     _decodeMap[j] = new int[_classBook.Dimensions];
-                    for (int k = 0; k < _classBook.Dimensions; k++)
+                    for (var k = 0; k < _classBook.Dimensions; k++)
                     {
                         var deco = val / mult;
                         val -= deco * mult;
@@ -179,7 +179,7 @@ namespace NVorbis
 
                 _partWordCache = new int[_vorbis._channels][][];
                 var maxPartWords = ((_end - _begin) / _partitionSize + _classBook.Dimensions - 1) / _classBook.Dimensions;
-                for (int ch = 0; ch < _vorbis._channels; ch++)
+                for (var ch = 0; ch < _vorbis._channels; ch++)
                 {
                     _partWordCache[ch] = new int[maxPartWords][];
                 }
@@ -198,18 +198,18 @@ namespace NVorbis
                     var partVals = n / _partitionSize;
                     
                     var partWords = (partVals + _classBook.Dimensions - 1) / _classBook.Dimensions;
-                    for (int j = 0; j < channels; j++)
+                    for (var j = 0; j < channels; j++)
                     {
                         Array.Clear(_partWordCache[j], 0, partWords);
                     }
 
-                    for (int s = 0; s < _maxStages; s++)
+                    for (var s = 0; s < _maxStages; s++)
                     {
                         for (int i = 0, l = 0; i < partVals; l++)
                         {
                             if (s == 0)
                             {
-                                for (int j = 0; j < channels; j++)
+                                for (var j = 0; j < channels; j++)
                                 {
                                     var idx = _classBook.DecodeScalar(packet);
                                     if (idx >= 0 && idx < _decodeMap.Length)
@@ -224,10 +224,10 @@ namespace NVorbis
                                     }
                                 }
                             }
-                            for (int k = 0; i < partVals && k < _classBook.Dimensions; k++, i++)
+                            for (var k = 0; i < partVals && k < _classBook.Dimensions; k++, i++)
                             {
                                 var offset = _begin + i * _partitionSize;
-                                for (int j = 0; j < channels; j++)
+                                for (var j = 0; j < channels; j++)
                                 {
                                     var idx = _partWordCache[j][l][k];
                                     if ((_cascade[idx] & (1 << s)) != 0)
@@ -253,21 +253,21 @@ namespace NVorbis
                 return residue;
             }
 
-            virtual protected bool WriteVectors(VorbisCodebook codebook, DataPacket packet, float[][] residue, int channel, int offset, int partitionSize)
+            protected virtual bool WriteVectors(VorbisCodebook codebook, DataPacket packet, float[][] residue, int channel, int offset, int partitionSize)
             {
                 var res = residue[channel];
                 var step = partitionSize / codebook.Dimensions;
 
-                for (int i = 0; i < step; i++)
+                for (var i = 0; i < step; i++)
                 {
                     if ((_entryCache[i] = codebook.DecodeScalar(packet)) == -1)
                     {
                         return true;
                     }
                 }
-                for (int i = 0; i < codebook.Dimensions; i++)
+                for (var i = 0; i < codebook.Dimensions; i++)
                 {
-                    for (int j = 0; j < step; j++, offset++)
+                    for (var j = 0; j < step; j++, offset++)
                     {
                         res[offset] += codebook[_entryCache[j], i];
                     }
@@ -285,14 +285,14 @@ namespace NVorbis
             {
                 var res = residue[channel];
 
-                for (int i = 0; i < partitionSize; )
+                for (var i = 0; i < partitionSize; )
                 {
                     var entry = codebook.DecodeScalar(packet);
                     if (entry == -1)
                     {
                         return true;
                     }
-                    for (int j = 0; j < codebook.Dimensions; i++, j++)
+                    for (var j = 0; j < codebook.Dimensions; i++, j++)
                     {
                         res[offset + i] += codebook[entry, j];
                     }
@@ -323,7 +323,7 @@ namespace NVorbis
                 var chPtr = 0;
 
                 offset /= _channels;
-                for (int c = 0; c < partitionSize; )
+                for (var c = 0; c < partitionSize; )
                 {
                     var entry = codebook.DecodeScalar(packet);
                     if (entry == -1)

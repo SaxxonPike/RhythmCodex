@@ -118,7 +118,7 @@ namespace CSCore.Tags.ID3
         {
             get
             {
-                MultiStringTextFrame f = _id3[FrameID.ContentType] as MultiStringTextFrame;
+                var f = _id3[FrameID.ContentType] as MultiStringTextFrame;
                 if (f == null)
                     return null;
 
@@ -136,8 +136,8 @@ namespace CSCore.Tags.ID3
                 }
 
                 char c;
-                int i = 1;
-                string sr = String.Empty;
+                var i = 1;
+                var sr = String.Empty;
                 do
                 {
                     c = str[i++];
@@ -145,7 +145,7 @@ namespace CSCore.Tags.ID3
                         sr += c;
                 } while (i < str.Length && Char.IsNumber(c));
 
-                int res = 0;
+                var res = 0;
                 if (Int32.TryParse(sr, out res))
                 {
                     return (ID3Genre)res;
@@ -156,9 +156,7 @@ namespace CSCore.Tags.ID3
 
         public ID3v2QuickInfo(ID3v2 id3)
         {
-            if (id3 == null)
-                throw new ArgumentNullException(nameof(id3));
-            _id3 = id3;
+            _id3 = id3 ?? throw new ArgumentNullException(nameof(id3));
         }
     }
 }

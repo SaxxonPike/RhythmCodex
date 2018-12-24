@@ -12,7 +12,7 @@ namespace CSCore.Codecs.FLAC
         /// <summary>
         /// Gets the a list of found frames by the scan.
         /// </summary>
-        public ReadOnlyCollection<FlacFrameInformation> Frames { get; private set; }
+        public ReadOnlyCollection<FlacFrameInformation> Frames { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlacPreScanFinishedEventArgs"/> class.

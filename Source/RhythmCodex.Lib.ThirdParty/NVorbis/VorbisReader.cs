@@ -14,8 +14,6 @@ namespace NVorbis
 {
     public class VorbisReader : IDisposable
     {
-        private int _streamIdx;
-
         private IContainerReader _containerReader;
         private List<VorbisStreamDecoder> _decoders;
         private List<int> _serials;
@@ -127,7 +125,7 @@ namespace NVorbis
             get
             {
                 if (_decoders == null) throw new ObjectDisposedException("VorbisReader");
-                return _decoders[_streamIdx];
+                return _decoders[StreamIndex];
             }
         }
 
@@ -136,47 +134,47 @@ namespace NVorbis
         /// <summary>
         /// Gets the number of channels in the current selected Vorbis stream
         /// </summary>
-        public int Channels { get { return ActiveDecoder._channels; } }
+        public int Channels => ActiveDecoder._channels;
 
         /// <summary>
         /// Gets the sample rate of the current selected Vorbis stream
         /// </summary>
-        public int SampleRate { get { return ActiveDecoder._sampleRate; } }
+        public int SampleRate => ActiveDecoder._sampleRate;
 
         /// <summary>
         /// Gets the encoder's upper bitrate of the current selected Vorbis stream
         /// </summary>
-        public int UpperBitrate { get { return ActiveDecoder._upperBitrate; } }
+        public int UpperBitrate => ActiveDecoder._upperBitrate;
 
         /// <summary>
         /// Gets the encoder's nominal bitrate of the current selected Vorbis stream
         /// </summary>
-        public int NominalBitrate { get { return ActiveDecoder._nominalBitrate; } }
+        public int NominalBitrate => ActiveDecoder._nominalBitrate;
 
         /// <summary>
         /// Gets the encoder's lower bitrate of the current selected Vorbis stream
         /// </summary>
-        public int LowerBitrate { get { return ActiveDecoder._lowerBitrate; } }
+        public int LowerBitrate => ActiveDecoder._lowerBitrate;
 
         /// <summary>
         /// Gets the encoder's vendor string for the current selected Vorbis stream
         /// </summary>
-        public string Vendor { get { return ActiveDecoder._vendor; } }
+        public string Vendor => ActiveDecoder._vendor;
 
         /// <summary>
         /// Gets the comments in the current selected Vorbis stream
         /// </summary>
-        public string[] Comments { get { return ActiveDecoder._comments; } }
+        public string[] Comments => ActiveDecoder._comments;
 
         /// <summary>
         /// Gets whether the previous short sample count was due to a parameter change in the stream.
         /// </summary>
-        public bool IsParameterChange { get { return ActiveDecoder.IsParameterChange; } }
+        public bool IsParameterChange => ActiveDecoder.IsParameterChange;
 
         /// <summary>
         /// Gets the number of bits read that are related to framing and transport alone
         /// </summary>
-        public long ContainerOverheadBits { get { return ActiveDecoder.ContainerBits; } }
+        public long ContainerOverheadBits => ActiveDecoder.ContainerBits;
 
         /// <summary>
         /// Gets or sets whether to automatically apply clipping to samples returned by <see cref="VorbisReader.ReadSamples"/>.
@@ -194,10 +192,7 @@ namespace NVorbis
         /// <summary>
         /// Gets the currently-selected stream's index
         /// </summary>
-        public int StreamIndex
-        {
-            get { return _streamIdx; }
-        }
+        public int StreamIndex { get; private set; }
 
         /// <summary>
         /// Reads decoded samples from the current logical stream
@@ -215,8 +210,8 @@ namespace NVorbis
 
             if (ClipSamples)
             {
-                var decoder = _decoders[_streamIdx];
-                for (int i = 0; i < count; i++, offset++)
+                var decoder = _decoders[StreamIndex];
+                for (var i = 0; i < count; i++, offset++)
                 {
                     buffer[offset] = Utils.ClipValue(buffer[offset], ref decoder._clipped);
                 }
@@ -236,10 +231,7 @@ namespace NVorbis
         /// <summary>
         /// Returns the number of logical streams found so far in the physical container
         /// </summary>
-        public int StreamCount
-        {
-            get { return _decoders.Count; }
-        }
+        public int StreamCount => _decoders.Count;
 
         /// <summary>
         /// Searches for the next stream in a concatenated file
@@ -262,11 +254,11 @@ namespace NVorbis
 
             if (_decoders == null) throw new ObjectDisposedException("VorbisReader");
 
-            if (_streamIdx == index) return false;
+            if (StreamIndex == index) return false;
 
-            var curDecoder = _decoders[_streamIdx];
-            _streamIdx = index;
-            var newDecoder = _decoders[_streamIdx];
+            var curDecoder = _decoders[StreamIndex];
+            StreamIndex = index;
+            var newDecoder = _decoders[StreamIndex];
 
             return curDecoder._channels != newDecoder._channels || curDecoder._sampleRate != newDecoder._sampleRate;
         }
@@ -276,15 +268,8 @@ namespace NVorbis
         /// </summary>
         public TimeSpan DecodedTime
         {
-            get
-            {
-                return TimeSpan.FromSeconds((double)ActiveDecoder.CurrentPosition / SampleRate);
-            }
-            set
-            {
-                ActiveDecoder.SeekTo((long)(value.TotalSeconds * SampleRate));
-            }
-
+            get => TimeSpan.FromSeconds((double)ActiveDecoder.CurrentPosition / SampleRate);
+            set => ActiveDecoder.SeekTo((long)(value.TotalSeconds * SampleRate));
         }
 
         /// <summary>
@@ -292,14 +277,8 @@ namespace NVorbis
         /// </summary>
         public long DecodedPosition
         {
-            get 
-            {
-                return ActiveDecoder.CurrentPosition;
-            }
-            set
-            {
-                ActiveDecoder.SeekTo(value);
-            }
+            get => ActiveDecoder.CurrentPosition;
+            set => ActiveDecoder.SeekTo(value);
         }
 
         /// <summary>

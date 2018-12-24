@@ -27,6 +27,6 @@ namespace NVorbis
         /// <summary>
         /// Gets the first packet after the parameter change.  This would typically be the parameters packet.
         /// </summary>
-        public DataPacket FirstPacket { get; private set; }
+        public DataPacket FirstPacket { get; }
     }
 }

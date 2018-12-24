@@ -15,15 +15,15 @@ namespace CSCore.Utils
         {
             if (bits != 8 && bits != 16)
                 throw new ArgumentOutOfRangeException(nameof(bits));
-            int polySumm = bits == 8 ? 0x07 : 0x8005;
-            int bitmask = bits == 8 ? 0x00FF : 0xFFFF;
+            var polySumm = bits == 8 ? 0x07 : 0x8005;
+            var bitmask = bits == 8 ? 0x00FF : 0xFFFF;
             crc_table = new ushort[tableSize];
 
             int poly = (ushort) (polySumm + (1 << bits));
-            for (int i = 0; i < crc_table.Length; i++)
+            for (var i = 0; i < crc_table.Length; i++)
             {
-                int crc = i;
-                for (int n = 0; n < bits; n++)
+                var crc = i;
+                for (var n = 0; n < bits; n++)
                 {
                     if ((crc & (1 << (bits - 1))) != 0)
                     {

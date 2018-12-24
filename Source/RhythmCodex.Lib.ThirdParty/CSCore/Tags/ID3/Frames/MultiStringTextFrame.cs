@@ -8,10 +8,7 @@ namespace CSCore.Tags.ID3.Frames
     {
         private List<string> _strings;
 
-        public List<string> Strings
-        {
-            get { return _strings ?? (_strings = new List<string>()); }
-        }
+        public List<string> Strings => _strings ?? (_strings = new List<string>());
 
         public MultiStringTextFrame(FrameHeader header)
             : base(header)
@@ -21,7 +18,7 @@ namespace CSCore.Tags.ID3.Frames
         protected override void Decode(byte[] content)
         {
             Encoding e;
-            int index = 1;
+            var index = 1;
             Strings.Clear();
 
             e = ID3Utils.GetEncoding(content, 0, 1);
@@ -30,7 +27,7 @@ namespace CSCore.Tags.ID3.Frames
             //index = read;
             while (index < content.Length)
             {
-                int r = 0;
+                var r = 0;
                 Strings.Add(ID3Utils.ReadString(content, index, -1, e, out r));
                 index += r;
             }
@@ -39,12 +36,6 @@ namespace CSCore.Tags.ID3.Frames
                 Strings.Add(String.Empty);
         }
 
-        public override string Text
-        {
-            get
-            {
-                return Strings[0];
-            }
-        }
+        public override string Text => Strings[0];
     }
 }

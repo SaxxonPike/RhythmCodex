@@ -46,7 +46,7 @@ namespace NVorbis
         private void InitTree(DataPacket packet)
         {
             bool sparse;
-            int total = 0;
+            var total = 0;
 
             if (packet.ReadBit())
             {
@@ -87,7 +87,7 @@ namespace NVorbis
             // figure out the maximum bit size; if all are unused, don't do anything else
             if ((MaxBits = Lengths.Max()) > -1)
             {
-                int sortedCount = 0;
+                var sortedCount = 0;
                 int[] codewordLengths = null;
                 if (sparse && total >= Entries >> 2)
                 {
@@ -107,7 +107,7 @@ namespace NVorbis
                     sortedCount = 0;
                 }
 
-                int sortedEntries = sortedCount;
+                var sortedEntries = sortedCount;
 
                 int[] values = null;
                 int[] codewords = null;
@@ -131,7 +131,7 @@ namespace NVorbis
         private bool ComputeCodewords(bool sparse, int sortedEntries, int[] codewords, int[] codewordLengths, int[] len, int n, int[] values)
         {
             int i, k, m = 0;
-            uint[] available = new uint[32];
+            var available = new uint[32];
 
             for (k = 0; k < n; ++k) if (len[k] > 0) break;
             if (k == n) return true;
@@ -268,13 +268,7 @@ namespace NVorbis
         private int MaxBits;
 
 
-        internal float this[int entry, int dim]
-        {
-            get
-            {
-                return LookupTable[entry * Dimensions + dim];
-            }
-        }
+        internal float this[int entry, int dim] => LookupTable[entry * Dimensions + dim];
 
         internal int DecodeScalar(DataPacket packet)
         {

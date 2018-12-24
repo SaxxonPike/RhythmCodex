@@ -8,21 +8,21 @@ namespace CSCore.Tags.ID3
 {
     internal static class ID3Utils
     {
-        public readonly static Encoding Iso88591 = Encoding.GetEncoding("ISO-8859-1");
-        public readonly static Encoding Utf16 = new UnicodeEncoding(false, true);
-        public readonly static Encoding Utf16Big = new UnicodeEncoding(true, true);
+        public static readonly Encoding Iso88591 = Encoding.GetEncoding("ISO-8859-1");
+        public static readonly Encoding Utf16 = new UnicodeEncoding(false, true);
+        public static readonly Encoding Utf16Big = new UnicodeEncoding(true, true);
         public static readonly Encoding Utf8 = new UTF8Encoding();
 
-        public unsafe static Int32 ReadInt32(byte[] array, int offset, bool sync, int length = 4)
+        public static unsafe Int32 ReadInt32(byte[] array, int offset, bool sync, int length = 4)
         {
             /*fixed (byte* ptr = array)
             {
                 byte* p = ptr + offset;
                 return p[0] * (1 << 21) + p[1] * (1 << 14) + p[2] * (1 << 7) + p[3];
             }*/
-            int value = 0;
+            var value = 0;
 
-            for (int i = offset; i < offset + length; i++)
+            for (var i = offset; i < offset + length; i++)
             {
                 if (sync)
                 {
@@ -41,7 +41,7 @@ namespace CSCore.Tags.ID3
 
         public static Int32 ReadInt32(Stream stream, bool sync, int length = 4)
         {
-            byte[] buffer = new byte[4];
+            var buffer = new byte[4];
             if (stream.Read(buffer, 0, buffer.Length) < buffer.Length)
                 throw new EndOfStreamException();
 
@@ -50,7 +50,7 @@ namespace CSCore.Tags.ID3
 
         public static byte[] Read(Stream stream, int count)
         {
-            byte[] buffer = new byte[count];
+            var buffer = new byte[count];
             if (stream.Read(buffer, 0, count) < count)
                 throw new EndOfStreamException();
             return buffer;
@@ -64,15 +64,15 @@ namespace CSCore.Tags.ID3
 
         public static string ReadString(byte[] buffer, int offset, int count, Encoding encoding, out int read)
         {
-            int sizeofsymbol = (encoding == Utf16 || encoding == Utf16Big) ? 2 : 1;
+            var sizeofsymbol = (encoding == Utf16 || encoding == Utf16Big) ? 2 : 1;
 
             if (count == -1)
                 count = buffer.Length;
 
-            int index = SeekPreamble(buffer, offset, count, encoding);
+            var index = SeekPreamble(buffer, offset, count, encoding);
 
-            int length = CalculateStringLength(buffer, offset, count, sizeofsymbol);
-            string result = encoding.GetString(buffer, offset, length);
+            var length = CalculateStringLength(buffer, offset, count, sizeofsymbol);
+            var result = encoding.GetString(buffer, offset, length);
 
             read = 0;
             read += (index - offset); //preamble
@@ -84,7 +84,7 @@ namespace CSCore.Tags.ID3
 
         public static Encoding GetEncoding(byte[] buffer, int offset, int stringOffset)
         {
-            byte encodingByte = buffer[offset];
+            var encodingByte = buffer[offset];
 
             if (encodingByte == 0)
                 return Encoding.Default;
@@ -108,8 +108,8 @@ namespace CSCore.Tags.ID3
 
         private static int CalculateStringLength(byte[] buffer, int offset, int count, int sizeofsymbol)
         {
-            int index = offset;
-            int symcount = sizeofsymbol - 1;
+            var index = offset;
+            var symcount = sizeofsymbol - 1;
 
             while (index < Math.Min(buffer.Length, count + offset) && (buffer[index] != 0 || buffer[index + symcount] != 0))
             {
@@ -121,12 +121,12 @@ namespace CSCore.Tags.ID3
 
         private static int SeekPreamble(byte[] buffer, int offset, int count, Encoding e)
         {
-            byte[] prem = e.GetPreamble();
+            var prem = e.GetPreamble();
             if (prem.Length + offset > buffer.Length ||
                prem.Length > count)
                 return offset;
 
-            int newoffset = 0;
+            var newoffset = 0;
             while (newoffset < prem.Length && prem[newoffset] == buffer[newoffset + offset])
                 newoffset++;
 
@@ -142,7 +142,7 @@ namespace CSCore.Tags.ID3
             Stream stream;
             if (mimetype.Trim() == MimeURL)
             {
-                WebClient client = new WebClient();
+                var client = new WebClient();
                 var data = client.DownloadData(GetURL(rawdata, mimetype));
                 stream = new MemoryStream(data);
             }

@@ -13,7 +13,7 @@ namespace CSCore.Codecs.FLAC
         /// Gets the layer of the flac stream the exception got thrown.
         /// </summary>
         /// <remarks>Used for debugging purposes.</remarks>
-        public FlacLayer Layer { get; private set; }
+        public FlacLayer Layer { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlacException"/> class.

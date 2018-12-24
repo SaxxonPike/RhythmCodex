@@ -38,9 +38,6 @@ namespace MP3Sharp.Decoding
 
         private ABuffer m_Output;
 
-        private int m_OutputChannels;
-        private int m_OutputFrequency;
-
         /// <summary>
         ///     Creates a new Decoder instance with default parameters.
         /// </summary>
@@ -67,11 +64,7 @@ namespace MP3Sharp.Decoding
 //            }
         }
 
-        public static Params DefaultParams
-        {
-            get { return (Params) DEFAULT_PARAMS.Clone(); // MemberwiseClone();
-            }
-        }
+        public static Params DefaultParams => (Params) DEFAULT_PARAMS.Clone();
 
 //        public Equalizer Equalizer
 //        {
@@ -97,7 +90,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public ABuffer OutputBuffer
         {
-            set { m_Output = value; }
+            set => m_Output = value;
         }
 
         /// <summary>
@@ -105,20 +98,14 @@ namespace MP3Sharp.Decoding
         ///     by this decoder. This typically corresponds to the sample
         ///     rate encoded in the MPEG audio stream.
         /// </summary>
-        public int OutputFrequency
-        {
-            get { return m_OutputFrequency; }
-        }
+        public int OutputFrequency { get; private set; }
 
         /// <summary>
         ///     Retrieves the number of channels of PCM samples output by
         ///     this decoder. This usually corresponds to the number of
         ///     channels in the MPEG audio stream.
         /// </summary>
-        public int OutputChannels
-        {
-            get { return m_OutputChannels; }
-        }
+        public int OutputChannels { get; private set; }
 
         /// <summary>
         ///     Retrieves the maximum number of samples that will be written to
@@ -128,10 +115,7 @@ namespace MP3Sharp.Decoding
         ///     an upper bound and fewer samples may actually be written, depending
         ///     upon the sample rate and number of channels.
         /// </summary>
-        public int OutputBlockSize
-        {
-            get { return ABuffer.OBUFFERSIZE; }
-        }
+        public int OutputBlockSize => ABuffer.OBUFFERSIZE;
 
         private void InitBlock()
         {
@@ -248,8 +232,8 @@ namespace MP3Sharp.Decoding
             if (channels == 2)
                 m_RightChannelFilter = new SynthesisFilter(1, scalefactor);
 
-            m_OutputChannels = channels;
-            m_OutputFrequency = header.frequency();
+            OutputChannels = channels;
+            OutputFrequency = header.frequency();
 
             m_IsInitialized = true;
         }
@@ -265,15 +249,9 @@ namespace MP3Sharp.Decoding
 
             public OutputChannels OutputChannels
             {
-                get { return m_OutputChannels; }
+                get => m_OutputChannels;
 
-                set
-                {
-                    if (value == null)
-                        throw new NullReferenceException("out");
-
-                    m_OutputChannels = value;
-                }
+                set => m_OutputChannels = value ?? throw new NullReferenceException("out");
             }
 
 //            /// <summary>

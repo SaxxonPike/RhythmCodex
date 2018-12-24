@@ -11,7 +11,7 @@
         {
             if (_capByOrder < partitionOrder)
             {
-                int size = 1 << partitionOrder;
+                var size = 1 << partitionOrder;
                 Parameters = new int[size];
                 RawBits = new int[size];
 

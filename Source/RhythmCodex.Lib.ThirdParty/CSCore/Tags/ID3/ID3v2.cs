@@ -24,7 +24,7 @@ namespace CSCore.Tags.ID3
         {
             try
             {
-                ID3v2 id3v2 = new ID3v2(stream);
+                var id3v2 = new ID3v2(stream);
                 if (id3v2.ReadData(stream, true))
                     return id3v2;
             }
@@ -37,7 +37,7 @@ namespace CSCore.Tags.ID3
 
         private static ID3v2 FromStream(Stream stream, bool readData)
         {
-            ID3v2 id3v2 = new ID3v2(stream);
+            var id3v2 = new ID3v2(stream);
             if (id3v2.ReadData(stream, readData))
                 return id3v2;
             return null;
@@ -65,29 +65,20 @@ namespace CSCore.Tags.ID3
         }
 
         private readonly Stream _stream;
-        private ID3v2Header _header;
-        private ID3v2ExtendedHeader _extendedHeader;
-        private ID3v2Footer _footer;
         private readonly List<Frame> _frames;
         private ID3v2QuickInfo _quickInfo;
 
         private byte[] _content;
 
-        public ID3v2Header Header { get { return _header; } }
+        public ID3v2Header Header { get; private set; }
 
-        public ID3v2ExtendedHeader ExtendedHeader { get { return _extendedHeader; } }
+        public ID3v2ExtendedHeader ExtendedHeader { get; private set; }
 
-        public ID3v2Footer Footer { get { return _footer; } }
+        public ID3v2Footer Footer { get; private set; }
 
-        public ID3v2QuickInfo QuickInfo { get { return _quickInfo ?? (_quickInfo = new ID3v2QuickInfo(this)); } }
+        public ID3v2QuickInfo QuickInfo => _quickInfo ?? (_quickInfo = new ID3v2QuickInfo(this));
 
-        public Frame this[FrameID id]
-        {
-            get
-            {
-                return this[FrameIDFactory.GetID(id, Header.Version)];
-            }
-        }
+        public Frame this[FrameID id] => this[FrameIDFactory.GetID(id, Header.Version)];
 
         public Frame this[string id]
         {
@@ -105,20 +96,20 @@ namespace CSCore.Tags.ID3
 
         private bool ReadData(Stream stream, bool readData)
         {
-            if ((_header = ID3v2Header.FromStream(stream)) != null)
+            if ((Header = ID3v2Header.FromStream(stream)) != null)
             {
-                byte[] buffer = new byte[_header.DataLength];
+                var buffer = new byte[Header.DataLength];
                 if (stream.Read(buffer, 0, buffer.Length) < buffer.Length)
                     return false;
 
-                if (_header.IsUnsync && _header.Version != ID3Version.ID3v2_4)
+                if (Header.IsUnsync && Header.Version != ID3Version.ID3v2_4)
                 {
                     buffer = UnSyncBuffer(buffer);
                 }
                 _content = buffer;
-                MemoryStream contentStream = new MemoryStream(buffer);
+                var contentStream = new MemoryStream(buffer);
 
-                switch (_header.Version)
+                switch (Header.Version)
                 {
                     case ID3Version.ID3v2_2:
                         Parse2();
@@ -133,7 +124,7 @@ namespace CSCore.Tags.ID3
                         break;
 
                     default:
-                        throw new ID3Exception("Invalid Version: [2.{0};{1}]", _header.RawVersion[0], _header.RawVersion[1]);
+                        throw new ID3Exception("Invalid Version: [2.{0};{1}]", Header.RawVersion[0], Header.RawVersion[1]);
                 }
 
                 if (readData)
@@ -152,38 +143,38 @@ namespace CSCore.Tags.ID3
 
         private bool Parse2()
         {
-            if (((int)_header.Flags & 0x3F) != 0)
-                throw new ID3Exception("Invalid headerflags: 0x{0}.", ((int)_header.Flags).ToString("x"));
+            if (((int)Header.Flags & 0x3F) != 0)
+                throw new ID3Exception("Invalid headerflags: 0x{0}.", ((int)Header.Flags).ToString("x"));
 
             return true;
         }
 
         private bool Parse3(Stream stream)
         {
-            if ((_header.Flags & ID3v2HeaderFlags.ExtendedHeader) == ID3v2HeaderFlags.ExtendedHeader)
+            if ((Header.Flags & ID3v2HeaderFlags.ExtendedHeader) == ID3v2HeaderFlags.ExtendedHeader)
             {
-                _extendedHeader = new ID3v2ExtendedHeader(stream, ID3Version.ID3v2_3);
+                ExtendedHeader = new ID3v2ExtendedHeader(stream, ID3Version.ID3v2_3);
             }
-            if (((int)_header.Flags & 0x1F) != 0)
-                throw new ID3Exception("Invalid headerflags: 0x{0}.", ((int)_header.Flags).ToString("x"));
+            if (((int)Header.Flags & 0x1F) != 0)
+                throw new ID3Exception("Invalid headerflags: 0x{0}.", ((int)Header.Flags).ToString("x"));
 
             return true;
         }
 
         private bool Parse4(Stream stream)
         {
-            if ((_header.Flags & ID3v2HeaderFlags.ExtendedHeader) == ID3v2HeaderFlags.ExtendedHeader)
+            if ((Header.Flags & ID3v2HeaderFlags.ExtendedHeader) == ID3v2HeaderFlags.ExtendedHeader)
             {
-                _extendedHeader = new ID3v2ExtendedHeader(stream, ID3Version.ID3v2_4);
+                ExtendedHeader = new ID3v2ExtendedHeader(stream, ID3Version.ID3v2_4);
             }
-            if ((_header.Flags & ID3v2HeaderFlags.FooterPresent) == ID3v2HeaderFlags.FooterPresent)
+            if ((Header.Flags & ID3v2HeaderFlags.FooterPresent) == ID3v2HeaderFlags.FooterPresent)
             {
                 //footer vom orginal stream lesen - da im neuen stream kein footer vorhanden ist
-                _footer = ID3v2Footer.FromStream(_stream);
-                if (_footer == null) throw new ID3Exception("Invalid Id3Footer.");
+                Footer = ID3v2Footer.FromStream(_stream);
+                if (Footer == null) throw new ID3Exception("Invalid Id3Footer.");
             }
-            if (((int)_header.Flags & 0x0F) != 0)
-                throw new ID3Exception("Invalid headerflags: 0x{0}.", ((int)_header.Flags).ToString("x"));
+            if (((int)Header.Flags & 0x0F) != 0)
+                throw new ID3Exception("Invalid headerflags: 0x{0}.", ((int)Header.Flags).ToString("x"));
 
             return true;
         }
@@ -204,15 +195,15 @@ namespace CSCore.Tags.ID3
 
         private byte[] UnSyncBuffer(byte[] buffer)
         {
-            MemoryStream memoryStream = new MemoryStream(buffer);
-            UnsyncStream ustream = new UnsyncStream(memoryStream);
-            byte[] result = new byte[buffer.Length];
+            var memoryStream = new MemoryStream(buffer);
+            var ustream = new UnsyncStream(memoryStream);
+            var result = new byte[buffer.Length];
 
-            int read = ustream.Read(result, 0, result.Length);
+            var read = ustream.Read(result, 0, result.Length);
 
             if (read < result.Length)
             {
-                byte[] newresult = new byte[read];
+                var newresult = new byte[read];
                 Buffer.BlockCopy(result, 0, newresult, 0, read);
                 return newresult;
             }

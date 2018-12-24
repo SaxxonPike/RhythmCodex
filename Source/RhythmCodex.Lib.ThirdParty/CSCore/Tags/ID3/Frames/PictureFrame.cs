@@ -21,10 +21,7 @@ namespace CSCore.Tags.ID3.Frames
         /// Use GetURL() the get the url to the picture. If not, data, contained by the frame will
         /// be used.
         /// </summary>
-        public Image Image
-        {
-            get { return _image ?? (_image = DecodeImage()); }
-        }
+        public Image Image => _image ?? (_image = DecodeImage());
 
         private Image DecodeImage()
         {
@@ -43,7 +40,7 @@ namespace CSCore.Tags.ID3.Frames
 
         protected override void Decode(byte[] content)
         {
-            int offset = 1;
+            var offset = 1;
             if (content.Length < 3)
                 throw new ID3Exception("Invalid contentlength id=0.");//id -> for debugging
 

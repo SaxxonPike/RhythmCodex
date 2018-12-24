@@ -20,13 +20,12 @@ namespace NVorbis.Ogg
 
             public DebugView(PacketReader reader)
             {
-                if (reader == null) throw new ArgumentNullException(nameof(reader));
-                _reader = reader;
+                _reader = reader ?? throw new ArgumentNullException(nameof(reader));
             }
 
-            public ContainerReader Container { get { return _reader._container; } }
-            public int StreamSerial { get { return _reader._streamSerial; } }
-            public bool EndOfStreamFound { get { return _reader._eosFound; } }
+            public ContainerReader Container => _reader._container;
+            public int StreamSerial => _reader.StreamSerial;
+            public bool EndOfStreamFound => _reader.HasEndOfStream;
 
             public int CurrentPacketIndex
             {
@@ -70,8 +69,6 @@ namespace NVorbis.Ogg
 #pragma warning restore 67
 
         private ContainerReader _container;
-        private int _streamSerial;
-        private bool _eosFound;
 
         private Packet _first, _current, _last;
 
@@ -80,12 +77,12 @@ namespace NVorbis.Ogg
         internal PacketReader(ContainerReader container, int streamSerial)
         {
             _container = container;
-            _streamSerial = streamSerial;
+            StreamSerial = streamSerial;
         }
 
         public void Dispose()
         {
-            _eosFound = true;
+            HasEndOfStream = true;
 
             if (_container != null)
                 _container.DisposePacketReader(this);
@@ -115,7 +112,7 @@ namespace NVorbis.Ogg
             lock (_packetLock)
             {
                 // if we've already found the end of the stream, don't accept any more packets
-                if (_eosFound) return;
+                if (HasEndOfStream) return;
 
                 // if the packet is a resync, it cannot be a continuation...
                 if (packet.IsResync)
@@ -160,17 +157,14 @@ namespace NVorbis.Ogg
             }
         }
 
-        internal bool HasEndOfStream
-        {
-            get { return _eosFound; }
-        }
+        internal bool HasEndOfStream { get; private set; }
 
         internal void SetEndOfStream()
         {
             lock (_packetLock)
             {
                 // set the flag...
-                _eosFound = true;
+                HasEndOfStream = true;
 
                 // make sure we're handling the last packet correctly
                 if (_last.IsContinued)
@@ -183,10 +177,7 @@ namespace NVorbis.Ogg
             }
         }
 
-        public int StreamSerial
-        {
-            get { return _streamSerial; }
-        }
+        public int StreamSerial { get; }
 
         public long ContainerBits
         {
@@ -194,10 +185,7 @@ namespace NVorbis.Ogg
             set;
         }
 
-        public bool CanSeek
-        {
-            get { return _container.CanSeek; }
-        }
+        public bool CanSeek => _container.CanSeek;
 
         // This is fast path... don't make the caller wait if we can help it...
         public DataPacket GetNextPacket()
@@ -227,11 +215,11 @@ namespace NVorbis.Ogg
                         curPacket = _current.Next;
 
                         // if we have a valid packet or we can't get any more, bail out of the loop
-                        if ((curPacket != null && !curPacket.IsContinued) || _eosFound) break;
+                        if ((curPacket != null && !curPacket.IsContinued) || HasEndOfStream) break;
                     }
 
                     // we need another packet and we've not found the end of the stream...
-                    _container.GatherNextPage(_streamSerial);
+                    _container.GatherNextPage(StreamSerial);
                 }
             }
 
@@ -250,9 +238,9 @@ namespace NVorbis.Ogg
             if (!CanSeek) throw new InvalidOperationException();
 
             // don't hold the lock any longer than we have to
-            while (!_eosFound)
+            while (!HasEndOfStream)
             {
-                _container.GatherNextPage(_streamSerial);
+                _container.GatherNextPage(StreamSerial);
             }
         }
 
@@ -297,11 +285,11 @@ namespace NVorbis.Ogg
             {
                 while (packet.Next == null)
                 {
-                    if (_eosFound)
+                    if (HasEndOfStream)
                     {
                         throw new ArgumentOutOfRangeException("index");
                     }
-                    _container.GatherNextPage(_streamSerial);
+                    _container.GatherNextPage(StreamSerial);
                 }
 
                 packet = packet.Next;
@@ -357,7 +345,7 @@ namespace NVorbis.Ogg
                     }
 
                     // if it's the last packet in the stream, it might be a partial.  The spec says the last packet has to be on its own page, so if it is not assume the stream was truncated.
-                    if (packet == _last && _eosFound && packet.Prev.PageSequenceNumber < packet.PageSequenceNumber)
+                    if (packet == _last && HasEndOfStream && packet.Prev.PageSequenceNumber < packet.PageSequenceNumber)
                     {
                         packet.GranuleCount = (int)(packet.GranulePosition - packet.Prev.PageGranulePosition);
                     }
@@ -422,10 +410,10 @@ namespace NVorbis.Ogg
                 // find the first packet in the page the requested granule is on
                 while (granulePos > packet.PageGranulePosition)
                 {
-                    if ((packet.Next == null || packet.IsContinued) && !_eosFound)
+                    if ((packet.Next == null || packet.IsContinued) && !HasEndOfStream)
                     {
-                        _container.GatherNextPage(_streamSerial);
-                        if (_eosFound)
+                        _container.GatherNextPage(StreamSerial);
+                        if (HasEndOfStream)
                         {
                             packet = null;
                             break;

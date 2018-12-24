@@ -13,10 +13,9 @@ namespace CSCore.Codecs.FLAC
     /// <summary>
     ///     Provides a decoder for decoding flac (Free Lostless Audio Codec) data.
     /// </summary>
-    public class FlacFile : IReadableAudioSource<byte>
+    public sealed class FlacFile : IReadableAudioSource<byte>
     {
         private readonly Stream _stream;
-        private readonly WaveFormat _waveFormat;
         private readonly FlacMetadataStreamInfo _streamInfo;
         private readonly FlacPreScan _scan;
 
@@ -33,33 +32,19 @@ namespace CSCore.Codecs.FLAC
         private int _frameIndex;
 
         /// <summary>
-        ///     Gets a list with all found metadata fields.
-        /// </summary>
-        public ReadOnlyCollection<FlacMetadata> Metadata { get; protected set; }
-
-        /// <summary>
         ///     Gets the output <see cref="CSCore.WaveFormat" /> of the decoder.
         /// </summary>
-        public WaveFormat WaveFormat
-        {
-            get { return _waveFormat; }
-        }
+        public WaveFormat WaveFormat { get; }
 
         /// <summary>
         ///     Gets a value which indicates whether the seeking is supported. True means that seeking is supported; False means
         ///     that seeking is not supported.
         /// </summary>
-        public bool CanSeek
-        {
-            get { return _scan != null; }
-        }
+        public bool CanSeek => _scan != null;
 
         private FlacFrame _frame;
 
-        private FlacFrame Frame
-        {
-            get { return _frame ?? (_frame = FlacFrame.FromStream(_stream, _streamInfo)); }
-        }
+        private FlacFrame Frame => _frame ?? (_frame = FlacFrame.FromStream(_stream, _streamInfo));
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="FlacFile" /> class.
@@ -75,32 +60,13 @@ namespace CSCore.Codecs.FLAC
         ///     Initializes a new instance of the <see cref="FlacFile" /> class.
         /// </summary>
         /// <param name="stream">Stream which contains flac data which should be decoded.</param>
-        public FlacFile(Stream stream)
-            : this(stream, FlacPreScanMode.Default)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="FlacFile" /> class.
-        /// </summary>
-        /// <param name="stream">Stream which contains flac data which should be decoded.</param>
-        /// <param name="scanFlag">Scan mode which defines how to scan the flac data for frames.</param>
-        public FlacFile(Stream stream, FlacPreScanMode scanFlag)
-            : this(stream, scanFlag, null)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="FlacFile" /> class.
-        /// </summary>
-        /// <param name="stream">Stream which contains flac data which should be decoded.</param>
         /// <param name="scanFlag">Scan mode which defines how to scan the flac data for frames.</param>
         /// <param name="onscanFinished">
         ///     Callback which gets called when the pre scan processes finished. Should be used if the
         ///     <paramref name="scanFlag" /> argument is set the <see cref="FlacPreScanMode.Async" />.
         /// </param>
-        public FlacFile(Stream stream, FlacPreScanMode scanFlag,
-            Action<FlacPreScanFinishedEventArgs> onscanFinished)
+        public FlacFile(Stream stream, FlacPreScanMode scanFlag = FlacPreScanMode.Default,
+            Action<FlacPreScanFinishedEventArgs> onscanFinished = null)
         {
             if (stream == null)
                 throw new ArgumentNullException();
@@ -117,27 +83,24 @@ namespace CSCore.Codecs.FLAC
 
             //read fLaC sync
             var beginSync = new byte[4];
-            int read = stream.Read(beginSync, 0, beginSync.Length);
+            var read = stream.Read(beginSync, 0, beginSync.Length);
             if (read < beginSync.Length)
                 throw new EndOfStreamException("Can not read \"fLaC\" sync.");
             if (beginSync[0] == 0x66 && beginSync[1] == 0x4C && //Check for 'fLaC' signature
                 beginSync[2] == 0x61 && beginSync[3] == 0x43)
             {
                 //read metadata
-                List<FlacMetadata> metadata = FlacMetadata.ReadAllMetadataFromStream(stream).ToList();
+                var metadata = FlacMetadata.ReadAllMetadataFromStream(stream).ToList();
 
-                Metadata = metadata.AsReadOnly();
                 if (metadata.Count <= 0)
                     throw new FlacException("No Metadata found.", FlacLayer.Metadata);
 
                 var streamInfo =
                     metadata.First(x => x.MetaDataType == FlacMetaDataType.StreamInfo) as FlacMetadataStreamInfo;
-                if (streamInfo == null)
-                    throw new FlacException("No StreamInfo-Metadata found.", FlacLayer.Metadata);
 
-                _streamInfo = streamInfo;
-                _waveFormat = CreateWaveFormat(streamInfo);
-                Debug.WriteLine("Flac StreamInfo found -> WaveFormat: " + _waveFormat);
+                _streamInfo = streamInfo ?? throw new FlacException("No StreamInfo-Metadata found.", FlacLayer.Metadata);
+                WaveFormat = CreateWaveFormat(streamInfo);
+                Debug.WriteLine("Flac StreamInfo found -> WaveFormat: " + WaveFormat);
                 Debug.WriteLine("Flac-File-Metadata read.");
             }
             else
@@ -227,7 +190,7 @@ namespace CSCore.Codecs.FLAC
         {
             CheckForDisposed();
 
-            int read = 0;
+            var read = 0;
             count -= (count % WaveFormat.BlockAlign);
 
             lock (_bufferLock)
@@ -236,7 +199,7 @@ namespace CSCore.Codecs.FLAC
 
                 while (read < count)
                 {
-                    FlacFrame frame = Frame;
+                    var frame = Frame;
                     if (frame == null)
                         return read;
 
@@ -251,8 +214,8 @@ namespace CSCore.Codecs.FLAC
                     }
                     _frameIndex++;
 
-                    int bufferlength = frame.GetBuffer(ref _overflowBuffer);
-                    int bytesToCopy = Math.Min(count - read, bufferlength);
+                    var bufferlength = frame.GetBuffer(ref _overflowBuffer);
+                    var bytesToCopy = Math.Min(count - read, bufferlength);
                     Array.Copy(_overflowBuffer, 0, buffer, offset, bytesToCopy);
                     read += bytesToCopy;
                     offset += bytesToCopy;
@@ -272,7 +235,7 @@ namespace CSCore.Codecs.FLAC
         {
             if (_overflowCount != 0 && _overflowBuffer != null && count > 0)
             {
-                int bytesToCopy = Math.Min(count, _overflowCount);
+                var bytesToCopy = Math.Min(count, _overflowCount);
                 Array.Copy(_overflowBuffer, _overflowOffset, buffer, offset, bytesToCopy);
 
                 _overflowCount -= bytesToCopy;
@@ -320,7 +283,7 @@ namespace CSCore.Codecs.FLAC
                     value = Math.Max(Math.Min(value, Length), 0);
                     value -= (value % WaveFormat.BlockAlign);
 
-                    for (int i = 0; i < _scan.Frames.Count; i++)
+                    for (var i = 0; i < _scan.Frames.Count; i++)
                     {
                         if ((value / WaveFormat.BlockAlign) <= _scan.Frames[i].SampleOffset)
                         {
@@ -337,7 +300,7 @@ namespace CSCore.Codecs.FLAC
                             _overflowCount = 0;
                             _overflowOffset = 0;
 
-                            int diff = (int) (value - Position);
+                            var diff = (int) (value - Position);
                             diff -= (diff % WaveFormat.BlockAlign);
                             if (diff > 0)
                             {
@@ -382,7 +345,7 @@ namespace CSCore.Codecs.FLAC
         ///     True to release both managed and unmanaged resources; false to release only unmanaged
         ///     resources.
         /// </param>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             lock (_bufferLock)
             {

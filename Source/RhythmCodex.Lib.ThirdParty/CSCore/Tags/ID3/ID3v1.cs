@@ -30,7 +30,7 @@ namespace CSCore.Tags.ID3
             }
 
             ID3v1 tag = null;
-            BinaryReader reader = new BinaryReader(stream);
+            var reader = new BinaryReader(stream);
             if (reader.ReadByte() == 0x54 && reader.ReadByte() == 0x41 && reader.ReadByte() == 0x47)
             {
                 tag = new ID3v1(stream);
@@ -63,12 +63,12 @@ namespace CSCore.Tags.ID3
 
         private ID3v1(Stream stream)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            var reader = new BinaryReader(stream);
             Title = new string(reader.ReadChars(30)).Replace("\0", String.Empty).TrimEnd();
             Artist = new string(reader.ReadChars(30)).Replace("\0", String.Empty).TrimEnd();
             Album = new string(reader.ReadChars(30)).Replace("\0", String.Empty).TrimEnd();
             int year;
-            bool parseResult = Int32.TryParse(new string(reader.ReadChars(4)), out year);
+            var parseResult = Int32.TryParse(new string(reader.ReadChars(4)), out year);
             if (parseResult)
                 Year = year;
             else
@@ -79,11 +79,11 @@ namespace CSCore.Tags.ID3
 
         public void SaveToStream(Stream stream)
         {
-            BinaryWriter writer = new BinaryWriter(stream);
+            var writer = new BinaryWriter(stream);
             var title = Title.Length > 30 ? Title.Substring(0, 30) : Title;
             var artist = Artist.Length > 30 ? Title.Substring(0, 30) : Artist;
             var album = Album.Length > 30 ? Album.Substring(0, 30) : Album;
-            int year = Year.HasValue ? Year.Value : 0;
+            var year = Year.HasValue ? Year.Value : 0;
             var comment = Comment.Length > 30 ? Comment.Substring(0, 30) : Comment;
             var genre = (byte)Genre;
 

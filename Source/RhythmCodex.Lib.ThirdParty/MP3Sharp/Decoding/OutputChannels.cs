@@ -51,11 +51,10 @@ namespace MP3Sharp.Decoding
         public static readonly OutputChannels RIGHT = new OutputChannels(RIGHT_CHANNEL);
         public static readonly OutputChannels BOTH = new OutputChannels(BOTH_CHANNELS);
         public static readonly OutputChannels DOWNMIX = new OutputChannels(DOWNMIX_CHANNELS);
-        private readonly int outputChannels;
 
         private OutputChannels(int channels)
         {
-            outputChannels = channels;
+            ChannelsOutputCode = channels;
 
             if (channels < 0 || channels > 3)
                 throw new ArgumentException("channels");
@@ -69,10 +68,7 @@ namespace MP3Sharp.Decoding
         /// <returns>
         ///     the channel code represented by this instance.
         /// </returns>
-        public int ChannelsOutputCode
-        {
-            get { return outputChannels; }
-        }
+        public int ChannelsOutputCode { get; }
 
         /// <summary>
         ///     Retrieves the number of output channels represented
@@ -87,7 +83,7 @@ namespace MP3Sharp.Decoding
         {
             get
             {
-                var count = (outputChannels == BOTH_CHANNELS) ? 2 : 1;
+                var count = (ChannelsOutputCode == BOTH_CHANNELS) ? 2 : 1;
                 return count;
             }
         }
@@ -129,7 +125,7 @@ namespace MP3Sharp.Decoding
             if (o is OutputChannels)
             {
                 var oc = (OutputChannels) o;
-                equals = (oc.outputChannels == outputChannels);
+                equals = (oc.ChannelsOutputCode == ChannelsOutputCode);
             }
 
             return equals;
@@ -137,7 +133,7 @@ namespace MP3Sharp.Decoding
 
         public override int GetHashCode()
         {
-            return outputChannels;
+            return ChannelsOutputCode;
         }
     }
 }

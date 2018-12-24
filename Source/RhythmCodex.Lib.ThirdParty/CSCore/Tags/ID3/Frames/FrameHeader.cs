@@ -48,7 +48,7 @@ namespace CSCore.Tags.ID3.Frames
 
         private void Parse2(Stream stream)
         {
-            byte[] buffer = ID3Utils.Read(stream, 6);
+            var buffer = ID3Utils.Read(stream, 6);
             FrameID = ID3Utils.ReadString(buffer, 0, 3, ID3Utils.Iso88591);
             FrameSize = ID3Utils.ReadInt32(buffer, 3, false, 3);
 
@@ -58,11 +58,11 @@ namespace CSCore.Tags.ID3.Frames
 
         private void Parse3(Stream stream)
         {
-            byte[] buffer = ID3Utils.Read(stream, 10);
+            var buffer = ID3Utils.Read(stream, 10);
             FrameID = ID3Utils.ReadString(buffer, 0, 4, ID3Utils.Iso88591);
             FrameSize = ID3Utils.ReadInt32(buffer, 4, false, 4);
 
-            byte[] flags = new byte[] { buffer[8], buffer[9] };
+            var flags = new byte[] { buffer[8], buffer[9] };
 
             //%abc00000
             if ((flags[0] & 0x80) == 0)
@@ -94,11 +94,11 @@ namespace CSCore.Tags.ID3.Frames
 
         private void Parse4(Stream stream)
         {
-            byte[] buffer = ID3Utils.Read(stream, 10);
+            var buffer = ID3Utils.Read(stream, 10);
             FrameID = ID3Utils.ReadString(buffer, 0, 4, ID3Utils.Iso88591);
             FrameSize = ID3Utils.ReadInt32(buffer, 4, true, 4);
 
-            byte[] flags = new byte[] { buffer[8], buffer[9] };
+            var flags = new byte[] { buffer[8], buffer[9] };
 
             //%0abc0000 Framestatusflags
             if ((flags[0] & 0x40) == 0)

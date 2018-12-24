@@ -26,8 +26,6 @@ namespace MP3Sharp.Decoding
     [Serializable]
     internal sealed class DecoderException : MP3SharpException
     {
-        private int m_ErrorCode;
-
         public DecoderException(string message, Exception inner) : base(message, inner)
         {
             InitBlock();
@@ -36,18 +34,15 @@ namespace MP3Sharp.Decoding
         public DecoderException(int errorcode, Exception inner) : this(GetErrorString(errorcode), inner)
         {
             InitBlock();
-            m_ErrorCode = errorcode;
+            ErrorCode = errorcode;
         }
 
         private DecoderException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            m_ErrorCode = info.GetInt32("ErrorCode");
+            ErrorCode = info.GetInt32("ErrorCode");
         }
 
-        public int ErrorCode
-        {
-            get { return m_ErrorCode; }
-        }
+        public int ErrorCode { get; private set; }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -56,13 +51,13 @@ namespace MP3Sharp.Decoding
                 throw new ArgumentNullException(nameof(info));
             }
 
-            info.AddValue("ErrorCode", m_ErrorCode);
+            info.AddValue("ErrorCode", ErrorCode);
             base.GetObjectData(info, context);
         }
 
         private void InitBlock()
         {
-            m_ErrorCode = DecoderErrors.UNKNOWN_ERROR;
+            ErrorCode = DecoderErrors.UNKNOWN_ERROR;
         }
 
         public static string GetErrorString(int errorcode)

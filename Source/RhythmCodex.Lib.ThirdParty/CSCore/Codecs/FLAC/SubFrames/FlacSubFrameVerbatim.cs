@@ -10,9 +10,9 @@ namespace CSCore.Codecs.FLAC
             {
                 int* ptrDest = data.DestinationBuffer, ptrResidual = data.ResidualBuffer;
 
-                for (int i = 0; i < header.BlockSize; i++)
+                for (var i = 0; i < header.BlockSize; i++)
                 {
-                    int x = (int)reader.ReadBits(bitsPerSample);
+                    var x = (int)reader.ReadBits(bitsPerSample);
                     *ptrDest++ = x;
                     *ptrResidual++ = x;
                 }

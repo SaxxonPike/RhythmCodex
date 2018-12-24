@@ -20,11 +20,7 @@ using System.Collections.Generic;
         private int _readBits;              // 4
         private byte _overflowBits;         // 1
         private PacketFlags _packetFlags;   // 1
-        private long _granulePosition;      // 8
-        private long _pageGranulePosition;  // 8
-        private int _length;                // 4
         private int _granuleCount;          // 4
-        private int _pageSequenceNumber;    // 4
 
         /// <summary>
         /// Defines flags to apply to the current packet
@@ -104,12 +100,12 @@ using System.Collections.Generic;
         /// Reads the next byte of the packet.
         /// </summary>
         /// <returns>The next byte if available, otherwise -1.</returns>
-        abstract protected int ReadNextByte();
+        protected abstract int ReadNextByte();
 
         /// <summary>
         /// Indicates that the packet has been read and its data is no longer needed.
         /// </summary>
-        virtual public void Done()
+        public virtual void Done()
         {
         }
 
@@ -261,53 +257,38 @@ using System.Collections.Generic;
         /// </summary>
         public bool IsResync
         {
-            get { return GetFlag(PacketFlags.IsResync); }
-            internal set { SetFlag(PacketFlags.IsResync, value); }
+            get => GetFlag(PacketFlags.IsResync);
+            internal set => SetFlag(PacketFlags.IsResync, value);
         }
 
         /// <summary>
         /// Gets the position of the last granule in the packet.
         /// </summary>
-        public long GranulePosition
-        {
-            get { return _granulePosition; }
-            set { _granulePosition = value; }
-        }
+        public long GranulePosition { get; set; }
 
         /// <summary>
         /// Gets the position of the last granule in the page the packet is in.
         /// </summary>
-        public long PageGranulePosition
-        {
-            get { return _pageGranulePosition; }
-            internal set { _pageGranulePosition = value; }
-        }
+        public long PageGranulePosition { get; internal set; }
 
         /// <summary>
         /// Gets the length of the packet.
         /// </summary>
-        public int Length
-        {
-            get { return _length; }
-            protected set { _length = value; }
-        }
+        public int Length { get; protected set; }
 
         /// <summary>
         /// Gets whether the packet is the last one in the logical stream.
         /// </summary>
         public bool IsEndOfStream
         {
-            get { return GetFlag(PacketFlags.IsEndOfStream); }
-            internal set { SetFlag(PacketFlags.IsEndOfStream, value); }
+            get => GetFlag(PacketFlags.IsEndOfStream);
+            internal set => SetFlag(PacketFlags.IsEndOfStream, value);
         }
 
         /// <summary>
         /// Gets the number of bits read from the packet.
         /// </summary>
-        public long BitsRead
-        {
-            get { return _readBits; }
-        }
+        public long BitsRead => _readBits;
 
         /// <summary>
         /// Gets the number of granules in the packet.  If <c>null</c>, the packet has not been decoded yet.
@@ -336,16 +317,12 @@ using System.Collections.Generic;
             }
         }
 
-        internal int PageSequenceNumber
-        {
-            get { return _pageSequenceNumber; }
-            set { _pageSequenceNumber = value; }
-        }
+        internal int PageSequenceNumber { get; set; }
 
         internal bool IsShort
         {
-            get { return GetFlag(PacketFlags.IsShort); }
-            private set { SetFlag(PacketFlags.IsShort, value); }
+            get => GetFlag(PacketFlags.IsShort);
+            private set => SetFlag(PacketFlags.IsShort, value);
         }
 
         /// <summary>
@@ -414,10 +391,10 @@ using System.Collections.Generic;
         public int Read(byte[] buffer, int index, int count)
         {
             if (index < 0 || index + count > buffer.Length) throw new ArgumentOutOfRangeException(nameof(index));
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 int cnt;
-                byte val = (byte)TryPeekBits(8, out cnt);
+                var val = (byte)TryPeekBits(8, out cnt);
                 if (cnt == 0)
                 {
                     return i;

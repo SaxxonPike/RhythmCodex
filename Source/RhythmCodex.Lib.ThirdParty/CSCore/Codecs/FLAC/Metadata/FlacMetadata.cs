@@ -33,7 +33,7 @@ namespace CSCore.Codecs.FLAC
         {
             while (true)
             {
-                FlacMetadata data = FlacMetadataFactory.Instance.ParseMetadata(stream);
+                var data = FlacMetadataFactory.Instance.ParseMetadata(stream);
                 yield return data;
 
                 if (data == null || data.IsLastMetaBlock)

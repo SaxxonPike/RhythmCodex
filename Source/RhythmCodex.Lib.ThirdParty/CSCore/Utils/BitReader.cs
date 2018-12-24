@@ -9,12 +9,9 @@ namespace CSCore.Utils
     /// </summary>
     internal unsafe class BitReader : IDisposable
     {
-        private readonly byte* _storedBuffer;
         private int _bitoffset;
         private byte* _buffer;
-        private uint _cache;
         private GCHandle _hBuffer;
-        private int _position;
 
         public BitReader(byte[] buffer, int offset)
         {
@@ -24,9 +21,9 @@ namespace CSCore.Utils
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
             _hBuffer = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            _buffer = _storedBuffer = (byte*) _hBuffer.AddrOfPinnedObject().ToPointer() + offset;
+            _buffer = Buffer = (byte*) _hBuffer.AddrOfPinnedObject().ToPointer() + offset;
 
-            _cache = PeekCache();
+            Cache = PeekCache();
         }
 
         public BitReader(byte* buffer, int offset)
@@ -36,38 +33,23 @@ namespace CSCore.Utils
             if (offset < 0)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            int byteoffset = offset / 8;
+            var byteoffset = offset / 8;
 
-            _buffer = _storedBuffer = buffer + byteoffset;
+            _buffer = Buffer = buffer + byteoffset;
             _bitoffset = offset % 8;
 
-            _cache = PeekCache();
+            Cache = PeekCache();
         }
 
-        protected internal uint Cache
-        {
-            get { return _cache; }
-        }
+        protected internal uint Cache { get; private set; }
 
-        protected internal int CacheSigned
-        {
-            get { return (int) Cache; }
-        }
+        protected internal int CacheSigned => (int) Cache;
 
-        public byte* Buffer
-        {
-            get { return _storedBuffer; }
-        }
+        public byte* Buffer { get; }
 
-        public IntPtr BufferPtr
-        {
-            get { return new IntPtr(Buffer);}
-        }
+        public IntPtr BufferPtr => new IntPtr(Buffer);
 
-        public int Position
-        {
-            get { return _position; }
-        }
+        public int Position { get; private set; }
 
         public void Dispose()
         {
@@ -79,7 +61,7 @@ namespace CSCore.Utils
         {
             unchecked
             {
-                byte* ptr = _buffer;
+                var ptr = _buffer;
                 uint result = *(ptr++);
                 result = (result << 8) + *(ptr++);
                 result = (result << 8) + *(ptr++);
@@ -102,13 +84,13 @@ namespace CSCore.Utils
             if (bits <= 0)
                 throw new ArgumentOutOfRangeException(nameof(bits));
 
-            int tmp = _bitoffset + bits;
+            var tmp = _bitoffset + bits;
             _buffer += tmp >> 3; //skip bytes
             _bitoffset = tmp & 7; //bitoverflow -> max 7 bit
 
-            _cache = PeekCache();
+            Cache = PeekCache();
 
-            _position += tmp >> 3;
+            Position += tmp >> 3;
         }
 
         public uint ReadBits(int bits)
@@ -116,7 +98,7 @@ namespace CSCore.Utils
             if (bits <= 0 || bits > 32)
                 throw new ArgumentOutOfRangeException(nameof(bits), "bits has to be a value between 1 and 32");
 
-            uint result = _cache >> 32 - bits;
+            var result = Cache >> 32 - bits;
             if (bits <= 24)
             {
                 SeekBits(bits);
@@ -124,7 +106,7 @@ namespace CSCore.Utils
             }
 
             SeekBits(24);
-            result |= _cache >> 56 - bits;
+            result |= Cache >> 56 - bits;
             SeekBits(bits - 24);
 
             return result;
@@ -208,7 +190,7 @@ namespace CSCore.Utils
 
         public int ReadBitI()
         {
-            uint result = _cache >> 31;
+            var result = Cache >> 31;
             SeekBits(1);
             return (int) result;
         }

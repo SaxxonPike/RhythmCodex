@@ -25,7 +25,7 @@ namespace CSCore.Tags.ID3
 
         public ID3v2ImageSizeRestriction ImageSizeRestriction { get; private set; }
 
-        public ID3Version Version { get; private set; }
+        public ID3Version Version { get; }
 
         public ID3v2ExtendedHeader(Stream stream, ID3Version version)
         {
@@ -45,7 +45,7 @@ namespace CSCore.Tags.ID3
         private void Parse3(Stream stream)
         {
             HeaderLength = ID3Utils.ReadInt32(stream, false);
-            byte[] flags = ID3Utils.Read(stream, 2);
+            var flags = ID3Utils.Read(stream, 2);
             PaddingSize = ID3Utils.ReadInt32(stream, false);
 
             if ((flags[0] & 0x7F) != 0 || flags[1] != 0)
@@ -63,7 +63,7 @@ namespace CSCore.Tags.ID3
         private void Parse4(Stream stream)
         {
             HeaderLength = ID3Utils.ReadInt32(stream, false);
-            byte[] flags = ID3Utils.Read(stream, 1);
+            var flags = ID3Utils.Read(stream, 1);
             Flags = (ID3v2ExtendedHeaderFlags)flags[0];
 
             if ((Flags & ID3v2ExtendedHeaderFlags.CrcPresent) == ID3v2ExtendedHeaderFlags.CrcPresent)

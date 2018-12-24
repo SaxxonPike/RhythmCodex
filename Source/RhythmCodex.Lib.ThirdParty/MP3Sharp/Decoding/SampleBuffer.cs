@@ -21,52 +21,37 @@ namespace MP3Sharp.Decoding
     /// </summary>
     internal sealed class SampleBuffer : ABuffer
     {
-        private readonly short[] buffer;
         private readonly int[] bufferp;
-        private readonly int channels;
-        private readonly int frequency;
 
         /// <summary>
         ///     Constructor
         /// </summary>
         public SampleBuffer(int sample_frequency, int number_of_channels)
         {
-            buffer = new short[OBUFFERSIZE];
+            Buffer = new short[OBUFFERSIZE];
             bufferp = new int[MAXCHANNELS];
-            channels = number_of_channels;
-            frequency = sample_frequency;
+            ChannelCount = number_of_channels;
+            SampleFrequency = sample_frequency;
 
             for (var i = 0; i < number_of_channels; ++i)
                 bufferp[i] = (short) i;
         }
 
-        public int ChannelCount
-        {
-            get { return channels; }
-        }
+        public int ChannelCount { get; }
 
-        public int SampleFrequency
-        {
-            get { return frequency; }
-        }
+        public int SampleFrequency { get; }
 
-        public short[] Buffer
-        {
-            get { return buffer; }
-        }
+        public short[] Buffer { get; }
 
-        public int BufferLength
-        {
-            get { return bufferp[0]; }
-        }
+        public int BufferLength => bufferp[0];
 
         /// <summary>
         ///     Takes a 16 Bit PCM sample.
         /// </summary>
         public override void Append(int channel, short valueRenamed)
         {
-            buffer[bufferp[channel]] = valueRenamed;
-            bufferp[channel] += channels;
+            Buffer[bufferp[channel]] = valueRenamed;
+            bufferp[channel] += ChannelCount;
         }
 
         public override void AppendSamples(int channel, float[] f)
@@ -82,8 +67,8 @@ namespace MP3Sharp.Decoding
 
                 //UPGRADE_WARNING: Narrowing conversions may produce unexpected results in C#. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1042"'
                 s = (short) fs;
-                buffer[pos] = s;
-                pos += channels;
+                Buffer[pos] = s;
+                pos += ChannelCount;
             }
 
             bufferp[channel] = pos;
@@ -107,7 +92,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public override void ClearBuffer()
         {
-            for (var i = 0; i < channels; ++i)
+            for (var i = 0; i < ChannelCount; ++i)
                 bufferp[i] = (short) i;
         }
 

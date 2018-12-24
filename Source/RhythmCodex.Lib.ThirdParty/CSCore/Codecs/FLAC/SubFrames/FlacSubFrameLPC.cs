@@ -21,37 +21,37 @@ namespace CSCore.Codecs.FLAC
             : base(header)
         {
             var warmup = new int[order];
-            for (int i = 0; i < order; i++)
+            for (var i = 0; i < order; i++)
             {
                 warmup[i] = data.ResidualBuffer[i] = reader.ReadBitsSigned(bitsPerSample);
             }
 
-            int coefPrecision = (int)reader.ReadBits(4);
+            var coefPrecision = (int)reader.ReadBits(4);
             if (coefPrecision == 0x0F)
                 throw new FlacException("Invalid \"quantized linear predictor coefficients' precision in bits\" was invalid. Must not be 0x0F.",
                     FlacLayer.SubFrame);
             coefPrecision += 1;
 
-            int shiftNeeded = reader.ReadBitsSigned(5);
+            var shiftNeeded = reader.ReadBitsSigned(5);
             if (shiftNeeded < 0)
                 throw new FlacException("'\"Quantized linear predictor coefficient shift needed in bits\" was negative.", FlacLayer.SubFrame);
 
             var q = new int[order];
-            for (int i = 0; i < order; i++)
+            for (var i = 0; i < order; i++)
             {
                 q[i] = reader.ReadBitsSigned(coefPrecision);
             }
 
             //decode the residual
             var residual = new FlacResidual(reader, header, data, order);
-            for (int i = 0; i < order; i++)
+            for (var i = 0; i < order; i++)
             {
                 data.DestinationBuffer[i] = data.ResidualBuffer[i];
             }
 
-            int* residualBuffer0 = data.ResidualBuffer + order;
-            int* destinationBuffer0 = data.DestinationBuffer + order;
-            int blockSizeToProcess = header.BlockSize - order;
+            var residualBuffer0 = data.ResidualBuffer + order;
+            var destinationBuffer0 = data.DestinationBuffer + order;
+            var blockSizeToProcess = header.BlockSize - order;
 
             if (bitsPerSample + coefPrecision + Log2(order) <= 32)
             {
@@ -76,7 +76,7 @@ namespace CSCore.Codecs.FLAC
         /// </summary>
         private int Log2(int x)
         {
-            int bits = 0;
+            var bits = 0;
             while (x > 0)
             {
                 bits++;

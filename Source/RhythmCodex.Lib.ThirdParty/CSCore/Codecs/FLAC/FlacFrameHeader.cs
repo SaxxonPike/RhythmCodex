@@ -87,7 +87,7 @@ namespace CSCore.Codecs.FLAC
         /// </value>
         public byte Crc8 { get; private set; }
 
-        private bool DoCrc { get; set; }
+        private bool DoCrc { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance has error.
@@ -95,7 +95,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         ///   <c>true</c> if this instance has error; otherwise, <c>false</c>.
         /// </value>
-        public bool HasError { get; private set; }
+        public bool HasError { get; }
 
         /// <summary>
         /// Gets the stream position.
@@ -103,7 +103,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The stream position.
         /// </value>
-        public long StreamPosition { get; private set; }
+        public long StreamPosition { get; }
 
         internal bool PrintErrors = true;
 
@@ -169,14 +169,14 @@ namespace CSCore.Codecs.FLAC
         {
             const string loggerLocation = "FlacFrameHeader.ParseHeader(Stream, FlacMetadataStreamInfo)";
 
-            byte[] headerBuffer = new byte[FlacConstant.FrameHeaderSize];
+            var headerBuffer = new byte[FlacConstant.FrameHeaderSize];
             if (stream.Read(headerBuffer, 0, headerBuffer.Length) == headerBuffer.Length)
             {
                 fixed (byte* ptrBuffer = headerBuffer)
                 {
-                    byte* ptrSave = ptrBuffer;
-                    byte* __ptrBuffer = ptrBuffer;
-                    bool result = ParseHeader(ref __ptrBuffer, streamInfo);
+                    var ptrSave = ptrBuffer;
+                    var __ptrBuffer = ptrBuffer;
+                    var result = ParseHeader(ref __ptrBuffer, streamInfo);
                     stream.Position -= (headerBuffer.Length - (__ptrBuffer - ptrSave)); //todo
 
                     return result;
@@ -201,14 +201,14 @@ namespace CSCore.Codecs.FLAC
                     return false;
                 }
 
-                byte* __headerbufferPtr = headerBuffer;
-                FlacBitReader reader = new FlacBitReader(__headerbufferPtr, 0);
+                var __headerbufferPtr = headerBuffer;
+                var reader = new FlacBitReader(__headerbufferPtr, 0);
 
                 #region blocksize
 
                 //blocksize
                 val = headerBuffer[2] >> 4;
-                int blocksize = -1;
+                var blocksize = -1;
 
                 if (val == 0)
                 {
@@ -236,7 +236,7 @@ namespace CSCore.Codecs.FLAC
 
                 //samplerate
                 val = headerBuffer[2] & 0x0F;
-                int sampleRate = -1;
+                var sampleRate = -1;
 
                 if (val == 0)
                 {

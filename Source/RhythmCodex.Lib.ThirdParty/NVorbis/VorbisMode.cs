@@ -65,7 +65,7 @@ namespace NVorbis
             // 2: prev = s, next = l
             // 3: prev = l, next = l
 
-            for (int idx = 0; idx < _windows.Length; idx++)
+            for (var idx = 0; idx < _windows.Length; idx++)
             {
                 var array = _windows[idx];
 
@@ -76,19 +76,19 @@ namespace NVorbis
                 var leftbegin = wnd / 4 - left / 2;
                 var rightbegin = wnd - wnd / 4 - right / 2;
 
-                for (int i = 0; i < left; i++)
+                for (var i = 0; i < left; i++)
                 {
                     var x = (float)Math.Sin((i + .5) / left * M_PI2);
                     x *= x;
                     array[leftbegin + i] = (float)Math.Sin(x * M_PI2);
                 }
 
-                for (int i = leftbegin + left; i < rightbegin; i++)
+                for (var i = leftbegin + left; i < rightbegin; i++)
                 {
                     array[i] = 1.0f;
                 }
 
-                for (int i = 0; i < right; i++)
+                for (var i = 0; i < right; i++)
                 {
                     var x = (float)Math.Sin((right - i - .5) / right * M_PI2);
                     x *= x;

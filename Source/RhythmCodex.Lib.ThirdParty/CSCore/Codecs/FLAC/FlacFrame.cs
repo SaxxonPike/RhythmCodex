@@ -48,7 +48,7 @@ namespace CSCore.Codecs.FLAC
         /// <returns>A new instance of the <see cref="FlacFrame"/> class.</returns>
         public static FlacFrame FromStream(Stream stream)
         {
-            FlacFrame frame = new FlacFrame(stream);
+            var frame = new FlacFrame(stream);
             return frame;
             //return frame.HasError ? null : frame;
         }
@@ -61,7 +61,7 @@ namespace CSCore.Codecs.FLAC
         /// <returns>A new instance of the <see cref="FlacFrame"/> class.</returns>
         public static FlacFrame FromStream(Stream stream, FlacMetadataStreamInfo streamInfo)
         {
-            FlacFrame frame = new FlacFrame(stream, streamInfo);
+            var frame = new FlacFrame(stream, streamInfo);
             return frame;
             //return frame.HasError ? null : frame;
         }
@@ -102,26 +102,26 @@ namespace CSCore.Codecs.FLAC
 
         private unsafe void ReadSubFrames()
         {
-            List<FlacSubFrameBase> subFrames = new List<FlacSubFrameBase>();
+            var subFrames = new List<FlacSubFrameBase>();
 
             //alocateOutput
             var data = AllocOuputMemory();
             _subFrameData = data;
 
-            byte[] buffer = new byte[0x20000];
+            var buffer = new byte[0x20000];
             if ((_streamInfo.MaxFrameSize * Header.Channels * Header.BitsPerSample * 2 >> 3) > buffer.Length)
             {
                 buffer = new byte[(_streamInfo.MaxFrameSize * Header.Channels * Header.BitsPerSample * 2 >> 3) - FlacConstant.FrameHeaderSize];
             }
 
-            int read = _stream.Read(buffer, 0, (int)Math.Min(buffer.Length, _stream.Length - _stream.Position));
+            var read = _stream.Read(buffer, 0, (int)Math.Min(buffer.Length, _stream.Length - _stream.Position));
 
             fixed (byte* ptrBuffer = buffer)
             {
-                FlacBitReader reader = new FlacBitReader(ptrBuffer, 0);
-                for (int c = 0; c < Header.Channels; c++)
+                var reader = new FlacBitReader(ptrBuffer, 0);
+                for (var c = 0; c < Header.Channels; c++)
                 {
-                    int bitsPerSample = Header.BitsPerSample;
+                    var bitsPerSample = Header.BitsPerSample;
                     if (Header.ChannelAssignment == ChannelAssignment.MidSide || Header.ChannelAssignment == ChannelAssignment.LeftSide)
                         bitsPerSample += c;
                     else if (Header.ChannelAssignment == ChannelAssignment.RightSide)
@@ -149,24 +149,24 @@ namespace CSCore.Codecs.FLAC
         {
             if (Header.ChannelAssignment == ChannelAssignment.LeftSide)
             {
-                for (int i = 0; i < Header.BlockSize; i++)
+                for (var i = 0; i < Header.BlockSize; i++)
                 {
                     subFrames[1].DestinationBuffer[i] = subFrames[0].DestinationBuffer[i] - subFrames[1].DestinationBuffer[i];
                 }
             }
             else if (Header.ChannelAssignment == ChannelAssignment.RightSide)
             {
-                for (int i = 0; i < Header.BlockSize; i++)
+                for (var i = 0; i < Header.BlockSize; i++)
                 {
                     subFrames[0].DestinationBuffer[i] += subFrames[1].DestinationBuffer[i];
                 }
             }
             else if (Header.ChannelAssignment == ChannelAssignment.MidSide)
             {
-                for (int i = 0; i < Header.BlockSize; i++)
+                for (var i = 0; i < Header.BlockSize; i++)
                 {
-                    int mid = subFrames[0].DestinationBuffer[i] << 1;
-                    int side = subFrames[1].DestinationBuffer[i];
+                    var mid = subFrames[0].DestinationBuffer[i] << 1;
+                    var side = subFrames[1].DestinationBuffer[i];
 
                     mid |= (side & 1);
 
@@ -249,16 +249,16 @@ namespace CSCore.Codecs.FLAC
             if (_residualBuffer == null || _residualBuffer.Length < (Header.Channels * Header.BlockSize))
                 _residualBuffer = new int[Header.Channels * Header.BlockSize];
 
-            List<FlacSubFrameData> output = new List<FlacSubFrameData>();
+            var output = new List<FlacSubFrameData>();
 
-            for (int c = 0; c < Header.Channels; c++)
+            for (var c = 0; c < Header.Channels; c++)
             {
                 fixed (int* ptrDestBuffer = _destBuffer, ptrResidualBuffer = _residualBuffer)
                 {
                     _handle1 = GCHandle.Alloc(_destBuffer, GCHandleType.Pinned);
                     _handle2 = GCHandle.Alloc(_residualBuffer, GCHandleType.Pinned);
 
-                    FlacSubFrameData data = new FlacSubFrameData
+                    var data = new FlacSubFrameData
                     {
                         DestinationBuffer = (ptrDestBuffer + c * Header.BlockSize),
                         ResidualBuffer = (ptrResidualBuffer + c * Header.BlockSize)

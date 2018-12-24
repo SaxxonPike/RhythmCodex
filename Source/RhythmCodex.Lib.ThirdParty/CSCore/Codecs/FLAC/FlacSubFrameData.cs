@@ -4,6 +4,6 @@
     {
         public int* DestinationBuffer;
         public int* ResidualBuffer;
-        public FlacPartitionedRiceContent Content = new FlacPartitionedRiceContent();
+        public readonly FlacPartitionedRiceContent Content = new FlacPartitionedRiceContent();
     }
 }

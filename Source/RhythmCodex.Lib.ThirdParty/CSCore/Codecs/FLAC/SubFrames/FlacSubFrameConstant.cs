@@ -9,15 +9,15 @@ namespace CSCore.Codecs.FLAC
         public FlacSubFrameConstant(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample)
             : base(header)
         {
-            int value = (int)reader.ReadBits(bitsPerSample);
+            var value = (int)reader.ReadBits(bitsPerSample);
 #if FLAC_DEBUG
             Value = value;
 #endif
 
             unsafe
             {
-                int* pDestinationBuffer = data.DestinationBuffer;
-                for (int i = 0; i < header.BlockSize; i++)
+                var pDestinationBuffer = data.DestinationBuffer;
+                for (var i = 0; i < header.BlockSize; i++)
                 {
                     *pDestinationBuffer++ = value;
                 }

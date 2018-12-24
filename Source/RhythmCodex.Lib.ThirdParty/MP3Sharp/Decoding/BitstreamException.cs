@@ -40,8 +40,6 @@ namespace MP3Sharp.Decoding
     [Serializable]
     public sealed class BitstreamException : MP3SharpException
     {
-        private int m_Errorcode;
-
         public BitstreamException(string message, Exception inner) : base(message, inner)
         {
             InitBlock();
@@ -50,18 +48,15 @@ namespace MP3Sharp.Decoding
         public BitstreamException(int errorcode, Exception inner) : this(GetErrorString(errorcode), inner)
         {
             InitBlock();
-            m_Errorcode = errorcode;
+            ErrorCode = errorcode;
         }
 
         private BitstreamException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            m_Errorcode = info.GetInt32("ErrorCode");
+            ErrorCode = info.GetInt32("ErrorCode");
         }
 
-        public int ErrorCode
-        {
-            get { return m_Errorcode; }
-        }
+        public int ErrorCode { get; private set; }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -70,13 +65,13 @@ namespace MP3Sharp.Decoding
                 throw new ArgumentNullException(nameof(info));
             }
 
-            info.AddValue("ErrorCode", m_Errorcode);
+            info.AddValue("ErrorCode", ErrorCode);
             base.GetObjectData(info, context);
         }
 
         private void InitBlock()
         {
-            m_Errorcode = BitstreamErrors.UNKNOWN_ERROR;
+            ErrorCode = BitstreamErrors.UNKNOWN_ERROR;
         }
 
         public static string GetErrorString(int errorcode)
