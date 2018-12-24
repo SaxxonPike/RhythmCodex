@@ -17,7 +17,7 @@ namespace FlacLibSharp
         
         // Some housekeeping for the file save
         private long frameStart;
-        private string filePath = String.Empty;
+        private readonly string filePath = string.Empty;
 
         private static readonly byte[] magicFlacMarker = { 0x66, 0x4C, 0x61, 0x43 }; // fLaC
 
@@ -29,9 +29,9 @@ namespace FlacLibSharp
         /// <param name="path">Path to the file.</param>
         public FlacFile(string path)
         {
-            this.filePath = path;
-            this.dataStream = File.OpenRead(path);
-            this.Initialize();
+            filePath = path;
+            dataStream = File.OpenRead(path);
+            Initialize();
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace FlacLibSharp
         /// <remarks>Stream is assumed to be at the beginning of the FLAC data.</remarks>
         public FlacFile(Stream data)
         {
-            this.dataStream = data;
-            this.Initialize();
+            dataStream = data;
+            Initialize();
         }
 
         #endregion
@@ -56,11 +56,11 @@ namespace FlacLibSharp
         {
             get
             {
-                if (this.metadata == null)
+                if (metadata == null)
                 {
-                    this.metadata = new List<MetadataBlock>();
+                    metadata = new List<MetadataBlock>();
                 }
-                return this.metadata;
+                return metadata;
             }
         }
 
@@ -82,22 +82,22 @@ namespace FlacLibSharp
         /// </summary>
         private void VerifyFlacIdentity()
         {
-            byte[] data = new byte[4];
+            var data = new byte[4];
 
             try
             {
-                this.dataStream.Read(data, 0, 4);
-                for (int i = 0; i < data.Length; i++)
+                dataStream.Read(data, 0, 4);
+                for (var i = 0; i < data.Length; i++)
                 {
                     if (data[i] != magicFlacMarker[i])
                     {
-                        throw new FlacLibSharp.Exceptions.FlacLibSharpInvalidFormatException("In Verify Flac Identity");
+                        throw new FlacLibSharpInvalidFormatException("In Verify Flac Identity");
                     }
                 }
             }
             catch (ArgumentException)
             {
-                throw new FlacLibSharp.Exceptions.FlacLibSharpInvalidFormatException("In Verify Flac Identity");
+                throw new FlacLibSharpInvalidFormatException("In Verify Flac Identity");
             }
         }
 
@@ -110,40 +110,40 @@ namespace FlacLibSharp
         /// </summary>
         protected void ReadMetadata()
         {
-            bool foundStreamInfo = false;
+            var foundStreamInfo = false;
             MetadataBlock lastMetaDataBlock = null;
             do
             {
-                lastMetaDataBlock = MetadataBlock.Create(this.dataStream);
-                this.Metadata.Add(lastMetaDataBlock);
+                lastMetaDataBlock = MetadataBlock.Create(dataStream);
+                Metadata.Add(lastMetaDataBlock);
                 switch(lastMetaDataBlock.Header.Type) {
                     case MetadataBlockHeader.MetadataBlockType.StreamInfo:
                         foundStreamInfo = true;
-                        this.streamInfo = (StreamInfo)lastMetaDataBlock;
+                        streamInfo = (StreamInfo)lastMetaDataBlock;
                         break;
                     case MetadataBlockHeader.MetadataBlockType.Application:
-                        this.applicationInfo = (ApplicationInfo)lastMetaDataBlock;
+                        applicationInfo = (ApplicationInfo)lastMetaDataBlock;
                         break;
                     case MetadataBlockHeader.MetadataBlockType.CueSheet:
-                        this.cueSheet = (CueSheet)lastMetaDataBlock;
+                        cueSheet = (CueSheet)lastMetaDataBlock;
                         break;
                     case MetadataBlockHeader.MetadataBlockType.Seektable:
-                        this.seekTable = (SeekTable)lastMetaDataBlock;
+                        seekTable = (SeekTable)lastMetaDataBlock;
                         break;
                     case MetadataBlockHeader.MetadataBlockType.VorbisComment:
-                        this.vorbisComment = (VorbisComment)lastMetaDataBlock;
+                        vorbisComment = (VorbisComment)lastMetaDataBlock;
                         break;
                     case MetadataBlockHeader.MetadataBlockType.Padding:
-                        this.padding = (Padding)lastMetaDataBlock;
+                        padding = (Padding)lastMetaDataBlock;
                         break;
                 }
             } while (!lastMetaDataBlock.Header.IsLastMetaDataBlock);
 
             if (!foundStreamInfo)
-                throw new Exceptions.FlacLibSharpStreamInfoMissing();
+                throw new FlacLibSharpStreamInfoMissing();
             
             // Remember where the frame data starts
-            frameStart = this.dataStream.Position;
+            frameStart = dataStream.Position;
         }
 
 #endregion
@@ -162,20 +162,20 @@ namespace FlacLibSharp
         /// <summary>
         /// Returns the StreamInfo metedata of the loaded Flac file.
         /// </summary>
-        public StreamInfo StreamInfo { get { return this.streamInfo; } }
+        public StreamInfo StreamInfo { get { return streamInfo; } }
         
         /// <summary>
         /// Returns the first ApplicationInfo metadata of the loaded Flac file or null if this data is not available.
         /// </summary>
-        public ApplicationInfo ApplicationInfo { get { return this.applicationInfo; } }
+        public ApplicationInfo ApplicationInfo { get { return applicationInfo; } }
 
         /// <summary>
         /// Returns all ApplicationInfo metadata, if there is any.
         /// </summary>
         public IEnumerable<ApplicationInfo> GetAllApplicationInfo()
         {
-            List<ApplicationInfo> result = new List<ApplicationInfo>();
-            foreach (MetadataBlock block in this.Metadata)
+            var result = new List<ApplicationInfo>();
+            foreach (var block in Metadata)
             {
                 if (block.Header.Type == MetadataBlockHeader.MetadataBlockType.Application)
                 {
@@ -188,19 +188,19 @@ namespace FlacLibSharp
         /// <summary>
         /// Returns the VorbisComment metadata of the loaded Flac file or null if this data is not available.
         /// </summary>
-        public VorbisComment VorbisComment { get { return this.vorbisComment; } }
+        public VorbisComment VorbisComment { get { return vorbisComment; } }
 
         /// <summary>
         /// Returns the CueSheet metadata of the loaded Flac file or null if this data is not available.
         /// </summary>
-        public CueSheet CueSheet { get { return this.cueSheet; } }
+        public CueSheet CueSheet { get { return cueSheet; } }
 
         /// <summary>
         /// Returns all CueSheet metadata, if there is any.
         /// </summary>
         public IEnumerable<CueSheet> GetAllCueSheets() {
-            List<CueSheet> result = new List<CueSheet>();
-            foreach (MetadataBlock block in this.Metadata)
+            var result = new List<CueSheet>();
+            foreach (var block in Metadata)
             {
                 if (block.Header.Type == MetadataBlockHeader.MetadataBlockType.CueSheet)
                 {
@@ -213,12 +213,12 @@ namespace FlacLibSharp
         /// <summary>
         /// Returns the SeekTable metadata of the loaded Flac file or null if this data is not available.
         /// </summary>
-        public SeekTable SeekTable { get { return this.seekTable; } }
+        public SeekTable SeekTable { get { return seekTable; } }
 
         /// <summary>
         /// Returns the Padding metadata of the loaded Flac file or null if this data is not available.
         /// </summary>
-        public Padding Padding { get { return this.padding; } }
+        public Padding Padding { get { return padding; } }
 
         /// <summary>
         /// Returns all Padding metadata, if there is any.
@@ -226,8 +226,8 @@ namespace FlacLibSharp
         /// <returns></returns>
         public IEnumerable<Padding> GetAllPadding()
         {
-            List<Padding> result = new List<Padding>();
-            foreach (MetadataBlock block in this.Metadata)
+            var result = new List<Padding>();
+            foreach (var block in Metadata)
             {
                 if (block.Header.Type == MetadataBlockHeader.MetadataBlockType.Padding)
                 {
@@ -243,9 +243,9 @@ namespace FlacLibSharp
         /// <returns></returns>
         public List<Picture> GetAllPictures()
         {
-            List<Picture> result = new List<Picture>();
+            var result = new List<Picture>();
 
-            foreach (MetadataBlock block in this.Metadata)
+            foreach (var block in Metadata)
             {
                 if (block.Header.Type == MetadataBlockHeader.MetadataBlockType.Picture)
                 {
@@ -265,22 +265,22 @@ namespace FlacLibSharp
         /// </summary>
         public void Save()
         {
-            if (String.IsNullOrEmpty(this.filePath) || !this.dataStream.CanSeek)
+            if (string.IsNullOrEmpty(filePath) || !dataStream.CanSeek)
             {
                 throw new FlacLibSharpSaveNotSupportedException();
             }
 
-            string bufferFile = Path.GetTempFileName();
+            var bufferFile = Path.GetTempFileName();
             using (var fs = new FileStream(bufferFile, FileMode.Create))
             {
                 // First write the magic flac bytes ...
                 fs.Write(magicFlacMarker, 0, magicFlacMarker.Length);
 
-                for (var i = 0; i < this.Metadata.Count; i++) {
-                    MetadataBlock block = this.Metadata[i];
+                for (var i = 0; i < Metadata.Count; i++) {
+                    var block = Metadata[i];
 
                     // We have to make sure to set the last metadata bit correctly.
-                    if (i == this.Metadata.Count - 1)
+                    if (i == Metadata.Count - 1)
                     {
                         block.Header.IsLastMetaDataBlock = true;
                     }
@@ -298,8 +298,8 @@ namespace FlacLibSharp
                         // minus 4 bytes because the MetaDataBlockLength excludes the size of the header
                         if (writtenBytes - 4 != block.Header.MetaDataBlockLength)
                         {
-                            throw new Exception(String.Format("The header of metadata block of type {0} claims a length of {1} bytes but the total amount of data written was {2} + 4 bytes",
-                                block.Header.Type, block.Header.MetaDataBlockLength, writtenBytes));
+                            throw new Exception(
+                                $"The header of metadata block of type {block.Header.Type} claims a length of {block.Header.MetaDataBlockLength} bytes but the total amount of data written was {writtenBytes} + 4 bytes");
                         }
                     }
                     catch (NotImplementedException)
@@ -309,21 +309,21 @@ namespace FlacLibSharp
                 }
 
                 // Metadata is written back to the new file stream, now we can copy the rest of the frames
-                byte[] dataBuffer = new byte[4096];
-                this.dataStream.Seek(this.frameStart, SeekOrigin.Begin);
+                var dataBuffer = new byte[4096];
+                dataStream.Seek(frameStart, SeekOrigin.Begin);
 
-                int read = 0;
+                var read = 0;
                 do {
-                    read = this.dataStream.Read(dataBuffer, 0, dataBuffer.Length);
+                    read = dataStream.Read(dataBuffer, 0, dataBuffer.Length);
                     fs.Write(dataBuffer, 0, read);
                 } while (read > 0);
             }
 
-            this.dataStream.Dispose();
+            dataStream.Dispose();
 
             // Issue #35: Cannot use "File.Move" because it does not retain the original file's attributes.
             //            File.Copy does: https://docs.microsoft.com/en-us/dotnet/api/system.io.file.copy?view=netframework-4.7#System_IO_File_Copy_System_String_System_String_System_Boolean_
-            File.Copy(bufferFile, this.filePath, true);
+            File.Copy(bufferFile, filePath, true);
             File.Delete(bufferFile);
         }
 

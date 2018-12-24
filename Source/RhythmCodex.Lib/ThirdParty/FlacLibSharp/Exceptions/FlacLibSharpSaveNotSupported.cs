@@ -19,7 +19,7 @@ namespace FlacLibSharp.Exceptions
         public FlacLibSharpSaveNotSupportedException()
             : base("This flac was opened from a stream (not from a filepath) so cannot save the data back, to allow save open the flac from a file and ensure the filestream is seekable.")
         {
-            this.Details = String.Empty;
+            Details = string.Empty;
         }
     }
 }

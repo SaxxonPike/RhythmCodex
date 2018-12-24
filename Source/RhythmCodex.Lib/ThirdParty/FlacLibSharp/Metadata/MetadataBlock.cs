@@ -14,7 +14,7 @@ namespace FlacLibSharp {
         /// </summary>
         protected MetadataBlock()
         {
-            this.header = new MetadataBlockHeader();
+            header = new MetadataBlockHeader();
         }
 
         /// <summary>
@@ -37,22 +37,22 @@ namespace FlacLibSharp {
         public static MetadataBlock Create(Stream data)
         {
             // Step 1: Get header
-            byte[] headerData = new byte[4]; // always 4 bytes
+            var headerData = new byte[4]; // always 4 bytes
             
             data.Read(headerData, 0, 4);
-            MetadataBlockHeader header = new MetadataBlockHeader(headerData);
+            var header = new MetadataBlockHeader(headerData);
 
             // Step 2: Get instance of meta data block by type
 
-            MetadataBlock metaDataBlock = GetInstanceByBlockType(header.Type);
+            var metaDataBlock = GetInstanceByBlockType(header.Type);
 
             if (metaDataBlock != null) {
                 metaDataBlock.header = header;
 
                 // Step 3: Read block of meta data (according to header)
 
-                byte[] blockData = new byte[header.MetaDataBlockLength];
-                data.Read(blockData, 0, (Int32)header.MetaDataBlockLength);
+                var blockData = new byte[header.MetaDataBlockLength];
+                data.Read(blockData, 0, (int)header.MetaDataBlockLength);
 
                 // Step 4: Load the meta data into the meta data block instance
 
@@ -92,7 +92,7 @@ namespace FlacLibSharp {
         /// Each metadata block has a header, defining its type among other things.
         /// </summary>
         public MetadataBlockHeader Header {
-            get { return this.header; }
+            get { return header; }
         }
 
     }

@@ -44,8 +44,8 @@ namespace MP3Sharp.Decoding
         public int Read(sbyte[] toRead, int offset, int length)
         {
             // Read 
-            int currentByte = 0;
-            bool canReadStream = true;
+            var currentByte = 0;
+            var canReadStream = true;
             while (currentByte < length && canReadStream)
             {
                 if (m_NumForwardBytesInBuffer > 0)
@@ -58,10 +58,10 @@ namespace MP3Sharp.Decoding
                 else
                 {
                     // from stream
-                    int newBytes = length - currentByte;
-                    int numRead = m_Stream.Read(m_TemporaryBuffer, 0, newBytes);
+                    var newBytes = length - currentByte;
+                    var numRead = m_Stream.Read(m_TemporaryBuffer, 0, newBytes);
                     canReadStream = numRead >= newBytes;
-                    for (int i = 0; i < numRead; i++)
+                    for (var i = 0; i < numRead; i++)
                     {
                         m_CircularByteBuffer.Push(m_TemporaryBuffer[i]);
                         toRead[offset + currentByte + i] = (sbyte) m_TemporaryBuffer[i];

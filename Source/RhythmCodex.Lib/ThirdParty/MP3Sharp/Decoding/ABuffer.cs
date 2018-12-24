@@ -33,7 +33,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public virtual void AppendSamples(int channel, float[] f)
         {
-            for (int i = 0; i < 32; i++)
+            for (var i = 0; i < 32; i++)
             {
                 Append(channel, Clip((f[i])));
             }

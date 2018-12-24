@@ -43,7 +43,7 @@ namespace MP3Sharp.Decoding
                 m_NumValid = cdb.m_NumValid;
                 m_Index = cdb.m_Index;
                 m_DataArray = new byte[m_Length];
-                for (int c = 0; c < m_Length; c++)
+                for (var c = 0; c < m_Length; c++)
                 {
                     m_DataArray[c] = cdb.m_DataArray[c];
                 }
@@ -58,10 +58,10 @@ namespace MP3Sharp.Decoding
             get { return m_Length; }
             set
             {
-                byte[] newDataArray = new byte[value];
+                var newDataArray = new byte[value];
 
-                int minLength = (m_Length > value) ? value : m_Length;
-                for (int i = 0; i < minLength; i++)
+                var minLength = (m_Length > value) ? value : m_Length;
+                for (var i = 0; i < minLength; i++)
                 {
                     newDataArray[i] = InternalGet(i - m_Length + 1);
                 }
@@ -150,7 +150,7 @@ namespace MP3Sharp.Decoding
 
         private byte InternalGet(int offset)
         {
-            int ind = m_Index + offset;
+            var ind = m_Index + offset;
 
             // Do thin modulo (should just drop through)
             for (; ind >= m_Length; ind -= m_Length)
@@ -163,7 +163,7 @@ namespace MP3Sharp.Decoding
 
         private void InternalSet(int offset, byte valueToSet)
         {
-            int ind = m_Index + offset;
+            var ind = m_Index + offset;
 
             // Do thin modulo (should just drop through)
             for (; ind > m_Length; ind -= m_Length)
@@ -180,7 +180,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public byte[] GetRange(int str, int stp)
         {
-            byte[] outByte = new byte[str - stp + 1];
+            var outByte = new byte[str - stp + 1];
 
             for (int i = str, j = 0; i >= stp; i--,j++)
             {
@@ -192,8 +192,8 @@ namespace MP3Sharp.Decoding
 
         public override string ToString()
         {
-            string ret = "";
-            for (int i = 0; i < m_DataArray.Length; i++)
+            var ret = "";
+            for (var i = 0; i < m_DataArray.Length; i++)
             {
                 ret += m_DataArray[i] + " ";
             }

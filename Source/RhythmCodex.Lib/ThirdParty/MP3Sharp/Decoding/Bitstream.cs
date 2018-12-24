@@ -196,8 +196,8 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public bool IsSyncCurrentPosition(int syncmode)
         {
-            int read = readBytes(m_SyncBuffer, 0, 4);
-            int headerstring = ((m_SyncBuffer[0] << 24) & (int) SupportClass.Identity(0xFF000000)) |
+            var read = readBytes(m_SyncBuffer, 0, 4);
+            var headerstring = ((m_SyncBuffer[0] << 24) & (int) SupportClass.Identity(0xFF000000)) |
                                ((m_SyncBuffer[1] << 16) & 0x00FF0000) | ((m_SyncBuffer[2] << 8) & 0x0000FF00) |
                                ((m_SyncBuffer[3] << 0) & 0x000000FF);
 
@@ -210,7 +210,7 @@ namespace MP3Sharp.Decoding
 
             }
 
-            bool sync = false;
+            var sync = false;
             switch (read)
             {
                 case 0:
@@ -262,7 +262,7 @@ namespace MP3Sharp.Decoding
             int headerstring;
 
             // read additinal 2 bytes
-            int bytesRead = readBytes(m_SyncBuffer, 0, 3);
+            var bytesRead = readBytes(m_SyncBuffer, 0, 3);
 
             if (bytesRead != 3)
                 throw newBitstreamException(BitstreamErrors.STREAM_EOF, null);
@@ -294,7 +294,7 @@ namespace MP3Sharp.Decoding
 
         public bool isSyncMark(int headerstring, int syncmode, int word)
         {
-            bool sync = false;
+            var sync = false;
 
             if (syncmode == INITIAL_SYNC)
             {
@@ -348,11 +348,11 @@ namespace MP3Sharp.Decoding
         internal void ParseFrame()
         {
             // Convert Bytes read to int
-            int b = 0;
-            sbyte[] byteread = m_FrameBytes;
-            int bytesize = m_FrameSize;
+            var b = 0;
+            var byteread = m_FrameBytes;
+            var bytesize = m_FrameSize;
 
-            for (int k = 0; k < bytesize; k = k + 4)
+            for (var k = 0; k < bytesize; k = k + 4)
             {
                 sbyte b0 = 0;
                 sbyte b1 = 0;
@@ -380,8 +380,8 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public int GetBitsFromBuffer(int countBits)
         {
-            int returnvalue = 0;
-            int sum = m_BitIndex + countBits;
+            var returnvalue = 0;
+            var sum = m_BitIndex + countBits;
 
             // E.B
             // There is a problem here, wordpointer could be -1 ?!
@@ -406,9 +406,9 @@ namespace MP3Sharp.Decoding
             //((short[])&returnvalue)[0] = ((short[])wordpointer + 1)[0];
             //wordpointer++; // Added by me!
             //((short[])&returnvalue + 1)[0] = ((short[])wordpointer)[0];
-            int Right = (m_FrameBuffer[m_WordPointer] & 0x0000FFFF);
+            var Right = (m_FrameBuffer[m_WordPointer] & 0x0000FFFF);
             m_WordPointer++;
-            int Left = (m_FrameBuffer[m_WordPointer] & (int) SupportClass.Identity(0xFFFF0000));
+            var Left = (m_FrameBuffer[m_WordPointer] & (int) SupportClass.Identity(0xFFFF0000));
             returnvalue = ((Right << 16) & (int) SupportClass.Identity(0xFFFF0000)) |
                           ((SupportClass.URShift(Left, 16)) & 0x0000FFFF);
 
@@ -455,7 +455,7 @@ namespace MP3Sharp.Decoding
             {
                 while (len > 0)
                 {
-                    int bytesread = m_SourceStream.Read(b, offs, len);
+                    var bytesread = m_SourceStream.Read(b, offs, len);
                     if (bytesread == -1 || bytesread == 0) // t/DD -- .NET returns 0 at end-of-stream!
                     {
                         // t/DD: this really SHOULD throw an exception here...
@@ -485,12 +485,12 @@ namespace MP3Sharp.Decoding
         /// </summary>
         private int readBytes(sbyte[] b, int offs, int len)
         {
-            int totalBytesRead = 0;
+            var totalBytesRead = 0;
             try
             {
                 while (len > 0)
                 {
-                    int bytesread = m_SourceStream.Read(b, offs, len);
+                    var bytesread = m_SourceStream.Read(b, offs, len);
 //					for (int i = 0; i < len; i++) b[i] = (sbyte)Temp[i];
                     if (bytesread == -1 || bytesread == 0)
                     {

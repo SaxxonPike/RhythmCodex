@@ -112,7 +112,7 @@ namespace FlacLibSharp
 
         private string description;
 
-        private UInt32 width, height, colorDepth, colors;
+        private uint width, height, colorDepth, colors;
 
         private byte[] data;
 
@@ -120,10 +120,10 @@ namespace FlacLibSharp
 
         public Picture()
         {
-            this.Header.Type = MetadataBlockHeader.MetadataBlockType.Picture;
-            this.mimeType = string.Empty;
-            this.description = string.Empty;
-            this.data = new byte[] {};
+            Header.Type = MetadataBlockHeader.MetadataBlockType.Picture;
+            mimeType = string.Empty;
+            description = string.Empty;
+            data = new byte[] {};
             CalculateMetadataBlockLength();
         }
 
@@ -136,27 +136,27 @@ namespace FlacLibSharp
             pictureType = (PictureType)(int)BinaryDataHelper.GetUInt32(data, 0);
 
             // Then the length of the MIME type text (32-bit) and the mime type
-            int mimeTypeLength = (int)BinaryDataHelper.GetUInt32(data, 4);
-            byte[] mimeData = BinaryDataHelper.GetDataSubset(data, 8, mimeTypeLength);
-            this.mimeType = Encoding.ASCII.GetString(mimeData);
+            var mimeTypeLength = (int)BinaryDataHelper.GetUInt32(data, 4);
+            var mimeData = BinaryDataHelper.GetDataSubset(data, 8, mimeTypeLength);
+            mimeType = Encoding.ASCII.GetString(mimeData);
 
-            int byteOffset = 8 + mimeTypeLength;
+            var byteOffset = 8 + mimeTypeLength;
 
             // Then the description (in UTF-8)
-            int descriptionLength = (int)BinaryDataHelper.GetUInt32(data, byteOffset);
-            byte[] descriptionData = BinaryDataHelper.GetDataSubset(data, byteOffset + 4, descriptionLength);
-            this.description = Encoding.UTF8.GetString(descriptionData);
+            var descriptionLength = (int)BinaryDataHelper.GetUInt32(data, byteOffset);
+            var descriptionData = BinaryDataHelper.GetDataSubset(data, byteOffset + 4, descriptionLength);
+            description = Encoding.UTF8.GetString(descriptionData);
 
             byteOffset += 4 + descriptionLength;
 
-            this.width = BinaryDataHelper.GetUInt32(data, byteOffset);
-            this.height = BinaryDataHelper.GetUInt32(data, byteOffset + 4);
-            this.colorDepth = BinaryDataHelper.GetUInt32(data, byteOffset + 8);
-            this.colors = BinaryDataHelper.GetUInt32(data, byteOffset + 12);
+            width = BinaryDataHelper.GetUInt32(data, byteOffset);
+            height = BinaryDataHelper.GetUInt32(data, byteOffset + 4);
+            colorDepth = BinaryDataHelper.GetUInt32(data, byteOffset + 8);
+            colors = BinaryDataHelper.GetUInt32(data, byteOffset + 12);
 
             byteOffset += 16;
 
-            int dataLength = (int)BinaryDataHelper.GetUInt32(data, byteOffset);
+            var dataLength = (int)BinaryDataHelper.GetUInt32(data, byteOffset);
             this.data = BinaryDataHelper.GetDataSubset(data, byteOffset + 4, dataLength);
 
             // According to the FLAC format, if the mimeType is the string -->, the data contains
@@ -164,7 +164,7 @@ namespace FlacLibSharp
             // more sensible.
             if (mimeType == "-->")
             {
-                this.url = Encoding.UTF8.GetString(this.data);
+                url = Encoding.UTF8.GetString(this.data);
             }
         }
 
@@ -175,18 +175,18 @@ namespace FlacLibSharp
         public override void WriteBlockData(Stream targetStream)
         {
             // This is where the header will come
-            long headerPosition = targetStream.Position;
+            var headerPosition = targetStream.Position;
             // Moving along, we'll write the header last!
             targetStream.Seek(4, SeekOrigin.Current);
 
             // 32-bit picture type
-            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)this.pictureType), 0, 4);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)pictureType), 0, 4);
 
-            byte[] mimeTypeData = Encoding.ASCII.GetBytes(this.mimeType);
+            var mimeTypeData = Encoding.ASCII.GetBytes(mimeType);
             // Length of the MIME type string (in bytes ...)
             targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)mimeTypeData.Length), 0, 4);
             // Only allows printable ascii characters (0x20 - 0x7e)
-            for (int i = 0; i < mimeTypeData.Length; i++)
+            for (var i = 0; i < mimeTypeData.Length; i++)
             {
                 if (mimeTypeData[i] < 0x20 || mimeTypeData[i] > 0x7e)
                 {
@@ -196,37 +196,37 @@ namespace FlacLibSharp
             }
             targetStream.Write(mimeTypeData, 0, mimeTypeData.Length);
 
-            byte[] descriptionData = Encoding.UTF8.GetBytes(this.description);
+            var descriptionData = Encoding.UTF8.GetBytes(description);
             // Length of the description string (in bytes ...)
             targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)descriptionData.Length), 0, 4);
             // The description of the picture (in UTF-8)
             targetStream.Write(descriptionData, 0, descriptionData.Length);
 
-            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)this.width), 0, 4);
-            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)this.height), 0, 4);
-            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)this.colorDepth), 0, 4);
-            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)this.colors), 0, 4);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)width), 0, 4);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)height), 0, 4);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)colorDepth), 0, 4);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)colors), 0, 4);
 
             // If --> is the mime type, the data contains the URL ...
-            if (this.mimeType == "-->")
+            if (mimeType == "-->")
             {
-                this.data = Encoding.ASCII.GetBytes(this.url);
+                data = Encoding.ASCII.GetBytes(url);
             }
 
-            if (this.data == null)
+            if (data == null)
             {
-                this.data = new byte[] {};
+                data = new byte[] {};
             }
 
-            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)this.data.Length), 0, 4);
-            targetStream.Write(this.data, 0, this.data.Length);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt32((uint)data.Length), 0, 4);
+            targetStream.Write(data, 0, data.Length);
 
             // Writing the header, now we have the required information on the variable length fields
-            CalculateMetadataBlockLength((uint)mimeTypeData.Length, (uint)descriptionData.Length, (uint)this.data.Length);
+            CalculateMetadataBlockLength((uint)mimeTypeData.Length, (uint)descriptionData.Length, (uint)data.Length);
             
-            long currentPosition = targetStream.Position;
+            var currentPosition = targetStream.Position;
             targetStream.Position = headerPosition;
-            this.Header.WriteHeaderData(targetStream);
+            Header.WriteHeaderData(targetStream);
             targetStream.Position = currentPosition;
         }
 
@@ -235,9 +235,9 @@ namespace FlacLibSharp
         /// </summary>
         private void CalculateMetadataBlockLength()
         {
-            uint mimeLength = (uint)Encoding.ASCII.GetByteCount(this.mimeType);
-            uint descriptionLength = (uint)Encoding.UTF8.GetByteCount(this.description);
-            uint pictureDataLength = (uint)this.data.Length;
+            var mimeLength = (uint)Encoding.ASCII.GetByteCount(mimeType);
+            var descriptionLength = (uint)Encoding.UTF8.GetByteCount(description);
+            var pictureDataLength = (uint)data.Length;
 
             CalculateMetadataBlockLength(mimeLength, descriptionLength, pictureDataLength);
         }
@@ -251,79 +251,79 @@ namespace FlacLibSharp
         /// <remarks>If the lengths of the variable length fields are already available, use this function, otherwise use the parameterless override.</remarks>
         private void CalculateMetadataBlockLength(uint mimeLength, uint descriptionLength, uint pictureDataLength)
         {
-            this.Header.MetaDataBlockLength = FIXED_BLOCK_LENGTH + mimeLength + descriptionLength + pictureDataLength;
+            Header.MetaDataBlockLength = FIXED_BLOCK_LENGTH + mimeLength + descriptionLength + pictureDataLength;
         }
 
         /// <summary>
         /// What kind of picture this is.
         /// </summary>
         public PictureType PictureType { 
-            get { return this.pictureType; }
-            set { this.pictureType = value; }
+            get { return pictureType; }
+            set { pictureType = value; }
         }
 
         /// <summary>
         /// The MIME type of the picture file.
         /// </summary>
         public string MIMEType {
-            get { return this.mimeType; }
-            set { this.mimeType = value; }
+            get { return mimeType; }
+            set { mimeType = value; }
         }
 
         /// <summary>
         /// A description for the picture.
         /// </summary>
         public string Description {
-            get { return this.description; }
-            set { this.description = value; }
+            get { return description; }
+            set { description = value; }
         }
 
         /// <summary>
         /// Width of the picture, in pixels.
         /// </summary>
-        public UInt32 Width {
-            get { return this.width; }
-            set { this.width = value; }
+        public uint Width {
+            get { return width; }
+            set { width = value; }
         }
 
         /// <summary>
         /// Height of the picture, in pixels.
         /// </summary>
-        public UInt32 Height {
-            get { return this.height; }
-            set { this.height = value; }
+        public uint Height {
+            get { return height; }
+            set { height = value; }
         }
 
         /// <summary>
         /// The colour depth of the picture.
         /// </summary>
-        public UInt32 ColorDepth {
-            get { return this.colorDepth; }
-            set { this.colorDepth = value; }
+        public uint ColorDepth {
+            get { return colorDepth; }
+            set { colorDepth = value; }
         }
 
         /// <summary>
         /// For color indexed pictures, all of the colours in the picture.
         /// </summary>
-        public UInt32 Colors {
-            get { return this.colors; }
-            set { this.colors = value;  }
+        public uint Colors {
+            get { return colors; }
+            set { colors = value;  }
         }
 
         /// <summary>
         /// The actual picture data in a stream.
         /// </summary>
         public byte[] Data {
-            get { return this.data; }
-            set { this.data = value; }
+            get { return data; }
+            set { data = value; }
         }
 
         /// <summary>
         /// The URL for the image if the MIME Type indicates a URL reference (MIME Type = '-->').
         /// </summary>
         public string URL {
-            get { return this.url; }
-            set { this.url = value;  }
+            get { return url; }
+            set { url = value;  }
         }
 
     }

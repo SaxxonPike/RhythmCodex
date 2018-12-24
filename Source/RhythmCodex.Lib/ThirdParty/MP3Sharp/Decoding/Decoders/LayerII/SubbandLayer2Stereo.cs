@@ -46,7 +46,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         /// </summary>
         public override void ReadBitAllocation(Bitstream stream, Header header, Crc16 crc)
         {
-            int length = get_allocationlength(header);
+            var length = get_allocationlength(header);
             allocation = stream.GetBitsFromBuffer(length);
             channel2_allocation = stream.GetBitsFromBuffer(length);
             if (crc != null)
@@ -116,12 +116,12 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         /// </summary>
         public override bool ReadSampleData(Bitstream stream)
         {
-            bool returnvalue = base.ReadSampleData(stream);
+            var returnvalue = base.ReadSampleData(stream);
 
             if (channel2_allocation != 0)
                 if (groupingtable[1] != null)
                 {
-                    int samplecode = stream.GetBitsFromBuffer(channel2_codelength[0]);
+                    var samplecode = stream.GetBitsFromBuffer(channel2_codelength[0]);
                     // create requantized samples:
                     samplecode += samplecode << 1;
                     /*
@@ -136,10 +136,10 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
                     target[tmp] = source[samplecode + temp];
                     // memcpy (channel2_samples, channel2_groupingtable + samplecode, 3 * sizeof (real));
                     */
-                    float[] target = channel2_samples;
-                    float[] source = groupingtable[1];
-                    int tmp = 0;
-                    int temp = samplecode;
+                    var target = channel2_samples;
+                    var source = groupingtable[1];
+                    var tmp = 0;
+                    var temp = samplecode;
                     target[tmp] = source[temp];
                     temp++;
                     tmp++;
@@ -165,10 +165,10 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         /// </summary>
         public override bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
         {
-            bool returnvalue = base.PutNextSample(channels, filter1, filter2);
+            var returnvalue = base.PutNextSample(channels, filter1, filter2);
             if ((channel2_allocation != 0) && (channels != OutputChannels.LEFT_CHANNEL))
             {
-                float sample = channel2_samples[samplenumber - 1];
+                var sample = channel2_samples[samplenumber - 1];
 
                 if (groupingtable[1] == null)
                     sample = (sample + channel2_d[0]) * channel2_c[0];

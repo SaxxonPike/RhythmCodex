@@ -54,7 +54,7 @@ namespace NVorbis.Ogg
             _curOfs = 0;
         }
 
-        internal void MergeWith(NVorbis.DataPacket continuation)
+        internal void MergeWith(DataPacket continuation)
         {
             var op = continuation as Packet;
 

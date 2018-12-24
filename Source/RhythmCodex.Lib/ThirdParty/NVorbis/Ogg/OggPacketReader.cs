@@ -12,7 +12,7 @@ using System.IO;
 
 namespace NVorbis.Ogg
 {
-    [System.Diagnostics.DebuggerTypeProxy(typeof(PacketReader.DebugView))]
+    [System.Diagnostics.DebuggerTypeProxy(typeof(DebugView))]
     class PacketReader : IPacketProvider
     {
         class DebugView

@@ -106,13 +106,13 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         {
             if (allocation != 0)
             {
-                float sample = samples[samplenumber];
+                var sample = samples[samplenumber];
 
                 if (groupingtable[0] == null)
                     sample = (sample + d[0]) * c[0];
                 if (channels == OutputChannels.BOTH_CHANNELS)
                 {
-                    float sample2 = sample;
+                    var sample2 = sample;
                     if (groupnumber <= 4)
                     {
                         sample *= scalefactor1;

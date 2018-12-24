@@ -17,13 +17,13 @@ namespace FlacLibSharp {
         public CueSheetTrack()
         {
             // Initializing some "reasonable" defaults
-            this.trackOffset = 0;
-            this.trackNumber = 0;
-            this.isrc = string.Empty;
-            this.isAudioTrack = true;
-            this.isPreEmphasis = false;
+            trackOffset = 0;
+            trackNumber = 0;
+            isrc = string.Empty;
+            isAudioTrack = true;
+            isPreEmphasis = false;
 
-            this.indexPoints = new CueSheetTrackIndexCollection();
+            indexPoints = new CueSheetTrackIndexCollection();
         }
 
         /// <summary>
@@ -32,31 +32,33 @@ namespace FlacLibSharp {
         /// <param name="data">The full data array.</param>
         /// <param name="dataOffset">Where the cuesheet track begins.</param>
         public CueSheetTrack(byte[] data, int dataOffset) {
-            this.trackOffset = BinaryDataHelper.GetUInt64(data, dataOffset);
-            this.trackNumber = (byte)BinaryDataHelper.GetUInt64(data, dataOffset + 8, 8);
-            this.isrc = System.Text.Encoding.ASCII.GetString(data, dataOffset + 9, 12).Trim(new char[] { '\0' });
-            this.isAudioTrack = !BinaryDataHelper.GetBoolean(data, dataOffset + 21, 1); // 0 for audio
-            this.isPreEmphasis = BinaryDataHelper.GetBoolean(data, dataOffset + 21, 2);
+            trackOffset = BinaryDataHelper.GetUInt64(data, dataOffset);
+            trackNumber = (byte)BinaryDataHelper.GetUInt64(data, dataOffset + 8, 8);
+            isrc = Encoding.ASCII.GetString(data, dataOffset + 9, 12).Trim(new char[] { '\0' });
+            isAudioTrack = !BinaryDataHelper.GetBoolean(data, dataOffset + 21, 1); // 0 for audio
+            isPreEmphasis = BinaryDataHelper.GetBoolean(data, dataOffset + 21, 2);
             // 6 bits + 13 bytes need to be zero, won't check this
-            byte indexPointCount = (byte)BinaryDataHelper.GetUInt64(data, dataOffset + 35, 8);
+            var indexPointCount = (byte)BinaryDataHelper.GetUInt64(data, dataOffset + 35, 8);
 
             if (indexPointCount > 100)
             {
-                throw new FlacLibSharp.Exceptions.FlacLibSharpInvalidFormatException(string.Format("CueSheet track nr {0} has an invalid Track Index Count of {1}. Maximum allowed is 100.", this.TrackNumber, indexPointCount));
+                throw new Exceptions.FlacLibSharpInvalidFormatException(
+                    $"CueSheet track nr {TrackNumber} has an invalid Track Index Count of {indexPointCount}. Maximum allowed is 100.");
             }
 
             // For all tracks, except the lead-in track, one or more track index points
             dataOffset += 36;
-            for (int i = 0; i < indexPointCount; i++)
+            for (var i = 0; i < indexPointCount; i++)
             {
-                this.IndexPoints.Add(new CueSheetTrackIndex(data, dataOffset));
+                IndexPoints.Add(new CueSheetTrackIndex(data, dataOffset));
                 dataOffset += 12; // Index points are always 12 bytes long
             }
 
-            if (indexPointCount != this.IndexPoints.Count)
+            if (indexPointCount != IndexPoints.Count)
             {
                 // Should we be so strict?
-                throw new FlacLibSharp.Exceptions.FlacLibSharpInvalidFormatException(string.Format("CueSheet track nr {0} indicates {1} index points, but actually {2} index points are present.", this.TrackNumber, indexPointCount, this.IndexPoints.Count));
+                throw new Exceptions.FlacLibSharpInvalidFormatException(
+                    $"CueSheet track nr {TrackNumber} indicates {indexPointCount} index points, but actually {IndexPoints.Count} index points are present.");
             }
 
         }
@@ -67,40 +69,40 @@ namespace FlacLibSharp {
         /// <param name="targetStream"></param>
         public void WriteBlockData(Stream targetStream)
         {
-            targetStream.Write(BinaryDataHelper.GetBytesUInt64(this.trackOffset), 0, 8);
-            targetStream.WriteByte(this.TrackNumber);
-            targetStream.Write(BinaryDataHelper.GetPaddedAsciiBytes(this.isrc, ISRC_LENGTH), 0, ISRC_LENGTH);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt64(trackOffset), 0, 8);
+            targetStream.WriteByte(TrackNumber);
+            targetStream.Write(BinaryDataHelper.GetPaddedAsciiBytes(isrc, ISRC_LENGTH), 0, ISRC_LENGTH);
             
             byte trackAndEmphasis = 0;
-            if (this.IsAudioTrack)
+            if (IsAudioTrack)
             {
                 trackAndEmphasis += 0x80; // Most significant bit to 1
             }
-            if (this.IsPreEmphasis)
+            if (IsPreEmphasis)
             {
                 trackAndEmphasis += 0x40; // Second most significant bit to 1
             }
             targetStream.WriteByte(trackAndEmphasis);
 
-            byte[] nullData = new byte[RESERVED_NULLDATA_LENGTH];
+            var nullData = new byte[RESERVED_NULLDATA_LENGTH];
             targetStream.Write(nullData, 0, nullData.Length);
 
-            targetStream.WriteByte(this.IndexPointCount);
+            targetStream.WriteByte(IndexPointCount);
 
-            foreach (var indexPoint in this.IndexPoints)
+            foreach (var indexPoint in IndexPoints)
             {
                 indexPoint.WriteBlockData(targetStream);
             }
         }
 
-        private UInt64 trackOffset;
+        private ulong trackOffset;
 
         /// <summary>
         /// Offset of a track.
         /// </summary>
-        public UInt64 TrackOffset {
-            get { return this.trackOffset; }
-            set { this.trackOffset = value;  }
+        public ulong TrackOffset {
+            get { return trackOffset; }
+            set { trackOffset = value;  }
         }
 
         private byte trackNumber;
@@ -109,8 +111,8 @@ namespace FlacLibSharp {
         /// Number of the track.
         /// </summary>
         public byte TrackNumber {
-            get { return this.trackNumber; }
-            set { this.trackNumber = value;  }
+            get { return trackNumber; }
+            set { trackNumber = value;  }
         }
 
         private string isrc;
@@ -119,8 +121,8 @@ namespace FlacLibSharp {
         /// The ISRC of the track.
         /// </summary>
         public string ISRC {
-            get { return this.isrc; }
-            set { this.isrc = value; }
+            get { return isrc; }
+            set { isrc = value; }
         }
 
         private bool isAudioTrack;
@@ -129,8 +131,8 @@ namespace FlacLibSharp {
         /// Indicates whether or not this is an audio track.
         /// </summary>
         public bool IsAudioTrack {
-            get { return this.isAudioTrack; }
-            set { this.isAudioTrack = value; }
+            get { return isAudioTrack; }
+            set { isAudioTrack = value; }
         }
 
         private bool isPreEmphasis;
@@ -139,8 +141,8 @@ namespace FlacLibSharp {
         /// The Pre Emphasis flag.
         /// </summary>
         public bool IsPreEmphasis {
-            get { return this.isPreEmphasis; }
-            set { this.isPreEmphasis = value; }
+            get { return isPreEmphasis; }
+            set { isPreEmphasis = value; }
         }
 
         /// <summary>
@@ -150,8 +152,8 @@ namespace FlacLibSharp {
         {
             get
             {
-                if (this.TrackNumber == CueSheet.CUESHEET_LEADOUT_TRACK_NUMBER_CDDA ||
-                    this.trackNumber == CueSheet.CUESHEET_LEADOUT_TRACK_NUMBER_NON_CDDA)
+                if (TrackNumber == CueSheet.CUESHEET_LEADOUT_TRACK_NUMBER_CDDA ||
+                    trackNumber == CueSheet.CUESHEET_LEADOUT_TRACK_NUMBER_NON_CDDA)
                 {
                     return true;
                 }
@@ -166,7 +168,7 @@ namespace FlacLibSharp {
         /// Number of track index points. There must be at least one index in every track in a CUESHEET except for the lead-out track, which must have zero. For CD-DA, this number may be no more than 100.
         /// </summary>
         public byte IndexPointCount {
-            get { return (byte)this.IndexPoints.Count; }
+            get { return (byte)IndexPoints.Count; }
         }
 
         private CueSheetTrackIndexCollection indexPoints;
@@ -176,12 +178,12 @@ namespace FlacLibSharp {
         /// </summary>
         public CueSheetTrackIndexCollection IndexPoints {
             get {
-                if (this.indexPoints == null) { 
-                    this.indexPoints = new CueSheetTrackIndexCollection();
+                if (indexPoints == null) { 
+                    indexPoints = new CueSheetTrackIndexCollection();
                 }
-                return this.indexPoints;
+                return indexPoints;
             }
-            set { this.indexPoints = value; }
+            set { indexPoints = value; }
         }
 
     }

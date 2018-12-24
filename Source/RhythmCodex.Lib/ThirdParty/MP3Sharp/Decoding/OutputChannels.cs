@@ -87,7 +87,7 @@ namespace MP3Sharp.Decoding
         {
             get
             {
-                int count = (outputChannels == BOTH_CHANNELS) ? 2 : 1;
+                var count = (outputChannels == BOTH_CHANNELS) ? 2 : 1;
                 return count;
             }
         }
@@ -124,11 +124,11 @@ namespace MP3Sharp.Decoding
 
         public override bool Equals(object o)
         {
-            bool equals = false;
+            var equals = false;
 
             if (o is OutputChannels)
             {
-                OutputChannels oc = (OutputChannels) o;
+                var oc = (OutputChannels) o;
                 equals = (oc.outputChannels == outputChannels);
             }
 

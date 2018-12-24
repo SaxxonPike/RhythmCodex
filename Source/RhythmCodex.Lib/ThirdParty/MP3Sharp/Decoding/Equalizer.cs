@@ -70,9 +70,9 @@ namespace MP3Sharp.Decoding
             set
             {
                 reset();
-                int max = (value.Length > BANDS) ? BANDS : value.Length;
+                var max = (value.Length > BANDS) ? BANDS : value.Length;
 
-                for (int i = 0; i < max; i++)
+                for (var i = 0; i < max; i++)
                 {
                     settings[i] = limit(value[i]);
                 }
@@ -101,9 +101,9 @@ namespace MP3Sharp.Decoding
             set
             {
                 reset();
-                int max = BANDS;
+                var max = BANDS;
 
-                for (int i = 0; i < max; i++)
+                for (var i = 0; i < max; i++)
                 {
                     settings[i] = limit(value.getBand(i));
                 }
@@ -132,7 +132,7 @@ namespace MP3Sharp.Decoding
         {
             get
             {
-                float[] factors = new float[BANDS];
+                var factors = new float[BANDS];
                 for (int i = 0, maxCount = BANDS; i < maxCount; i++)
                 {
                     factors[i] = getBandFactor(settings[i]);
@@ -152,7 +152,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public void reset()
         {
-            for (int i = 0; i < BANDS; i++)
+            for (var i = 0; i < BANDS; i++)
             {
                 settings[i] = 0.0f;
             }
@@ -160,7 +160,7 @@ namespace MP3Sharp.Decoding
 
         public float setBand(int band, float neweq)
         {
-            float eq = 0.0f;
+            var eq = 0.0f;
 
             if ((band >= 0) && (band < BANDS))
             {
@@ -176,7 +176,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public float getBand(int band)
         {
-            float eq = 0.0f;
+            var eq = 0.0f;
 
             if ((band >= 0) && (band < BANDS))
             {
@@ -208,7 +208,7 @@ namespace MP3Sharp.Decoding
             if (eq == BAND_NOT_PRESENT)
                 return 0.0f;
 
-            float f = (float) Math.Pow(2.0, eq);
+            var f = (float) Math.Pow(2.0, eq);
             return f;
         }
 

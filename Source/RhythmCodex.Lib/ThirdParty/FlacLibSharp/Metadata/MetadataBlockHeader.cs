@@ -55,8 +55,8 @@ namespace FlacLibSharp {
 
         public MetadataBlockHeader()
         {
-            this.Type = MetadataBlockType.None;
-            this.metaDataBlockLength = 0;
+            Type = MetadataBlockType.None;
+            metaDataBlockLength = 0;
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace FlacLibSharp {
         /// </summary>
         /// <param name="data"></param>
         public MetadataBlockHeader(byte[] data) {
-            this.ParseData(data);
+            ParseData(data);
         }
 
         /// <summary>
@@ -72,13 +72,13 @@ namespace FlacLibSharp {
         /// </summary>
         /// <param name="targetStream">The stream where the data will be written to.</param>
         public void WriteHeaderData(Stream targetStream) {
-            byte data = this.isLastMetaDataBlock ? (byte)128 : (byte)0; // The 128 because the last metadata flag is the most significant bit set to 1 ...
-            data += (byte)(this.typeID & 0x7F); // We make sure to chop off the last bit
+            var data = isLastMetaDataBlock ? (byte)128 : (byte)0; // The 128 because the last metadata flag is the most significant bit set to 1 ...
+            data += (byte)(typeID & 0x7F); // We make sure to chop off the last bit
 
             targetStream.WriteByte(data);
 
             // 24-bit metaDataBlockLength
-            targetStream.Write(BinaryDataHelper.GetBytes((UInt64)this.metaDataBlockLength, 3), 0, 3);
+            targetStream.Write(BinaryDataHelper.GetBytes((ulong)metaDataBlockLength, 3), 0, 3);
         }
 
         private bool isLastMetaDataBlock;
@@ -89,8 +89,8 @@ namespace FlacLibSharp {
         /// Indicates if this is the last metadata block in the file (meaning that it is followed by the actual audio stream).
         /// </summary>
         public bool IsLastMetaDataBlock {
-            get { return this.isLastMetaDataBlock; }
-            set { this.isLastMetaDataBlock = value; }
+            get { return isLastMetaDataBlock; }
+            set { isLastMetaDataBlock = value; }
         }
 
         private MetadataBlockType type;
@@ -99,21 +99,21 @@ namespace FlacLibSharp {
         /// Defines what kind of metadatablock this is.
         /// </summary>
         public MetadataBlockType Type {
-            get { return this.type; }
+            get { return type; }
             set {
-                this.type = value;
+                type = value;
                 typeID = (int)value;
             }
         }
 
-        private UInt32 metaDataBlockLength;
+        private uint metaDataBlockLength;
 
         /// <summary>
         /// Defines the length of the metadata block.
         /// </summary>
-        public UInt32 MetaDataBlockLength {
-            get { return this.metaDataBlockLength; }
-            set { this.metaDataBlockLength = value; }
+        public uint MetaDataBlockLength {
+            get { return metaDataBlockLength; }
+            set { metaDataBlockLength = value; }
         }
 
         /// <summary>
@@ -135,40 +135,40 @@ namespace FlacLibSharp {
             //  127 : invalid, to avoid confusion with a frame sync code
             // Next 3 bytes: Length (in bytes) of metadata to follow (does not include the size of the METADATA_BLOCK_HEADER)
 
-            this.isLastMetaDataBlock = BinaryDataHelper.GetBoolean(data, 0, 0);
+            isLastMetaDataBlock = BinaryDataHelper.GetBoolean(data, 0, 0);
 
             typeID = data[0] & 0x7F;
             switch (typeID) {
                 case 0:
-                    this.type = MetadataBlockType.StreamInfo;
-                    this.metaDataBlockLength = 34;
+                    type = MetadataBlockType.StreamInfo;
+                    metaDataBlockLength = 34;
                     break;
                 case 1:
-                    this.type = MetadataBlockType.Padding;
+                    type = MetadataBlockType.Padding;
                     break;
                 case 2:
-                    this.type = MetadataBlockType.Application;
+                    type = MetadataBlockType.Application;
                     break;
                 case 3:
-                    this.type = MetadataBlockType.Seektable;
+                    type = MetadataBlockType.Seektable;
                     break;
                 case 4:
-                    this.type = MetadataBlockType.VorbisComment;
+                    type = MetadataBlockType.VorbisComment;
                     break;
                 case 5:
-                    this.type = MetadataBlockType.CueSheet;
+                    type = MetadataBlockType.CueSheet;
                     break;
                 case 6:
-                    this.type = MetadataBlockType.Picture;
+                    type = MetadataBlockType.Picture;
                     break;
             }
             if (typeID > 6 && typeID < 127) {
-                this.type = MetadataBlockType.None;
+                type = MetadataBlockType.None;
             } else if(typeID >= 127) {
-                this.type = MetadataBlockType.Invalid;
+                type = MetadataBlockType.Invalid;
             }
 
-            this.metaDataBlockLength = (BinaryDataHelper.GetUInt24(data, 1));
+            metaDataBlockLength = (BinaryDataHelper.GetUInt24(data, 1));
         }
     }
 }

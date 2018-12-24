@@ -11,9 +11,9 @@ namespace FlacLibSharp {
     /// </summary>
     public class SeekPoint : IComparable<SeekPoint> {
 
-        private UInt64 firstSampleNumber;
-        private UInt64 byteOffset;
-        private UInt16 numberOfSamples;
+        private ulong firstSampleNumber;
+        private ulong byteOffset;
+        private ushort numberOfSamples;
         private bool isPlaceHolder;
 
         /// <summary>
@@ -21,9 +21,9 @@ namespace FlacLibSharp {
         /// </summary>
         /// <param name="data"></param>
         public SeekPoint(byte[] data) {
-            this.firstSampleNumber = BinaryDataHelper.GetUInt64(data, 0);
-            this.byteOffset = BinaryDataHelper.GetUInt64(data, 8);
-            this.numberOfSamples = BinaryDataHelper.GetUInt16(data, 16);
+            firstSampleNumber = BinaryDataHelper.GetUInt64(data, 0);
+            byteOffset = BinaryDataHelper.GetUInt64(data, 8);
+            numberOfSamples = BinaryDataHelper.GetUInt16(data, 16);
             ValidateIsPlaceholder();
         }
 
@@ -32,26 +32,26 @@ namespace FlacLibSharp {
         /// </summary>
         /// <param name="targetStream"></param>
         public void WriteData(Stream targetStream) {
-            targetStream.Write(BinaryDataHelper.GetBytesUInt64(this.firstSampleNumber), 0, 8);
-            targetStream.Write(BinaryDataHelper.GetBytesUInt64(this.byteOffset), 0, 8);
-            targetStream.Write(BinaryDataHelper.GetBytesUInt16(this.numberOfSamples), 0, 2);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt64(firstSampleNumber), 0, 8);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt64(byteOffset), 0, 8);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt16(numberOfSamples), 0, 2);
         }
 
         /// <summary>
         /// Creates a place holder seekpoint.
         /// </summary>
         public SeekPoint() {
-            this.firstSampleNumber = Int64.MaxValue;
-            this.isPlaceHolder = true;
+            firstSampleNumber = long.MaxValue;
+            isPlaceHolder = true;
         }
 
         /// <summary>
         /// Sample number of the first sample in a target frame, 0xFFFFFFFFFFFFFFFF for a placeholder point.
         /// </summary>
-        public UInt64 FirstSampleNumber {
-            get { return this.firstSampleNumber; }
+        public ulong FirstSampleNumber {
+            get { return firstSampleNumber; }
             set {
-                this.firstSampleNumber = value;
+                firstSampleNumber = value;
                 ValidateIsPlaceholder();
             }
         }
@@ -59,35 +59,35 @@ namespace FlacLibSharp {
         /// <summary>
         /// Offset, in bytes, from the first byte of the first frame header to the first byte of the target frame's header.
         /// </summary>
-        public UInt64 ByteOffset {
-            get { return this.byteOffset; }
-            set { this.byteOffset = value; }
+        public ulong ByteOffset {
+            get { return byteOffset; }
+            set { byteOffset = value; }
         }
 
         /// <summary>
         /// Number of samples in the target frame.
         /// </summary>
-        public UInt16 NumberOfSamples {
-            get { return this.numberOfSamples; }
-            set { this.numberOfSamples = value; }
+        public ushort NumberOfSamples {
+            get { return numberOfSamples; }
+            set { numberOfSamples = value; }
         }
 
         /// <summary>
         /// Indicates if this seekpoint is a place holder.
         /// </summary>
         public bool IsPlaceHolder {
-            get { return this.isPlaceHolder; }
-            set { this.isPlaceHolder = value; }
+            get { return isPlaceHolder; }
+            set { isPlaceHolder = value; }
         }
 
         /// <summary>
         /// Checks if this SeekPoint is a place holder.
         /// </summary>
         private void ValidateIsPlaceholder() {
-            if (this.FirstSampleNumber == UInt64.MaxValue) {
-                this.isPlaceHolder = true;
+            if (FirstSampleNumber == ulong.MaxValue) {
+                isPlaceHolder = true;
             } else {
-                this.isPlaceHolder = false;
+                isPlaceHolder = false;
             }
         }
 
@@ -99,10 +99,10 @@ namespace FlacLibSharp {
         /// <param name="other"></param>
         /// <returns></returns>
         public int CompareTo(SeekPoint other) {
-            if (this.firstSampleNumber == other.firstSampleNumber) {
+            if (firstSampleNumber == other.firstSampleNumber) {
                 // We're equal... in the reality of FLAC this may never happen
                 return 0;
-            } else if (this.firstSampleNumber < other.firstSampleNumber) {
+            } else if (firstSampleNumber < other.firstSampleNumber) {
                 // I precede the other, because my samplenumber is smaller
                 return -1;
             } else {

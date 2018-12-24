@@ -75,12 +75,12 @@ namespace MP3Sharp.Decoding.Decoders.LayerI
                 }
                 else if (channels == OutputChannels.LEFT_CHANNEL)
                 {
-                    float sample1 = sample * scalefactor;
+                    var sample1 = sample * scalefactor;
                     filter1.WriteSample(sample1, subbandnumber);
                 }
                 else
                 {
-                    float sample2 = sample * channel2_scalefactor;
+                    var sample2 = sample * channel2_scalefactor;
                     filter1.WriteSample(sample2, subbandnumber);
                 }
             }

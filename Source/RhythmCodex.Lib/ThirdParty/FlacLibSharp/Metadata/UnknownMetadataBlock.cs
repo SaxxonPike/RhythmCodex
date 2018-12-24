@@ -6,7 +6,7 @@ namespace FlacLibSharp {
 
         public FLACUnknownMetaDataBlock()
         {
-            this.Header.Type = MetadataBlockHeader.MetadataBlockType.None;
+            Header.Type = MetadataBlockHeader.MetadataBlockType.None;
         }
         
         public override void LoadBlockData(byte[] data) {

@@ -92,7 +92,7 @@ namespace MP3Sharp.Decoding.Decoders
         protected internal virtual void ReadAllocation()
         {
             // start to read audio data:
-            for (int i = 0; i < num_subbands; ++i)
+            for (var i = 0; i < num_subbands; ++i)
                 subbands[i].ReadBitAllocation(stream, header, crc);
         }
 
@@ -103,15 +103,15 @@ namespace MP3Sharp.Decoding.Decoders
 
         protected internal virtual void ReadScaleFactors()
         {
-            for (int i = 0; i < num_subbands; ++i)
+            for (var i = 0; i < num_subbands; ++i)
                 subbands[i].ReadScaleFactor(stream, header);
         }
 
         protected internal virtual void ReadSampleData()
         {
-            bool readReady = false;
-            bool writeReady = false;
-            int hdrMode = header.mode();
+            var readReady = false;
+            var writeReady = false;
+            var hdrMode = header.mode();
             do
             {
                 int i;

@@ -205,8 +205,8 @@ namespace MP3Sharp
         /// </summary>
         public int DecodeFrames(int frameCount)
         {
-            int framesDecoded = 0;
-            bool aFrameWasRead = true;
+            var framesDecoded = 0;
+            var aFrameWasRead = true;
             while (framesDecoded < frameCount && aFrameWasRead)
             {
                 aFrameWasRead = ReadFrame();
@@ -226,7 +226,7 @@ namespace MP3Sharp
             if (IsEOF)
                 return 0;
 
-            int bytesRead = 0;
+            var bytesRead = 0;
             while (true)
             {
                 if (m_Buffer.BytesLeft <= 0)
@@ -265,7 +265,7 @@ namespace MP3Sharp
         private bool ReadFrame()
         {
             // Read a frame from the bitstream.
-            Header header = m_BitStream.readFrame();
+            var header = m_BitStream.readFrame();
             if (header == null)
                 return false;
 
@@ -280,7 +280,7 @@ namespace MP3Sharp
                 m_FrequencyRep = header.frequency();
 
                 // Decode the frame.
-                ABuffer decoderOutput = m_Decoder.DecodeFrame(header, m_BitStream);
+                var decoderOutput = m_Decoder.DecodeFrame(header, m_BitStream);
 
                 // Apparently, the way JavaZoom sets the output buffer 
                 // on the decoder is a bit dodgy. Even though

@@ -16,7 +16,7 @@ namespace FlacLibSharp
         /// <param name="path">Path to the file.</param>
         public static List<MetadataBlock> GetMetaData(string path)
         {
-            using (FlacFile flac = new FlacFile(path))
+            using (var flac = new FlacFile(path))
             {
                 return flac.Metadata;
             }
@@ -29,7 +29,7 @@ namespace FlacLibSharp
         /// <returns>The StreamInfo metadata or null if no StreamInfo metadata is found.</returns>
         public static StreamInfo GetStreamInfo(string path)
         {
-            using (FlacFile flac = new FlacFile(path))
+            using (var flac = new FlacFile(path))
             {
                 return flac.StreamInfo;
             }
@@ -42,7 +42,7 @@ namespace FlacLibSharp
         /// <returns>The vorbis comment metadata or null if none is available.</returns>
         public static VorbisComment GetVorbisComment(string path)
         {
-            using (FlacFile flac = new FlacFile(path))
+            using (var flac = new FlacFile(path))
             {
                 return flac.VorbisComment;
             }
@@ -60,7 +60,7 @@ namespace FlacLibSharp
         /// <returns>The value of the field.</returns>
         public static VorbisCommentValues GetVorbisField(string path, string fieldName)
         {
-            using (FlacFile flac = new FlacFile(path))
+            using (var flac = new FlacFile(path))
             {
                 if (flac.VorbisComment != null && flac.VorbisComment.ContainsField(fieldName))
                 {
@@ -127,7 +127,7 @@ namespace FlacLibSharp
         /// <returns>The duration of the track in seconds or 0 if the duration is not known (sample count is missing from streaminfo metadata).</returns>
         public static int GetDuration(string path)
         {
-            using (FlacFile file = new FlacFile(path))
+            using (var file = new FlacFile(path))
             {
                 return file.StreamInfo.Duration;
             }

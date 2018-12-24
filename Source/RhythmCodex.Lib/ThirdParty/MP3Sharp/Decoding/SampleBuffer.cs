@@ -36,7 +36,7 @@ namespace MP3Sharp.Decoding
             channels = number_of_channels;
             frequency = sample_frequency;
 
-            for (int i = 0; i < number_of_channels; ++i)
+            for (var i = 0; i < number_of_channels; ++i)
                 bufferp[i] = (short) i;
         }
 
@@ -71,11 +71,11 @@ namespace MP3Sharp.Decoding
 
         public override void AppendSamples(int channel, float[] f)
         {
-            int pos = bufferp[channel];
+            var pos = bufferp[channel];
 
             short s;
             float fs;
-            for (int i = 0; i < 32;)
+            for (var i = 0; i < 32;)
             {
                 fs = f[i++];
                 fs = (fs > 32767.0f ? 32767.0f : (fs < -32767.0f ? -32767.0f : fs));
@@ -107,7 +107,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public override void ClearBuffer()
         {
-            for (int i = 0; i < channels; ++i)
+            for (var i = 0; i < channels; ++i)
                 bufferp[i] = (short) i;
         }
 

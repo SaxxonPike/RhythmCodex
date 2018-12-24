@@ -19,7 +19,7 @@ using System.IO;
 
 namespace MP3Sharp.Support
 {
-    internal class SupportClass
+    internal static class SupportClass
     {
         public static int URShift(int number, int bits)
         {
@@ -111,10 +111,10 @@ namespace MP3Sharp.Support
         /// </returns>
         public static int ReadInput(Stream sourceStream, ref sbyte[] target, int start, int count)
         {
-            byte[] receiver = new byte[target.Length];
-            int bytesRead = sourceStream.Read(receiver, start, count);
+            var receiver = new byte[target.Length];
+            var bytesRead = sourceStream.Read(receiver, start, count);
 
-            for (int i = start; i < start + bytesRead; i++)
+            for (var i = start; i < start + bytesRead; i++)
                 target[i] = (sbyte) receiver[i];
 
             return bytesRead;
@@ -129,8 +129,8 @@ namespace MP3Sharp.Support
         /// <returns>The new array of bytes</returns>
         public static byte[] ToByteArray(sbyte[] sbyteArray)
         {
-            byte[] byteArray = new byte[sbyteArray.Length];
-            for (int index = 0; index < sbyteArray.Length; index++)
+            var byteArray = new byte[sbyteArray.Length];
+            for (var index = 0; index < sbyteArray.Length; index++)
                 byteArray[index] = (byte) sbyteArray[index];
             return byteArray;
         }
@@ -142,8 +142,8 @@ namespace MP3Sharp.Support
         /// <returns>The new array of bytes</returns>
         public static byte[] ToByteArray(string sourceString)
         {
-            byte[] byteArray = new byte[sourceString.Length];
-            for (int index = 0; index < sourceString.Length; index++)
+            var byteArray = new byte[sourceString.Length];
+            for (var index = 0; index < sourceString.Length; index++)
                 byteArray[index] = (byte) sourceString[index];
             return byteArray;
         }
@@ -160,10 +160,8 @@ namespace MP3Sharp.Support
         public static void GetSBytesFromString(string sourceString, int sourceStart, int sourceEnd,
             ref sbyte[] destinationArray, int destinationStart)
         {
-            int sourceCounter;
-            int destinationCounter;
-            sourceCounter = sourceStart;
-            destinationCounter = destinationStart;
+            var sourceCounter = sourceStart;
+            var destinationCounter = destinationStart;
             while (sourceCounter < sourceEnd)
             {
                 destinationArray[destinationCounter] = (sbyte) sourceString[sourceCounter];

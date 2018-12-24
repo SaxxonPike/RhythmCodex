@@ -11,7 +11,7 @@ namespace FlacLibSharp {
     /// </summary>
     public class ApplicationInfo : MetadataBlock {
 
-        private UInt32 applicationID;
+        private uint applicationID;
         private byte[] applicationData;
 
         /// <summary>
@@ -20,9 +20,9 @@ namespace FlacLibSharp {
         /// <remarks>Application id will be 0, application data will be empty.</remarks>
         public ApplicationInfo()
         {
-            this.Header.Type = MetadataBlockHeader.MetadataBlockType.Application;
-            this.applicationID = 0;
-            this.applicationData = new byte[0];
+            Header.Type = MetadataBlockHeader.MetadataBlockType.Application;
+            applicationID = 0;
+            applicationData = new byte[0];
         }
 
         /// <summary>
@@ -30,12 +30,12 @@ namespace FlacLibSharp {
         /// </summary>
         /// <param name="data"></param>
         public override void LoadBlockData(byte[] data) {
-            this.applicationID = BinaryDataHelper.GetUInt32(data, 0);
-            this.applicationData = new byte[data.Length - 4];
+            applicationID = BinaryDataHelper.GetUInt32(data, 0);
+            applicationData = new byte[data.Length - 4];
 
-            for (int i = 0; i < this.applicationData.Length; i++)
+            for (var i = 0; i < applicationData.Length; i++)
             {
-                this.applicationData[i] = data[i + 4]; // + 4 because the first four bytes are the application ID!
+                applicationData[i] = data[i + 4]; // + 4 because the first four bytes are the application ID!
             }
         }
 
@@ -45,27 +45,27 @@ namespace FlacLibSharp {
         /// <param name="targetStream">Stream to write the data to.</param>
         public override void WriteBlockData(Stream targetStream)
         {
-            this.Header.MetaDataBlockLength = 4 + (uint)this.applicationData.Length;
-            this.Header.WriteHeaderData(targetStream);
+            Header.MetaDataBlockLength = 4 + (uint)applicationData.Length;
+            Header.WriteHeaderData(targetStream);
 
-            targetStream.Write(BinaryDataHelper.GetBytesUInt32(this.applicationID), 0, 4);
-            targetStream.Write(this.applicationData, 0, this.applicationData.Length);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt32(applicationID), 0, 4);
+            targetStream.Write(applicationData, 0, applicationData.Length);
         }
 
         /// <summary>
         /// The application ID of the application for which the data is intended
         /// </summary>
-        public UInt32 ApplicationID {
-            get { return this.applicationID; }
-            set { this.applicationID = value; }
+        public uint ApplicationID {
+            get { return applicationID; }
+            set { applicationID = value; }
         }
 
         /// <summary>
         /// The additional data
         /// </summary>
         public byte[] ApplicationData {
-            get { return this.applicationData; }
-            set { this.applicationData = value; }
+            get { return applicationData; }
+            set { applicationData = value; }
         }
 
     }

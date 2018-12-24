@@ -21,7 +21,7 @@ namespace FlacLibSharp {
 
         public CueSheet()
         {
-            this.Header.Type = MetadataBlockHeader.MetadataBlockType.CueSheet;
+            Header.Type = MetadataBlockHeader.MetadataBlockType.CueSheet;
 
             CalculateMetaDataBlockLength();
         }
@@ -31,23 +31,24 @@ namespace FlacLibSharp {
         /// </summary>
         /// <param name="data">The binary data from the flac file.</param>
         public override void LoadBlockData(byte[] data) {
-            this.mediaCatalog = Encoding.ASCII.GetString(data, 0, 128).Trim(new char[]{ '\0' });
-            this.leadInSampleCount = BinaryDataHelper.GetUInt64(data, 128);
-            this.isCDCueSheet = BinaryDataHelper.GetBoolean(data, 136, 0);
+            mediaCatalog = Encoding.ASCII.GetString(data, 0, 128).Trim(new char[]{ '\0' });
+            leadInSampleCount = BinaryDataHelper.GetUInt64(data, 128);
+            isCDCueSheet = BinaryDataHelper.GetBoolean(data, 136, 0);
             // We're skipping 7 bits + 258 bytes which is reserved null data
-            byte trackCount = data[395];
+            var trackCount = data[395];
             if (trackCount > 100)
             {
                 // Do we really need to throw an exception here?
-                throw new Exceptions.FlacLibSharpInvalidFormatException(string.Format("CueSheet has invalid track count {0}. Cannot be more than 100.", trackCount));
+                throw new Exceptions.FlacLibSharpInvalidFormatException(
+                    $"CueSheet has invalid track count {trackCount}. Cannot be more than 100.");
             }
 
-            int cueSheetTrackOffset = 396;
-            for (int i = 0; i < trackCount; i++)
+            var cueSheetTrackOffset = 396;
+            for (var i = 0; i < trackCount; i++)
             {
-                CueSheetTrack newTrack = new CueSheetTrack(data, cueSheetTrackOffset);
+                var newTrack = new CueSheetTrack(data, cueSheetTrackOffset);
                 cueSheetTrackOffset += 36 + (12 * newTrack.IndexPointCount); // 36 bytes for the cueSheetTrack and 12 bytes per index point ...
-                this.Tracks.Add(newTrack);
+                Tracks.Add(newTrack);
             }
         }
 
@@ -57,25 +58,26 @@ namespace FlacLibSharp {
         /// <param name="targetStream">Stream to write the data to.</param>
         public override void WriteBlockData(Stream targetStream)
         {
-            if (this.Tracks.Count > 0)
+            if (Tracks.Count > 0)
             {
-                var lastTrack = this.Tracks[this.Tracks.Count - 1];
+                var lastTrack = Tracks[Tracks.Count - 1];
                 if (!lastTrack.IsLeadOut)
                 {
-                    throw new FlacLibSharp.Exceptions.FlacLibSharpInvalidFormatException(string.Format("CueSheet is invalid, last track (nr {0}) is not the lead-out track.", lastTrack.TrackNumber));
+                    throw new Exceptions.FlacLibSharpInvalidFormatException(
+                        $"CueSheet is invalid, last track (nr {lastTrack.TrackNumber}) is not the lead-out track.");
                 }
             }
             else
             {
-                throw new FlacLibSharp.Exceptions.FlacLibSharpInvalidFormatException("CueSheet is invalid as it has no tracks, it must have at least one track (the lead-out track).");
+                throw new Exceptions.FlacLibSharpInvalidFormatException("CueSheet is invalid as it has no tracks, it must have at least one track (the lead-out track).");
             }
 
             // TODO: this value in the header should also update when someone add/removes tracks or track index points ...
-            this.Header.MetaDataBlockLength = CalculateMetaDataBlockLength();
-            this.Header.WriteHeaderData(targetStream);
+            Header.MetaDataBlockLength = CalculateMetaDataBlockLength();
+            Header.WriteHeaderData(targetStream);
 
-            targetStream.Write(BinaryDataHelper.GetPaddedAsciiBytes(this.MediaCatalog, MEDIACATALOG_MAX_LENGTH), 0, MEDIACATALOG_MAX_LENGTH);
-            targetStream.Write(BinaryDataHelper.GetBytesUInt64(this.LeadInSampleCount), 0, 8);
+            targetStream.Write(BinaryDataHelper.GetPaddedAsciiBytes(MediaCatalog, MEDIACATALOG_MAX_LENGTH), 0, MEDIACATALOG_MAX_LENGTH);
+            targetStream.Write(BinaryDataHelper.GetBytesUInt64(LeadInSampleCount), 0, 8);
             
             byte isCDCueSheet = 0;
             if(this.isCDCueSheet) {
@@ -84,11 +86,11 @@ namespace FlacLibSharp {
             targetStream.WriteByte(isCDCueSheet);
 
             // Now we need to write 258 bytes of 0 data ("reserved")
-            byte[] nullData = new byte[RESERVED_NULLDATA_LENGTH];
+            var nullData = new byte[RESERVED_NULLDATA_LENGTH];
             targetStream.Write(nullData, 0, nullData.Length);
 
             // The number of tracks i 1 byte in size ...
-            targetStream.WriteByte(this.TrackCount);
+            targetStream.WriteByte(TrackCount);
 
             foreach (var track in Tracks)
             {
@@ -104,33 +106,33 @@ namespace FlacLibSharp {
         /// </summary>
         public string MediaCatalog {
             get {
-                if (this.mediaCatalog == null)
+                if (mediaCatalog == null)
                 {
-                    this.mediaCatalog = string.Empty;
+                    mediaCatalog = string.Empty;
                 }
-                return this.mediaCatalog;
+                return mediaCatalog;
             }
-            set { this.mediaCatalog = value; }
+            set { mediaCatalog = value; }
         }
 
-        private UInt64 leadInSampleCount;
+        private ulong leadInSampleCount;
 
         /// <summary>
         /// Gets or sets the number of lead-in samples, this field is only relevant for CD-DA cuesheets.
         /// </summary>
-        public UInt64 LeadInSampleCount {
-            get { return this.leadInSampleCount; }
-            set { this.leadInSampleCount = value; }
+        public ulong LeadInSampleCount {
+            get { return leadInSampleCount; }
+            set { leadInSampleCount = value; }
         }
 
-        private Boolean isCDCueSheet;
+        private bool isCDCueSheet;
 
         /// <summary>
         /// Gets or sets whether the cuesheet corresponds to a Compact Disc.
         /// </summary>
-        public Boolean IsCDCueSheet {
-            get { return this.isCDCueSheet; }
-            set { this.isCDCueSheet = value; }
+        public bool IsCDCueSheet {
+            get { return isCDCueSheet; }
+            set { isCDCueSheet = value; }
         }
 
         /// <summary>
@@ -138,7 +140,7 @@ namespace FlacLibSharp {
         /// </summary>
         public byte TrackCount {
             get {
-                return (byte)this.Tracks.Count;
+                return (byte)Tracks.Count;
             }
         }
 
@@ -149,10 +151,10 @@ namespace FlacLibSharp {
         /// </summary>
         public CueSheetTrackCollection Tracks {
             get {
-                if (this.tracks == null) {
-                    this.tracks = new CueSheetTrackCollection();
+                if (tracks == null) {
+                    tracks = new CueSheetTrackCollection();
                 }
-                return this.tracks;
+                return tracks;
             }
         }
 
@@ -162,12 +164,12 @@ namespace FlacLibSharp {
         /// <returns></returns>
         private uint CalculateMetaDataBlockLength()
         {
-            uint totalLength = CUESHEET_BLOCK_DATA_LENGTH; // See the specs ...
+            var totalLength = CUESHEET_BLOCK_DATA_LENGTH; // See the specs ...
             // The length of this metadata block is: 
             // 396 bytes for the CueSheet block data itself (see spec for details)
             // + 36 bytes per CueSheetTrack
             // + 12 bytes per CueSheetTrackIndex
-            foreach (var track in this.Tracks)
+            foreach (var track in Tracks)
             {
                 totalLength += CUESHEET_TRACK_LENGTH + (track.IndexPointCount * CUESHEET_TRACK_INDEXPOINT_LENGTH);
             }

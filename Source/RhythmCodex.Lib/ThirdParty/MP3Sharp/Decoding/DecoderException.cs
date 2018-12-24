@@ -53,7 +53,7 @@ namespace MP3Sharp.Decoding
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
 
             info.AddValue("ErrorCode", m_ErrorCode);

@@ -77,7 +77,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerI
         /// </summary>
         public override bool ReadSampleData(Bitstream stream)
         {
-            bool returnvalue = base.ReadSampleData(stream);
+            var returnvalue = base.ReadSampleData(stream);
             if (channel2_allocation != 0)
             {
                 channel2_sample = stream.GetBitsFromBuffer(channel2_samplelength);
@@ -93,7 +93,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerI
             base.PutNextSample(channels, filter1, filter2);
             if ((channel2_allocation != 0) && (channels != OutputChannels.LEFT_CHANNEL))
             {
-                float sample2 = (channel2_sample * channel2_factor + channel2_offset) * channel2_scalefactor;
+                var sample2 = (channel2_sample * channel2_factor + channel2_offset) * channel2_scalefactor;
                 if (channels == OutputChannels.BOTH_CHANNELS)
                     filter2.WriteSample(sample2, subbandnumber);
                 else

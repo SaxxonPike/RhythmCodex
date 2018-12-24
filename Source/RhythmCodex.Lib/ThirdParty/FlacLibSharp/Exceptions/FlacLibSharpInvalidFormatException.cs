@@ -15,9 +15,9 @@
         /// </summary>
         /// <param name="details">Technical details on what exactly has gone wrong.</param>
         public FlacLibSharpInvalidFormatException(string details)
-            : base(string.Format("The file is not a valid FLAC file: {0}", details))
+            : base($"The file is not a valid FLAC file: {details}")
         {
-            this.Details = details;
+            Details = details;
         }
     }
 }

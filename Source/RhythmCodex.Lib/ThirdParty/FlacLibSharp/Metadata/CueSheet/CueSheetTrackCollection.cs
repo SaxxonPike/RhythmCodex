@@ -11,7 +11,7 @@ namespace FlacLibSharp {
 
         protected override void InsertItem(int index, CueSheetTrack item)
         {
-            if (this.Count >= maxCapacity)
+            if (Count >= maxCapacity)
             {
                 throw new Exceptions.FlacLibSharpMaxTracksExceededException(maxCapacity);
             }

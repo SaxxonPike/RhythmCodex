@@ -66,13 +66,13 @@ namespace MP3Sharp
         {
             if (bufferOut == null)
             {
-                throw new ArgumentNullException("bufferOut");
+                throw new ArgumentNullException(nameof(bufferOut));
             }
             if ((count + offset) > bufferOut.Length)
             {
                 throw new ArgumentException("The sum of offset and count is larger than the buffer length");
             }
-            int remaining = BytesLeft;
+            var remaining = BytesLeft;
             int copySize;
             if (count > remaining)
             {
@@ -81,7 +81,7 @@ namespace MP3Sharp
             else
             {
                 // Copy an even number of sample frames
-                int remainder = count % (2 * CHANNELS);
+                var remainder = count % (2 * CHANNELS);
                 copySize = count - remainder;
             }
 
@@ -118,24 +118,24 @@ namespace MP3Sharp
             if (samples == null)
             {
                 // samples is required.
-                throw new ArgumentNullException("samples");
+                throw new ArgumentNullException(nameof(samples));
             }
             if (samples.Length < 32)
             {
                 throw new ArgumentException("samples must have 32 values");
             }
             // Always, 32 samples are appended
-            int pos = m_Bufferp[channel];
+            var pos = m_Bufferp[channel];
 
-            for (int i = 0; i < 32; i++)
+            for (var i = 0; i < 32; i++)
             {
-                float fs = samples[i];
+                var fs = samples[i];
                 if (fs > 32767.0f) // can this happen?
                     fs = 32767.0f;
                 else if (fs < -32767.0f)
                     fs = -32767.0f;
 
-                int sample = (int)fs;
+                var sample = (int)fs;
                 m_Buffer[pos] = (byte)(sample & 0xff);
                 m_Buffer[pos + 1] = (byte)(sample >> 8);
 
@@ -153,7 +153,7 @@ namespace MP3Sharp
             m_Offset = 0;
             m_End = 0;
 
-            for (int i = 0; i < CHANNELS; i++)
+            for (var i = 0; i < CHANNELS; i++)
                 m_Bufferp[i] = i * 2; // two bytes per channel
         }
 

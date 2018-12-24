@@ -13,7 +13,7 @@ namespace FlacLibSharp.Exceptions
         /// </summary>
         /// <param name="maxIndexPoints">How many index points that are allowed.</param>
         public FlacLibSharpMaxTrackIndicesExceededException(int maxIndexPoints)
-            : base(String.Format("A cuesheet track can have no more than {0} index points.", maxIndexPoints))
+            : base($"A cuesheet track can have no more than {maxIndexPoints} index points.")
         {
         }
     }

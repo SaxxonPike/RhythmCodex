@@ -13,7 +13,7 @@ namespace FlacLibSharp.Exceptions
         /// </summary>
         /// <param name="maxTracks">How many tracks that are allowed.</param>
         public FlacLibSharpMaxTracksExceededException(int maxTracks)
-            : base(String.Format("A cuesheet can have no more than {0} tracks.", maxTracks))
+            : base($"A cuesheet can have no more than {maxTracks} tracks.")
         {
         }
     }

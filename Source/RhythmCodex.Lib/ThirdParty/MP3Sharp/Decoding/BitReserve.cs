@@ -73,9 +73,9 @@ namespace MP3Sharp.Decoding
         {
             totbit += N;
 
-            int val = 0;
+            var val = 0;
 
-            int pos = buf_byte_idx;
+            var pos = buf_byte_idx;
             if (pos + N < BUFSIZE)
             {
                 while (N-- > 0)
@@ -103,7 +103,7 @@ namespace MP3Sharp.Decoding
         public int ReadOneBit()
         {
             totbit++;
-            int val = buf[buf_byte_idx];
+            var val = buf[buf_byte_idx];
             buf_byte_idx = (buf_byte_idx + 1) & BUFSIZE_MASK;
             return val;
         }
@@ -113,7 +113,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public void hputbuf(int val)
         {
-            int ofs = offset;
+            var ofs = offset;
             buf[ofs++] = val & 0x80;
             buf[ofs++] = val & 0x40;
             buf[ofs++] = val & 0x20;
@@ -145,7 +145,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public void RewindStreamBytes(int byteCount)
         {
-            int bits = (byteCount << 3);
+            var bits = (byteCount << 3);
             totbit -= bits;
             buf_byte_idx -= bits;
             if (buf_byte_idx < 0)

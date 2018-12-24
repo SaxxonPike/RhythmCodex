@@ -236,31 +236,31 @@ namespace MP3Sharp.Decoding.Decoders
             InitBlock();
             is_1d = new int[SBLIMIT*SSLIMIT + 4];
             ro = new float[2][][];
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 ro[i] = new float[SBLIMIT][];
-                for (int i2 = 0; i2 < SBLIMIT; i2++)
+                for (var i2 = 0; i2 < SBLIMIT; i2++)
                 {
                     ro[i][i2] = new float[SSLIMIT];
                 }
             }
             lr = new float[2][][];
-            for (int i3 = 0; i3 < 2; i3++)
+            for (var i3 = 0; i3 < 2; i3++)
             {
                 lr[i3] = new float[SBLIMIT][];
-                for (int i4 = 0; i4 < SBLIMIT; i4++)
+                for (var i4 = 0; i4 < SBLIMIT; i4++)
                 {
                     lr[i3][i4] = new float[SSLIMIT];
                 }
             }
             out_1d = new float[SBLIMIT*SSLIMIT];
             prevblck = new float[2][];
-            for (int i5 = 0; i5 < 2; i5++)
+            for (var i5 = 0; i5 < 2; i5++)
             {
                 prevblck[i5] = new float[SBLIMIT*SSLIMIT];
             }
             k = new float[2][];
-            for (int i6 = 0; i6 < 2; i6++)
+            for (var i6 = 0; i6 < 2; i6++)
             {
                 k[i6] = new float[SBLIMIT*SSLIMIT];
             }
@@ -346,7 +346,7 @@ namespace MP3Sharp.Decoding.Decoders
             {
                 // SZD: generate LUT
                 reorder_table = new int[9][];
-                for (int i = 0; i < 9; i++)
+                for (var i = 0; i < 9; i++)
                     reorder_table[i] = Reorder(sfBandIndex[i].s);
             }
 
@@ -399,8 +399,8 @@ namespace MP3Sharp.Decoding.Decoders
                 first_channel = last_channel = 0;
             }
 
-            for (int ch = 0; ch < 2; ch++)
-                for (int j = 0; j < 576; j++)
+            for (var ch = 0; ch < 2; ch++)
+                for (var j = 0; j < 576; j++)
                     prevblck[ch][j] = 0.0f;
 
             nonzero[0] = nonzero[1] = 576;
@@ -431,15 +431,15 @@ namespace MP3Sharp.Decoding.Decoders
         public void seek_notify()
         {
             frame_start = 0;
-            for (int ch = 0; ch < 2; ch++)
-                for (int j = 0; j < 576; j++)
+            for (var ch = 0; ch < 2; ch++)
+                for (var j = 0; j < 576; j++)
                     prevblck[ch][j] = 0.0f;
             m_BitReserve = new BitReserve();
         }
 
         public void Decode()
         {
-            int nSlots = header.slots();
+            var nSlots = header.slots();
             int flush_main;
             int gr, ch, ss, sb, sb18;
             int main_data_end;
@@ -720,10 +720,10 @@ namespace MP3Sharp.Decoding.Decoders
         private void ReadScaleFactors(int ch, int gr)
         {
             int sfb, window;
-            GranuleInfo gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
-            int scale_comp = gr_info.ScaleFacCompress;
-            int length0 = slen[0][scale_comp];
-            int length1 = slen[1][scale_comp];
+            var gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
+            var scale_comp = gr_info.ScaleFacCompress;
+            var length0 = slen[0][scale_comp];
+            var length1 = slen[1][scale_comp];
 
             if ((gr_info.WindowSwitchingFlag != 0) && (gr_info.BlockType == 2))
             {
@@ -833,12 +833,12 @@ namespace MP3Sharp.Decoding.Decoders
         private void get_LSF_scale_data(int ch, int gr)
         {
             int scalefac_comp, int_scalefac_comp;
-            int mode_ext = header.mode_extension();
+            var mode_ext = header.mode_extension();
             int m;
             int blocktypenumber;
-            int blocknumber = 0;
+            var blocknumber = 0;
 
-            GranuleInfo grInfo = (m_SideInfo.Channels[ch].Granules[gr]);
+            var grInfo = (m_SideInfo.Channels[ch].Granules[gr]);
 
             scalefac_comp = grInfo.ScaleFacCompress;
 
@@ -920,14 +920,14 @@ namespace MP3Sharp.Decoding.Decoders
                 }
             }
 
-            for (int x = 0; x < 45; x++)
+            for (var x = 0; x < 45; x++)
                 // why 45, not 54?
                 scalefac_buffer[x] = 0;
 
             m = 0;
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
-                for (int j = 0; j < nr_of_sfb_block[blocknumber][blocktypenumber][i]; j++)
+                for (var j = 0; j < nr_of_sfb_block[blocknumber][blocktypenumber][i]; j++)
                 {
                     scalefac_buffer[m] = (new_slen[i] == 0) ? 0 : m_BitReserve.ReadBits(new_slen[i]);
                     m++;
@@ -942,9 +942,9 @@ namespace MP3Sharp.Decoding.Decoders
         /// </summary>
         private void get_LSF_scale_factors(int ch, int gr)
         {
-            int m = 0;
+            var m = 0;
             int sfb;
-            GranuleInfo grInfo = (m_SideInfo.Channels[ch].Granules[gr]);
+            var grInfo = (m_SideInfo.Channels[ch].Granules[gr]);
 
             get_LSF_scale_data(ch, gr);
 
@@ -1008,7 +1008,7 @@ namespace MP3Sharp.Decoding.Decoders
             v[0] = 0;
             w[0] = 0;
 
-            int part2_3_end = part2_start + m_SideInfo.Channels[ch].Granules[gr].Part23Length;
+            var part2_3_end = part2_start + m_SideInfo.Channels[ch].Granules[gr].Part23Length;
             int num_bits;
             int region1Start;
             int region2Start;
@@ -1043,7 +1043,7 @@ namespace MP3Sharp.Decoding.Decoders
 
             index = 0;
             // Read bigvalues area
-            for (int i = 0; i < (m_SideInfo.Channels[ch].Granules[gr].BigValues << 1); i += 2)
+            for (var i = 0; i < (m_SideInfo.Channels[ch].Granules[gr].BigValues << 1); i += 2)
             {
                 if (i < region1Start)
                     h = Huffman.ht[m_SideInfo.Channels[ch].Granules[gr].TableSelect[0]];
@@ -1132,14 +1132,14 @@ namespace MP3Sharp.Decoding.Decoders
         /// </summary>
         private void dequantize_sample(float[][] xr, int ch, int gr)
         {
-            GranuleInfo gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
-            int cb = 0;
+            var gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
+            var cb = 0;
             int next_cb_boundary;
-            int cb_begin = 0;
-            int cb_width = 0;
+            var cb_begin = 0;
+            var cb_width = 0;
             int index = 0, t_index, j;
             float g_gain;
-            float[][] xr_1d = xr;
+            var xr_1d = xr;
 
             // choose correct scalefactor band per block type, initalize boundary
 
@@ -1167,13 +1167,13 @@ namespace MP3Sharp.Decoding.Decoders
             for (j = 0; j < nonzero[ch]; j++)
             {
                 // Modif E.B 02/22/99
-                int reste = j%SSLIMIT;
-                int quotien = (j - reste)/SSLIMIT;
+                var reste = j%SSLIMIT;
+                var quotien = (j - reste)/SSLIMIT;
                 if (is_1d[j] == 0)
                     xr_1d[quotien][reste] = 0.0f;
                 else
                 {
-                    int abv = is_1d[j];
+                    var abv = is_1d[j];
                     if (is_1d[j] > 0)
                         xr_1d[quotien][reste] = g_gain*t_43[abv];
                     else
@@ -1186,8 +1186,8 @@ namespace MP3Sharp.Decoding.Decoders
             for (j = 0; j < nonzero[ch]; j++)
             {
                 // Modif E.B 02/22/99
-                int reste = j%SSLIMIT;
-                int quotien = (j - reste)/SSLIMIT;
+                var reste = j%SSLIMIT;
+                var quotien = (j - reste)/SSLIMIT;
 
                 if (index == next_cb_boundary)
                 {
@@ -1248,7 +1248,7 @@ namespace MP3Sharp.Decoding.Decoders
                     /*            xr[sb][ss] *= pow(2.0, ((-2.0 * gr_info.subblock_gain[t_index])
 					-(0.5 * (1.0 + gr_info.scalefac_scale)
 					* scalefac[ch].s[t_index][cb]))); */
-                    int idx = scalefac[ch].s[t_index][cb] << gr_info.ScaleFacScale;
+                    var idx = scalefac[ch].s[t_index][cb] << gr_info.ScaleFacScale;
                     idx += (gr_info.SubblockGain[t_index] << 2);
 
                     xr_1d[quotien][reste] *= two_to_negative_half_pow[idx];
@@ -1259,7 +1259,7 @@ namespace MP3Sharp.Decoding.Decoders
                     /*				xr[sb][ss] *= pow(2.0, -0.5 * (1.0+gr_info.scalefac_scale)
 					* (scalefac[ch].l[cb]
 					+ gr_info.preflag * pretab[cb])); */
-                    int idx = scalefac[ch].l[cb];
+                    var idx = scalefac[ch].l[cb];
 
                     if (gr_info.Preflag != 0)
                         idx += pretab[cb];
@@ -1273,8 +1273,8 @@ namespace MP3Sharp.Decoding.Decoders
             for (j = nonzero[ch]; j < 576; j++)
             {
                 // Modif E.B 02/22/99
-                int reste = j%SSLIMIT;
-                int quotien = (j - reste)/SSLIMIT;
+                var reste = j%SSLIMIT;
+                var quotien = (j - reste)/SSLIMIT;
                 if (reste < 0)
                     reste = 0;
                 if (quotien < 0)
@@ -1288,12 +1288,12 @@ namespace MP3Sharp.Decoding.Decoders
         /// </summary>
         private void Reorder(float[][] xr, int ch, int gr)
         {
-            GranuleInfo gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
+            var gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
             int freq, freq3;
             int index;
             int sfb, sfb_start, sfb_lines;
             int src_line, des_line;
-            float[][] xr_1d = xr;
+            var xr_1d = xr;
 
             if ((gr_info.WindowSwitchingFlag != 0) && (gr_info.BlockType == 2))
             {
@@ -1306,8 +1306,8 @@ namespace MP3Sharp.Decoding.Decoders
                     for (index = 0; index < 36; index++)
                     {
                         // Modif E.B 02/22/99
-                        int reste = index%SSLIMIT;
-                        int quotien = (index - reste)/SSLIMIT;
+                        var reste = index%SSLIMIT;
+                        var quotien = (index - reste)/SSLIMIT;
                         out_1d[index] = xr_1d[quotien][reste];
                     }
                     // REORDERING FOR REST SWITCHED SHORT
@@ -1316,15 +1316,15 @@ namespace MP3Sharp.Decoding.Decoders
                         sfb++, sfb_start = sfBandIndex[sfreq].s[sfb],
                             sfb_lines = sfBandIndex[sfreq].s[sfb + 1] - sfb_start)
                     {
-                        int sfb_start3 = (sfb_start << 2) - sfb_start;
+                        var sfb_start3 = (sfb_start << 2) - sfb_start;
 
                         for (freq = 0, freq3 = 0; freq < sfb_lines; freq++, freq3 += 3)
                         {
                             src_line = sfb_start3 + freq;
                             des_line = sfb_start3 + freq3;
                             // Modif E.B 02/22/99
-                            int reste = src_line%SSLIMIT;
-                            int quotien = (src_line - reste)/SSLIMIT;
+                            var reste = src_line%SSLIMIT;
+                            var quotien = (src_line - reste)/SSLIMIT;
 
                             out_1d[des_line] = xr_1d[quotien][reste];
                             src_line += sfb_lines;
@@ -1349,9 +1349,9 @@ namespace MP3Sharp.Decoding.Decoders
                     // pure short
                     for (index = 0; index < 576; index++)
                     {
-                        int j = reorder_table[sfreq][index];
-                        int reste = j%SSLIMIT;
-                        int quotien = (j - reste)/SSLIMIT;
+                        var j = reorder_table[sfreq][index];
+                        var reste = j%SSLIMIT;
+                        var quotien = (j - reste)/SSLIMIT;
                         out_1d[index] = xr_1d[quotien][reste];
                     }
                 }
@@ -1362,8 +1362,8 @@ namespace MP3Sharp.Decoding.Decoders
                 for (index = 0; index < 576; index++)
                 {
                     // Modif E.B 02/22/99
-                    int reste = index%SSLIMIT;
-                    int quotien = (index - reste)/SSLIMIT;
+                    var reste = index%SSLIMIT;
+                    var quotien = (index - reste)/SSLIMIT;
                     out_1d[index] = xr_1d[quotien][reste];
                 }
             }
@@ -1387,17 +1387,17 @@ namespace MP3Sharp.Decoding.Decoders
             }
             else
             {
-                GranuleInfo gr_info = (m_SideInfo.Channels[0].Granules[gr]);
-                int mode_ext = header.mode_extension();
+                var gr_info = (m_SideInfo.Channels[0].Granules[gr]);
+                var mode_ext = header.mode_extension();
                 int sfb;
                 int i;
                 int lines, temp, temp2;
 
-                bool ms_stereo = ((header.mode() == Header.JOINT_STEREO) && ((mode_ext & 0x2) != 0));
-                bool i_stereo = ((header.mode() == Header.JOINT_STEREO) && ((mode_ext & 0x1) != 0));
-                bool lsf = ((header.version() == Header.MPEG2_LSF || header.version() == Header.MPEG25_LSF)); // SZD
+                var ms_stereo = ((header.mode() == Header.JOINT_STEREO) && ((mode_ext & 0x2) != 0));
+                var i_stereo = ((header.mode() == Header.JOINT_STEREO) && ((mode_ext & 0x1) != 0));
+                var lsf = ((header.version() == Header.MPEG2_LSF || header.version() == Header.MPEG25_LSF)); // SZD
 
-                int io_type = (gr_info.ScaleFacCompress & 1);
+                var io_type = (gr_info.ScaleFacCompress & 1);
 
                 // initialization
 
@@ -1414,9 +1414,9 @@ namespace MP3Sharp.Decoding.Decoders
                     {
                         if (gr_info.MixedBlockFlag != 0)
                         {
-                            int max_sfb = 0;
+                            var max_sfb = 0;
 
-                            for (int j = 0; j < 3; j++)
+                            for (var j = 0; j < 3; j++)
                             {
                                 int sfbcnt;
                                 sfbcnt = 2;
@@ -1542,7 +1542,7 @@ namespace MP3Sharp.Decoding.Decoders
                         else
                         {
                             // if (gr_info.mixed_block_flag)
-                            for (int j = 0; j < 3; j++)
+                            for (var j = 0; j < 3; j++)
                             {
                                 int sfbcnt;
                                 sfbcnt = -1;
@@ -1726,7 +1726,7 @@ namespace MP3Sharp.Decoding.Decoders
         private void Antialias(int ch, int gr)
         {
             int sb18, ss, sb18lim;
-            GranuleInfo gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
+            var gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
             // 31 alias-reduction operations between each pair of sub-bands
             // with 8 butterflies between each pair
 
@@ -1746,10 +1746,10 @@ namespace MP3Sharp.Decoding.Decoders
             {
                 for (ss = 0; ss < 8; ss++)
                 {
-                    int src_idx1 = sb18 + 17 - ss;
-                    int src_idx2 = sb18 + 18 + ss;
-                    float bu = out_1d[src_idx1];
-                    float bd = out_1d[src_idx2];
+                    var src_idx1 = sb18 + 17 - ss;
+                    var src_idx2 = sb18 + 18 + ss;
+                    var bu = out_1d[src_idx1];
+                    var bd = out_1d[src_idx2];
                     out_1d[src_idx1] = (bu*cs[ss]) - (bd*ca[ss]);
                     out_1d[src_idx2] = (bd*cs[ss]) + (bu*ca[ss]);
                 }
@@ -1760,7 +1760,7 @@ namespace MP3Sharp.Decoding.Decoders
         {
             int bt;
             int sb18;
-            GranuleInfo gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
+            var gr_info = (m_SideInfo.Channels[ch].Granules[gr]);
             float[] tsOut;
 
             float[][] prvblk;
@@ -1773,12 +1773,12 @@ namespace MP3Sharp.Decoding.Decoders
 
                 tsOut = out_1d;
                 // Modif E.B 02/22/99
-                for (int cc = 0; cc < 18; cc++)
+                for (var cc = 0; cc < 18; cc++)
                     tsOutCopy[cc] = tsOut[cc + sb18];
 
                 InverseMDCT(tsOutCopy, rawout, bt);
 
-                for (int cc = 0; cc < 18; cc++)
+                for (var cc = 0; cc < 18; cc++)
                     tsOut[cc + sb18] = tsOutCopy[cc];
                 // Fin Modif
 
@@ -1829,9 +1829,9 @@ namespace MP3Sharp.Decoding.Decoders
         /// </summary>
         private void doDownMix()
         {
-            for (int sb = 0; sb < SSLIMIT; sb++)
+            for (var sb = 0; sb < SSLIMIT; sb++)
             {
-                for (int ss = 0; ss < SSLIMIT; ss += 3)
+                for (var ss = 0; ss < SSLIMIT; ss += 3)
                 {
                     lr[0][sb][ss] = (lr[0][sb][ss] + lr[1][sb][ss])*0.5f;
                     lr[0][sb][ss + 1] = (lr[0][sb][ss + 1] + lr[1][sb][ss + 1])*0.5f;
@@ -1901,7 +1901,7 @@ namespace MP3Sharp.Decoding.Decoders
                 outValues[34] = 0.0f;
                 outValues[35] = 0.0f;
 
-                int six_i = 0;
+                var six_i = 0;
 
                 int i;
                 for (i = 0; i < 3; i++)
@@ -1944,7 +1944,7 @@ namespace MP3Sharp.Decoding.Decoders
                     tmpf_5 *= 0.517638090f;
 
                     // Output butterflies on 2 3 point IDCT's (for 6 point IDCT)
-                    float save = tmpf_0;
+                    var save = tmpf_0;
                     tmpf_0 += tmpf_5;
                     tmpf_5 = save - tmpf_5;
                     save = tmpf_1;
@@ -2050,8 +2050,8 @@ namespace MP3Sharp.Decoding.Decoders
                 // 9 point IDCT on even indices
 
                 // 5 points on odd indices (not realy an IDCT)
-                float i00 = inValues[0] + inValues[0];
-                float iip12 = i00 + inValues[12];
+                var i00 = inValues[0] + inValues[0];
+                var iip12 = i00 + inValues[12];
 
                 tmp0 = iip12 + inValues[4]*1.8793852415718f + inValues[8]*1.532088886238f +
                        inValues[16]*0.34729635533386f;
@@ -2063,7 +2063,7 @@ namespace MP3Sharp.Decoding.Decoders
                 tmp4 = inValues[0] - inValues[4] + inValues[8] - inValues[12] + inValues[16];
 
                 // 4 points on even indices
-                float i66_ = inValues[6]*1.732050808f; // Sqrt[3]
+                var i66_ = inValues[6]*1.732050808f; // Sqrt[3]
 
                 tmp0_ = inValues[2]*1.9696155060244f + i66_ + inValues[10]*1.2855752193731f +
                         inValues[14]*0.68404028665134f;
@@ -2075,8 +2075,8 @@ namespace MP3Sharp.Decoding.Decoders
 
                 // 9 point IDCT on odd indices
                 // 5 points on odd indices (not realy an IDCT)
-                float i0 = inValues[0 + 1] + inValues[0 + 1];
-                float i0p12 = i0 + inValues[12 + 1];
+                var i0 = inValues[0 + 1] + inValues[0 + 1];
+                var i0p12 = i0 + inValues[12 + 1];
 
                 tmp0o = i0p12 + inValues[4 + 1]*1.8793852415718f + inValues[8 + 1]*1.532088886238f +
                         inValues[16 + 1]*0.34729635533386f;
@@ -2090,7 +2090,7 @@ namespace MP3Sharp.Decoding.Decoders
                          inValues[16 + 1])*0.707106781f; // Twiddled
 
                 // 4 points on even indices
-                float i6_ = inValues[6 + 1]*1.732050808f; // Sqrt[3]
+                var i6_ = inValues[6 + 1]*1.732050808f; // Sqrt[3]
 
                 tmp0_o = inValues[2 + 1]*1.9696155060244f + i6_ + inValues[10 + 1]*1.2855752193731f +
                          inValues[14 + 1]*0.68404028665134f;
@@ -2144,7 +2144,7 @@ namespace MP3Sharp.Decoding.Decoders
 
                 // end 36 point IDCT */
                 // shift to modified IDCT
-                float[] win_bt = win[blockType];
+                var win_bt = win[blockType];
 
                 outValues[0] = -tmpf_9*win_bt[0];
                 outValues[1] = -tmpf_10*win_bt[1];
@@ -2187,10 +2187,10 @@ namespace MP3Sharp.Decoding.Decoders
 
         private static float[] create_t_43()
         {
-            float[] t43 = new float[8192];
-            double d43 = (4.0/3.0);
+            var t43 = new float[8192];
+            var d43 = (4.0/3.0);
 
-            for (int i = 0; i < 8192; i++)
+            for (var i = 0; i < 8192; i++)
             {
                 t43[i] = (float) Math.Pow(i, d43);
             }
@@ -2200,14 +2200,14 @@ namespace MP3Sharp.Decoding.Decoders
         internal static int[] Reorder(int[] scalefac_band)
         {
             // SZD: converted from LAME
-            int j = 0;
-            int[] ix = new int[576];
-            for (int sfb = 0; sfb < 13; sfb++)
+            var j = 0;
+            var ix = new int[576];
+            for (var sfb = 0; sfb < 13; sfb++)
             {
-                int start = scalefac_band[sfb];
-                int end = scalefac_band[sfb + 1];
-                for (int window = 0; window < 3; window++)
-                    for (int i = start; i < end; i++)
+                var start = scalefac_band[sfb];
+                var end = scalefac_band[sfb + 1];
+                for (var window = 0; window < 3; window++)
+                    for (var i = start; i < end; i++)
                         ix[3*i + window] = j++;
             }
             return ix;

@@ -44,7 +44,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public void add_bits(int bitstring, int length)
         {
-            int bitmask = 1 << (length - 1);
+            var bitmask = 1 << (length - 1);
             do
                 if (((m_Crc & 0x8000) == 0) ^ ((bitstring & bitmask) == 0))
                 {
@@ -61,7 +61,7 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public short Checksum()
         {
-            short sum = m_Crc;
+            var sum = m_Crc;
             m_Crc = (short) SupportClass.Identity(0xFFFF);
             return sum;
         }

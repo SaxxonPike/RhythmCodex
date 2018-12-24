@@ -22,7 +22,7 @@ namespace FlacLibSharp
         /// </summary>
         public VorbisCommentValues(string value)
         {
-            this.Add(value);
+            Add(value);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace FlacLibSharp
         /// </summary>
         public VorbisCommentValues(IEnumerable<string> values)
         {
-            this.AddRange(values);
+            AddRange(values);
         }
 
         /// <summary>
@@ -39,12 +39,12 @@ namespace FlacLibSharp
         public string Value {
             get
             {
-                if (this.Count == 0) { return string.Empty; }
+                if (Count == 0) { return string.Empty; }
                 return this[0];
             }
             set
             {
-                if (this.Count == 0) { this.Add(value); }
+                if (Count == 0) { Add(value); }
                 else { this[0] = value; }
             }
         }
@@ -54,7 +54,7 @@ namespace FlacLibSharp
         /// </summary>
         public override string ToString()
         {
-            return this.Value;
+            return Value;
         }
     }
 
@@ -65,7 +65,7 @@ namespace FlacLibSharp
     {
         // Vorbis format: http://www.xiph.org/vorbis/doc/v-comment.html
 
-        private Dictionary<string, VorbisCommentValues> comments;
+        private readonly Dictionary<string, VorbisCommentValues> comments;
         private string vendor;
 
         /// <summary>
@@ -73,9 +73,9 @@ namespace FlacLibSharp
         /// </summary>
         public VorbisComment()
         {
-            this.Header.Type = MetadataBlockHeader.MetadataBlockType.VorbisComment;
-            this.comments = new Dictionary<string, VorbisCommentValues>(StringComparer.OrdinalIgnoreCase);
-            this.vendor = string.Empty;
+            Header.Type = MetadataBlockHeader.MetadataBlockType.VorbisComment;
+            comments = new Dictionary<string, VorbisCommentValues>(StringComparer.OrdinalIgnoreCase);
+            vendor = string.Empty;
         }
 
         /// <summary>
@@ -84,17 +84,17 @@ namespace FlacLibSharp
         /// <param name="data"></param>
         public override void LoadBlockData(byte[] data)
         {
-            UInt32 vendorLength = BinaryDataHelper.GetUInt32(BinaryDataHelper.SwitchEndianness(data, 0, 4), 0);
-            this.vendor = Encoding.UTF8.GetString(BinaryDataHelper.GetDataSubset(data, 4, (int)vendorLength));
+            var vendorLength = BinaryDataHelper.GetUInt32(BinaryDataHelper.SwitchEndianness(data, 0, 4), 0);
+            vendor = Encoding.UTF8.GetString(BinaryDataHelper.GetDataSubset(data, 4, (int)vendorLength));
 
-            int startOfComments = 4 + (int)vendorLength;
-            UInt32 userCommentListLength = BinaryDataHelper.GetUInt32(BinaryDataHelper.SwitchEndianness(data, startOfComments, 4), 0);
+            var startOfComments = 4 + (int)vendorLength;
+            var userCommentListLength = BinaryDataHelper.GetUInt32(BinaryDataHelper.SwitchEndianness(data, startOfComments, 4), 0);
             // Start of comments actually four bytes further (first piece is the count of items in the list)
             startOfComments += 4;
-            for (UInt32 i = 0; i < userCommentListLength; i++)
+            for (uint i = 0; i < userCommentListLength; i++)
             {
-                UInt32 commentLength = BinaryDataHelper.GetUInt32(BinaryDataHelper.SwitchEndianness(data, startOfComments, 4), 0);
-                string comment = Encoding.UTF8.GetString(BinaryDataHelper.GetDataSubset(data, startOfComments + 4, (int)commentLength));
+                var commentLength = BinaryDataHelper.GetUInt32(BinaryDataHelper.SwitchEndianness(data, startOfComments, 4), 0);
+                var comment = Encoding.UTF8.GetString(BinaryDataHelper.GetDataSubset(data, startOfComments + 4, (int)commentLength));
                 // We're moving on in the array ...
                 startOfComments += 4 + (int)commentLength;
 
@@ -112,13 +112,13 @@ namespace FlacLibSharp
         {
             uint totalLength = 0;
 
-            long headerPosition = targetStream.Position;
+            var headerPosition = targetStream.Position;
 
-            this.Header.WriteHeaderData(targetStream);
+            Header.WriteHeaderData(targetStream);
 
             // Write the vendor string (first write the length as a 32-bit uint and then the actual bytes
-            byte[] vendorData = System.Text.Encoding.UTF8.GetBytes(this.vendor);
-            byte[] number = BinaryDataHelper.GetBytesUInt32((uint)vendorData.Length);
+            var vendorData = Encoding.UTF8.GetBytes(vendor);
+            var number = BinaryDataHelper.GetBytesUInt32((uint)vendorData.Length);
             targetStream.Write(BinaryDataHelper.SwitchEndianness(number, 0, 4), 0, 4);
             targetStream.Write(vendorData, 0, vendorData.Length);
             totalLength += 4 + (uint)vendorData.Length;
@@ -128,7 +128,7 @@ namespace FlacLibSharp
             // we can't use this.comments.Count, since 1 comment could have 10
             // values, which results in 10 comments in the FLAC file.
             var totalValueCount = 0;
-            foreach(var comment in this.comments)
+            foreach(var comment in comments)
             {
                 foreach (var value in comment.Value)
                 {
@@ -139,12 +139,12 @@ namespace FlacLibSharp
             targetStream.Write(BinaryDataHelper.SwitchEndianness(number, 0, 4), 0, 4);
             totalLength += 4;
 
-            foreach (var comment in this.comments)
+            foreach (var comment in comments)
             {
                 foreach (var value in comment.Value)
                 {
-                    string commentText = string.Format("{0}={1}", comment.Key, value);
-                    byte[] commentData = System.Text.Encoding.UTF8.GetBytes(commentText);
+                    var commentText = $"{comment.Key}={value}";
+                    var commentData = Encoding.UTF8.GetBytes(commentText);
                     number = BinaryDataHelper.GetBytesUInt32((uint)commentData.Length);
                     targetStream.Write(BinaryDataHelper.SwitchEndianness(number, 0, 4), 0, 4);
                     targetStream.Write(commentData, 0, commentData.Length);
@@ -152,12 +152,12 @@ namespace FlacLibSharp
                 }
             }
 
-            long endPosition = targetStream.Position;
+            var endPosition = targetStream.Position;
 
             targetStream.Seek(headerPosition, SeekOrigin.Begin);
 
-            this.Header.MetaDataBlockLength = totalLength;
-            this.Header.WriteHeaderData(targetStream);
+            Header.MetaDataBlockLength = totalLength;
+            Header.WriteHeaderData(targetStream);
 
             targetStream.Seek(endPosition, SeekOrigin.Begin);
 
@@ -169,7 +169,7 @@ namespace FlacLibSharp
         /// </summary>
         public IEnumerator<KeyValuePair<string, VorbisCommentValues>> GetEnumerator()
         {
-            return this.comments.GetEnumerator();
+            return comments.GetEnumerator();
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace FlacLibSharp
         /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.comments.GetEnumerator();
+            return comments.GetEnumerator();
         }
 
         /// <summary>
@@ -186,22 +186,22 @@ namespace FlacLibSharp
         /// <param name="comment">Comment in the format "FIELDNAME=VALUE".</param>
         protected void AddComment(string comment)
         {
-            int splitIndex = comment.IndexOf('=');
-            string key = comment.Substring(0, splitIndex);
-            string value = comment.Substring(splitIndex + 1);
+            var splitIndex = comment.IndexOf('=');
+            var key = comment.Substring(0, splitIndex);
+            var value = comment.Substring(splitIndex + 1);
 
             AddComment(key, value);
         }
 
         protected void AddComment(string fieldName, VorbisCommentValues values)
         {
-            if (this.comments.ContainsKey(fieldName))
+            if (comments.ContainsKey(fieldName))
             {
-                this.comments[fieldName].AddRange(values);
+                comments[fieldName].AddRange(values);
             }
             else
             {
-                this.comments.Add(fieldName, values);
+                comments.Add(fieldName, values);
             }
         }
 
@@ -210,19 +210,19 @@ namespace FlacLibSharp
         /// </summary>
         protected void AddComment(string fieldName, string value)
         {
-            if (this.comments.ContainsKey(fieldName))
+            if (comments.ContainsKey(fieldName))
             {
-                this.comments[fieldName].Add(value);
+                comments[fieldName].Add(value);
             } else
             {
-                this.comments.Add(fieldName, new VorbisCommentValues(value));
+                comments.Add(fieldName, new VorbisCommentValues(value));
             }
         }
 
         /// <summary>
         /// The Vendor of the Flac file.
         /// </summary>
-        public string Vendor { get { return this.vendor; } }
+        public string Vendor { get { return vendor; } }
 
         /// <summary>
         /// Get one of the vorbis comments.
@@ -233,21 +233,21 @@ namespace FlacLibSharp
         {
             get
             {
-                if (!this.comments.ContainsKey(key))
+                if (!comments.ContainsKey(key))
                 {
-                    this.comments.Add(key, new VorbisCommentValues());
+                    comments.Add(key, new VorbisCommentValues());
                 }
 
-                return this.comments[key];
+                return comments[key];
             }
             set
             {
-                if (!this.comments.ContainsKey(key))
+                if (!comments.ContainsKey(key))
                 {
-                    this.comments.Add(key, value);
+                    comments.Add(key, value);
                 } else
                 {
-                    this.comments[key] = value;
+                    comments[key] = value;
                 }
             }
         }
@@ -259,7 +259,7 @@ namespace FlacLibSharp
         /// <returns>True if such a field is available.</returns>
         public bool ContainsField(string key)
         {
-            return this.comments.ContainsKey(key);
+            return comments.ContainsKey(key);
         }
 
         /// <summary>
@@ -269,9 +269,9 @@ namespace FlacLibSharp
         /// <remarks>Does nothing if no Vorbis Comments with the key are found.</remarks>
         public void Remove(string key)
         {
-            if (this.comments.ContainsKey(key))
+            if (comments.ContainsKey(key))
             {
-                this.comments.Remove(key);
+                comments.Remove(key);
             }
         }
 
@@ -282,13 +282,13 @@ namespace FlacLibSharp
         /// <remarks>Does nothing if no Vorbis Comments with the key are found.</remarks>
         public void Remove(string key, string value)
         {
-            if (this.comments.ContainsKey(key))
+            if (comments.ContainsKey(key))
             {
-                for(var i = this.comments[key].Count - 1; i >= 0; i--)
+                for(var i = comments[key].Count - 1; i >= 0; i--)
                 {
-                    if (this.comments[key][i].Equals(value, StringComparison.OrdinalIgnoreCase))
+                    if (comments[key][i].Equals(value, StringComparison.OrdinalIgnoreCase))
                     {
-                        this.comments[key].RemoveAt(i);
+                        comments[key].RemoveAt(i);
                     }
                 }
             }
@@ -302,7 +302,7 @@ namespace FlacLibSharp
         /// <remarks>If a tag with the key already exists, the value is appended.</remarks>
         public void Add(string key, string value)
         {
-            if (this.ContainsField(key))
+            if (ContainsField(key))
             {
                 this[key].Add(value);
             } else
@@ -319,7 +319,7 @@ namespace FlacLibSharp
         /// <remarks>If a tag with the key already exists, the values are appended.</remarks>
         public void Add(string key, IEnumerable<string> values)
         {
-            if (this.ContainsField(key))
+            if (ContainsField(key))
             {
                 this[key].AddRange(values);
             } else

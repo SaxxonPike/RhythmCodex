@@ -473,7 +473,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         {
             if (header.version() == Header.MPEG1)
             {
-                int channel_bitrate = header.bitrate_index();
+                var channel_bitrate = header.bitrate_index();
 
                 // calculate bitrate per channel:
                 if (header.mode() != Header.SINGLE_CHANNEL)
@@ -511,7 +511,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         protected internal virtual void prepare_sample_reading(Header header, int allocation, int channel,
             float[] factor, int[] codelength, float[] c, float[] d)
         {
-            int channel_bitrate = header.bitrate_index();
+            var channel_bitrate = header.bitrate_index();
             // calculate bitrate per channel:
             if (header.mode() != Header.SINGLE_CHANNEL)
                 if (channel_bitrate == 4)
@@ -572,7 +572,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         /// </summary>
         public override void ReadBitAllocation(Bitstream stream, Header header, Crc16 crc)
         {
-            int length = get_allocationlength(header);
+            var length = get_allocationlength(header);
             allocation = stream.GetBitsFromBuffer(length);
             if (crc != null)
                 crc.add_bits(allocation, length);
@@ -632,11 +632,11 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
             if (allocation != 0)
                 if (groupingtable[0] != null)
                 {
-                    int samplecode = stream.GetBitsFromBuffer(codelength[0]);
+                    var samplecode = stream.GetBitsFromBuffer(codelength[0]);
                     // create requantized samples:
                     samplecode += samplecode << 1;
-                    float[] target = samples;
-                    float[] source = groupingtable[0];
+                    var target = samples;
+                    var source = groupingtable[0];
                     /*
                     int tmp = 0;
                     int temp = 0;
@@ -647,8 +647,8 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
                     target[tmp] = source[samplecode + temp];
                     */
                     //Bugfix:
-                    int tmp = 0;
-                    int temp = samplecode;
+                    var tmp = 0;
+                    var temp = samplecode;
 
                     if (temp > source.Length - 3)
                         temp = source.Length - 3;
@@ -683,7 +683,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
         {
             if ((allocation != 0) && (channels != OutputChannels.RIGHT_CHANNEL))
             {
-                float sample = samples[samplenumber];
+                var sample = samples[samplenumber];
 
                 if (groupingtable[0] == null)
                     sample = (sample + d[0]) * c[0];

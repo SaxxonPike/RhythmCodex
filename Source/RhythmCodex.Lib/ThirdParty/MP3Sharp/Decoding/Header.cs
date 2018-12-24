@@ -222,7 +222,7 @@ namespace MP3Sharp.Decoding
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder(200);
+            var buffer = new StringBuilder(200);
             buffer.Append("Layer ");
             buffer.Append(layer_string());
             buffer.Append(" frame ");
@@ -238,7 +238,7 @@ namespace MP3Sharp.Decoding
             buffer.Append(' ');
             buffer.Append(bitrate_string());
 
-            string s = buffer.ToString();
+            var s = buffer.ToString();
             return s;
         }
 
@@ -250,7 +250,7 @@ namespace MP3Sharp.Decoding
             int headerstring;
             int channel_bitrate;
 
-            bool sync = false;
+            var sync = false;
 
             do
             {

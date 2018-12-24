@@ -60,7 +60,7 @@ namespace MP3Sharp.Decoding
 
             params_Renamed = params0;
 
-            Equalizer eq = params_Renamed.InitialEqualizerSettings;
+            var eq = params_Renamed.InitialEqualizerSettings;
             if (eq != null)
             {
                 m_Equalizer.FromEqualizer = eq;
@@ -82,7 +82,7 @@ namespace MP3Sharp.Decoding
 
                 m_Equalizer.FromEqualizer = value;
 
-                float[] factors = m_Equalizer.BandFactors;
+                var factors = m_Equalizer.BandFactors;
                 if (m_LeftChannelFilter != null)
                     m_LeftChannelFilter.EQ = factors;
 
@@ -157,11 +157,11 @@ namespace MP3Sharp.Decoding
                 Initialize(header);
             }
 
-            int layer = header.layer();
+            var layer = header.layer();
 
             m_Output.ClearBuffer();
 
-            IFrameDecoder decoder = RetrieveDecoder(header, stream, layer);
+            var decoder = RetrieveDecoder(header, stream, layer);
 
             decoder.DecodeFrame();
 
@@ -230,17 +230,17 @@ namespace MP3Sharp.Decoding
         private void Initialize(Header header)
         {
             // REVIEW: allow customizable scale factor
-            float scalefactor = 32700.0f;
+            var scalefactor = 32700.0f;
 
-            int mode = header.mode();
-            int layer = header.layer();
-            int channels = mode == Header.SINGLE_CHANNEL ? 1 : 2;
+            var mode = header.mode();
+            var layer = header.layer();
+            var channels = mode == Header.SINGLE_CHANNEL ? 1 : 2;
 
             // set up output buffer if not set up by client.
             if (m_Output == null)
                 m_Output = new SampleBuffer(header.frequency(), channels);
 
-            float[] factors = m_Equalizer.BandFactors;
+            var factors = m_Equalizer.BandFactors;
             //Console.WriteLine("NOT CREATING SYNTHESIS FILTERS");
             m_LeftChannelFilter = new SynthesisFilter(0, scalefactor, factors);
 

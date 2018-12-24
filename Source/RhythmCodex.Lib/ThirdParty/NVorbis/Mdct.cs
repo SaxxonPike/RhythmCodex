@@ -42,7 +42,7 @@ namespace NVorbis
 
         private Mdct(int n)
         {
-            this._n = n;
+            _n = n;
             _n2 = n >> 1;
             _n4 = _n2 >> 1;
             _n8 = _n4 >> 1;

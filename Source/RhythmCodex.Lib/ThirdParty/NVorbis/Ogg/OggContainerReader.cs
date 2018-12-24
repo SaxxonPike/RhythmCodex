@@ -123,8 +123,8 @@ namespace NVorbis.Ogg
             if (!CanSeek) throw new InvalidOperationException();
 
             // goes through all the pages until the serial count increases
-            var cnt = this._packetReaders.Count;
-            while (this._packetReaders.Count == cnt)
+            var cnt = _packetReaders.Count;
+            while (_packetReaders.Count == cnt)
             {
                 _stream.TakeLock();
                 try
@@ -140,7 +140,7 @@ namespace NVorbis.Ogg
                     _stream.ReleaseLock();
                 }
             }
-            return cnt > this._packetReaders.Count;
+            return cnt > _packetReaders.Count;
         }
 
         /// <summary>

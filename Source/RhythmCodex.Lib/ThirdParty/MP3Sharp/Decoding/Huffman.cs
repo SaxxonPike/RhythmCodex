@@ -738,10 +738,10 @@ namespace MP3Sharp.Decoding
             // 0..31 Huffman code table 0..31
             // 32,33 count1-tables
 
-            int dmask = 1 << ((4*8) - 1);
-            int point = 0;
-            int error = 1;
-            int level = dmask;
+            var dmask = 1 << ((4*8) - 1);
+            var point = 0;
+            var error = 1;
+            var level = dmask;
 
             if (h.val == null)
                 return 2;

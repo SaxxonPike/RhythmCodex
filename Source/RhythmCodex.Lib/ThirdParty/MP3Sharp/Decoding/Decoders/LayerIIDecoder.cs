@@ -45,7 +45,7 @@ namespace MP3Sharp.Decoding.Decoders
 
         protected internal override void ReadScaleFactorSelection()
         {
-            for (int i = 0; i < num_subbands; ++i)
+            for (var i = 0; i < num_subbands; ++i)
                 ((SubbandLayer2) subbands[i]).read_scalefactor_selection(stream, crc);
         }
     }

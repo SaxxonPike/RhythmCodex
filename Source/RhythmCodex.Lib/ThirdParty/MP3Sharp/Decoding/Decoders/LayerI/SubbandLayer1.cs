@@ -114,7 +114,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerI
         {
             if ((allocation != 0) && (channels != OutputChannels.RIGHT_CHANNEL))
             {
-                float scaled_sample = (sample * factor + offset) * scalefactor;
+                var scaled_sample = (sample * factor + offset) * scalefactor;
                 filter1.WriteSample(scaled_sample, subbandnumber);
             }
             return true;
