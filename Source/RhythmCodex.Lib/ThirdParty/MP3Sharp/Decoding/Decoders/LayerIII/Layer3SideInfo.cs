@@ -16,7 +16,7 @@
 
 namespace MP3Sharp.Decoding.Decoders.LayerIII
 {
-    internal class Layer3SideInfo
+    internal sealed class Layer3SideInfo
     {
         public ChannelData[] Channels;
         public int MainDataBegin;

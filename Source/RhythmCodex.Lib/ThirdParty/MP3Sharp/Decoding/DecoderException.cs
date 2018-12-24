@@ -24,7 +24,7 @@ namespace MP3Sharp.Decoding
     ///     errors that can occur when decoding MPEG audio.
     /// </summary>
     [Serializable]
-    internal class DecoderException : MP3SharpException
+    internal sealed class DecoderException : MP3SharpException
     {
         private int m_ErrorCode;
 
@@ -39,12 +39,12 @@ namespace MP3Sharp.Decoding
             m_ErrorCode = errorcode;
         }
 
-        protected DecoderException(SerializationInfo info, StreamingContext context) : base(info, context)
+        private DecoderException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             m_ErrorCode = info.GetInt32("ErrorCode");
         }
 
-        public virtual int ErrorCode
+        public int ErrorCode
         {
             get { return m_ErrorCode; }
         }

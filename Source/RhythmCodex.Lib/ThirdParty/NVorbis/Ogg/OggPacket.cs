@@ -6,22 +6,18 @@
  *                                                                          *
  ***************************************************************************/
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 
 namespace NVorbis.Ogg
 {
-    class Packet : DataPacket
+    internal class Packet : DataPacket
     {
-        long _offset;                       // 8
-        int _length;                        // 4
-        int _curOfs;                        // 4
-        Packet _mergedPacket;               // IntPtr.Size
-        Packet _next;                       // IntPtr.Size
-        Packet _prev;                       // IntPtr.Size
-        ContainerReader _containerReader;   // IntPtr.Size
+        private long _offset;                       // 8
+        private int _length;                        // 4
+        private int _curOfs;                        // 4
+        private Packet _mergedPacket;               // IntPtr.Size
+        private Packet _next;                       // IntPtr.Size
+        private Packet _prev;                       // IntPtr.Size
+        private ContainerReader _containerReader;   // IntPtr.Size
 
         internal Packet Next
         {

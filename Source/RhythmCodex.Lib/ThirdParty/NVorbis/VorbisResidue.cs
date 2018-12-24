@@ -11,7 +11,7 @@ using System.IO;
 
 namespace NVorbis
 {
-    abstract class VorbisResidue
+    internal abstract class VorbisResidue
     {
         internal static VorbisResidue Init(VorbisStreamDecoder vorbis, DataPacket packet)
         {
@@ -30,7 +30,7 @@ namespace NVorbis
             return residue;
         }
 
-        static int icount(int v)
+        private static int icount(int v)
         {
             var ret = 0;
             while (v != 0)
@@ -41,8 +41,8 @@ namespace NVorbis
             return ret;
         }
 
-        VorbisStreamDecoder _vorbis;
-        float[][] _residue;
+        private VorbisStreamDecoder _vorbis;
+        private float[][] _residue;
 
         protected VorbisResidue(VorbisStreamDecoder vorbis)
         {
@@ -75,20 +75,20 @@ namespace NVorbis
         abstract protected void Init(DataPacket packet);
 
         // residue type 0... samples are grouped by channel, then stored with non-interleaved dimensions (d0, d0, d0, d0, ..., d1, d1, d1, d1, ..., d2, d2, d2, d2, etc...)
-        class Residue0 : VorbisResidue
+        private class Residue0 : VorbisResidue
         {
-            int _begin;
-            int _end;
-            int _partitionSize;
-            int _classifications;
-            int _maxStages;
+            private int _begin;
+            private int _end;
+            private int _partitionSize;
+            private int _classifications;
+            private int _maxStages;
 
-            VorbisCodebook[][] _books;
-            VorbisCodebook _classBook;
+            private VorbisCodebook[][] _books;
+            private VorbisCodebook _classBook;
 
-            int[] _cascade, _entryCache;
-            int[][] _decodeMap;
-            int[][][] _partWordCache;
+            private int[] _cascade, _entryCache;
+            private int[][] _decodeMap;
+            private int[][][] _partWordCache;
 
             internal Residue0(VorbisStreamDecoder vorbis) : base(vorbis) { }
 
@@ -277,7 +277,7 @@ namespace NVorbis
         }
 
         // residue type 1... samples are grouped by channel, then stored with interleaved dimensions (d0, d1, d2, d0, d1, d2, etc...)
-        class Residue1 : Residue0
+        private class Residue1 : Residue0
         {
             internal Residue1(VorbisStreamDecoder vorbis) : base(vorbis) { }
 
@@ -303,9 +303,9 @@ namespace NVorbis
         }
 
         // residue type 2... basically type 0, but samples are interleaved between channels (ch0, ch1, ch0, ch1, etc...)
-        class Residue2 : Residue0
+        private class Residue2 : Residue0
         {
-            int _channels;
+            private int _channels;
 
             internal Residue2(VorbisStreamDecoder vorbis) : base(vorbis) { }
 

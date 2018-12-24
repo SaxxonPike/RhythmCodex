@@ -16,7 +16,7 @@
 
 namespace MP3Sharp.Decoding.Decoders.LayerIII
 {
-    internal class ChannelData
+    internal sealed class ChannelData
     {
         public GranuleInfo[] Granules;
         public int[] ScaleFactorBits;

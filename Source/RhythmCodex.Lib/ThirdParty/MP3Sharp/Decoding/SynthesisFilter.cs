@@ -23,7 +23,7 @@ namespace MP3Sharp.Decoding
     ///     This class does a fast downsampling from 32, 44.1 or 48 kHz to 8 kHz, if ULAW is defined.
     ///     Frequencies above 4 kHz are removed by ignoring higher subbands.
     /// </summary>
-    internal class SynthesisFilter
+    internal sealed class SynthesisFilter
     {
         private const double MY_PI = 3.14159265358979323846;
         // Note: These values are not in the same order
@@ -214,14 +214,14 @@ namespace MP3Sharp.Decoding
 
         private float[] actual_v; // v1 or v2
         private int actual_write_pos; // 0-15
-        private float[] eq;
+        //private float[] eq;
 
         /// <summary>
         ///     Contructor.
         ///     The scalefactor scales the calculated float pcm samples to short values
         ///     (raw pcm samples are in [-1.0, 1.0], if no violations occur).
         /// </summary>
-        public SynthesisFilter(int channelIndex, float factor, float[] eq0)
+        public SynthesisFilter(int channelIndex, float factor)
         {
             InitBlock();
             if (d == null)
@@ -235,29 +235,29 @@ namespace MP3Sharp.Decoding
             m_SubbandSamples = new float[32];
             m_ChannelIndex = channelIndex;
             scalefactor = factor;
-            EQ = eq;
+            //EQ = eq;
 
             reset();
         }
 
-        public float[] EQ
-        {
-            set
-            {
-                eq = value;
-
-                if (eq == null)
-                {
-                    eq = new float[32];
-                    for (var i = 0; i < 32; i++)
-                        eq[i] = 1.0f;
-                }
-                if (eq.Length < 32)
-                {
-                    throw new ArgumentException("eq0");
-                }
-            }
-        }
+//        public float[] EQ
+//        {
+//            set
+//            {
+//                eq = value;
+//
+//                if (eq == null)
+//                {
+//                    eq = new float[32];
+//                    for (var i = 0; i < 32; i++)
+//                        eq[i] = 1.0f;
+//                }
+//                if (eq.Length < 32)
+//                {
+//                    throw new ArgumentException("eq0");
+//                }
+//            }
+//        }
 
         private void InitBlock()
         {
@@ -286,14 +286,14 @@ namespace MP3Sharp.Decoding
         /// </summary>
         public void WriteSample(float sample, int subbandIndex)
         {
-            m_SubbandSamples[subbandIndex] = eq[subbandIndex]*sample;
+            m_SubbandSamples[subbandIndex] = sample;
         }
 
         public void WriteAllSamples(float[] s)
         {
             for (var i = 31; i >= 0; i--)
             {
-                m_SubbandSamples[i] = s[i]*eq[i];
+                m_SubbandSamples[i] = s[i];
             }
         }
 
@@ -540,7 +540,7 @@ namespace MP3Sharp.Decoding
             new_v30 = (tmp1 = -p8 - p12 - p14 - p15) - p0;
             new_v28 = tmp1 - tmp2;
 
-            // insert V[0-15] (== new_v[0-15]) into actual v:	
+            // insert V[0-15] (== new_v[0-15]) into actual v:   
             // float[] x2 = actual_v + actual_write_pos;
             var dest = actual_v;
 
@@ -644,9 +644,9 @@ namespace MP3Sharp.Decoding
                 new_v[i] = 0.0f;
             }
 
-            //	float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
-            //	float[] p = new float[16];
-            //	float[] pp = new float[16];
+            //  float[] new_v = new float[32]; // new V[0-15] and V[33-48] of Figure 3-A.2 in ISO DIS 11172-3
+            //  float[] p = new float[16];
+            //  float[] pp = new float[16];
 
             var x1 = m_SubbandSamples;
 
@@ -1399,7 +1399,7 @@ namespace MP3Sharp.Decoding
             actual_write_pos = (actual_write_pos + 1) & 0xf;
             actual_v = (actual_v == v1) ? v2 : v1;
 
-            // initialize samples[]:	
+            // initialize samples[]:    
             //for (register float *floatp = samples + 32; floatp > samples; )
             // *--floatp = 0.0f;  
 
@@ -1426,10 +1426,10 @@ namespace MP3Sharp.Decoding
         ///     to achieve offset + constant indexing into an array. Each sub-array
         ///     represents a block of values of the original array.
         /// </summary>
-        /// <param name="array			The">
+        /// <param name="array          The">
         ///     array to split up into blocks.
         /// </param>
-        /// <param name="blockSize		The">
+        /// <param name="blockSize      The">
         ///     size of the blocks to split the array
         ///     into. This must be an exact divisor of
         ///     the length of the array, or some data

@@ -16,7 +16,7 @@
 
 namespace MP3Sharp.Decoding.Decoders.LayerIII
 {
-    internal class GranuleInfo
+    internal sealed class GranuleInfo
     {
         public int BigValues;
         public int BlockType;

@@ -9,9 +9,9 @@ using System;
 
 namespace NVorbis
 {
-    static class Huffman
+    internal static class Huffman
     {
-        const int MAX_TABLE_BITS = 10;
+        private const int MAX_TABLE_BITS = 10;
 
         static internal System.Collections.Generic.List<HuffmanListNode> BuildPrefixedLinkedList(int[] values, int[] lengthList, int[] codeList, out int tableBits, out HuffmanListNode firstOverflowNode)
         {
@@ -77,7 +77,7 @@ namespace NVorbis
             return prefixList;
         }
 
-        static int SortCallback(HuffmanListNode i1, HuffmanListNode i2)
+        private static int SortCallback(HuffmanListNode i1, HuffmanListNode i2)
         {
             var len = i1.Length - i2.Length;
             if (len == 0)
@@ -88,7 +88,7 @@ namespace NVorbis
         }
     }
 
-    class HuffmanListNode
+    internal class HuffmanListNode
     {
         internal int Value;
 

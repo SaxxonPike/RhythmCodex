@@ -3,7 +3,7 @@ using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.ThirdParty
 {
-    public interface IOggAdapter
+    public interface IOggDecoder
     {
         ISound Decode(Stream stream);
     }

@@ -11,18 +11,18 @@ using System.Collections.Generic;
 
 namespace NVorbis
 {
-    class Mdct
+    internal class Mdct
     {
-        const float M_PI = 3.14159265358979323846264f;
+        private const float M_PI = 3.14159265358979323846264f;
 
-        static Dictionary<int, Mdct> _setupCache = new Dictionary<int, Mdct>(2);
+        private static Dictionary<int, Mdct> _setupCache = new Dictionary<int, Mdct>(2);
 
         public static void Reverse(float[] samples, int sampleCount)
         {
             GetSetup(sampleCount).CalcReverse(samples);
         }
 
-        static Mdct GetSetup(int n)
+        private static Mdct GetSetup(int n)
         {
             lock (_setupCache)
             {
@@ -35,10 +35,10 @@ namespace NVorbis
             }
         }
 
-        int _n, _n2, _n4, _n8, _ld;
+        private int _n, _n2, _n4, _n8, _ld;
 
-        float[] _A, _B, _C;
-        ushort[] _bitrev;
+        private float[] _A, _B, _C;
+        private ushort[] _bitrev;
 
         private Mdct(int n)
         {
@@ -82,8 +82,9 @@ namespace NVorbis
         //  2) Mdct must be thread-safe
         // To handle these constraints, we use a "thread-local" dictionary
 
-        Dictionary<int, float[]> _threadLocalBuffers = new Dictionary<int, float[]>(1);
-        float[] GetBuffer()
+        private Dictionary<int, float[]> _threadLocalBuffers = new Dictionary<int, float[]>(1);
+
+        private float[] GetBuffer()
         {
             lock (_threadLocalBuffers)
             {
@@ -98,7 +99,7 @@ namespace NVorbis
 
         #endregion
 
-        void CalcReverse(float[] buffer)
+        private void CalcReverse(float[] buffer)
         {
             float[] u, v, buf2;
 
@@ -348,7 +349,7 @@ namespace NVorbis
             }
         }
 
-        void step3_iter0_loop(int n, float[] e, int i_off, int k_off)
+        private void step3_iter0_loop(int n, float[] e, int i_off, int k_off)
         {
             var ee0 = i_off;        // e
             var ee2 = ee0 + k_off;  // e
@@ -394,7 +395,7 @@ namespace NVorbis
             }
         }
 
-        void step3_inner_r_loop(int lim, float[] e, int d0, int k_off, int k1)
+        private void step3_inner_r_loop(int lim, float[] e, int d0, int k_off, int k1)
         {
             float k00_20, k01_21;
 
@@ -445,7 +446,7 @@ namespace NVorbis
             }
         }
 
-        void step3_inner_s_loop(int n, float[] e, int i_off, int k_off, int a, int a_off, int k0)
+        private void step3_inner_s_loop(int n, float[] e, int i_off, int k_off, int a, int a_off, int k0)
         {
             var A0 = _A[a];
             var A1 = _A[a + 1];
@@ -496,7 +497,7 @@ namespace NVorbis
             }
         }
 
-        void step3_inner_s_loop_ld654(int n, float[] e, int i_off, int base_n)
+        private void step3_inner_s_loop_ld654(int n, float[] e, int i_off, int base_n)
         {
             var a_off = base_n >> 3;
             var A2 = _A[a_off];

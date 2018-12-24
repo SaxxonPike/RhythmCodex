@@ -16,16 +16,16 @@ namespace NVorbis.Ogg
     /// </summary>
     public class ContainerReader : IContainerReader
     {
-        Crc _crc = new Crc();
-        BufferedReadStream _stream;
-        Dictionary<int, PacketReader> _packetReaders;
-        List<int> _disposedStreamSerials;
-        long _nextPageOffset;
-        int _pageCount;
+        private Crc _crc = new Crc();
+        private BufferedReadStream _stream;
+        private Dictionary<int, PacketReader> _packetReaders;
+        private List<int> _disposedStreamSerials;
+        private long _nextPageOffset;
+        private int _pageCount;
 
-        byte[] _readBuffer = new byte[65025];   // up to a full page of data (but no more!)
+        private byte[] _readBuffer = new byte[65025];   // up to a full page of data (but no more!)
 
-        long _containerBits, _wasteBits;
+        private long _containerBits, _wasteBits;
 
         /// <summary>
         /// Gets the list of stream serials found in the container so far.
@@ -199,7 +199,7 @@ namespace NVorbis.Ogg
 
 
         // private implmentation bits
-        class PageHeader
+        private class PageHeader
         {
             public int StreamSerial { get; set; }
             public PageFlags Flags { get; set; }
@@ -211,7 +211,7 @@ namespace NVorbis.Ogg
             public bool IsResync { get; set; }
         }
 
-        PageHeader ReadPageHeader(long position)
+        private PageHeader ReadPageHeader(long position)
         {
             // set the stream's position
             _stream.Seek(position, SeekOrigin.Begin);
@@ -301,7 +301,7 @@ namespace NVorbis.Ogg
             return null;
         }
 
-        PageHeader FindNextPageHeader()
+        private PageHeader FindNextPageHeader()
         {
             var startPos = _nextPageOffset;
 
@@ -349,7 +349,7 @@ namespace NVorbis.Ogg
             return hdr;
         }
 
-        bool AddPage(PageHeader hdr)
+        private bool AddPage(PageHeader hdr)
         {
             // get our packet reader (create one if we have to)
             PacketReader packetReader;
@@ -412,7 +412,7 @@ namespace NVorbis.Ogg
             }
         }
 
-        int GatherNextPage()
+        private int GatherNextPage()
         {
             while (true)
             {

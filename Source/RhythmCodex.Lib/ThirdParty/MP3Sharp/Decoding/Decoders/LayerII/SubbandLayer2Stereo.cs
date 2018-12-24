@@ -19,7 +19,7 @@ namespace MP3Sharp.Decoding.Decoders.LayerII
     /// <summary>
     ///     Class for layer II subbands in stereo mode.
     /// </summary>
-    internal class SubbandLayer2Stereo : SubbandLayer2
+    internal sealed class SubbandLayer2Stereo : SubbandLayer2
     {
         protected internal int channel2_allocation;
         protected internal float[] channel2_c = { 0 };

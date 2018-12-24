@@ -11,7 +11,6 @@ namespace RhythmCodex.Xa.Converters
 {
     public class XaDecoder : IXaDecoder
     {
-        private readonly IDeinterleaver _deinterleaver;
         private readonly IXaFrameSplitter _xaFrameSplitter;
 
         // Reference: https://github.com/kode54/vgmstream/blob/master/src/coding/xa_decoder.c
@@ -19,9 +18,8 @@ namespace RhythmCodex.Xa.Converters
         private static readonly int[] K0 = {0, 60, 115, 98, 122};
         private static readonly int[] K1 = {0, 0, -52, -55, -60};
 
-        public XaDecoder(IDeinterleaver deinterleaver, IXaFrameSplitter xaFrameSplitter)
+        public XaDecoder(IXaFrameSplitter xaFrameSplitter)
         {
-            _deinterleaver = deinterleaver;
             _xaFrameSplitter = xaFrameSplitter;
         }
 

@@ -13,7 +13,7 @@ using System.IO;
 
 namespace NVorbis
 {
-    class VorbisStreamDecoder : IVorbisStreamStatus, IDisposable
+    internal class VorbisStreamDecoder : IVorbisStreamStatus, IDisposable
     {
         internal int _upperBitrate;
         internal int _nominalBitrate;
@@ -34,7 +34,7 @@ namespace NVorbis
         internal VorbisMapping[] Maps;
         internal VorbisMode[] Modes;
 
-        int _modeFieldBits;
+        private int _modeFieldBits;
 
         #region Stat Fields
 
@@ -61,15 +61,15 @@ namespace NVorbis
 
         #endregion
 
-        IPacketProvider _packetProvider;
-        DataPacket _parameterChangePacket;
+        private IPacketProvider _packetProvider;
+        private DataPacket _parameterChangePacket;
 
-        List<int> _pagesSeen;
-        int _lastPageSeen;
+        private List<int> _pagesSeen;
+        private int _lastPageSeen;
 
-        bool _eosFound;
+        private bool _eosFound;
 
-        object _seekLock = new object();
+        private object _seekLock = new object();
 
         internal VorbisStreamDecoder(IPacketProvider packetProvider)
         {
@@ -113,7 +113,7 @@ namespace NVorbis
             return true;
         }
 
-        void SetParametersChanging(object sender, ParameterChangeEventArgs e)
+        private void SetParametersChanging(object sender, ParameterChangeEventArgs e)
         {
             _parameterChangePacket = e.FirstPacket;
         }
@@ -131,7 +131,7 @@ namespace NVorbis
 
         #region Header Decode
 
-        void ProcessParameterChange(DataPacket packet)
+        private void ProcessParameterChange(DataPacket packet)
         {
             _parameterChangePacket = null;
 
@@ -179,7 +179,7 @@ namespace NVorbis
             ResetDecoder(doFullReset);
         }
 
-        bool ProcessStreamHeader(DataPacket packet)
+        private bool ProcessStreamHeader(DataPacket packet)
         {
             if (!packet.ReadBytes(7).SequenceEqual(new byte[] { 0x01, 0x76, 0x6f, 0x72, 0x62, 0x69, 0x73 }))
             {
@@ -220,7 +220,7 @@ namespace NVorbis
             return true;
         }
 
-        bool LoadComments(DataPacket packet)
+        private bool LoadComments(DataPacket packet)
         {
             if (!packet.ReadBytes(7).SequenceEqual(new byte[] { 0x03, 0x76, 0x6f, 0x72, 0x62, 0x69, 0x73 }))
             {
@@ -245,7 +245,7 @@ namespace NVorbis
             return true;
         }
 
-        bool LoadBooks(DataPacket packet)
+        private bool LoadBooks(DataPacket packet)
         {
             if (!packet.ReadBytes(7).SequenceEqual(new byte[] { 0x05, 0x76, 0x6f, 0x72, 0x62, 0x69, 0x73 }))
             {
@@ -333,26 +333,26 @@ namespace NVorbis
 
         #region Data Decode
 
-        float[] _prevBuffer;
-        RingBuffer _outputBuffer;
-        Queue<int> _bitsPerPacketHistory;
-        Queue<int> _sampleCountHistory;
-        int _preparedLength;
+        private float[] _prevBuffer;
+        private RingBuffer _outputBuffer;
+        private Queue<int> _bitsPerPacketHistory;
+        private Queue<int> _sampleCountHistory;
+        private int _preparedLength;
         internal bool _clipped = false;
 
-        Stack<DataPacket> _resyncQueue;
+        private Stack<DataPacket> _resyncQueue;
 
-        long _currentPosition;
-        long _reportedPosition;
+        private long _currentPosition;
+        private long _reportedPosition;
 
-        VorbisMode _mode;
-        bool _prevFlag, _nextFlag;
-        bool[] _noExecuteChannel;
-        VorbisFloor.PacketData[] _floorData;
-        float[][] _residue;
-        bool _isParameterChange;
+        private VorbisMode _mode;
+        private bool _prevFlag, _nextFlag;
+        private bool[] _noExecuteChannel;
+        private VorbisFloor.PacketData[] _floorData;
+        private float[][] _residue;
+        private bool _isParameterChange;
 
-        void InitDecoder()
+        private void InitDecoder()
         {
             _currentPosition = 0L;
 
@@ -364,7 +364,7 @@ namespace NVorbis
             ResetDecoder(true);
         }
 
-        void ResetDecoder(bool isFullReset)
+        private void ResetDecoder(bool isFullReset)
         {
             // this is called when:
             //  - init (true)
@@ -399,14 +399,14 @@ namespace NVorbis
             _preparedLength = 0;
         }
 
-        void SaveBuffer()
+        private void SaveBuffer()
         {
             var buf = new float[_preparedLength * _channels];
             ReadSamples(buf, 0, buf.Length);
             _prevBuffer = buf;
         }
 
-        bool UnpackPacket(DataPacket packet)
+        private bool UnpackPacket(DataPacket packet)
         {
             // make sure we're on an audio packet
             if (packet.ReadBit())
@@ -491,7 +491,7 @@ namespace NVorbis
             return true;
         }
 
-        void DecodePacket()
+        private void DecodePacket()
         {
             // inverse coupling
             var steps = _mode.Mapping.CouplingSteps;
@@ -559,7 +559,7 @@ namespace NVorbis
             }
         }
 
-        int OverlapSamples()
+        private int OverlapSamples()
         {
             // window
             var window = _mode.GetWindow(_prevFlag, _nextFlag);
@@ -608,7 +608,7 @@ namespace NVorbis
             return samplesDecoded;
         }
 
-        void UpdatePosition(int samplesDecoded, DataPacket packet)
+        private void UpdatePosition(int samplesDecoded, DataPacket packet)
         {
             _samples += samplesDecoded;
 
@@ -667,7 +667,7 @@ namespace NVorbis
             }
         }
 
-        void DecodeNextPacket()
+        private void DecodeNextPacket()
         {
             _sw.Start();
 

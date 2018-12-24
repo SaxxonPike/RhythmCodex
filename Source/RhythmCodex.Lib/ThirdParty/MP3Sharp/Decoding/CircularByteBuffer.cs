@@ -19,7 +19,7 @@ using System;
 namespace MP3Sharp.Decoding
 {
     [Serializable]
-    internal class CircularByteBuffer
+    internal sealed class CircularByteBuffer
     {
         private byte[] m_DataArray;
         private int m_Index;

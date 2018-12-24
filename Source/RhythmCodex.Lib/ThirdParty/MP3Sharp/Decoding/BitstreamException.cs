@@ -38,7 +38,7 @@ namespace MP3Sharp.Decoding
     ///     </p>
     /// </summary>
     [Serializable]
-    public class BitstreamException : MP3SharpException
+    public sealed class BitstreamException : MP3SharpException
     {
         private int m_Errorcode;
 
@@ -58,7 +58,7 @@ namespace MP3Sharp.Decoding
             m_Errorcode = info.GetInt32("ErrorCode");
         }
 
-        public virtual int ErrorCode
+        public int ErrorCode
         {
             get { return m_Errorcode; }
         }

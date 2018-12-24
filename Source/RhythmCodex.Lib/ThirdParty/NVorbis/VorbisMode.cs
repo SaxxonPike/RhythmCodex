@@ -10,10 +10,10 @@ using System.IO;
 
 namespace NVorbis
 {
-    class VorbisMode
+    internal class VorbisMode
     {
-        const float M_PI = 3.1415926539f; //(float)Math.PI;
-        const float M_PI2 = M_PI / 2;
+        private const float M_PI = 3.1415926539f; //(float)Math.PI;
+        private const float M_PI2 = M_PI / 2;
 
         internal static VorbisMode Init(VorbisStreamDecoder vorbis, DataPacket packet)
         {
@@ -49,16 +49,16 @@ namespace NVorbis
             return mode;
         }
 
-        VorbisStreamDecoder _vorbis;
+        private VorbisStreamDecoder _vorbis;
 
-        float[][] _windows;
+        private float[][] _windows;
 
         private VorbisMode(VorbisStreamDecoder vorbis)
         {
             _vorbis = vorbis;
         }
 
-        void CalcWindows()
+        private void CalcWindows()
         {
             // 0: prev = s, next = s || BlockFlag = false
             // 1: prev = l, next = s

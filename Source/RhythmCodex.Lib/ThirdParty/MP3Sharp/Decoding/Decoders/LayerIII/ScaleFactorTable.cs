@@ -16,7 +16,7 @@
 
 namespace MP3Sharp.Decoding.Decoders.LayerIII
 {
-    internal class ScaleFactorTable
+    internal sealed class ScaleFactorTable
     {
         private LayerIIIDecoder enclosingInstance;
         public int[] l;

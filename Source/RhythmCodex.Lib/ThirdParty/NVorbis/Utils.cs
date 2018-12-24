@@ -7,7 +7,7 @@
  ***************************************************************************/
 namespace NVorbis
 {
-    static class Utils
+    internal static class Utils
     {
         static internal int ilog(int x)
         {
@@ -36,7 +36,7 @@ namespace NVorbis
 
         // make it so we can twiddle bits in a float...
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
-        struct FloatBits
+        private struct FloatBits
         {
             [System.Runtime.InteropServices.FieldOffset(0)]
             public float Float;

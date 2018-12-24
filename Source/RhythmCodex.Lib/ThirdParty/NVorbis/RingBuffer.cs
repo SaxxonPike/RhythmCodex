@@ -6,18 +6,15 @@
  *                                                                          *
  ***************************************************************************/
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NVorbis
 {
-    class RingBuffer
+    internal class RingBuffer
     {
-        float[] _buffer;
-        int _start;
-        int _end;
-        int _bufLen;
+        private float[] _buffer;
+        private int _start;
+        private int _end;
+        private int _bufLen;
 
         internal RingBuffer(int size)
         {

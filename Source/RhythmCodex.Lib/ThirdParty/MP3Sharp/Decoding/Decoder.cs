@@ -22,11 +22,11 @@ namespace MP3Sharp.Decoding
     /// <summary>
     ///     Encapsulates the details of decoding an MPEG audio frame.
     /// </summary>
-    internal class Decoder
+    internal sealed class Decoder
     {
         private static readonly Params DEFAULT_PARAMS = new Params();
         private readonly Params params_Renamed;
-        private Equalizer m_Equalizer;
+        //private Equalizer m_Equalizer;
 
         private SynthesisFilter m_LeftChannelFilter;
         private SynthesisFilter m_RightChannelFilter;
@@ -60,11 +60,11 @@ namespace MP3Sharp.Decoding
 
             params_Renamed = params0;
 
-            var eq = params_Renamed.InitialEqualizerSettings;
-            if (eq != null)
-            {
-                m_Equalizer.FromEqualizer = eq;
-            }
+//            var eq = params_Renamed.InitialEqualizerSettings;
+//            if (eq != null)
+//            {
+//                m_Equalizer.FromEqualizer = eq;
+//            }
         }
 
         public static Params DefaultParams
@@ -73,29 +73,29 @@ namespace MP3Sharp.Decoding
             }
         }
 
-        public virtual Equalizer Equalizer
-        {
-            set
-            {
-                if (value == null)
-                    value = Equalizer.PASS_THRU_EQ;
-
-                m_Equalizer.FromEqualizer = value;
-
-                var factors = m_Equalizer.BandFactors;
-                if (m_LeftChannelFilter != null)
-                    m_LeftChannelFilter.EQ = factors;
-
-                if (m_RightChannelFilter != null)
-                    m_RightChannelFilter.EQ = factors;
-            }
-        }
+//        public Equalizer Equalizer
+//        {
+//            set
+//            {
+//                if (value == null)
+//                    value = Equalizer.PASS_THRU_EQ;
+//
+//                //m_Equalizer.FromEqualizer = value;
+//
+//                //var factors = m_Equalizer.BandFactors;
+////                if (m_LeftChannelFilter != null)
+////                    m_LeftChannelFilter.EQ = factors;
+////
+////                if (m_RightChannelFilter != null)
+////                    m_RightChannelFilter.EQ = factors;
+//            }
+//        }
 
         /// <summary>
         ///     Changes the output buffer. This will take effect the next time
         ///     decodeFrame() is called.
         /// </summary>
-        public virtual ABuffer OutputBuffer
+        public ABuffer OutputBuffer
         {
             set { m_Output = value; }
         }
@@ -105,7 +105,7 @@ namespace MP3Sharp.Decoding
         ///     by this decoder. This typically corresponds to the sample
         ///     rate encoded in the MPEG audio stream.
         /// </summary>
-        public virtual int OutputFrequency
+        public int OutputFrequency
         {
             get { return m_OutputFrequency; }
         }
@@ -115,7 +115,7 @@ namespace MP3Sharp.Decoding
         ///     this decoder. This usually corresponds to the number of
         ///     channels in the MPEG audio stream.
         /// </summary>
-        public virtual int OutputChannels
+        public int OutputChannels
         {
             get { return m_OutputChannels; }
         }
@@ -128,14 +128,14 @@ namespace MP3Sharp.Decoding
         ///     an upper bound and fewer samples may actually be written, depending
         ///     upon the sample rate and number of channels.
         /// </summary>
-        public virtual int OutputBlockSize
+        public int OutputBlockSize
         {
             get { return ABuffer.OBUFFERSIZE; }
         }
 
         private void InitBlock()
         {
-            m_Equalizer = new Equalizer();
+            //m_Equalizer = new Equalizer();
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace MP3Sharp.Decoding
         /// <returns>
         ///     A SampleBuffer containing the decoded samples.
         /// </returns>
-        public virtual ABuffer DecodeFrame(Header header, Bitstream stream)
+        public ABuffer DecodeFrame(Header header, Bitstream stream)
         {
             if (!m_IsInitialized)
             {
@@ -170,17 +170,17 @@ namespace MP3Sharp.Decoding
             return m_Output;
         }
 
-        protected internal virtual DecoderException NewDecoderException(int errorcode)
+        protected internal DecoderException NewDecoderException(int errorcode)
         {
             return new DecoderException(errorcode, null);
         }
 
-        protected internal virtual DecoderException NewDecoderException(int errorcode, Exception throwable)
+        protected internal DecoderException NewDecoderException(int errorcode, Exception throwable)
         {
             return new DecoderException(errorcode, throwable);
         }
 
-        protected internal virtual IFrameDecoder RetrieveDecoder(Header header, Bitstream stream, int layer)
+        protected internal IFrameDecoder RetrieveDecoder(Header header, Bitstream stream, int layer)
         {
             IFrameDecoder decoder = null;
 
@@ -240,13 +240,13 @@ namespace MP3Sharp.Decoding
             if (m_Output == null)
                 m_Output = new SampleBuffer(header.frequency(), channels);
 
-            var factors = m_Equalizer.BandFactors;
+            //var factors = m_Equalizer.BandFactors;
             //Console.WriteLine("NOT CREATING SYNTHESIS FILTERS");
-            m_LeftChannelFilter = new SynthesisFilter(0, scalefactor, factors);
+            m_LeftChannelFilter = new SynthesisFilter(0, scalefactor);
 
             // REVIEW: allow mono output for stereo
             if (channels == 2)
-                m_RightChannelFilter = new SynthesisFilter(1, scalefactor, factors);
+                m_RightChannelFilter = new SynthesisFilter(1, scalefactor);
 
             m_OutputChannels = channels;
             m_OutputFrequency = header.frequency();
@@ -260,10 +260,10 @@ namespace MP3Sharp.Decoding
         /// </summary>
         internal class Params : ICloneable
         {
-            private Equalizer m_Equalizer;
+//            private Equalizer m_Equalizer;
             private OutputChannels m_OutputChannels;
 
-            public virtual OutputChannels OutputChannels
+            public OutputChannels OutputChannels
             {
                 get { return m_OutputChannels; }
 
@@ -276,24 +276,24 @@ namespace MP3Sharp.Decoding
                 }
             }
 
-            /// <summary>
-            ///     Retrieves the equalizer settings that the decoder's equalizer
-            ///     will be initialized from.
-            ///     The Equalizer instance returned
-            ///     cannot be changed in real time to affect the
-            ///     decoder output as it is used only to initialize the decoders
-            ///     EQ settings. To affect the decoder's output in realtime,
-            ///     use the Equalizer returned from the getEqualizer() method on
-            ///     the decoder.
-            /// </summary>
-            /// <returns>
-            ///     The Equalizer used to initialize the
-            ///     EQ settings of the decoder.
-            /// </returns>
-            public virtual Equalizer InitialEqualizerSettings
-            {
-                get { return m_Equalizer; }
-            }
+//            /// <summary>
+//            ///     Retrieves the equalizer settings that the decoder's equalizer
+//            ///     will be initialized from.
+//            ///     The Equalizer instance returned
+//            ///     cannot be changed in real time to affect the
+//            ///     decoder output as it is used only to initialize the decoders
+//            ///     EQ settings. To affect the decoder's output in realtime,
+//            ///     use the Equalizer returned from the getEqualizer() method on
+//            ///     the decoder.
+//            /// </summary>
+//            /// <returns>
+//            ///     The Equalizer used to initialize the
+//            ///     EQ settings of the decoder.
+//            /// </returns>
+//            public Equalizer InitialEqualizerSettings
+//            {
+//                get { return m_Equalizer; }
+//            }
 
             public object Clone()
             {

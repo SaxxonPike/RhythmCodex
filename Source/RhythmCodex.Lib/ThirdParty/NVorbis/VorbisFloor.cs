@@ -12,7 +12,7 @@ using System.IO;
 
 namespace NVorbis
 {
-    abstract class VorbisFloor
+    internal abstract class VorbisFloor
     {
         internal static VorbisFloor Init(VorbisStreamDecoder vorbis, DataPacket packet)
         {
@@ -30,7 +30,7 @@ namespace NVorbis
             return floor;
         }
 
-        VorbisStreamDecoder _vorbis;
+        private VorbisStreamDecoder _vorbis;
 
         protected VorbisFloor(VorbisStreamDecoder vorbis)
         {
@@ -57,15 +57,15 @@ namespace NVorbis
             }
         }
 
-        class Floor0 : VorbisFloor
+        private class Floor0 : VorbisFloor
         {
             internal Floor0(VorbisStreamDecoder vorbis) : base(vorbis) { }
 
-            int _order, _rate, _bark_map_size, _ampBits, _ampOfs, _ampDiv;
-            VorbisCodebook[] _books;
-            int _bookBits;
-            Dictionary<int, float[]> _wMap;
-            Dictionary<int, int[]> _barkMaps;
+            private int _order, _rate, _bark_map_size, _ampBits, _ampOfs, _ampDiv;
+            private VorbisCodebook[] _books;
+            private int _bookBits;
+            private Dictionary<int, float[]> _wMap;
+            private Dictionary<int, int[]> _barkMaps;
 
             protected override void Init(DataPacket packet)
             {
@@ -108,7 +108,7 @@ namespace NVorbis
                 }
             }
 
-            int[] SynthesizeBarkCurve(int n)
+            private int[] SynthesizeBarkCurve(int n)
             {
                 var scale = _bark_map_size / toBARK(_rate / 2);
 
@@ -122,12 +122,12 @@ namespace NVorbis
                 return map;
             }
 
-            static float toBARK(double lsp)
+            private static float toBARK(double lsp)
             {
                 return (float)(13.1 * Math.Atan(0.00074 * lsp) + 2.24 * Math.Atan(0.0000000185 * lsp * lsp) + .0001 * lsp);
             }
 
-            float[] SynthesizeWDelMap(int n)
+            private float[] SynthesizeWDelMap(int n)
             {
                 var wdel = (float)(Math.PI / _bark_map_size);
 
@@ -139,7 +139,7 @@ namespace NVorbis
                 return map;
             }
 
-            class PacketData0 : PacketData
+            private class PacketData0 : PacketData
             {
                 protected override bool HasEnergy
                 {
@@ -150,7 +150,7 @@ namespace NVorbis
                 internal float Amp;
             }
 
-            PacketData0[] _reusablePacketData;
+            private PacketData0[] _reusablePacketData;
 
             internal override PacketData UnpackPacket(DataPacket packet, int blockSize, int channel)
             {
@@ -270,18 +270,18 @@ namespace NVorbis
             }
         }
 
-        class Floor1 : VorbisFloor
+        private class Floor1 : VorbisFloor
         {
             internal Floor1(VorbisStreamDecoder vorbis) : base(vorbis) { }
 
-            int[] _partitionClass, _classDimensions, _classSubclasses, _xList, _classMasterBookIndex, _hNeigh, _lNeigh, _sortIdx;
-            int _multiplier, _range, _yBits;
-            VorbisCodebook[] _classMasterbooks;
-            VorbisCodebook[][] _subclassBooks;
-            int[][] _subclassBookIndex;
+            private int[] _partitionClass, _classDimensions, _classSubclasses, _xList, _classMasterBookIndex, _hNeigh, _lNeigh, _sortIdx;
+            private int _multiplier, _range, _yBits;
+            private VorbisCodebook[] _classMasterbooks;
+            private VorbisCodebook[][] _subclassBooks;
+            private int[][] _subclassBookIndex;
 
-            static int[] _rangeLookup = { 256, 128, 86, 64 };
-            static int[] _yBitsLookup = { 8, 7, 7, 6 };
+            private static int[] _rangeLookup = { 256, 128, 86, 64 };
+            private static int[] _yBitsLookup = { 8, 7, 7, 6 };
 
             protected override void Init(DataPacket packet)
             {
@@ -391,7 +391,7 @@ namespace NVorbis
                 }
             }
 
-            class PacketData1 : PacketData
+            private class PacketData1 : PacketData
             {
                 protected override bool HasEnergy
                 {
@@ -402,7 +402,7 @@ namespace NVorbis
                 public int PostCount;
             }
 
-            PacketData1[] _reusablePacketData;
+            private PacketData1[] _reusablePacketData;
 
             internal override PacketData UnpackPacket(DataPacket packet, int blockSize, int channel)
             {
@@ -499,10 +499,10 @@ namespace NVorbis
                 }
             }
 
-            bool[] _stepFlags = new bool[64];
-            int[] _finalY = new int[64];
+            private bool[] _stepFlags = new bool[64];
+            private int[] _finalY = new int[64];
 
-            bool[] UnwrapPosts(PacketData1 data)
+            private bool[] UnwrapPosts(PacketData1 data)
             {
                 Array.Clear(_stepFlags, 2, 62);
                 _stepFlags[0] = true;
@@ -577,7 +577,7 @@ namespace NVorbis
                 return _stepFlags;
             }
 
-            int RenderPoint(int x0, int y0, int x1, int y1, int X)
+            private int RenderPoint(int x0, int y0, int x1, int y1, int X)
             {
                 var dy = y1 - y0;
                 var adx = x1 - x0;
@@ -594,7 +594,7 @@ namespace NVorbis
                 }
             }
 
-            void RenderLineMulti(int x0, int y0, int x1, int y1, float[] v)
+            private void RenderLineMulti(int x0, int y0, int x1, int y1, float[] v)
             {
                 var dy = y1 - y0;
                 var adx = x1 - x0;
@@ -623,7 +623,7 @@ namespace NVorbis
 
             #region dB inversion table
 
-            static readonly float[] inverse_dB_table = {
+            private static readonly float[] inverse_dB_table = {
                                                         1.0649863e-07f, 1.1341951e-07f, 1.2079015e-07f, 1.2863978e-07f, 
                                                         1.3699951e-07f, 1.4590251e-07f, 1.5538408e-07f, 1.6548181e-07f, 
                                                         1.7623575e-07f, 1.8768855e-07f, 1.9988561e-07f, 2.1287530e-07f, 

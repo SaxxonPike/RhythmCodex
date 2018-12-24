@@ -24,7 +24,7 @@ namespace MP3Sharp
     ///     Provides a view of the sequence of bytes that are produced during the conversion of an MP3 stream
     ///     into a 16-bit PCM-encoded ("WAV" format) stream.
     /// </summary>
-    public class MP3Stream : Stream
+    public sealed class MP3Stream : Stream
     {
         // Used to interface with JavaZoom code.
         private readonly Bitstream m_BitStream;
@@ -41,7 +41,7 @@ namespace MP3Sharp
         {
             get; 
             protected set;
-		}
+        }
 
         /// <summary>
         ///     Creates a new stream instance using the provided filename, and the default chunk size of 4096 bytes.

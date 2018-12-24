@@ -16,7 +16,7 @@
 
 namespace MP3Sharp.Decoding.Decoders.LayerIII
 {
-    internal class SBI
+    internal sealed class SBI
     {
         public int[] l;
         public int[] s;

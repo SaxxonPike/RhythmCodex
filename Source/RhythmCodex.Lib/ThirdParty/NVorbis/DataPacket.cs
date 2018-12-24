@@ -7,25 +7,24 @@
  ***************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
 
-namespace NVorbis
+ namespace NVorbis
 {
     /// <summary>
     /// A single data packet from a logical Vorbis stream.
     /// </summary>
     public abstract class DataPacket
     {
-        ulong _bitBucket;           // 8
-        int _bitCount;              // 4
-        int _readBits;              // 4
-        byte _overflowBits;         // 1
-        PacketFlags _packetFlags;   // 1
-        long _granulePosition;      // 8
-        long _pageGranulePosition;  // 8
-        int _length;                // 4
-        int _granuleCount;          // 4
-        int _pageSequenceNumber;    // 4
+        private ulong _bitBucket;           // 8
+        private int _bitCount;              // 4
+        private int _readBits;              // 4
+        private byte _overflowBits;         // 1
+        private PacketFlags _packetFlags;   // 1
+        private long _granulePosition;      // 8
+        private long _pageGranulePosition;  // 8
+        private int _length;                // 4
+        private int _granuleCount;          // 4
+        private int _pageSequenceNumber;    // 4
 
         /// <summary>
         /// Defines flags to apply to the current packet

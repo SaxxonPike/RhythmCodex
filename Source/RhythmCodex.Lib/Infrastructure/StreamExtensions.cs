@@ -9,7 +9,7 @@ namespace RhythmCodex.Infrastructure
     {
         private const int BufferSize = 1 << 16;
 
-        private static byte[] ReadAllBytes(Func<byte[], int, int, int> readFunc)
+        public static byte[] ReadAllBytes(Func<byte[], int, int, int> readFunc)
         {
             var buffer = new byte[BufferSize];
             var result = new List<byte>();

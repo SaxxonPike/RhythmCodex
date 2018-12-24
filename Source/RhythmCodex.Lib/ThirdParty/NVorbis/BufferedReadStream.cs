@@ -6,7 +6,6 @@
  *                                                                          *
  ***************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace NVorbis
@@ -14,17 +13,17 @@ namespace NVorbis
     /// <summary>
     /// A thread-safe, read-only, buffering stream wrapper.
     /// </summary>
-    partial class BufferedReadStream : Stream
+    internal partial class BufferedReadStream : Stream
     {
-        const int DEFAULT_INITIAL_SIZE = 32768; // 32KB  (1/2 full page)
-        const int DEFAULT_MAX_SIZE = 262144;    // 256KB (4 full pages)
+        private const int DEFAULT_INITIAL_SIZE = 32768; // 32KB  (1/2 full page)
+        private const int DEFAULT_MAX_SIZE = 262144;    // 256KB (4 full pages)
 
-        Stream _baseStream;
-        StreamReadBuffer _buffer;
-        long _readPosition;
-        object _localLock = new object();
-        System.Threading.Thread _owningThread;
-        int _lockCount;
+        private Stream _baseStream;
+        private StreamReadBuffer _buffer;
+        private long _readPosition;
+        private object _localLock = new object();
+        private System.Threading.Thread _owningThread;
+        private int _lockCount;
 
         public BufferedReadStream(Stream baseStream)
             : this(baseStream, DEFAULT_INITIAL_SIZE, DEFAULT_MAX_SIZE, false)
@@ -84,7 +83,7 @@ namespace NVorbis
             }
         }
 
-        void CheckLock()
+        private void CheckLock()
         {
             if (_owningThread != System.Threading.Thread.CurrentThread)
             {

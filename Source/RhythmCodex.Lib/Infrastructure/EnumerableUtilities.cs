@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RhythmCodex.Infrastructure.Converters
+namespace RhythmCodex.Infrastructure
 {
-    public class Deinterleaver : IDeinterleaver
+    internal static class EnumerableUtilities
     {
-        public IList<IList<T>> Deinterleave<T>(IEnumerable<T> data, int interleave, int streamCount)
+        public static IList<IList<T>> Deinterleave<T>(this IEnumerable<T> data, int interleave, int streamCount)
         {
             var result = Enumerable.Range(0, streamCount).Select(i => new List<T>()).Cast<IList<T>>().ToList();
             var index = 0;

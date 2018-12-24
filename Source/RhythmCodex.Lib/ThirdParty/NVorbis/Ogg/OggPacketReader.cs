@@ -7,17 +7,16 @@
  ***************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 
 namespace NVorbis.Ogg
 {
     [System.Diagnostics.DebuggerTypeProxy(typeof(DebugView))]
-    class PacketReader : IPacketProvider
+    internal class PacketReader : IPacketProvider
     {
-        class DebugView
+        private class DebugView
         {
-            PacketReader _reader;
+            private PacketReader _reader;
 
             public DebugView(PacketReader reader)
             {
@@ -38,8 +37,8 @@ namespace NVorbis.Ogg
                 }
             }
 
-            Packet _last, _first;
-            Packet[] _packetList = new Packet[0];
+            private Packet _last, _first;
+            private Packet[] _packetList = new Packet[0];
             public Packet[] Packets
             {
                 get
@@ -70,13 +69,13 @@ namespace NVorbis.Ogg
         public event EventHandler<ParameterChangeEventArgs> ParameterChange;
 #pragma warning restore 67
 
-        ContainerReader _container;
-        int _streamSerial;
-        bool _eosFound;
+        private ContainerReader _container;
+        private int _streamSerial;
+        private bool _eosFound;
 
-        Packet _first, _current, _last;
+        private Packet _first, _current, _last;
 
-        object _packetLock = new object();
+        private object _packetLock = new object();
 
         internal PacketReader(ContainerReader container, int streamSerial)
         {
@@ -211,7 +210,7 @@ namespace NVorbis.Ogg
             return PeekNextPacketInternal();
         }
 
-        Packet PeekNextPacketInternal()
+        private Packet PeekNextPacketInternal()
         {
             // try to get the next packet in the sequence
             Packet curPacket;
@@ -312,7 +311,7 @@ namespace NVorbis.Ogg
             return packet;
         }
 
-        Packet GetLastPacketInPage(Packet packet)
+        private Packet GetLastPacketInPage(Packet packet)
         {
             if (packet != null)
             {
@@ -331,7 +330,7 @@ namespace NVorbis.Ogg
             return packet;
         }
 
-        Packet FindPacketInPage(Packet pagePacket, long targetGranulePos, Func<DataPacket, DataPacket, int> packetGranuleCountCallback)
+        private Packet FindPacketInPage(Packet pagePacket, long targetGranulePos, Func<DataPacket, DataPacket, int> packetGranuleCountCallback)
         {
             var lastPacketInPage = GetLastPacketInPage(pagePacket);
             if (lastPacketInPage == null)

@@ -16,7 +16,7 @@
 
 namespace MP3Sharp.Decoding.Decoders.LayerIII
 {
-    internal class ScaleFactorData
+    internal sealed class ScaleFactorData
     {
         public int[] l; /* [cb] */
         public int[][] s; /* [window][cb] */

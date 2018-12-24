@@ -8,20 +8,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace NVorbis
 {
     public class VorbisReader : IDisposable
     {
-        int _streamIdx;
+        private int _streamIdx;
 
-        IContainerReader _containerReader;
-        List<VorbisStreamDecoder> _decoders;
-        List<int> _serials;
+        private IContainerReader _containerReader;
+        private List<VorbisStreamDecoder> _decoders;
+        private List<int> _serials;
 
-        VorbisReader()
+        private VorbisReader()
         {
             ClipSamples = true;
 
@@ -76,7 +75,7 @@ namespace NVorbis
             if (ea.IgnoreStream) throw new InvalidDataException("No Vorbis data found!");
         }
 
-        bool LoadContainer(IContainerReader containerReader)
+        private bool LoadContainer(IContainerReader containerReader)
         {
             containerReader.NewStream += NewStream;
             if (!containerReader.Init())
@@ -87,7 +86,7 @@ namespace NVorbis
             return true;
         }
 
-        void NewStream(object sender, NewStreamEventArgs ea)
+        private void NewStream(object sender, NewStreamEventArgs ea)
         {
             var packetProvider = ea.PacketProvider;
             var decoder = new VorbisStreamDecoder(packetProvider);
@@ -123,7 +122,7 @@ namespace NVorbis
             }
         }
 
-        VorbisStreamDecoder ActiveDecoder
+        private VorbisStreamDecoder ActiveDecoder
         {
             get
             {

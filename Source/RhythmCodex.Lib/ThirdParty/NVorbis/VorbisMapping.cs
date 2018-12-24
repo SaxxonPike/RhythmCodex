@@ -9,7 +9,7 @@ using System.IO;
 
 namespace NVorbis
 {
-    abstract class VorbisMapping
+    internal abstract class VorbisMapping
     {
         internal static VorbisMapping Init(VorbisStreamDecoder vorbis, DataPacket packet)
         {
@@ -26,7 +26,7 @@ namespace NVorbis
             return mapping;
         }
 
-        VorbisStreamDecoder _vorbis;
+        private VorbisStreamDecoder _vorbis;
 
         protected VorbisMapping(VorbisStreamDecoder vorbis)
         {
@@ -41,7 +41,7 @@ namespace NVorbis
 
         internal CouplingStep[] CouplingSteps;
 
-        class Mapping0 : VorbisMapping
+        private class Mapping0 : VorbisMapping
         {
             internal Mapping0(VorbisStreamDecoder vorbis) : base(vorbis) { }
 

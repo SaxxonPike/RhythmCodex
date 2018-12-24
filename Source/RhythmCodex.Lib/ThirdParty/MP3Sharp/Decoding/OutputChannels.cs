@@ -25,7 +25,7 @@ namespace MP3Sharp.Decoding
     /// <author>
     ///     Mat McGowan
     /// </author>
-    internal class OutputChannels
+    internal sealed class OutputChannels
     {
         /// <summary>
         ///     Flag to indicate output should include both channels.
@@ -69,7 +69,7 @@ namespace MP3Sharp.Decoding
         /// <returns>
         ///     the channel code represented by this instance.
         /// </returns>
-        public virtual int ChannelsOutputCode
+        public int ChannelsOutputCode
         {
             get { return outputChannels; }
         }
@@ -83,7 +83,7 @@ namespace MP3Sharp.Decoding
         ///     type. This will be 2 for BOTH_CHANNELS only, and 1
         ///     for all other types.
         /// </returns>
-        public virtual int ChannelCount
+        public int ChannelCount
         {
             get
             {

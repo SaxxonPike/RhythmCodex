@@ -14,13 +14,6 @@ namespace RhythmCodex.Vag.Converters
 {
     public class VagDecoder : IVagDecoder
     {
-        private readonly IDeinterleaver _deinterleaver;
-
-        public VagDecoder(IDeinterleaver deinterleaver)
-        {
-            _deinterleaver = deinterleaver;
-        }
-
         public ISound Decode(VagChunk chunk)
         {
             using (var mem = new MemoryStream(chunk.Data))
@@ -34,8 +27,8 @@ namespace RhythmCodex.Vag.Converters
                 var data = stream.ReadAllBytes();
                 var shorts = new short[data.Length / 2];
                 Buffer.BlockCopy(data, 0, shorts, 0, shorts.Length * 2);
-                var output = _deinterleaver
-                    .Deinterleave(shorts.Select(s => (float) s / 32768f), 1, chunk.Channels)
+                var output = shorts.Select(s => (float) s / 32768f)
+                    .Deinterleave(1, chunk.Channels)
                     .Select(floats => new Sample
                     {
                         Data = floats

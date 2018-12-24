@@ -11,7 +11,7 @@ using System.IO;
 
 namespace NVorbis
 {
-    class VorbisCodebook
+    internal class VorbisCodebook
     {
         internal static VorbisCodebook Init(VorbisStreamDecoder vorbis, DataPacket packet, int number)
         {
@@ -43,7 +43,7 @@ namespace NVorbis
             InitLookupTable(packet);
         }
 
-        void InitTree(DataPacket packet)
+        private void InitTree(DataPacket packet)
         {
             bool sparse;
             int total = 0;
@@ -128,7 +128,7 @@ namespace NVorbis
             }
         }
 
-        bool ComputeCodewords(bool sparse, int sortedEntries, int[] codewords, int[] codewordLengths, int[] len, int n, int[] values)
+        private bool ComputeCodewords(bool sparse, int sortedEntries, int[] codewords, int[] codewordLengths, int[] len, int n, int[] values)
         {
             int i, k, m = 0;
             uint[] available = new uint[32];
@@ -164,7 +164,7 @@ namespace NVorbis
             return true;
         }
 
-        void AddEntry(bool sparse, int[] codewords, int[] codewordLengths, uint huffCode, int symbol, int count, int len, int[] values)
+        private void AddEntry(bool sparse, int[] codewords, int[] codewordLengths, uint huffCode, int symbol, int count, int len, int[] values)
         {
             if (sparse)
             {
@@ -178,7 +178,7 @@ namespace NVorbis
             }
         }
 
-        void InitLookupTable(DataPacket packet)
+        private void InitLookupTable(DataPacket packet)
         {
             MapType = (int)packet.ReadBits(4);
             if (MapType == 0) return;
@@ -241,7 +241,7 @@ namespace NVorbis
             LookupTable = lookupTable;
         }
 
-        int lookup1_values()
+        private int lookup1_values()
         {
             var r = (int)Math.Floor(Math.Exp(Math.Log(Entries) / Dimensions));
             
@@ -256,16 +256,16 @@ namespace NVorbis
 
         internal int Entries;
 
-        int[] Lengths;
+        private int[] Lengths;
 
-        float[] LookupTable;
+        private float[] LookupTable;
 
         internal int MapType;
 
-        HuffmanListNode PrefixOverflowTree;
-        System.Collections.Generic.List<HuffmanListNode> PrefixList;
-        int PrefixBitLength;
-        int MaxBits;
+        private HuffmanListNode PrefixOverflowTree;
+        private System.Collections.Generic.List<HuffmanListNode> PrefixList;
+        private int PrefixBitLength;
+        private int MaxBits;
 
 
         internal float this[int entry, int dim]

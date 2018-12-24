@@ -19,7 +19,7 @@ namespace MP3Sharp.Decoding
     ///     The SampleBuffer class implements an output buffer
     ///     that provides storage for a fixed size block of samples.
     /// </summary>
-    internal class SampleBuffer : ABuffer
+    internal sealed class SampleBuffer : ABuffer
     {
         private readonly short[] buffer;
         private readonly int[] bufferp;
@@ -40,22 +40,22 @@ namespace MP3Sharp.Decoding
                 bufferp[i] = (short) i;
         }
 
-        public virtual int ChannelCount
+        public int ChannelCount
         {
             get { return channels; }
         }
 
-        public virtual int SampleFrequency
+        public int SampleFrequency
         {
             get { return frequency; }
         }
 
-        public virtual short[] Buffer
+        public short[] Buffer
         {
             get { return buffer; }
         }
 
-        public virtual int BufferLength
+        public int BufferLength
         {
             get { return bufferp[0]; }
         }

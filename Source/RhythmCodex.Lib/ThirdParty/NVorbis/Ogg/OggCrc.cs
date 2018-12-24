@@ -5,17 +5,13 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NVorbis.Ogg
 {
-    class Crc
+    internal class Crc
     {
-        const uint CRC32_POLY = 0x04c11db7;
-        static uint[] crcTable = new uint[256];
+        private const uint CRC32_POLY = 0x04c11db7;
+        private static uint[] crcTable = new uint[256];
 
         static Crc()
         {
@@ -30,7 +26,7 @@ namespace NVorbis.Ogg
             }
         }
 
-        uint _crc;
+        private uint _crc;
 
         public Crc()
         {
