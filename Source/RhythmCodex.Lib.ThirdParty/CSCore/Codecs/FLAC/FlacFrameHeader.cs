@@ -105,7 +105,7 @@ namespace CSCore.Codecs.FLAC
         /// </value>
         public long StreamPosition { get; }
 
-        internal bool PrintErrors = true;
+        internal readonly bool PrintErrors = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlacFrameHeader"/> class.
@@ -121,18 +121,8 @@ namespace CSCore.Codecs.FLAC
         /// </summary>
         /// <param name="stream">The underlying stream which contains the <see cref="FlacFrameHeader"/>.</param>
         /// <param name="streamInfo">The stream-info-metadata-block of the flac stream which provides some basic information about the flac framestream. Can be set to null.</param>
-        public FlacFrameHeader(Stream stream, FlacMetadataStreamInfo streamInfo)
-            : this(stream, streamInfo, true)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FlacFrameHeader"/> class.
-        /// </summary>
-        /// <param name="stream">The underlying stream which contains the <see cref="FlacFrameHeader"/>.</param>
-        /// <param name="streamInfo">The stream-info-metadata-block of the flac stream which provides some basic information about the flac framestream. Can be set to null.</param>
         /// <param name="doCrc">A value which indicates whether the crc8 checksum of the <see cref="FlacFrameHeader"/> should be calculated.</param>
-        public FlacFrameHeader(Stream stream, FlacMetadataStreamInfo streamInfo, bool doCrc)
+        public FlacFrameHeader(Stream stream, FlacMetadataStreamInfo streamInfo, bool doCrc = true)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (stream.CanRead == false) throw new ArgumentException("stream is not readable");
@@ -192,7 +182,6 @@ namespace CSCore.Codecs.FLAC
         private unsafe bool ParseHeader(ref byte* headerBuffer, FlacMetadataStreamInfo streamInfo)
         {
             const string loggerLocation = "FlacFrameHeader.ParseHeader(byte*, FlacMetadataStreamInfo)";
-            int val;
             if (headerBuffer[0] == 0xFF && headerBuffer[1] >> 1 == 0x7C) //sync bits
             {
                 if ((headerBuffer[1] & 0x02) != 0)
@@ -207,7 +196,7 @@ namespace CSCore.Codecs.FLAC
                 #region blocksize
 
                 //blocksize
-                val = headerBuffer[2] >> 4;
+                var val = headerBuffer[2] >> 4;
                 var blocksize = -1;
 
                 if (val == 0)
