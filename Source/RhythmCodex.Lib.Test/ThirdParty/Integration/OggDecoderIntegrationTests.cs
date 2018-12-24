@@ -12,7 +12,7 @@ namespace RhythmCodex.ThirdParty.Integration
     {
         [Test]
         [Explicit]
-        public void Test1()
+        public void Test_OGG()
         {
             var data = GetArchiveResource($"Ogg.example.ogg.zip")
                 .First()

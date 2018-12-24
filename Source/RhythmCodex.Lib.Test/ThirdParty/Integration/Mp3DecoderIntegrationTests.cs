@@ -12,7 +12,7 @@ namespace RhythmCodex.ThirdParty.Integration
     {
         [Test]
         [Explicit]
-        public void Test1()
+        public void Test_MP3()
         {
             var data = GetArchiveResource($"Mp3.example.mp3.zip")
                 .First()
