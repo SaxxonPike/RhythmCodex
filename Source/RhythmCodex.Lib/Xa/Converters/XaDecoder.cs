@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Xa.Models;
 
@@ -30,7 +31,7 @@ namespace RhythmCodex.Xa.Converters
             var states = Enumerable.Range(0, channels).Select(i => new XaState()).ToList();
             var samples = Enumerable.Range(0, channels).Select(i => new List<float>()).ToList();
 
-            using (var mem = new MemoryStream(chunk.Data))
+            using (var mem = new ReadOnlyMemoryStream(chunk.Data))
             using (var reader = new BinaryReader(mem))
             {
                 for (var offset = 0; offset < mem.Length - 0x7F; offset += 0x80)

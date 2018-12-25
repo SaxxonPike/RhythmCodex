@@ -4,9 +4,9 @@ namespace RhythmCodex.Infrastructure
 {
     public class MemoryReader
     {
-        private readonly Memory<byte> _mem;
+        private readonly ReadOnlyMemory<byte> _mem;
 
-        public MemoryReader(Memory<byte> mem)
+        public MemoryReader(ReadOnlyMemory<byte> mem)
         {
             _mem = mem;
         }

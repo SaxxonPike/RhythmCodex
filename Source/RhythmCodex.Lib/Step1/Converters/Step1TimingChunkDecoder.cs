@@ -22,7 +22,7 @@ namespace RhythmCodex.Step1.Converters
 
         private IEnumerable<Timing> ConvertInternal(byte[] data)
         {
-            using (var mem = new MemoryStream(data))
+            using (var mem = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(mem))
             {
                 while (mem.Position < mem.Length - 7)

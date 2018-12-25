@@ -9,7 +9,7 @@ namespace RhythmCodex.Tim.Converters
     {
         public int[] Decode4Bit(byte[] data, int stride, int height)
         {
-            using (var stream = new MemoryStream(data))
+            using (var stream = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(stream))
             {
                 var size = height * stride * 2;
@@ -27,7 +27,7 @@ namespace RhythmCodex.Tim.Converters
 
         public int[] Decode8Bit(byte[] data, int stride, int height)
         {
-            using (var stream = new MemoryStream(data))
+            using (var stream = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(stream))
             {
                 var size = height * stride;
@@ -37,7 +37,7 @@ namespace RhythmCodex.Tim.Converters
 
         public int[] Decode16Bit(byte[] data, int stride, int height)
         {
-            using (var stream = new MemoryStream(data))
+            using (var stream = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(stream))
             {
                 var size = height * stride / 2;
@@ -50,7 +50,7 @@ namespace RhythmCodex.Tim.Converters
 
         public int[] Decode24Bit(byte[] data, int stride, int height)
         {
-            using (var stream = new MemoryStream(data))
+            using (var stream = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(stream))
             {
                 var size = height * stride / 3;

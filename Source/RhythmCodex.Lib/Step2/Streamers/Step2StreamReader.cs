@@ -11,7 +11,7 @@ namespace RhythmCodex.Step2.Streamers
         public Step2Chunk Read(Stream stream, int length)
         {
             var data = new BinaryReader(stream).ReadBytes(length);
-            using (var mem = new MemoryStream(data))
+            using (var mem = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(mem))
             {
                 var headerLength = reader.ReadInt32();

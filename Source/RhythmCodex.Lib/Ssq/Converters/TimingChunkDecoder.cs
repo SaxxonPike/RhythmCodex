@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Extensions;
@@ -10,9 +11,9 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class TimingChunkDecoder : ITimingChunkDecoder
     {
-        public IList<Timing> Convert(byte[] data)
+        public IList<Timing> Convert(ReadOnlyMemory<byte> data)
         {
-            using (var mem = new MemoryStream(data))
+            using (var mem = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(mem))
             {
                 var count = reader.ReadInt32();

@@ -25,7 +25,7 @@ namespace RhythmCodex.Djmain.Streamers
         {
             var buffer = new byte[11];
 
-            using (var mem = new MemoryStream(buffer))
+            using (var mem = new ReadOnlyMemoryStream(buffer))
             {
                 var reader = new BinaryReader(mem);
 

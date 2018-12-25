@@ -68,7 +68,7 @@ namespace RhythmCodex.BeatmaniaPsx.Streamers
                 offset += maxSize;
 
                 var files = new List<BeatmaniaPsxFile>();
-                using (var mem = new MemoryStream(buffer))
+                using (var mem = new ReadOnlyMemoryStream(buffer))
                 using (var memReader = new BinaryReader(mem))
                 {
                     foreach (var entry in directoryEntries)

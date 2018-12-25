@@ -59,7 +59,7 @@ namespace RhythmCodex.Djmain.Converters
                 !Enum.IsDefined(typeof(DjmainChunkFormat), chunk.Format))
                 throw new RhythmCodexException($"{nameof(chunk.Format)} is not recognized");
 
-            using (var stream = new MemoryStream(chunk.Data))
+            using (var stream = new ReadOnlyMemoryStream(chunk.Data))
             {
                 var swappedStream = new ByteSwappedReadStream(stream);
 

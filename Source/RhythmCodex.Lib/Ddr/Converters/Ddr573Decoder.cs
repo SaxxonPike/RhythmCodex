@@ -35,7 +35,7 @@ namespace RhythmCodex.Ddr.Converters
                 throw new RhythmCodexException("A module with index 0 must be present in the image.");
             
             var readers = image.Modules
-                .ToDictionary(kv => kv.Key, kv => new BinaryReader(new MemoryStream(kv.Value)));
+                .ToDictionary(kv => kv.Key, kv => new BinaryReader(new ReadOnlyMemoryStream(kv.Value)));
             
             try
             {
@@ -52,7 +52,7 @@ namespace RhythmCodex.Ddr.Converters
                     {
                         case 1:
                         {
-                            using (var compressedStream = new MemoryStream(data))
+                            using (var compressedStream = new ReadOnlyMemoryStream(data))
                             using (var decompressedStream = new MemoryStream())
                             {
                                 try

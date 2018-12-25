@@ -9,7 +9,7 @@ namespace RhythmCodex.Riff.Converters
     {
         public IRiffFormat Decode(IRiffChunk chunk)
         {
-            using (var stream = new MemoryStream(chunk.Data))
+            using (var stream = new ReadOnlyMemoryStream(chunk.Data))
             using (var reader = new BinaryReader(stream))
             {
                 return new RiffFormat

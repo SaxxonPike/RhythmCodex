@@ -12,7 +12,7 @@ namespace RhythmCodex.Ssq.Converters
     {
         public IList<Trigger> Convert(byte[] data)
         {
-            using (var mem = new MemoryStream(data))
+            using (var mem = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(mem))
             {
                 var count = reader.ReadInt32();

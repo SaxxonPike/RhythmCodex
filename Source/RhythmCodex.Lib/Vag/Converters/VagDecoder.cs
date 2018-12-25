@@ -16,7 +16,7 @@ namespace RhythmCodex.Vag.Converters
     {
         public ISound Decode(VagChunk chunk)
         {
-            using (var mem = new MemoryStream(chunk.Data))
+            using (var mem = new ReadOnlyMemoryStream(chunk.Data))
             using (var stream = new VagStream(mem, new VagConfig
             {
                 Channels = chunk.Channels,

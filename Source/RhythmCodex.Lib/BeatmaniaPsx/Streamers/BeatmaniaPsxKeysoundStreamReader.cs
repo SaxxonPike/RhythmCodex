@@ -45,7 +45,7 @@ namespace RhythmCodex.BeatmaniaPsx.Streamers
             reader.ReadInt32S();
 
             var data = reader.ReadBytes(dataLength);
-            using (var dataStream = new MemoryStream(data))
+            using (var dataStream = new ReadOnlyMemoryStream(data))
             {
                 foreach (var keysound in keysounds)
                 {

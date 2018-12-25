@@ -33,7 +33,7 @@ namespace RhythmCodex.Compression
             var sourceReader = new BinaryReader(source);
             var writer = new BinaryWriter(target);
 
-            using (var mem = new MemoryStream(sourceReader.ReadBytes(length)))
+            using (var mem = new ReadOnlyMemoryStream(sourceReader.ReadBytes(length)))
             {
                 var reader = new BinaryReader(mem);
 
