@@ -84,9 +84,15 @@ namespace RhythmCodex.Infrastructure
                 ? $"Getting all files from path: {path} (no pattern)"
                 : $"Getting all files from path: {path} (with pattern {pattern})");
 
-            return string.IsNullOrWhiteSpace(pattern) 
-                ? Directory.GetFiles(path) 
-                : Directory.GetFiles(path, pattern);
+            var searchOption = recursive
+                ? SearchOption.AllDirectories
+                : SearchOption.TopDirectoryOnly;
+
+            var result = string.IsNullOrWhiteSpace(pattern)
+                ? Directory.GetFiles(path, "*", searchOption)
+                : Directory.GetFiles(path, pattern, searchOption);
+            
+            return result;
         }
 
         /// <inheritdoc />

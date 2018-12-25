@@ -61,21 +61,13 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "encode",
                 Description = "Encodes an SSQ file.",
-                Execute = Encode,
-                Parameters = new[]
-                {
-                    new CommandParameter { Name = "-o <path>", Description = "Sets an output path." }
-                }
+                Execute = Encode
             },
             new Command
             {
                 Name = "decode",
                 Description = "Decodes an SSQ file.",
-                Execute = Decode,
-                Parameters = new[]
-                {
-                    new CommandParameter { Name = "-o <path>", Description = "Sets an output path." }
-                }
+                Execute = Decode
             }
         };
 

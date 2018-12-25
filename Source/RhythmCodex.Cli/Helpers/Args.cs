@@ -21,8 +21,8 @@ namespace RhythmCodex.Cli.Helpers
                 : new string[0];
             opts.Remove(string.Empty);
 
-            RecursiveInputFiles = opts.ContainsKey("r");
-            opts.Remove("r");
+            RecursiveInputFiles = opts.ContainsKey("+r");
+            opts.Remove("+r");
 
             if (opts.ContainsKey("log"))
             {

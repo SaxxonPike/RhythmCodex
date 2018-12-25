@@ -49,40 +49,9 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "extract",
                 Description = "Extracts files from a GAME (and optionally additionally CARD) image.",
-                Execute = Extract,
-                Parameters = new[]
-                {
-                    new CommandParameter { Name = "-o <path>", Description = "Sets an output path." }
-                }
+                Execute = Extract
             }
         };
-
-        /// <summary>
-        /// Get all input files from command line args.
-        /// </summary>
-        private string[] GetInputFiles(IDictionary<string, string[]> args)
-        {
-            var files = (args.ContainsKey(string.Empty)
-                ? args[string.Empty].SelectMany(a => _fileSystem.GetFileNames(a)).ToArray()
-                : Enumerable.Empty<string>()).ToArray();
-            foreach (var inputFile in files)
-                _logger.Debug($"Input file: {inputFile}");
-            return files;
-        }
-
-        /// <summary>
-        /// Get output directory from command line args.
-        /// </summary>
-        private string GetOutputDirectory(IDictionary<string, string[]> args)
-        {
-            var value = args.ContainsKey("o")
-                ? args["o"].FirstOrDefault()
-                : null;
-
-            return !string.IsNullOrEmpty(value)
-                ? value
-                : _fileSystem.CurrentPath;
-        }
 
         /// <summary>
         /// Perform the EXTRACT command.

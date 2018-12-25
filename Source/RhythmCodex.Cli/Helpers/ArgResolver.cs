@@ -9,9 +9,6 @@ namespace RhythmCodex.Cli.Helpers
     // ReSharper disable once ClassNeverInstantiated.Global
     public class ArgResolver : IArgResolver
     {
-        private const string RecursiveSwitch = "r";
-        private const string OutputPathSwitch = "o";
-        
         private readonly IFileSystem _fileSystem;
 
         public ArgResolver(IFileSystem fileSystem)

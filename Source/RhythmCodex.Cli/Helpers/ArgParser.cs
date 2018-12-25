@@ -31,7 +31,12 @@ namespace RhythmCodex.Cli.Helpers
                     if (arg == "-")
                         continue;
 
-                    if (arg.StartsWith("-"))
+                    if (arg.StartsWith("+"))
+                    {
+                        result[arg] = new List<string>();
+                        continue;
+                    }
+                    else if (arg.StartsWith("-"))
                     {
                         current = arg.Substring(1);
                         addValue = false;

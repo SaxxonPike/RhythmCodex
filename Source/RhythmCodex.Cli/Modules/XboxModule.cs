@@ -53,11 +53,7 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "decode",
                 Description = "Decodes a raw blob of Xbox ADCPM data.",
-                Execute = Decode,
-                Parameters = new[]
-                {
-                    new CommandParameter { Name = "-o <path>", Description = "Sets an output path." }
-                }
+                Execute = Decode
             }
         };
 

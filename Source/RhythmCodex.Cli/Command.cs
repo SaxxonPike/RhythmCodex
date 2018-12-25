@@ -10,10 +10,10 @@ namespace RhythmCodex.Cli
         /// <inheritdoc />
         public string Name { get; set; }
         /// <inheritdoc />
-        public IEnumerable<ICommandParameter> Parameters { get; set; }
+        public IEnumerable<ICommandParameter> Parameters { get; set; } = new List<ICommandParameter>();
         /// <inheritdoc />
         public string Description { get; set; }
         /// <inheritdoc />
-        public Action<Args> Execute { get; set; }
+        public Action<Args> Execute { get; set; } = args => throw new Exception("Execute is not defined.");
     }
 }

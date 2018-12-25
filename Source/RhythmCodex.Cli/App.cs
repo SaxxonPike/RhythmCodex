@@ -125,10 +125,17 @@ namespace RhythmCodex.Cli
         /// </summary>
         private void OutputParameterList(ICliModule module, ICommand command)
         {
-            _console.WriteLine($"Available parameters for {module.Name} {command.Name}:");
+            var defaultParameters = new[]
+            {
+                new CommandParameter {Name = "-log <level>", Description = "Set log level: debug, info, warning, error. (global)"},
+                new CommandParameter {Name = "-o <path>", Description = "Sets an output path. (global)"},
+                new CommandParameter {Name = "+r", Description = "Use recursive input directories. (global)"},
+            };
+            
+            _console.WriteLine($"Available parameters for command \"{module.Name} {command.Name}\":");
             _console.WriteLine();
 
-            foreach (var parameter in command.Parameters)
+            foreach (var parameter in defaultParameters.Concat(command.Parameters))
                 _console.WriteLine($"{parameter.Name.PadRight(20)}{parameter.Description}");
 
             _console.WriteLine();
@@ -140,9 +147,9 @@ namespace RhythmCodex.Cli
         /// </summary>
         private void OutputCommandList(ICliModule module)
         {
-            _console.WriteLine($"Available commands for {module.Name}:");
+            _console.WriteLine($"Available commands for module \"{module.Name}\":");
             _console.WriteLine();
-
+            
             foreach (var command in module.Commands.OrderBy(c => c.Name))
                 _console.WriteLine($"{command.Name.PadRight(20)}{command.Description}");
 
