@@ -9,7 +9,7 @@ namespace RhythmCodex.Cli.Helpers
     public class ArgParser : IArgParser
     {
         /// <inheritdoc />
-        public IDictionary<string, string[]> Parse(IEnumerable<string> args)
+        public Args Parse(IEnumerable<string> args)
         {
             var result = new Dictionary<string, List<string>>();
             var current = string.Empty;
@@ -48,7 +48,7 @@ namespace RhythmCodex.Cli.Helpers
                 current = string.Empty;
             }
 
-            return result.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray());
+            return new Args(result.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray())); 
         }
     }
 }

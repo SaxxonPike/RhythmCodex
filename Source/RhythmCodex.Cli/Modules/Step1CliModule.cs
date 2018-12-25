@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Attributes;
+using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Converters;
@@ -21,6 +22,7 @@ namespace RhythmCodex.Cli.Modules
     public class Step1CliModule : ICliModule
     {
         private readonly IFileSystem _fileSystem;
+        private readonly IArgResolver _argResolver;
         private readonly ILogger _logger;
         private readonly ISmEncoder _smEncoder;
         private readonly ISmStreamWriter _smStreamWriter;
@@ -36,7 +38,8 @@ namespace RhythmCodex.Cli.Modules
             IStep1StreamReader step1StreamReader,
             ISmEncoder smEncoder,
             ISmStreamWriter smStreamWriter,
-            IFileSystem fileSystem)
+            IFileSystem fileSystem,
+            IArgResolver argResolver)
         {
             _logger = logger;
             _step1Decoder = step1Decoder;
@@ -44,10 +47,11 @@ namespace RhythmCodex.Cli.Modules
             _smEncoder = smEncoder;
             _smStreamWriter = smStreamWriter;
             _fileSystem = fileSystem;
+            _argResolver = argResolver;
         }
 
         /// <inheritdoc />
-        public string Name => "STEP";
+        public string Name => "Step";
 
         /// <inheritdoc />
         public string Description => "Encodes and decodes the STEP format. (2nd-3rdPlus, SoloBass)";
@@ -68,39 +72,15 @@ namespace RhythmCodex.Cli.Modules
         };
 
         /// <summary>
-        /// Get all input files from command line args.
-        /// </summary>
-        private string[] GetInputFiles(IDictionary<string, string[]> args)
-        {
-            var files = (args.ContainsKey(string.Empty)
-                ? args[string.Empty].SelectMany(a => _fileSystem.GetFileNames(a)).ToArray()
-                : Enumerable.Empty<string>()).ToArray();
-            foreach (var inputFile in files)
-                _logger.Debug($"Input file: {inputFile}");
-            return files;
-        }
-
-        /// <summary>
-        /// Get output directory from command line args.
-        /// </summary>
-        private string GetOutputDirectory(IDictionary<string, string[]> args)
-        {
-            var value = args.ContainsKey("o")
-                ? args["o"].FirstOrDefault()
-                : null;
-
-            return !string.IsNullOrEmpty(value)
-                ? value
-                : _fileSystem.CurrentPath;
-        }
-
-        /// <summary>
         /// Perform the DECODE command.
         /// </summary>
-        private void Decode(IDictionary<string, string[]> args)
+        private void Decode(Args args)
         {
-            var outputDirectory = GetOutputDirectory(args);
-            var inputFiles = GetInputFiles(args);
+            var outputDirectory = _argResolver.GetOutputDirectory(args);
+            var inputFiles = _argResolver.GetInputFiles(args);
+            
+            foreach (var inputFile in inputFiles)
+                _logger.Debug($"Input file: {inputFile}");            
 
             if (!inputFiles.Any())
             {
@@ -109,6 +89,7 @@ namespace RhythmCodex.Cli.Modules
             }
 
             _logger.Info($"Using output directory: {outputDirectory}");
+            _fileSystem.CreateDirectory(outputDirectory);
 
             foreach (var inputFile in inputFiles)
             {

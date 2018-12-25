@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RhythmCodex.Cli.Helpers;
 
 namespace RhythmCodex.Cli
 {
@@ -13,6 +14,6 @@ namespace RhythmCodex.Cli
         /// <inheritdoc />
         public string Description { get; set; }
         /// <inheritdoc />
-        public Action<IDictionary<string, string[]>> Execute { get; set; }
+        public Action<Args> Execute { get; set; }
     }
 }

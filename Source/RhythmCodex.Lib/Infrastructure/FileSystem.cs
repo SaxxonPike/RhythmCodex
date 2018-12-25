@@ -75,7 +75,7 @@ namespace RhythmCodex.Infrastructure
         }
 
         /// <inheritdoc />
-        public IEnumerable<string> GetFileNames(string path, string pattern)
+        public IEnumerable<string> GetFileNames(string path, string pattern, bool recursive)
         {
             if (string.IsNullOrWhiteSpace(path))
                 path = ".\\";

@@ -5,11 +5,11 @@ namespace RhythmCodex.Extensions
 {
     public static class FileSystemExtensions
     {
-        public static IEnumerable<string> GetFileNames(this IFileSystem fileSystem, string path)
+        public static IEnumerable<string> GetFileNames(this IFileSystem fileSystem, string path, bool recursive = false)
         {
             var directory = fileSystem.GetDirectory(path);
             var pattern = fileSystem.GetFileName(path);
-            return fileSystem.GetFileNames(directory, pattern);
+            return fileSystem.GetFileNames(directory, pattern, recursive);
         }
     }
 }

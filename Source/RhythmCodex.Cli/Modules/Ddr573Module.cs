@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Streamers;
@@ -15,6 +16,7 @@ namespace RhythmCodex.Cli.Modules
         private readonly IFileSystem _fileSystem;
         private readonly IDdr573Decoder _ddr573Decoder;
         private readonly IDdr573StreamReader _ddr573StreamReader;
+        private readonly IArgResolver _argResolver;
         private readonly ILogger _logger;
 
         /// <summary>
@@ -24,16 +26,18 @@ namespace RhythmCodex.Cli.Modules
             ILogger logger,
             IFileSystem fileSystem,
             IDdr573Decoder ddr573Decoder,
-            IDdr573StreamReader ddr573StreamReader)
+            IDdr573StreamReader ddr573StreamReader,
+            IArgResolver argResolver)
         {
             _logger = logger;
             _fileSystem = fileSystem;
             _ddr573Decoder = ddr573Decoder;
             _ddr573StreamReader = ddr573StreamReader;
+            _argResolver = argResolver;
         }
 
         /// <inheritdoc />
-        public string Name => "DDR573";
+        public string Name => "Ddr573";
 
         /// <inheritdoc />
         public string Description => "Manipulates flash images for 573-based DDR. (1stMix-8thMix)";
@@ -83,10 +87,13 @@ namespace RhythmCodex.Cli.Modules
         /// <summary>
         /// Perform the EXTRACT command.
         /// </summary>
-        private void Extract(IDictionary<string, string[]> args)
+        private void Extract(Args args)
         {
-            var outputDirectory = GetOutputDirectory(args);
-            var inputFiles = GetInputFiles(args);
+            var outputDirectory = _argResolver.GetOutputDirectory(args);
+            var inputFiles = _argResolver.GetInputFiles(args);
+            
+            foreach (var inputFile in inputFiles)
+                _logger.Debug($"Input file: {inputFile}");            
 
             if (!inputFiles.Any())
             {

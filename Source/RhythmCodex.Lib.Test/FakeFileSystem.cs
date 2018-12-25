@@ -78,7 +78,7 @@ namespace RhythmCodex
         }
 
         /// <inheritdoc />
-        public IEnumerable<string> GetFileNames(string path, string pattern)
+        public IEnumerable<string> GetFileNames(string path, string pattern, bool recursive = false)
         {
             return _files.Where(f => f.Key.StartsWith(path, StringComparison.OrdinalIgnoreCase)).Select(f => f.Key);
         }

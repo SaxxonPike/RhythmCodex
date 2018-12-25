@@ -18,7 +18,7 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
 
             // Assert.
-            output.Should().BeEmpty();
+            output.Options.Should().BeEmpty();
         }
 
         [Test]
@@ -33,8 +33,8 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
 
             // Assert.
-            output.Should().HaveCount(1);
-            output[$"{argKind}"].Should().BeEquivalentTo(new[] {argValue});
+            output.Options.Should().HaveCount(1);
+            output.Options[$"{argKind}"].Should().BeEquivalentTo(new[] {argValue});
         }
 
         [Test]
@@ -49,8 +49,8 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
 
             // Assert.
-            output.Should().HaveCount(1);
-            output[$"{argKind}"].Should().BeEquivalentTo(argValues);
+            output.Options.Should().HaveCount(1);
+            output.Options[$"{argKind}"].Should().BeEquivalentTo(argValues);
         }
 
         [Test]
@@ -65,9 +65,9 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
 
             // Assert.
-            output.Should().HaveCount(2);
-            output[$"{argKinds[0]}"].Should().BeEquivalentTo(new[] {argValues[0]});
-            output[$"{argKinds[1]}"].Should().BeEquivalentTo(new[] {argValues[1]});
+            output.Options.Should().HaveCount(2);
+            output.Options[$"{argKinds[0]}"].Should().BeEquivalentTo(new[] {argValues[0]});
+            output.Options[$"{argKinds[1]}"].Should().BeEquivalentTo(new[] {argValues[1]});
         }
 
         [Test]
@@ -81,8 +81,8 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
 
             // Assert.
-            output.Should().HaveCount(1);
-            output[string.Empty].Should().BeEquivalentTo(new[] {argValue});
+            output.Options.Should().HaveCount(1);
+            output.InputFiles.Should().BeEquivalentTo(argValue);
         }
 
         [Test]
@@ -95,8 +95,8 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(argValues);
 
             // Assert.
-            output.Should().HaveCount(1);
-            output[string.Empty].Should().BeEquivalentTo(argValues);
+            output.Options.Should().HaveCount(1);
+            output.InputFiles.Should().BeEquivalentTo(argValues);
         }
 
         [Test]
@@ -113,10 +113,10 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
             
             // Assert.
-            output.Should().HaveCount(3);
-            output[string.Empty].Should().BeEquivalentTo(defaultValues);
-            output[$"{argKinds[0]}"].Should().BeEquivalentTo(argValues[0]);
-            output[$"{argKinds[1]}"].Should().BeEquivalentTo(argValues[1]);
+            output.Options.Should().HaveCount(2);
+            output.InputFiles.Should().BeEquivalentTo(defaultValues);
+            output.Options[$"{argKinds[0]}"].Should().BeEquivalentTo(argValues[0]);
+            output.Options[$"{argKinds[1]}"].Should().BeEquivalentTo(argValues[1]);
         }
         
         [Test]
@@ -130,8 +130,8 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
             
             // Assert.
-            output.Should().HaveCount(1);
-            output[string.Empty].Should().BeEquivalentTo(defaultValues);
+            output.Options.Should().HaveCount(1);
+            output.InputFiles.Should().BeEquivalentTo(defaultValues);
         }
     }
 }

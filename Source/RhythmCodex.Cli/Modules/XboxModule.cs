@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Extensions;
 using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;
@@ -17,6 +18,7 @@ namespace RhythmCodex.Cli.Modules
         private readonly IImaAdpcmDecoder _imaAdpcmDecoder;
         private readonly IRiffPcm16SoundEncoder _riffPcm16SoundEncoder;
         private readonly IRiffStreamWriter _riffStreamWriter;
+        private readonly IArgResolver _argResolver;
         private readonly ILogger _logger;
 
         /// <summary>
@@ -27,17 +29,19 @@ namespace RhythmCodex.Cli.Modules
             IFileSystem fileSystem,
             IImaAdpcmDecoder imaAdpcmDecoder,
             IRiffPcm16SoundEncoder riffPcm16SoundEncoder,
-            IRiffStreamWriter riffStreamWriter)
+            IRiffStreamWriter riffStreamWriter,
+            IArgResolver argResolver)
         {
             _logger = logger;
             _fileSystem = fileSystem;
             _imaAdpcmDecoder = imaAdpcmDecoder;
             _riffPcm16SoundEncoder = riffPcm16SoundEncoder;
             _riffStreamWriter = riffStreamWriter;
+            _argResolver = argResolver;
         }
 
         /// <inheritdoc />
-        public string Name => "XBOX";
+        public string Name => "Xbox";
 
         /// <inheritdoc />
         public string Description => "Handles conversion of Xbox native media.";
@@ -58,39 +62,15 @@ namespace RhythmCodex.Cli.Modules
         };
 
         /// <summary>
-        /// Get all input files from command line args.
-        /// </summary>
-        private string[] GetInputFiles(IDictionary<string, string[]> args)
-        {
-            var files = (args.ContainsKey(string.Empty)
-                ? args[string.Empty].SelectMany(a => _fileSystem.GetFileNames(a)).ToArray()
-                : Enumerable.Empty<string>()).ToArray();
-            foreach (var inputFile in files)
-                _logger.Debug($"Input file: {inputFile}");
-            return files;
-        }
-
-        /// <summary>
-        /// Get output directory from command line args.
-        /// </summary>
-        private string GetOutputDirectory(IDictionary<string, string[]> args)
-        {
-            var value = args.ContainsKey("o")
-                ? args["o"].FirstOrDefault()
-                : null;
-
-            return !string.IsNullOrEmpty(value)
-                ? value
-                : _fileSystem.CurrentPath;
-        }
-
-        /// <summary>
         /// Perform the DECODE command.
         /// </summary>
-        private void Decode(IDictionary<string, string[]> args)
+        private void Decode(Args args)
         {
-            var outputDirectory = GetOutputDirectory(args);
-            var inputFiles = GetInputFiles(args);
+            var outputDirectory = _argResolver.GetOutputDirectory(args);
+            var inputFiles = _argResolver.GetInputFiles(args);
+            
+            foreach (var inputFile in inputFiles)
+                _logger.Debug($"Input file: {inputFile}");            
 
             if (!inputFiles.Any())
             {

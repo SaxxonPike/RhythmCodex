@@ -74,39 +74,20 @@ namespace RhythmCodex.Cli
                 return;
             }
 
-            var parameters = _argParser.Parse(args.Skip(2));
-            var moduleParameters = ProcessSpecialArgs(parameters);
+            var cmd = _argParser.Parse(args.Skip(2));
+            
+            _loggerConfigurationSource.VerbosityLevel = cmd.LogLevel;            
+            _console.WriteLine($"Using {cmd.LogLevel} log level.");
 
-            if (!moduleParameters.Any())
+            if (!cmd.Options.Any())
             {
                 OutputParameterList(module, command);
                 return;
             }
 
             _console.WriteLine($"Executing {module.Name} {command.Name}.");
-            command.Execute(moduleParameters);
+            command.Execute(cmd);
             _console.WriteLine($"Task complete.");
-        }
-
-        /// <summary>
-        /// Obtain special arguments that do not pertain to any one module.
-        /// </summary>
-        private IDictionary<string, string[]> ProcessSpecialArgs(IDictionary<string, string[]> args)
-        {
-            var specialArgs = args.Where(a => a.Key.StartsWith("-"));
-            var filteredArgs = args.Where(a => !a.Key.StartsWith("-"));
-
-            foreach (var arg in specialArgs)
-            {
-                switch (arg.Key.ToLowerInvariant().Substring(1))
-                {
-                    case "log":
-                        SetLogLevel(arg.Value.LastOrDefault());
-                        break;
-                }
-            }
-
-            return filteredArgs.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
         /// <summary>
@@ -129,7 +110,6 @@ namespace RhythmCodex.Cli
                     _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Error;
                     break;
             }
-            _console.WriteLine($"Using {_loggerConfigurationSource.VerbosityLevel} log level.");
         }
 
         /// <summary>

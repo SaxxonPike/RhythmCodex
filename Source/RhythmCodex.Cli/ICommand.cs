@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using RhythmCodex.Cli.Helpers;
 
 namespace RhythmCodex.Cli
 {
@@ -16,7 +17,7 @@ namespace RhythmCodex.Cli
         /// <summary>
         /// Execute the function with the specified command line parameters.
         /// </summary>
-        Action<IDictionary<string, string[]>> Execute { get; }
+        Action<Args> Execute { get; }
         
         /// <summary>
         /// Name of the command the user can refer to this command with.

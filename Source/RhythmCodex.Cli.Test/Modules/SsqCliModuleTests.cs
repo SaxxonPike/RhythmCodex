@@ -5,6 +5,7 @@ using System.Linq;
 using Autofac;
 using FluentAssertions;
 using NUnit.Framework;
+using RhythmCodex.Cli.Helpers;
 
 namespace RhythmCodex.Cli.Modules
 {
@@ -25,16 +26,13 @@ namespace RhythmCodex.Cli.Modules
             FileSystem.WriteAllBytes(inputFileName, inputFile);
 
             var subject = AppContainer.Resolve<SsqCliModule>();
-            var args = new Dictionary<string, string[]>
-            {
-                {string.Empty, new[] {inputFileName}}
-            };
+            var parsedArgs = AppContainer.Resolve<ArgParser>().Parse(new[] {inputFileName});
 
             // Act.
             Action act = () => subject
                 .Commands
                 .Single(c => c.Name.Equals("decode", StringComparison.OrdinalIgnoreCase))
-                .Execute(args);
+                .Execute(parsedArgs);
 
             // Assert.
             act.Should().NotThrow();
