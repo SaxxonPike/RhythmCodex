@@ -79,7 +79,7 @@ namespace RhythmCodex.Cli
             _loggerConfigurationSource.VerbosityLevel = cmd.LogLevel;            
             _console.WriteLine($"Using {cmd.LogLevel} log level.");
 
-            if (!cmd.Options.Any())
+            if (!cmd.Options.Any() && !cmd.InputFiles.Any())
             {
                 OutputParameterList(module, command);
                 return;
