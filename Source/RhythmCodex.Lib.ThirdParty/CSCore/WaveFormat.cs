@@ -229,11 +229,6 @@ namespace CSCore
             return MemberwiseClone(); //since there are value types MemberWiseClone is enough.
         }
 
-        internal virtual void SetWaveFormatTagInternal(AudioEncoding waveFormatTag)
-        {
-            WaveFormatTag = waveFormatTag;
-        }
-
         internal void SetBitsPerSampleAndFormatProperties(int bitsPerSample)
         {
             BitsPerSample = bitsPerSample;

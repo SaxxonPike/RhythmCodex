@@ -13,9 +13,6 @@ namespace CSCore.Codecs.FLAC
     public sealed partial class FlacFrame : IDisposable
     {
         private List<FlacSubFrameData> _subFrameData;
-#if FLAC_DEBUG
-        private System.Collections.ObjectModel.ReadOnlyCollection<FlacSubFrameBase> _subFrames;  
-#endif
         private Stream _stream;
         private FlacMetadataStreamInfo _streamInfo;
 
@@ -140,9 +137,6 @@ namespace CSCore.Codecs.FLAC
                 MapToChannels(_subFrameData);
             }
 
-#if FLAC_DEBUG
-            _subFrames = subFrames.AsReadOnly();
-#endif
         }
 
         private unsafe void MapToChannels(List<FlacSubFrameData> subFrames)
@@ -181,65 +175,9 @@ namespace CSCore.Codecs.FLAC
         /// </summary>
         /// <param name="buffer">The buffer which should be used to store the data in. This value can be null.</param>
         /// <returns>The number of read bytes.</returns>
-        public
-#if FLAC_DEBUG && !GET_BUFFER_INTERNAL
-            unsafe 
-#endif
- int GetBuffer(ref byte[] buffer)
+        public int GetBuffer(ref byte[] buffer)
         {
-#if !FLAC_DEBUG || GET_BUFFER_INTERNAL
             return GetBufferInternal(ref buffer);
-#else 
-            int desiredsize = Header.BlockSize * Header.Channels * ((Header.BitsPerSample + 7) / 2);
-            if (buffer == null || buffer.Length < desiredsize)
-                buffer = new byte[desiredsize];
-
-            fixed (byte* ptrBuffer = buffer)
-            {
-                byte* ptr = ptrBuffer;
-                if (Header.BitsPerSample == 8)
-                {
-                    for (int i = 0; i < Header.BlockSize; i++)
-                    {
-                        for (int c = 0; c < Header.Channels; c++)
-                        {
-                            *(ptr++) = (byte)(_subFrames[c].DestinationBuffer[i] + 0x80);
-                        }
-                    }
-                }
-                else if (Header.BitsPerSample == 16)
-                {
-                    for (int i = 0; i < Header.BlockSize; i++)
-                    {
-                        for (int c = 0; c < Header.Channels; c++)
-                        {
-                            short val = (short)(_subFrames[c].DestinationBuffer[i]);
-                            *(ptr++) = (byte)(val & 0xFF);
-                            *(ptr++) = (byte)((val >> 8) & 0xFF);
-                        }
-                    }
-                }
-                else if (Header.BitsPerSample == 24)
-                {
-                    for (int i = 0; i < Header.BlockSize; i++)
-                    {
-                        for (int c = 0; c < Header.Channels; c++)
-                        {
-                            int val = (_subFrames[c].DestinationBuffer[i]);
-                            *(ptr++) = (byte)(val & 0xFF);
-                            *(ptr++) = (byte)((val >> 8) & 0xFF);
-                            *(ptr++) = (byte)((val >> 16) & 0xFF);
-                        }
-                    }
-                }
-                else
-                {
-                    throw new FlacException(String.Format("FlacFrame::GetBuffer: Invalid BitsPerSample value: {0}", Header.BitsPerSample), FlacLayer.Frame);
-                }
-
-                return (int)(ptr - ptrBuffer);
-            }
-#endif
         }
 
         private unsafe List<FlacSubFrameData> AllocOuputMemory()

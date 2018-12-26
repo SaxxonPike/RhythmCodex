@@ -62,23 +62,11 @@ namespace CSCore.Codecs.FLAC
                 }
             }
 
-#if FLAC_DEBUG
-            subFrame.WastedBits = wastedBits;
-#endif
             return subFrame;
         }
 
-#if FLAC_DEBUG
-        public int WastedBits { get; private set; }
-
-        public FlacFrameHeader Header { get; private set; }
-#endif
-
         protected FlacSubFrameBase(FlacFrameHeader header)
         {
-#if FLAC_DEBUG
-            Header = header;
-#endif
         }
     }
 }

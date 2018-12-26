@@ -76,7 +76,7 @@ namespace CSCore
         ///     Subformat of the data, such as <see cref="AudioSubTypes.Pcm" />. The subformat information is similar to
         ///     that provided by the tag in the <see cref="WaveFormat" /> class's <see cref="WaveFormat.WaveFormatTag" /> member.
         /// </summary>
-        public Guid SubFormat { get; protected internal set; }
+        public Guid SubFormat { get; }
 
         internal WaveFormatExtensible()
         {
@@ -152,16 +152,6 @@ namespace CSCore
         }
 
         /// <summary>
-        ///     Converts the <see cref="WaveFormatExtensible" /> instance to a raw <see cref="WaveFormat" /> instance by converting
-        ///     the <see cref="SubFormat" /> to the equal <see cref="WaveFormat.WaveFormatTag" />.
-        /// </summary>
-        /// <returns>A simple <see cref="WaveFormat"/> instance.</returns>
-        public WaveFormat ToWaveFormat()
-        {
-            return new WaveFormat(SampleRate, BitsPerSample, Channels, AudioSubTypes.EncodingFromSubType(SubFormat));
-        }
-
-        /// <summary>
         /// Creates a new <see cref="WaveFormat" /> object that is a copy of the current instance.
         /// </summary>
         /// <returns>
@@ -173,11 +163,6 @@ namespace CSCore
             //waveFormat._samplesUnion = _samplesUnion;
             //return waveFormat;
             return MemberwiseClone();
-        }
-
-        internal override void SetWaveFormatTagInternal(AudioEncoding waveFormatTag)
-        {
-            SubFormat = AudioSubTypes.SubTypeFromEncoding(waveFormatTag);
         }
 
         /// <summary>

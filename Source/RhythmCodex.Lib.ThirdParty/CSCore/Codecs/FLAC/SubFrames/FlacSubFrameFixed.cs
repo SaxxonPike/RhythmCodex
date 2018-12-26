@@ -5,9 +5,6 @@ namespace CSCore.Codecs.FLAC
 {
     internal sealed class FlacSubFrameFixed : FlacSubFrameBase
     {
-#if FLAC_DEBUG
-        public FlacResidual Residual { get; private set; }
-#endif
         public unsafe FlacSubFrameFixed(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample, int order)
             : base(header)
         {
@@ -18,10 +15,6 @@ namespace CSCore.Codecs.FLAC
 
             var residual = new FlacResidual(reader, header, data, order); //necessary for decoding
             RestoreSignal(data, header.BlockSize - order, order);
-
-#if FLAC_DEBUG
-            Residual = residual;
-#endif
         }
 
         private unsafe void RestoreSignal(FlacSubFrameData subframeData, int length, int order)

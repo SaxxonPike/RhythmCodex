@@ -1,19 +1,16 @@
 ﻿#define DIAGNOSTICS
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using CSCore.Tags.ID3;
 
 namespace CSCore.Codecs.FLAC
 {
     /// <summary>
     ///     Provides a decoder for decoding flac (Free Lostless Audio Codec) data.
     /// </summary>
-    public sealed class FlacFile : IReadableAudioSource<byte>
+    public sealed class FlacFile : IFlacFile
     {
         private readonly Stream _stream;
         private readonly FlacMetadataStreamInfo _streamInfo;
@@ -77,34 +74,21 @@ namespace CSCore.Codecs.FLAC
             _closeStream = true;
 
             //skip ID3v2
-            while (ID3v2.SkipTag(stream))
-            {
-            }
+            SkipId3V2(stream);
 
-            //read fLaC sync
-            var beginSync = new byte[4];
-            var read = stream.Read(beginSync, 0, beginSync.Length);
-            if (read < beginSync.Length)
-                throw new EndOfStreamException("Can not read \"fLaC\" sync.");
-            if (beginSync[0] == 0x66 && beginSync[1] == 0x4C && //Check for 'fLaC' signature
-                beginSync[2] == 0x61 && beginSync[3] == 0x43)
-            {
-                //read metadata
-                var metadata = FlacMetadata.ReadAllMetadataFromStream(stream).ToList();
+            //read metadata
+            var metadata = FlacMetadata.ReadAllMetadataFromStream(stream).ToList();
 
-                if (metadata.Count <= 0)
-                    throw new FlacException("No Metadata found.", FlacLayer.Metadata);
+            if (metadata.Count <= 0)
+                throw new FlacException("No Metadata found.", FlacLayer.Metadata);
 
-                var streamInfo =
-                    metadata.First(x => x.MetaDataType == FlacMetaDataType.StreamInfo) as FlacMetadataStreamInfo;
+            var streamInfo =
+                metadata.First(x => x.MetaDataType == FlacMetaDataType.StreamInfo) as FlacMetadataStreamInfo;
 
-                _streamInfo = streamInfo ?? throw new FlacException("No StreamInfo-Metadata found.", FlacLayer.Metadata);
-                WaveFormat = CreateWaveFormat(streamInfo);
-                Debug.WriteLine("Flac StreamInfo found -> WaveFormat: " + WaveFormat);
-                Debug.WriteLine("Flac-File-Metadata read.");
-            }
-            else
-                throw new FlacException("Invalid Flac-File. \"fLaC\" Sync not found.", FlacLayer.OutSideOfFrame);
+            _streamInfo = streamInfo ?? throw new FlacException("No StreamInfo-Metadata found.", FlacLayer.Metadata);
+            WaveFormat = CreateWaveFormat(streamInfo);
+            Debug.WriteLine("Flac StreamInfo found -> WaveFormat: " + WaveFormat);
+            Debug.WriteLine("Flac-File-Metadata read.");
 
             //prescan stream
             if (scanFlag != FlacPreScanMode.None)
@@ -116,6 +100,33 @@ namespace CSCore.Codecs.FLAC
                 };
                 scan.ScanStream(_streamInfo, scanFlag);
                 _scan = scan;
+            }
+        }
+
+        private void SkipId3V2(Stream stream)
+        {
+            var buffer = new byte[10];
+            while (true)
+            {
+                if (stream.Read(buffer, 0, 4) < 4)
+                    throw new EndOfStreamException("Can not read \"fLaC\" sync.");
+
+                if (buffer[0] == 'I' && buffer[1] == 'D' && buffer[2] == '3')
+                {
+                    if (stream.Read(buffer, 4, 6) < 6)
+                        throw new EndOfStreamException("Can not finish reading ID3 tag.");
+                    var size = ((buffer[6] & 0x7F) << 21) |
+                               ((buffer[7] & 0x7F) << 14) |
+                               ((buffer[8] & 0x7F) << 7) |
+                               (buffer[9] & 0x7F);
+                    stream.Read(new byte[size], 0, size);
+                    continue;
+                }
+
+                if (buffer[0] == 'f' && buffer[1] == 'L' && buffer[2] == 'a' && buffer[3] == 'C')
+                    return;
+                
+                throw new FlacException("Invalid Flac-File. \"fLaC\" Sync not found.", FlacLayer.OutSideOfFrame);
             }
         }
 
@@ -304,7 +315,7 @@ namespace CSCore.Codecs.FLAC
                             diff -= (diff % WaveFormat.BlockAlign);
                             if (diff > 0)
                             {
-                                this.ReadBytes(diff);
+                                _stream.Read(new byte[diff], 0, diff);
                             }
 
                             break;
@@ -357,7 +368,7 @@ namespace CSCore.Codecs.FLAC
                         _frame = null;
                     }
 
-                    if (_stream != null && !_stream.IsClosed() && _closeStream)
+                    if (_stream != null && !(!_stream.CanRead && !_stream.CanWrite) && _closeStream)
                         _stream.Dispose();
 
                     _disposed = true;

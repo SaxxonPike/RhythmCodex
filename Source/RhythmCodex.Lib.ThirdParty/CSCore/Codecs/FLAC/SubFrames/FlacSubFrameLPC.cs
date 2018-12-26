@@ -6,17 +6,6 @@ namespace CSCore.Codecs.FLAC
 // ReSharper disable once InconsistentNaming
     internal sealed partial class FlacSubFrameLPC : FlacSubFrameBase
     {
-#if FLAC_DEBUG
-        public int QLPCoeffPrecision { get; private set; }
-
-        public int LPCShiftNeeded { get; private set; }
-
-        public int[] QLPCoeffs { get; private set; }
-
-        public int[] Warmup { get; private set; }
-
-        public FlacResidual Residual { get; private set; }
-#endif
         public unsafe FlacSubFrameLPC(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample, int order)
             : base(header)
         {
@@ -61,14 +50,6 @@ namespace CSCore.Codecs.FLAC
             {
                 RestoreLPCSignal64(residualBuffer0, destinationBuffer0, blockSizeToProcess, order, q, shiftNeeded);
             }
-
-#if FLAC_DEBUG
-            QLPCoeffPrecision = coefPrecision;
-            LPCShiftNeeded = shiftNeeded;
-            Warmup = warmup;
-            Residual = residual;
-            QLPCoeffs = q;
-#endif
         }
 
         /// <summary>
