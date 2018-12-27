@@ -21,7 +21,7 @@ namespace CSCore.Codecs.FLAC
         private readonly bool _closeStream;
 
         //overflow:
-        private byte[] _overflowBuffer;
+        private Memory<byte> _overflowBuffer;
 
         private int _overflowCount;
         private int _overflowOffset;
@@ -227,7 +227,7 @@ namespace CSCore.Codecs.FLAC
 
                     var bufferlength = frame.GetBuffer(ref _overflowBuffer);
                     var bytesToCopy = Math.Min(count - read, bufferlength);
-                    Array.Copy(_overflowBuffer, 0, buffer, offset, bytesToCopy);
+                    _overflowBuffer.Span.Slice(0, bytesToCopy).CopyTo(buffer.AsSpan().Slice(offset));
                     read += bytesToCopy;
                     offset += bytesToCopy;
 
@@ -242,12 +242,12 @@ namespace CSCore.Codecs.FLAC
             return read;
         }
 
-        private int GetOverflows(byte[] buffer, ref int offset, int count)
+        private int GetOverflows(Memory<byte> buffer, ref int offset, int count)
         {
-            if (_overflowCount != 0 && _overflowBuffer != null && count > 0)
+            if (_overflowCount != 0 && count > 0)
             {
                 var bytesToCopy = Math.Min(count, _overflowCount);
-                Array.Copy(_overflowBuffer, _overflowOffset, buffer, offset, bytesToCopy);
+                _overflowBuffer.Span.Slice(_overflowOffset, bytesToCopy).CopyTo(buffer.Span.Slice(offset));
 
                 _overflowCount -= bytesToCopy;
                 _overflowOffset += bytesToCopy;

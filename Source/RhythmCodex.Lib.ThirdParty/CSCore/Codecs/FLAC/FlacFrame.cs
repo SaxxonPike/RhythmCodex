@@ -194,7 +194,7 @@ namespace CSCore.Codecs.FLAC
         /// </summary>
         /// <param name="buffer">The buffer which should be used to store the data in. This value can be null.</param>
         /// <returns>The number of read bytes.</returns>
-        public int GetBuffer(ref byte[] buffer)
+        public int GetBuffer(ref Memory<byte> buffer)
         {
             return GetBufferInternal(ref buffer);
         }

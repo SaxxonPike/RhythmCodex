@@ -4,11 +4,12 @@ namespace CSCore.Codecs.FLAC
 {
     public partial class FlacFrame
     {
-        private int GetBufferInternal(ref byte[] ptrBuffer)
+        private int GetBufferInternal(ref Memory<byte> mem)
         {
             var desiredsize = Header.BlockSize * Header.Channels * ((Header.BitsPerSample + 7) / 2);
-            if (ptrBuffer == null || ptrBuffer.Length < desiredsize)
-                ptrBuffer = new byte[desiredsize];
+            if (mem.Length < desiredsize)
+                mem = new byte[desiredsize];
+            var ptrBuffer = mem.Span;
 
             {
                 var ptr = 0;
