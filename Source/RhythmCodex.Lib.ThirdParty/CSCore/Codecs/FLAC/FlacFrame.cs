@@ -10,7 +10,7 @@ namespace CSCore.Codecs.FLAC
     /// <summary>
     /// Represents a frame inside of an Flac-Stream.
     /// </summary>
-    public sealed partial class FlacFrame : IDisposable
+    internal sealed class FlacFrame : IDisposable
     {
         private List<FlacSubFrameData> _subFrameData;
         private Stream _stream;
@@ -194,9 +194,59 @@ namespace CSCore.Codecs.FLAC
         /// </summary>
         /// <param name="buffer">The buffer which should be used to store the data in. This value can be null.</param>
         /// <returns>The number of read bytes.</returns>
-        public int GetBuffer(ref Memory<byte> buffer)
+        public int GetBuffer(ref Memory<byte> mem)
         {
-            return GetBufferInternal(ref buffer);
+            var desiredsize = Header.BlockSize * Header.Channels * ((Header.BitsPerSample + 7) / 2);
+            if (mem.Length < desiredsize)
+                mem = new byte[desiredsize];
+            var ptrBuffer = mem.Span;
+            var ptr = 0;
+            
+            var blockSize = Header.BlockSize;
+            var channelCount = Header.Channels;
+            
+            switch (Header.BitsPerSample)
+            {
+                case 8:
+                {
+                    for (var i = 0; i < blockSize; i++)
+                    for (var c = 0; c < channelCount; c++)
+                        ptrBuffer[ptr++] = (byte) (_subFrameData[c].DestinationBuffer.Span[i] + 0x80);
+
+                    break;
+                }
+                case 16:
+                {
+                    for (var i = 0; i < blockSize; i++)
+                    for (var c = 0; c < channelCount; c++)
+                    {
+                        var vals = (short) _subFrameData[c].DestinationBuffer.Span[i];
+                        ptrBuffer[ptr++] = (byte) (vals & 0xFF);
+                        ptrBuffer[ptr++] = (byte) ((vals >> 8) & 0xFF);
+                    }
+
+                    break;
+                }
+                case 24:
+                {
+                    for (var i = 0; i < blockSize; i++)
+                    for (var c = 0; c < channelCount; c++)
+                    {
+                        var val = _subFrameData[c].DestinationBuffer.Span[i];
+                        ptrBuffer[ptr++] = (byte) (val & 0xFF);
+                        ptrBuffer[ptr++] = (byte) ((val >> 8) & 0xFF);
+                        ptrBuffer[ptr++] = (byte) ((val >> 16) & 0xFF);
+                    }
+
+                    break;
+                }
+                default: //default bits per sample
+                    throw new FlacException(
+                        $"FlacFrame::GetBuffer: Invalid BitsPerSample value: {Header.BitsPerSample}",
+                        FlacLayer.Frame);
+            }
+
+            return ptr;
         }
 
         private unsafe List<FlacSubFrameData> AllocOuputMemory()
