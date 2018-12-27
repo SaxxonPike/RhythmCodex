@@ -6,8 +6,11 @@ namespace CSCore.Codecs.FLAC
         public FlacSubFrameConstant(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample)
             : base(header)
         {
-            var value = (int)reader.ReadBits(bitsPerSample);
-            data.DestinationBuffer.Span.Fill(value);
+            unchecked
+            {
+                var value = (int)reader.ReadBits(bitsPerSample);
+                data.DestinationBuffer.Span.Fill(value);
+            }
         }
     }
 }
