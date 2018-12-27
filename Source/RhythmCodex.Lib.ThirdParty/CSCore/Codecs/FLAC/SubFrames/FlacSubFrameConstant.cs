@@ -7,15 +7,7 @@ namespace CSCore.Codecs.FLAC
             : base(header)
         {
             var value = (int)reader.ReadBits(bitsPerSample);
-
-            unsafe
-            {
-                var pDestinationBuffer = data.DestinationBuffer.Span;
-                for (var i = 0; i < header.BlockSize; i++)
-                {
-                    pDestinationBuffer[i] = value;
-                }
-            }
+            data.DestinationBuffer.Span.Fill(value);
         }
     }
 }
