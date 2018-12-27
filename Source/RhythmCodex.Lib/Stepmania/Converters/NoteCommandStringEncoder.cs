@@ -49,6 +49,9 @@ namespace RhythmCodex.Stepmania.Converters
         private IEnumerable<char[][]> EncodeMeasures(IEnumerable<Note> notes)
         {
             var notesList = notes.AsList();
+            if (!notesList.Any())
+                yield break;
+            
             var columns = notesList.Max(n => n.Column) + 1;
             var measures = notesList.GroupBy(n => n.MetricOffset.GetWholePart()).AsList();
             var maxMeasure = measures.Max(m => m.Key);

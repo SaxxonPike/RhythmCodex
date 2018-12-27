@@ -86,18 +86,52 @@ namespace RhythmCodex.Stepmania.Converters
         private IEnumerable<Command> GetTimingCommands(IEnumerable<IChart> charts)
         {
             var chartList = charts.AsList();
-
+            
             var bpms = chartList
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
                 .Select(g => g.First())
+                .ToList();
+
+            // If initial BPM can't be determined, SM does weird calculations that don't pan out,
+            // so find it ourselves:
+            if (bpms.All(bpm => bpm[NumericData.MetricOffset] != 0))
+            {
+                // Find any negative metric offsets, closest to zero
+                var initialBpm = bpms
+                    .Where(bpm => bpm[NumericData.MetricOffset] <= 0)
+                    .OrderBy(bpm => bpm[NumericData.MetricOffset])
+                    .LastOrDefault();
+
+                // If all offsets are above zero, use the first one instead
+                if (initialBpm == null)
+                {
+                    initialBpm = bpms
+                        .Where(bpm => bpm[NumericData.MetricOffset] > 0)
+                        .OrderBy(bpm => bpm[NumericData.MetricOffset])
+                        .FirstOrDefault();
+                }
+
+                // Create a zero-offset BPM so SM knows how to set the BPM
+                if (initialBpm != null)
+                {
+                    bpms.Insert(0, new Event
+                    {
+                        [NumericData.MetricOffset] = 0,
+                        [NumericData.Bpm] = initialBpm[NumericData.Bpm]
+                    });
+                }
+            }
+            
+            var bpmEvents = bpms
+                .Where(ev => ev[NumericData.MetricOffset] >= 0)
                 .Select(ev =>
                     new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value});
 
             yield return new Command
             {
                 Name = ChartTag.BpmsTag,
-                Values = new[] {_timedCommandStringEncoder.Encode(bpms)}
+                Values = new[] {_timedCommandStringEncoder.Encode(bpmEvents)}
             };
 
             var stops = chartList
