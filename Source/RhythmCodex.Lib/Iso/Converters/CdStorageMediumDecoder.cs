@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Converters;
 using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Converters
@@ -11,16 +10,7 @@ namespace RhythmCodex.Iso.Converters
     public class CdStorageMediumDecoder : ICdStorageMediumDecoder
     {
         private static readonly byte[] StandardIdentifier = {0x43, 0x44, 0x30, 0x30, 0x31};
-        
-        private readonly IBitter _bitter;
-        private readonly IBcd _bcd;
 
-        public CdStorageMediumDecoder(IBitter bitter, IBcd bcd)
-        {
-            _bitter = bitter;
-            _bcd = bcd;
-        }
-        
         public Iso9660StorageMedium Decode(IEnumerable<Iso9660SectorInfo> sectors)
         {
             var result = new Iso9660StorageMedium
@@ -88,15 +78,15 @@ namespace RhythmCodex.Iso.Converters
             {
                 SystemIdentifier = Encodings.CP437.GetString(primaryVolumeDescriptor.UserData.Slice(8, 32)),
                 VolumeIdentifier = Encodings.CP437.GetString(primaryVolumeDescriptor.UserData.Slice(40, 32)),
-                SpaceSize = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(80, 8)),
-                SetSize = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(120, 4)),
-                SequenceNumber = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(124, 4)),
-                LogicalBlockSize = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(128, 4)),
-                PathTableSize = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(132, 8)),
-                TypeLPathTableLocation = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(140, 4)),
-                OptionalTypeLPathTableLocation = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(144, 4)),
-                TypeMPathTableLocation = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(148, 4)),
-                OptionalTypeMPathTableLocation = _bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(152, 4)),
+                SpaceSize = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(80, 8)),
+                SetSize = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(120, 4)),
+                SequenceNumber = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(124, 4)),
+                LogicalBlockSize = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(128, 4)),
+                PathTableSize = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(132, 8)),
+                TypeLPathTableLocation = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(140, 4)),
+                OptionalTypeLPathTableLocation = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(144, 4)),
+                TypeMPathTableLocation = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(148, 4)),
+                OptionalTypeMPathTableLocation = Bitter.ToInt32(primaryVolumeDescriptor.UserData.Slice(152, 4)),
                 // directory record at 156 for 34 bytes
                 VolumeSetIdentifier = Encodings.CP437.GetString(primaryVolumeDescriptor.UserData.Slice(190, 128)),
                 PublisherIdentifier = Encodings.CP437.GetString(primaryVolumeDescriptor.UserData.Slice(318, 128)),

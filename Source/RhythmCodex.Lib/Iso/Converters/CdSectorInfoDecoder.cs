@@ -1,5 +1,4 @@
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Converters;
 using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Converters
@@ -7,13 +6,6 @@ namespace RhythmCodex.Iso.Converters
     [Service]
     public class CdSectorInfoDecoder : ICdSectorInfoDecoder
     {
-        private readonly IBcd _bcd;
-
-        public CdSectorInfoDecoder(IBcd bcd)
-        {
-            _bcd = bcd;
-        }
-        
         public Iso9660SectorInfo Decode(ICdSector sector)
         {
             var result = new Iso9660SectorInfo
@@ -42,9 +34,9 @@ namespace RhythmCodex.Iso.Converters
                 return result;
             }
 
-            result.Minutes = _bcd.FromBcd(data[0x000C]);
-            result.Seconds = _bcd.FromBcd(data[0x000D]);
-            result.Frames = _bcd.FromBcd(data[0x000E]);
+            result.Minutes = Bcd.Decode(data[0x000C]);
+            result.Seconds = Bcd.Decode(data[0x000D]);
+            result.Frames = Bcd.Decode(data[0x000E]);
             result.Mode = data[0x000F];
 
             switch (result.Mode)

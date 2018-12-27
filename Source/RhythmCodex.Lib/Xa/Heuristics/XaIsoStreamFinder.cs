@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Converters;
 using RhythmCodex.Iso.Model;
 using RhythmCodex.Xa.Models;
 

@@ -21,6 +21,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\BeatmaniaPsx\chart.zip" />
     <EmbeddedResource Include="Data\BeatmaniaPsx\keysounds.zip" />
+    <EmbeddedResource Include="Data\Dds\dxt1.zip" />
+    <EmbeddedResource Include="Data\Dds\uncompressed.zip" />
     <EmbeddedResource Include="Data\Djmain\bm1st.zip" />
     <EmbeddedResource Include="Data\Djmain\bm7th.zip" />
     <EmbeddedResource Include="Data\Djmain\bmcm.zip" />

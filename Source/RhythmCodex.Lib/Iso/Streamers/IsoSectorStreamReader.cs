@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Converters;
 using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Streamers
@@ -10,14 +9,8 @@ namespace RhythmCodex.Iso.Streamers
     [Service]
     public class IsoSectorStreamReader : IIsoSectorStreamReader
     {
-        private readonly IBcd _bcd;
         private const int InputSectorLength = 2048;
         private const int OutputSectorLength = 2352;
-
-        public IsoSectorStreamReader(IBcd bcd)
-        {
-            _bcd = bcd;
-        }
 
         public IEnumerable<ICdSector> Read(Stream stream, int length, bool keepOnDisk)
         {
@@ -45,7 +38,7 @@ namespace RhythmCodex.Iso.Streamers
                 0x00, 0xFF, 0xFF, 0xFF,
                 0xFF, 0xFF, 0xFF, 0xFF,
                 0xFF, 0xFF, 0xFF, 0x00,
-                _bcd.ToBcd(minute), _bcd.ToBcd(second), _bcd.ToBcd(frame), 0x01
+                Bcd.Encode(minute), Bcd.Encode(second), Bcd.Encode(frame), 0x01
             }.AsSpan().CopyTo(data);
             return data;
         }

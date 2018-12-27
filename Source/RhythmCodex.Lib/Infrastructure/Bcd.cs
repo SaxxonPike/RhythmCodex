@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 
-namespace RhythmCodex.Infrastructure.Converters
+namespace RhythmCodex.Infrastructure
 {
-    public class Bcd : IBcd
+    public static class Bcd
     {
-        public int FromBcd(IEnumerable<byte> bytes)
+        public static int Decode(IEnumerable<byte> bytes)
         {
             var output = 0;
             foreach (var b in bytes)
             {
                 output *= 100;
-                output += FromBcd(b);
+                output += Decode(b);
             }
 
             return output;
         }
 
-        public int FromBcd(byte b) => 
+        public static int Decode(byte b) => 
             (b & 0xF) + (b >> 4) * 10;
 
-        public byte ToBcd(int data)
+        public static byte Encode(int data)
         {
             return unchecked((byte) (((data / 10) << 4) | (data % 10)));
         }

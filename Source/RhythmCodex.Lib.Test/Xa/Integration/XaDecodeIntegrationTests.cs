@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Attributes;
-using RhythmCodex.Infrastructure.Converters;
 using RhythmCodex.Iso.Converters;
 using RhythmCodex.Iso.Streamers;
 using RhythmCodex.Riff.Converters;

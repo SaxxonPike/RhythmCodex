@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bms\Model" />
+    <Folder Include="Infrastructure\Converters" />
     <Folder Include="Step1\Mappers" />
   </ItemGroup>
   <ItemGroup>
