@@ -12,11 +12,8 @@ namespace CSCore.Codecs.FLAC
             var resi = data.ResidualBuffer.Span;
             var dest = data.DestinationBuffer.Span;
             
-            var warmup = new int[order];
             for (var i = 0; i < order; i++)
-            {
-                warmup[i] = resi[i] = reader.ReadBitsSigned(bitsPerSample);
-            }
+                resi[i] = reader.ReadBitsSigned(bitsPerSample);
 
             var coefPrecision = (int)reader.ReadBits(4);
             if (coefPrecision == 0x0F)
@@ -30,16 +27,11 @@ namespace CSCore.Codecs.FLAC
 
             var q = new int[order];
             for (var i = 0; i < order; i++)
-            {
                 q[i] = reader.ReadBitsSigned(coefPrecision);
-            }
 
             //decode the residual
-            var residual = new FlacResidual(reader, header, data, order);
-            for (var i = 0; i < order; i++)
-            {
-                dest[i] = resi[i];
-            }
+            new FlacResidual(reader, header, data, order);
+            resi.Slice(0, order).CopyTo(dest);
 
             var blockSizeToProcess = header.BlockSize - order;
 
