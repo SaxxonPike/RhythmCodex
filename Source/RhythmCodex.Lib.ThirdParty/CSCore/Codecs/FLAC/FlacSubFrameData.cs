@@ -1,9 +1,11 @@
-﻿namespace CSCore.Codecs.FLAC
+﻿using System;
+
+namespace CSCore.Codecs.FLAC
 {
-    internal unsafe class FlacSubFrameData
+    internal class FlacSubFrameData
     {
-        public int* DestinationBuffer;
-        public int* ResidualBuffer;
+        public Memory<int> DestinationBuffer;
+        public Memory<int> ResidualBuffer;
         public readonly FlacPartitionedRiceContent Content = new FlacPartitionedRiceContent();
     }
 }

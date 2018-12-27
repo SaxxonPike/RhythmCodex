@@ -139,33 +139,52 @@ namespace CSCore.Codecs.FLAC
 
         }
 
-        private unsafe void MapToChannels(List<FlacSubFrameData> subFrames)
+        private void MapToChannels(List<FlacSubFrameData> subFrames)
         {
-            if (Header.ChannelAssignment == ChannelAssignment.LeftSide)
+            
+            switch (Header.ChannelAssignment)
             {
-                for (var i = 0; i < Header.BlockSize; i++)
+                case ChannelAssignment.LeftSide:
                 {
-                    subFrames[1].DestinationBuffer[i] = subFrames[0].DestinationBuffer[i] - subFrames[1].DestinationBuffer[i];
-                }
-            }
-            else if (Header.ChannelAssignment == ChannelAssignment.RightSide)
-            {
-                for (var i = 0; i < Header.BlockSize; i++)
-                {
-                    subFrames[0].DestinationBuffer[i] += subFrames[1].DestinationBuffer[i];
-                }
-            }
-            else if (Header.ChannelAssignment == ChannelAssignment.MidSide)
-            {
-                for (var i = 0; i < Header.BlockSize; i++)
-                {
-                    var mid = subFrames[0].DestinationBuffer[i] << 1;
-                    var side = subFrames[1].DestinationBuffer[i];
+                    var subFrames1 = subFrames[1].DestinationBuffer.Span;
+                    var subFrames0 = subFrames[0].DestinationBuffer.Span;
+                    
+                    for (var i = 0; i < Header.BlockSize; i++)
+                    {
+                        subFrames1[i] = subFrames0[i] - subFrames1[i];
+                    }
 
-                    mid |= (side & 1);
+                    break;
+                }
+                case ChannelAssignment.RightSide:
+                {
+                    var subFrames1 = subFrames[1].DestinationBuffer.Span;
+                    var subFrames0 = subFrames[0].DestinationBuffer.Span;
+                    
+                    for (var i = 0; i < Header.BlockSize; i++)
+                    {
+                        subFrames0[i] += subFrames1[i];
+                    }
 
-                    subFrames[0].DestinationBuffer[i] = (mid + side) >> 1;
-                    subFrames[1].DestinationBuffer[i] = (mid - side) >> 1;
+                    break;
+                }
+                case ChannelAssignment.MidSide:
+                {
+                    var subFrames1 = subFrames[1].DestinationBuffer.Span;
+                    var subFrames0 = subFrames[0].DestinationBuffer.Span;
+                    
+                    for (var i = 0; i < Header.BlockSize; i++)
+                    {
+                        var mid = subFrames0[i] << 1;
+                        var side = subFrames1[i];
+
+                        mid |= (side & 1);
+
+                        subFrames0[i] = (mid + side) >> 1;
+                        subFrames1[i] = (mid - side) >> 1;
+                    }
+
+                    break;
                 }
             }
         }
@@ -198,8 +217,8 @@ namespace CSCore.Codecs.FLAC
 
                     var data = new FlacSubFrameData
                     {
-                        DestinationBuffer = (ptrDestBuffer + c * Header.BlockSize),
-                        ResidualBuffer = (ptrResidualBuffer + c * Header.BlockSize)
+                        DestinationBuffer = _destBuffer.AsMemory(c * Header.BlockSize),
+                        ResidualBuffer = _residualBuffer.AsMemory(c * Header.BlockSize)
                     };
                     output.Add(data);
                 }

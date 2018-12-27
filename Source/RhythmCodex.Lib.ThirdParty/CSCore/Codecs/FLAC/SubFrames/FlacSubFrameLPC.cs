@@ -6,13 +6,16 @@ namespace CSCore.Codecs.FLAC
 // ReSharper disable once InconsistentNaming
     internal sealed partial class FlacSubFrameLPC : FlacSubFrameBase
     {
-        public unsafe FlacSubFrameLPC(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample, int order)
+        public FlacSubFrameLPC(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample, int order)
             : base(header)
         {
+            var resi = data.ResidualBuffer.Span;
+            var dest = data.DestinationBuffer.Span;
+            
             var warmup = new int[order];
             for (var i = 0; i < order; i++)
             {
-                warmup[i] = data.ResidualBuffer[i] = reader.ReadBitsSigned(bitsPerSample);
+                warmup[i] = resi[i] = reader.ReadBitsSigned(bitsPerSample);
             }
 
             var coefPrecision = (int)reader.ReadBits(4);
@@ -35,20 +38,18 @@ namespace CSCore.Codecs.FLAC
             var residual = new FlacResidual(reader, header, data, order);
             for (var i = 0; i < order; i++)
             {
-                data.DestinationBuffer[i] = data.ResidualBuffer[i];
+                dest[i] = resi[i];
             }
 
-            var residualBuffer0 = data.ResidualBuffer + order;
-            var destinationBuffer0 = data.DestinationBuffer + order;
             var blockSizeToProcess = header.BlockSize - order;
 
             if (bitsPerSample + coefPrecision + Log2(order) <= 32)
             {
-                RestoreLPCSignal32(residualBuffer0, destinationBuffer0, blockSizeToProcess, order, q, shiftNeeded);
+                RestoreLPCSignal32(resi, dest, blockSizeToProcess, order, q, shiftNeeded);
             }
             else
             {
-                RestoreLPCSignal64(residualBuffer0, destinationBuffer0, blockSizeToProcess, order, q, shiftNeeded);
+                RestoreLPCSignal64(resi, dest, blockSizeToProcess, order, q, shiftNeeded);
             }
         }
 

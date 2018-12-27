@@ -1,8 +1,10 @@
-﻿namespace CSCore.Codecs.FLAC
+﻿using System;
+
+namespace CSCore.Codecs.FLAC
 {
     internal static class FlacPartitionedRice
     {
-        public static unsafe void ProcessResidual(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data,
+        public static void ProcessResidual(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data,
             int order, int partitionOrder, FlacResidualCodingMethod codingMethod)
         {
             data.Content.UpdateSize(partitionOrder);
@@ -12,7 +14,7 @@
 
             var partitionCount = 1 << partitionOrder;  //2^partitionOrder -> There will be 2^order partitions. -> "order" = partitionOrder in this case
 
-            var residualBuffer = data.ResidualBuffer + order;
+            var residualBuffer = data.ResidualBuffer.Span.Slice(order);
 
             for (var p = 0; p < partitionCount; p++)
             {
@@ -34,15 +36,15 @@
                     for (var i = 0; i < samplesPerPartition; i++)
                     {
                         var sample = reader.ReadBitsSigned((int)raw);
-                        *(residualBuffer) = sample;
-                        residualBuffer++;
+                        residualBuffer[i] = sample;
                     }
                 }
                 else
                 {
                     ReadFlacRiceBlock(reader, samplesPerPartition, (int)riceParameter, residualBuffer);
-                    residualBuffer += samplesPerPartition;
                 }
+
+                residualBuffer = residualBuffer.Slice(samplesPerPartition);
             }
         }
 
@@ -50,16 +52,16 @@
         /// This method is based on the CUETools.NET BitReader (see http://sourceforge.net/p/cuetoolsnet/code/ci/default/tree/CUETools.Codecs/BitReader.cs)
         /// The author "Grigory Chudov" explicitly gave the permission to use the source as part of the cscore source code which got licensed under the ms-pl.
         /// </summary>
-        private static unsafe void ReadFlacRiceBlock(FlacBitReader reader, int nvals, int riceParameter, int* ptrDest)
+        private static void ReadFlacRiceBlock(FlacBitReader reader, int nvals, int riceParameter, Span<int> ptrDest)
         {
-            fixed (byte* putable = FlacBitReader.UnaryTable)
+            var putable = FlacBitReader.UnaryTable;
             {
                 var mask = (1u << riceParameter) - 1;
                 if (riceParameter == 0)
                 {
                     for (var i = 0; i < nvals; i++)
                     {
-                        *(ptrDest++) = reader.ReadUnarySigned();
+                        ptrDest[i] = reader.ReadUnarySigned();
                     }
                 }
                 else
@@ -89,7 +91,7 @@
                             uval = (msbs << riceParameter) | ((reader.Cache >> (32 - riceParameter)));
                             reader.SeekBits(riceParameter);
                         }
-                        *(ptrDest++) = (int)((uval >> 1) ^ -(int)(uval & 1));
+                        ptrDest[i] = (int)((uval >> 1) ^ -(int)(uval & 1));
                     }
                 }
             }

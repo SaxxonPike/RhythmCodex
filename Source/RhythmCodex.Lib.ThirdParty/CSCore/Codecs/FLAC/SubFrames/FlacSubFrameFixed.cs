@@ -5,23 +5,25 @@ namespace CSCore.Codecs.FLAC
 {
     internal sealed class FlacSubFrameFixed : FlacSubFrameBase
     {
-        public unsafe FlacSubFrameFixed(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample, int order)
+        public FlacSubFrameFixed(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample, int order)
             : base(header)
         {
+            var resi = data.ResidualBuffer.Span;
+            var dest = data.DestinationBuffer.Span;
             for (var i = 0; i < order; i++) //order = predictor order
             {
-                data.ResidualBuffer[i] = data.DestinationBuffer[i] = reader.ReadBitsSigned(bitsPerSample);
+                resi[i] = dest[i] = reader.ReadBitsSigned(bitsPerSample);
             }
 
             var residual = new FlacResidual(reader, header, data, order); //necessary for decoding
             RestoreSignal(data, header.BlockSize - order, order);
         }
 
-        private unsafe void RestoreSignal(FlacSubFrameData subframeData, int length, int order)
+        private void RestoreSignal(FlacSubFrameData subframeData, int length, int order)
         {
             //see ftp://svr-ftp.eng.cam.ac.uk/pub/reports/auto-pdf/robinson_tr156.pdf chapter 3.2
-            var residual = subframeData.ResidualBuffer + order;
-            var destBuffer = subframeData.DestinationBuffer + order;
+            var residual = subframeData.ResidualBuffer.Span.Slice(order);
+            var destBuffer = subframeData.DestinationBuffer.Span.Slice(order);
 
             switch (order)
             {

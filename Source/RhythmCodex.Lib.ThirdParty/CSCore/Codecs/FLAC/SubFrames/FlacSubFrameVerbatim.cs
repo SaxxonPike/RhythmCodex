@@ -6,16 +6,13 @@ namespace CSCore.Codecs.FLAC
         public FlacSubFrameVerbatim(FlacBitReader reader, FlacFrameHeader header, FlacSubFrameData data, int bitsPerSample)
             : base(header)
         {
-            unsafe
-            {
-                int* ptrDest = data.DestinationBuffer, ptrResidual = data.ResidualBuffer;
+            var dest = data.DestinationBuffer.Span;
+            var resi = data.ResidualBuffer.Span;
 
-                for (var i = 0; i < header.BlockSize; i++)
-                {
-                    var x = (int)reader.ReadBits(bitsPerSample);
-                    *ptrDest++ = x;
-                    *ptrResidual++ = x;
-                }
+            for (var i = 0; i < header.BlockSize; i++)
+            {
+                var x = (int)reader.ReadBits(bitsPerSample);
+                dest[i] = resi[i] = x;
             }
         }
     }

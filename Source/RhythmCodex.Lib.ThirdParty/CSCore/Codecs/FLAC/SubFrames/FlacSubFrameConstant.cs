@@ -10,10 +10,10 @@ namespace CSCore.Codecs.FLAC
 
             unsafe
             {
-                var pDestinationBuffer = data.DestinationBuffer;
+                var pDestinationBuffer = data.DestinationBuffer.Span;
                 for (var i = 0; i < header.BlockSize; i++)
                 {
-                    *pDestinationBuffer++ = value;
+                    pDestinationBuffer[i] = value;
                 }
             }
         }
