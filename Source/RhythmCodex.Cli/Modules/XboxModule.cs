@@ -51,16 +51,24 @@ namespace RhythmCodex.Cli.Modules
         {
             new Command
             {
-                Name = "decode",
+                Name = "decode-adpcm",
                 Description = "Decodes a raw blob of Xbox ADCPM data.",
-                Execute = Decode
+                Execute = DecodeAdpcm
+            },
+            new Command
+            {
+                Name = "decode-dds",
+                Description = "Decodes a DDS image.",
+                Execute = DecodeDds
             }
         };
 
-        /// <summary>
-        /// Perform the DECODE command.
-        /// </summary>
-        private void Decode(Args args)
+        private void DecodeDds(Args args)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void DecodeAdpcm(Args args)
         {
             var outputDirectory = _argResolver.GetOutputDirectory(args);
             var inputFiles = _argResolver.GetInputFiles(args);

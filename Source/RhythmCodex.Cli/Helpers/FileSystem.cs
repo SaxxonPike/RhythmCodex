@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Cli.Helpers
 {
     public class FileSystem : IFileSystem
     {

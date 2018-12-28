@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.BeatmaniaPsx.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Vag.Streamers;
 
@@ -18,7 +19,7 @@ namespace RhythmCodex.BeatmaniaPsx.Streamers
         
         public IList<BeatmaniaPsxKeysound> Read(Stream stream)
         {
-            var reader = new BinaryReaderEx(stream);
+            var reader = new BinaryReader(stream);
 
             reader.ReadInt32S(); // directory offset
             var directoryLength = reader.ReadInt32S();

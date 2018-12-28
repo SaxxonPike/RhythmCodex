@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Cli.Helpers
 {
     [TestFixture]
     public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>

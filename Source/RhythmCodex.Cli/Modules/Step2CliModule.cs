@@ -49,7 +49,7 @@ namespace RhythmCodex.Cli.Modules
         }
 
         /// <inheritdoc />
-        public string Name => "Step2";
+        public string Name => "step2";
 
         /// <inheritdoc />
         public string Description => "Decodes the STEP2 format. (1stMix)";

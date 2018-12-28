@@ -24,7 +24,6 @@ namespace RhythmCodex
             var builder = new ContainerBuilder();
 
             builder.RegisterInstance(TestContext.Out).As<TextWriter>().SingleInstance();
-            builder.Register(c => new FakeFileSystem(new FileSystem(c.Resolve<ILogger>()))).SingleInstance();
             builder.Register(c => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
                 .As<ILoggerConfigurationSource>();
             builder.RegisterType<TextWriterLogger>().As<ILogger>();
@@ -36,8 +35,7 @@ namespace RhythmCodex
 
             foreach (var assembly in assemblies)
                 builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
-                    .Except<FileSystem>()
+                    .Where(t => t.GetTypeInfo().CustomAttributes.Any(a => a.AttributeType == typeof(ServiceAttribute)))
                     .AsSelf()
                     .AsImplementedInterfaces()
                     .SingleInstance();
@@ -80,7 +78,6 @@ namespace RhythmCodex
             var builder = new ContainerBuilder();
 
             builder.RegisterInstance(TestContext.Out).As<TextWriter>().SingleInstance();
-            builder.Register(c => new FakeFileSystem(new FileSystem(c.Resolve<ILogger>()))).SingleInstance();
             builder.Register(c => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
                 .As<ILoggerConfigurationSource>();
             builder.RegisterType<TextWriterLogger>().As<ILogger>();
@@ -93,8 +90,7 @@ namespace RhythmCodex
 
             foreach (var assembly in assemblies)
                 builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.All(a => a.AttributeType == typeof(ServiceAttribute)))
-                    .Except<FileSystem>()
+                    .Where(t => t.GetTypeInfo().CustomAttributes.Any(a => a.AttributeType == typeof(ServiceAttribute)))
                     .AsSelf()
                     .AsImplementedInterfaces()
                     .SingleInstance();

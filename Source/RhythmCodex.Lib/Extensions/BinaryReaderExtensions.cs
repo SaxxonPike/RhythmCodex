@@ -1,85 +1,54 @@
-using System;
+using System.Diagnostics;
 using System.IO;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Extensions
 {
-    public class BinaryReaderEx : BinaryReader
+    [DebuggerStepThrough]
+    internal static class BinaryReaderExtensions
     {
-        public BinaryReaderEx(Stream source)
-            : base(source)
+        public static byte[] ReadBytesS(this BinaryReader reader, int count)
         {
-        }
-
-        private int _bitsLeft;
-        private int _currentValue;
-
-        public ulong ReadBits(int count)
-        {
-            ulong result = 0;
-
-            while (count > 0)
-            {
-                count--;
-                if (_bitsLeft <= 0)
-                {
-                    _bitsLeft = 8;
-                    _currentValue = ReadByte();
-                }
-                _bitsLeft--;
-                result <<= 1;
-                result |= ((_currentValue & 1) != 0) ? 1UL : 0UL;
-            }
-
-            return result;
-        }
-
-        public byte[] ReadBytesS(int count)
-        {
-            var input = ReadBytes(count);
+            var input = reader.ReadBytes(count);
             var result = new byte[count];
             for (int i = 0, j = count - 1; i < count; i++)
                 result[i] = input[j--];
-            _bitsLeft = 0;
             return result;
         }
 
-        public short ReadInt16S()
+        public static short ReadInt16S(this BinaryReader reader)
         {
-            var input = ReadBytes(2);
-            short result = input[0];
+            var input = reader.ReadBytes(2);
+            int result = input[0];
             result <<= 8;
-            result |= (short)input[1];
-            _bitsLeft = 0;
-            return result;
+            result |= input[1];
+            return unchecked((short) result);
         }
 
-        public int ReadInt24()
+        public static int ReadInt24(this BinaryReader reader)
         {
-            var input = ReadBytes(3);
+            var input = reader.ReadBytes(3);
             int result = input[2];
             result <<= 8;
             result |= input[1];
             result <<= 8;
             result |= input[0];
-            _bitsLeft = 0;
             return result;
         }
 
-        public int ReadInt24S()
+        public static int ReadInt24S(this BinaryReader reader)
         {
-            var input = ReadBytes(3);
+            var input = reader.ReadBytes(3);
             int result = input[0];
             result <<= 8;
             result |= input[1];
             result <<= 8;
             result |= input[2];
-            _bitsLeft = 0;
             return result;
         }
 
-        public int ReadInt32S()
+        public static int ReadInt32S(this BinaryReader reader)
         {
-            var input = ReadBytes(4);
+            var input = reader.ReadBytes(4);
             int result = input[0];
             result <<= 8;
             result |= input[1];
@@ -87,13 +56,12 @@ namespace RhythmCodex.Infrastructure
             result |= input[2];
             result <<= 8;
             result |= input[3];
-            _bitsLeft = 0;
             return result;
         }
 
-        public long ReadInt64S()
+        public static long ReadInt64S(this BinaryReader reader)
         {
-            var input = ReadBytes(8);
+            var input = reader.ReadBytes(8);
             long result = input[0];
             result <<= 8;
             result |= input[1];
@@ -109,37 +77,32 @@ namespace RhythmCodex.Infrastructure
             result |= input[6];
             result <<= 8;
             result |= input[7];
-            _bitsLeft = 0;
             return result;
         }
 
-        public byte[] ReadMD5()
+        public static byte[] ReadMD5(this BinaryReader reader)
         {
-            _bitsLeft = 0;
-            return ReadBytes(16);
+            return reader.ReadBytes(16);
         }
 
-        public byte[] ReadMD5S()
+        public static byte[] ReadMD5S(this BinaryReader reader)
         {
-            _bitsLeft = 0;
-            return ReadBytesS(16);
+            return reader.ReadBytesS(16);
         }
 
-        public byte[] ReadSHA1()
+        public static byte[] ReadSHA1(this BinaryReader reader)
         {
-            _bitsLeft = 0;
-            return ReadBytes(20);
+            return reader.ReadBytes(20);
         }
 
-        public byte[] ReadSHA1S()
+        public static byte[] ReadSHA1S(this BinaryReader reader)
         {
-            _bitsLeft = 0;
-            return ReadBytesS(20);
+            return reader.ReadBytesS(20);
         }
 
-        public long ReadValue(int bytes)
+        public static long ReadValue(this BinaryReader reader, int bytes)
         {
-            var buffer = ReadBytes(bytes);
+            var buffer = reader.ReadBytes(bytes);
             long result = 0;
 
             while (bytes > 0)
@@ -149,13 +112,12 @@ namespace RhythmCodex.Infrastructure
                 result |= buffer[bytes];
             }
 
-            _bitsLeft = 0;
             return result;
         }
 
-        public long ReadValueS(int bytes)
+        public static long ReadValueS(this BinaryReader reader, int bytes)
         {
-            var buffer = ReadBytesS(bytes);
+            var buffer = reader.ReadBytesS(bytes);
             long result = 0;
 
             while (bytes > 0)
@@ -165,47 +127,46 @@ namespace RhythmCodex.Infrastructure
                 result |= buffer[bytes];
             }
 
-            _bitsLeft = 0;
             return result;
         }
 
-        public ushort ReadUInt16S()
+        public static ushort ReadUInt16S(this BinaryReader reader)
         {
-            var input = ReadBytes(2);
+            var input = reader.ReadBytes(2);
             ushort result = input[0];
             result <<= 8;
             result |= input[1];
-            _bitsLeft = 0;
+
             return result;
         }
 
-        public uint ReadUInt24()
+        public static uint ReadUInt24(this BinaryReader reader)
         {
-            var input = ReadBytes(3);
+            var input = reader.ReadBytes(3);
             uint result = input[2];
             result <<= 8;
             result |= input[1];
             result <<= 8;
             result |= input[0];
-            _bitsLeft = 0;
+
             return result;
         }
 
-        public uint ReadUInt24S()
+        public static uint ReadUInt24S(this BinaryReader reader)
         {
-            var input = ReadBytes(3);
+            var input = reader.ReadBytes(3);
             uint result = input[0];
             result <<= 8;
             result |= input[1];
             result <<= 8;
             result |= input[2];
-            _bitsLeft = 0;
+
             return result;
         }
 
-        public uint ReadUInt32S()
+        public static uint ReadUInt32S(this BinaryReader reader)
         {
-            var input = ReadBytes(4);
+            var input = reader.ReadBytes(4);
             uint result = input[0];
             result <<= 8;
             result |= input[1];
@@ -213,13 +174,13 @@ namespace RhythmCodex.Infrastructure
             result |= input[2];
             result <<= 8;
             result |= input[3];
-            _bitsLeft = 0;
+
             return result;
         }
 
-        public ulong ReadUInt64S()
+        public static ulong ReadUInt64S(this BinaryReader reader)
         {
-            var input = ReadBytes(8);
+            var input = reader.ReadBytes(8);
             ulong result = input[0];
             result <<= 8;
             result |= input[1];
@@ -235,13 +196,13 @@ namespace RhythmCodex.Infrastructure
             result |= input[6];
             result <<= 8;
             result |= input[7];
-            _bitsLeft = 0;
+
             return result;
         }
 
-        public ulong ReadUValue(int bytes)
+        public static ulong ReadUValue(this BinaryReader reader, int bytes)
         {
-            var buffer = ReadBytes(bytes);
+            var buffer = reader.ReadBytes(bytes);
             ulong result = 0;
 
             while (bytes > 0)
@@ -251,13 +212,12 @@ namespace RhythmCodex.Infrastructure
                 result |= buffer[bytes];
             }
 
-            _bitsLeft = 0;
             return result;
         }
 
-        public ulong ReadUValueS(int bytes)
+        public static ulong ReadUValueS(this BinaryReader reader, int bytes)
         {
-            var buffer = ReadBytesS(bytes);
+            var buffer = reader.ReadBytesS(bytes);
             ulong result = 0;
 
             while (bytes > 0)
@@ -267,9 +227,7 @@ namespace RhythmCodex.Infrastructure
                 result |= buffer[bytes];
             }
 
-            _bitsLeft = 0;
             return result;
         }
-
     }
 }

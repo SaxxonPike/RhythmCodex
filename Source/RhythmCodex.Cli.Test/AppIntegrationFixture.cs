@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using NUnit.Framework;
+using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli

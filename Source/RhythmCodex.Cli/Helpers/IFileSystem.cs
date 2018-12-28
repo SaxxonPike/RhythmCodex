@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Cli.Helpers
 {
     public interface IFileSystem
     {

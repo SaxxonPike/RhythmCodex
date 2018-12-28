@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Extensions
+namespace RhythmCodex.Cli.Helpers
 {
     public static class FileSystemExtensions
     {
