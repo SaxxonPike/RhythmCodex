@@ -16,7 +16,7 @@ namespace RhythmCodex.Dds.Converters
             _dxtDecoder = dxtDecoder;
             _rawBitmapDecoder = rawBitmapDecoder;
         }
-        
+
         public RawBitmap Decode(DdsImage image)
         {
             switch (image.PixelFormat.FourCc)
@@ -26,7 +26,7 @@ namespace RhythmCodex.Dds.Converters
                     {
                         Width = image.Width,
                         Height = image.Height,
-                        Data = _rawBitmapDecoder.Decode32Bit(image.Data.AsSpan(), image.Width, image.Height)
+                        Data = _rawBitmapDecoder.Decode32Bit(image.Data, image.Width, image.Height)
                     };
 
                 case 0x31545844: // DXT1
@@ -34,17 +34,13 @@ namespace RhythmCodex.Dds.Converters
                     {
                         Width = image.Width,
                         Height = image.Height,
-                        Data = _dxtDecoder.DecodeDxt1(image.Data, image.Width, image.Height)
+                        Data = _dxtDecoder.DecodeDxt1(image.Data, image.Width, image.Height,
+                            image.PixelFormat.Flags.HasFlag(DdsPixelFormatFlags.DDPF_ALPHAPIXELS))
                     };
-                
+
                 default:
                     throw new RhythmCodexException($"Unsupported FourCC: 0x{image.PixelFormat.FourCc:X8}");
             }
         }
-    }
-
-    public interface IDdsBitmapDecoder
-    {
-        RawBitmap Decode(DdsImage image);
     }
 }
