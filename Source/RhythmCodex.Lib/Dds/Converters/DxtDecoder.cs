@@ -167,8 +167,6 @@ namespace RhythmCodex.Dds.Converters
                 dstI += width;
                 n >>= 12;
             }
-            
-            throw new NotImplementedException();
         }
         
         private static void DecodeColorBlock(ReadOnlySpan<byte> src, Span<int> c)

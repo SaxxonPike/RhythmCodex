@@ -38,6 +38,22 @@ namespace RhythmCodex.Dds.Converters
                             image.PixelFormat.Flags.HasFlag(DdsPixelFormatFlags.DDPF_ALPHAPIXELS))
                     };
 
+                case 0x33545844: // DXT3
+                    return new RawBitmap
+                    {
+                        Width = image.Width,
+                        Height = image.Height,
+                        Data = _dxtDecoder.DecodeDxt3(image.Data, image.Width, image.Height)
+                    };
+
+                case 0x35545844: // DXT5
+                    return new RawBitmap
+                    {
+                        Width = image.Width,
+                        Height = image.Height,
+                        Data = _dxtDecoder.DecodeDxt5(image.Data, image.Width, image.Height)
+                    };
+
                 default:
                     throw new RhythmCodexException($"Unsupported FourCC: 0x{image.PixelFormat.FourCc:X8}");
             }
