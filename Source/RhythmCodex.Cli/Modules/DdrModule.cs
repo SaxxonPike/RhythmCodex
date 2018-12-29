@@ -45,11 +45,11 @@ namespace RhythmCodex.Cli.Modules
 
         private void Extract573Flash(Args args)
         {
-            var task = _taskFactory
+            _taskFactory
                 .BuildDdrTask()
                 .WithArgs(args)
-                .CreateExtract();
-            task.Run();
+                .CreateExtract()
+                .Run();
         }
     }
 }

@@ -5,6 +5,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Dds.Streamers
 {
+    [Service]
     public class DdsStreamReader : IDdsStreamReader
     {
         public const int MagicId = 0x20534444;

@@ -10,6 +10,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli.Orchestration
 {
+    [InstancePerDependency]
     public class DdrTaskBuilder : TaskBuilderBase<DdrTaskBuilder>
     {
         private readonly IDdr573StreamReader _ddr573StreamReader;
@@ -31,18 +32,16 @@ namespace RhythmCodex.Cli.Orchestration
             return Build("Extract DDR 573 image",
                 task =>
                 {
-                    task.Message = "Resolving input files.";
-
-                    var inputFiles = GetInputFiles();
+                    var inputFiles = GetInputFiles(task);
                     if (!inputFiles.Any())
                     {
-                        Logger.Error("No input files.");
+                        task.Message = "No input files.";
                         return false;
                     }
 
                     if (inputFiles.Length > 2)
                     {
-                        Logger.Error("Using more than 2 input files is not supported yet.");
+                        task.Message = "Using more than 2 input files is not supported yet.";
                         return false;
                     }
 
@@ -65,7 +64,7 @@ namespace RhythmCodex.Cli.Orchestration
                             fileStream?.Dispose();
                     }
 
-                    task.Message = $"Decoding image.";
+                    task.Message = "Decoding image.";
                     var files = _ddr573Decoder.Decode(image);
 
                     var fileIndex = 0;
@@ -74,7 +73,7 @@ namespace RhythmCodex.Cli.Orchestration
                         task.Progress = fileIndex / (float) files.Count;
                         var outFileName = $"{file.Module:X4}{file.Offset:X7}.bin";
                         task.Message = $"Writing {outFileName}";
-                        using (var stream = OpenWriteMulti(gameImage, _ => $"{file.Module:X4}{file.Offset:X7}.bin"))
+                        using (var stream = OpenWriteMulti(task, gameImage, _ => $"{file.Module:X4}{file.Offset:X7}.bin"))
                         {
                             var writer = new BinaryWriter(stream);
                             writer.Write(file.Data);

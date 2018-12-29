@@ -20,7 +20,7 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         }
         
         protected Args Args { get; private set; }
-        protected ILogger Logger { get; }
+        private ILogger Logger { get; }
 
         protected ITask Build(string name, Func<BuiltTask, bool> task)
         {
@@ -33,23 +33,40 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         protected string GetOutputFolder(string inputFile) => 
             Args.OutputPath ?? Path.GetDirectoryName(inputFile);
 
-        protected string[] GetInputFiles() => 
-            Args.InputFiles
+        protected string[] GetInputFiles(BuiltTask task)
+        {
+            task.Message = "Resolving input files.";
+            return Args.InputFiles
                 .SelectMany(a => _fileSystem.GetFileNames(a, Args.RecursiveInputFiles))
                 .ToArray();
+        }
 
-        protected Stream OpenWriteSingle(string inputFile, Func<string, string> generateName)
+        protected byte[] GetFile(BuiltTask task, string inputFile)
+        {
+            task.Message = $"Reading {inputFile}";
+            return File.ReadAllBytes(inputFile);
+        }
+
+        protected Stream OpenRead(BuiltTask task, string inputFile)
+        {
+            task.Message = $"Opening {inputFile}";
+            return File.OpenRead(inputFile);
+        }
+
+        protected Stream OpenWriteSingle(BuiltTask task, string inputFile, Func<string, string> generateName)
         {
             if (_fileSystem == null)
                 throw new RhythmCodexException("Filesystem is not defined.");
 
             var path = GetOutputFolder(inputFile);
             var newName = generateName(Path.GetFileNameWithoutExtension(inputFile));
+            var newPath = Path.Combine(path, newName);
+            task.Message = $"Writing {newPath}";
             Directory.CreateDirectory(path);
-            return File.OpenWrite(Path.Combine(path, newName));
+            return File.OpenWrite(newPath);
         }
 
-        protected Stream OpenWriteMulti(string inputFile, Func<string, string> generateName)
+        protected Stream OpenWriteMulti(BuiltTask task, string inputFile, Func<string, string> generateName)
         {
             if (_fileSystem == null)
                 throw new RhythmCodexException("Filesystem is not defined.");
@@ -57,8 +74,10 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             var baseName = Path.GetFileNameWithoutExtension(inputFile);
             var path = Path.Combine(GetOutputFolder(inputFile), baseName);
             var newName = generateName(baseName);
+            var newPath = Path.Combine(path, newName);
+            task.Message = $"Writing {newPath}";
             Directory.CreateDirectory(path);
-            return File.OpenWrite(Path.Combine(path, newName));
+            return File.OpenWrite(newPath);
         }
 
         public TTask WithArgs(Args args)
