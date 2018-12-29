@@ -46,57 +46,57 @@ namespace RhythmCodex.Cli.Orchestration
         {
             return Build("Decode DirectDraw Surface", task =>
             {
-                var inputFiles = GetInputFiles(task);
-                if (!inputFiles.Any())
+                var files = GetInputFiles(task);
+                if (!files.Any())
                 {
                     task.Message = "No input files.";
                     return false;
                 }
 
-                foreach (var inputFile in inputFiles)
+                ParallelProgress(task, files, file =>
                 {
-                    using (var stream = OpenRead(task, inputFile))
+                    using (var stream = OpenRead(task, file))
                     {
                         var image = _ddsStreamReader.Read(stream, (int) stream.Length);
                         task.Message = "Decoding DDS.";
                         var bitmap = _ddsBitmapDecoder.Decode(image);
-                        using (var outStream = OpenWriteSingle(task, inputFile, i => $"{i}.png"))
+                        using (var outStream = OpenWriteSingle(task, file, i => $"{i}.png"))
                             _pngStreamWriter.Write(outStream, bitmap);
                     }
-                }
+                });
 
                 return true;
             });
         }
 
-        public ITask CreateDecodeAdpcm()
+        public ITask CreateDecodeXst()
         {
             return Build("Decode Xbox ADPCM", task =>
             {
-                var inputFiles = GetInputFiles(task);
-                if (!inputFiles.Any())
+                var files = GetInputFiles(task);
+                if (!files.Any())
                 {
                     task.Message = "No input files.";
                     return false;
                 }
 
-                foreach (var inputFile in inputFiles)
+                ParallelProgress(task, files, file =>
                 {
                     var sound = _imaAdpcmDecoder.Decode(new ImaAdpcmChunk
                     {
                         Channels = 2,
                         ChannelSamplesPerFrame = 64,
-                        Data = GetFile(task, inputFile),
+                        Data = GetFile(task, file),
                         Rate = 44100
                     }).Single();
 
                     var encoded = _riffPcm16SoundEncoder.Encode(sound);
-                    using (var outStream = OpenWriteSingle(task, inputFile, i => $"{i}.wav"))
+                    using (var outStream = OpenWriteSingle(task, file, i => $"{i}.wav"))
                     {
                         _riffStreamWriter.Write(outStream, encoded);
                         outStream.Flush();
                     }
-                }
+                });
 
                 return true;
             });

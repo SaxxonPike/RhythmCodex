@@ -7,6 +7,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Statistics
 {
+    [Service]
     public class EventCounter : IEventCounter
     {
         public int CountCombos(IEnumerable<IEvent> events)

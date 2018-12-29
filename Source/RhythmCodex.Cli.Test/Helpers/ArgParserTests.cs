@@ -81,7 +81,7 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(data);
 
             // Assert.
-            output.Options.Should().HaveCount(1);
+            output.InputFiles.Should().HaveCount(1);
             output.InputFiles.Should().BeEquivalentTo(argValue);
         }
 
@@ -95,7 +95,7 @@ namespace RhythmCodex.Cli.Helpers
             var output = Subject.Parse(argValues);
 
             // Assert.
-            output.Options.Should().HaveCount(1);
+            output.InputFiles.Should().HaveCount(argValues.Length);
             output.InputFiles.Should().BeEquivalentTo(argValues);
         }
 
@@ -123,14 +123,13 @@ namespace RhythmCodex.Cli.Helpers
         public void Parse_ParsesEscapedArgs()
         {
             // Arrange.
-            var defaultValues = CreateMany<string>().Select(s => $"-{s}").ToArray();
+            var defaultValues = CreateMany<string>(3).Select(s => $"-{s}").ToArray();
             var data = new[] {"--"}.Concat(defaultValues);
             
             // Act.
             var output = Subject.Parse(data);
             
             // Assert.
-            output.Options.Should().HaveCount(1);
             output.InputFiles.Should().BeEquivalentTo(defaultValues);
         }
     }

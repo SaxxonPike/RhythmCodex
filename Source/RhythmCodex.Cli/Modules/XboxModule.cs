@@ -37,7 +37,7 @@ namespace RhythmCodex.Cli.Modules
         {
             new Command
             {
-                Name = "decode-adpcm",
+                Name = "decode-xst",
                 Description = "Decodes a raw blob of Xbox ADCPM data.",
                 Execute = DecodeAdpcm
             },
@@ -63,7 +63,7 @@ namespace RhythmCodex.Cli.Modules
             _taskFactory
                 .BuildXboxTask()
                 .WithArgs(args)
-                .CreateDecodeAdpcm()
+                .CreateDecodeXst()
                 .Run();
         }
     }

@@ -22,6 +22,16 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         protected Args Args { get; private set; }
         private ILogger Logger { get; }
 
+        protected void ParallelProgress<T>(BuiltTask task, ICollection<T> items, Action<T> action)
+        {
+            var progressIncrement = 1 / (float) items.Count;
+            foreach (var item in items.AsParallel())
+            {
+                action(item);
+                task.Progress += progressIncrement;
+            }
+        }
+
         protected ITask Build(string name, Func<BuiltTask, bool> task)
         {
             BuiltTask result = null;
@@ -44,13 +54,13 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         protected byte[] GetFile(BuiltTask task, string inputFile)
         {
             task.Message = $"Reading {inputFile}";
-            return File.ReadAllBytes(inputFile);
+            return _fileSystem.ReadAllBytes(inputFile);
         }
 
         protected Stream OpenRead(BuiltTask task, string inputFile)
         {
             task.Message = $"Opening {inputFile}";
-            return File.OpenRead(inputFile);
+            return _fileSystem.OpenRead(inputFile);
         }
 
         protected Stream OpenWriteSingle(BuiltTask task, string inputFile, Func<string, string> generateName)
@@ -62,8 +72,8 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             var newName = generateName(Path.GetFileNameWithoutExtension(inputFile));
             var newPath = Path.Combine(path, newName);
             task.Message = $"Writing {newPath}";
-            Directory.CreateDirectory(path);
-            return File.OpenWrite(newPath);
+            _fileSystem.CreateDirectory(path);
+            return _fileSystem.OpenWrite(newPath);
         }
 
         protected Stream OpenWriteMulti(BuiltTask task, string inputFile, Func<string, string> generateName)
@@ -76,8 +86,8 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             var newName = generateName(baseName);
             var newPath = Path.Combine(path, newName);
             task.Message = $"Writing {newPath}";
-            Directory.CreateDirectory(path);
-            return File.OpenWrite(newPath);
+            _fileSystem.CreateDirectory(path);
+            return _fileSystem.OpenWrite(newPath);
         }
 
         public TTask WithArgs(Args args)
