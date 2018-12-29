@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Autofac;
+using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli

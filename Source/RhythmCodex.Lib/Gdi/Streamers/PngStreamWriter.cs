@@ -1,10 +1,12 @@
 using System.Drawing.Imaging;
 using System.IO;
 using RhythmCodex.Gdi.Converters;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Gdi.Streamers
 {
+    [Service]
     public class PngStreamWriter : IPngStreamWriter
     {
         private readonly IGdiFactory _gdiFactory;

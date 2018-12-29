@@ -73,9 +73,4 @@ namespace RhythmCodex.Tim.Streamers
                 reader.ReadBytes(padding);
         }
     }
-
-    public interface ITimStreamReader
-    {
-        TimImage Read(Stream stream);
-    }
 }

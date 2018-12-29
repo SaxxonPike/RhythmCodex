@@ -5,7 +5,6 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Converters;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Vag.Models;
 using RhythmCodex.Vag.Streamers;

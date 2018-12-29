@@ -11,7 +11,7 @@ namespace RhythmCodex.Gdi.Converters
 
         public GdiAdapter(Array data, int width, int height, int stride)
         {
-            _handle = GCHandle.Alloc(data);
+            _handle = GCHandle.Alloc(data, GCHandleType.Pinned);
             Bitmap = new Bitmap(width, height, stride, PixelFormat.Format32bppArgb, _handle.AddrOfPinnedObject());
         }
 

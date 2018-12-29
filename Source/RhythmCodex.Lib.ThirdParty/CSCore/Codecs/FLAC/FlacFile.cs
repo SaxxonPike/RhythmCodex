@@ -1,6 +1,4 @@
-﻿#define DIAGNOSTICS
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,12 +15,9 @@ namespace CSCore.Codecs.FLAC
         private readonly FlacPreScan _scan;
 
         private readonly object _bufferLock = new object();
-
         private readonly bool _closeStream;
-
-        //overflow:
-        private byte[] _overflowBuffer;
-
+        
+        private Memory<byte> _overflowBuffer;
         private int _overflowCount;
         private int _overflowOffset;
 
@@ -227,7 +222,7 @@ namespace CSCore.Codecs.FLAC
 
                     var bufferlength = frame.GetBuffer(ref _overflowBuffer);
                     var bytesToCopy = Math.Min(count - read, bufferlength);
-                    Array.Copy(_overflowBuffer, 0, buffer, offset, bytesToCopy);
+                    _overflowBuffer.Span.Slice(0, bytesToCopy).CopyTo(buffer.AsSpan().Slice(offset));
                     read += bytesToCopy;
                     offset += bytesToCopy;
 
@@ -235,19 +230,17 @@ namespace CSCore.Codecs.FLAC
                     _overflowOffset = ((bufferlength > bytesToCopy) ? (bytesToCopy) : 0);
                 }
             }
-#if DIAGNOSTICS
             _position += read;
-#endif
 
             return read;
         }
 
-        private int GetOverflows(byte[] buffer, ref int offset, int count)
+        private int GetOverflows(Memory<byte> buffer, ref int offset, int count)
         {
-            if (_overflowCount != 0 && _overflowBuffer != null && count > 0)
+            if (_overflowCount != 0 && count > 0)
             {
                 var bytesToCopy = Math.Min(count, _overflowCount);
-                Array.Copy(_overflowBuffer, _overflowOffset, buffer, offset, bytesToCopy);
+                _overflowBuffer.Span.Slice(_overflowOffset, bytesToCopy).CopyTo(buffer.Span.Slice(offset));
 
                 _overflowCount -= bytesToCopy;
                 _overflowOffset += bytesToCopy;
@@ -257,10 +250,8 @@ namespace CSCore.Codecs.FLAC
             return 0;
         }
 
-#if DIAGNOSTICS
         private long _position;
         private bool _disposed;
-#endif
 
         /// <summary>
         ///     Gets or sets the position of the <see cref="FlacFile" /> in bytes.
@@ -274,13 +265,7 @@ namespace CSCore.Codecs.FLAC
 
                 lock (_bufferLock)
                 {
-#if !DIAGNOSTICS
-                    if (_frameIndex == _scan.Frames.Count)
-                        return Length;
-                    return _scan.Frames[_frameIndex].SampleOffset * WaveFormat.BlockAlign + _overflowOffset;
-#else
                     return _position;
-#endif
                 }
             }
             set
@@ -305,9 +290,7 @@ namespace CSCore.Codecs.FLAC
                             _frameIndex = i;
                             if (_stream.Position >= _stream.Length)
                                 throw new EndOfStreamException("Stream got EOF.");
-#if DIAGNOSTICS
                             _position = _scan.Frames[i].SampleOffset * WaveFormat.BlockAlign;
-#endif
                             _overflowCount = 0;
                             _overflowOffset = 0;
 

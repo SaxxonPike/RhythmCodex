@@ -49,7 +49,7 @@ namespace RhythmCodex.Cli.Modules
         }
 
         /// <inheritdoc />
-        public string Name => "Ssq";
+        public string Name => "ssq";
 
         /// <inheritdoc />
         public string Description => "Encodes and decodes the SSQ format.";

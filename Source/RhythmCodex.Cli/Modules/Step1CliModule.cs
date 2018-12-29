@@ -51,7 +51,7 @@ namespace RhythmCodex.Cli.Modules
         }
 
         /// <inheritdoc />
-        public string Name => "Step";
+        public string Name => "step";
 
         /// <inheritdoc />
         public string Description => "Encodes and decodes the STEP format. (2nd-3rdPlus, SoloBass)";
