@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RhythmCodex.Infrastructure
 {
-    public static class StreamExtensions
+    internal static class StreamExtensions
     {
         private const int BufferSize = 1 << 16;
 
@@ -35,6 +35,24 @@ namespace RhythmCodex.Infrastructure
         public static byte[] ReadAllBytes(this Stream stream)
         {
             return ReadAllBytes(stream.Read);
+        }
+        
+        public static IEnumerable<string> ReadAllLines(this Stream source)
+        {
+            var reader = new StreamReader(source);
+            while (true)
+            {
+                var line = reader.ReadLine();
+                if (line == null)
+                    yield break;
+                yield return line.Trim();
+            }
+        }
+
+        public static string ReadAllText(this Stream source)
+        {
+            var reader = new StreamReader(source, true);
+            return reader.ReadToEnd();
         }
 
         public static int TryRead(this Stream stream, byte[] buffer, int offset, int count)

@@ -4,8 +4,8 @@ using RhythmCodex.Bms.Model;
 
 namespace RhythmCodex.Bms.Streamers
 {
-    public interface IBmsStreamWriter
+    public interface IBmsStreamReader
     {
-        void Write(Stream stream, IEnumerable<BmsCommand> commands);
+        IEnumerable<BmsCommand> Read(Stream stream);
     }
 }

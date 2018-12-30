@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using RhythmCodex.Bms.Model;
-using RhythmCodex.Charting;
 
 namespace RhythmCodex.Bms.Converters
 {
-    public interface IBmsEncoder
+    public interface IBmsRandomResolver
     {
-        IList<BmsCommand> Encode(IChart chart);
+        IEnumerable<BmsCommand> Resolve(IEnumerable<BmsCommand> commands);
     }
 }

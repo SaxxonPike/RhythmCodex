@@ -12,7 +12,7 @@ namespace RhythmCodex.Stepmania.Streamers
     {
         public IEnumerable<Command> Read(Stream source)
         {
-            var lines = ReadAllLines(source);
+            var lines = source.ReadAllLines();
             var commands = ExtractCommands(lines);
 
             return commands
@@ -55,18 +55,6 @@ namespace RhythmCodex.Stepmania.Streamers
 
             if (commandBuilder.Length > 0)
                 yield return commandBuilder.ToString();
-        }
-
-        private static IEnumerable<string> ReadAllLines(Stream source)
-        {
-            var reader = new StreamReader(source);
-            while (true)
-            {
-                var line = reader.ReadLine();
-                if (line == null)
-                    yield break;
-                yield return line.Trim();
-            }
         }
     }
 }
