@@ -13,7 +13,26 @@ namespace RhythmCodex.Bms.Integration
     public class BmsIntegrationTests : BaseIntegrationFixture
     {
         [Test]
-        public void Test_ParsingRandom()
+        [Explicit]
+        public void Test_ReadingSampleMap()
+        {
+            // Arrange.
+            var data = GetArchiveResource($"Bms.random.zip")
+                .First()
+                .Value;
+            var mem = new MemoryStream(data);
+            var reader = Resolve<IBmsStreamReader>();
+            var resolver = Resolve<IBmsRandomResolver>();
+            var decoder = Resolve<IBmsDecoder>();
+
+            // Act.
+            var commands = reader.Read(mem);
+            var resolved = resolver.Resolve(commands);
+            var decoded = decoder.Decode(resolved);
+        }
+
+        [Test]
+        public void Test_ParsingLargeRandom()
         {
             // Arrange.
             var data = GetArchiveResource($"Bms.random.zip")
@@ -25,9 +44,7 @@ namespace RhythmCodex.Bms.Integration
 
             // Act.
             var observed = reader.Read(mem);
-            var resolved = resolver.Resolve(observed);
-
-            // Assert.
+            resolver.Invoking(x => x.Resolve(observed)).Should().NotThrow();
         }
 
         [Test]

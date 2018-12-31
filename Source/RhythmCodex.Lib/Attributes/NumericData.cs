@@ -26,6 +26,11 @@
         SourceData,
         Difficulty,
         ByteOffset,
-        SampleMap
+        SampleMap,
+        MeasureLength,
+        BgaBase,
+        BgaObject,
+        BgaPoor,
+        BgaLayer
     }
 }

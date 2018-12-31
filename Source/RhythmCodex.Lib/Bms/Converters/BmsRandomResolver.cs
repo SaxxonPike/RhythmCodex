@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using RhythmCodex.Bms.Model;
 using RhythmCodex.Infrastructure;
@@ -19,10 +20,11 @@ namespace RhythmCodex.Bms.Converters
         public IEnumerable<BmsCommand> Resolve(IEnumerable<BmsCommand> commands)
         {
             var scope = new BmsResolverScope();
-            return ResolveScope(commands, scope).ToArray();
+            return ResolveScope(commands, scope, true).ToArray();
         }
 
-        private IEnumerable<BmsCommand> ResolveScope(IEnumerable<BmsCommand> commands, BmsResolverScope scope)
+        private IEnumerable<BmsCommand> ResolveScope(IEnumerable<BmsCommand> commands, BmsResolverScope scope,
+            bool isRootScope)
         {
             var pendingScopeCommands = new List<BmsCommand>();
             var pendingScope = new BmsResolverScope();
@@ -30,38 +32,72 @@ namespace RhythmCodex.Bms.Converters
 
             foreach (var command in commands)
             {
-                // Scope management.
-
-                if ("endif".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                // Ending any block will evaluate it when the scope level returns to zero.
+                
+                if ("endif".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                    "endsw".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                    "elseif".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                    "else".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     if (scopeLevel > 0)
                     {
                         scopeLevel--;
                         if (scopeLevel == 0)
                         {
-                            if (scope.RandomNumber == int.Parse(pendingScopeCommands.First().Value))
+                            var topCommand = pendingScopeCommands.First();
+                            if ("switch".Equals(topCommand.Name, StringComparison.OrdinalIgnoreCase) || 
+                                (topCommand.Value == null && !scope.Satisfied) || 
+                                (topCommand.Value != null && scope.CompareValue == topCommand.Value))
                             {
-                                foreach (var innerCommand in ResolveScope(pendingScopeCommands.Skip(1), pendingScope))
+                                scope.Satisfied = true;
+                                var innerScopeCommands = pendingScopeCommands.Skip(1).ToArray();
+                                Console.WriteLine("Processing inner scope:");
+                                Console.WriteLine(string.Join(Environment.NewLine, innerScopeCommands.Select(isc => $"{isc}")));
+                                var innerScopeOutput =
+                                    ResolveScope(innerScopeCommands, pendingScope, false).ToArray();
+                                foreach (var innerCommand in innerScopeOutput)
                                     yield return innerCommand;
                             }
+
                             pendingScopeCommands.Clear();
                             pendingScope = new BmsResolverScope();
-                            continue;
+                        }
+
+                        if ("endif".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                            "endsw".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            scope.Satisfied = false;
+                            if (scopeLevel == 0)
+                                continue;
                         }
                     }
                 }
+                
+                // Starting a block will prepare a scope.
 
-                if ("if".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                if ("if".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                    "elseif".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                    "else".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    // Scope propagation.
-
                     if (scopeLevel == 0)
                     {
-                        pendingScope.RandomNumber = scope.RandomNumber;
+                        pendingScope.CompareValue = scope.CompareValue;
+                        pendingScope.Matched = true;
                     }
-
                     scopeLevel++;
                 }
+
+                if ("switch".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (scopeLevel == 0)
+                    {
+                        pendingScope.CompareValue = $"{_randomizer.GetInt(int.Parse(command.Value)) + 1}";
+                        pendingScope.Matched = false;
+                    }
+                    scopeLevel++;
+                }
+                
+                // Skip scope processing if we are figuring out an inner scope.
 
                 if (scopeLevel > 0)
                 {
@@ -71,13 +107,44 @@ namespace RhythmCodex.Bms.Converters
 
                 // Scope specific commands.
 
-                if ("random".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                if (!isRootScope)
                 {
-                    scope.RandomNumber = _randomizer.GetInt(int.Parse(command.Value)) + 1;
-                    continue;
+                    if ("case".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (command.Value == scope.CompareValue)
+                            scope.Matched = true;
+                        continue;
+                    }
+
+                    if ("def".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        scope.Matched = true;
+                        continue;
+                    }
+
+                    if (scope.Matched && "skip".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                        yield break;
                 }
                 
-                if (scopeLevel == 0)
+                if ("random".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    scope.CompareValue = $"{_randomizer.GetInt(int.Parse(command.Value)) + 1}";
+                    continue;
+                }
+
+                if ("setrandom".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    scope.CompareValue = command.Value;
+                    continue;
+                }
+
+                if ("endrandom".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    scope.CompareValue = "1";
+                    continue;
+                }
+
+                if (isRootScope || scope.Matched)
                     yield return command;
             }
         }

@@ -11,12 +11,10 @@ namespace RhythmCodex.Bms.Converters
     [Service]
     public class BmsEncoder : IBmsEncoder
     {
-        private readonly IAlphabetConverter _alphabetConverter;
         private readonly ILogger _logger;
 
-        public BmsEncoder(IAlphabetConverter alphabetConverter, ILogger logger)
+        public BmsEncoder(ILogger logger)
         {
-            _alphabetConverter = alphabetConverter;
             _logger = logger;
         }
 
@@ -56,8 +54,8 @@ namespace RhythmCodex.Bms.Converters
             {
                 yield return new BmsCommand
                 {
-                    Name = $"WAV{_alphabetConverter.EncodeAlphanumeric(kv.Value, 2)}",
-                    Value = $"{_alphabetConverter.EncodeAlphanumeric(kv.Key, 2)}.WAV"
+                    Name = $"WAV{Alphabet.EncodeAlphanumeric(kv.Value, 2)}",
+                    Value = $"{Alphabet.EncodeAlphanumeric(kv.Key, 2)}.WAV"
                 };
             }
 
@@ -80,7 +78,7 @@ namespace RhythmCodex.Bms.Converters
             foreach (var kv in bpmMap)
                 yield return new BmsCommand
                 {
-                    Name = $"BPM{_alphabetConverter.EncodeNumeric(kv.Value, 2)}",
+                    Name = $"BPM{Alphabet.EncodeNumeric(kv.Value, 2)}",
                     Value = $"{kv.Key}"
                 };
         }

@@ -8,6 +8,7 @@ using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Djmain.Converters;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Vag.Converters;
@@ -31,7 +32,6 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
             var keysoundDecoder = Resolve<IVagDecoder>();
             var keysoundEncoder = Resolve<IRiffPcm16SoundEncoder>();
             var keysoundWriter = Resolve<IRiffStreamWriter>();
-            var alphabet = Resolve<IAlphabetConverter>();
             
             using (var file = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {
@@ -82,7 +82,7 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
                                     {
                                         keysoundWriter.Write(outStream, encoded);
                                         outStream.Flush();
-                                        File.WriteAllBytes(Path.Combine(keyOutFolder, $"{alphabet.EncodeAlphanumeric(keyIndex, 2)}.wav"), outStream.ToArray());
+                                        File.WriteAllBytes(Path.Combine(keyOutFolder, $"{Alphabet.EncodeAlphanumeric(keyIndex, 2)}.wav"), outStream.ToArray());
                                         keyIndex++;
                                     }
                                 }

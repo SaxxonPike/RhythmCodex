@@ -12,6 +12,8 @@ namespace RhythmCodex.Bms.Streamers
     [Service]
     public class BmsStreamReader : IBmsStreamReader
     {
+        private static readonly char[] Delimiters = {' ', '\t', ':'};
+        
         public IEnumerable<BmsCommand> Read(Stream stream)
         {
             var text = stream.ReadAllText();
@@ -48,29 +50,24 @@ namespace RhythmCodex.Bms.Streamers
 
                 // Determine delimiter.
                 var cmd = new BmsCommand();
-                var colonIndex = trimmedLine.IndexOf(':');
-                var spaceIndex = trimmedLine.IndexOf(' ');
-                var delimiterIndex = -1;
+                var delimiterOffset = Delimiters
+                    .Select(d => new {Delimiter = d, Index = trimmedLine.IndexOf(d)})
+                    .Where(kv => kv.Index >= 0)
+                    .OrderBy(kv => kv.Index)
+                    .FirstOrDefault();
 
-                if (colonIndex >= 0 && spaceIndex >= 0)
-                    delimiterIndex = Math.Min(colonIndex, spaceIndex);
-                else if (colonIndex >= 0)
-                    delimiterIndex = colonIndex;
-                else if (spaceIndex >= 0)
-                    delimiterIndex = spaceIndex;
-
-                if (delimiterIndex >= 0)
+                if (delimiterOffset != null)
                 {
-                    cmd.Name = trimmedLine.Substring(1, delimiterIndex - 1).Trim();
-                    cmd.Value = trimmedLine.Substring(delimiterIndex + 1).Trim();
-                    if (delimiterIndex == colonIndex)
+                    cmd.Name = trimmedLine.Substring(1, delimiterOffset.Index - 1).Trim().ToUpperInvariant();
+                    cmd.Value = trimmedLine.Substring(delimiterOffset.Index + 1).Trim();
+                    if (delimiterOffset.Delimiter == ':')
                         cmd.UseColon = true;
                 }
                 else
                 {
-                    cmd.Name = trimmedLine.Substring(1);
+                    cmd.Name = trimmedLine.Substring(1).ToUpperInvariant();
                 }
-
+                
                 yield return cmd;
             }
         }
