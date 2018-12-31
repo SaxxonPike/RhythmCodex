@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace RhythmCodex.Infrastructure
 {
@@ -51,7 +52,7 @@ namespace RhythmCodex.Infrastructure
 
         public static string ReadAllText(this Stream source)
         {
-            var reader = new StreamReader(source, true);
+            var reader = new StreamReader(source, Encoding.UTF8, true);
             return reader.ReadToEnd();
         }
 

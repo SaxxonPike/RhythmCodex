@@ -31,6 +31,8 @@
         BgaBase,
         BgaObject,
         BgaPoor,
-        BgaLayer
+        BgaLayer,
+        Rank,
+        LifeBar
     }
 }

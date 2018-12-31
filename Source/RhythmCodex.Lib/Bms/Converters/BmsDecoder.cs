@@ -16,30 +16,33 @@ namespace RhythmCodex.Bms.Converters
     {
         private static readonly Regex MeasureRegex = new Regex("^[0-9]{3}[0-9A-F]{2}$");
 
-        private static readonly Dictionary<string, string> SingularTags = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> SingularStringTags = new Dictionary<string, string>
         {
             {"TITLE", "Title"},
             {"ARTIST", "Artist"},
             {"GENRE", "Genre"},
+            {"STAGEFILE", "StageFile"},
+            {"BANNER", "Banner"},
+            {"BACKBMP", "BackBmp"}
         };
 
-        private static readonly Dictionary<string, string> MultiTags = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> MultiStringTags = new Dictionary<string, string>
         {
             {"SUBTITLE", "Subtitle"},
             {"SUBARTIST", "Subartist"},
             {"COMMENT", "Comment"}
         };
 
-        private static readonly string[] IgnoredTags =
-        {
-            "TITLE",
-            "SUBTITLE",
-            "ARTIST",
-            "SUBARTIST",
-            "COMMENT",
-            "GENRE",
-            "LNOBJ"
-        };
+        private static readonly Dictionary<string, NumericData> SingularNumericTags =
+            new Dictionary<string, NumericData>
+            {
+                {"DIFFICULTY", NumericData.Difficulty},
+                {"PLAYLEVEL", NumericData.PlayLevel},
+                {"PLAYER", NumericData.Player},
+                {"RANK", NumericData.Rank},
+                {"TOTAL", NumericData.LifeBar},
+                {"VOLWAV", NumericData.Volume}
+            };
 
         public BmsChart Decode(IEnumerable<BmsCommand> commands)
         {
@@ -64,8 +67,10 @@ namespace RhythmCodex.Bms.Converters
                     chart.Events.Add(new Event {[NumericData.Bpm] = initialBpm, [NumericData.MetricOffset] = 0});
             }
 
-            AddSingularMetadata(chart, commandList, SingularTags);
-            AddMultiMetadata(chart, commandList, MultiTags);
+            AddSingularMetadata(chart, commandList, SingularNumericTags);
+            AddSingularMetadata(chart, commandList, SingularStringTags);
+            AddMultiMetadata(chart, commandList, MultiStringTags);
+
             return new BmsChart
             {
                 Chart = chart,
@@ -75,6 +80,18 @@ namespace RhythmCodex.Bms.Converters
 
         private void AddSingularMetadata(IMetadata chart, IList<BmsCommand> commandList,
             IDictionary<string, string> metadataMap)
+        {
+            foreach (var kv in metadataMap)
+            {
+                var command = commandList
+                    .LastOrDefault(c => kv.Key.Equals(c.Name, StringComparison.InvariantCultureIgnoreCase));
+                if (command != null)
+                    chart[kv.Key] = command.Value;
+            }
+        }
+
+        private void AddSingularMetadata(IMetadata chart, IList<BmsCommand> commandList,
+            IDictionary<string, NumericData> metadataMap)
         {
             foreach (var kv in metadataMap)
             {

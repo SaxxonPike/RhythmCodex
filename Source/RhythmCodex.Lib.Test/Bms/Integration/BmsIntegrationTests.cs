@@ -12,6 +12,24 @@ namespace RhythmCodex.Bms.Integration
     [TestFixture]
     public class BmsIntegrationTests : BaseIntegrationFixture
     {
+        [TestCase("positive")]
+        public void Test_ReadingExampleBms(string name)
+        {
+            // Arrange.
+            var data = GetArchiveResource($"Bms.{name}.zip")
+                .First()
+                .Value;
+            var mem = new MemoryStream(data);
+            var reader = Resolve<IBmsStreamReader>();
+            var resolver = Resolve<IBmsRandomResolver>();
+            var decoder = Resolve<IBmsDecoder>();
+
+            // Act.
+            var commands = reader.Read(mem);
+            var resolved = resolver.Resolve(commands);
+            var decoded = decoder.Decode(resolved);
+        }
+        
         [Test]
         [Explicit]
         public void Test_ReadingSampleMap()
