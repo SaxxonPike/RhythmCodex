@@ -143,9 +143,6 @@ namespace RhythmCodex.Bms.Converters
         {
             var measure = Alphabet.DecodeNumeric(command.Name.AsSpan(0, 3));
             var lane = Alphabet.DecodeHex(command.Name.AsSpan(3, 2));
-            int? outLane = null;
-            FlagData? outFlag = null;
-            NumericData? outValue = null;
 
             switch (lane)
             {
