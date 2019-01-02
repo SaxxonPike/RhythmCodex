@@ -48,6 +48,8 @@ namespace RhythmCodex.Bms.Converters
                     
                 }
             }
+            
+            throw new NotImplementedException();
         }
 
         private string GetActualFileName(string name, IFileAccessor accessor)
@@ -56,12 +58,15 @@ namespace RhythmCodex.Bms.Converters
                 return name;
 
             var baseName = Path.GetFileNameWithoutExtension(name);
+            if (accessor.FileExists($"{baseName}.wav"))
+                return $"{baseName}.wav";
+            if (accessor.FileExists($"{baseName}.flac"))
+                return $"{baseName}.flac";
+            if (accessor.FileExists($"{baseName}.ogg"))
+                return $"{baseName}.ogg";
             if (accessor.FileExists($"{baseName}.mp3"))
+                return $"{baseName}.mp3";
+            return null;
         }
-    }
-
-    public interface IBmsSoundLoader
-    {
-        IList<ISound> Load(IDictionary<int, string> map);
     }
 }
