@@ -13,6 +13,14 @@ namespace RhythmCodex.Bms.Converters
     [Service]
     public class BmsSoundLoader : IBmsSoundLoader
     {
+        private static readonly string[] ExtensionPriority =
+        {
+            "wav",
+            "flac",
+            "ogg",
+            "mp3"
+        };
+
         private readonly IRiffStreamReader _riffStreamReader;
         private readonly IMp3Decoder _mp3Decoder;
         private readonly IOggDecoder _oggDecoder;
@@ -42,12 +50,13 @@ namespace RhythmCodex.Bms.Converters
                 var actualFileName = GetActualFileName(Path.GetFileNameWithoutExtension(kv.Value), accessor);
                 if (actualFileName == null)
                     continue;
-                
+
                 using (var stream = accessor.OpenRead(actualFileName))
                 {
-                    
                 }
             }
+
+            throw new NotImplementedException();
         }
 
         private string GetActualFileName(string name, IFileAccessor accessor)
@@ -56,12 +65,14 @@ namespace RhythmCodex.Bms.Converters
                 return name;
 
             var baseName = Path.GetFileNameWithoutExtension(name);
-            if (accessor.FileExists($"{baseName}.mp3"))
-        }
-    }
+            foreach (var extension in ExtensionPriority)
+            {
+                var desiredName = $"{baseName}.{extension}";
+                if (accessor.FileExists(desiredName))
+                    return desiredName;
+            }
 
-    public interface IBmsSoundLoader
-    {
-        IList<ISound> Load(IDictionary<int, string> map);
+            return null;
+        }
     }
 }
