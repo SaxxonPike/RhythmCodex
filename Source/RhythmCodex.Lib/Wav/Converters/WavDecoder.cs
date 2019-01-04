@@ -2,9 +2,12 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
+using RhythmCodex.ImaAdpcm.Converters;
+using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Wav.Converters
 {
@@ -14,12 +17,18 @@ namespace RhythmCodex.Wav.Converters
         private readonly IRiffStreamReader _riffStreamReader;
         private readonly IPcmDecoder _pcmDecoder;
         private readonly IWaveFmtDecoder _waveFmtDecoder;
+        private readonly IImaAdpcmDecoder _imaAdpcmDecoder;
 
-        public WavDecoder(IRiffStreamReader riffStreamReader, IPcmDecoder pcmDecoder, IWaveFmtDecoder waveFmtDecoder)
+        public WavDecoder(
+            IRiffStreamReader riffStreamReader, 
+            IPcmDecoder pcmDecoder, 
+            IWaveFmtDecoder waveFmtDecoder,
+            IImaAdpcmDecoder imaAdpcmDecoder)
         {
             _riffStreamReader = riffStreamReader;
             _pcmDecoder = pcmDecoder;
             _waveFmtDecoder = waveFmtDecoder;
+            _imaAdpcmDecoder = imaAdpcmDecoder;
         }
 
         public ISound Decode(Stream stream)
@@ -89,6 +98,22 @@ namespace RhythmCodex.Wav.Converters
                         });
                     }
 
+                    break;
+                }
+                case 0x0011: // IMA ADPCM
+                {
+                    var exFormat = new ImaAdpcmFormat(format.ExtraData);
+                    var decoded = _imaAdpcmDecoder.Decode(new ImaAdpcmChunk
+                    {
+                        Channels = format.Channels,
+                        Rate = format.SampleRate,
+                        Data = data.Data,
+                        ChannelSamplesPerFrame = exFormat.SamplesPerBlock
+                    });
+
+                    foreach (var sample in decoded.SelectMany(s => s.Samples))
+                        result.Samples.Add(sample);
+                    
                     break;
                 }
             }
