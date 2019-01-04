@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Attributes;
@@ -18,17 +20,20 @@ namespace RhythmCodex.Wav.Converters
         private readonly IPcmDecoder _pcmDecoder;
         private readonly IWaveFmtDecoder _waveFmtDecoder;
         private readonly IImaAdpcmDecoder _imaAdpcmDecoder;
+        private readonly IMicrosoftAdpcmDecoder _microsoftAdpcmDecoder;
 
         public WavDecoder(
             IRiffStreamReader riffStreamReader, 
             IPcmDecoder pcmDecoder, 
             IWaveFmtDecoder waveFmtDecoder,
-            IImaAdpcmDecoder imaAdpcmDecoder)
+            IImaAdpcmDecoder imaAdpcmDecoder,
+            IMicrosoftAdpcmDecoder microsoftAdpcmDecoder)
         {
             _riffStreamReader = riffStreamReader;
             _pcmDecoder = pcmDecoder;
             _waveFmtDecoder = waveFmtDecoder;
             _imaAdpcmDecoder = imaAdpcmDecoder;
+            _microsoftAdpcmDecoder = microsoftAdpcmDecoder;
         }
 
         public ISound Decode(Stream stream)
@@ -48,7 +53,8 @@ namespace RhythmCodex.Wav.Converters
 
             var result = new Sound
             {
-                [NumericData.Rate] = format.SampleRate
+                [NumericData.Rate] = format.SampleRate,
+                Samples = new List<ISample>()
             };
 
             switch (format.Format)
@@ -82,6 +88,16 @@ namespace RhythmCodex.Wav.Converters
                             Data = channel
                         });
                     }
+
+                    break;
+                }
+                case 0x0002: // Microsoft ADPCM
+                {
+                    var exFormat = new MsAdpcmFormat(format.ExtraData);
+                    var decoded = _microsoftAdpcmDecoder.Decode(data.Data.AsSpan(), format, exFormat);
+
+                    foreach (var sample in decoded.Samples)
+                        result.Samples.Add(sample);
 
                     break;
                 }

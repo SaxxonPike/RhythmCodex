@@ -4,6 +4,7 @@ using RhythmCodex.Riff.Models;
 
 namespace RhythmCodex.Riff.Streamers
 {
+    [Service]
     public class RiffChunkStreamReader : IRiffChunkStreamReader
     {
         public IRiffChunk Read(Stream stream)

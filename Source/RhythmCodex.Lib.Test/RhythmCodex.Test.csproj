@@ -4,51 +4,51 @@
         <RootNamespace>RhythmCodex</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="4.8.1"/>
-        <PackageReference Include="AutoFixture" Version="4.6.0"/>
-        <PackageReference Include="FluentAssertions" Version="5.5.3"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0"/>
-        <PackageReference Include="Moqzilla" Version="1.1.0"/>
-        <PackageReference Include="NUnit" Version="3.11.0"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="3.12.0"/>
-        <PackageReference Include="System.IO.Compression" Version="4.3.0"/>
-        <PackageReference Include="System.Memory" Version="4.5.1"/>
-        <PackageReference Include="System.Runtime.Numerics" Version="4.3.0"/>
+        <PackageReference Include="Autofac" Version="4.8.1" />
+        <PackageReference Include="AutoFixture" Version="4.6.0" />
+        <PackageReference Include="FluentAssertions" Version="5.5.3" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+        <PackageReference Include="Moqzilla" Version="1.1.0" />
+        <PackageReference Include="NUnit" Version="3.11.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.12.0" />
+        <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+        <PackageReference Include="System.Memory" Version="4.5.1" />
+        <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Data\BeatmaniaPsx\chart.zip"/>
-        <EmbeddedResource Include="Data\BeatmaniaPsx\keysounds.zip"/>
-        <EmbeddedResource Include="Data\Bms\positive.zip"/>
-        <EmbeddedResource Include="Data\Bms\random.zip"/>
-        <EmbeddedResource Include="Data\Dds\dxt1.zip"/>
-        <EmbeddedResource Include="Data\Dds\dxt5.zip"/>
-        <EmbeddedResource Include="Data\Dds\uncompressed.zip"/>
-        <EmbeddedResource Include="Data\Djmain\bm1st.zip"/>
-        <EmbeddedResource Include="Data\Djmain\bm7th.zip"/>
-        <EmbeddedResource Include="Data\Djmain\bmcm.zip"/>
-        <EmbeddedResource Include="Data\Djmain\bmcm2.zip"/>
-        <EmbeddedResource Include="Data\Djmain\bmfinal.zip"/>
-        <EmbeddedResource Include="Data\Djmain\chart.zip"/>
-        <EmbeddedResource Include="Data\Flac\example.flac.zip"/>
-        <EmbeddedResource Include="Data\ImaAdpcm\RawXboxAdpcm.zip"/>
-        <EmbeddedResource Include="Data\Iso\test-iso.zip"/>
-        <EmbeddedResource Include="Data\Mp3\example.mp3.zip"/>
-        <EmbeddedResource Include="Data\Ogg\example.ogg.zip"/>
-        <EmbeddedResource Include="Data\Ssq\freeze.zip"/>
-        <EmbeddedResource Include="Data\Ssq\shock.zip"/>
-        <EmbeddedResource Include="Data\Ssq\solo.zip"/>
-        <EmbeddedResource Include="Data\Step1\2nd.zip"/>
-        <EmbeddedResource Include="Data\Step1\picky.zip"/>
-        <EmbeddedResource Include="Data\Step1\solo.zip"/>
-        <EmbeddedResource Include="Data\Step2\couple.zip"/>
-        <EmbeddedResource Include="Data\Step2\double.zip"/>
-        <EmbeddedResource Include="Data\Step2\single.zip"/>
-        <EmbeddedResource Include="Data\Vag\svag.zip"/>
-        <EmbeddedResource Include="Data\Vag\xa2.zip"/>
-        <EmbeddedResource Include="Data\Wav\alaw.zip"/>
+        <EmbeddedResource Include="Data\BeatmaniaPsx\chart.zip" />
+        <EmbeddedResource Include="Data\BeatmaniaPsx\keysounds.zip" />
+        <EmbeddedResource Include="Data\Bms\positive.zip" />
+        <EmbeddedResource Include="Data\Bms\random.zip" />
+        <EmbeddedResource Include="Data\Dds\dxt1.zip" />
+        <EmbeddedResource Include="Data\Dds\dxt5.zip" />
+        <EmbeddedResource Include="Data\Dds\uncompressed.zip" />
+        <EmbeddedResource Include="Data\Djmain\bm1st.zip" />
+        <EmbeddedResource Include="Data\Djmain\bm7th.zip" />
+        <EmbeddedResource Include="Data\Djmain\bmcm.zip" />
+        <EmbeddedResource Include="Data\Djmain\bmcm2.zip" />
+        <EmbeddedResource Include="Data\Djmain\bmfinal.zip" />
+        <EmbeddedResource Include="Data\Djmain\chart.zip" />
+        <EmbeddedResource Include="Data\Flac\example.flac.zip" />
+        <EmbeddedResource Include="Data\ImaAdpcm\RawXboxAdpcm.zip" />
+        <EmbeddedResource Include="Data\Iso\test-iso.zip" />
+        <EmbeddedResource Include="Data\Mp3\example.mp3.zip" />
+        <EmbeddedResource Include="Data\Ogg\example.ogg.zip" />
+        <EmbeddedResource Include="Data\Ssq\freeze.zip" />
+        <EmbeddedResource Include="Data\Ssq\shock.zip" />
+        <EmbeddedResource Include="Data\Ssq\solo.zip" />
+        <EmbeddedResource Include="Data\Step1\2nd.zip" />
+        <EmbeddedResource Include="Data\Step1\picky.zip" />
+        <EmbeddedResource Include="Data\Step1\solo.zip" />
+        <EmbeddedResource Include="Data\Step2\couple.zip" />
+        <EmbeddedResource Include="Data\Step2\double.zip" />
+        <EmbeddedResource Include="Data\Step2\single.zip" />
+        <EmbeddedResource Include="Data\Vag\svag.zip" />
+        <EmbeddedResource Include="Data\Vag\xa2.zip" />
+        <EmbeddedResource Include="Data\Wav\alaw.zip" />
         <EmbeddedResource Include="Data\Wav\double.zip" />
         <EmbeddedResource Include="Data\Wav\imaadpcm.zip" />
         <EmbeddedResource Include="Data\Wav\mp3.zip" />
@@ -59,12 +59,12 @@
         <EmbeddedResource Include="Data\Wav\pcm32.zip" />
         <EmbeddedResource Include="Data\Wav\single.zip" />
         <EmbeddedResource Include="Data\Wav\ulaw.zip" />
-        <EmbeddedResource Include="Data\Xa\xa.zip"/>
+        <EmbeddedResource Include="Data\Xa\xa.zip" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Data\Step2"/>
-        <Folder Include="ImaAdpcm\Converters"/>
-        <Folder Include="Ssq"/>
-        <Folder Include="Stepmania"/>
+        <Folder Include="Data\Step2" />
+        <Folder Include="ImaAdpcm\Converters" />
+        <Folder Include="Ssq" />
+        <Folder Include="Stepmania" />
     </ItemGroup>
 </Project>

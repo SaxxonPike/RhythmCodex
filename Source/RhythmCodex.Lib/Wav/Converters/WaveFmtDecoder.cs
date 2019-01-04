@@ -5,6 +5,7 @@ using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Wav.Converters
 {
+    [Service]
     public class WaveFmtDecoder : IWaveFmtDecoder
     {
         public WaveFmtChunk Decode(IRiffChunk chunk)

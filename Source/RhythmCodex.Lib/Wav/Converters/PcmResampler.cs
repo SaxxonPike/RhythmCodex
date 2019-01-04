@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Wav.Converters
 {
+    [Service]
     public class PcmDecoder : IPcmDecoder
     {
         public float[] Decode8Bit(byte[] bytes)
