@@ -11,5 +11,6 @@ namespace RhythmCodex.Wav.Models
         public int ByteRate { get; set; }
         public int BlockAlign { get; set; }
         public int BitsPerSample { get; set; }
+        public byte[] ExtraData { get; set; }
     }
 }

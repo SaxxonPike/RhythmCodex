@@ -7,27 +7,38 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.ThirdParty;
+using RhythmCodex.Wav.Converters;
 
 namespace RhythmCodex.Bms.Converters
 {
     [Service]
     public class BmsSoundLoader : IBmsSoundLoader
     {
-        private readonly IRiffStreamReader _riffStreamReader;
+        private readonly IWavDecoder _wavDecoder;
         private readonly IMp3Decoder _mp3Decoder;
         private readonly IOggDecoder _oggDecoder;
         private readonly IFlacDecoder _flacDecoder;
 
+        private readonly Dictionary<string, Func<Stream, ISound>> Extensions;
+
         public BmsSoundLoader(
-            IRiffStreamReader riffStreamReader,
+            IWavDecoder wavDecoder,
             IMp3Decoder mp3Decoder,
             IOggDecoder oggDecoder,
             IFlacDecoder flacDecoder)
         {
-            _riffStreamReader = riffStreamReader;
+            _wavDecoder = wavDecoder;
             _mp3Decoder = mp3Decoder;
             _oggDecoder = oggDecoder;
             _flacDecoder = flacDecoder;
+
+            Extensions = new Dictionary<string, Func<Stream, ISound>>
+            {
+                {"wav", s => _wavDecoder.Decode(s)},
+                {"flac", s => _flacDecoder.Decode(s)},
+                {"ogg", s => _oggDecoder.Decode(s)},
+                {"mp3", s => _mp3Decoder.Decode(s)}
+            };
         }
 
         public IList<ISound> Load(IDictionary<int, string> map, IFileAccessor accessor)
@@ -39,34 +50,21 @@ namespace RhythmCodex.Bms.Converters
         {
             foreach (var kv in map)
             {
-                var actualFileName = GetActualFileName(Path.GetFileNameWithoutExtension(kv.Value), accessor);
-                if (actualFileName == null)
+                var decoder = GetDecoder(Path.GetFileNameWithoutExtension(kv.Value), accessor);
+                if (decoder.Decoder == null)
                     continue;
-                
-                using (var stream = accessor.OpenRead(actualFileName))
-                {
-                    
-                }
+
+                using (var stream = accessor.OpenRead(decoder.Filename))
+                    yield return decoder.Decoder(stream);
             }
-            
-            throw new NotImplementedException();
         }
 
-        private string GetActualFileName(string name, IFileAccessor accessor)
+        private (string Filename, Func<Stream, ISound> Decoder) GetDecoder(string name, IFileAccessor accessor)
         {
-            if (accessor.FileExists(name))
-                return name;
-
-            var baseName = Path.GetFileNameWithoutExtension(name);
-            if (accessor.FileExists($"{baseName}.wav"))
-                return $"{baseName}.wav";
-            if (accessor.FileExists($"{baseName}.flac"))
-                return $"{baseName}.flac";
-            if (accessor.FileExists($"{baseName}.ogg"))
-                return $"{baseName}.ogg";
-            if (accessor.FileExists($"{baseName}.mp3"))
-                return $"{baseName}.mp3";
-            return null;
+            var file = accessor.GetFileNameByExtension(name, Extensions.Keys);
+            if (file == null)
+                throw new RhythmCodexException($"Unable to find a decoder for {name}.");
+            return (file.Filename, Extensions[file.Extension]);
         }
     }
 }
