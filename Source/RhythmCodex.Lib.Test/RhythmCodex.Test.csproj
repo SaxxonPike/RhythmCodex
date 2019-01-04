@@ -24,6 +24,7 @@
         <EmbeddedResource Include="Data\Bms\positive.zip"/>
         <EmbeddedResource Include="Data\Bms\random.zip"/>
         <EmbeddedResource Include="Data\Dds\dxt1.zip"/>
+        <EmbeddedResource Include="Data\Dds\dxt5.zip"/>
         <EmbeddedResource Include="Data\Dds\uncompressed.zip"/>
         <EmbeddedResource Include="Data\Djmain\bm1st.zip"/>
         <EmbeddedResource Include="Data\Djmain\bm7th.zip"/>
