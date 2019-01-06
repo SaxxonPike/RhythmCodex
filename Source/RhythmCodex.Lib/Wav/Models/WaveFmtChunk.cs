@@ -3,7 +3,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Wav.Models
 {
     [Model]
-    public class WaveFmtChunk
+    public class WaveFmtChunk : IWaveFormat
     {
         public int Format { get; set; }
         public int Channels { get; set; }

@@ -5,6 +5,10 @@ namespace RhythmCodex.Wav.Models
     [Model]
     public class MsAdpcmFormat
     {
+        public MsAdpcmFormat()
+        {
+        }
+        
         public MsAdpcmFormat(byte[] data)
         {
             SamplesPerBlock = Bitter.ToInt16(data, 2);
