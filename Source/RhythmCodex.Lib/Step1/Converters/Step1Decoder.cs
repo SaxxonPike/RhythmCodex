@@ -98,9 +98,9 @@ namespace RhythmCodex.Step1.Converters
                 yield return new Chart
                 {
                     Events = events,
-                    ["Difficulty"] = difficulty,
-                    ["Type"] = type,
-                    ["Description"] = description
+                    [StringData.Difficulty] = difficulty,
+                    [StringData.Type] = type,
+                    [StringData.Description] = description
                 };
             }
         }

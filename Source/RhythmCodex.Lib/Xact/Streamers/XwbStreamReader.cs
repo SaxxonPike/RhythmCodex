@@ -30,77 +30,74 @@ namespace RhythmCodex.Xact.Streamers
             _microsoftAdpcmDecoder = microsoftAdpcmDecoder;
         }
 
-        public IList<ISound> Read(Stream source)
+        public IEnumerable<ISound> Read(Stream source)
         {
-            var result = new List<ISound>();
             using (var reader = new BinaryReader(source))
             {
                 var sampleCount = 0;
-                var header = new WaveBankHeader();
-                var bank = new WaveBankData();
                 WaveBankEntry[] entries = { };
                 string[] names = { };
                 var dataChunk = new MemoryStream();
 
-                header = WaveBankHeader.Read(source);
+                var header = WaveBankHeader.Read(source);
 
                 for (var i = 0; i < (int) WaveBankSegIdx.Count; i++)
                 {
                     var region = header.Segments[i];
-                    if (region.Length > 0)
+                    if (region.Length <= 0)
+                        continue;
+
+                    source.Position = region.Offset;
+                    var mem = new MemoryStream(reader.ReadBytes(region.Length));
+                    var memReader = new BinaryReader(mem);
+                    switch (i)
                     {
-                        source.Position = region.Offset;
-                        var mem = new MemoryStream(reader.ReadBytes(region.Length));
-                        var memReader = new BinaryReader(mem);
-                        switch (i)
-                        {
-                            case (int) WaveBankSegIdx.BankData:
-                                bank = WaveBankData.Read(mem);
-                                sampleCount = bank.EntryCount;
-                                entries = new WaveBankEntry[sampleCount];
-                                names = new string[sampleCount];
-                                mem.Dispose();
-                                break;
-                            case (int) WaveBankSegIdx.EntryMetaData:
-                                for (var j = 0; j < sampleCount; j++)
-                                    entries[j] = WaveBankEntry.Read(mem);
-                                mem.Dispose();
-                                break;
-                            case (int) WaveBankSegIdx.EntryNames:
-                                for (var j = 0; j < sampleCount; j++)
-                                    names[j] = new string(memReader.ReadChars(XactConstants.WavebankEntrynameLength)
-                                        .TakeWhile(c => c != 0).ToArray());
-                                mem.Dispose();
-                                break;
-                            case (int) WaveBankSegIdx.EntryWaveData:
-                                dataChunk = mem;
-                                break;
-                            case (int) WaveBankSegIdx.SeekTables:
-                                mem.Dispose();
-                                break;
-                            default:
-                                mem.Dispose();
-                                break;
-                        }
+                        case (int) WaveBankSegIdx.BankData:
+                            var bank = WaveBankData.Read(mem);
+                            sampleCount = bank.EntryCount;
+                            entries = new WaveBankEntry[sampleCount];
+                            names = new string[sampleCount];
+                            mem.Dispose();
+                            break;
+                        case (int) WaveBankSegIdx.EntryMetaData:
+                            for (var j = 0; j < sampleCount; j++)
+                                entries[j] = WaveBankEntry.Read(mem);
+                            mem.Dispose();
+                            break;
+                        case (int) WaveBankSegIdx.EntryNames:
+                            for (var j = 0; j < sampleCount; j++)
+                                names[j] = new string(memReader.ReadChars(XactConstants.WavebankEntrynameLength)
+                                    .TakeWhile(c => c != 0).ToArray());
+                            mem.Dispose();
+                            break;
+                        case (int) WaveBankSegIdx.EntryWaveData:
+                            dataChunk = mem;
+                            break;
+                        case (int) WaveBankSegIdx.SeekTables:
+                            mem.Dispose();
+                            break;
+                        default:
+                            mem.Dispose();
+                            break;
                     }
                 }
 
-                if (sampleCount > 0)
+                for (var i = 0; i < sampleCount; i++)
                 {
-                    var sounds = new List<ISound>();
-                    for (var i = 0; i < sampleCount; i++)
-                    {
-                        var entry = entries[i];
-                        dataChunk.Position = entry.PlayRegion.Offset;
-                        var sound = DecodeSound(entry.Format, dataChunk, entry.PlayRegion.Length);
+                    var entry = entries[i];
+                    dataChunk.Position = entry.PlayRegion.Offset;
 
-                        if (sound != null)
-                            sounds.Add(sound);
-                    }
+                    var sound = DecodeSound(entry.Format, dataChunk, entry.PlayRegion.Length);
+                    if (sound == null)
+                        continue;
+
+                    sound[NumericData.Rate] = entry.Format.SampleRate;
+                    sound[StringData.Name] = names[i];
+                    sound[NumericData.LoopStart] = entry.LoopRegion.StartSample;
+                    sound[NumericData.LoopLength] = entry.LoopRegion.TotalSamples;
+                    yield return sound;
                 }
             }
-
-            return result;
         }
 
         private ISound DecodeSound(WaveBankMiniWaveFormat format, Stream stream, int length)
@@ -160,7 +157,7 @@ namespace RhythmCodex.Xact.Streamers
                     return _microsoftAdpcmDecoder.Decode(
                         reader.ReadBytes(length),
                         format,
-                        new MsAdpcmFormat
+                        new MicrosoftAdpcmFormat
                         {
                             Coefficients = new int[0],
                             SamplesPerBlock = format.AdpcmSamplesPerBlock

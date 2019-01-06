@@ -59,8 +59,8 @@ namespace RhythmCodex.Ssq.Converters
                             _panelMapperSelector.Select(sc.Steps, info))
                         .AsList(),
                     [NumericData.Id] = sc.Id,
-                    ["Difficulty"] = info.Difficulty,
-                    ["Type"] = $"dance-{info.Type.ToLowerInvariant()}"
+                    [StringData.Difficulty] = info.Difficulty,
+                    [StringData.Type] = $"dance-{info.Type.ToLowerInvariant()}"
                 };
             });
 

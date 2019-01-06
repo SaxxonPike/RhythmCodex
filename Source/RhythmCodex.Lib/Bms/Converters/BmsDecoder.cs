@@ -16,21 +16,21 @@ namespace RhythmCodex.Bms.Converters
     {
         private static readonly Regex MeasureRegex = new Regex("^[0-9]{3}[0-9A-F]{2}$");
 
-        private static readonly Dictionary<string, string> SingularStringTags = new Dictionary<string, string>
+        private static readonly Dictionary<string, StringData> SingularStringTags = new Dictionary<string, StringData>
         {
-            {"TITLE", "Title"},
-            {"ARTIST", "Artist"},
-            {"GENRE", "Genre"},
-            {"STAGEFILE", "StageFile"},
-            {"BANNER", "Banner"},
-            {"BACKBMP", "BackBmp"}
+            {"TITLE", StringData.Title},
+            {"ARTIST", StringData.Artist},
+            {"GENRE", StringData.Genre},
+            {"STAGEFILE", StringData.StageFile},
+            {"BANNER", StringData.BannerFile},
+            {"BACKBMP", StringData.BackgroundFile}
         };
 
-        private static readonly Dictionary<string, string> MultiStringTags = new Dictionary<string, string>
+        private static readonly Dictionary<string, StringData> MultiStringTags = new Dictionary<string, StringData>
         {
-            {"SUBTITLE", "Subtitle"},
-            {"SUBARTIST", "Subartist"},
-            {"COMMENT", "Comment"}
+            {"SUBTITLE", StringData.Subtitle},
+            {"SUBARTIST", StringData.Subartist},
+            {"COMMENT", StringData.Comment}
         };
 
         private static readonly Dictionary<string, NumericData> SingularNumericTags =
@@ -79,14 +79,14 @@ namespace RhythmCodex.Bms.Converters
         }
 
         private void AddSingularMetadata(IMetadata chart, IList<BmsCommand> commandList,
-            IDictionary<string, string> metadataMap)
+            IDictionary<string, StringData> metadataMap)
         {
             foreach (var kv in metadataMap)
             {
                 var command = commandList
                     .LastOrDefault(c => kv.Key.Equals(c.Name, StringComparison.InvariantCultureIgnoreCase));
                 if (command != null)
-                    chart[kv.Key] = command.Value;
+                    chart[kv.Value] = command.Value;
             }
         }
 
@@ -98,12 +98,12 @@ namespace RhythmCodex.Bms.Converters
                 var command = commandList
                     .LastOrDefault(c => kv.Key.Equals(c.Name, StringComparison.InvariantCultureIgnoreCase));
                 if (command != null)
-                    chart[kv.Key] = command.Value;
+                    chart[kv.Value] = BigRationalParser.ParseString(command.Value);
             }
         }
 
         private void AddMultiMetadata(IMetadata chart, IList<BmsCommand> commandList,
-            IDictionary<string, string> metadataMap)
+            IDictionary<string, StringData> metadataMap)
         {
             foreach (var kv in metadataMap)
             {
@@ -111,7 +111,7 @@ namespace RhythmCodex.Bms.Converters
                     .Where(c => kv.Key.Equals(c.Name, StringComparison.InvariantCultureIgnoreCase))
                     .ToArray();
                 if (commands.Any())
-                    chart[kv.Key] = string.Join(Environment.NewLine, commands.Select(c => c.Value));
+                    chart[kv.Value] = string.Join(Environment.NewLine, commands.Select(c => c.Value));
             }
         }
 

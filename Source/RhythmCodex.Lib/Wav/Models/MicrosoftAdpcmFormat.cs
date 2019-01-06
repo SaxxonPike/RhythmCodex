@@ -3,13 +3,13 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Wav.Models
 {
     [Model]
-    public class MsAdpcmFormat
+    public class MicrosoftAdpcmFormat
     {
-        public MsAdpcmFormat()
+        public MicrosoftAdpcmFormat()
         {
         }
         
-        public MsAdpcmFormat(byte[] data)
+        public MicrosoftAdpcmFormat(byte[] data)
         {
             SamplesPerBlock = Bitter.ToInt16(data, 2);
             var coefficientCount = Bitter.ToInt16(data, 4);

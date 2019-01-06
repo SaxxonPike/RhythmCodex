@@ -6,6 +6,6 @@ namespace RhythmCodex.Xact.Streamers
 {
     public interface IXwbStreamReader
     {
-        IList<ISound> Read(Stream source);
+        IEnumerable<ISound> Read(Stream source);
     }
 }

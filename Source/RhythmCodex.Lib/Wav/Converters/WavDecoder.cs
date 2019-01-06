@@ -93,7 +93,7 @@ namespace RhythmCodex.Wav.Converters
                 }
                 case 0x0002: // Microsoft ADPCM
                 {
-                    var exFormat = new MsAdpcmFormat(format.ExtraData);
+                    var exFormat = new MicrosoftAdpcmFormat(format.ExtraData);
                     var decoded = _microsoftAdpcmDecoder.Decode(data.Data.AsSpan(), format, exFormat);
 
                     foreach (var sample in decoded.Samples)

@@ -73,6 +73,12 @@ namespace RhythmCodex.Attributes
             }
         }
 
+        public string this[StringData type]
+        {
+            get => this[type.ToString()];
+            set => this[type.ToString()] = value;
+        }
+
         public bool MetadataEquals(Metadata other)
         {
             return _stringDatas.Count == other._stringDatas.Count && !_stringDatas.Except(other._stringDatas).Any() &&

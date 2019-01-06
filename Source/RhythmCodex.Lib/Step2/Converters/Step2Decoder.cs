@@ -58,9 +58,9 @@ namespace RhythmCodex.Step2.Converters
             return new Chart
             {
                 Events = events,
-                ["Difficulty"] = difficulty,
-                ["Type"] = type,
-                ["Description"] = description
+                [StringData.Difficulty] = difficulty,
+                [StringData.Type] = type,
+                [StringData.Description] = description
             };
         }
 

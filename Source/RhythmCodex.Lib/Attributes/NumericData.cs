@@ -33,6 +33,8 @@
         BgaPoor,
         BgaLayer,
         Rank,
-        LifeBar
+        LifeBar,
+        LoopStart,
+        LoopLength
     }
 }

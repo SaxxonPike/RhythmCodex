@@ -60,6 +60,8 @@
         <EmbeddedResource Include="Data\Wav\single.zip" />
         <EmbeddedResource Include="Data\Wav\ulaw.zip" />
         <EmbeddedResource Include="Data\Xa\xa.zip" />
+        <EmbeddedResource Include="Data\Xact\xsb.zip" />
+        <EmbeddedResource Include="Data\Xact\xwb.zip" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Data\Step2" />

@@ -32,7 +32,7 @@ namespace RhythmCodex.Step1.Integration
 
             foreach (var chart in charts)
             {
-                TestContext.Out.WriteLine($"{chart["Difficulty"]} {chart["Type"]} {chart["Description"]}");
+                TestContext.Out.WriteLine($"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
             }
         }
 
@@ -55,7 +55,7 @@ namespace RhythmCodex.Step1.Integration
 
                 foreach (var chart in charts)
                 {
-                    TestContext.Out.WriteLine($"{chart["Difficulty"]} {chart["Type"]} {chart["Description"]}");
+                    TestContext.Out.WriteLine($"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
                 }                
             }
         }

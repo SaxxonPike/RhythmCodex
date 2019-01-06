@@ -34,10 +34,10 @@ namespace RhythmCodex.Wav.Converters
             0, 1, 2, 3, 4, 5, 6, 7, -8, -7, -6, -5, -4, -3, -2, -1
         };
 
-        public ISound Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MsAdpcmFormat msAdpcmFormat)
+        public ISound Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat)
         {
             var channels = fmtChunk.Channels;
-            var channelSamplesPerFrame = msAdpcmFormat.SamplesPerBlock;
+            var channelSamplesPerFrame = microsoftAdpcmFormat.SamplesPerBlock;
             var buffer = new float[channelSamplesPerFrame];
             var frameSize = fmtChunk.BlockAlign;
             var max = data.Length / frameSize * frameSize;
@@ -45,9 +45,9 @@ namespace RhythmCodex.Wav.Converters
 
             // Apply coefficients
             var coefficients =
-                new int[Math.Max(DefaultCoefficients.Length, msAdpcmFormat.Coefficients.Length)].AsMemory();
+                new int[Math.Max(DefaultCoefficients.Length, microsoftAdpcmFormat.Coefficients.Length)].AsMemory();
             DefaultCoefficients.AsSpan().CopyTo(coefficients.Span);
-            msAdpcmFormat.Coefficients.AsSpan().CopyTo(coefficients.Span);
+            microsoftAdpcmFormat.Coefficients.AsSpan().CopyTo(coefficients.Span);
 
             for (var offset = 0; offset < max; offset += frameSize)
             {
@@ -72,7 +72,7 @@ namespace RhythmCodex.Wav.Converters
             var control = frame[channel];
             var coeff1 = coefficients[control << 1];
             var coeff2 = coefficients[(control << 1) + 1];
-            var index = channelCount;
+            var index = channelCount + channel * 2;
             var delta = ((frame[index] | (frame[index + 1] << 8)) << 16) >> 16;
             index += channelCount * 2;
             var sample1 = ((frame[index] | (frame[index + 1] << 8)) << 16) >> 16;

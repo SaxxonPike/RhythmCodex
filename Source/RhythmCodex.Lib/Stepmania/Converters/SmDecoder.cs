@@ -73,8 +73,8 @@ namespace RhythmCodex.Stepmania.Converters
 
                     charts.Add(new Chart
                     {
-                        ["Description"] = command.Values[1],
-                        ["Difficulty"] = command.Values[2],
+                        [StringData.Description] = command.Values[1],
+                        [StringData.Difficulty] = command.Values[2],
                         [NumericData.PlayLevel] = hasPlayLevel ? (BigRational?) playLevel : null,
                         Events = _noteDecoder.Decode(events, columns).ToList()
                     });
