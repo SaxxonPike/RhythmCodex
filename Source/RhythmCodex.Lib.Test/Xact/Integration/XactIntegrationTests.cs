@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Attributes;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Xact.Streamers;
@@ -12,22 +13,21 @@ namespace RhythmCodex.Xact.Integration
     public class XactIntegrationTests : BaseIntegrationFixture
     {
         [Test]
-        public void Test1()
+        [Explicit]
+        public void Test_XWB()
         {
             // Arrange.
-//            var data = GetArchiveResource($"Xact.xwb.zip")
-//                .First()
-//                .Value;
+            var data = GetArchiveResource($"Xact.xwb.zip")
+                .First()
+                .Value;
             var reader = Resolve<IXwbStreamReader>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
             // Act.
-//            var observed = reader.Read(new MemoryStream(data));
-            using (var observed = File.OpenRead(@"C:\Users\Saxxon\Desktop\bgm_dance.xwb"))
+            using (var observed = new MemoryStream(data))
             {
                 // Assert.
-                var index = 0;
                 foreach (var sound in reader.Read(observed))
                 {
                     var encoded = encoder.Encode(sound);
@@ -39,8 +39,8 @@ namespace RhythmCodex.Xact.Integration
                     {
                         writer.Write(outStream, encoded);
                         outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outfolder, $"{index:000}.wav"), outStream.ToArray());
-                        index++;
+                        File.WriteAllBytes(Path.Combine(outfolder, $"{sound[StringData.Name]}.wav"),
+                            outStream.ToArray());
                     }
                 }
             }
