@@ -12,6 +12,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Xact.Streamers;
+using RhythmCodex.Xbox.Streamers;
 
 namespace RhythmCodex.Cli.Orchestration
 {
@@ -25,6 +26,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IDdsBitmapDecoder _ddsBitmapDecoder;
         private readonly IPngStreamWriter _pngStreamWriter;
         private readonly IXwbStreamReader _xwbStreamReader;
+        private readonly IXboxIsoStreamReader _xboxIsoStreamReader;
 
         public XboxTaskBuilder(
             IFileSystem fileSystem,
@@ -35,7 +37,8 @@ namespace RhythmCodex.Cli.Orchestration
             IDdsStreamReader ddsStreamReader,
             IDdsBitmapDecoder ddsBitmapDecoder,
             IPngStreamWriter pngStreamWriter,
-            IXwbStreamReader xwbStreamReader)
+            IXwbStreamReader xwbStreamReader,
+            IXboxIsoStreamReader xboxIsoStreamReader)
             : base(fileSystem, logger)
         {
             _imaAdpcmDecoder = imaAdpcmDecoder;
@@ -45,6 +48,7 @@ namespace RhythmCodex.Cli.Orchestration
             _ddsBitmapDecoder = ddsBitmapDecoder;
             _pngStreamWriter = pngStreamWriter;
             _xwbStreamReader = xwbStreamReader;
+            _xboxIsoStreamReader = xboxIsoStreamReader;
         }
 
         public ITask CreateDecodeDds()
@@ -74,6 +78,41 @@ namespace RhythmCodex.Cli.Orchestration
             });
         }
 
+        public ITask CreateExtractXiso()
+        {
+            return Build("Extract XISO", task =>
+            {
+                var files = GetInputFiles(task);
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    using (var stream = OpenRead(task, file))
+                    {
+                        var index = 0;
+                        foreach (var entry in _xboxIsoStreamReader.Read(stream, stream.Length))
+                        {
+                            using (var outStream =
+                                OpenWriteMulti(task, file, i => entry.FileName))
+                            {
+                                var writer = new BinaryWriter(outStream);
+                                writer.Write(_xboxIsoStreamReader.Extract(stream, entry));
+                                outStream.Flush();
+                            }
+
+                            index++;
+                        }
+                    }
+                });
+
+                return true;
+            });
+        }
+
         public ITask CreateExtractXwb()
         {
             return Build("Extract XWB", task =>
@@ -94,11 +133,14 @@ namespace RhythmCodex.Cli.Orchestration
                         {
                             var encoded = _riffPcm16SoundEncoder.Encode(sound);
                             var name = sound[StringData.Name];
-                            using (var outStream = OpenWriteSingle(task, file, i => $"{name ?? $"{i}{index:0000}"}.wav"))
+                            using (var outStream =
+                                OpenWriteSingle(task, file, i => $"{name ?? $"{i}{index:0000}"}.wav"))
                             {
                                 _riffStreamWriter.Write(outStream, encoded);
                                 outStream.Flush();
                             }
+
+                            index++;
                         }
                     }
                 });

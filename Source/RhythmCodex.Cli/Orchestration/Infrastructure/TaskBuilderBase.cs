@@ -71,8 +71,9 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             var path = GetOutputFolder(inputFile);
             var newName = generateName(Path.GetFileNameWithoutExtension(inputFile));
             var newPath = Path.Combine(path, newName);
+            var newDirectory = Path.GetDirectoryName(newPath);
             task.Message = $"Writing {newPath}";
-            _fileSystem.CreateDirectory(path);
+            _fileSystem.CreateDirectory(newDirectory);
             return _fileSystem.OpenWrite(newPath);
         }
 
@@ -85,8 +86,9 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             var path = Path.Combine(GetOutputFolder(inputFile), baseName);
             var newName = generateName(baseName);
             var newPath = Path.Combine(path, newName);
+            var newDirectory = Path.GetDirectoryName(newPath);
             task.Message = $"Writing {newPath}";
-            _fileSystem.CreateDirectory(path);
+            _fileSystem.CreateDirectory(newDirectory);
             return _fileSystem.OpenWrite(newPath);
         }
 

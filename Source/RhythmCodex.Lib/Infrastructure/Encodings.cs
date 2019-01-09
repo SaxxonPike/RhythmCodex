@@ -9,6 +9,7 @@ namespace RhythmCodex.Infrastructure
     {
         public static readonly Encoding CP437 = CodePagesEncodingProvider.Instance.GetEncoding(437);
         public static readonly Encoding CP932 = CodePagesEncodingProvider.Instance.GetEncoding(932);
+        public static readonly Encoding UTF8 = Encoding.UTF8;
 
         public static string GetString(this Encoding encoding, Span<byte> bytes) =>
             encoding.GetString(bytes.ToArray());

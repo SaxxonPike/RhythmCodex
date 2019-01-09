@@ -11,12 +11,12 @@ namespace RhythmCodex.Iso.Streamers
     {
         private const int SectorLength = 2352;
         
-        public IEnumerable<ICdSector> Read(Stream stream, int length, bool keepOnDisk)
+        public IEnumerable<ICdSector> Read(Stream stream, long length, bool keepOnDisk)
         {
             if (keepOnDisk)
             {
                 var reader = new BinaryReader(stream);
-                return new CdSectorOnDiskCollection(length / SectorLength, i =>
+                return new CdSectorOnDiskCollection((int)(length / SectorLength), i =>
                 {
                     stream.Position = i * (long) SectorLength;
                     return reader.ReadBytes(SectorLength);
@@ -28,7 +28,7 @@ namespace RhythmCodex.Iso.Streamers
             }
         }
 
-        private static IEnumerable<ICdSector> ReadInternal(Stream stream, int length)
+        private static IEnumerable<ICdSector> ReadInternal(Stream stream, long length)
         {
             var offset = 0;
             var reader = new BinaryReader(stream);

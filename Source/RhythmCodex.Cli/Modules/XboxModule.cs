@@ -52,6 +52,12 @@ namespace RhythmCodex.Cli.Modules
                 Name = "extract-xwb",
                 Description = "Extracts an XWB sound bank.",
                 Execute = ExtractXwb
+            },
+            new Command
+            {
+                Name = "extract-iso",
+                Description = "Extracts files from an Xbox ISO.",
+                Execute = ExtractXiso
             }
         };
 
@@ -79,6 +85,15 @@ namespace RhythmCodex.Cli.Modules
                 .BuildXboxTask()
                 .WithArgs(args)
                 .CreateExtractXwb()
+                .Run();
+        }
+
+        private void ExtractXiso(Args args)
+        {
+            _taskFactory
+                .BuildXboxTask()
+                .WithArgs(args)
+                .CreateExtractXiso()
                 .Run();
         }
     }
