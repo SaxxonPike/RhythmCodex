@@ -90,10 +90,4 @@ namespace RhythmCodex.Xbox.Streamers
             return reader.ReadBytes(entry.FileSize);
         }
     }
-
-    public interface IXboxIsoStreamReader
-    {
-        IEnumerable<XboxIsoFileEntry> Read(Stream stream, long length);
-        byte[] Extract(Stream stream, XboxIsoFileEntry entry);
-    }
 }

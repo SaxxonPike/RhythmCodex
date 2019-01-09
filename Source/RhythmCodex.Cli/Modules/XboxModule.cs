@@ -58,6 +58,12 @@ namespace RhythmCodex.Cli.Modules
                 Name = "extract-iso",
                 Description = "Extracts files from an Xbox ISO.",
                 Execute = ExtractXiso
+            },
+            new Command
+            {
+                Name = "extract-sng",
+                Description = "Extracts songs from an SNG file.",
+                Execute = ExtractSng
             }
         };
 
@@ -94,6 +100,15 @@ namespace RhythmCodex.Cli.Modules
                 .BuildXboxTask()
                 .WithArgs(args)
                 .CreateExtractXiso()
+                .Run();
+        }
+
+        private void ExtractSng(Args args)
+        {
+            _taskFactory
+                .BuildXboxTask()
+                .WithArgs(args)
+                .CreateExtractSng()
                 .Run();
         }
     }

@@ -27,6 +27,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IPngStreamWriter _pngStreamWriter;
         private readonly IXwbStreamReader _xwbStreamReader;
         private readonly IXboxIsoStreamReader _xboxIsoStreamReader;
+        private readonly IXboxSngStreamReader _xboxSngStreamReader;
 
         public XboxTaskBuilder(
             IFileSystem fileSystem,
@@ -38,7 +39,8 @@ namespace RhythmCodex.Cli.Orchestration
             IDdsBitmapDecoder ddsBitmapDecoder,
             IPngStreamWriter pngStreamWriter,
             IXwbStreamReader xwbStreamReader,
-            IXboxIsoStreamReader xboxIsoStreamReader)
+            IXboxIsoStreamReader xboxIsoStreamReader,
+            IXboxSngStreamReader xboxSngStreamReader)
             : base(fileSystem, logger)
         {
             _imaAdpcmDecoder = imaAdpcmDecoder;
@@ -49,6 +51,7 @@ namespace RhythmCodex.Cli.Orchestration
             _pngStreamWriter = pngStreamWriter;
             _xwbStreamReader = xwbStreamReader;
             _xboxIsoStreamReader = xboxIsoStreamReader;
+            _xboxSngStreamReader = xboxSngStreamReader;
         }
 
         public ITask CreateDecodeDds()
@@ -143,6 +146,67 @@ namespace RhythmCodex.Cli.Orchestration
                             index++;
                         }
                     }
+                });
+
+                return true;
+            });
+        }
+
+        public ITask CreateExtractSng()
+        {
+            return Build("Extract SNG", task =>
+            {
+                var files = GetInputFiles(task);
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    using (var input = OpenRead(task, file))
+                    {
+                        foreach (var entry in _xboxSngStreamReader.Read(input))
+                        {
+                            if (entry.Song != null)
+                            {
+                                var sound = _imaAdpcmDecoder.Decode(new ImaAdpcmChunk
+                                {
+                                    Channels = 2,
+                                    ChannelSamplesPerFrame = 64,
+                                    Data = entry.Song,
+                                    Rate = 44100
+                                }).Single();
+
+                                var encoded = _riffPcm16SoundEncoder.Encode(sound);
+                                using (var outStream = OpenWriteMulti(task, file, i => $"{entry.Name}.wav"))
+                                {
+                                    _riffStreamWriter.Write(outStream, encoded);
+                                    outStream.Flush();
+                                }                                
+                            }
+                            
+                            if (entry.Preview != null)
+                            {
+                                var sound = _imaAdpcmDecoder.Decode(new ImaAdpcmChunk
+                                {
+                                    Channels = 2,
+                                    ChannelSamplesPerFrame = 64,
+                                    Data = entry.Preview,
+                                    Rate = 44100
+                                }).Single();
+
+                                var encoded = _riffPcm16SoundEncoder.Encode(sound);
+                                using (var outStream = OpenWriteMulti(task, file, i => $"{entry.Name}-preview.wav"))
+                                {
+                                    _riffStreamWriter.Write(outStream, encoded);
+                                    outStream.Flush();
+                                }                                
+                            }
+                        }
+                    }
+                    
                 });
 
                 return true;
