@@ -35,6 +35,9 @@
         Rank,
         LifeBar,
         LoopStart,
-        LoopLength
+        LoopLength,
+        Channel,
+        SourceVolume,
+        SourcePanning
     }
 }

@@ -14,7 +14,7 @@ namespace RhythmCodex.Wav.Models
             SamplesPerBlock = Bitter.ToInt16(data, 2);
             var coefficientCount = Bitter.ToInt16(data, 4);
             Coefficients = new int[coefficientCount * 2];
-            for (var i = 0; i < coefficientCount; i++)
+            for (var i = 0; i < Coefficients.Length; i++)
                 Coefficients[i] = Bitter.ToInt16(data, 6 + i * 2);
         }
 
