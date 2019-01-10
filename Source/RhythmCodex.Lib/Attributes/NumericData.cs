@@ -38,6 +38,8 @@
         LoopLength,
         Channel,
         SourceVolume,
-        SourcePanning
+        SourcePanning,
+        Meter,
+        NoteCount
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Infrastructure.Models;
 
-namespace RhythmCodex.BeatmaniaPc.Streamers
+namespace RhythmCodex.Beatmania.Streamers
 {
     public interface IBeatmaniaPcAudioStreamer
     {

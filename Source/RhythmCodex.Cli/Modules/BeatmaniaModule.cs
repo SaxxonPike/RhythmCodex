@@ -33,8 +33,31 @@ namespace RhythmCodex.Cli.Modules
                 Name = "extract-2dx",
                 Description = "Extracts sound files from a 2DX file.",
                 Execute = Extract2dx
-            }
+            },
+            new Command
+            {
+                Name = "decode-1",
+                Description = "Decode a .1 file chart set.",
+                Execute = Decode1,
+                Parameters = new[]
+                {
+                    new CommandParameter
+                    {
+                        Name = "rate",
+                        Description = "Ticks per second. Pre-GOLD uses 59.94. GOLD uses 60.94. Default is 1000."
+                    }
+                }
+            },
         };
+
+        private void Decode1(Args args)
+        {
+            _taskFactory
+                .BuildBeatmaniaTask()
+                .WithArgs(args)
+                .CreateDecode1()
+                .Run();
+        }
 
         private void Extract2dx(Args args)
         {

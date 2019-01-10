@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
-using RhythmCodex.BeatmaniaPsx.Models;
+using RhythmCodex.Beatmania.Models;
 
-namespace RhythmCodex.BeatmaniaPsx.Streamers
+namespace RhythmCodex.Beatmania.Streamers
 {
     public interface IBeatmaniaPsxBmDataStreamReader
     {

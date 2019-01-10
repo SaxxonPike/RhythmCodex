@@ -30,6 +30,8 @@ namespace RhythmCodex.Bms.Converters
 
             yield return new BmsCommand {Comment = $"RhythmCodex {DateTime.Now:s}"};
 
+            // Sample definitions (WAVxx)
+
             var usedSamples = chart.Events
                 .Where(ev => ev[NumericData.LoadSound] != null)
                 .Select(ev => ev[NumericData.LoadSound])
@@ -59,6 +61,8 @@ namespace RhythmCodex.Bms.Converters
                 };
             }
 
+            // BPM definitions (for BPM and xxx08:)
+
             var bpms = chart.Events
                 .Where(ev => ev[NumericData.Bpm] != null)
                 .Select(ev => (decimal) ev[NumericData.Bpm])
@@ -81,6 +85,26 @@ namespace RhythmCodex.Bms.Converters
                     Name = $"BPM{Alphabet.EncodeNumeric(kv.Value, 2)}",
                     Value = $"{kv.Key}"
                 };
+
+            // Measure lengths (xxx02:)
+
+            var measureLengths = chart.Events
+                .Where(ev => (ev[FlagData.Measure] == true || ev[FlagData.End] == true)
+                             && ev[NumericData.MeasureLength].HasValue)
+                .GroupBy(ev => (int) ev[NumericData.MetricOffset].Value.GetWholePart())
+                .ToDictionary(
+                    g => g.Key,
+                    g => (decimal) (g.First()[NumericData.MeasureLength] ?? 1));
+
+            foreach (var kv in measureLengths.Where(ml => ml.Value != 1))
+            {
+                yield return new BmsCommand
+                {
+                    Name = $"{Alphabet.EncodeNumeric(kv.Key, 3)}02",
+                    Value = $"{kv.Value}",
+                    UseColon = true
+                };
+            }
         }
     }
 }

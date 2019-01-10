@@ -1,4 +1,4 @@
-namespace RhythmCodex.BeatmaniaPsx.Models
+namespace RhythmCodex.Beatmania.Models
 {
     public class BeatmaniaPsxDirectoryEntry
     {

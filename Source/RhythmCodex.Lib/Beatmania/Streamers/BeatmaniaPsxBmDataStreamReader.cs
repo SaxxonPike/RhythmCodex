@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.BeatmaniaPsx.Models;
+using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.BeatmaniaPsx.Streamers
+namespace RhythmCodex.Beatmania.Streamers
 {
     [Service]
     public class BeatmaniaPsxBmDataStreamReader : IBeatmaniaPsxBmDataStreamReader

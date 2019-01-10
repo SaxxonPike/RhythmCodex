@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.BeatmaniaPsx.Models;
+using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Vag.Streamers;
 
-namespace RhythmCodex.BeatmaniaPsx.Streamers
+namespace RhythmCodex.Beatmania.Streamers
 {
     public class BeatmaniaPsxKeysoundStreamReader : IBeatmaniaPsxKeysoundStreamReader
     {

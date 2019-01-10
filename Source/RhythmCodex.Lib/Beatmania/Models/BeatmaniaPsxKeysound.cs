@@ -1,7 +1,7 @@
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Vag.Models;
 
-namespace RhythmCodex.BeatmaniaPsx.Models
+namespace RhythmCodex.Beatmania.Models
 {
     [Model]
     public class BeatmaniaPsxKeysound

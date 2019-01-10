@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Attributes;
-using RhythmCodex.BeatmaniaPsx.Streamers;
+using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Djmain.Converters;

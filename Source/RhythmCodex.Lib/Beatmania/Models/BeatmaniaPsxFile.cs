@@ -1,6 +1,6 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.BeatmaniaPsx.Models
+namespace RhythmCodex.Beatmania.Models
 {
     [Model]
     public class BeatmaniaPsxFile

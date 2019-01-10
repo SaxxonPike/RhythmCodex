@@ -11,6 +11,59 @@ namespace RhythmCodex.Extensions
         private static BigRational GetLinearRate(BigRational bpm)
             => new BigRational(bpm.Denominator * 240, bpm.Numerator);
 
+        /// <summary>
+        /// Running this will normalize all metric offsets so each measure line lands on an integer.
+        /// Measure lengths are populated on measure lines.
+        /// </summary>
+        private static void NormalizeMetricOffsets(IChart chart)
+        {
+            if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
+                throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
+
+            if (!chart.Events.Any() || !chart.Events.Any(ev => ev[FlagData.Measure] == true || ev[FlagData.End] == true))
+                return;
+            
+            // Find all the measure lines. End-of-song counts as a measure line, even if it's
+            // invisible in the original game, because it has to for purposes of BMS export.
+            var measures = chart
+                .Events
+                .Where(ev => ev[FlagData.End] == true || ev[FlagData.Measure] == true)
+                .Select(ev => ev[NumericData.MetricOffset])
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+            
+            // This really shouldn't happen but you never know if there will be events after the
+            // last measure or end of the song.
+            var latestEvent = chart
+                .Events
+                .Select(ev => ev[NumericData.MetricOffset])
+                .OrderBy(o => o)
+                .Last();
+            while (latestEvent >= measures.Last())
+                measures.Add(measures.Last() + BigRational.One);
+
+            var eligibleEvents = chart.Events.Distinct().ToList();
+            
+            // Perform the normalization.
+            for (var i = 0; i < measures.Count - 1; i++)
+            {
+                var baseOffset = measures[i];
+                var endOffset = measures[i + 1];
+                var measureLength = endOffset - baseOffset;
+                var measureEvents = eligibleEvents
+                    .Where(ev => ev[NumericData.MetricOffset] >= baseOffset && ev[NumericData.MetricOffset] < endOffset)
+                    .ToList();
+                foreach (var ev in measureEvents)
+                {
+                    if (ev[FlagData.Measure] == true || ev[FlagData.End] == true)
+                        ev[NumericData.MeasureLength] = measureLength;
+                    ev[NumericData.MetricOffset] = ((ev[NumericData.MetricOffset] - baseOffset) / measureLength) + i;
+                    eligibleEvents.Remove(ev);
+                }
+            }
+        }
+        
         public static void PopulateMetricOffsets(this IChart chart)
         {
             if (chart.Events.Any(ev => ev[NumericData.LinearOffset] == null))
@@ -47,6 +100,8 @@ namespace RhythmCodex.Extensions
                     referenceLinear = ev[NumericData.LinearOffset];
                 }
             }
+
+            NormalizeMetricOffsets(chart);
         }
 
         public static void PopulateLinearOffsets(this IChart chart)

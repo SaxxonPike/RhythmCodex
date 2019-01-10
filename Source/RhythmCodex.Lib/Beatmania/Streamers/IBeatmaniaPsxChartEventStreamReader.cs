@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Djmain.Model;
 
-namespace RhythmCodex.BeatmaniaPsx.Streamers
+namespace RhythmCodex.Beatmania.Streamers
 {
     public interface IBeatmaniaPsxChartEventStreamReader
     {

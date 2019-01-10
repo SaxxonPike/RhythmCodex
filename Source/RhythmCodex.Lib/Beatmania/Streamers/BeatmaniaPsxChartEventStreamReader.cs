@@ -4,7 +4,7 @@ using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.BeatmaniaPsx.Streamers
+namespace RhythmCodex.Beatmania.Streamers
 {
     [Service]
     public class BeatmaniaPsxChartEventStreamReader : IBeatmaniaPsxChartEventStreamReader

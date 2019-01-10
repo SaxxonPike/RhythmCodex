@@ -5,10 +5,9 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
-using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Wav.Converters;
 
-namespace RhythmCodex.BeatmaniaPc.Streamers
+namespace RhythmCodex.Beatmania.Streamers
 {
     [Service]
     public class BeatmaniaPcAudioStreamer : IBeatmaniaPcAudioStreamer
