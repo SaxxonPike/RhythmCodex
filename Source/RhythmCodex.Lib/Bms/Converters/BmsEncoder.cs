@@ -53,19 +53,6 @@ namespace RhythmCodex.Bms.Converters
 
             var chartEvents = inputChart.Events.ToList();
             
-            // Add leading measure to make calculations work if needed
-
-            var test = chartEvents.Single(ev =>
-                ev[NumericData.MetricOffset] == 0 && (ev[FlagData.Measure] == true || ev[FlagData.End] == true));
-            if (!chartEvents.Any(ev => ev[NumericData.MetricOffset] == 0 && (ev[FlagData.Measure] == true || ev[FlagData.End] == true)))
-            {
-                chartEvents.Insert(0, new Event
-                {
-                    [FlagData.Measure] = true,
-                    [NumericData.MetricOffset] = BigRational.Zero
-                });
-            }
-
             // Metadata
 
             foreach (var kv in StringTagMap)
@@ -169,7 +156,7 @@ namespace RhythmCodex.Bms.Converters
             var bpmEvents = _bmsNoteCommandEncoder
                 .TranslateBpmEvents(chartEvents);
 
-            foreach (var ev in GetCommands(bpmEvents, 384,
+            foreach (var ev in GetCommands(bpmEvents, 1920,
                 i => Alphabet.EncodeNumeric(bpmMap.ContainsKey(i) 
                     ? bpmMap[i] 
                     : 0, 2)))
@@ -181,7 +168,7 @@ namespace RhythmCodex.Bms.Converters
                 .TranslateNoteEvents(chartEvents)
                 .AsList();
 
-            foreach (var ev in GetCommands(noteEvents, 192, i => Alphabet.EncodeAlphanumeric(
+            foreach (var ev in GetCommands(noteEvents, 960, i => Alphabet.EncodeAlphanumeric(
                 i == BigRational.Zero
                     ? 0
                     : sampleMap.ContainsKey((int) i)

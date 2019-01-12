@@ -10,6 +10,11 @@ namespace RhythmCodex.Dsp
     [Service]
     public class AudioDsp : IAudioDsp
     {
+        public ISound ApplyResampling(ISound sound, int rate)
+        {
+            throw new NotImplementedException();
+        }
+
         public ISound ApplyEffects(ISound sound)
         {
             if (!sound.Samples.Any())
