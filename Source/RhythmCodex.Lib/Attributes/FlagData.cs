@@ -12,6 +12,7 @@
         End,
         Roll,
         Lift,
-        Fake
+        Fake,
+        FreezeEnd
     }
 }

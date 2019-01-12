@@ -94,6 +94,11 @@ namespace RhythmCodex.Infrastructure
         ///     A pre-initialized BigRational with the value of negative one.
         /// </summary>
         public static BigRational MinusOne { get; } = new BigRational(BigInteger.MinusOne);
+        
+        /// <summary>
+        ///     A pre-initialized BigRational with the value of one half.
+        /// </summary>
+        public static BigRational OneHalf { get; } = new BigRational(BigInteger.One, 2);
 
         /// <summary>
         ///     Gets a number that indicates the sign (negative, positive, or zero) of the current BigRational object.

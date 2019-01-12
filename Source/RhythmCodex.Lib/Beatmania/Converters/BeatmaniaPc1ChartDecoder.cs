@@ -12,11 +12,13 @@ namespace RhythmCodex.Beatmania.Converters
     {
         public IChart Decode(IEnumerable<BeatmaniaPc1Event> events, BigRational rate)
         {
-            return new Chart
+            var result = new Chart
             {
                 Events = DecodeInternal(events, rate).ToList(),
                 [NumericData.Rate] = rate
             };
+
+            return result;
         }
 
         private IEnumerable<IEvent> DecodeInternal(IEnumerable<BeatmaniaPc1Event> events, BigRational rate)
@@ -82,6 +84,7 @@ namespace RhythmCodex.Beatmania.Converters
                             var end = GetNewEvent(ev);
                             SetPropertiesForColumn(ev, end);
                             end[FlagData.Note] = true;
+                            end[FlagData.FreezeEnd] = true;
                             yield return end;
                         }
                         else

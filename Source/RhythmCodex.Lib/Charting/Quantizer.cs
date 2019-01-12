@@ -19,12 +19,15 @@ namespace RhythmCodex.Charting
 
         public int GetQuantization(IEnumerable<BigRational> rationals, BigInteger minimum, BigInteger maximum)
         {
+            if (maximum < minimum)
+                maximum = minimum;
+            
             var data = rationals.AsList();
             var multiplier = GetQuantizationInternal(data, minimum, maximum);
 
             if (multiplier > maximum)
                 multiplier =
-                    GetQuantizationInternal(data.Select(n => new BigRational((n * maximum).Numerator, maximum)),
+                    GetQuantizationInternal(data.Select(n => new BigRational((n * maximum).GetWholePart(), maximum)),
                         minimum, maximum);
 
             return (int) multiplier;
@@ -33,7 +36,7 @@ namespace RhythmCodex.Charting
         private static BigInteger GetQuantizationInternal(IEnumerable<BigRational> rationals, BigInteger start,
             BigInteger threshold)
         {
-            var values = rationals.Select(r => r.GetFractionPart() * start).ToArray();
+            var values = rationals.Select(r => r.GetFractionPart() * new BigRational(start)).ToArray();
             if (values.All(v => v.Numerator.IsZero))
                 return start;
 

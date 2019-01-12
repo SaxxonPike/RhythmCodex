@@ -38,7 +38,7 @@ namespace RhythmCodex.Cli.Orchestration
             IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder,
             IBmsEncoder bmsEncoder,
             IBmsStreamWriter bmsStreamWriter
-            )
+        )
             : base(fileSystem, logger)
         {
             _beatmaniaPcAudioStreamer = beatmaniaPcAudioStreamer;
@@ -66,7 +66,7 @@ namespace RhythmCodex.Cli.Orchestration
                 if (Args.Options.ContainsKey("rate"))
                 {
                     rate = BigRationalParser.ParseString(Args.Options["rate"].Last())
-                        ?? throw new RhythmCodexException($"Invalid rate.");
+                           ?? throw new RhythmCodexException($"Invalid rate.");
                 }
 
                 ParallelProgress(task, files, file =>
@@ -78,15 +78,46 @@ namespace RhythmCodex.Cli.Orchestration
                         {
                             var newChart = _beatmaniaPc1ChartDecoder.Decode(c.Data, rate);
                             newChart[NumericData.Id] = c.Index;
+
+                            switch (c.Index)
+                            {
+                                case 0:
+                                case 6:
+                                {
+                                    newChart[NumericData.Difficulty] = 3;
+                                    break;
+                                }
+                                case 1:
+                                case 7:
+                                {
+                                    newChart[NumericData.Difficulty] = 2;
+                                    break;
+                                }
+                                case 2:
+                                case 8:
+                                {
+                                    newChart[NumericData.Difficulty] = 4;
+                                    break;
+                                }
+                                case 3:
+                                case 9:
+                                {
+                                    newChart[NumericData.Difficulty] = 1;
+                                    break;
+                                }
+                            }
+
+                            newChart[StringData.Title] = Path.GetFileNameWithoutExtension(file);
                             return newChart;
                         }).ToList();
-                        
+
                         foreach (var chart in decoded)
                         {
                             chart.PopulateMetricOffsets();
                             var encoded = _bmsEncoder.Encode(chart);
                             using (var outStream =
-                                OpenWriteMulti(task, file, i => $"{Alphabet.EncodeNumeric((int)chart[NumericData.Id], 2)}.bme"))
+                                OpenWriteMulti(task, file,
+                                    i => $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme"))
                             {
                                 _bmsStreamWriter.Write(outStream, encoded);
                             }

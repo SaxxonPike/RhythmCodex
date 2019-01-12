@@ -27,7 +27,7 @@ namespace RhythmCodex.Extensions
             // invisible in the original game, because it has to for purposes of BMS export.
             var measures = chart
                 .Events
-                .Where(ev => ev[FlagData.End] == true || ev[FlagData.Measure] == true)
+                .Where(ev => (ev[FlagData.End] == true || ev[FlagData.Measure] == true) && ev[NumericData.MetricOffset] > 0)
                 .Select(ev => ev[NumericData.MetricOffset])
                 .Distinct()
                 .OrderBy(x => x)
@@ -58,7 +58,7 @@ namespace RhythmCodex.Extensions
                 {
                     if (ev[FlagData.Measure] == true || ev[FlagData.End] == true)
                         ev[NumericData.MeasureLength] = measureLength;
-                    ev[NumericData.MetricOffset] = ((ev[NumericData.MetricOffset] - baseOffset) / measureLength) + i;
+                    ev[NumericData.MetricOffset] = (ev[NumericData.MetricOffset] - baseOffset) / measureLength + i;
                     eligibleEvents.Remove(ev);
                 }
             }
@@ -95,6 +95,10 @@ namespace RhythmCodex.Extensions
                 
                 if (ev[NumericData.Bpm] is BigRational newTempo && newTempo > BigRational.Zero)
                 {
+                    if (ev[NumericData.LinearOffset] > 0)
+                    {
+                        var r = 0;
+                    }
                     linearRate = GetLinearRate(newTempo);
                     referenceMetric = ev[NumericData.MetricOffset];
                     referenceLinear = ev[NumericData.LinearOffset];
