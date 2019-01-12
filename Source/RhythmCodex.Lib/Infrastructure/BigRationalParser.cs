@@ -6,6 +6,12 @@ namespace RhythmCodex.Infrastructure
     {
         public static BigRational? ParseString(string value)
         {
+            if (value.Contains("/"))
+            {
+                var values = value.Split('/');
+                return ParseString(values[0]) / ParseString(values[1]);
+            }
+            
             BigInteger numerator = 0;
             BigInteger denominator = 1;
             var isPastDecimalPoint = false;
