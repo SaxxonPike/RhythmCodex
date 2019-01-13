@@ -8,7 +8,7 @@ namespace RhythmCodex.Bms.Converters
 {
     public interface IBmsNoteCommandEncoder
     {
-        string Encode(IEnumerable<BmsEvent> events, Func<BigRational, string> encodeValue,
+        string Encode(IEnumerable<BmsEvent> events, Func<BigRational?, string> encodeValue,
             BigRational measureLength, int quantize);
 
         IEnumerable<BmsEvent> TranslateNoteEvents(IEnumerable<IEvent> events);

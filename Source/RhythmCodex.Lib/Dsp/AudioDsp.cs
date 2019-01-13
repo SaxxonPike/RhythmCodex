@@ -10,9 +10,50 @@ namespace RhythmCodex.Dsp
     [Service]
     public class AudioDsp : IAudioDsp
     {
-        public ISound ApplyResampling(ISound sound, int rate)
+        public ISound ApplyResampling(ISound sound, BigRational rate)
         {
-            throw new NotImplementedException();
+            // Garbage non-interpolated resampling? Check.
+            if (rate <= BigRational.Zero || sound[NumericData.Rate] == rate)
+                return sound;
+
+            if (rate < 8000)
+            {
+                
+            }
+
+            var samples = new List<ISample>(sound.Samples);
+
+            var result = new Sound
+            {
+                Samples = samples.Select(s =>
+                {
+                    var interval = rate / sound[NumericData.Rate].Value;
+                    var targetSize = (int) (interval * s.Data.Count + interval);
+                    var data = new float[targetSize];
+                    var sourceData = s.Data;
+                    var targetOffset = BigRational.Zero;
+                    var targetPointer = 0;
+
+                    for (var sourceOffset = 0; sourceOffset < sourceData.Count; sourceOffset++)
+                    {
+                        targetOffset += interval;
+                        while (targetPointer < targetOffset)
+                            data[targetPointer++] = sourceData[sourceOffset];
+                    }
+
+                    var sample = new Sample
+                    {
+                        Data = data
+                    };
+                    sample.CloneMetadataFrom((Metadata) s);
+                    sample[NumericData.Rate] = rate;
+                    return (ISample) sample;
+                }).ToList()
+            };
+
+            result.CloneMetadataFrom((Metadata) sound);
+            result[NumericData.Rate] = rate;
+            return result;
         }
 
         public ISound ApplyEffects(ISound sound)

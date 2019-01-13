@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using RhythmCodex.Charting;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Cli.Orchestration.Infrastructure
 {
@@ -18,7 +21,7 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             _fileSystem = fileSystem;
             Logger = logger;
         }
-        
+
         protected Args Args { get; private set; }
         private ILogger Logger { get; }
 
@@ -40,36 +43,63 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             return result;
         }
 
-        protected string GetOutputFolder(string inputFile) => 
+        protected string GetOutputFolder(string inputFile) =>
             Args.OutputPath ?? Path.GetDirectoryName(inputFile);
 
-        protected string[] GetInputFiles(BuiltTask task)
+        protected InputFile[] GetInputFiles(BuiltTask task)
         {
             task.Message = "Resolving input files.";
-            return Args.InputFiles
-                .SelectMany(a => _fileSystem.GetFileNames(a, Args.RecursiveInputFiles))
+            var sourceFiles = Args.InputFiles
+                .SelectMany(a => _fileSystem.GetFileNames(a, Args.RecursiveInputFiles));
+
+            if (Args.FilesAreZipArchives)
+            {
+                return sourceFiles
+                    .SelectMany(sf =>
+                    {
+                        using (var parentArc = new ZipArchive(_fileSystem.OpenRead(sf)))
+                        {
+                            return parentArc.Entries.Select(e => new InputFile(Path.Combine(Path.GetDirectoryName(sf), Path.GetFileNameWithoutExtension(sf), e.FullName), () =>
+                            {
+                                var archive = new ZipArchive(_fileSystem.OpenRead(sf));
+                                var entry = archive.GetEntry(e.Name);
+                                return entry.Open();
+                            }, s =>
+                            {
+                                s.Dispose();
+                                parentArc.Dispose();
+                            }));
+                        }
+                    }).ToArray();
+            }
+
+            return sourceFiles
+                .Select(sf => new InputFile(sf, () => _fileSystem.OpenRead(sf), s => s.Dispose()))
                 .ToArray();
         }
 
-        protected byte[] GetFile(BuiltTask task, string inputFile)
+        protected byte[] GetFile(BuiltTask task, InputFile inputFile)
         {
             task.Message = $"Reading {inputFile}";
-            return _fileSystem.ReadAllBytes(inputFile);
+            using (var stream = inputFile.Open())
+            {
+                var reader = new BinaryReader(stream);
+                return reader.ReadBytes((int) stream.Length);
+            }
         }
 
-        protected Stream OpenRead(BuiltTask task, string inputFile)
+        protected Stream OpenRead(BuiltTask task, InputFile inputFile)
         {
-            task.Message = $"Opening {inputFile}";
-            return _fileSystem.OpenRead(inputFile);
+            task.Message = $"Opening {inputFile.Name}";
+            return inputFile.Open();
         }
 
-        protected Stream OpenWriteSingle(BuiltTask task, string inputFile, Func<string, string> generateName)
+        protected Stream OpenWriteSingle(BuiltTask task, InputFile inputFile, Func<string, string> generateName)
         {
             if (_fileSystem == null)
                 throw new RhythmCodexException("Filesystem is not defined.");
-
-            var path = GetOutputFolder(inputFile);
-            var newName = generateName(Path.GetFileNameWithoutExtension(inputFile));
+            var path = GetOutputFolder(inputFile.Name);
+            var newName = generateName(Path.GetFileNameWithoutExtension(inputFile.Name));
             var newPath = Path.Combine(path, newName);
             var newDirectory = Path.GetDirectoryName(newPath);
             task.Message = $"Writing {newPath}";
@@ -77,13 +107,12 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             return _fileSystem.OpenWrite(newPath);
         }
 
-        protected Stream OpenWriteMulti(BuiltTask task, string inputFile, Func<string, string> generateName)
+        protected Stream OpenWriteMulti(BuiltTask task, InputFile inputFile, Func<string, string> generateName)
         {
             if (_fileSystem == null)
                 throw new RhythmCodexException("Filesystem is not defined.");
-
-            var baseName = Path.GetFileNameWithoutExtension(inputFile);
-            var path = Path.Combine(GetOutputFolder(inputFile), baseName);
+            var baseName = Path.GetFileNameWithoutExtension(inputFile.Name);
+            var path = Path.Combine(GetOutputFolder(inputFile.Name), baseName);
             var newName = generateName(baseName);
             var newPath = Path.Combine(path, newName);
             var newDirectory = Path.GetDirectoryName(newPath);
@@ -102,7 +131,6 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         {
             public event EventHandler<string> MessageUpdated;
             public event EventHandler<float> ProgressUpdated;
-            
             private string _message = string.Empty;
             private float _progress = 0;
 
@@ -111,7 +139,7 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                 Name = name;
                 Run = run;
             }
-            
+
             public string Name { get; }
 
             public float Progress

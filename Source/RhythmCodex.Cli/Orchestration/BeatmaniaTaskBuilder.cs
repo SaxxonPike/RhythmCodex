@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Attributes;
@@ -5,13 +6,18 @@ using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
+using RhythmCodex.Charting;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
+using RhythmCodex.Djmain.Converters;
+using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Dsp;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Statistics;
 
 namespace RhythmCodex.Cli.Orchestration
 {
@@ -26,6 +32,9 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IBeatmaniaPc1ChartDecoder _beatmaniaPc1ChartDecoder;
         private readonly IBmsEncoder _bmsEncoder;
         private readonly IBmsStreamWriter _bmsStreamWriter;
+        private readonly IDjmainDecoder _djmainDecoder;
+        private readonly IDjmainChunkStreamReader _djmainChunkStreamReader;
+        private readonly IUsedSamplesCounter _usedSamplesCounter;
 
         public BeatmaniaTaskBuilder(
             IFileSystem fileSystem,
@@ -37,7 +46,10 @@ namespace RhythmCodex.Cli.Orchestration
             IBeatmaniaPc1Streamer beatmaniaPc1Streamer,
             IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder,
             IBmsEncoder bmsEncoder,
-            IBmsStreamWriter bmsStreamWriter
+            IBmsStreamWriter bmsStreamWriter,
+            IDjmainDecoder djmainDecoder,
+            IDjmainChunkStreamReader djmainChunkStreamReader,
+            IUsedSamplesCounter usedSamplesCounter
         )
             : base(fileSystem, logger)
         {
@@ -49,6 +61,9 @@ namespace RhythmCodex.Cli.Orchestration
             _beatmaniaPc1ChartDecoder = beatmaniaPc1ChartDecoder;
             _bmsEncoder = bmsEncoder;
             _bmsStreamWriter = bmsStreamWriter;
+            _djmainDecoder = djmainDecoder;
+            _djmainChunkStreamReader = djmainChunkStreamReader;
+            _usedSamplesCounter = usedSamplesCounter;
         }
 
         public ITask CreateDecode1()
@@ -107,7 +122,7 @@ namespace RhythmCodex.Cli.Orchestration
                                 }
                             }
 
-                            newChart[StringData.Title] = Path.GetFileNameWithoutExtension(file);
+                            newChart[StringData.Title] = Path.GetFileNameWithoutExtension(file.Name);
                             return newChart;
                         }).ToList();
 
@@ -167,6 +182,72 @@ namespace RhythmCodex.Cli.Orchestration
 
                 return true;
             });
+        }
+
+        public ITask CreateDecodeDjmainHdd()
+        {
+            return Build("Extract DJMAIN HDD", task =>
+            {
+                var files = GetInputFiles(task);
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    using (var stream = OpenRead(task, file))
+                    {
+                        var chunks = _djmainChunkStreamReader.Read(stream);
+                        foreach (var chunk in chunks)
+                        {
+                            var chunkPath = $"{Alphabet.EncodeNumeric(chunk.Id, 4)}";
+                            var decoded = _djmainDecoder.Decode(chunk);
+                            ExportKeysoundedChart(task, file, chunkPath, $"{Alphabet.EncodeNumeric(chunk.Id, 4)}",
+                                decoded.Charts, decoded.Samples);
+                        }
+                    }
+                });
+
+                return true;
+            });
+        }
+
+        protected void ExportKeysoundedChart(BuiltTask task, InputFile file, string path, string id,
+            ICollection<IChart> charts, ICollection<ISound> sounds)
+        {
+            var usedSamples = charts
+                .SelectMany(chart => _usedSamplesCounter.GetUsedSamples(chart.Events))
+                .Distinct()
+                .ToArray();
+            
+            foreach (var sound in sounds.Where(s => usedSamples.Contains((int)s[NumericData.Id])))
+            {
+                var outSound = _audioDsp.ApplyEffects(_audioDsp.ApplyResampling(sound, 44100));
+                using (var outStream =
+                    OpenWriteMulti(task, file,
+                        i => Path.Combine(path,
+                            $"{Alphabet.EncodeAlphanumeric((int) sound[NumericData.Id], 4)}.wav")))
+                {
+                    var encoded = _riffPcm16SoundEncoder.Encode(outSound);
+                    _riffStreamWriter.Write(outStream, encoded);
+                }
+            }
+
+            foreach (var chart in charts)
+            {
+                chart.PopulateMetricOffsets();
+                chart[StringData.Title] = id;
+                var encoded = _bmsEncoder.Encode(chart);
+                using (var outStream =
+                    OpenWriteMulti(task, file,
+                        i => Path.Combine(path,
+                            $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme")))
+                {
+                    _bmsStreamWriter.Write(outStream, encoded);
+                }
+            }
         }
     }
 }

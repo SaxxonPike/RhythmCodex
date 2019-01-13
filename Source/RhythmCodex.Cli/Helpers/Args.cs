@@ -24,6 +24,9 @@ namespace RhythmCodex.Cli.Helpers
             RecursiveInputFiles = opts.ContainsKey("+r");
             opts.Remove("+r");
 
+            FilesAreZipArchives = opts.ContainsKey("+zip");
+            opts.Remove("+zip");
+
             if (opts.ContainsKey("log"))
             {
                 switch (opts["log"].FirstOrDefault()?.ToLowerInvariant())
@@ -48,6 +51,7 @@ namespace RhythmCodex.Cli.Helpers
         public string OutputPath { get; }
         public IReadOnlyList<string> InputFiles { get; }
         public bool RecursiveInputFiles { get; }
+        public bool FilesAreZipArchives { get; }
         public LoggerVerbosityLevel LogLevel { get; } = LoggerVerbosityLevel.Info;
     }
 }

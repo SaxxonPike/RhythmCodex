@@ -15,7 +15,7 @@ namespace RhythmCodex.Djmain.Converters
         {
             return new Chart
             {
-                Events = DecodeEvents(events).ToArray()
+                Events = DecodeEvents(events).ToList()
             };
         }
 

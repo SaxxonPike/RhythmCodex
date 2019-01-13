@@ -52,7 +52,7 @@ namespace RhythmCodex.Bms.Converters
                 yield break;
 
             var chartEvents = inputChart.Events.ToList();
-            
+
             // Metadata
 
             foreach (var kv in StringTagMap)
@@ -94,7 +94,7 @@ namespace RhythmCodex.Bms.Converters
 
             var sampleMap = usedSamples
                 .Select((e, i) => new KeyValuePair<int, int>(e, i + 1))
-                .Where(kv => kv.Value > 0 && kv.Value <= 1295)
+                .Where(kv => kv.Value >= 0 && kv.Value <= 1295)
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
 
             foreach (var kv in sampleMap)
@@ -157,9 +157,12 @@ namespace RhythmCodex.Bms.Converters
                 .TranslateBpmEvents(chartEvents);
 
             foreach (var ev in GetCommands(bpmEvents, 1920,
-                i => Alphabet.EncodeNumeric(bpmMap.ContainsKey(i) 
-                    ? bpmMap[i] 
-                    : 0, 2)))
+                i => Alphabet.EncodeNumeric(
+                    i == null
+                        ? 0
+                        : bpmMap.ContainsKey(i.Value)
+                            ? bpmMap[i.Value]
+                            : 0, 2)))
                 yield return ev;
 
             // Notes
@@ -169,7 +172,7 @@ namespace RhythmCodex.Bms.Converters
                 .AsList();
 
             foreach (var ev in GetCommands(noteEvents, 960, i => Alphabet.EncodeAlphanumeric(
-                i == BigRational.Zero
+                i == null
                     ? 0
                     : sampleMap.ContainsKey((int) i)
                         ? sampleMap[(int) i]
@@ -179,7 +182,7 @@ namespace RhythmCodex.Bms.Converters
             // Builder
 
             IEnumerable<BmsCommand> GetCommands(IEnumerable<BmsEvent> events, int quantize,
-                Func<BigRational, string> encode)
+                Func<BigRational?, string> encode)
             {
                 var eventMeasures = events
                     .GroupBy(ev => ev.Measure);

@@ -27,7 +27,7 @@ namespace RhythmCodex.Djmain.Heuristics
                     case @"GQ988": return DjmainChunkFormat.Complete2;
                     case @"GQA05": return DjmainChunkFormat.Core;
                     case @"GQ995": return DjmainChunkFormat.Dct;
-                    case @"GCC01": return DjmainChunkFormat.Final;
+                    case @" GCC0": return DjmainChunkFormat.Final;
                     default: return DjmainChunkFormat.Unknown;
                 }
             }

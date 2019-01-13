@@ -30,6 +30,12 @@ namespace RhythmCodex.Cli.Modules
         {
             new Command
             {
+                Name = "decode-djmain-hdd",
+                Description = "Extracts and decodes BMS files from a DJMAIN hard drive image.",
+                Execute = DecodeDjmainHdd
+            },
+            new Command
+            {
                 Name = "extract-2dx",
                 Description = "Extracts sound files from a 2DX file.",
                 Execute = Extract2dx
@@ -49,6 +55,15 @@ namespace RhythmCodex.Cli.Modules
                 }
             },
         };
+
+        private void DecodeDjmainHdd(Args args)
+        {
+            _taskFactory
+                .BuildBeatmaniaTask()
+                .WithArgs(args)
+                .CreateDecodeDjmainHdd()
+                .Run();
+        }
 
         private void Decode1(Args args)
         {

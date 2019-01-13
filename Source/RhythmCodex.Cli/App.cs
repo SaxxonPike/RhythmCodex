@@ -75,8 +75,8 @@ namespace RhythmCodex.Cli
             }
 
             var cmd = _argParser.Parse(args.Skip(2));
-            
-            _loggerConfigurationSource.VerbosityLevel = cmd.LogLevel;            
+
+            _loggerConfigurationSource.VerbosityLevel = cmd.LogLevel;
             _console.WriteLine($"Using {cmd.LogLevel} log level.");
 
             if (!cmd.Options.Any() && !cmd.InputFiles.Any())
@@ -127,11 +127,17 @@ namespace RhythmCodex.Cli
         {
             var defaultParameters = new[]
             {
-                new CommandParameter {Name = "-log <level>", Description = "Set log level: debug, info, warning, error. (global)"},
+                new CommandParameter
+                    {Name = "-log <level>", Description = "Set log level: debug, info, warning, error. (global)"},
                 new CommandParameter {Name = "-o <path>", Description = "Sets an output path. (global)"},
                 new CommandParameter {Name = "+r", Description = "Use recursive input directories. (global)"},
+                new CommandParameter
+                {
+                    Name = "+zip",
+                    Description = "Indicate input files are ZIP archies. All files inside will be processed."
+                }
             };
-            
+
             _console.WriteLine($"Available parameters for command \"{module.Name} {command.Name}\":");
             _console.WriteLine();
 
@@ -149,7 +155,7 @@ namespace RhythmCodex.Cli
         {
             _console.WriteLine($"Available commands for module \"{module.Name}\":");
             _console.WriteLine();
-            
+
             foreach (var command in module.Commands.OrderBy(c => c.Name))
                 _console.WriteLine($"{command.Name.PadRight(20)}{command.Description}");
 

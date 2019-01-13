@@ -173,12 +173,12 @@ namespace RhythmCodex.Cli.Orchestration
                     }
 
                     var gameImage = inputFiles[0];
-                    var fileStreams = new List<FileStream>();
+                    var fileStreams = new List<Stream>();
                     Ddr573Image image;
 
                     try
                     {
-                        fileStreams.AddRange(inputFiles.Select(f => new FileStream(f, FileMode.Open, FileAccess.Read)));
+                        fileStreams.AddRange(inputFiles.Select(f => f.Open()));
 
                         image = fileStreams.Count == 1
                             ? _ddr573StreamReader.Read(fileStreams[0], (int) fileStreams[0].Length)
