@@ -53,29 +53,44 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                 .SelectMany(a => _fileSystem.GetFileNames(a, Args.RecursiveInputFiles));
 
             if (Args.FilesAreZipArchives)
-            {
-                return sourceFiles
-                    .SelectMany(sf =>
-                    {
-                        using (var parentArc = new ZipArchive(_fileSystem.OpenRead(sf)))
-                        {
-                            return parentArc.Entries.Select(e => new InputFile(Path.Combine(Path.GetDirectoryName(sf), Path.GetFileNameWithoutExtension(sf), e.FullName), () =>
-                            {
-                                var archive = new ZipArchive(_fileSystem.OpenRead(sf));
-                                var entry = archive.GetEntry(e.Name);
-                                return entry.Open();
-                            }, s =>
-                            {
-                                s.Dispose();
-                                parentArc.Dispose();
-                            }));
-                        }
-                    }).ToArray();
-            }
+                return GetArchivedFiles(sourceFiles);
 
             return sourceFiles
                 .Select(sf => new InputFile(sf, () => _fileSystem.OpenRead(sf), s => s.Dispose()))
                 .ToArray();
+        }
+
+        private InputFile[] GetArchivedFiles(IEnumerable<string> sourceFiles)
+        {
+            return sourceFiles
+                .SelectMany(sf =>
+                {
+                    using (var parentArc = new ZipArchive(_fileSystem.OpenRead(sf)))
+                    {
+                        return parentArc.Entries.Select(e => new InputFile(Path.Combine(Path.GetDirectoryName(sf), Path.GetFileNameWithoutExtension(sf), e.FullName), () =>
+                        {
+                            var archive = new ZipArchive(_fileSystem.OpenRead(sf));
+                            var entry = archive.GetEntry(e.Name);
+                            return entry.Open();
+                        }, s =>
+                        {
+                            s.Dispose();
+                            parentArc.Dispose();
+                        }));
+                    }
+                }).ToArray();
+        }
+
+        protected InputFile GetInputFileDirect(string name)
+        {
+            var sourceFiles = _fileSystem.GetFileNames(name, Args.RecursiveInputFiles);
+
+            if (Args.FilesAreZipArchives)
+                return GetArchivedFiles(sourceFiles).Single();
+
+            return sourceFiles
+                .Select(sf => new InputFile(sf, () => _fileSystem.OpenRead(sf), s => s.Dispose()))
+                .Single();
         }
 
         protected byte[] GetFile(BuiltTask task, InputFile inputFile)

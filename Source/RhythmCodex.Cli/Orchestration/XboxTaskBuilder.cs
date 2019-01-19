@@ -28,6 +28,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IXwbStreamReader _xwbStreamReader;
         private readonly IXboxIsoStreamReader _xboxIsoStreamReader;
         private readonly IXboxSngStreamReader _xboxSngStreamReader;
+        private readonly IXboxHbnStreamReader _xboxHbnStreamReader;
 
         public XboxTaskBuilder(
             IFileSystem fileSystem,
@@ -40,7 +41,8 @@ namespace RhythmCodex.Cli.Orchestration
             IPngStreamWriter pngStreamWriter,
             IXwbStreamReader xwbStreamReader,
             IXboxIsoStreamReader xboxIsoStreamReader,
-            IXboxSngStreamReader xboxSngStreamReader)
+            IXboxSngStreamReader xboxSngStreamReader,
+            IXboxHbnStreamReader xboxHbnStreamReader)
             : base(fileSystem, logger)
         {
             _imaAdpcmDecoder = imaAdpcmDecoder;
@@ -52,6 +54,46 @@ namespace RhythmCodex.Cli.Orchestration
             _xwbStreamReader = xwbStreamReader;
             _xboxIsoStreamReader = xboxIsoStreamReader;
             _xboxSngStreamReader = xboxSngStreamReader;
+            _xboxHbnStreamReader = xboxHbnStreamReader;
+        }
+
+        public ITask CreateExtractHbn()
+        {
+            return Build("Extract HBN", task =>
+            {
+                var files = GetInputFiles(task);
+
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    using (var stream = OpenRead(task, file))
+                    {
+                        var binFileName = $"{Path.GetFileNameWithoutExtension(file.Name)}.bin";
+                        
+                        var binFile = Path.Combine(
+                            Path.GetDirectoryName(file.Name),
+                            binFileName);
+
+                        foreach (var entry in _xboxHbnStreamReader.Read(stream, OpenRead(task, GetInputFileDirect(binFile))))
+                        {
+                            using (var outStream =
+                                OpenWriteMulti(task, file, i => entry.Name))
+                            {
+                                var writer = new BinaryWriter(outStream);
+                                writer.Write(entry.Data);
+                                outStream.Flush();
+                            }
+                        }
+                    }
+                });
+
+                return true;
+            });
         }
 
         public ITask CreateDecodeDds()
@@ -184,9 +226,9 @@ namespace RhythmCodex.Cli.Orchestration
                                 {
                                     _riffStreamWriter.Write(outStream, encoded);
                                     outStream.Flush();
-                                }                                
+                                }
                             }
-                            
+
                             if (entry.Preview != null)
                             {
                                 var sound = _imaAdpcmDecoder.Decode(new ImaAdpcmChunk
@@ -202,11 +244,10 @@ namespace RhythmCodex.Cli.Orchestration
                                 {
                                     _riffStreamWriter.Write(outStream, encoded);
                                     outStream.Flush();
-                                }                                
+                                }
                             }
                         }
                     }
-                    
                 });
 
                 return true;

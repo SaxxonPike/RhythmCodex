@@ -64,6 +64,12 @@ namespace RhythmCodex.Cli.Modules
                 Name = "extract-sng",
                 Description = "Extracts songs from an SNG file.",
                 Execute = ExtractSng
+            },
+            new Command
+            {
+                Name = "extract-hbn",
+                Description = "Extracts files using an HBN index.",
+                Execute = ExtractHbn
             }
         };
 
@@ -109,6 +115,15 @@ namespace RhythmCodex.Cli.Modules
                 .BuildXboxTask()
                 .WithArgs(args)
                 .CreateExtractSng()
+                .Run();
+        }
+
+        private void ExtractHbn(Args args)
+        {
+            _taskFactory
+                .BuildXboxTask()
+                .WithArgs(args)
+                .CreateExtractHbn()
                 .Run();
         }
     }
