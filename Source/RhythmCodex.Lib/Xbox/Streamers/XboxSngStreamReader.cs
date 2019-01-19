@@ -13,13 +13,22 @@ namespace RhythmCodex.Xbox.Streamers
         public IEnumerable<XboxSngEntry> Read(Stream stream)
         {
             var baseOffset = stream.Position;
+            var directoryOffset = 4;
             var reader = new BinaryReader(stream);
             var count = reader.ReadInt32();
+
+            if (count == 0x616E6F4B) // 'Kona'
+            {
+                directoryOffset += 0x800;
+                reader.ReadBytes(0x7FC);
+                count = reader.ReadInt32();
+            }
+            
             return Enumerable
                 .Range(0, count)
                 .Select(i =>
                 {
-                    stream.Position = baseOffset + 4 + (i * 0x14);
+                    stream.Position = baseOffset + directoryOffset + (i * 0x14);
 
                     var result = new XboxSngEntry
                     {
