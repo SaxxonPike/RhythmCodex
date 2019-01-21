@@ -5,5 +5,6 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         BeatmaniaTaskBuilder BuildBeatmaniaTask();
         DdrTaskBuilder BuildDdrTask();
         XboxTaskBuilder BuildXboxTask();
+        GraphicsTaskBuilder BuildGraphicsTask();
     }
 }
