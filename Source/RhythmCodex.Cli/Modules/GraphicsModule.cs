@@ -30,11 +30,26 @@ namespace RhythmCodex.Cli.Modules
         {
             new Command
             {
+                Name = "decode-dds",
+                Description = "Decodes a DDS image.",
+                Execute = DecodeDds
+            },
+            new Command
+            {
                 Name = "decode-tga",
                 Description = "Decodes a TGA image.",
                 Execute = DecodeTga
             }
         };
+
+        private void DecodeDds(Args args)
+        {
+            _taskFactory
+                .BuildGraphicsTask()
+                .WithArgs(args)
+                .CreateDecodeDds()
+                .Run();
+        }
 
         private void DecodeTga(Args args)
         {

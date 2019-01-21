@@ -43,12 +43,6 @@ namespace RhythmCodex.Cli.Modules
             },
             new Command
             {
-                Name = "decode-dds",
-                Description = "Decodes a DDS image.",
-                Execute = DecodeDds
-            },
-            new Command
-            {
                 Name = "extract-xwb",
                 Description = "Extracts an XWB sound bank.",
                 Execute = ExtractXwb
@@ -72,15 +66,6 @@ namespace RhythmCodex.Cli.Modules
                 Execute = ExtractHbn
             }
         };
-
-        private void DecodeDds(Args args)
-        {
-            _taskFactory
-                .BuildXboxTask()
-                .WithArgs(args)
-                .CreateDecodeDds()
-                .Run();
-        }
 
         private void DecodeAdpcm(Args args)
         {

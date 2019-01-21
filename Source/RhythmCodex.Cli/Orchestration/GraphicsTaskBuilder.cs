@@ -2,6 +2,8 @@ using System.Drawing;
 using System.Linq;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
+using RhythmCodex.Dds.Converters;
+using RhythmCodex.Dds.Streamers;
 using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Infrastructure;
@@ -18,6 +20,8 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly ITgaStreamReader _tgaStreamReader;
         private readonly ITgaDecoder _tgaDecoder;
         private readonly IGdiDsp _gdiDsp;
+        private readonly IDdsStreamReader _ddsStreamReader;
+        private readonly IDdsBitmapDecoder _ddsBitmapDecoder;
 
         public GraphicsTaskBuilder(
             IFileSystem fileSystem, 
@@ -25,13 +29,18 @@ namespace RhythmCodex.Cli.Orchestration
             IPngStreamWriter pngStreamWriter,
             ITgaStreamReader tgaStreamReader,
             ITgaDecoder tgaDecoder,
-            IGdiDsp gdiDsp) 
+            IGdiDsp gdiDsp,
+            IDdsStreamReader ddsStreamReader,
+            IDdsBitmapDecoder ddsBitmapDecoder
+            ) 
             : base(fileSystem, logger)
         {
             _pngStreamWriter = pngStreamWriter;
             _tgaStreamReader = tgaStreamReader;
             _tgaDecoder = tgaDecoder;
             _gdiDsp = gdiDsp;
+            _ddsStreamReader = ddsStreamReader;
+            _ddsBitmapDecoder = ddsBitmapDecoder;
         }
 
         private RawBitmap CropImage(RawBitmap bitmap)
@@ -47,6 +56,33 @@ namespace RhythmCodex.Cli.Orchestration
             }
 
             return bitmap;
+        }
+
+        public ITask CreateDecodeDds()
+        {
+            return Build("Decode DirectDraw Surface", task =>
+            {
+                var files = GetInputFiles(task);
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    using (var stream = OpenRead(task, file))
+                    {
+                        var image = _ddsStreamReader.Read(stream, (int) stream.Length);
+                        task.Message = "Decoding DDS.";
+                        var bitmap = CropImage(_ddsBitmapDecoder.Decode(image));
+                        using (var outStream = OpenWriteSingle(task, file, i => $"{i}.png"))
+                            _pngStreamWriter.Write(outStream, bitmap);
+                    }
+                });
+
+                return true;
+            });
         }
 
         public ITask CreateDecodeTga()

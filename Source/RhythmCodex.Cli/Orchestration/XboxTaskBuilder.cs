@@ -22,9 +22,6 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IImaAdpcmDecoder _imaAdpcmDecoder;
         private readonly IRiffPcm16SoundEncoder _riffPcm16SoundEncoder;
         private readonly IRiffStreamWriter _riffStreamWriter;
-        private readonly IDdsStreamReader _ddsStreamReader;
-        private readonly IDdsBitmapDecoder _ddsBitmapDecoder;
-        private readonly IPngStreamWriter _pngStreamWriter;
         private readonly IXwbStreamReader _xwbStreamReader;
         private readonly IXboxIsoStreamReader _xboxIsoStreamReader;
         private readonly IXboxSngStreamReader _xboxSngStreamReader;
@@ -36,9 +33,6 @@ namespace RhythmCodex.Cli.Orchestration
             IImaAdpcmDecoder imaAdpcmDecoder,
             IRiffPcm16SoundEncoder riffPcm16SoundEncoder,
             IRiffStreamWriter riffStreamWriter,
-            IDdsStreamReader ddsStreamReader,
-            IDdsBitmapDecoder ddsBitmapDecoder,
-            IPngStreamWriter pngStreamWriter,
             IXwbStreamReader xwbStreamReader,
             IXboxIsoStreamReader xboxIsoStreamReader,
             IXboxSngStreamReader xboxSngStreamReader,
@@ -48,9 +42,6 @@ namespace RhythmCodex.Cli.Orchestration
             _imaAdpcmDecoder = imaAdpcmDecoder;
             _riffPcm16SoundEncoder = riffPcm16SoundEncoder;
             _riffStreamWriter = riffStreamWriter;
-            _ddsStreamReader = ddsStreamReader;
-            _ddsBitmapDecoder = ddsBitmapDecoder;
-            _pngStreamWriter = pngStreamWriter;
             _xwbStreamReader = xwbStreamReader;
             _xboxIsoStreamReader = xboxIsoStreamReader;
             _xboxSngStreamReader = xboxSngStreamReader;
@@ -89,33 +80,6 @@ namespace RhythmCodex.Cli.Orchestration
                                 outStream.Flush();
                             }
                         }
-                    }
-                });
-
-                return true;
-            });
-        }
-
-        public ITask CreateDecodeDds()
-        {
-            return Build("Decode DirectDraw Surface", task =>
-            {
-                var files = GetInputFiles(task);
-                if (!files.Any())
-                {
-                    task.Message = "No input files.";
-                    return false;
-                }
-
-                ParallelProgress(task, files, file =>
-                {
-                    using (var stream = OpenRead(task, file))
-                    {
-                        var image = _ddsStreamReader.Read(stream, (int) stream.Length);
-                        task.Message = "Decoding DDS.";
-                        var bitmap = _ddsBitmapDecoder.Decode(image);
-                        using (var outStream = OpenWriteSingle(task, file, i => $"{i}.png"))
-                            _pngStreamWriter.Write(outStream, bitmap);
                     }
                 });
 
