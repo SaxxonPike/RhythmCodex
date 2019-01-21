@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
@@ -50,6 +51,24 @@ namespace RhythmCodex.Stepmania.Converters
             _grooveRadarEncoder = grooveRadarEncoder;
             _timedCommandStringEncoder = timedCommandStringEncoder;
         }
+        
+        private string[] GetDefault(string name, ChartSet chartSet)
+        {
+            switch (name)
+            {
+                case ChartTag.DisplayBpmTag:
+                {
+                    var bpms = GetBpmEvents(chartSet.Charts).Select(e => e.Value).AsList();
+                    var min = Math.Round((decimal) bpms.Min());
+                    var max = Math.Round((decimal) bpms.Max());
+                    return (min == max)
+                        ? new[] {$"{min}"}
+                        : new[] {$"{min}:{max}"};
+                }
+            }
+
+            return new string[0];
+        }
 
         public IEnumerable<Command> Encode(ChartSet chartSet)
         {
@@ -59,9 +78,11 @@ namespace RhythmCodex.Stepmania.Converters
                 .Select(s => new Command
                 {
                     Name = s,
-                    Values = new[] {chartSet.Metadata?[s] ?? string.Empty}
+                    Values = chartSet.Metadata[s] != null
+                        ? new[] {chartSet.Metadata?[s]}
+                        : GetDefault(s, chartSet)
                 });
-
+            
             var timingCommands = GetTimingCommands(chartList);
 
             var noteCommands = chartList.Select(chart => new Command
@@ -83,11 +104,9 @@ namespace RhythmCodex.Stepmania.Converters
                 .Concat(noteCommands);
         }
 
-        private IEnumerable<Command> GetTimingCommands(IEnumerable<IChart> charts)
+        private IEnumerable<TimedEvent> GetBpmEvents(IEnumerable<IChart> charts)
         {
-            var chartList = charts.AsList();
-            
-            var bpms = chartList
+            var bpms = charts
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
                 .Select(g => g.First())
@@ -123,28 +142,34 @@ namespace RhythmCodex.Stepmania.Converters
                 }
             }
             
-            var bpmEvents = bpms
+            return bpms
                 .Where(ev => ev[NumericData.MetricOffset] >= 0)
                 .Select(ev =>
-                    new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value});
+                    new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value});            
+        }
 
-            yield return new Command
-            {
-                Name = ChartTag.BpmsTag,
-                Values = new[] {_timedCommandStringEncoder.Encode(bpmEvents)}
-            };
-
-            var stops = chartList
+        private IEnumerable<TimedEvent> GetStopEvents(IEnumerable<IChart> charts)
+        {
+            return charts
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Stop] != null))
                 .GroupBy(ev => ev[NumericData.MetricOffset])
                 .Select(g => g.First())
                 .Select(ev =>
                     new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Stop].Value});
+        }
+        
+        private IEnumerable<Command> GetTimingCommands(IList<IChart> charts)
+        {
+            yield return new Command
+            {
+                Name = ChartTag.BpmsTag,
+                Values = new[] {_timedCommandStringEncoder.Encode(GetBpmEvents(charts))}
+            };
 
             yield return new Command
             {
                 Name = ChartTag.StopsTag,
-                Values = new[] {_timedCommandStringEncoder.Encode(stops)}
+                Values = new[] {_timedCommandStringEncoder.Encode(GetStopEvents(charts))}
             };
         }
     }

@@ -8,5 +8,6 @@ namespace RhythmCodex.Ssq.Converters
         TimingChunk GetTimings(IEnumerable<Chunk> chunks);
         IEnumerable<Trigger> GetTriggers(IEnumerable<Chunk> chunks);
         IEnumerable<StepChunk> GetSteps(IEnumerable<Chunk> chunks);
+        IEnumerable<SsqInfoChunk> GetInfos(IEnumerable<Chunk> chunks);
     }
 }

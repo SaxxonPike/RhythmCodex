@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ using RhythmCodex.Step1.Converters;
 using RhythmCodex.Step1.Streamers;
 using RhythmCodex.Step2.Converters;
 using RhythmCodex.Step2.Streamers;
+using RhythmCodex.Stepmania;
 using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
@@ -33,6 +35,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IStep1Decoder _step1Decoder;
         private readonly IStep2StreamReader _step2StreamReader;
         private readonly IStep2Decoder _step2Decoder;
+        private readonly IMetadataAggregator _metadataAggregator;
 
         public DdrTaskBuilder(
             IFileSystem fileSystem,
@@ -46,7 +49,8 @@ namespace RhythmCodex.Cli.Orchestration
             IStep1StreamReader step1StreamReader,
             IStep1Decoder step1Decoder,
             IStep2StreamReader step2StreamReader,
-            IStep2Decoder step2Decoder)
+            IStep2Decoder step2Decoder,
+            IMetadataAggregator metadataAggregator)
             : base(fileSystem, logger)
         {
             _ddr573StreamReader = ddr573StreamReader;
@@ -59,6 +63,7 @@ namespace RhythmCodex.Cli.Orchestration
             _step1Decoder = step1Decoder;
             _step2StreamReader = step2StreamReader;
             _step2Decoder = step2Decoder;
+            _metadataAggregator = metadataAggregator;
         }
 
         public ITask CreateDecodeSsq()
@@ -78,7 +83,26 @@ namespace RhythmCodex.Cli.Orchestration
                     {
                         var chunks = _ssqStreamReader.Read(inFile);
                         var charts = _ssqDecoder.Decode(chunks);
-                        var encoded = _smEncoder.Encode(new ChartSet {Metadata = new Metadata(), Charts = charts});
+                        var aggregatedInfo = _metadataAggregator.Aggregate(charts);
+                        var title = Path.GetFileNameWithoutExtension(file.Name);
+                        
+                        // This is a temporary hack to make building sets easier for right now
+                        // TODO: make this optional via command line switch
+                        if (title.EndsWith("_all", StringComparison.InvariantCultureIgnoreCase))
+                            title = title.Substring(0, title.Length - 4);
+
+                        var encoded = _smEncoder.Encode(new ChartSet
+                        {
+                            Metadata = new Metadata
+                            {
+                                [StringData.Title] = aggregatedInfo[StringData.Title] ?? title,
+                                [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
+                                [StringData.Artist] = aggregatedInfo[StringData.Artist],
+                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg"
+                            }, 
+                            Charts = charts
+                        });
+                        
                         using (var outFile = OpenWriteSingle(task, file, i => $"{i}.sm"))
                         {
                             _smStreamWriter.Write(outFile, encoded);

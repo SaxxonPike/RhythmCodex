@@ -10,6 +10,7 @@ namespace RhythmCodex.Ssq.Converters
     public class SsqChunkFilter : ISsqChunkFilter
     {
         private readonly IStepChunkDecoder _stepChunkDecoder;
+        private readonly ISsqInfoChunkDecoder _ssqInfoChunkDecoder;
         private readonly ILogger _logger;
         private readonly ITimingChunkDecoder _timingChunkDecoder;
         private readonly ITriggerChunkDecoder _triggerChunkDecoder;
@@ -18,11 +19,13 @@ namespace RhythmCodex.Ssq.Converters
             ITimingChunkDecoder timingChunkDecoder,
             ITriggerChunkDecoder triggerChunkDecoder,
             IStepChunkDecoder stepChunkDecoder,
+            ISsqInfoChunkDecoder ssqInfoChunkDecoder,
             ILogger logger)
         {
             _timingChunkDecoder = timingChunkDecoder;
             _triggerChunkDecoder = triggerChunkDecoder;
             _stepChunkDecoder = stepChunkDecoder;
+            _ssqInfoChunkDecoder = ssqInfoChunkDecoder;
             _logger = logger;
         }
 
@@ -64,6 +67,14 @@ namespace RhythmCodex.Ssq.Converters
             {
                 _logger.Debug($"Found chart ID {chunk.Id:X4} with step count of {chunk.Steps.Count}");
             }
+            return result;
+        }
+
+        public IEnumerable<SsqInfoChunk> GetInfos(IEnumerable<Chunk> chunks)
+        {
+            var result = chunks.Where(c => c.Parameter0 == Parameter0.Meta)
+                .Select(c => _ssqInfoChunkDecoder.Decode(c))
+                .AsList();
             return result;
         }
     }

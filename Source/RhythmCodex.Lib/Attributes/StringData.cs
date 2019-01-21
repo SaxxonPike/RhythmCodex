@@ -14,6 +14,7 @@ namespace RhythmCodex.Attributes
         BackgroundFile,
         Subtitle,
         Subartist,
-        Comment
+        Comment,
+        Music
     }
 }

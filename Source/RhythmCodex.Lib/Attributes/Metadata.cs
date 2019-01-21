@@ -99,6 +99,16 @@ namespace RhythmCodex.Attributes
             _flagDatas = metadata._flagDatas;
         }
 
+        public void CopyTo(IMetadata other)
+        {
+            foreach (var kv in _stringDatas)
+                other[kv.Key] = kv.Value;
+            foreach (var kv in _numericDatas)
+                other[kv.Key] = kv.Value;
+            foreach (var kv in _flagDatas)
+                other[kv.Key] = kv.Value;
+        }
+
         public override string ToString()
         {
             var output = new Dictionary<string, string>();

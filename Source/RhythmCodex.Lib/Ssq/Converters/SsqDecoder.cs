@@ -45,12 +45,12 @@ namespace RhythmCodex.Ssq.Converters
             var timings = _ssqChunkFilter.GetTimings(chunks);
             var triggers = _ssqChunkFilter.GetTriggers(chunks);
             var steps = _ssqChunkFilter.GetSteps(chunks);
+            var meta = _ssqChunkFilter.GetInfos(chunks).FirstOrDefault();
 
             var charts = steps.Select(sc =>
             {
                 var info = _chartInfoDecoder.Decode(sc.Id);
-
-                return new Chart
+                var chart = new Chart
                 {
                     Events = _ssqEventDecoder.Decode(
                             timings,
@@ -62,6 +62,49 @@ namespace RhythmCodex.Ssq.Converters
                     [StringData.Difficulty] = info.Difficulty,
                     [StringData.Type] = $"dance-{info.Type.ToLowerInvariant()}"
                 };
+
+                if (meta != null)
+                {
+                    chart[StringData.Title] = meta.Text[0];
+                    chart[StringData.Subtitle] = meta.Text[1];
+                    chart[StringData.Artist] = meta.Text[2];
+
+                    switch (sc.Id)
+                    {
+                        case 0x0114:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[1];
+                            break;
+                        case 0x0214:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[2];
+                            break;
+                        case 0x0314:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[3];
+                            break;
+                        case 0x0414:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[0];
+                            break;
+                        case 0x0614:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[4];
+                            break;
+                        case 0x0118:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[6];
+                            break;
+                        case 0x0218:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[7];
+                            break;
+                        case 0x0318:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[8];
+                            break;
+                        case 0x0418:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[5];
+                            break;
+                        case 0x0618:
+                            chart[NumericData.PlayLevel] = meta.Difficulties[9];
+                            break;
+                    }
+                }
+
+                return chart;
             });
 
             return charts.Cast<IChart>().AsList();
