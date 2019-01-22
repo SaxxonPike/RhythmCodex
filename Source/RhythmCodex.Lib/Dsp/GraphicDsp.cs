@@ -1,15 +1,16 @@
 using System.Drawing;
+using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 
-namespace RhythmCodex.Gdi.Converters
+namespace RhythmCodex.Dsp
 {
     [Service]
-    public class GdiDsp : IGdiDsp
+    public class GraphicDsp : IGraphicDsp
     {
         private readonly IGdiFactory _gdiFactory;
 
-        public GdiDsp(IGdiFactory gdiFactory)
+        public GraphicDsp(IGdiFactory gdiFactory)
         {
             _gdiFactory = gdiFactory;
         }

@@ -45,5 +45,11 @@ namespace RhythmCodex.Stepmania.Converters
 
         public void SetBpm(ICollection<Command> commands, string minBpm, string maxBpm) =>
             AddOrReplace(commands, ChartTag.DisplayBpmTag, minBpm, maxBpm);
+
+        public void SetBannerImage(ICollection<Command> commands, string fileName) =>
+            AddOrReplace(commands, ChartTag.BannerTag, fileName);
+
+        public void SetBackgroundImage(ICollection<Command> commands, string fileName) =>
+            AddOrReplace(commands, ChartTag.BackgroundTag, fileName);
     }
 }

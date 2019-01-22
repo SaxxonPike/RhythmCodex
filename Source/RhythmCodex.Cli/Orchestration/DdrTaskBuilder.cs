@@ -9,6 +9,8 @@ using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Sif.Converters;
+using RhythmCodex.Sif.Streamers;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Step1.Converters;
@@ -36,10 +38,9 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IStep2StreamReader _step2StreamReader;
         private readonly IStep2Decoder _step2Decoder;
         private readonly IMetadataAggregator _metadataAggregator;
-        private readonly ISmDecoder _smDecoder;
         private readonly ISifStreamReader _sifStreamReader;
         private readonly ISmStreamReader _smStreamReader;
-        private readonly ISmMetadataChanger _smMetadataChanger;
+        private readonly ISifSmMetadataChanger _sifSmMetadataChanger;
 
         public DdrTaskBuilder(
             IFileSystem fileSystem,
@@ -55,10 +56,9 @@ namespace RhythmCodex.Cli.Orchestration
             IStep2StreamReader step2StreamReader,
             IStep2Decoder step2Decoder,
             IMetadataAggregator metadataAggregator,
-            ISmDecoder smDecoder,
             ISifStreamReader sifStreamReader,
             ISmStreamReader smStreamReader,
-            ISmMetadataChanger smMetadataChanger)
+            ISifSmMetadataChanger sifSmMetadataChanger)
             : base(fileSystem, logger)
         {
             _ddr573StreamReader = ddr573StreamReader;
@@ -72,10 +72,9 @@ namespace RhythmCodex.Cli.Orchestration
             _step2StreamReader = step2StreamReader;
             _step2Decoder = step2Decoder;
             _metadataAggregator = metadataAggregator;
-            _smDecoder = smDecoder;
             _sifStreamReader = sifStreamReader;
             _smStreamReader = smStreamReader;
-            _smMetadataChanger = smMetadataChanger;
+            _sifSmMetadataChanger = sifSmMetadataChanger;
         }
 
         public ITask CreateDecodeSsq()
@@ -207,40 +206,14 @@ namespace RhythmCodex.Cli.Orchestration
                     using (var smFile = OpenRelatedRead(inputFile, i => $"{i}_all.sm"))
                     {
                         var sm = _smStreamReader.Read(smFile).ToList();
-                        var sif = _sifStreamReader.Read(inFile, inFile.Length).KeyValues;
+                        var sif = _sifStreamReader.Read(inFile, inFile.Length);
                         var name = Path.GetFileNameWithoutExtension(inputFile.Name);
 
-                        if (sif.ContainsKey("dir"))
-                            name = sif["dir"];
-                        if (sif.ContainsKey("title"))
-                            _smMetadataChanger.SetTitle(sm, sif["title"]);
-                        if (sif.ContainsKey("mix"))
-                            _smMetadataChanger.SetSubtitle(sm, sif["mix"]);
-                        if (sif.ContainsKey("artist"))
-                            _smMetadataChanger.SetArtist(sm, sif["artist"]);
-                        if (sif.ContainsKey("extra"))
-                            _smMetadataChanger.SetSubartist(sm, sif["extra"]);
-                        if (sif.ContainsKey("bpm_min") && sif.ContainsKey("bpm_max"))
-                            _smMetadataChanger.SetBpm(sm, sif["bpm_min"], sif["bpm_max"]);
+                        if (!sif.KeyValues.ContainsKey("dir"))
+                            sif.KeyValues["dir"] = name;
+                        _sifSmMetadataChanger.Apply(sm, sif);
 
-                        if (sif.ContainsKey("foot.single"))
-                        {
-                            var values = sif["foot.single"].Split(',');
-                            _smMetadataChanger.SetDifficulty(sm, "dance-single", "easy", values[0]);
-                            _smMetadataChanger.SetDifficulty(sm, "dance-single", "medium", values[1]);
-                            _smMetadataChanger.SetDifficulty(sm, "dance-single", "hard", values[2]);
-                        }
-                        
-                        if (sif.ContainsKey("foot.double"))
-                        {
-                            var values = sif["foot.double"].Split(',');
-                            _smMetadataChanger.SetDifficulty(sm, "dance-double", "easy", values[0]);
-                            _smMetadataChanger.SetDifficulty(sm, "dance-double", "medium", values[1]);
-                            _smMetadataChanger.SetDifficulty(sm, "dance-double", "hard", values[2]);
-                        }
-                        
                         smFile.Dispose();
-
                         using (var outStream = OpenWriteSingle(task, inputFile, i => $"{name}_all.sm"))
                         {
                             _smStreamWriter.Write(outStream, sm);

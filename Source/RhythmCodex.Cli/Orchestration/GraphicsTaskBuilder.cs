@@ -4,6 +4,7 @@ using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Dds.Converters;
 using RhythmCodex.Dds.Streamers;
+using RhythmCodex.Dsp;
 using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Infrastructure;
@@ -19,7 +20,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IPngStreamWriter _pngStreamWriter;
         private readonly ITgaStreamReader _tgaStreamReader;
         private readonly ITgaDecoder _tgaDecoder;
-        private readonly IGdiDsp _gdiDsp;
+        private readonly IGraphicDsp _graphicDsp;
         private readonly IDdsStreamReader _ddsStreamReader;
         private readonly IDdsBitmapDecoder _ddsBitmapDecoder;
 
@@ -29,7 +30,7 @@ namespace RhythmCodex.Cli.Orchestration
             IPngStreamWriter pngStreamWriter,
             ITgaStreamReader tgaStreamReader,
             ITgaDecoder tgaDecoder,
-            IGdiDsp gdiDsp,
+            IGraphicDsp graphicDsp,
             IDdsStreamReader ddsStreamReader,
             IDdsBitmapDecoder ddsBitmapDecoder
             ) 
@@ -38,7 +39,7 @@ namespace RhythmCodex.Cli.Orchestration
             _pngStreamWriter = pngStreamWriter;
             _tgaStreamReader = tgaStreamReader;
             _tgaDecoder = tgaDecoder;
-            _gdiDsp = gdiDsp;
+            _graphicDsp = graphicDsp;
             _ddsStreamReader = ddsStreamReader;
             _ddsBitmapDecoder = ddsBitmapDecoder;
         }
@@ -48,11 +49,11 @@ namespace RhythmCodex.Cli.Orchestration
             if (Args.Options.ContainsKey("+crop_ddr"))
             {
                 if (bitmap.Width == 512 && bitmap.Height == 256)
-                    bitmap = _gdiDsp.Snip(bitmap, new Rectangle(0, 0, 320, 200));
+                    bitmap = _graphicDsp.Snip(bitmap, new Rectangle(0, 0, 320, 200));
                 else if (bitmap.Width == 256 && bitmap.Height == 128)
-                    bitmap = _gdiDsp.Snip(bitmap, new Rectangle(0, 0, 256, 80));
+                    bitmap = _graphicDsp.Snip(bitmap, new Rectangle(0, 0, 256, 80));
                 else if (bitmap.Width == 1024 && bitmap.Height == 512)
-                    bitmap = _gdiDsp.Snip(bitmap, new Rectangle(0, 0, 640, 480));
+                    bitmap = _graphicDsp.Snip(bitmap, new Rectangle(0, 0, 640, 480));
             }
 
             return bitmap;

@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using RhythmCodex.Ddr.Models;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Ssq.Model;
+using RhythmCodex.Sif.Models;
 
-namespace RhythmCodex.Ddr.Streamers
+namespace RhythmCodex.Sif.Streamers
 {
     [Service]
     public class SifStreamReader : ISifStreamReader

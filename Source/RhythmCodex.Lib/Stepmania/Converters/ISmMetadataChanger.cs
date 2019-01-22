@@ -11,5 +11,7 @@ namespace RhythmCodex.Stepmania.Converters
         void SetSubartist(ICollection<Command> commands, string value);
         void SetDifficulty(ICollection<Command> commands, string mode, string difficulty, string value);
         void SetBpm(ICollection<Command> commands, string minBpm, string maxBpm);
+        void SetBannerImage(ICollection<Command> commands, string fileName);
+        void SetBackgroundImage(ICollection<Command> commands, string fileName);
     }
 }

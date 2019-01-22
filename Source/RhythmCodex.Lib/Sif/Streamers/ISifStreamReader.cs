@@ -1,7 +1,7 @@
 using System.IO;
-using RhythmCodex.Ddr.Models;
+using RhythmCodex.Sif.Models;
 
-namespace RhythmCodex.Ddr.Streamers
+namespace RhythmCodex.Sif.Streamers
 {
     public interface ISifStreamReader
     {

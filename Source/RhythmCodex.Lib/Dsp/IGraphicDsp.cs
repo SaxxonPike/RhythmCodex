@@ -1,9 +1,9 @@
 using System.Drawing;
 using RhythmCodex.Infrastructure.Models;
 
-namespace RhythmCodex.Gdi.Converters
+namespace RhythmCodex.Dsp
 {
-    public interface IGdiDsp
+    public interface IGraphicDsp
     {
         RawBitmap Snip(RawBitmap bitmap, Rectangle rect);
     }
