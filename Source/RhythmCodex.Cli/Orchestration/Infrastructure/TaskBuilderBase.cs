@@ -43,6 +43,12 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
             return result;
         }
 
+        protected Stream OpenRelatedRead(InputFile inputFile, Func<string, string> transformName)
+        {
+            var transformedName = transformName(Path.GetFileNameWithoutExtension(inputFile.Name));
+            return inputFile.OpenRelated(transformedName);
+        }
+
         protected string GetOutputFolder(string inputFile) =>
             Args.OutputPath ?? Path.GetDirectoryName(inputFile);
 
@@ -56,7 +62,11 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                 return GetArchivedFiles(sourceFiles);
 
             return sourceFiles
-                .Select(sf => new InputFile(sf, () => _fileSystem.OpenRead(sf), s => s.Dispose()))
+                .Select(sf => new InputFile(
+                    sf,
+                    () => _fileSystem.OpenRead(sf),
+                    f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                    s => s.Dispose()))
                 .ToArray();
         }
 
@@ -67,16 +77,25 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                 {
                     using (var parentArc = new ZipArchive(_fileSystem.OpenRead(sf)))
                     {
-                        return parentArc.Entries.Select(e => new InputFile(Path.Combine(Path.GetDirectoryName(sf), Path.GetFileNameWithoutExtension(sf), e.FullName), () =>
-                        {
-                            var archive = new ZipArchive(_fileSystem.OpenRead(sf));
-                            var entry = archive.GetEntry(e.Name);
-                            return entry.Open();
-                        }, s =>
-                        {
-                            s.Dispose();
-                            parentArc.Dispose();
-                        }));
+                        return parentArc.Entries.Select(e => new InputFile(
+                            Path.Combine(Path.GetDirectoryName(sf), Path.GetFileNameWithoutExtension(sf), e.FullName),
+                            () =>
+                            {
+                                var archive = new ZipArchive(_fileSystem.OpenRead(sf));
+                                var entry = archive.GetEntry(e.Name);
+                                return entry.Open();
+                            },
+                            f =>
+                            {
+                                var archive = new ZipArchive(_fileSystem.OpenRead(sf));
+                                var entry = archive.GetEntry(Path.Combine(Path.GetDirectoryName(sf), f));
+                                return entry.Open();
+                            },
+                            s =>
+                            {
+                                s.Dispose();
+                                parentArc.Dispose();
+                            }));
                     }
                 }).ToArray();
         }
@@ -89,7 +108,11 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                 return GetArchivedFiles(sourceFiles).Single();
 
             return sourceFiles
-                .Select(sf => new InputFile(sf, () => _fileSystem.OpenRead(sf), s => s.Dispose()))
+                .Select(sf => new InputFile(
+                    sf,
+                    () => _fileSystem.OpenRead(sf),
+                    f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                    s => s.Dispose()))
                 .Single();
         }
 

@@ -40,8 +40,23 @@ namespace RhythmCodex.Cli.Modules
                 Name = "extract-573-flash",
                 Description = "Extracts files from a 573 GAME (and optionally additionally CARD) image.",
                 Execute = Extract573Flash
+            },
+            new Command
+            {
+                Name = "apply-sif",
+                Description = "Applies SIF metadata to a SM file.",
+                Execute = ApplySif
             }
         };
+
+        private void ApplySif(Args args)
+        {
+            _taskFactory
+                .BuildDdrTask()
+                .WithArgs(args)
+                .CreateApplySif()
+                .Run();
+        }
 
         private void Extract573Flash(Args args)
         {

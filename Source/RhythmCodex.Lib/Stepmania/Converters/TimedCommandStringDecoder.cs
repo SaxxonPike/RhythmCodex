@@ -6,6 +6,7 @@ using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Converters
 {
+    [Service]
     public class TimedCommandStringDecoder : ITimedCommandStringDecoder
     {
         private readonly ILogger _logger;

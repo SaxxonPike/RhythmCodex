@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Converters
 {
+    [Service]
     public class NoteDecoder : INoteDecoder
     {
         public IEnumerable<IEvent> Decode(IEnumerable<Note> events, int columns)
