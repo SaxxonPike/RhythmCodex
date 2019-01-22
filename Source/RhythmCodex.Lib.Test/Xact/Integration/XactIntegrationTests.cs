@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RhythmCodex.Attributes;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Xact.Converters;
 using RhythmCodex.Xact.Streamers;
 
 namespace RhythmCodex.Xact.Integration
@@ -21,6 +22,7 @@ namespace RhythmCodex.Xact.Integration
                 .First()
                 .Value;
             var reader = Resolve<IXwbStreamReader>();
+            var decoder = Resolve<IXwbDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
@@ -30,7 +32,8 @@ namespace RhythmCodex.Xact.Integration
                 // Assert.
                 foreach (var sound in reader.Read(observed))
                 {
-                    var encoded = encoder.Encode(sound);
+                    var decoded = decoder.Decode(sound);
+                    var encoded = encoder.Encode(decoded);
                     var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xwb");
                     if (!Directory.Exists(outfolder))
                         Directory.CreateDirectory(outfolder);
@@ -39,7 +42,7 @@ namespace RhythmCodex.Xact.Integration
                     {
                         writer.Write(outStream, encoded);
                         outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outfolder, $"{sound[StringData.Name]}.wav"),
+                        File.WriteAllBytes(Path.Combine(outfolder, $"{decoded[StringData.Name]}.wav"),
                             outStream.ToArray());
                     }
                 }

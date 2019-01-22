@@ -5,7 +5,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Xact.Model
 {
     [Model]
-    public struct WaveBankData
+    public struct XwbData
     {
         public int Flags { get; set; }
         public int EntryCount { get; set; }
@@ -13,7 +13,7 @@ namespace RhythmCodex.Xact.Model
         public int EntryMetaDataElementSize { get; set; }
         public int EntryNameElementSize { get; set; }
         public int Alignment { get; set; }
-        public WaveBankMiniWaveFormat CompactFormat { get; set; }
+        public XwbMiniWaveFormat CompactFormat { get; set; }
         public long BuildTime { get; set; }
     }
 }

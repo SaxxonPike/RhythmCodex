@@ -4,7 +4,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Xact.Model
 {
     [Model]
-    public struct WaveBankSampleRegion
+    public struct XwbSampleRegion
     {
         public int StartSample { get; set; }
         public int TotalSamples { get; set; }

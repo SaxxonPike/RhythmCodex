@@ -4,11 +4,11 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Xact.Model
 {
     [Model]
-    public struct WaveBankHeader
+    public struct XwbHeader
     {
         public int Signature { get; set; }
         public int Version { get; set; }
         public int HeaderVersion { get; set; }
-        public WaveBankRegion[] Segments { get; set; }
+        public XwbRegion[] Segments { get; set; }
     }
 }

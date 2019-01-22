@@ -5,6 +5,6 @@ namespace RhythmCodex.Xact.Streamers
 {
     public interface IXwbRegionStreamReader
     {
-        WaveBankRegion Read(Stream source);
+        XwbRegion Read(Stream source);
     }
 }

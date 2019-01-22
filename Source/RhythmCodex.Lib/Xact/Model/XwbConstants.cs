@@ -1,6 +1,6 @@
 namespace RhythmCodex.Xact.Model
 {
-    public static class XactConstants
+    public static class XwbConstants
     {
         public const int AdpcmMiniwaveformatBlockalignConversionOffset = 22;
         public const int WavebankHeaderSignature = 0x444E4257;

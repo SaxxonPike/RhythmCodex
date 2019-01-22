@@ -22,10 +22,10 @@ namespace RhythmCodex.Xact.Streamers
             _xwbSampleRegionStreamReader = xwbSampleRegionStreamReader;
         }
         
-        public WaveBankEntry Read(Stream source)
+        public XwbEntry Read(Stream source)
         {
             var reader = new BinaryReader(source);
-            var result = new WaveBankEntry
+            var result = new XwbEntry
             {
                 Value = reader.ReadInt32(),
                 Format = _xwbMiniWaveFormatStreamReader.Read(source),

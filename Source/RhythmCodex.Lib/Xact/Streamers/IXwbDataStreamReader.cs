@@ -5,6 +5,6 @@ namespace RhythmCodex.Xact.Streamers
 {
     public interface IXwbDataStreamReader
     {
-        WaveBankData Read(Stream source);
+        XwbData Read(Stream source);
     }
 }

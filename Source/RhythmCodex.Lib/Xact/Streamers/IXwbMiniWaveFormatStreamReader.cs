@@ -5,6 +5,6 @@ namespace RhythmCodex.Xact.Streamers
 {
     public interface IXwbMiniWaveFormatStreamReader
     {
-        WaveBankMiniWaveFormat Read(Stream source);
+        XwbMiniWaveFormat Read(Stream source);
     }
 }

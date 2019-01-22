@@ -11,6 +11,7 @@ using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Xact.Converters;
 using RhythmCodex.Xact.Streamers;
 using RhythmCodex.Xbox.Streamers;
 
@@ -26,6 +27,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IXboxIsoStreamReader _xboxIsoStreamReader;
         private readonly IXboxSngStreamReader _xboxSngStreamReader;
         private readonly IXboxHbnStreamReader _xboxHbnStreamReader;
+        private readonly IXwbDecoder _xwbDecoder;
 
         public XboxTaskBuilder(
             IFileSystem fileSystem,
@@ -36,7 +38,8 @@ namespace RhythmCodex.Cli.Orchestration
             IXwbStreamReader xwbStreamReader,
             IXboxIsoStreamReader xboxIsoStreamReader,
             IXboxSngStreamReader xboxSngStreamReader,
-            IXboxHbnStreamReader xboxHbnStreamReader)
+            IXboxHbnStreamReader xboxHbnStreamReader,
+            IXwbDecoder xwbDecoder)
             : base(fileSystem, logger)
         {
             _imaAdpcmDecoder = imaAdpcmDecoder;
@@ -46,6 +49,7 @@ namespace RhythmCodex.Cli.Orchestration
             _xboxIsoStreamReader = xboxIsoStreamReader;
             _xboxSngStreamReader = xboxSngStreamReader;
             _xboxHbnStreamReader = xboxHbnStreamReader;
+            _xwbDecoder = xwbDecoder;
         }
 
         public ITask CreateExtractHbn()
@@ -140,8 +144,9 @@ namespace RhythmCodex.Cli.Orchestration
                         var index = 0;
                         foreach (var sound in _xwbStreamReader.Read(stream))
                         {
-                            var encoded = _riffPcm16SoundEncoder.Encode(sound);
-                            var name = sound[StringData.Name];
+                            var decoded = _xwbDecoder.Decode(sound);
+                            var encoded = _riffPcm16SoundEncoder.Encode(decoded);
+                            var name = decoded[StringData.Name];
                             using (var outStream =
                                 OpenWriteSingle(task, file, i => $"{name ?? $"{i}{index:0000}"}.wav"))
                             {

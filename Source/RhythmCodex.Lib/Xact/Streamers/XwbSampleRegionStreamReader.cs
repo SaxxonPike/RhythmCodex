@@ -7,10 +7,10 @@ namespace RhythmCodex.Xact.Streamers
     [Service]
     public class XwbSampleRegionStreamReader : IXwbSampleRegionStreamReader
     {
-        public WaveBankSampleRegion Read(Stream source)
+        public XwbSampleRegion Read(Stream source)
         {
             var reader = new BinaryReader(source);
-            var result = new WaveBankSampleRegion
+            var result = new XwbSampleRegion
             {
                 StartSample = reader.ReadInt32(),
                 TotalSamples = reader.ReadInt32()

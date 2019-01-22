@@ -5,7 +5,7 @@ using RhythmCodex.Wav.Models;
 namespace RhythmCodex.Xact.Model
 {
     [Model]
-    public struct WaveBankMiniWaveFormat : IWaveFormat
+    public struct XwbMiniWaveFormat : IWaveFormat
     {
         public int Value;
 
@@ -16,13 +16,13 @@ namespace RhythmCodex.Xact.Model
             {
                 switch (wFormatTag)
                 {
-                    case XactConstants.WavebankminiformatTagXma:
-                    case XactConstants.WavebankminiformatTagWma:
+                    case XwbConstants.WavebankminiformatTagXma:
+                    case XwbConstants.WavebankminiformatTagWma:
                         return 2 * 8;
-                    case XactConstants.WavebankminiformatTagAdpcm:
+                    case XwbConstants.WavebankminiformatTagAdpcm:
                         return 4;
                     default:
-                        return wBitsPerSample == XactConstants.WavebankminiformatBitdepth16 ? 16 : 8;
+                        return wBitsPerSample == XwbConstants.WavebankminiformatBitdepth16 ? 16 : 8;
                 }
             }
         }
@@ -33,16 +33,16 @@ namespace RhythmCodex.Xact.Model
             {
                 switch (wFormatTag)
                 {
-                    case XactConstants.WavebankminiformatTagPcm:
+                    case XwbConstants.WavebankminiformatTagPcm:
                         return wBlockAlign;
-                    case XactConstants.WavebankminiformatTagXma:
+                    case XwbConstants.WavebankminiformatTagXma:
                         return (nChannels * (8 * 2) / 8);
-                    case XactConstants.WavebankminiformatTagAdpcm:
-                        return (wBlockAlign + XactConstants.AdpcmMiniwaveformatBlockalignConversionOffset) * nChannels;
-                    case XactConstants.WavebankminiformatTagWma:
+                    case XwbConstants.WavebankminiformatTagAdpcm:
+                        return (wBlockAlign + XwbConstants.AdpcmMiniwaveformatBlockalignConversionOffset) * nChannels;
+                    case XwbConstants.WavebankminiformatTagWma:
                         var dwBlockAlignIndex = wBlockAlign & 0x1F;
-                        if (dwBlockAlignIndex < XactConstants.MaxWmaBlockAlignEntries)
-                            return XactConstants.WmaBlockAlign[dwBlockAlignIndex];
+                        if (dwBlockAlignIndex < XwbConstants.MaxWmaBlockAlignEntries)
+                            return XwbConstants.WmaBlockAlign[dwBlockAlignIndex];
                         break;
                 }
                 return 0;
@@ -55,15 +55,15 @@ namespace RhythmCodex.Xact.Model
             {
                 switch (wFormatTag)
                 {
-                    case XactConstants.WavebankminiformatTagPcm:
-                    case XactConstants.WavebankminiformatTagXma:
+                    case XwbConstants.WavebankminiformatTagPcm:
+                    case XwbConstants.WavebankminiformatTagXma:
                         return (nSamplesPerSec * wBlockAlign);
-                    case XactConstants.WavebankminiformatTagAdpcm:
+                    case XwbConstants.WavebankminiformatTagAdpcm:
                         return (BlockAlign * nSamplesPerSec / AdpcmSamplesPerBlock);
-                    case XactConstants.WavebankminiformatTagWma:
+                    case XwbConstants.WavebankminiformatTagWma:
                         var dwBytesPerSecIndex = wBlockAlign >> 5;
-                        if (dwBytesPerSecIndex < XactConstants.MaxWmaAvgBytesPerSecEntries)
-                            return XactConstants.WmaAvgBytesPerSec[dwBytesPerSecIndex];
+                        if (dwBytesPerSecIndex < XwbConstants.MaxWmaAvgBytesPerSecEntries)
+                            return XwbConstants.WmaAvgBytesPerSec[dwBytesPerSecIndex];
                         break;
                 }
                 return 0;
@@ -74,7 +74,7 @@ namespace RhythmCodex.Xact.Model
         {
             get
             {
-                var nBlockAlign = (wBlockAlign + XactConstants.AdpcmMiniwaveformatBlockalignConversionOffset) * nChannels;
+                var nBlockAlign = (wBlockAlign + XwbConstants.AdpcmMiniwaveformatBlockalignConversionOffset) * nChannels;
                 return nBlockAlign * 2 / nChannels - 12;
             }
         }

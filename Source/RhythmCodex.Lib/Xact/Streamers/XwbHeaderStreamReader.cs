@@ -14,15 +14,15 @@ namespace RhythmCodex.Xact.Streamers
             _xwbRegionStreamReader = xwbRegionStreamReader;
         }
         
-        public WaveBankHeader Read(Stream source)
+        public XwbHeader Read(Stream source)
         {
             var reader = new BinaryReader(source);
-            var result = new WaveBankHeader
+            var result = new XwbHeader
             {
                 Signature = reader.ReadInt32(),
                 Version = reader.ReadInt32(),
                 HeaderVersion = reader.ReadInt32(),
-                Segments = new WaveBankRegion[(int) WaveBankSegIdx.Count]
+                Segments = new XwbRegion[(int) XwbSegIdx.Count]
             };
 
             for (var i = 0; i < result.Segments.Length; i++)

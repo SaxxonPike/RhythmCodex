@@ -1,6 +1,6 @@
 namespace RhythmCodex.Xact.Model
 {
-    public enum WaveBankSegIdx
+    public enum XwbSegIdx
     {
         BankData = 0,
         EntryMetaData,
