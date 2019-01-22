@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+        <RootNamespace>RhythmCodex.Data</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Beatmania\2dx9th.zip" />
+        <EmbeddedResource Include="Beatmania\chart9th.zip" />
+        <EmbeddedResource Include="BeatmaniaPsx\chart.zip" />
+        <EmbeddedResource Include="BeatmaniaPsx\keysounds.zip" />
+        <EmbeddedResource Include="Bms\positive.zip" />
+        <EmbeddedResource Include="Bms\random.zip" />
+        <EmbeddedResource Include="Dds\dxt1.zip" />
+        <EmbeddedResource Include="Dds\dxt5.zip" />
+        <EmbeddedResource Include="Dds\uncompressed.zip" />
+        <EmbeddedResource Include="Djmain\bm1st.zip" />
+        <EmbeddedResource Include="Djmain\bm7th.zip" />
+        <EmbeddedResource Include="Djmain\bmcm.zip" />
+        <EmbeddedResource Include="Djmain\bmcm2.zip" />
+        <EmbeddedResource Include="Djmain\bmfinal.zip" />
+        <EmbeddedResource Include="Djmain\chart.zip" />
+        <EmbeddedResource Include="Flac\example.flac.zip" />
+        <EmbeddedResource Include="ImaAdpcm\RawXboxAdpcm.zip" />
+        <EmbeddedResource Include="Iso\test-iso.zip" />
+        <EmbeddedResource Include="Mp3\example.mp3.zip" />
+        <EmbeddedResource Include="Ogg\example.ogg.zip" />
+        <EmbeddedResource Include="Ssq\freeze.zip" />
+        <EmbeddedResource Include="Ssq\shock.zip" />
+        <EmbeddedResource Include="Ssq\solo.zip" />
+        <EmbeddedResource Include="Step1\2nd.zip" />
+        <EmbeddedResource Include="Step1\picky.zip" />
+        <EmbeddedResource Include="Step1\solo.zip" />
+        <EmbeddedResource Include="Step2\couple.zip" />
+        <EmbeddedResource Include="Step2\double.zip" />
+        <EmbeddedResource Include="Step2\single.zip" />
+        <EmbeddedResource Include="Vag\svag.zip" />
+        <EmbeddedResource Include="Vag\xa2.zip" />
+        <EmbeddedResource Include="Wav\alaw.zip" />
+        <EmbeddedResource Include="Wav\double.zip" />
+        <EmbeddedResource Include="Wav\imaadpcm.zip" />
+        <EmbeddedResource Include="Wav\mp3.zip" />
+        <EmbeddedResource Include="Wav\msadpcm.zip" />
+        <EmbeddedResource Include="Wav\pcm8.zip" />
+        <EmbeddedResource Include="Wav\pcm16.zip" />
+        <EmbeddedResource Include="Wav\pcm24.zip" />
+        <EmbeddedResource Include="Wav\pcm32.zip" />
+        <EmbeddedResource Include="Wav\single.zip" />
+        <EmbeddedResource Include="Wav\ulaw.zip" />
+        <EmbeddedResource Include="Xa\xa.zip" />
+        <EmbeddedResource Include="Xact\xsb.zip" />
+        <EmbeddedResource Include="Xact\xwb.zip" />
+    </ItemGroup>
+</Project>

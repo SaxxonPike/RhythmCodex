@@ -7,9 +7,8 @@ using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Vag.Converters;
-using RhythmCodex.Vag.Streamers;
 
-namespace RhythmCodex.BeatmaniaPsx.Integration
+namespace RhythmCodex.Beatmania.Integration
 {
     [TestFixture]
     public class BeatmaniaPsxKeysoundIntegrationTests : BaseIntegrationFixture
