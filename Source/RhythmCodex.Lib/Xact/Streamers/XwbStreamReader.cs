@@ -19,15 +19,24 @@ namespace RhythmCodex.Xact.Streamers
         private readonly IPcmDecoder _pcmDecoder;
         private readonly IImaAdpcmDecoder _imaAdpcmDecoder;
         private readonly IMicrosoftAdpcmDecoder _microsoftAdpcmDecoder;
+        private readonly IXwbDataStreamReader _xwbDataStreamReader;
+        private readonly IXwbEntryStreamReader _xwbEntryStreamReader;
+        private readonly IXwbHeaderStreamReader _xwbHeaderStreamReader;
 
         public XwbStreamReader(
             IPcmDecoder pcmDecoder,
             IImaAdpcmDecoder imaAdpcmDecoder,
-            IMicrosoftAdpcmDecoder microsoftAdpcmDecoder)
+            IMicrosoftAdpcmDecoder microsoftAdpcmDecoder,
+            IXwbHeaderStreamReader xwbHeaderStreamReader,
+            IXwbDataStreamReader xwbDataStreamReader,
+            IXwbEntryStreamReader xwbEntryStreamReader)
         {
             _pcmDecoder = pcmDecoder;
             _imaAdpcmDecoder = imaAdpcmDecoder;
             _microsoftAdpcmDecoder = microsoftAdpcmDecoder;
+            _xwbDataStreamReader = xwbDataStreamReader;
+            _xwbEntryStreamReader = xwbEntryStreamReader;
+            _xwbHeaderStreamReader = xwbHeaderStreamReader;
         }
 
         public IEnumerable<ISound> Read(Stream source)
@@ -39,7 +48,7 @@ namespace RhythmCodex.Xact.Streamers
                 string[] names = { };
                 var dataChunk = new MemoryStream();
 
-                var header = WaveBankHeader.Read(source);
+                var header = _xwbHeaderStreamReader.Read(source);
 
                 for (var i = 0; i < (int) WaveBankSegIdx.Count; i++)
                 {
@@ -53,7 +62,7 @@ namespace RhythmCodex.Xact.Streamers
                     switch (i)
                     {
                         case (int) WaveBankSegIdx.BankData:
-                            var bank = WaveBankData.Read(mem);
+                            var bank = _xwbDataStreamReader.Read(mem);
                             sampleCount = bank.EntryCount;
                             entries = new WaveBankEntry[sampleCount];
                             names = new string[sampleCount];
@@ -61,7 +70,7 @@ namespace RhythmCodex.Xact.Streamers
                             break;
                         case (int) WaveBankSegIdx.EntryMetaData:
                             for (var j = 0; j < sampleCount; j++)
-                                entries[j] = WaveBankEntry.Read(mem);
+                                entries[j] = _xwbEntryStreamReader.Read(mem);
                             mem.Dispose();
                             break;
                         case (int) WaveBankSegIdx.EntryNames:

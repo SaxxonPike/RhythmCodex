@@ -1,8 +1,10 @@
 using System.IO;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Xact.Model
 {
+    [Model]
     public struct WaveBankMiniWaveFormat : IWaveFormat
     {
         public int Value;
@@ -111,13 +113,6 @@ namespace RhythmCodex.Xact.Model
         {
             get => (Value >> 31) & 0x1;
             set { Value &= ~(0x1 << 31); Value |= (value & 0x1) << 31; }
-        }
-
-        public static WaveBankMiniWaveFormat Read(Stream source)
-        {
-            var reader = new BinaryReader(source);
-            var result = new WaveBankMiniWaveFormat {Value = reader.ReadInt32()};
-            return result;
         }
     }
 }

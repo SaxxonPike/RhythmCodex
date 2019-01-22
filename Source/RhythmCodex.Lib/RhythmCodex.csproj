@@ -15,7 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Step1\Mappers" />
-    <Folder Include="Xact\Converters" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib.ThirdParty\RhythmCodex.Thirdparty.csproj" />

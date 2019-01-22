@@ -1,21 +1,12 @@
 using System.IO;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Xact.Model
 {
+    [Model]
     public struct WaveBankSampleRegion
     {
-        public int StartSample;
-        public int TotalSamples;
-
-        public static WaveBankSampleRegion Read(Stream source)
-        {
-            var reader = new BinaryReader(source);
-            var result = new WaveBankSampleRegion
-            {
-                StartSample = reader.ReadInt32(),
-                TotalSamples = reader.ReadInt32()
-            };
-            return result;
-        }
+        public int StartSample { get; set; }
+        public int TotalSamples { get; set; }
     }
 }
