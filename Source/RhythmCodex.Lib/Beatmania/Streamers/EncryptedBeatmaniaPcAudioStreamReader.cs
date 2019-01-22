@@ -1,26 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
-using RhythmCodex.Wav.Converters;
 
 namespace RhythmCodex.Beatmania.Streamers
 {
     [Service]
-    public class BeatmaniaPcAudioStreamer : IBeatmaniaPcAudioStreamer
+    public class EncryptedBeatmaniaPcAudioStreamReader : IEncryptedBeatmaniaPcAudioStreamReader
     {
         // reference: crack2dx.c (thanks Tau)
         // borrowed from Scharfrichter
-
-        private readonly IWavDecoder _wavDecoder;
-
-        public BeatmaniaPcAudioStreamer(IWavDecoder wavDecoder)
-        {
-            _wavDecoder = wavDecoder;
-        }
 
         private enum BeatmaniaPcAudioEncryptionType
         {
@@ -114,7 +102,9 @@ namespace RhythmCodex.Beatmania.Streamers
                 using (var encodedDataMem = new MemoryStream(data))
                 {
                     DecryptInternal(encodedDataMem, decodedData, key, encType);
-                    return decodedData.ToArray();
+                    var result = decodedData.ToArray();
+                    File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "decrypted.2dx"), result);
+                    return result;
                 }
             }
         }
@@ -190,78 +180,6 @@ namespace RhythmCodex.Beatmania.Streamers
                 block[5] ^= (byte) d;
                 block[6] ^= (byte) i;
                 block[7] ^= (byte) g;
-            }
-        }
-
-        public IEnumerable<ISound> Read(Stream source, long length)
-        {
-            var baseOffset = source.Position;
-            var reader = new BinaryReader(source);
-
-            reader.ReadBytes(0x10);
-
-            var headerLength = reader.ReadInt32();
-            var sampleCount = reader.ReadInt32();
-            var sampleOffset = new long[sampleCount];
-
-            reader.ReadBytes(0x30);
-
-            for (var i = 0; i < sampleCount; i++)
-                sampleOffset[i] = reader.ReadInt32();
-
-            for (var i = 0; i < sampleCount; i++)
-            {
-                reader.BaseStream.Position = sampleOffset[i] + baseOffset;
-                yield return ReadInternal(source);
-            }
-        }
-
-        private static readonly BigRational[] VolumeTable =
-            Enumerable
-                .Range(0, 256)
-                .Select(i => new BigRational(Math.Pow(10.0f, -36.0f * i / 64f / 20.0f)))
-                .ToArray();
-
-        private ISound ReadInternal(Stream source)
-        {
-            var reader = new BinaryReader(source);
-            if (new string(reader.ReadChars(4)) != "2DX9")
-                return null;
-
-            var infoLength = reader.ReadInt32();
-            var dataLength = reader.ReadInt32();
-            reader.ReadInt16();
-            int channel = reader.ReadInt16();
-            int panning = reader.ReadInt16();
-            int volume = reader.ReadInt16();
-            var options = reader.ReadInt32();
-
-            reader.ReadBytes(infoLength - 24);
-
-            var wavData = reader.ReadBytes(dataLength);
-            using (var wavDataMem = new MemoryStream(wavData))
-            {
-                //File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "out.wav"), wavData);
-                var result = _wavDecoder.Decode(wavDataMem);
-
-                // calculate output panning
-                if (panning > 0x7F || panning < 0x01)
-                    panning = 0x40;
-                result[NumericData.Panning] = (panning - 1.0d) / 126.0d;
-
-                // calculate output volume
-                if (volume < 0x01)
-                    volume = 0x01;
-                else if (volume > 0xFF)
-                    volume = 0xFF;
-                result[NumericData.Volume] = VolumeTable[volume];
-
-                // retain additional metadata
-                result[NumericData.Channel] = channel;
-                result[NumericData.SourceVolume] = volume;
-                result[NumericData.SourcePanning] = panning;
-
-                return result;
             }
         }
     }

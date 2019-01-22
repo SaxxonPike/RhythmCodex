@@ -8,6 +8,7 @@ using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Beatmania.Streamers
 {
+    [Service]
     public class BeatmaniaPsxKeysoundStreamReader : IBeatmaniaPsxKeysoundStreamReader
     {
         private readonly IVagStreamReader _vagStreamReader;

@@ -24,46 +24,52 @@ namespace RhythmCodex.Cli.Orchestration
     [InstancePerDependency]
     public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
     {
-        private readonly IBeatmaniaPcAudioStreamer _beatmaniaPcAudioStreamer;
+        private readonly IBeatmaniaPcAudioStreamReader _beatmaniaPcAudioStreamReader;
         private readonly IRiffPcm16SoundEncoder _riffPcm16SoundEncoder;
         private readonly IRiffStreamWriter _riffStreamWriter;
         private readonly IAudioDsp _audioDsp;
-        private readonly IBeatmaniaPc1Streamer _beatmaniaPc1Streamer;
+        private readonly IBeatmaniaPc1StreamReader _beatmaniaPc1StreamReader;
         private readonly IBeatmaniaPc1ChartDecoder _beatmaniaPc1ChartDecoder;
         private readonly IBmsEncoder _bmsEncoder;
         private readonly IBmsStreamWriter _bmsStreamWriter;
         private readonly IDjmainDecoder _djmainDecoder;
         private readonly IDjmainChunkStreamReader _djmainChunkStreamReader;
         private readonly IUsedSamplesCounter _usedSamplesCounter;
+        private readonly IBeatmaniaPcAudioDecoder _beatmaniaPcAudioDecoder;
+        private readonly IEncryptedBeatmaniaPcAudioStreamReader _encryptedBeatmaniaPcAudioStreamReader;
 
         public BeatmaniaTaskBuilder(
             IFileSystem fileSystem,
             ILogger logger,
-            IBeatmaniaPcAudioStreamer beatmaniaPcAudioStreamer,
+            IBeatmaniaPcAudioStreamReader beatmaniaPcAudioStreamReader,
             IRiffPcm16SoundEncoder riffPcm16SoundEncoder,
             IRiffStreamWriter riffStreamWriter,
             IAudioDsp audioDsp,
-            IBeatmaniaPc1Streamer beatmaniaPc1Streamer,
+            IBeatmaniaPc1StreamReader beatmaniaPc1StreamReader,
             IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder,
             IBmsEncoder bmsEncoder,
             IBmsStreamWriter bmsStreamWriter,
             IDjmainDecoder djmainDecoder,
             IDjmainChunkStreamReader djmainChunkStreamReader,
-            IUsedSamplesCounter usedSamplesCounter
+            IUsedSamplesCounter usedSamplesCounter,
+            IBeatmaniaPcAudioDecoder beatmaniaPcAudioDecoder,
+            IEncryptedBeatmaniaPcAudioStreamReader encryptedBeatmaniaPcAudioStreamReader
         )
             : base(fileSystem, logger)
         {
-            _beatmaniaPcAudioStreamer = beatmaniaPcAudioStreamer;
+            _beatmaniaPcAudioStreamReader = beatmaniaPcAudioStreamReader;
             _riffPcm16SoundEncoder = riffPcm16SoundEncoder;
             _riffStreamWriter = riffStreamWriter;
             _audioDsp = audioDsp;
-            _beatmaniaPc1Streamer = beatmaniaPc1Streamer;
+            _beatmaniaPc1StreamReader = beatmaniaPc1StreamReader;
             _beatmaniaPc1ChartDecoder = beatmaniaPc1ChartDecoder;
             _bmsEncoder = bmsEncoder;
             _bmsStreamWriter = bmsStreamWriter;
             _djmainDecoder = djmainDecoder;
             _djmainChunkStreamReader = djmainChunkStreamReader;
             _usedSamplesCounter = usedSamplesCounter;
+            _beatmaniaPcAudioDecoder = beatmaniaPcAudioDecoder;
+            _encryptedBeatmaniaPcAudioStreamReader = encryptedBeatmaniaPcAudioStreamReader;
         }
 
         public ITask CreateDecode1()
@@ -88,7 +94,7 @@ namespace RhythmCodex.Cli.Orchestration
                 {
                     using (var stream = OpenRead(task, file))
                     {
-                        var charts = _beatmaniaPc1Streamer.Read(stream, stream.Length).ToList();
+                        var charts = _beatmaniaPc1StreamReader.Read(stream, stream.Length).ToList();
                         var decoded = charts.Select(c =>
                         {
                             var newChart = _beatmaniaPc1ChartDecoder.Decode(c.Data, rate);
@@ -159,23 +165,21 @@ namespace RhythmCodex.Cli.Orchestration
                 {
                     using (var stream = OpenRead(task, file))
                     {
-                        var decrypted = _beatmaniaPcAudioStreamer.Decrypt(stream, stream.Length);
-                        using (var decryptedStream = new MemoryStream(decrypted))
+                        var decrypted = _encryptedBeatmaniaPcAudioStreamReader.Decrypt(stream, stream.Length);
+                        var sounds = _beatmaniaPcAudioStreamReader.Read(new MemoryStream(decrypted), decrypted.Length);
+                        var index = 1;
+                        foreach (var sound in sounds)
                         {
-                            var sounds = _beatmaniaPcAudioStreamer.Read(decryptedStream, stream.Length);
-                            var index = 1;
-                            foreach (var sound in sounds)
+                            var decoded = _beatmaniaPcAudioDecoder.Decode(sound);
+                            var outSound = _audioDsp.ApplyEffects(decoded);
+                            using (var outStream =
+                                OpenWriteMulti(task, file, i => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
                             {
-                                var outSound = _audioDsp.ApplyEffects(sound);
-                                using (var outStream =
-                                    OpenWriteMulti(task, file, i => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
-                                {
-                                    var encoded = _riffPcm16SoundEncoder.Encode(outSound);
-                                    _riffStreamWriter.Write(outStream, encoded);
-                                }
-
-                                index++;
+                                var encoded = _riffPcm16SoundEncoder.Encode(outSound);
+                                _riffStreamWriter.Write(outStream, encoded);
                             }
+
+                            index++;
                         }
                     }
                 });

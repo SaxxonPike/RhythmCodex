@@ -7,7 +7,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Beatmania.Streamers
 {
     [Service]
-    public class BeatmaniaPc1Streamer : IBeatmaniaPc1Streamer
+    public class BeatmaniaPc1StreamReader : IBeatmaniaPc1StreamReader
     {
         public IEnumerable<BeatmaniaPc1Chart> Read(Stream source, long length)
         {
@@ -53,10 +53,5 @@ namespace RhythmCodex.Beatmania.Streamers
                 };
             }
         }
-    }
-
-    public interface IBeatmaniaPc1Streamer
-    {
-        IEnumerable<BeatmaniaPc1Chart> Read(Stream source, long length);
     }
 }

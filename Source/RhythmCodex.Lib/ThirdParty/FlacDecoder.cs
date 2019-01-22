@@ -1,6 +1,5 @@
 using System.IO;
 using System.Linq;
-using CSCore;
 using CSCore.Codecs.FLAC;
 using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
