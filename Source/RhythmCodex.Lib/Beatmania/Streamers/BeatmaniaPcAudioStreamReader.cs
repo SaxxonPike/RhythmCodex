@@ -12,11 +12,12 @@ namespace RhythmCodex.Beatmania.Streamers
     [Service]
     public class BeatmaniaPcAudioStreamReader : IBeatmaniaPcAudioStreamReader
     {
-        private readonly IWavDecoder _wavDecoder;
+        private readonly IBeatmaniaPcAudioEntryStreamReader _beatmaniaPcAudioEntryStreamReader;
 
-        public BeatmaniaPcAudioStreamReader(IWavDecoder wavDecoder)
+        public BeatmaniaPcAudioStreamReader(
+            IBeatmaniaPcAudioEntryStreamReader beatmaniaPcAudioEntryStreamReader)
         {
-            _wavDecoder = wavDecoder;
+            _beatmaniaPcAudioEntryStreamReader = beatmaniaPcAudioEntryStreamReader;
         }
 
         public IEnumerable<BeatmaniaPcAudioEntry> Read(Stream source, long length)
@@ -38,37 +39,8 @@ namespace RhythmCodex.Beatmania.Streamers
             for (var i = 0; i < sampleCount; i++)
             {
                 reader.BaseStream.Position = sampleOffset[i] + baseOffset;
-                yield return ReadInternal(source);
+                yield return _beatmaniaPcAudioEntryStreamReader.Read(source);
             }
-        }
-
-        private BeatmaniaPcAudioEntry ReadInternal(Stream source)
-        {
-            var reader = new BinaryReader(source);
-            if (new string(reader.ReadChars(4)) != "2DX9")
-                return null;
-
-            var infoLength = reader.ReadInt32();
-            var dataLength = reader.ReadInt32();
-            var reserved = reader.ReadInt16();
-            int channel = reader.ReadInt16();
-            int panning = reader.ReadInt16();
-            int volume = reader.ReadInt16();
-            var options = reader.ReadInt32();
-            var extraInfo = reader.ReadBytes(infoLength - 24);
-
-            var wavData = reader.ReadBytes(dataLength);
-            
-            return new BeatmaniaPcAudioEntry
-            {
-                Channel = channel,
-                Data = wavData,
-                ExtraInfo = extraInfo,
-                Options = options,
-                Panning = panning,
-                Reserved = reserved,
-                Volume = volume
-            };
         }
     }
 }
