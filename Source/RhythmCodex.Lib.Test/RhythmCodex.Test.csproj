@@ -20,7 +20,6 @@
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Beatmania\Streamers" />
         <Folder Include="ImaAdpcm\Converters" />
         <Folder Include="Ssq" />
         <Folder Include="Stepmania" />

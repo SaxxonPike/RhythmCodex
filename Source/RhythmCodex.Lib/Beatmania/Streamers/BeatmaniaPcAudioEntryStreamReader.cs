@@ -19,8 +19,7 @@ namespace RhythmCodex.Beatmania.Streamers
             int channel = reader.ReadInt16();
             int panning = reader.ReadInt16();
             int volume = reader.ReadInt16();
-            var options = reader.ReadInt32();
-            var extraInfo = reader.ReadBytes(infoLength - 24);
+            var extraInfo = reader.ReadBytes(infoLength - 0x14);
 
             var wavData = reader.ReadBytes(dataLength);
             
@@ -29,7 +28,6 @@ namespace RhythmCodex.Beatmania.Streamers
                 Channel = channel,
                 Data = wavData,
                 ExtraInfo = extraInfo,
-                Options = options,
                 Panning = panning,
                 Reserved = reserved,
                 Volume = volume
