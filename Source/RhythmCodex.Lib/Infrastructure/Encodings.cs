@@ -12,7 +12,7 @@ namespace RhythmCodex.Infrastructure
         public static readonly Encoding CP1252 = CodePagesEncodingProvider.Instance.GetEncoding(1252);
         public static readonly Encoding UTF8 = Encoding.UTF8;
 
-        public static string GetString(this Encoding encoding, Span<byte> bytes) =>
+        public static string GetString(this Encoding encoding, ReadOnlySpan<byte> bytes) =>
             encoding.GetString(bytes.ToArray());
     }
 }

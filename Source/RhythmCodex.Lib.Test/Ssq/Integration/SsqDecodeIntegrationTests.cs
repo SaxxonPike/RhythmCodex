@@ -25,6 +25,20 @@ namespace RhythmCodex.Ssq.Integration
         }
 
         [Test]
+        public void DecodeOffsetSsq()
+        {
+            // Arrange.
+            var data = GetArchiveResource("Ssq.offset.zip")
+                .First()
+                .Value;
+
+            // Act.
+            var charts = DecodeCharts(data).AsList();
+
+            // Assert.
+        }
+
+        [Test]
         public void DecodeFreezeSsq()
         {
             // Arrange.

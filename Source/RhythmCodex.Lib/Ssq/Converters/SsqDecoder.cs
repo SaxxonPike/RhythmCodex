@@ -6,6 +6,7 @@ using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
+using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
@@ -16,23 +17,14 @@ namespace RhythmCodex.Ssq.Converters
         private readonly IPanelMapperSelector _panelMapperSelector;
         private readonly ISsqChunkFilter _ssqChunkFilter;
         private readonly ISsqEventDecoder _ssqEventDecoder;
-        private readonly IStepChunkDecoder _stepChunkDecoder;
-        private readonly ITimingChunkDecoder _timingChunkDecoder;
-        private readonly ITriggerChunkDecoder _triggerChunkDecoder;
 
         public SsqDecoder(
             ISsqEventDecoder ssqEventDecoder,
-            ITimingChunkDecoder timingDecoder,
-            IStepChunkDecoder stepChunkDecoder,
-            ITriggerChunkDecoder triggerChunkDecoder,
             IPanelMapperSelector panelMapperSelector,
             IChartInfoDecoder chartInfoDecoder,
             ISsqChunkFilter ssqChunkFilter)
         {
             _ssqEventDecoder = ssqEventDecoder;
-            _timingChunkDecoder = timingDecoder;
-            _stepChunkDecoder = stepChunkDecoder;
-            _triggerChunkDecoder = triggerChunkDecoder;
             _panelMapperSelector = panelMapperSelector;
             _chartInfoDecoder = chartInfoDecoder;
             _ssqChunkFilter = ssqChunkFilter;
@@ -60,8 +52,13 @@ namespace RhythmCodex.Ssq.Converters
                         .AsList(),
                     [NumericData.Id] = sc.Id,
                     [StringData.Difficulty] = info.Difficulty,
-                    [StringData.Type] = $"dance-{info.Type.ToLowerInvariant()}"
+                    [StringData.Type] = $"{SmGameTypes.Dance}-{info.Type}".ToLowerInvariant()
                 };
+
+                var firstTiming = timings.Timings.OrderBy(t => t.LinearOffset).First();
+                chart[NumericData.LinearOffset] = chart.GetZeroLinearReference(
+                    (BigRational) firstTiming.LinearOffset / timings.Rate,
+                    (BigRational) firstTiming.MetricOffset / SsqConstants.MeasureLength);
 
                 if (meta != null)
                 {
@@ -71,19 +68,29 @@ namespace RhythmCodex.Ssq.Converters
 
                     switch (sc.Id)
                     {
+                        case 0x0113:
                         case 0x0114:
+                        case 0x0116:
                             chart[NumericData.PlayLevel] = meta.Difficulties[1];
                             break;
+                        case 0x0213:
                         case 0x0214:
+                        case 0x0216:
                             chart[NumericData.PlayLevel] = meta.Difficulties[2];
                             break;
+                        case 0x0313:
                         case 0x0314:
+                        case 0x0316:
                             chart[NumericData.PlayLevel] = meta.Difficulties[3];
                             break;
+                        case 0x0413:
                         case 0x0414:
+                        case 0x0416:
                             chart[NumericData.PlayLevel] = meta.Difficulties[0];
                             break;
+                        case 0x0613:
                         case 0x0614:
+                        case 0x0616:
                             chart[NumericData.PlayLevel] = meta.Difficulties[4];
                             break;
                         case 0x0118:

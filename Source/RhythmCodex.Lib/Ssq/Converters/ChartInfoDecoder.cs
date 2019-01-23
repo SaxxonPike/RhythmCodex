@@ -1,5 +1,6 @@
 ﻿using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Model;
+using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Ssq.Converters
 {
@@ -29,13 +30,13 @@ namespace RhythmCodex.Ssq.Converters
             switch (param1 & 0xFF)
             {
                 case 0x14:
-                    return "Single";
+                    return SmGameTypes.Single;
                 case 0x16:
-                    return "Solo";
+                    return SmGameTypes.Solo;
                 case 0x18:
-                    return "Double";
+                    return SmGameTypes.Double;
                 case 0x24:
-                    return "Couple";
+                    return SmGameTypes.Couple;
                 default:
                     _logger.Warning($"Unrecognized chart type {param1 & 0xFF:X2}");
                     return null;
@@ -47,21 +48,21 @@ namespace RhythmCodex.Ssq.Converters
             switch ((param1 >> 8) & 0xFF)
             {
                 case 0x01:
-                    return "Easy";
+                    return SmNotesDifficulties.Easy;
                 case 0x02:
-                    return "Medium";
+                    return SmNotesDifficulties.Medium;
                 case 0x03:
-                    return "Hard";
+                    return SmNotesDifficulties.Hard;
                 case 0x04:
-                    return "Beginner";
+                    return SmNotesDifficulties.Beginner;
                 case 0x06:
-                    return "Challenge";
+                    return SmNotesDifficulties.Challenge;
                 case 0x10:
                     // TODO: Couple charts use this value. This doesn't seem right.
-                    return "Medium";
+                    return SmNotesDifficulties.Medium;
                 default:
                     _logger.Warning($"Unrecognized chart difficulty {(param1 >> 8) & 0xFF:X2}");
-                    return "Edit";
+                    return SmNotesDifficulties.Edit;
             }
         }
 

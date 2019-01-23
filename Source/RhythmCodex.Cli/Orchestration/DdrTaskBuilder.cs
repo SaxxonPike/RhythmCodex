@@ -8,6 +8,7 @@ using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Streamers;
+using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Sif.Converters;
 using RhythmCodex.Sif.Streamers;
@@ -41,6 +42,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly ISifStreamReader _sifStreamReader;
         private readonly ISmStreamReader _smStreamReader;
         private readonly ISifSmMetadataChanger _sifSmMetadataChanger;
+        private readonly IHeuristicTester _heuristicTester;
 
         public DdrTaskBuilder(
             IFileSystem fileSystem,
@@ -58,7 +60,8 @@ namespace RhythmCodex.Cli.Orchestration
             IMetadataAggregator metadataAggregator,
             ISifStreamReader sifStreamReader,
             ISmStreamReader smStreamReader,
-            ISifSmMetadataChanger sifSmMetadataChanger)
+            ISifSmMetadataChanger sifSmMetadataChanger,
+            IHeuristicTester heuristicTester)
             : base(fileSystem, logger)
         {
             _ddr573StreamReader = ddr573StreamReader;
@@ -75,6 +78,7 @@ namespace RhythmCodex.Cli.Orchestration
             _sifStreamReader = sifStreamReader;
             _smStreamReader = smStreamReader;
             _sifSmMetadataChanger = sifSmMetadataChanger;
+            _heuristicTester = heuristicTester;
         }
 
         public ITask CreateDecodeSsq()
@@ -109,7 +113,8 @@ namespace RhythmCodex.Cli.Orchestration
                                 [StringData.Title] = aggregatedInfo[StringData.Title] ?? title,
                                 [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
                                 [StringData.Artist] = aggregatedInfo[StringData.Artist],
-                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg"
+                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
+                                [ChartTag.OffsetTag] = $"{(decimal) -aggregatedInfo[NumericData.LinearOffset]}"
                             },
                             Charts = charts
                         });
@@ -270,8 +275,12 @@ namespace RhythmCodex.Cli.Orchestration
                         task.Progress = fileIndex / (float) files.Count;
                         var outFileName = $"{file.Module:X4}{file.Offset:X7}.bin";
                         task.Message = $"Writing {outFileName}";
+
+                        var extension = (_heuristicTester.Find(file.Data).FirstOrDefault()?.FileExtension ?? "bin")
+                            .ToLowerInvariant();
+
                         using (var stream =
-                            OpenWriteMulti(task, gameImage, _ => $"{file.Module:X4}{file.Offset:X7}.bin"))
+                            OpenWriteMulti(task, gameImage, _ => $"{file.Module:X4}{file.Offset:X7}.{extension}"))
                         {
                             var writer = new BinaryWriter(stream);
                             writer.Write(file.Data);

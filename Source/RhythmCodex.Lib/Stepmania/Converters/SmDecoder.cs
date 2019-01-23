@@ -95,22 +95,22 @@ namespace RhythmCodex.Stepmania.Converters
         {
             switch (type.Trim().ToLowerInvariant())
             {
-                case "dance-single":
+                case SmGameTypes.DanceSingle:
                     return 4;
-                case "dance-double":
-                case "dance-couple":
+                case SmGameTypes.DanceDouble:
+                case SmGameTypes.DanceCouple:
                     return 8;
-                case "dance-solo":
+                case SmGameTypes.DanceSolo:
                     return 6;
-                case "pump-single":
-                case "ez2-single":
-                case "ez2-double":
-                case "para-single":
+                case SmGameTypes.PumpSingle:
+                case SmGameTypes.Ez2Single:
+                case SmGameTypes.Ez2Double:
+                case SmGameTypes.ParaSingle:
                     return 5;
-                case "pump-double":
-                case "pump-couple":
+                case SmGameTypes.PumpDouble:
+                case SmGameTypes.PumpCouple:
                     return 10;
-                case "ez2-real":
+                case SmGameTypes.Ez2Real:
                     return 7;
                 default:
                     _logger.Warning($"Unknown game type {type}.");

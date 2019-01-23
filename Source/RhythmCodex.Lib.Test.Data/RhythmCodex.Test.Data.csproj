@@ -25,6 +25,7 @@
         <EmbeddedResource Include="Mp3\example.mp3.zip" />
         <EmbeddedResource Include="Ogg\example.ogg.zip" />
         <EmbeddedResource Include="Ssq\freeze.zip" />
+        <EmbeddedResource Include="Ssq\offset.zip" />
         <EmbeddedResource Include="Ssq\shock.zip" />
         <EmbeddedResource Include="Ssq\solo.zip" />
         <EmbeddedResource Include="Step1\2nd.zip" />

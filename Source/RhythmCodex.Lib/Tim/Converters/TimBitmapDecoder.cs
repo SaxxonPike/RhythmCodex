@@ -36,15 +36,13 @@ namespace RhythmCodex.Tim.Converters
 
         private void ConvertColors(int[] data, TimImage image, int clutIndex)
         {
-            switch (image.ImageType)
+            switch (image.ImageType & 0x3)
             {
                 case 0x00000000:
                 case 0x00000001:
-                case 0x00000008:
-                case 0x00000009:
                     var clut = GetClut(image, clutIndex);
                     for (var i = 0; i < data.Length; i++)
-                        data[i] = clut[i];
+                        data[i] = clut[data[i]];
                     break;
                 case 0x00000002:
                     for (var i = 0; i < data.Length; i++)
@@ -59,12 +57,10 @@ namespace RhythmCodex.Tim.Converters
 
         private int[] GetClut(TimImage image, int clutIndex)
         {
-            switch (image.ImageType)
+            switch (image.ImageType & 0x3)
             {
                 case 0x00000000:
                 case 0x00000001:
-                case 0x00000008:
-                case 0x00000009:
                     return DecodeClut(image.Cluts[clutIndex]);
                 default:
                     return null;
@@ -76,18 +72,16 @@ namespace RhythmCodex.Tim.Converters
 
         private int[] DecodeData(TimImage image)
         {
-            switch (image.ImageType)
+            switch (image.ImageType & 0x3)
             {
                 case 0x00000000:
-                case 0x00000008:
-                    return _dataDecoder.Decode4Bit(image.Data, image.Stride, image.Height);
+                    return _dataDecoder.Decode4Bit(image.Data, image.Stride * 2, image.Height);
                 case 0x00000001:
-                case 0x00000009:
-                    return _dataDecoder.Decode8Bit(image.Data, image.Stride, image.Height);
+                    return _dataDecoder.Decode8Bit(image.Data, image.Stride * 2, image.Height);
                 case 0x00000002:
-                    return _dataDecoder.Decode16Bit(image.Data, image.Stride, image.Height);
+                    return _dataDecoder.Decode16Bit(image.Data, image.Stride * 2, image.Height);
                 case 0x00000003:
-                    return _dataDecoder.Decode24Bit(image.Data, image.Stride, image.Height);
+                    return _dataDecoder.Decode24Bit(image.Data, image.Stride * 2, image.Height);
                 default:
                     throw new RhythmCodexException($"Unrecognized TIM image type {image.ImageType:X8}.");
             }

@@ -39,8 +39,23 @@ namespace RhythmCodex.Cli.Modules
                 Name = "decode-tga",
                 Description = "Decodes a TGA image.",
                 Execute = DecodeTga
+            },
+            new Command
+            {
+                Name = "decode-tim",
+                Description = "Decodes a TIM image.",
+                Execute = DecodeTim
             }
         };
+
+        private void DecodeTim(Args args)
+        {
+            _taskFactory
+                .BuildGraphicsTask()
+                .WithArgs(args)
+                .CreateDecodeTim()
+                .Run();
+        }
 
         private void DecodeDds(Args args)
         {

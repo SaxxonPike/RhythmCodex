@@ -1,5 +1,6 @@
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Ssq.Model;
+using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Step1.Converters
 {
@@ -30,10 +31,10 @@ namespace RhythmCodex.Step1.Converters
             {
                 switch (panelCount)
                 {
-                    case 3: return "3panel";
-                    case 4: return "Single";
-                    case 6: return "Solo";
-                    case 8: return "Double";
+                    case 3: return SmGameTypes.ThreePanel;
+                    case 4: return SmGameTypes.Single;
+                    case 6: return SmGameTypes.Solo;
+                    case 8: return SmGameTypes.Double;
                 }
             }
 
@@ -41,8 +42,8 @@ namespace RhythmCodex.Step1.Converters
             {
                 switch (metadata & 0xFF)
                 {
-                    case 0x01: return "Couple";
-                    case 0x02: return "Double";
+                    case 0x01: return SmGameTypes.Couple;
+                    case 0x02: return SmGameTypes.Double;
                 }                
             }
             
@@ -55,11 +56,11 @@ namespace RhythmCodex.Step1.Converters
             switch ((metadata >> 8) & 0xFF)
             {
                 case 0x00:
-                    return "Easy";
+                    return SmNotesDifficulties.Easy;
                 case 0x01:
-                    return "Medium";
+                    return SmNotesDifficulties.Medium;
                 case 0x02:
-                    return "Hard";
+                    return SmNotesDifficulties.Hard;
                 default:
                     _logger.Warning($"Unrecognized chart difficulty {(metadata >> 8) & 0xFF:X2}");
                     return "Edit";

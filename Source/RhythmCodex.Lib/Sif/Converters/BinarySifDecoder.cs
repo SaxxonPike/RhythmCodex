@@ -17,7 +17,7 @@ namespace RhythmCodex.Sif.Converters
                 KeyValues = new Dictionary<string, string>()
             };
 
-            result.KeyValues["version"] = "0";
+            result.KeyValues[SifKeys.Version] = "0";
 
             var text = new string[5];
             var chunkMem = new ReadOnlyMemoryStream(bytes);
@@ -39,34 +39,34 @@ namespace RhythmCodex.Sif.Converters
                 builder.Clear();
             }
 
-            result.KeyValues["dir"] = text[0];
-            result.KeyValues["title"] = text[1];
-            result.KeyValues["mix"] = text[2];
-            result.KeyValues["artist"] = text[3];
-            result.KeyValues["extra"] = text[4];
+            result.KeyValues[SifKeys.Dir] = text[0];
+            result.KeyValues[SifKeys.Title] = text[1];
+            result.KeyValues[SifKeys.Mix] = text[2];
+            result.KeyValues[SifKeys.Artist] = text[3];
+            result.KeyValues[SifKeys.Extra] = text[4];
 
             chunkMem.Position = 0x200;
-            result.KeyValues["groove_chart.single.light"] =
+            result.KeyValues[SifKeys.GrooveChartSingleLight] =
                 $"{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()}";
-            result.KeyValues["groove_chart.single.standard"] =
+            result.KeyValues[SifKeys.GrooveChartSingleStandard] =
                 $"{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()}";
-            result.KeyValues["groove_chart.single.heavy"] =
+            result.KeyValues[SifKeys.GrooveChartSingleHeavy] =
                 $"{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()}";
-            result.KeyValues["groove_chart.double.light"] =
+            result.KeyValues[SifKeys.GrooveChartDoubleLight] =
                 $"{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()}";
-            result.KeyValues["groove_chart.double.standard"] =
+            result.KeyValues[SifKeys.GrooveChartDoubleStandard] =
                 $"{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()}";
-            result.KeyValues["groove_chart.double.heavy"] =
+            result.KeyValues[SifKeys.GrooveChartDoubleHeavy] =
                 $"{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()},{reader.ReadInt16()}";
-            result.KeyValues["foot.single"] =
+            result.KeyValues[SifKeys.FootSingle] =
                 $"{reader.ReadByte()},{reader.ReadByte()},{reader.ReadByte()}";
-            result.KeyValues["foot.double"] =
+            result.KeyValues[SifKeys.FootDouble] =
                 $"{reader.ReadByte()},{reader.ReadByte()},{reader.ReadByte()}";
-            result.KeyValues["bpm_min"] = 
+            result.KeyValues[SifKeys.BpmMin] = 
                 $"{reader.ReadInt16()}";
-            result.KeyValues["bpm_max"] = 
+            result.KeyValues[SifKeys.BpmMax] = 
                 $"{reader.ReadInt16()}";
-            result.KeyValues["end_bar"] =
+            result.KeyValues[SifKeys.EndBar] =
                 $"{reader.ReadInt16()}";
             
             return result;

@@ -11,6 +11,8 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Tga.Converters;
 using RhythmCodex.Tga.Streamers;
+using RhythmCodex.Tim.Converters;
+using RhythmCodex.Tim.Streamers;
 
 namespace RhythmCodex.Cli.Orchestration
 {
@@ -23,6 +25,8 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IGraphicDsp _graphicDsp;
         private readonly IDdsStreamReader _ddsStreamReader;
         private readonly IDdsBitmapDecoder _ddsBitmapDecoder;
+        private readonly ITimDecoder _timDecoder;
+        private readonly ITimStreamReader _timStreamReader;
 
         public GraphicsTaskBuilder(
             IFileSystem fileSystem, 
@@ -32,8 +36,9 @@ namespace RhythmCodex.Cli.Orchestration
             ITgaDecoder tgaDecoder,
             IGraphicDsp graphicDsp,
             IDdsStreamReader ddsStreamReader,
-            IDdsBitmapDecoder ddsBitmapDecoder
-            ) 
+            IDdsBitmapDecoder ddsBitmapDecoder,
+            ITimDecoder timDecoder,
+            ITimStreamReader timStreamReader) 
             : base(fileSystem, logger)
         {
             _pngStreamWriter = pngStreamWriter;
@@ -42,6 +47,8 @@ namespace RhythmCodex.Cli.Orchestration
             _graphicDsp = graphicDsp;
             _ddsStreamReader = ddsStreamReader;
             _ddsBitmapDecoder = ddsBitmapDecoder;
+            _timDecoder = timDecoder;
+            _timStreamReader = timStreamReader;
         }
 
         private RawBitmap CropImage(RawBitmap bitmap)
@@ -57,6 +64,48 @@ namespace RhythmCodex.Cli.Orchestration
             }
 
             return bitmap;
+        }
+
+        public ITask CreateDecodeTim()
+        {
+            return Build("Decode TIM Image", task =>
+            {
+                var files = GetInputFiles(task);
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    using (var stream = OpenRead(task, file))
+                    {
+                        var images = _timDecoder.Decode(stream);
+                        task.Message = "Decoding TIM.";
+
+                        if (images.Count > 1)
+                        {
+                            var idx = 0;
+                            foreach (var image in images)
+                            {
+                                var bitmap = CropImage(image);
+                                using (var outStream = OpenWriteSingle(task, file, i => $"{i}.{idx}.png"))
+                                    _pngStreamWriter.Write(outStream, bitmap);
+                                idx++;
+                            }
+                        }
+                        else if (images.Count == 1)
+                        {
+                            var bitmap = CropImage(images.Single());
+                            using (var outStream = OpenWriteSingle(task, file, i => $"{i}.png"))
+                                _pngStreamWriter.Write(outStream, bitmap);                            
+                        }
+                    }
+                });
+
+                return true;
+            });
         }
 
         public ITask CreateDecodeDds()
