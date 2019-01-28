@@ -20,6 +20,9 @@ namespace RhythmCodex.Ssq.Converters
 
         public IEnumerable<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
         {
+            if (panelMapper == null)
+                throw new RhythmCodexException("Panel mapper cannot be null");
+            
             var stepList = steps.AsList();
 
             foreach (var step in stepList)

@@ -26,7 +26,7 @@ namespace RhythmCodex.Infrastructure
             return ToInt32(buffer[0], buffer[1], buffer[2], buffer[3]);
         }
 
-        public static int ToInt32(Span<byte> bytes) => 
+        public static int ToInt32(ReadOnlySpan<byte> bytes) => 
             ToInt32(bytes[0], bytes[1], bytes[2], bytes[3]);
     }
 }

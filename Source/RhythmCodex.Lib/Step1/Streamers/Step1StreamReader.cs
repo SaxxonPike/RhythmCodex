@@ -22,13 +22,12 @@ namespace RhythmCodex.Step1.Streamers
             {
                 var length = reader.ReadInt32();
 
-                if (length < 8)
+                if (length < 4)
                     yield break;
 
                 yield return new Step1Chunk
                 {
-                    Metadata = reader.ReadInt32(),
-                    Data = reader.ReadBytes(length - 8)
+                    Data = reader.ReadBytes(length - 4)
                 };                            
             }
         }

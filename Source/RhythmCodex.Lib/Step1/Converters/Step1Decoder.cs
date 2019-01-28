@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Attributes;
@@ -87,7 +88,7 @@ namespace RhythmCodex.Step1.Converters
                 // Convert the steps.
                 var stepEvents = _stepEventDecoder.Decode(steps, mapper);
                 var events = timingEvents.Concat(stepEvents).ToList();
-                var info = _chartInfoDecoder.Decode(chunk.Metadata, mapper.PlayerCount, mapper.PanelCount);
+                var info = _chartInfoDecoder.Decode(Bitter.ToInt32(chunk.Data.AsSpan(0)), mapper.PlayerCount, mapper.PanelCount);
                 
                 // Output metadata.
                 var difficulty = info.Difficulty;

@@ -32,8 +32,9 @@ namespace RhythmCodex.Ssq.Mappers
                 .ToArray();
 
             var eligibleMappers = _panelMappers
-                .Where(m => (chartInfo?.PlayerCount == null || chartInfo.PlayerCount == m.PlayerCount) && (chartInfo?.PanelCount == null || chartInfo.PanelCount == m.PanelCount))
-                .Where(m => panelsUsed.Select(m.Map).All(p => p != null))
+                .Where(m => (chartInfo?.PlayerCount == null || chartInfo.PlayerCount == m.PlayerCount) && 
+                            panelsUsed.Select(m.Map).All(p => p != null))
+                .Distinct()
                 .ToArray();
 
             if (eligibleMappers.Length == 0)
@@ -43,8 +44,10 @@ namespace RhythmCodex.Ssq.Mappers
             else if (eligibleMappers.Length > 1)
             {
                 var mapperNames = eligibleMappers.Select(m => m.GetType().Name).ToArray();
-                _logger.Warning($"Multiple eligible mappers for {chartInfo?.PlayerCount} player(s) and {chartInfo?.PanelCount} panel(s)");
+                _logger.Debug($"Multiple eligible mappers for {chartInfo?.PlayerCount} player(s) and {chartInfo?.PanelCount} panel(s)");
                 _logger.Debug($"Eligible mappers: {string.Join(", ", mapperNames)}");
+                var chosenMapper = eligibleMappers.OrderBy(m => m.PanelCount).First();
+                return chosenMapper;
             }
 
             return eligibleMappers.FirstOrDefault();

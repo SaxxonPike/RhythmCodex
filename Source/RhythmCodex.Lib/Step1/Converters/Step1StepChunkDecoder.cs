@@ -19,6 +19,9 @@ namespace RhythmCodex.Step1.Converters
             using (var mem = new ReadOnlyMemoryStream(data))
             using (var reader = new BinaryReader(mem))
             {
+                // skip metadata
+                reader.ReadInt32();
+                
                 while (mem.Position < mem.Length - 7)
                 {
                     var metricOffset = reader.ReadInt32();
