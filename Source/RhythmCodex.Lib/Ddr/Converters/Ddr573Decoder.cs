@@ -53,13 +53,10 @@ namespace RhythmCodex.Ddr.Converters
                         case 1:
                         {
                             using (var compressedStream = new ReadOnlyMemoryStream(data))
-                            using (var decompressedStream = new MemoryStream())
                             {
                                 try
                                 {
-                                    _bemaniLzDecoder.Decode(compressedStream, decompressedStream);
-                                    decompressedStream.Flush();
-                                    data = decompressedStream.ToArray();
+                                    data = _bemaniLzDecoder.Decode(compressedStream);
                                 }
                                 catch (Exception)
                                 {

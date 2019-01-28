@@ -14,9 +14,6 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Step1\Mappers" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib.ThirdParty\RhythmCodex.Thirdparty.csproj" />
   </ItemGroup>
 </Project>
