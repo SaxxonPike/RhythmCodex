@@ -10,6 +10,7 @@
         <EmbeddedResource Include="BeatmaniaPsx\keysounds.zip" />
         <EmbeddedResource Include="Bms\positive.zip" />
         <EmbeddedResource Include="Bms\random.zip" />
+        <EmbeddedResource Include="Ddr\mp3.zip" />
         <EmbeddedResource Include="Dds\dxt1.zip" />
         <EmbeddedResource Include="Dds\dxt5.zip" />
         <EmbeddedResource Include="Dds\uncompressed.zip" />
@@ -50,5 +51,8 @@
         <EmbeddedResource Include="Xa\xa.zip" />
         <EmbeddedResource Include="Xact\xsb.zip" />
         <EmbeddedResource Include="Xact\xwb.zip" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Ddr" />
     </ItemGroup>
 </Project>

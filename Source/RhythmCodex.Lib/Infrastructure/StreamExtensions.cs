@@ -56,11 +56,11 @@ namespace RhythmCodex.Infrastructure
             return reader.ReadToEnd();
         }
 
-        public static int TryRead(this Stream stream, byte[] buffer, int offset, int count)
+        public static int TryRead(this Stream stream, byte[] buffer, int offset, long count)
         {
             while (true)
             {
-                var actualBytesRead = stream.Read(buffer, offset, count);
+                var actualBytesRead = stream.Read(buffer, offset, (int) Math.Min(int.MaxValue, count));
                 offset += actualBytesRead;
                 if (actualBytesRead >= count || actualBytesRead <= 0)
                     break;
