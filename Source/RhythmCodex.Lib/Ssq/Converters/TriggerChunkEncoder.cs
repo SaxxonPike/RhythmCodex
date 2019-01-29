@@ -25,7 +25,7 @@ namespace RhythmCodex.Ssq.Converters
                 foreach (var trigger in triggerList)
                     writer.Write(trigger.Id);
 
-                return mem.ToArray();
+                return mem.GetBuffer();
             }
         }
     }

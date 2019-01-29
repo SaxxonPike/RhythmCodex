@@ -27,7 +27,7 @@ namespace RhythmCodex.Ssq.Converters
 
                 writer.Flush();
 
-                return mem.ToArray();
+                return mem.GetBuffer();
             }
         }
     }

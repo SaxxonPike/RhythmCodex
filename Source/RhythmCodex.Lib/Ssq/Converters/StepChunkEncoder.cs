@@ -35,7 +35,7 @@ namespace RhythmCodex.Ssq.Converters
                     writer.Write(extraPanel.ExtraPanelInfo ?? 0);
                 }
 
-                return mem.ToArray();
+                return mem.GetBuffer();
             }
         }
     }

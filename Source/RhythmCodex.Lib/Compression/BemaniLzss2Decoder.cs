@@ -89,7 +89,7 @@ namespace RhythmCodex.Compression
                                 chunkOffset = ((cmd2 & 0xF0) << 4) | cmd1;
                                 break;
                             default:
-                                return target.ToArray();
+                                return target.GetBuffer();
                         }
 
                         for (; chunkLength > 0 && length > 0; chunkLength--)
@@ -111,7 +111,7 @@ namespace RhythmCodex.Compression
                 }
             }
 
-            return target.ToArray();
+            return target.GetBuffer();
         }
 
         public byte[] DecompressFirebeat(Stream source, int length, int decompLength)
