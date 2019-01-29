@@ -82,36 +82,23 @@ namespace RhythmCodex.Beatmania.Streamers
                     encType = BeatmaniaPcAudioEncryptionType.Standard;
                     break;
                 default:
-                    var data = new byte[length];
-                    using (var decoded = new MemoryStream(data))
-                    {
-                        var writer = new BinaryWriter(decoded);
-                        writer.Write(headerChars);
-                        source.TryRead(data, 4, (int) (length - 4));
-                    }
-
-                    return data;
+                    return source.TryRead(4, (int) (length - 4));
             }
 
-            using (var decodedData = new MemoryStream())
             {
                 var filelength = reader.ReadInt32();
                 var fileExtraBytes = (8 - (filelength % 8)) % 8;
                 var data = reader.ReadBytes(filelength + fileExtraBytes);
                 reader.ReadBytes((int) (length - data.Length - 8));
                 using (var encodedDataMem = new MemoryStream(data))
-                {
-                    DecryptInternal(encodedDataMem, decodedData, key, encType);
-                    var result = decodedData.ToArray();
-                    File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "decrypted.2dx"), result);
-                    return result;
-                }
+                    return DecryptInternal(encodedDataMem, key, encType);
             }
         }
 
-        private static void DecryptInternal(Stream source, Stream target, ReadOnlySpan<byte> key,
+        private static byte[] DecryptInternal(Stream source, ReadOnlySpan<byte> key,
             BeatmaniaPcAudioEncryptionType type)
         {
+            var target = new MemoryStream();
             var reader = new BinaryReader(source);
             var writer = new BinaryWriter(target);
 
@@ -121,7 +108,7 @@ namespace RhythmCodex.Beatmania.Streamers
             while (source.Position < source.Length)
             {
                 var block = reader.ReadBytes(8);
-                Array.Copy(block, currentBlock, 8);
+                Buffer.BlockCopy(block, 0, currentBlock, 0, 8);
 
                 // xor with key 0
                 for (var i = 0; i < 8; i++)
@@ -158,8 +145,10 @@ namespace RhythmCodex.Beatmania.Streamers
 
                 // output
                 writer.Write(block);
-                Array.Copy(currentBlock, lastBlock, 8);
+                Buffer.BlockCopy(currentBlock, 0, lastBlock, 0, 8);
             }
+
+            return target.GetBuffer();
         }
 
         private static void DecryptCycle(Span<byte> block)

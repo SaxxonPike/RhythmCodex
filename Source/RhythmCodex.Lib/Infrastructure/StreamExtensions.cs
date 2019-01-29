@@ -56,6 +56,15 @@ namespace RhythmCodex.Infrastructure
             return reader.ReadToEnd();
         }
 
+        public static byte[] TryRead(this Stream stream, int offset, long count)
+        {
+            var result = new byte[count];
+            var read = TryRead(stream, result, offset, count);
+            if (read < result.Length)
+                Array.Resize(ref result, read);
+            return result;
+        }
+
         public static int TryRead(this Stream stream, byte[] buffer, int offset, long count)
         {
             while (true)
