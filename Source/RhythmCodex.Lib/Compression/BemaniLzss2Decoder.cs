@@ -19,7 +19,7 @@ namespace RhythmCodex.Compression
             public BemaniLzss2Type Type;
         }
 
-        private void Decompress(Stream source, Stream target, int length, int decompLength, BemaniLzss2Properties props)
+        private byte[] Decompress(Stream source, int length, int decompLength, BemaniLzss2Properties props)
         {
             var ring = new byte[props.RingBufferSize];
             var ringPos = props.RingBufferOffset;
@@ -31,9 +31,10 @@ namespace RhythmCodex.Compression
                 decompLength = int.MaxValue;
 
             var sourceReader = new BinaryReader(source);
+            var target = new MemoryStream();
             var writer = new BinaryWriter(target);
 
-            using (var mem = new ReadOnlyMemoryStream(sourceReader.ReadBytes(length)))
+            using (var mem = new MemoryStream(sourceReader.ReadBytes(length)))
             {
                 var reader = new BinaryReader(mem);
 
@@ -88,7 +89,7 @@ namespace RhythmCodex.Compression
                                 chunkOffset = ((cmd2 & 0xF0) << 4) | cmd1;
                                 break;
                             default:
-                                return;
+                                return target.ToArray();
                         }
 
                         for (; chunkLength > 0 && length > 0; chunkLength--)
@@ -109,9 +110,11 @@ namespace RhythmCodex.Compression
                     controlBitsLeft--;
                 }
             }
+
+            return target.ToArray();
         }
 
-        public void DecompressFirebeat(Stream source, Stream target, int length, int decompLength)
+        public byte[] DecompressFirebeat(Stream source, int length, int decompLength)
         {
             var props = new BemaniLzss2Properties
             {
@@ -119,10 +122,10 @@ namespace RhythmCodex.Compression
                 RingBufferSize = 0x1000, 
                 Type = BemaniLzss2Type.Firebeat
             };
-            Decompress(source, target, length, decompLength, props);
+            return Decompress(source, length, decompLength, props);
         }
 
-        public void DecompressGcz(Stream source, Stream target, int length, int decompLength)
+        public byte[] DecompressGcz(Stream source, int length, int decompLength)
         {
             var props = new BemaniLzss2Properties
             {
@@ -130,7 +133,7 @@ namespace RhythmCodex.Compression
                 RingBufferSize = 0x1000, 
                 Type = BemaniLzss2Type.GCZ
             };
-            Decompress(source, target, length, decompLength, props);
+            return Decompress(source, length, decompLength, props);
         }
     }
 }
