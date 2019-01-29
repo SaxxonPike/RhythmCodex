@@ -91,24 +91,24 @@ namespace RhythmCodex.Beatmania.Streamers
                 var data = reader.ReadBytes(filelength + fileExtraBytes);
                 reader.ReadBytes((int) (length - data.Length - 8));
                 using (var encodedDataMem = new MemoryStream(data))
-                    return DecryptInternal(encodedDataMem, key, encType);
+                    return DecryptInternal(encodedDataMem, key, encType, data.Length);
             }
         }
 
         private static byte[] DecryptInternal(Stream source, ReadOnlySpan<byte> key,
-            BeatmaniaPcAudioEncryptionType type)
+            BeatmaniaPcAudioEncryptionType type, int length)
         {
-            var target = new MemoryStream();
-            var reader = new BinaryReader(source);
-            var writer = new BinaryWriter(target);
+            var output = new byte[length];
+            var outputIndex = 0;
+            var block = new byte[8];
 
-            byte[] lastBlock = {0, 0, 0, 0, 0, 0, 0, 0};
-            byte[] currentBlock = {0, 0, 0, 0, 0, 0, 0, 0};
+            Span<byte> lastBlock = new byte[] {0, 0, 0, 0, 0, 0, 0, 0};
+            Span<byte> currentBlock = new byte[] {0, 0, 0, 0, 0, 0, 0, 0};
 
             while (source.Position < source.Length)
             {
-                var block = reader.ReadBytes(8);
-                Buffer.BlockCopy(block, 0, currentBlock, 0, 8);
+                source.TryRead(block, 0, 8);
+                block.AsSpan().CopyTo(currentBlock);
 
                 // xor with key 0
                 for (var i = 0; i < 8; i++)
@@ -144,11 +144,12 @@ namespace RhythmCodex.Beatmania.Streamers
                     block[i] ^= lastBlock[i];
 
                 // output
-                writer.Write(block);
-                Buffer.BlockCopy(currentBlock, 0, lastBlock, 0, 8);
+                block.AsSpan().CopyTo(output.AsSpan(outputIndex));
+                outputIndex += 8;
+                currentBlock.CopyTo(lastBlock);
             }
 
-            return target.GetBuffer();
+            return output;
         }
 
         private static void DecryptCycle(Span<byte> block)
