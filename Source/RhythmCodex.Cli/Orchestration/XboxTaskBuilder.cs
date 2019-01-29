@@ -9,6 +9,7 @@ using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Xact.Converters;
@@ -17,7 +18,7 @@ using RhythmCodex.Xbox.Streamers;
 
 namespace RhythmCodex.Cli.Orchestration
 {
-    [InstancePerDependency]
+    [Service(singleInstance: false)]
     public class XboxTaskBuilder : TaskBuilderBase<XboxTaskBuilder>
     {
         private readonly IImaAdpcmDecoder _imaAdpcmDecoder;

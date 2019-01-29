@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Charting
 {

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Tim.Converters
 {

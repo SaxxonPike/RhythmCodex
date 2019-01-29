@@ -9,6 +9,7 @@ using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Riff;
 using RhythmCodex.Riff.Processing;
 using RhythmCodex.Streamers;

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Streamers

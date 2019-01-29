@@ -5,6 +5,7 @@ using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Step2.Converters;
 using RhythmCodex.Step2.Streamers;
 using RhythmCodex.Stepmania.Converters;

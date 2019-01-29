@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Sif.Models;
 using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;

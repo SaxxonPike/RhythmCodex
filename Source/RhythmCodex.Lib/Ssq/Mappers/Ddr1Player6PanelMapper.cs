@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Model;
 

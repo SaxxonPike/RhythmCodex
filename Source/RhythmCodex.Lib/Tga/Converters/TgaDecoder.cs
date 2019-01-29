@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Tga.Models;
 
 namespace RhythmCodex.Tga.Converters

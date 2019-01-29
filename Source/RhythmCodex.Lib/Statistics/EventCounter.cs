@@ -4,6 +4,7 @@ using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Statistics
 {

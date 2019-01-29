@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Attributes
 {

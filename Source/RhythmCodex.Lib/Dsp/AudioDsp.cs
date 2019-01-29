@@ -4,6 +4,7 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Dsp
 {

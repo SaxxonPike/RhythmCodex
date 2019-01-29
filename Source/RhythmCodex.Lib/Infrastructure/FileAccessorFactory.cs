@@ -1,3 +1,5 @@
+using RhythmCodex.IoC;
+
 namespace RhythmCodex.Infrastructure
 {
     [Service]

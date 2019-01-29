@@ -9,12 +9,13 @@ using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Tga.Converters;
 using RhythmCodex.Tga.Streamers;
 
 namespace RhythmCodex.Cli.Orchestration
 {
-    [InstancePerDependency]
+    [Service(singleInstance: false)]
     public class GraphicsTaskBuilder : TaskBuilderBase<GraphicsTaskBuilder>
     {
         private readonly IPngStreamWriter _pngStreamWriter;

@@ -15,13 +15,14 @@ using RhythmCodex.Dsp;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Statistics;
 
 namespace RhythmCodex.Cli.Orchestration
 {
-    [InstancePerDependency]
+    [Service(singleInstance: false)]
     public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
     {
         private readonly IBeatmaniaPcAudioStreamReader _beatmaniaPcAudioStreamReader;

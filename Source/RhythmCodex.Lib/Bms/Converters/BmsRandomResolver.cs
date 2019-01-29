@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using RhythmCodex.Bms.Model;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Bms.Converters
 {

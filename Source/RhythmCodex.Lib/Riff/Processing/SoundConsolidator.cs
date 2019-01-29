@@ -5,6 +5,7 @@ using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Riff.Processing
 {

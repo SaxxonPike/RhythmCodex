@@ -5,6 +5,7 @@ using System.Reflection;
 using Autofac;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex
 {

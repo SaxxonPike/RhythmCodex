@@ -2,6 +2,7 @@ using System;
 using RhythmCodex.Dds.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Dds.Converters
 {

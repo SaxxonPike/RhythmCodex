@@ -5,6 +5,7 @@ using RhythmCodex.Attributes;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Riff;
 
 namespace RhythmCodex.Djmain.Converters

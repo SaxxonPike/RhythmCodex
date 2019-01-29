@@ -1,4 +1,5 @@
 using System;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Infrastructure
 {

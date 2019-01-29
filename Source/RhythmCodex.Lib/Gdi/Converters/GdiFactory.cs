@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Gdi.Converters
 {

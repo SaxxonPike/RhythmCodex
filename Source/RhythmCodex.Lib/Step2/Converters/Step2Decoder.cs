@@ -4,6 +4,7 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Step2.Mappers;
 using RhythmCodex.Step2.Models;
 

@@ -7,6 +7,7 @@ using RhythmCodex.Djmain.Heuristics;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Djmain.Streamers
 {

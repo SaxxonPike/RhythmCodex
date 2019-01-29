@@ -6,6 +6,7 @@ using System.Reflection;
 using Autofac.Core;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Cli
 {

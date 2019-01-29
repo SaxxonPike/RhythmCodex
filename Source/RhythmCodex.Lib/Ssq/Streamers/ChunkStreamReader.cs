@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Streamers

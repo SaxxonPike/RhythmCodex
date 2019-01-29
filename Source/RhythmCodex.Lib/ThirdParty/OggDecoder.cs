@@ -6,6 +6,7 @@ using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.ThirdParty
 {
