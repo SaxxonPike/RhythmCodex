@@ -28,7 +28,7 @@ namespace RhythmCodex.Beatmania.Converters
 
         public ISound Decode(BeatmaniaPcAudioEntry entry)
         {
-            using (var wavDataMem = new MemoryStream(entry.Data))
+            using (var wavDataMem = new ReadOnlyMemoryStream(entry.Data))
             {
                 var result = _wavDecoder.Decode(wavDataMem);
 

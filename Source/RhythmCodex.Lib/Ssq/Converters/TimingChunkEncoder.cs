@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
@@ -10,7 +11,7 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class TimingChunkEncoder : ITimingChunkEncoder
     {
-        public byte[] Convert(IEnumerable<Timing> timings)
+        public Memory<byte> Convert(IEnumerable<Timing> timings)
         {
             var timingList = timings.ToArray();
             var count = timingList.Length;
@@ -28,7 +29,7 @@ namespace RhythmCodex.Ssq.Converters
 
                 writer.Flush();
 
-                return mem.GetBuffer();
+                return mem.AsMemory();
             }
         }
     }

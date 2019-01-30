@@ -48,7 +48,7 @@ namespace RhythmCodex.Xact.Streamers
 
                 source.Position = region.Offset;
                 var buffer = reader.ReadBytes(region.Length);
-                using (var mem = new MemoryStream(buffer))
+                using (var mem = new ReadOnlyMemoryStream(buffer))
                 {
                     var memReader = new BinaryReader(mem);
                     switch (i)

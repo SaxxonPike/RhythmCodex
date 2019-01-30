@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
@@ -10,7 +11,7 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class TriggerChunkEncoder : ITriggerChunkEncoder
     {
-        public byte[] Convert(IEnumerable<Trigger> triggers)
+        public Memory<byte> Convert(IEnumerable<Trigger> triggers)
         {
             var triggerList = triggers.AsList();
             var count = triggerList.Count;
@@ -26,7 +27,7 @@ namespace RhythmCodex.Ssq.Converters
                 foreach (var trigger in triggerList)
                     writer.Write(trigger.Id);
 
-                return mem.GetBuffer();
+                return mem.AsMemory();
             }
         }
     }

@@ -91,7 +91,7 @@ namespace RhythmCodex.Beatmania.Streamers
                 var fileExtraBytes = (8 - (filelength % 8)) % 8;
                 var data = reader.ReadBytes(filelength + fileExtraBytes);
                 reader.ReadBytes((int) (length - data.Length - 8));
-                using (var encodedDataMem = new MemoryStream(data))
+                using (var encodedDataMem = new ReadOnlyMemoryStream(data))
                     return DecryptInternal(encodedDataMem, key, encType, data.Length);
             }
         }

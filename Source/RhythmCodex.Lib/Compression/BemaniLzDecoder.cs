@@ -89,7 +89,7 @@ namespace RhythmCodex.Compression
                 }
 
                 writer.Flush();
-                return mem.GetBuffer();
+                return mem.ToArray();
             }
         }
     }

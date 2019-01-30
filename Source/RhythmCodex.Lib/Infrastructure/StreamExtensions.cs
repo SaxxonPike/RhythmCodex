@@ -112,7 +112,17 @@ namespace RhythmCodex.Infrastructure
             }
 
             return result;
-        } 
+        }
+
+        public static Span<byte> AsSpan(this MemoryStream mem)
+        {
+            return mem.GetBuffer().AsSpan(0, (int) mem.Length);
+        }
+
+        public static Memory<byte> AsMemory(this MemoryStream mem)
+        {
+            return mem.GetBuffer().AsMemory(0, (int) mem.Length);
+        }
     }
 
 }

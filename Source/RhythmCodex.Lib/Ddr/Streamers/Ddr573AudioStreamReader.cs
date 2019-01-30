@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Streamers
 {
