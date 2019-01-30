@@ -3,6 +3,7 @@ using System.IO;
 using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Gdi.Streamers
 {

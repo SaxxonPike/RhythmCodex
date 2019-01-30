@@ -1,5 +1,6 @@
 using System.IO;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Tga.Models;
 
 namespace RhythmCodex.Tga.Streamers

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Converters
 {

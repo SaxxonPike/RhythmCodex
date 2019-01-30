@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Riff.Models;
 
 namespace RhythmCodex.Riff.Streamers

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Djmain.Heuristics
 {

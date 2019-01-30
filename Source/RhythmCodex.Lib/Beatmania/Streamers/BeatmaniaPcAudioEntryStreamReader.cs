@@ -1,6 +1,7 @@
 using System.IO;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Beatmania.Streamers
 {

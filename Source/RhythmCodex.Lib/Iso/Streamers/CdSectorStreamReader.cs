@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Streamers

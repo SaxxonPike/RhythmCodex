@@ -8,6 +8,7 @@ using RhythmCodex.Bms.Model;
 using RhythmCodex.Charting;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Bms.Converters
 {

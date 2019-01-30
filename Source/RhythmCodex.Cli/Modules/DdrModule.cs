@@ -9,6 +9,7 @@ using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Cli.Modules
 {

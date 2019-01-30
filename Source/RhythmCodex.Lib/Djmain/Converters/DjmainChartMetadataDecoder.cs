@@ -2,6 +2,7 @@ using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Djmain.Converters
 {

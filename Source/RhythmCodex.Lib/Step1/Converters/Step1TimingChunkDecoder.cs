@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 using RhythmCodex.Step1.Models;
 

@@ -5,6 +5,7 @@ using System.Linq;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.ThirdParty;
 using RhythmCodex.Wav.Converters;

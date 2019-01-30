@@ -3,6 +3,7 @@ using System.IO;
 using RhythmCodex.Archives;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Streamers
 {

@@ -2,6 +2,7 @@
 using System.IO;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Djmain.Streamers
 {

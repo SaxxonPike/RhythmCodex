@@ -4,6 +4,7 @@ using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Djmain.Converters
 {

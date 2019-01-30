@@ -1,5 +1,6 @@
 using System.IO;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Xact.Model;
 
 namespace RhythmCodex.Xact.Streamers

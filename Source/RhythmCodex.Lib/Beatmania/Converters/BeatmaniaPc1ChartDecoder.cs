@@ -4,6 +4,7 @@ using RhythmCodex.Attributes;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Beatmania.Converters
 {

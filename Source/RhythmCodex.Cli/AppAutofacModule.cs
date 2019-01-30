@@ -8,6 +8,7 @@ using Autofac;
 using RhythmCodex.Charting;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Stepmania.Streamers;
 
@@ -21,30 +22,25 @@ namespace RhythmCodex.Cli
         /// </summary>
         private static readonly IEnumerable<Type> IocTypes = new[]
         {
-            typeof(App),
-            typeof(Chart),
-            typeof(DjmainChunk),
-            typeof(SsqDecoder),
-            typeof(SmStreamReader)
+            typeof(App),   // RhythmCodex.Cli
+            typeof(Chart)  // RhythmCodex.Lib
         };
 
         /// <inheritdoc />
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            foreach (var assembly in IocTypes.Select(t => t.GetTypeInfo().Assembly).Distinct())
-            {
-                builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.Any(a => a.AttributeType == typeof(ServiceAttribute)))
-                    .AsSelf()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
+            var mappings = ServiceTypes.GetMappings(IocTypes.Select(t => t.Assembly).ToArray());
 
-                builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.Any(a => a.AttributeType == typeof(InstancePerDependencyAttribute)))
-                    .AsSelf()
-                    .AsImplementedInterfaces()
-                    .InstancePerDependency();
+            foreach (var mapping in mappings)
+            {
+                var registration = builder.RegisterType(mapping.Implementation);
+                foreach (var service in mapping.Services)
+                    registration.As(service);
+                if (mapping.SingleInstance)
+                    registration.SingleInstance();
+                else
+                    registration.InstancePerDependency();
             }
         }
     }

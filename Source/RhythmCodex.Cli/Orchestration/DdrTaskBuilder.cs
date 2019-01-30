@@ -10,6 +10,7 @@ using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Sif.Converters;
 using RhythmCodex.Sif.Streamers;
 using RhythmCodex.Ssq.Converters;
@@ -25,7 +26,7 @@ using RhythmCodex.Stepmania.Streamers;
 
 namespace RhythmCodex.Cli.Orchestration
 {
-    [InstancePerDependency]
+    [Service(singleInstance: false)]
     public class DdrTaskBuilder : TaskBuilderBase<DdrTaskBuilder>
     {
         private readonly IDdr573StreamReader _ddr573StreamReader;

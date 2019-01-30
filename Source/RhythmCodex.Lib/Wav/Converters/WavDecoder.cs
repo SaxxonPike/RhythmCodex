@@ -8,6 +8,7 @@ using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Wav.Models;
 

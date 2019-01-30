@@ -4,6 +4,7 @@ using System.Linq;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Beatmania.Streamers

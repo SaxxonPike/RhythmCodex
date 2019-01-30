@@ -3,6 +3,7 @@ using System.Linq;
 using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Tim.Streamers;
 
 namespace RhythmCodex.Tim.Converters
