@@ -24,5 +24,6 @@
         public const string BgChangesTag = "BgChanges";
         public const string FgChangesTag = "FgChanges";
         public const string NotesTag = "Notes";
+        public const string PreviewTag = "Preview";
     }
 }

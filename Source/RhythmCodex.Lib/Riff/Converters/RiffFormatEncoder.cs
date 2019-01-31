@@ -25,7 +25,7 @@ namespace RhythmCodex.Riff.Converters
                 return new RiffChunk
                 {
                     Id = "fmt ",
-                    Data = stream.GetBuffer()
+                    Data = stream.ToArray()
                 };
             }
         }

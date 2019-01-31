@@ -33,7 +33,8 @@ namespace RhythmCodex.Stepmania.Converters
             ChartTag.SampleLengthTag,
             ChartTag.DisplayBpmTag,
             ChartTag.BgChangesTag,
-            ChartTag.FgChangesTag
+            ChartTag.FgChangesTag,
+            ChartTag.PreviewTag
         };
 
         private readonly IGrooveRadarEncoder _grooveRadarEncoder;

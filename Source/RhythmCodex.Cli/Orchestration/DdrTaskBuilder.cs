@@ -101,6 +101,9 @@ namespace RhythmCodex.Cli.Orchestration
                         var charts = _ssqDecoder.Decode(chunks);
                         var aggregatedInfo = _metadataAggregator.Aggregate(charts);
                         var title = Path.GetFileNameWithoutExtension(file.Name);
+                        var globalOffset = Args.Options.ContainsKey("-offset")
+                            ? BigRationalParser.ParseString(Args.Options["-offset"].FirstOrDefault() ?? "0")
+                            : BigRational.Zero;
 
                         // This is a temporary hack to make building sets easier for right now
                         // TODO: make this optional via command line switch
@@ -115,7 +118,8 @@ namespace RhythmCodex.Cli.Orchestration
                                 [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
                                 [StringData.Artist] = aggregatedInfo[StringData.Artist],
                                 [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
-                                [ChartTag.OffsetTag] = $"{(decimal) -aggregatedInfo[NumericData.LinearOffset]}"
+                                [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
+                                [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
                             },
                             Charts = charts
                         });
@@ -277,14 +281,14 @@ namespace RhythmCodex.Cli.Orchestration
                         var outFileName = $"{file.Module:X4}{file.Offset:X7}.bin";
                         task.Message = $"Writing {outFileName}";
 
-                        var extension = (_heuristicTester.Find(file.Data).FirstOrDefault()?.FileExtension ?? "bin")
+                        var extension = (_heuristicTester.Find(file.Data.Span).FirstOrDefault()?.FileExtension ?? "bin")
                             .ToLowerInvariant();
 
                         using (var stream =
                             OpenWriteMulti(task, gameImage, _ => $"{file.Module:X4}{file.Offset:X7}.{extension}"))
                         {
                             var writer = new BinaryWriter(stream);
-                            writer.Write(file.Data);
+                            writer.Write(file.Data.ToArray());
                             stream.Flush();
                         }
                     });

@@ -68,7 +68,7 @@ namespace RhythmCodex.Riff.Converters
                 container.Chunks.Add(new RiffChunk
                 {
                     Id = "data",
-                    Data = stream.GetBuffer()
+                    Data = stream.ToArray()
                 });
             }
 

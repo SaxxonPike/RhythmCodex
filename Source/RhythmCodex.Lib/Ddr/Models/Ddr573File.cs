@@ -1,3 +1,5 @@
+using System;
+
 namespace RhythmCodex.Ddr.Models
 {
     public class Ddr573File
@@ -8,6 +10,6 @@ namespace RhythmCodex.Ddr.Models
         public int Reserved0 { get; set; }
         public int Reserved1 { get; set; }
         public int Reserved2 { get; set; }
-        public byte[] Data { get; set; }
+        public Memory<byte> Data { get; set; }
     }
 }

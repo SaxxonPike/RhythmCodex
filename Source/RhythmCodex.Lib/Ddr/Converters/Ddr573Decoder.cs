@@ -47,7 +47,7 @@ namespace RhythmCodex.Ddr.Converters
                     
                     var moduleReader = readers[entry.Module];
                     moduleReader.BaseStream.Position = entry.Offset;
-                    var data = moduleReader.ReadBytes(entry.Length);
+                    Memory<byte> data = moduleReader.ReadBytes(entry.Length);
 
                     switch (entry.CompressionType)
                     {
