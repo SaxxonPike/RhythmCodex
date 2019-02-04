@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -8,7 +9,7 @@ namespace RhythmCodex.Wav.Converters
     [Service]
     public class PcmDecoder : IPcmDecoder
     {
-        public float[] Decode8Bit(byte[] bytes)
+        public float[] Decode8Bit(ReadOnlySpan<byte> bytes)
         {
             var result = new float[bytes.Length];
              for (var i = 0; i < result.Length; i++)
@@ -16,7 +17,7 @@ namespace RhythmCodex.Wav.Converters
             return result;
         }
 
-        public float[] Decode16Bit(byte[] bytes)
+        public float[] Decode16Bit(ReadOnlySpan<byte> bytes)
         {
             var result = new float[bytes.Length / 2];
             for (int i = 0, j = 0; i < result.Length - 1; i += 2)
@@ -24,7 +25,7 @@ namespace RhythmCodex.Wav.Converters
             return result;
         }
 
-        public float[] Decode24Bit(byte[] bytes)
+        public float[] Decode24Bit(ReadOnlySpan<byte> bytes)
         {
             var result = new float[bytes.Length / 3];
             for (int i = 0, j = 0; i < result.Length - 2; i += 3)
@@ -32,7 +33,7 @@ namespace RhythmCodex.Wav.Converters
             return result;
         }
 
-        public float[] Decode32Bit(byte[] bytes)
+        public float[] Decode32Bit(ReadOnlySpan<byte> bytes)
         {
             var result = new float[bytes.Length / 4];
             for (int i = 0, j = 0; i < result.Length - 3; i += 4)
@@ -40,12 +41,9 @@ namespace RhythmCodex.Wav.Converters
             return result;
         }
 
-        public float[] DecodeFloat(byte[] bytes)
+        public float[] DecodeFloat(ReadOnlySpan<byte> bytes)
         {
-            var result = new float[bytes.Length / 4];
-            for (int i = 0, j = 0; i < result.Length - 3; i += 4)
-                result[j++] = BitConverter.ToSingle(bytes, i);
-            return result;
+            return MemoryMarshal.Cast<byte, float>(bytes).ToArray();
         }
     }
 }
