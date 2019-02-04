@@ -9,10 +9,10 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class SsqInfoChunkDecoder : ISsqInfoChunkDecoder
     {
-        public SsqInfoChunk Decode(Chunk chunk)
+        public SsqInfoChunk Decode(SsqChunk ssqChunk)
         {
             var text = new string[12];
-            var chunkMem = new ReadOnlyMemoryStream(chunk.Data);
+            var chunkMem = new ReadOnlyMemoryStream(ssqChunk.Data);
             var reader = new BinaryReader(chunkMem, Encodings.CP1252);
             var builder = new StringBuilder();
             

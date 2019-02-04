@@ -9,23 +9,23 @@ namespace RhythmCodex.Ssq.Streamers
     [Service]
     public class ChunkStreamWriter : IChunkStreamWriter
     {
-        public void Write(Stream stream, Chunk chunk)
+        public void Write(Stream stream, SsqChunk ssqChunk)
         {
             var writer = new BinaryWriter(stream);
 
-            if (chunk == null)
+            if (ssqChunk == null)
             {
                 writer.Write(0);
                 return;
             }
 
-            var chunkData = chunk.Data ?? new byte[0];
+            var chunkData = ssqChunk.Data ?? new byte[0];
             var writeLength = ((chunkData.Length + 3) >> 2) << 2;
             var writeData = new byte[writeLength];
             Array.Copy(chunkData, writeData, chunkData.Length);
 
-            var parameter0 = chunk.Parameter0;
-            var parameter1 = chunk.Parameter1;
+            var parameter0 = ssqChunk.Parameter0;
+            var parameter1 = ssqChunk.Parameter1;
 
             writer.Write(writeLength + 8);
             writer.Write(parameter0);

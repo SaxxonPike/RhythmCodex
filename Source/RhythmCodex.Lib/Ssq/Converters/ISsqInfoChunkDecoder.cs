@@ -4,6 +4,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ISsqInfoChunkDecoder
     {
-        SsqInfoChunk Decode(Chunk chunk);
+        SsqInfoChunk Decode(SsqChunk ssqChunk);
     }
 }

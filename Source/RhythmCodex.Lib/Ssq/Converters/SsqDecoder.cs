@@ -31,7 +31,7 @@ namespace RhythmCodex.Ssq.Converters
             _ssqChunkFilter = ssqChunkFilter;
         }
 
-        public IList<IChart> Decode(IEnumerable<Chunk> data)
+        public IList<IChart> Decode(IEnumerable<SsqChunk> data)
         {
             var chunks = data.AsList();
 

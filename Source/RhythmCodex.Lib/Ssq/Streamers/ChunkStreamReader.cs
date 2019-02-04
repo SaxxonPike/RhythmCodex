@@ -8,7 +8,7 @@ namespace RhythmCodex.Ssq.Streamers
     [Service]
     public class ChunkStreamReader : IChunkStreamReader
     {
-        public Chunk Read(Stream stream)
+        public SsqChunk Read(Stream stream)
         {
             var reader = new BinaryReader(stream);
             var length = reader.ReadInt32();
@@ -16,7 +16,7 @@ namespace RhythmCodex.Ssq.Streamers
             if (length == 0)
                 return null;
 
-            return new Chunk
+            return new SsqChunk
             {
                 Parameter0 = reader.ReadInt16(),
                 Parameter1 = reader.ReadInt16(),

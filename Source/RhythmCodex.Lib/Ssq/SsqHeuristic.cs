@@ -1,13 +1,29 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Ssq.Model;
+using RhythmCodex.Ssq.Streamers;
 
 namespace RhythmCodex.Ssq
 {
     [Service]
-    public class SsqHeuristic : IHeuristic
+    public class SsqHeuristic : IReadableHeuristic<IEnumerable<SsqChunk>>
     {
+        private readonly ISsqStreamReader _ssqStreamReader;
+
+        public SsqHeuristic(ISsqStreamReader ssqStreamReader)
+        {
+            _ssqStreamReader = ssqStreamReader;
+        }
+
+        public IEnumerable<SsqChunk> Read(HeuristicResult heuristicResult, Stream stream)
+        {
+            return _ssqStreamReader.Read(stream);
+        }
+
         public string Description => "DDR Step Sequence";
         public string FileExtension => "SSQ";
 

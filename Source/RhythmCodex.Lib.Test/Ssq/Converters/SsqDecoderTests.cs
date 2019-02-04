@@ -14,8 +14,8 @@ namespace RhythmCodex.Ssq.Converters
             // Arrange.
             var chunks = new[]
             {
-                new Chunk {Data = Create<byte[]>(), Parameter0 = Parameter0.Timings},
-                new Chunk {Data = Create<byte[]>(), Parameter0 = Parameter0.Steps}
+                new SsqChunk {Data = Create<byte[]>(), Parameter0 = Parameter0.Timings},
+                new SsqChunk {Data = Create<byte[]>(), Parameter0 = Parameter0.Steps}
             };
 
             var timings = CreateMany<Timing>().ToList();

@@ -30,7 +30,7 @@ namespace RhythmCodex.Ssq.Converters
             _logger = logger;
         }
 
-        public TimingChunk GetTimings(IEnumerable<Chunk> chunks)
+        public TimingChunk GetTimings(IEnumerable<SsqChunk> chunks)
         {
             int? rate = null;
             var result = new TimingChunk
@@ -48,7 +48,7 @@ namespace RhythmCodex.Ssq.Converters
             return result;
         }
 
-        public IEnumerable<Trigger> GetTriggers(IEnumerable<Chunk> chunks)
+        public IEnumerable<Trigger> GetTriggers(IEnumerable<SsqChunk> chunks)
         {
             var result = chunks.Where(c => c.Parameter0 == Parameter0.Triggers)
                 .SelectMany(tc => _triggerChunkDecoder.Convert(tc.Data))
@@ -56,7 +56,7 @@ namespace RhythmCodex.Ssq.Converters
             return result;
         }
 
-        public IEnumerable<StepChunk> GetSteps(IEnumerable<Chunk> chunks)
+        public IEnumerable<StepChunk> GetSteps(IEnumerable<SsqChunk> chunks)
         {
             var result = chunks.Where(c => c.Parameter0 == Parameter0.Steps)
                 .Select(c => new StepChunk
@@ -71,7 +71,7 @@ namespace RhythmCodex.Ssq.Converters
             return result;
         }
 
-        public IEnumerable<SsqInfoChunk> GetInfos(IEnumerable<Chunk> chunks)
+        public IEnumerable<SsqInfoChunk> GetInfos(IEnumerable<SsqChunk> chunks)
         {
             var result = chunks.Where(c => c.Parameter0 == Parameter0.Meta)
                 .Select(c => _ssqInfoChunkDecoder.Decode(c))

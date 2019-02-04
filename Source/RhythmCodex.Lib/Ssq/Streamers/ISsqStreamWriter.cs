@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Streamers
 {
     public interface ISsqStreamWriter
     {
-        void Write(Stream stream, IEnumerable<Chunk> chunks);
+        void Write(Stream stream, IEnumerable<SsqChunk> chunks);
     }
 }

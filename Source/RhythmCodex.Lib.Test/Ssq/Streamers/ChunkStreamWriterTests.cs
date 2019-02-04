@@ -34,7 +34,7 @@ namespace RhythmCodex.Ssq.Streamers
             var stream = new MemoryStream();
 
             // Act.
-            Subject.Write(stream, new Chunk {Parameter0 = param0, Parameter1 = param1, Data = data});
+            Subject.Write(stream, new SsqChunk {Parameter0 = param0, Parameter1 = param1, Data = data});
             stream.Flush();
 
             // Assert.
