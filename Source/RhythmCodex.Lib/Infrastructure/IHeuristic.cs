@@ -1,4 +1,5 @@
 using System;
+using RhythmCodex.Heuristics;
 
 namespace RhythmCodex.Infrastructure
 {
@@ -6,6 +7,7 @@ namespace RhythmCodex.Infrastructure
     {
         string Description { get; }
         string FileExtension { get; }
-        bool IsMatch(ReadOnlySpan<byte> data);
+        HeuristicResult Match(ReadOnlySpan<byte> data);
+        int MinimumLength { get; }
     }
 }

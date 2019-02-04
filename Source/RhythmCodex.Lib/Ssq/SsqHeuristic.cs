@@ -1,4 +1,5 @@
 using System;
+using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -9,55 +10,57 @@ namespace RhythmCodex.Ssq
     {
         public string Description => "DDR Step Sequence";
         public string FileExtension => "SSQ";
-        
-        public bool IsMatch(ReadOnlySpan<byte> data)
+
+        public HeuristicResult Match(ReadOnlySpan<byte> data)
         {
             if (data.Length < 12)
-                return false;
+                return null;
 
             if (data[0] % 4 != 0)
-                return false;
+                return null;
 
             if (data[0] == 0 && data[1] == 0)
-                return false;
+                return null;
 
             if (data[2] != 0)
-                return false;
+                return null;
 
             if (data[3] != 0)
-                return false;
+                return null;
 
             if (data[4] != 1)
-                return false;
+                return null;
 
             if (data[5] != 0)
-                return false;
+                return null;
 
             if (data[6] == 0 && data[7] == 0)
-                return false;
+                return null;
 
             if (data[8] == 0 && data[9] == 0)
-                return false;
+                return null;
 
             if (data[10] != 0)
-                return false;
+                return null;
 
             if (data[11] != 0)
-                return false;
+                return null;
 
             if (data[data.Length - 1] != 0)
-                return false;
+                return null;
 
             if (data[data.Length - 2] != 0)
-                return false;
+                return null;
 
             if (data[data.Length - 3] != 0)
-                return false;
+                return null;
 
             if (data[data.Length - 4] != 0)
-                return false;
-
-            return true;
+                return null;
+            
+            return new HeuristicResult(this);
         }
+
+        public int MinimumLength => 12;
     }
 }

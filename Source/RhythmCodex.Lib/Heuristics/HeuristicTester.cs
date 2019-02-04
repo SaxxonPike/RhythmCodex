@@ -16,13 +16,14 @@ namespace RhythmCodex.Heuristics
             _heuristics = heuristics;
         }
 
-        public IEnumerable<IHeuristic> Find(ReadOnlySpan<byte> data)
+        public IEnumerable<HeuristicResult> Match(ReadOnlySpan<byte> data)
         {
-            var result = new List<IHeuristic>();
+            var result = new List<HeuristicResult>();
             foreach (var heuristic in _heuristics)
             {
-                if (heuristic.IsMatch(data))
-                    result.Add(heuristic);
+                var match = heuristic.Match(data);
+                if (match != null)
+                    result.Add(match);
             }
 
             return result;

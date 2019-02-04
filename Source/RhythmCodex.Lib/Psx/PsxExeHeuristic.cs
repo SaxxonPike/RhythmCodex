@@ -1,4 +1,5 @@
 using System;
+using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -10,12 +11,17 @@ namespace RhythmCodex.Psx
         public string Description => "Playstation Executable (PS-X EXE)";
         public string FileExtension => "exe";
         
-        public bool IsMatch(ReadOnlySpan<byte> data)
+        public HeuristicResult Match(ReadOnlySpan<byte> data)
         {
             if (data.Length < 8)
-                return false;
+                return null;
 
-            return Encodings.CP437.GetString(data.Slice(0, 8)) == "PS-X EXE";
+            if (Encodings.CP437.GetString(data.Slice(0, 8)) != "PS-X EXE")
+                return null;
+            
+            return new HeuristicResult(this);
         }
+
+        public int MinimumLength => 8;
     }
 }

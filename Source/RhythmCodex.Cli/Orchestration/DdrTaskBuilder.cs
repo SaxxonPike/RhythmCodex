@@ -281,7 +281,7 @@ namespace RhythmCodex.Cli.Orchestration
                         var outFileName = $"{file.Module:X4}{file.Offset:X7}.bin";
                         task.Message = $"Writing {outFileName}";
 
-                        var extension = (_heuristicTester.Find(file.Data.Span).FirstOrDefault()?.FileExtension ?? "bin")
+                        var extension = (_heuristicTester.Match(file.Data.Span).FirstOrDefault()?.Heuristic.FileExtension ?? "bin")
                             .ToLowerInvariant();
 
                         using (var stream =

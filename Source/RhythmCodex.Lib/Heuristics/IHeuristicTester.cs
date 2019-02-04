@@ -6,6 +6,6 @@ namespace RhythmCodex.Heuristics
 {
     public interface IHeuristicTester
     {
-        IEnumerable<IHeuristic> Find(ReadOnlySpan<byte> data);
+        IEnumerable<HeuristicResult> Match(ReadOnlySpan<byte> data);
     }
 }
