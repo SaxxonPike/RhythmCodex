@@ -6,6 +6,8 @@
     <ItemGroup>
         <EmbeddedResource Include="Beatmania\2dx9th.zip" />
         <EmbeddedResource Include="Beatmania\chart9th.zip" />
+        <EmbeddedResource Include="BeatmaniaPs2\bm2dxps2bgm.zip" />
+        <EmbeddedResource Include="BeatmaniaPs2\bm2dxps2key.zip" />
         <EmbeddedResource Include="BeatmaniaPsx\chart.zip" />
         <EmbeddedResource Include="BeatmaniaPsx\keysounds.zip" />
         <EmbeddedResource Include="Bms\positive.zip" />

@@ -6,6 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Beatmania.Heuristics
 {
     [Service]
+    [Context(Context.BeatmaniaIidxCs)]
     public class BeatmaniaPs2OldKeysoundHeuristic : IHeuristic
     {
         public string Description => "BeatmaniaIIDX CS Keysounds (old)";

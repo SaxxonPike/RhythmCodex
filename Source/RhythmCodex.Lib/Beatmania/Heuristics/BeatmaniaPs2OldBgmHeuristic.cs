@@ -1,24 +1,35 @@
 using System;
+using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Vag.Heuristics;
+using RhythmCodex.Vag.Models;
+using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Beatmania.Heuristics
 {
     [Service]
-    public class BeatmaniaPs2OldBgmHeuristic : IHeuristic
+    [Context(Context.BeatmaniaIidxCs)]
+    public class BeatmaniaPs2OldBgmHeuristic : IReadableHeuristic<VagChunk>
     {
+        private readonly IVagStreamReader _vagStreamReader;
+
+        public BeatmaniaPs2OldBgmHeuristic(IVagStreamReader vagStreamReader)
+        {
+            _vagStreamReader = vagStreamReader;
+        }
+        
         public string Description => "BeatmaniaIIDX CS BGM (old)";
         public string FileExtension => "bmcsbgm";
-        
+
         public HeuristicResult Match(ReadOnlySpan<byte> data)
         {
             if (data.Length < MinimumLength)
                 return null;
 
             var length = Bitter.ToInt32S(data);
-            
+
             if (length == 0)
                 return null;
 
@@ -41,7 +52,7 @@ namespace RhythmCodex.Beatmania.Heuristics
             return new VagHeuristicResult(this)
             {
                 Start = 0x800,
-                Interval = 0x800,
+                Interleave = 0x800,
                 Channels = data[0x08],
                 SampleRate = sampleRate,
                 Length = length
@@ -49,5 +60,11 @@ namespace RhythmCodex.Beatmania.Heuristics
         }
 
         public int MinimumLength => 0x10;
+
+        public VagChunk Read(HeuristicResult result, Stream stream)
+        {
+            var info = result as VagHeuristicResult;
+            return _vagStreamReader.Read(stream, info?.Channels ?? 1, info?.Interleave ?? 0);
+        }
     }
 }

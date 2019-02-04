@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -16,10 +17,12 @@ namespace RhythmCodex.Heuristics
             _heuristics = heuristics;
         }
 
-        public IEnumerable<HeuristicResult> Match(ReadOnlySpan<byte> data)
+        public IEnumerable<HeuristicResult> Match(ReadOnlySpan<byte> data, params Context[] contexts)
         {
             var result = new List<HeuristicResult>();
-            foreach (var heuristic in _heuristics)
+            foreach (var heuristic in _heuristics.Where(h =>
+                !contexts.Any() || h.GetType().GetCustomAttributes<ContextAttribute>().SelectMany(a => a.Contexts)
+                    .Intersect(contexts).Any()))
             {
                 var match = heuristic.Match(data);
                 if (match != null)

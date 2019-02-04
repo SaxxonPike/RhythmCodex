@@ -1,13 +1,28 @@
 using System;
+using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Tim.Models;
+using RhythmCodex.Tim.Streamers;
 
 namespace RhythmCodex.Tim
 {
     [Service]
-    public class TimHeuristic : IHeuristic
+    public class TimHeuristic : IReadableHeuristic<TimImage>
     {
+        private readonly ITimStreamReader _timStreamReader;
+
+        public TimHeuristic(ITimStreamReader timStreamReader)
+        {
+            _timStreamReader = timStreamReader;
+        }
+        
+        public TimImage Read(HeuristicResult heuristicResult, Stream stream)
+        {
+            return _timStreamReader.Read(stream);
+        }
+
         public string Description => "Playstation TIM image";
         public string FileExtension => "TIM";
         
