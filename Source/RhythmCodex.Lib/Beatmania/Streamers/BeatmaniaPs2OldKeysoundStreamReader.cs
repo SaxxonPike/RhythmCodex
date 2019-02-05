@@ -52,21 +52,21 @@ namespace RhythmCodex.Beatmania.Streamers
                     {
                         case 2:
                         {
-                            hunkMem.Position = result.OffsetLeft - 61456;
+                            hunkMem.Position = result.OffsetLeft - 61488;
                             result.Data = new List<VagChunk> {_vagStreamReader.Read(hunkMem, 1, 0)};
                             break;
                         }
                         case 3:
                         {
-                            hunkMem.Position = header[1] + result.OffsetLeft + 16400;
+                            hunkMem.Position = header[1] + result.OffsetLeft + 16368;
                             result.Data = new List<VagChunk> {_vagStreamReader.Read(hunkMem, 1, 0)};
                             break;
                         }
                         case 4:
                         {
-                            hunkMem.Position = result.OffsetLeft - 61456;
+                            hunkMem.Position = result.OffsetLeft - 61488;
                             var dataLeft = _vagStreamReader.Read(hunkMem, 1, 0);
-                            hunkMem.Position = result.OffsetRight - 61456;
+                            hunkMem.Position = result.OffsetRight - 61488;
                             var dataRight = _vagStreamReader.Read(hunkMem, 1, 0);
                             result.Data = new List<VagChunk> {dataLeft, dataRight};
                             break;
