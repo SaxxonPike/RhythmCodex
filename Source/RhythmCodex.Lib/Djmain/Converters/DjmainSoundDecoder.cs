@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Attributes;
+using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
@@ -13,34 +14,13 @@ namespace RhythmCodex.Djmain.Converters
     [Service]
     public class DjmainSoundDecoder : IDjmainSoundDecoder
     {
-        private static readonly Lazy<BigRational[]> VolumeTable = new Lazy<BigRational[]>(() =>
-        {
-            const double referenceDecibels = -36d;
-            const double referenceVolume = 0x40;
-            const double attenuation = 20d;
-
-            return Enumerable.Range(0, 256).Select(i =>
-            {
-                var value = (float)Math.Pow(10d, referenceDecibels * i / referenceVolume / attenuation);
-                return new BigRational((decimal)value);
-            }).ToArray();
-        });
-
-        private static readonly Lazy<BigRational[]> PanningTable = new Lazy<BigRational[]>(() =>
-        {
-            const int minimum = 0x1;
-            const int range = 0xE;
-
-            return Enumerable.Range(0, 16).Select(i =>
-                    BigRational.One - new BigRational(Math.Max(0, i - minimum), range))
-                .ToArray();
-        });
-
         private readonly IDjmainAudioDecoder _djmainAudioDecoder;
+        private readonly IBeatmaniaDspTranslator _beatmaniaDspTranslator;
 
-        public DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder)
+        public DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
         {
             _djmainAudioDecoder = djmainAudioDecoder;
+            _beatmaniaDspTranslator = beatmaniaDspTranslator;
         }
 
         public IDictionary<int, ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
@@ -76,9 +56,12 @@ namespace RhythmCodex.Djmain.Converters
                 yield return new Sound
                 {
                     Samples = new List<ISample> {sample},
-                    [NumericData.Volume] = VolumeTable.Value[info.Volume],
-                    [NumericData.Panning] = PanningTable.Value[(info.Panning & 0xF)],
-                    [NumericData.Rate] = DjmainConstants.SampleRateMultiplier * info.Frequency,
+                    [NumericData.Volume] = _beatmaniaDspTranslator.GetDjmainVolume(info.Volume),
+                    [NumericData.SourceVolume] = info.Volume,
+                    [NumericData.Panning] = _beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
+                    [NumericData.SourcePanning] = info.Panning,
+                    [NumericData.Channel] = info.Channel,
+                    [NumericData.Rate] = _beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
                     [NumericData.Id] = def.Key
                 };
             }

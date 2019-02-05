@@ -6,11 +6,13 @@ using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Vag.Models;
 using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Vag.Converters
 {
+    [Service]
     public class VagDecoder : IVagDecoder
     {
         public ISound Decode(VagChunk chunk)

@@ -14,27 +14,58 @@ namespace RhythmCodex.Beatmania.Integration
     {
         [Test]
         [Explicit]
+        public void Test_Bgm_Old()
+        {
+            var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2bgm.zip")
+                .First()
+                .Value;
+
+            var streamer = Resolve<IBeatmaniaPs2OldBgmStreamReader>();
+            var decoder = Resolve<IBeatmaniaPs2BgmDecoder>();
+            var encoder = Resolve<IRiffPcm16SoundEncoder>();
+            var writer = Resolve<IRiffStreamWriter>();
+
+            var outFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            if (!Directory.Exists(outFolder))
+                Directory.CreateDirectory(outFolder);
+
+            using (var dataStream = new MemoryStream(data))
+            {
+                var bgm = streamer.Read(dataStream);
+                
+                var decoded = decoder.Decode(bgm);
+                var encoded = encoder.Encode(decoded);
+                using (var outStream = new MemoryStream())
+                {
+                    writer.Write(outStream, encoded);
+                    outStream.Flush();
+                    File.WriteAllBytes(Path.Combine(outFolder, $"bgm.wav"), outStream.ToArray());
+                }
+            }
+        }
+        
+        [Test]
+        [Explicit]
         public void Test_Keys_Old()
         {
             var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2key.zip")
                 .First()
                 .Value;
 
-            var streamer = Resolve<ips2str>();
-            var decoder = Resolve<IBeatmaniaPcAudioDecoder>();
+            var streamer = Resolve<IBeatmaniaPs2OldKeysoundStreamReader>();
+            var decoder = Resolve<IBeatmaniaPs2KeysoundDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
-            var outFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "bmpc");
+            var outFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "bmps2");
             if (!Directory.Exists(outFolder))
                 Directory.CreateDirectory(outFolder);
 
-            using (var dataStream = new MemoryStream(decrypter.Decrypt(new MemoryStream(data), data.Length)))
+            using (var dataStream = new MemoryStream(data))
             {
-                var keysounds = streamer.Read(dataStream, dataStream.Length);
-                var index = 1;
+                var keysounds = streamer.Read(dataStream);
                 
-                foreach (var keysound in keysounds)
+                foreach (var keysound in keysounds.Keysounds)
                 {
                     var decoded = decoder.Decode(keysound);
                     var encoded = encoder.Encode(decoded);
@@ -42,8 +73,7 @@ namespace RhythmCodex.Beatmania.Integration
                     {
                         writer.Write(outStream, encoded);
                         outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outFolder, $"{index:D4}.wav"), outStream.ToArray());
-                        index++;
+                        File.WriteAllBytes(Path.Combine(outFolder, $"{keysound.SampleNumber:D4}.wav"), outStream.ToArray());
                     }
                 }
             }
