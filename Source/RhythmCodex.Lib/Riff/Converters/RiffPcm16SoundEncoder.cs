@@ -19,10 +19,25 @@ namespace RhythmCodex.Riff.Converters
         {
             _formatEncoder = formatEncoder;
         }
-        
+
         public IRiffContainer Encode(ISound sound)
         {
-            var sampleRate = (int) (sound[NumericData.Rate] ?? 44100);
+            var sampleRate = sound[NumericData.Rate];
+
+            if (sampleRate == null)
+            {
+                var sampleRates = sound
+                    .Samples
+                    .Select(s => s[NumericData.Rate])
+                    .Where(r => r != null)
+                    .Distinct()
+                    .ToArray();
+                sampleRate = sampleRates.SingleOrDefault();
+            }
+
+            if (sampleRate == null)
+                sampleRate = 44100;
+
             var channels = sound.Samples.Count;
             var byteRate = sampleRate * channels * 2;
             var container = new RiffContainer
@@ -30,13 +45,13 @@ namespace RhythmCodex.Riff.Converters
                 Format = "WAVE",
                 Chunks = new List<IRiffChunk>()
             };
-            
+
             var format = new RiffFormat
             {
                 Format = 1,
-                SampleRate = sampleRate,
+                SampleRate = (int) sampleRate,
                 Channels = channels,
-                ByteRate = byteRate,
+                ByteRate = (int) byteRate,
                 BitsPerSample = 16,
                 BlockAlign = channels * 2,
                 ExtraData = new byte[0]
@@ -45,7 +60,7 @@ namespace RhythmCodex.Riff.Converters
             container.Chunks.Add(_formatEncoder.Encode(format));
 
             var totalSamples = sound.Samples.Max(s => s.Data.Count);
-            
+
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
@@ -64,7 +79,7 @@ namespace RhythmCodex.Riff.Converters
                         writer.Write((short) value);
                     }
                 }
-                
+
                 container.Chunks.Add(new RiffChunk
                 {
                     Id = "data",
