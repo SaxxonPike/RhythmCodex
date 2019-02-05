@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Streamers;
+using RhythmCodex.Dsp;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 
@@ -22,6 +23,7 @@ namespace RhythmCodex.Beatmania.Integration
 
             var streamer = Resolve<IBeatmaniaPs2OldBgmStreamReader>();
             var decoder = Resolve<IBeatmaniaPs2BgmDecoder>();
+            var dsp = Resolve<IAudioDsp>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
@@ -34,7 +36,8 @@ namespace RhythmCodex.Beatmania.Integration
                 var bgm = streamer.Read(dataStream);
                 
                 var decoded = decoder.Decode(bgm);
-                var encoded = encoder.Encode(decoded);
+                var processed = dsp.ApplyEffects(decoded);
+                var encoded = encoder.Encode(processed);
                 using (var outStream = new MemoryStream())
                 {
                     writer.Write(outStream, encoded);
@@ -54,6 +57,7 @@ namespace RhythmCodex.Beatmania.Integration
 
             var streamer = Resolve<IBeatmaniaPs2OldKeysoundStreamReader>();
             var decoder = Resolve<IBeatmaniaPs2KeysoundDecoder>();
+            var dsp = Resolve<IAudioDsp>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
@@ -68,7 +72,8 @@ namespace RhythmCodex.Beatmania.Integration
                 foreach (var keysound in keysounds.Keysounds)
                 {
                     var decoded = decoder.Decode(keysound);
-                    var encoded = encoder.Encode(decoded);
+                    var processed = dsp.ApplyEffects(decoded);
+                    var encoded = encoder.Encode(processed);
                     using (var outStream = new MemoryStream())
                     {
                         writer.Write(outStream, encoded);
