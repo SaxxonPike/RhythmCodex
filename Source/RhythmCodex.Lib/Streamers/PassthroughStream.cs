@@ -1,8 +1,10 @@
 using System.IO;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Streamers
 {
+    [NotService]
     public abstract class PassthroughStream : Stream
     {
         protected Stream BaseStream { get; }

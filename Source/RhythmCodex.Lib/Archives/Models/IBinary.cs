@@ -1,4 +1,4 @@
-namespace RhythmCodex.Archives
+namespace RhythmCodex.Archives.Models
 {
     public interface IBinary
     {

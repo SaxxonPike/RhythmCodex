@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Streamers
 {
+    [NotService]
     public class ByteSwappedReadStream : Stream
     {
         private readonly Stream _baseStream;
