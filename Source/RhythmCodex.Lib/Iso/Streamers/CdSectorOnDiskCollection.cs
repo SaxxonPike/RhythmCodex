@@ -14,18 +14,15 @@ namespace RhythmCodex.Iso.Streamers
         private class OnDiskCdSector : ICdSector
         {
             private readonly Func<int, byte[]> _read;
-            private readonly Lazy<byte[]> _data;
 
             public OnDiskCdSector(int number, Func<int, byte[]> read)
             {
                 _read = read;
                 Number = number;
-                _data = new Lazy<byte[]>(DoRead);
             }
 
-            private byte[] DoRead() => _read(Number);
             public int Number { get; }
-            public byte[] Data => _data.Value;
+            public byte[] Data => _read(Number);
         }
 
         public CdSectorOnDiskCollection(int total, Func<int, byte[]> read)
