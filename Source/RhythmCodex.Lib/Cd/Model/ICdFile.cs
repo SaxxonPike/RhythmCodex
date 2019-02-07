@@ -4,7 +4,8 @@ namespace RhythmCodex.Cd.Model
 {
     public interface ICdFile
     {
-        string Name { get; set; }
+        string Name { get; }
+        long Length { get; }
         Stream Open();
     }
 }

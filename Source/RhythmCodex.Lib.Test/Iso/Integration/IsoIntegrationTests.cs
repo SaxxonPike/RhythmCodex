@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -17,14 +18,21 @@ namespace RhythmCodex.Iso.Integration
                 .First()
                 .Value;
             var mem = new MemoryStream(data);
-            
+
             var reader = Resolve<IIsoSectorStreamReader>();
-            var decoder = Resolve<IIsoSectorInfoDecoder>();
-            var storageDecoder = Resolve<IIsoStorageMediumDecoder>();
-            
-            var sectors = reader.Read(mem, (int) mem.Length, false).ToList();
-            var infos = sectors.Select(decoder.Decode).ToArray();
-            var decoded = storageDecoder.Decode(infos);
+            var decoder = Resolve<IIsoCdFileDecoder>();
+
+            var sectors = reader.Read(mem, (int) mem.Length, true);
+            var files = decoder.Decode(sectors);
+            var file = files.First();
+            using (var stream = file.Open())
+            {
+                var fileReader = new BinaryReader(stream);
+                var output = fileReader.ReadBytes((int) file.Length);
+                File.WriteAllBytes(
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                        Path.GetFileName(file.Name)), output);
+            }
         }
     }
 }

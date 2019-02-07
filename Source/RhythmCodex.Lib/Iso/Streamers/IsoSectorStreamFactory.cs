@@ -14,20 +14,26 @@ namespace RhythmCodex.Iso.Streamers
     {
         private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
 
-        private sealed class CdSectorStream : Stream
+        private sealed class IsoSectorStream : Stream
         {
             private readonly int _sectorSize;
             private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
-            private int _offset = 0;
-            private int _sector = 0;
+            private int _offset;
+            private long _position;
             private readonly IEnumerator<ICdSector> _sectorEnumerator;
+            private IsoSectorInfo _currentSector;
+            private long _remaining;
+            private readonly long? _length;
 
-            public CdSectorStream(int sectorSize, IEnumerable<ICdSector> sectors, IIsoSectorInfoDecoder isoSectorInfoDecoder)
+            public IsoSectorStream(int sectorSize, IEnumerable<ICdSector> sectors, IIsoSectorInfoDecoder isoSectorInfoDecoder, long? length)
             {
                 _sectorSize = sectorSize;
                 _isoSectorInfoDecoder = isoSectorInfoDecoder;
                 _sectorEnumerator = sectors.GetEnumerator();
                 _sectorEnumerator.MoveNext();
+                _currentSector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current);
+                _remaining = length ?? long.MaxValue;
+                _length = length;
             }
             
             public override void Flush()
@@ -37,72 +43,44 @@ namespace RhythmCodex.Iso.Streamers
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                var remaining = count;
-                var sector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current).Data;
+                var remaining = Math.Min(count, _remaining);
                 var result = 0;
+                var sector = _currentSector.UserData;
             
                 while (remaining > 0)
                 {
                     buffer[offset] = sector[_offset];
                     offset++;
                     _offset++;
-                    if (_offset > _sectorSize)
+                    _position++;
+                    if (_offset >= _sectorSize)
                     {
                         _offset -= _sectorSize;
-                        _sector++;
                         _sectorEnumerator.MoveNext();
-                        sector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current).Data;
+                        _currentSector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current);
+                        sector = _currentSector.UserData;
                     }
                     
                     remaining--;
+                    _remaining--;
                     result++;
                 }
 
                 return result;
             }
 
-            public override long Seek(long offset, SeekOrigin origin)
-            {
-                switch (origin)
-                {
-                    case SeekOrigin.Begin:
-                    {
-                        _sector = (int) (offset / _sectorSize);
-                        _offset = (int) (offset % _sectorSize);
-                        return offset;
-                    }
-                    case SeekOrigin.Current:
-                    {
-                        var newOffset = offset + _sector * _sectorSize + _offset;
-                        _sector = (int) (newOffset / _sectorSize);
-                        _offset = (int) (newOffset % _sectorSize);
-                        return newOffset;
-                    }
-                    default:
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-            }
-
-            public override void SetLength(long value)
-            {
-                throw new NotImplementedException();
-            }
-
-            public override void Write(byte[] buffer, int offset, int count)
-            {
-                throw new NotImplementedException();
-            }
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
+            public override void SetLength(long value) => throw new NotImplementedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
 
             public override bool CanRead => true;
             public override bool CanSeek => false;
             public override bool CanWrite => false;
-            public override long Length => throw new NotSupportedException();
+            public override long Length => _length ?? throw new NotSupportedException();
 
             public override long Position
             {
-                get => _sector * _sectorSize + _offset;
+                get => _position;
                 set => Seek(value, SeekOrigin.Begin);
             }
 
@@ -120,7 +98,12 @@ namespace RhythmCodex.Iso.Streamers
 
         public Stream Open(IEnumerable<ICdSector> sectors)
         {
-            return new CdSectorStream(2048, sectors, _isoSectorInfoDecoder);
+            return new IsoSectorStream(2048, sectors, _isoSectorInfoDecoder, null);
+        }
+
+        public Stream Open(IEnumerable<ICdSector> sectors, long length)
+        {
+            return new IsoSectorStream(2048, sectors, _isoSectorInfoDecoder, length);
         }
     }
 }

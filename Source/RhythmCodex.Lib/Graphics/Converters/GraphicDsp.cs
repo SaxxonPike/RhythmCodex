@@ -1,11 +1,10 @@
 using System.Drawing;
+using RhythmCodex.Dsp;
 using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Graphics.Models;
-using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Dsp
+namespace RhythmCodex.Graphics.Converters
 {
     [Service]
     public class GraphicDsp : IGraphicDsp

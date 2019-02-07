@@ -13,6 +13,8 @@ namespace RhythmCodex.Cd.Model
         }
         
         public string Name { get; set; }
+        public long Length { get; set; }
+
         public Stream Open() => _openFunc();
     }
 }

@@ -35,7 +35,7 @@ namespace RhythmCodex.Iso.Streamers
         private byte[] ExpandSector(int minute, int second, int frame, ReadOnlySpan<byte> sector)
         {
             var data = new byte[OutputSectorLength];
-            sector.Slice(InputSectorLength).CopyTo(data.AsSpan(0x0010));
+            sector.Slice(0, InputSectorLength).CopyTo(data.AsSpan(0x0010));
             new byte[]
             {
                 0x00, 0xFF, 0xFF, 0xFF,

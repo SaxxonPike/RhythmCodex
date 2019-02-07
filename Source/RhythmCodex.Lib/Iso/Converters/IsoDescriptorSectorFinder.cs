@@ -2,16 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Converters
 {
+    [Service]
     public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
     {
         private static readonly byte[] StandardIdentifier = {0x43, 0x44, 0x30, 0x30, 0x31};
 
-        public IEnumerable<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors)
+        public IList<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors)
         {
+            return FindInternal(sectors).ToList();
+        }
+        
+        private IList<IsoSectorInfo> FindInternal(IEnumerable<IsoSectorInfo> sectors)
+        {
+            var result = new List<IsoSectorInfo>();
             var mode1Sectors = sectors.Where(s => s.Mode == 1).ToList();
             var currentMinute = 0;
             var currentSecond = 2;
@@ -31,7 +39,7 @@ namespace RhythmCodex.Iso.Converters
                 if (!userData.Slice(0x0001, 5).SequenceEqual(StandardIdentifier))
                     throw new RhythmCodexException($"Standard identifier is incorrect. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");
 
-                yield return descriptorSector;
+                result.Add(descriptorSector);
                 
                 if (userData[0x0000] == 255)
                     break;
@@ -50,11 +58,8 @@ namespace RhythmCodex.Iso.Converters
                     currentMinute++;
                 }
             }
-        }
-    }
 
-    public interface IIsoDescriptorSectorFinder
-    {
-        IEnumerable<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors);
+            return result;
+        }
     }
 }
