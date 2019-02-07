@@ -4,7 +4,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Iso.Model
 {
     [Model]
-    public class Iso9660PathTableEntry
+    public class IsoPathRecord
     {
         public int ExtendedAttributeRecordLength { get; set; }
         public int LocationOfExtent { get; set; }

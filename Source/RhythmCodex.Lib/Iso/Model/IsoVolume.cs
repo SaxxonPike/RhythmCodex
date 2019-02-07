@@ -4,7 +4,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Iso.Model
 {
     [Model]
-    public class Iso9660Volume
+    public class IsoVolume
     {
         public string SystemIdentifier { get; set; }
         public string VolumeIdentifier { get; set; }
@@ -17,7 +17,7 @@ namespace RhythmCodex.Iso.Model
         public int OptionalTypeLPathTableLocation { get; set; }
         public int TypeMPathTableLocation { get; set; }
         public int OptionalTypeMPathTableLocation { get; set; }
-        public Iso9660DirectoryRecord RootDirectoryRecord { get; set; }
+        public IsoDirectoryRecord RootDirectoryRecord { get; set; }
         public string VolumeSetIdentifier { get; set; }
         public string PublisherIdentifier { get; set; }
         public string DataPreparerIdentifier { get; set; }

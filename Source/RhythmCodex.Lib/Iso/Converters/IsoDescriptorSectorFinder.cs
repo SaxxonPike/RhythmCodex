@@ -10,7 +10,7 @@ namespace RhythmCodex.Iso.Converters
     {
         private static readonly byte[] StandardIdentifier = {0x43, 0x44, 0x30, 0x30, 0x31};
 
-        public IEnumerable<Iso9660SectorInfo> Find(IEnumerable<Iso9660SectorInfo> sectors)
+        public IEnumerable<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors)
         {
             var mode1Sectors = sectors.Where(s => s.Mode == 1).ToList();
             var currentMinute = 0;
@@ -55,6 +55,6 @@ namespace RhythmCodex.Iso.Converters
 
     public interface IIsoDescriptorSectorFinder
     {
-        IEnumerable<Iso9660SectorInfo> Find(IEnumerable<Iso9660SectorInfo> sectors);
+        IEnumerable<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors);
     }
 }

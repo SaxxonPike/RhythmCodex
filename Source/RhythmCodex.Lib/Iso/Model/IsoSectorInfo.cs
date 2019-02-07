@@ -6,7 +6,7 @@ namespace RhythmCodex.Iso.Model
 {
     [DebuggerStepThrough]
     [Model]
-    public class Iso9660SectorInfo
+    public class IsoSectorInfo
     {
         public int Number { get; set; }
         public byte[] Data { get; set; }

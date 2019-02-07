@@ -19,12 +19,12 @@ namespace RhythmCodex.Iso.Converters
             _isoSectorStreamFactory = isoSectorStreamFactory;
         }
 
-        public IList<Iso9660PathTableEntry> Decode(IEnumerable<ICdSector> sectors)
+        public IList<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors)
         {
             return DecodeInternal(sectors).ToList();
         }
 
-        private IEnumerable<Iso9660PathTableEntry> DecodeInternal(IEnumerable<ICdSector> sectors)
+        private IEnumerable<IsoPathRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
         {
             using (var stream = _isoSectorStreamFactory.Open(sectors))
             {
@@ -38,7 +38,7 @@ namespace RhythmCodex.Iso.Converters
                 var name = reader.ReadBytes(length);
                 if ((length & 1) != 0)
                     reader.ReadByte();
-                yield return new Iso9660PathTableEntry
+                yield return new IsoPathRecord
                 {
                     LocationOfExtent = lba,
                     DirectoryIdentifier = Encodings.CP437.GetString(name),

@@ -1,6 +1,9 @@
+using RhythmCodex.Infrastructure;
+
 namespace RhythmCodex.Iso.Model
 {
-    public class Iso9660BootRecord
+    [Model]
+    public class IsoBootRecord
     {
         public string BootSystemIdentifier { get; set; }
         public string BootIdentifier { get; set; }

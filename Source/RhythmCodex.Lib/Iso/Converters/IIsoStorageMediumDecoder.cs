@@ -5,6 +5,6 @@ namespace RhythmCodex.Iso.Converters
 {
     public interface IIsoStorageMediumDecoder
     {
-        Iso9660StorageMedium Decode(IEnumerable<Iso9660SectorInfo> sectors);
+        IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors);
     }
 }

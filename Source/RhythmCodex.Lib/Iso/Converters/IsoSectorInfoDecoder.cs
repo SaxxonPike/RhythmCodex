@@ -8,9 +8,9 @@ namespace RhythmCodex.Iso.Converters
     [Service]
     public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
     {
-        public Iso9660SectorInfo Decode(ICdSector sector)
+        public IsoSectorInfo Decode(ICdSector sector)
         {
-            var result = new Iso9660SectorInfo
+            var result = new IsoSectorInfo
             {
                 Number = sector.Number,
                 Data = sector.Data,

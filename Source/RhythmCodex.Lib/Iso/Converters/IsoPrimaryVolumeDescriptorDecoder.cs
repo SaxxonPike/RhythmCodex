@@ -8,9 +8,9 @@ namespace RhythmCodex.Iso.Converters
     [Service]
     public class IsoPrimaryVolumeDescriptorDecoder : IIsoPrimaryVolumeDescriptorDecoder
     {
-        public Iso9660Volume Decode(ReadOnlySpan<byte> data)
+        public IsoVolume Decode(ReadOnlySpan<byte> data)
         {
-            return new Iso9660Volume
+            return new IsoVolume
             {
                 SystemIdentifier = Encodings.CP437.GetString(data.Slice(8, 32)),
                 VolumeIdentifier = Encodings.CP437.GetString(data.Slice(40, 32)),

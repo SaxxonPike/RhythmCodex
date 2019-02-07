@@ -6,6 +6,6 @@ namespace RhythmCodex.Iso.Converters
 {
     public interface IIsoPathTableDecoder
     {
-        IList<Iso9660PathTableEntry> Decode(IEnumerable<ICdSector> sectors);
+        IList<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors);
     }
 }

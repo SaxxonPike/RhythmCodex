@@ -10,7 +10,7 @@ namespace RhythmCodex.Xa.Heuristics
     [Service]
     public class XaIsoStreamFinder : IXaIsoStreamFinder
     {
-        public IList<XaChunk> Find(IEnumerable<Iso9660SectorInfo> sectors)
+        public IList<XaChunk> Find(IEnumerable<IsoSectorInfo> sectors)
         {
             var result = new List<XaChunk>();
             var mode2Sectors = sectors
@@ -20,7 +20,7 @@ namespace RhythmCodex.Xa.Heuristics
             var currentStreams = mode2Sectors
                 .Where(s => s.Channel != null)
                 .GroupBy(s => s.Channel)
-                .ToDictionary(g => g.Key, g => new List<Iso9660SectorInfo>());
+                .ToDictionary(g => g.Key, g => new List<IsoSectorInfo>());
             var streamCount = currentStreams.Max(s => s.Key).Value + 1;
             var currentStream = 0;
 

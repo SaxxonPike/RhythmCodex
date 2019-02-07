@@ -24,12 +24,12 @@ namespace RhythmCodex.Iso.Converters
             _isoDescriptorSectorFinder = isoDescriptorSectorFinder;
         }
         
-        public Iso9660StorageMedium Decode(IEnumerable<Iso9660SectorInfo> sectors)
+        public IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors)
         {
-            var result = new Iso9660StorageMedium
+            var result = new IsoStorageMedium
             {
-                BootRecords = new List<Iso9660BootRecord>(),
-                Volumes = new List<Iso9660Volume>()
+                BootRecords = new List<IsoBootRecord>(),
+                Volumes = new List<IsoVolume>()
             };
 
             var descriptorSectors = _isoDescriptorSectorFinder.Find(sectors).ToList();
