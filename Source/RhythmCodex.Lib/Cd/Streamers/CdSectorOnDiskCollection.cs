@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using RhythmCodex.Iso.Model;
+using RhythmCodex.Cd.Model;
+using RhythmCodex.IoC;
 
-namespace RhythmCodex.Iso.Streamers
+namespace RhythmCodex.Cd.Streamers
 {
+    [NotService]
     public class CdSectorOnDiskCollection : IReadOnlyList<ICdSector>
     {
         private readonly int _total;

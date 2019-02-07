@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Cd.Model;
 using RhythmCodex.IoC;
 using RhythmCodex.Iso.Converters;
 using RhythmCodex.Iso.Model;
@@ -9,22 +10,22 @@ using RhythmCodex.Iso.Model;
 namespace RhythmCodex.Iso.Streamers
 {
     [Service]
-    public class CdSectorStreamFactory : ICdSectorStreamFactory
+    public class IsoSectorStreamFactory : IIsoSectorStreamFactory
     {
-        private readonly ICdSectorInfoDecoder _cdSectorInfoDecoder;
+        private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
 
         private sealed class CdSectorStream : Stream
         {
             private readonly int _sectorSize;
-            private readonly ICdSectorInfoDecoder _cdSectorInfoDecoder;
+            private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
             private int _offset = 0;
             private int _sector = 0;
             private readonly IEnumerator<ICdSector> _sectorEnumerator;
 
-            public CdSectorStream(int sectorSize, IEnumerable<ICdSector> sectors, ICdSectorInfoDecoder cdSectorInfoDecoder)
+            public CdSectorStream(int sectorSize, IEnumerable<ICdSector> sectors, IIsoSectorInfoDecoder isoSectorInfoDecoder)
             {
                 _sectorSize = sectorSize;
-                _cdSectorInfoDecoder = cdSectorInfoDecoder;
+                _isoSectorInfoDecoder = isoSectorInfoDecoder;
                 _sectorEnumerator = sectors.GetEnumerator();
                 _sectorEnumerator.MoveNext();
             }
@@ -37,7 +38,7 @@ namespace RhythmCodex.Iso.Streamers
             public override int Read(byte[] buffer, int offset, int count)
             {
                 var remaining = count;
-                var sector = _cdSectorInfoDecoder.Decode(_sectorEnumerator.Current).Data;
+                var sector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current).Data;
                 var result = 0;
             
                 while (remaining > 0)
@@ -50,7 +51,7 @@ namespace RhythmCodex.Iso.Streamers
                         _offset -= _sectorSize;
                         _sector++;
                         _sectorEnumerator.MoveNext();
-                        sector = _cdSectorInfoDecoder.Decode(_sectorEnumerator.Current).Data;
+                        sector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current).Data;
                     }
                     
                     remaining--;
@@ -112,14 +113,14 @@ namespace RhythmCodex.Iso.Streamers
             }
         }
         
-        public CdSectorStreamFactory(ICdSectorInfoDecoder cdSectorInfoDecoder)
+        public IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder)
         {
-            _cdSectorInfoDecoder = cdSectorInfoDecoder;
+            _isoSectorInfoDecoder = isoSectorInfoDecoder;
         }
 
         public Stream Open(IEnumerable<ICdSector> sectors)
         {
-            return new CdSectorStream(2048, sectors, _cdSectorInfoDecoder);
+            return new CdSectorStream(2048, sectors, _isoSectorInfoDecoder);
         }
     }
 }

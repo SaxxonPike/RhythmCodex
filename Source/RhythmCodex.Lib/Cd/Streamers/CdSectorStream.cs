@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using RhythmCodex.Iso.Model;
+using RhythmCodex.Cd.Model;
+using RhythmCodex.IoC;
 
-namespace RhythmCodex.Iso.Streamers
+namespace RhythmCodex.Cd.Streamers
 {
+    [NotService]
     public class CdSectorStream : Stream
     {
         private readonly IReadOnlyList<ICdSector> _sectors;

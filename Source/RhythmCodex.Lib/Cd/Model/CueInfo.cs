@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace RhythmCodex.Iso.Model
+namespace RhythmCodex.Cd.Model
 {
     public class CueInfo
     {

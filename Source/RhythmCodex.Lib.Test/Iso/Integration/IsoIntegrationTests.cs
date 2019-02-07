@@ -19,8 +19,8 @@ namespace RhythmCodex.Iso.Integration
             var mem = new MemoryStream(data);
             
             var reader = Resolve<IIsoSectorStreamReader>();
-            var decoder = Resolve<ICdSectorInfoDecoder>();
-            var storageDecoder = Resolve<ICdStorageMediumDecoder>();
+            var decoder = Resolve<IIsoSectorInfoDecoder>();
+            var storageDecoder = Resolve<IIsoStorageMediumDecoder>();
             
             var sectors = reader.Read(mem, (int) mem.Length, false).ToList();
             var infos = sectors.Select(decoder.Decode).ToArray();

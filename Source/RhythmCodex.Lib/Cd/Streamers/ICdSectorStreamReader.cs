@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
-using RhythmCodex.Iso.Model;
+using RhythmCodex.Cd.Model;
 
-namespace RhythmCodex.Iso.Streamers
+namespace RhythmCodex.Cd.Streamers
 {
     public interface ICdSectorStreamReader
     {

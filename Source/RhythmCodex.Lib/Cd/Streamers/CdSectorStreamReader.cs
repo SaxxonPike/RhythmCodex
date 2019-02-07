@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using RhythmCodex.Infrastructure;
+using RhythmCodex.Cd.Model;
 using RhythmCodex.IoC;
-using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Streamers
+namespace RhythmCodex.Cd.Streamers
 {
     [Service]
     public class CdSectorStreamReader : ICdSectorStreamReader

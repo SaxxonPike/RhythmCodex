@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace RhythmCodex.Iso.Model
+namespace RhythmCodex.Cd.Model
 {
     public class CdFile : ICdFile
     {

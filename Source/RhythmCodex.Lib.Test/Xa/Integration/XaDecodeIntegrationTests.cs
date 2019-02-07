@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Attributes;
+using RhythmCodex.Cd.Streamers;
 using RhythmCodex.Iso.Converters;
 using RhythmCodex.Iso.Streamers;
 using RhythmCodex.Riff.Converters;
@@ -60,7 +61,7 @@ namespace RhythmCodex.Xa.Integration
             var data = File.ReadAllBytes(@"\\tamarat\Games\PS1\Beatmania Gotta Mix 2 Append.img");
 
             var isoReader = Resolve<ICdSectorStreamReader>();
-            var isoInfoDecoder = Resolve<ICdSectorInfoDecoder>();
+            var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
             var decoder = Resolve<IXaDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();

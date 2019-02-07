@@ -1,4 +1,4 @@
-namespace RhythmCodex.Iso.Model
+namespace RhythmCodex.Cd.Model
 {
     public interface ICdSector
     {

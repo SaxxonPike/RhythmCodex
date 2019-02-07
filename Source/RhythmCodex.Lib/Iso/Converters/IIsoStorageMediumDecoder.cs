@@ -3,7 +3,7 @@ using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Converters
 {
-    public interface ICdStorageMediumDecoder
+    public interface IIsoStorageMediumDecoder
     {
         Iso9660StorageMedium Decode(IEnumerable<Iso9660SectorInfo> sectors);
     }

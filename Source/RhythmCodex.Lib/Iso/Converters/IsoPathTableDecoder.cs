@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Cd.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;
@@ -11,11 +12,11 @@ namespace RhythmCodex.Iso.Converters
     [Service]
     public class IsoPathTableDecoder : IIsoPathTableDecoder
     {
-        private readonly ICdSectorStreamFactory _cdSectorStreamFactory;
+        private readonly IIsoSectorStreamFactory _isoSectorStreamFactory;
 
-        public IsoPathTableDecoder(ICdSectorStreamFactory cdSectorStreamFactory)
+        public IsoPathTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory)
         {
-            _cdSectorStreamFactory = cdSectorStreamFactory;
+            _isoSectorStreamFactory = isoSectorStreamFactory;
         }
 
         public IList<Iso9660PathTableEntry> Decode(IEnumerable<ICdSector> sectors)
@@ -25,7 +26,7 @@ namespace RhythmCodex.Iso.Converters
 
         private IEnumerable<Iso9660PathTableEntry> DecodeInternal(IEnumerable<ICdSector> sectors)
         {
-            using (var stream = _cdSectorStreamFactory.Open(sectors))
+            using (var stream = _isoSectorStreamFactory.Open(sectors))
             {
                 var reader = new BinaryReader(stream);
                 var length = reader.ReadByte();

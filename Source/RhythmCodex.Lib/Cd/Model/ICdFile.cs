@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace RhythmCodex.Iso.Model
+namespace RhythmCodex.Cd.Model
 {
     public interface ICdFile
     {

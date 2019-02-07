@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using RhythmCodex.Cd.Model;
+using RhythmCodex.Cd.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;

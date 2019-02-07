@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
+using RhythmCodex.Cd.Model;
 using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Streamers
 {
-    public interface ICdSectorStreamFactory
+    public interface IIsoSectorStreamFactory
     {
         Stream Open(IEnumerable<ICdSector> sectors);
     }

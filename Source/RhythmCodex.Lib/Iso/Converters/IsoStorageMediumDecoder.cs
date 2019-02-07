@@ -8,13 +8,13 @@ using RhythmCodex.Iso.Model;
 namespace RhythmCodex.Iso.Converters
 {
     [Service]
-    public class CdStorageMediumDecoder : ICdStorageMediumDecoder
+    public class IsoStorageMediumDecoder : IIsoStorageMediumDecoder
     {
         private readonly IIsoPrimaryVolumeDescriptorDecoder _isoPrimaryVolumeDescriptorDecoder;
         private readonly IIsoBootRecordDecoder _isoBootRecordDecoder;
         private readonly IIsoDescriptorSectorFinder _isoDescriptorSectorFinder;
 
-        public CdStorageMediumDecoder(
+        public IsoStorageMediumDecoder(
             IIsoPrimaryVolumeDescriptorDecoder isoPrimaryVolumeDescriptorDecoder,
             IIsoBootRecordDecoder isoBootRecordDecoder,
             IIsoDescriptorSectorFinder isoDescriptorSectorFinder)
