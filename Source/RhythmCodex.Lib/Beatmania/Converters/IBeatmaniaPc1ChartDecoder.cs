@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Beatmania.Converters

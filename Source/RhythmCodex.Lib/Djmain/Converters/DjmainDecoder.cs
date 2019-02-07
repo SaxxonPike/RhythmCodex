@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Djmain.Heuristics;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff;
 using RhythmCodex.Riff.Processing;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Djmain.Converters

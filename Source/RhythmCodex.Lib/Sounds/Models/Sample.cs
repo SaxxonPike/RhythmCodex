@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Infrastructure.Models
+namespace RhythmCodex.Sounds.Models
 {
     [Model]
     public class Sample : Metadata, ISample

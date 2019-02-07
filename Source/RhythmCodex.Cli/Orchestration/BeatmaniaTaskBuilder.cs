@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Djmain.Converters;
@@ -16,8 +16,10 @@ using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Statistics;
 
 namespace RhythmCodex.Cli.Orchestration

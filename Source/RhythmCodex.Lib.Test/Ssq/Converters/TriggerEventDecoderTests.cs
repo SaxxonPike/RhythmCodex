@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Ssq.Model;
 
 namespace RhythmCodex.Ssq.Converters

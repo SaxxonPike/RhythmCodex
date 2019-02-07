@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;

@@ -2,6 +2,7 @@
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Riff;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Djmain.Converters
 {

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
 using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;

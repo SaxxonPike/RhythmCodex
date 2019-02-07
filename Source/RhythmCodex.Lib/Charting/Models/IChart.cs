@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Charting
+namespace RhythmCodex.Charting.Models
 {
     public interface IChart : IMetadata
     {

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
 
 namespace RhythmCodex.Beatmania.Converters
 {

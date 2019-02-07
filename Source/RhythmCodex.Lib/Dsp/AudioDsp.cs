@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Dsp
 {

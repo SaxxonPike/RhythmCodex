@@ -1,8 +1,9 @@
-using RhythmCodex.Attributes;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Converters;
 
 namespace RhythmCodex.Beatmania.Converters

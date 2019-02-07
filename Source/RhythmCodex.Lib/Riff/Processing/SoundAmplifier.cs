@@ -3,6 +3,7 @@ using System.Linq;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Riff.Processing
 {

@@ -7,6 +7,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.ThirdParty;
 using RhythmCodex.Wav.Converters;
 

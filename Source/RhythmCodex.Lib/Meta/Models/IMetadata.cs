@@ -1,7 +1,6 @@
-﻿using RhythmCodex.Attributes;
-using RhythmCodex.Infrastructure;
+﻿using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Charting
+namespace RhythmCodex.Meta.Models
 {
     public interface IMetadata
     {

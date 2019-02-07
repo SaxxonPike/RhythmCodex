@@ -1,4 +1,5 @@
 using System.Drawing;
+using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Gdi.Converters
@@ -7,6 +8,6 @@ namespace RhythmCodex.Gdi.Converters
     {
         IGdiAdapter CreateAdapter(RawBitmap bitmap);
         Bitmap CreateBitmap(int width, int height);
-        Graphics CreateGraphics(Image image);
+        System.Drawing.Graphics CreateGraphics(Image image);
     }
 }

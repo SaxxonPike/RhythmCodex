@@ -7,6 +7,7 @@ using RhythmCodex.Dds.Streamers;
 using RhythmCodex.Dsp;
 using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Gdi.Streamers;
+using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;

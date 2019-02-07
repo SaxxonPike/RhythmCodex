@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using RhythmCodex.Attributes;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Step1.Converters;
 using RhythmCodex.Step1.Streamers;
 using RhythmCodex.Step2.Converters;

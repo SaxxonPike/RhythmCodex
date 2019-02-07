@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Extensions;
 using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Wav.Converters

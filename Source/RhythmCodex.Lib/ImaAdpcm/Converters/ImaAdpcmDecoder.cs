@@ -6,6 +6,7 @@ using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Xa.Models;
 
 namespace RhythmCodex.ImaAdpcm.Converters

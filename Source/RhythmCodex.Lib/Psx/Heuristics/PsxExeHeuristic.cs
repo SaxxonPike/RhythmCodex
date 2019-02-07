@@ -3,7 +3,7 @@ using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Psx
+namespace RhythmCodex.Psx.Heuristics
 {
     [Service]
     public class PsxExeHeuristic : IHeuristic

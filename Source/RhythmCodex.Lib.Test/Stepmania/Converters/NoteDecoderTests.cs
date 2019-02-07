@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using RhythmCodex.Attributes;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Stepmania.Converters

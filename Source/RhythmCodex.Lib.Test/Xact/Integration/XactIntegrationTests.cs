@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Attributes;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Xact.Converters;

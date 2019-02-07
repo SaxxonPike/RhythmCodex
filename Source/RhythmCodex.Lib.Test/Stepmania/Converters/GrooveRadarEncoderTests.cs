@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using RhythmCodex.Attributes;
+using RhythmCodex.Meta.Models;
 
 namespace RhythmCodex.Stepmania.Converters
 {

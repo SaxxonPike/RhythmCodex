@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Tim.Models;
 

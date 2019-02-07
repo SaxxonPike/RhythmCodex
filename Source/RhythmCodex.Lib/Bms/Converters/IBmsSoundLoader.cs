@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Bms.Converters
 {

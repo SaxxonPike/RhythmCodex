@@ -1,4 +1,5 @@
 using RhythmCodex.Dds.Models;
+using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Dds.Converters

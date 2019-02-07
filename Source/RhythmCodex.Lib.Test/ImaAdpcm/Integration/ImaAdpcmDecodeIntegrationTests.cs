@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Attributes;
 using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 

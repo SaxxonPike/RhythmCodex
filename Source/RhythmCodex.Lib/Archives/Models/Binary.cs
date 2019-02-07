@@ -1,5 +1,5 @@
-using RhythmCodex.Attributes;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 
 namespace RhythmCodex.Archives.Models
 {

@@ -1,4 +1,4 @@
-﻿namespace RhythmCodex.Attributes
+﻿namespace RhythmCodex.Meta.Models
 {
     public enum FlagData
     {

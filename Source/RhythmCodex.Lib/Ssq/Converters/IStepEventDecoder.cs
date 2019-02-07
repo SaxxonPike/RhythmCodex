@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
 

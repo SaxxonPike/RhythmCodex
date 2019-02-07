@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using RhythmCodex.Attributes;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 
 namespace RhythmCodex.Djmain.Converters
 {

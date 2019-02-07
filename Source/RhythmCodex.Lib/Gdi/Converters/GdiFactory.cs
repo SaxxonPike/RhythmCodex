@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
+using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
@@ -15,7 +16,7 @@ namespace RhythmCodex.Gdi.Converters
         public Bitmap CreateBitmap(int width, int height) =>
             new Bitmap(width, height, PixelFormat.Format32bppArgb);
 
-        public Graphics CreateGraphics(Image image) =>
-            Graphics.FromImage(image);
+        public System.Drawing.Graphics CreateGraphics(Image image) =>
+            System.Drawing.Graphics.FromImage(image);
     }
 }

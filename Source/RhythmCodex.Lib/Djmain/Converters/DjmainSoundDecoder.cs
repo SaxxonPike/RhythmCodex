@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Djmain.Converters
 {

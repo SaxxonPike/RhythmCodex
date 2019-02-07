@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.ImaAdpcm.Converters
 {

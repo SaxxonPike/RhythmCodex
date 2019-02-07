@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Attributes;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Charting
+namespace RhythmCodex.Charting.Models
 {
     [Model]
     public class Chart : Metadata, IChart

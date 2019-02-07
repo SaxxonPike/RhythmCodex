@@ -1,4 +1,5 @@
 ﻿using RhythmCodex.Charting;
+using RhythmCodex.Meta.Models;
 
 namespace RhythmCodex.Stepmania.Converters
 {

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
-using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Charting
+namespace RhythmCodex.Infrastructure
 {
     public interface IQuantizer
     {

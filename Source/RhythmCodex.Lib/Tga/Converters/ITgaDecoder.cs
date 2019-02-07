@@ -1,3 +1,4 @@
+using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Tga.Models;
 

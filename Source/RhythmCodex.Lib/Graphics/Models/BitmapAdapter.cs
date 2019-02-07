@@ -2,8 +2,9 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Infrastructure.Models
+namespace RhythmCodex.Graphics.Models
 {
     [Model]
     public class BitmapAdapter : IDisposable

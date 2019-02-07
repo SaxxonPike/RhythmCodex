@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;

@@ -1,7 +1,10 @@
-namespace RhythmCodex.Infrastructure.Models
+using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
+
+namespace RhythmCodex.Graphics.Models
 {
     [Model]
-    public class RawBitmap
+    public class RawBitmap : Metadata, IRawBitmap
     {
         public RawBitmap()
         {

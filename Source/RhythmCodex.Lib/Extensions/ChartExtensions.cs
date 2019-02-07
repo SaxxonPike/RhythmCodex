@@ -1,7 +1,8 @@
 ﻿using System.Linq;
-using RhythmCodex.Attributes;
 using RhythmCodex.Charting;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Extensions
