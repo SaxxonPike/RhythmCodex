@@ -16,7 +16,4 @@
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib.ThirdParty\RhythmCodex.Thirdparty.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Attributes" />
-  </ItemGroup>
 </Project>
