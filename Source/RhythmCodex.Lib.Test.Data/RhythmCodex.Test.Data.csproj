@@ -52,7 +52,6 @@
         <EmbeddedResource Include="Wav\pcm32.zip" />
         <EmbeddedResource Include="Wav\single.zip" />
         <EmbeddedResource Include="Wav\ulaw.zip" />
-        <EmbeddedResource Include="Xa\xa.zip" />
         <EmbeddedResource Include="Xact\xsb.zip" />
         <EmbeddedResource Include="Xact\xwb.zip" />
     </ItemGroup>
