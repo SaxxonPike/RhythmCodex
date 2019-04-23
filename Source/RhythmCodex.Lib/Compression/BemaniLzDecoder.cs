@@ -11,7 +11,7 @@ namespace RhythmCodex.Compression
         private const int BufferMask = 0x3FF; // 10 bits window
         private const int BufferSize = 0x400;
 
-        public Memory<byte> Decode(Stream source)
+        public byte[] Decode(Stream source)
         {
             using (var mem = new MemoryStream())
             {
@@ -90,7 +90,7 @@ namespace RhythmCodex.Compression
                 }
 
                 writer.Flush();
-                return mem.AsMemory();
+                return mem.ToArray();
             }
         }
     }

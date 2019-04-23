@@ -5,6 +5,6 @@ namespace RhythmCodex.Compression
 {
     public interface IBemaniLzDecoder
     {
-        Memory<byte> Decode(Stream source);
+        byte[] Decode(Stream source);
     }
 }
