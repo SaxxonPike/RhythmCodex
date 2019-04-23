@@ -11,22 +11,26 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         private readonly Func<XboxTaskBuilder> _xboxTaskBuilderFactory;
         private readonly Func<BeatmaniaTaskBuilder> _beatmaniaTaskBuilderFactory;
         private readonly Func<GraphicsTaskBuilder> _graphicsTaskBuilderFactory;
+        private readonly Func<CompressionTaskBuilder> _compressionTaskBuilderFactory;
 
         public TaskFactory(
             Func<DdrTaskBuilder> ddrTaskBuilderFactory, 
             Func<XboxTaskBuilder> xboxTaskBuilderFactory,
             Func<BeatmaniaTaskBuilder> beatmaniaTaskBuilderFactory,
-            Func<GraphicsTaskBuilder> graphicsTaskBuilderFactory)
+            Func<GraphicsTaskBuilder> graphicsTaskBuilderFactory,
+            Func<CompressionTaskBuilder> compressionTaskBuilderFactory)
         {
             _ddrTaskBuilderFactory = ddrTaskBuilderFactory;
             _xboxTaskBuilderFactory = xboxTaskBuilderFactory;
             _beatmaniaTaskBuilderFactory = beatmaniaTaskBuilderFactory;
             _graphicsTaskBuilderFactory = graphicsTaskBuilderFactory;
+            _compressionTaskBuilderFactory = compressionTaskBuilderFactory;
         }
 
         public BeatmaniaTaskBuilder BuildBeatmaniaTask() => _beatmaniaTaskBuilderFactory();
         public DdrTaskBuilder BuildDdrTask() => _ddrTaskBuilderFactory();
         public XboxTaskBuilder BuildXboxTask() => _xboxTaskBuilderFactory();
         public GraphicsTaskBuilder BuildGraphicsTask() => _graphicsTaskBuilderFactory();
+        public CompressionTaskBuilder BuildCompressionTask() => _compressionTaskBuilderFactory();
     }
 }

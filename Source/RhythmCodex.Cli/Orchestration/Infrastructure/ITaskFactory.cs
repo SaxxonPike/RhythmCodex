@@ -6,5 +6,6 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         DdrTaskBuilder BuildDdrTask();
         XboxTaskBuilder BuildXboxTask();
         GraphicsTaskBuilder BuildGraphicsTask();
+        CompressionTaskBuilder BuildCompressionTask();
     }
 }
