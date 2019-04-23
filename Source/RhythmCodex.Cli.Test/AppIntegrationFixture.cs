@@ -5,6 +5,7 @@ using Autofac;
 using NUnit.Framework;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Cli
 {
@@ -36,6 +37,16 @@ namespace RhythmCodex.Cli
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
+            builder.RegisterAssemblyTypes(typeof(App).Assembly)
+                .Where(t => t.GetCustomAttributes<ServiceAttribute>().FirstOrDefault()?.SingleInstance ?? false)
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+            builder.RegisterAssemblyTypes(typeof(App).Assembly)
+                .Where(t => !(t.GetCustomAttributes<ServiceAttribute>().FirstOrDefault()?.SingleInstance ?? true))
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .InstancePerRequest();
             
             builder.RegisterModule<AppAutofacModule>();
             AppContainer = builder.Build();
