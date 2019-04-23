@@ -17,7 +17,7 @@ namespace RhythmCodex.Bms.Integration
         {
             // Arrange.
             var data = GetArchiveResource($"Bms.{name}.zip")
-                .First()
+                .First(f => f.Key.EndsWith(".bms", StringComparison.OrdinalIgnoreCase))
                 .Value;
             var mem = new MemoryStream(data);
             var reader = Resolve<IBmsStreamReader>();

@@ -11,7 +11,7 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class TriggerChunkEncoder : ITriggerChunkEncoder
     {
-        public Memory<byte> Convert(IEnumerable<Trigger> triggers)
+        public byte[] Convert(IEnumerable<Trigger> triggers)
         {
             var triggerList = triggers.AsList();
             var count = triggerList.Count;
@@ -27,7 +27,7 @@ namespace RhythmCodex.Ssq.Converters
                 foreach (var trigger in triggerList)
                     writer.Write(trigger.Id);
 
-                return mem.AsMemory();
+                return mem.ToArray();
             }
         }
     }

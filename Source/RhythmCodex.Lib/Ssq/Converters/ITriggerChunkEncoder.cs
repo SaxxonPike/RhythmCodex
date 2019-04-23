@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ITriggerChunkEncoder
     {
-        Memory<byte> Convert(IEnumerable<Trigger> triggers);
+        byte[] Convert(IEnumerable<Trigger> triggers);
     }
 }

@@ -11,7 +11,7 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class TimingChunkEncoder : ITimingChunkEncoder
     {
-        public Memory<byte> Convert(IEnumerable<Timing> timings)
+        public byte[] Convert(IEnumerable<Timing> timings)
         {
             var timingList = timings.ToArray();
             var count = timingList.Length;
@@ -29,7 +29,7 @@ namespace RhythmCodex.Ssq.Converters
 
                 writer.Flush();
 
-                return mem.AsMemory();
+                return mem.ToArray();
             }
         }
     }

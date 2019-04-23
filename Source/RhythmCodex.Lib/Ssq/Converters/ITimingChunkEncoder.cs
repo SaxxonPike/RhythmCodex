@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ITimingChunkEncoder
     {
-        Memory<byte> Convert(IEnumerable<Timing> timings);
+        byte[] Convert(IEnumerable<Timing> timings);
     }
 }
