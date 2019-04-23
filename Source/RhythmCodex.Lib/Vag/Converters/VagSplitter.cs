@@ -26,9 +26,10 @@ namespace RhythmCodex.Vag.Converters
         {
             if (chunk.Channels == 1)
             {
-                var totalSamples = (int) (chunk.Length * 28 / 16);
+                var length = (int) (chunk.Length ?? chunk.Data.Length);
+                var totalSamples = length * 28 / 16;
                 var output = new float[totalSamples];
-                _vagDecrypter.Decrypt(chunk.Data, output, (int) chunk.Length, new VagDecodeState());
+                _vagDecrypter.Decrypt(chunk.Data, output, length, new VagDecodeState());
                 
                 yield return new Sample
                 {
