@@ -103,7 +103,7 @@ namespace RhythmCodex.Cli.Helpers
         public void Parse_ParsesMixtureOfDefaultAndSpecificKeys()
         {
             // Arrange.
-            var argKinds = CreateMany<char>(2);
+            var argKinds = Create<string>().Take(2).ToArray();
             var argValues = CreateMany<string>(2);
             var defaultValues = CreateMany<string>(2);
             var data = new[]
