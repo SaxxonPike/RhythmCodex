@@ -90,7 +90,7 @@ namespace RhythmCodex.Xa.Converters
 
         [Test]
         [TestCaseSource(nameof(Frame1Data))]
-        public void Test1(byte[] frame, int channel, int expectedStatus, byte[] expectedData)
+        public void Get4BitData_ShouldRetrieveCorrectDataStreams(byte[] frame, int channel, int expectedStatus, byte[] expectedData)
         {
             var buffer = new int[28];
             Subject.GetStatus(frame, channel).Should().Be(expectedStatus);
