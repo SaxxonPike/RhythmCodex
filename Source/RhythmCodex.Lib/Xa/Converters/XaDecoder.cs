@@ -4,11 +4,13 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
+using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Xa.Models;
 
 namespace RhythmCodex.Xa.Converters
 {
+    [Service]
     public class XaDecoder : IXaDecoder
     {
         private readonly IXaFrameSplitter _xaFrameSplitter;
@@ -54,7 +56,7 @@ namespace RhythmCodex.Xa.Converters
             return sounds;
         }
 
-        private void DecodeFrame(ReadOnlyMemory<byte> frame, Span<float> buffer, int channel, XaState state)
+        private void DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, XaState state)
         {
             var status = _xaFrameSplitter.GetStatus(frame, channel);
             var magnitude = status & 0x0F;
@@ -66,11 +68,12 @@ namespace RhythmCodex.Xa.Converters
             var k1 = K1[filter];
             var p1 = state.Prev1;
             var p2 = state.Prev2;
-            var i = 0;
+            var dataBuffer = new int[28];
+            _xaFrameSplitter.Get4BitData(frame, dataBuffer, channel);
 
-            foreach (var data in _xaFrameSplitter.Get4BitData(frame, channel))
+            for (var i = 0; i < 28; i++)
             {
-                var delta = data << 28;
+                var delta = dataBuffer[i] << 28;
                 var filter0 = k0 * p1;
                 var filter1 = k1 * p2;
                 var p0 = (delta >> magnitude) + ((filter0 + filter1) >> 6);

@@ -1,28 +1,43 @@
 using System;
 using System.Collections.Generic;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Xa.Converters
 {
+    [Service]
     public class XaFrameSplitter : IXaFrameSplitter
     {
-        public int GetStatus(ReadOnlyMemory<byte> frame, int channel) => 
-            frame.Span[(channel & 7) + 4];
+        public int GetStatus(ReadOnlySpan<byte> frame, int channel) => 
+            frame[(channel & 7) + 4];
 
-        public IEnumerable<int> Get4BitData(ReadOnlyMemory<byte> frame, int channel)
+        public void Get4BitData(ReadOnlySpan<byte> frame, Span<int> buffer, int channel)
         {
+            if (buffer == null)
+                throw new RhythmCodexException("Buffer cannot be null.");
+            
+            if (buffer.Length != 28)
+                throw new RhythmCodexException("Buffer must have a length of 28.");
+            
             var channelOffset = 0x10 + ((channel & 7) >> 1);
             var dataShift = (channel & 1) << 2;
 
             for (var i = 0; i < 28; i++)
-                yield return (frame.Span[channelOffset + (i << 2)] >> dataShift) & 0xF;
+                buffer[i] = (frame[channelOffset + (i << 2)] >> dataShift) & 0xF;
         }
         
-        public IEnumerable<int> Get8BitData(ReadOnlyMemory<byte> frame, int channel)
+        public void Get8BitData(ReadOnlySpan<byte> frame, Span<int> buffer, int channel)
         {
+            if (buffer == null)
+                throw new RhythmCodexException("Buffer cannot be null.");
+            
+            if (buffer.Length != 28)
+                throw new RhythmCodexException("Buffer must have a length of 28.");
+            
             var channelOffset = 0x10 + (channel & 3);
 
             for (var i = 0; i < 28; i++)
-                yield return frame.Span[channelOffset + (i << 2)];
+                buffer[i] = frame[channelOffset + (i << 2)];
         }
     }
 }

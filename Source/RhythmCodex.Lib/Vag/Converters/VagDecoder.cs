@@ -6,42 +6,28 @@ using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Models;
-using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Vag.Converters
 {
     [Service]
     public class VagDecoder : IVagDecoder
     {
+        private readonly IVagSplitter _vagSplitter;
+
+        public VagDecoder(IVagSplitter vagSplitter)
+        {
+            _vagSplitter = vagSplitter;
+        }
+        
         public ISound Decode(VagChunk chunk)
         {
-            using (var mem = new ReadOnlyMemoryStream(chunk.Data))
-            using (var stream = new VagStream(mem, new VagConfig
+            return new Sound
             {
-                Channels = chunk.Channels,
-                Interleave = chunk.Interleave,
-                MaximumLength = chunk.Length ?? long.MaxValue
-            }))
-            {
-                var data = stream.ReadAllBytes();
-                var shorts = new short[data.Length / 2];
-                Buffer.BlockCopy(data, 0, shorts, 0, shorts.Length * 2);
-                var output = shorts.Select(s => (float) s / 32768f)
-                    .Deinterleave(1, chunk.Channels)
-                    .Select(floats => new Sample
-                    {
-                        Data = floats
-                    })
-                    .Cast<ISample>()
-                    .ToArray();
-                
-                return new Sound
-                {
-                    Samples = output
-                };
-            }
+                Samples = _vagSplitter.Split(chunk)
+            };
         }
     }
 }

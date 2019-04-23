@@ -5,8 +5,8 @@ namespace RhythmCodex.Xa.Converters
 {
     public interface IXaFrameSplitter
     {
-        int GetStatus(ReadOnlyMemory<byte> frame, int channel);
-        IEnumerable<int> Get4BitData(ReadOnlyMemory<byte> frame, int channel);
-        IEnumerable<int> Get8BitData(ReadOnlyMemory<byte> frame, int channel);
+        int GetStatus(ReadOnlySpan<byte> frame, int channel);
+        void Get4BitData(ReadOnlySpan<byte> frame, Span<int> buffer, int channel);
+        void Get8BitData(ReadOnlySpan<byte> frame, Span<int> buffer, int channel);
     }
 }
