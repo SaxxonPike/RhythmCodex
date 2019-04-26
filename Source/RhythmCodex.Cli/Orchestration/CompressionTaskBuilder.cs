@@ -43,6 +43,7 @@ namespace RhythmCodex.Cli.Orchestration
                         var reader = new BinaryReader(stream);
                         var data = reader.ReadBytes((int) stream.Length);
                         var encoded = _bemaniLzEncoder.Encode(data);
+                        task.Message = $"Compressed {data.Length} -> {encoded.Length} bytes.";
                             
                         using (var output = OpenWriteSingle(task, file, i => $"{i}.bemanilz"))
                         {
@@ -73,6 +74,7 @@ namespace RhythmCodex.Cli.Orchestration
                     using (var stream = OpenRead(task, file))
                     {
                         var decoded = _bemaniLzDecoder.Decode(stream);
+                        task.Message = $"Deompressed {stream.Length} -> {decoded.Length} bytes.";
                         using (var output = OpenWriteSingle(task, file, i => $"{i}.decoded"))
                         {
                             var writer = new BinaryWriter(output);
