@@ -21,5 +21,19 @@ namespace RhythmCodex.Compression.Integration
 
             decoded.Should().BeEquivalentTo(data);
         }
+
+        [Test]
+        public void EncodingAndDecoding_ShouldReturnIdenticalData_WhenDataIsRandom()
+        {
+            var data = CreateMany<byte>(256).ToArray();
+            
+            var encoder = Resolve<BemaniLzEncoder>();
+            var encoded = encoder.Encode(data);
+            
+            var decoder = Resolve<BemaniLzDecoder>();
+            var decoded = decoder.Decode(new MemoryStream(encoded));
+
+            decoded.Should().BeEquivalentTo(data);
+        }
     }
 }
