@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Compression
@@ -11,6 +12,7 @@ namespace RhythmCodex.Compression
     {
         private enum TokenType
         {
+            Unassigned,
             Raw,
             Short,
             Long
@@ -22,12 +24,12 @@ namespace RhythmCodex.Compression
             public int Length;
         }
 
-        private class Token
+        private struct Token
         {
             public int Offset { get; set; }
             public int Length { get; set; }
             public TokenType Type { get; set; }
-            public List<byte> Data { get; } = new List<byte>();
+            public List<byte> Data { get; set; }
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace RhythmCodex.Compression
             var inputOffset = 0;
 
             var tokens = new List<Token>();
-            Token token = null;
+            var token = new Token();
             while (inputOffset < inputLength)
             {
                 var shortMatch = FindMatch(inputOffset - 0x10, inputOffset, inputLength, 2, 4);
@@ -96,9 +98,9 @@ namespace RhythmCodex.Compression
 
                 if (useShortMatch)
                 {
-                    if (token != null)
+                    if (token.Type != TokenType.Unassigned)
                         tokens.Add(token);
-                    token = null;
+                    token = new Token();
 
                     tokens.Add(new Token
                     {
@@ -111,9 +113,9 @@ namespace RhythmCodex.Compression
                 }
                 else if (useLongMatch)
                 {
-                    if (token != null)
+                    if (token.Type != TokenType.Unassigned)
                         tokens.Add(token);
-                    token = null;
+                    token = new Token();
 
                     tokens.Add(new Token
                     {
@@ -126,10 +128,11 @@ namespace RhythmCodex.Compression
                 }
                 else
                 {
-                    token = token ?? new Token
+                    if (token.Type == TokenType.Unassigned)
                     {
-                        Type = TokenType.Raw
-                    };
+                        token.Type = TokenType.Raw;
+                        token.Data = new List<byte>();
+                    }
 
                     token.Data.Add(source[inputOffset++]);
 
@@ -137,12 +140,12 @@ namespace RhythmCodex.Compression
                     if (token.Data.Count == 69)
                     {
                         tokens.Add(token);
-                        token = null;
+                        token = new Token();
                     }
                 }
             }
 
-            if (token != null)
+            if (token.Type != TokenType.Unassigned)
                 tokens.Add(token);
 
             return tokens;
@@ -202,7 +205,7 @@ namespace RhythmCodex.Compression
                         });
                         break;
                     }
-                    default:
+                    case TokenType.Raw:
                     {
                         if (token.Data.Count < 7)
                         {
@@ -215,6 +218,10 @@ namespace RhythmCodex.Compression
                         }
 
                         break;
+                    }
+                    default:
+                    {
+                        throw new RhythmCodexException($"Something went wrong with the tokenizer. Report this.");
                     }
                 }
             }
