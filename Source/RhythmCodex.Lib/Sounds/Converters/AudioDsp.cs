@@ -11,19 +11,28 @@ namespace RhythmCodex.Sounds.Converters
     [Service]
     public class AudioDsp : IAudioDsp
     {
+        public ISound ApplyPanVolume(ISound sound, BigRational volume, BigRational panning)
+        {
+            var newSound = new Sound
+            {
+                Samples = new List<ISample>(sound.Samples)
+            };
+
+            newSound.CloneMetadataFrom((Metadata) sound);
+            newSound[NumericData.Volume] = volume;
+            newSound[NumericData.Panning] = panning;
+
+            ApplyEffectsInternal(newSound);
+            return newSound;
+        }
+
         public ISound ApplyResampling(ISound sound, BigRational rate)
         {
             // Garbage non-interpolated resampling? Check.
             if (rate <= BigRational.Zero || sound[NumericData.Rate] == rate)
                 return sound;
 
-            if (rate < 8000)
-            {
-                
-            }
-
             var samples = new List<ISample>(sound.Samples);
-
             var result = new Sound
             {
                 Samples = samples.Select(s =>
