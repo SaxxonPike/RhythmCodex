@@ -29,8 +29,8 @@ namespace RhythmCodex.Cli.Orchestration
     [Service(singleInstance: false)]
     public class DdrTaskBuilder : TaskBuilderBase<DdrTaskBuilder>
     {
-        private readonly IDdr573StreamReader _ddr573StreamReader;
-        private readonly IDdr573Decoder _ddr573Decoder;
+        private readonly IDdr573ImageStreamReader _ddr573ImageStreamReader;
+        private readonly IDdr573ImageDecoder _ddr573ImageDecoder;
         private readonly ISsqStreamReader _ssqStreamReader;
         private readonly ISsqDecoder _ssqDecoder;
         private readonly ISmEncoder _smEncoder;
@@ -48,8 +48,8 @@ namespace RhythmCodex.Cli.Orchestration
         public DdrTaskBuilder(
             IFileSystem fileSystem,
             ILogger logger,
-            IDdr573StreamReader ddr573StreamReader,
-            IDdr573Decoder ddr573Decoder,
+            IDdr573ImageStreamReader ddr573ImageStreamReader,
+            IDdr573ImageDecoder ddr573ImageDecoder,
             ISsqStreamReader ssqStreamReader,
             ISsqDecoder ssqDecoder,
             ISmEncoder smEncoder,
@@ -65,8 +65,8 @@ namespace RhythmCodex.Cli.Orchestration
             IHeuristicTester heuristicTester)
             : base(fileSystem, logger)
         {
-            _ddr573StreamReader = ddr573StreamReader;
-            _ddr573Decoder = ddr573Decoder;
+            _ddr573ImageStreamReader = ddr573ImageStreamReader;
+            _ddr573ImageDecoder = ddr573ImageDecoder;
             _ssqStreamReader = ssqStreamReader;
             _ssqDecoder = ssqDecoder;
             _smEncoder = smEncoder;
@@ -263,8 +263,8 @@ namespace RhythmCodex.Cli.Orchestration
                         fileStreams.AddRange(inputFiles.Select(f => f.Open()));
 
                         image = fileStreams.Count == 1
-                            ? _ddr573StreamReader.Read(fileStreams[0], (int) fileStreams[0].Length)
-                            : _ddr573StreamReader.Read(fileStreams[0], (int) fileStreams[0].Length, fileStreams[1],
+                            ? _ddr573ImageStreamReader.Read(fileStreams[0], (int) fileStreams[0].Length)
+                            : _ddr573ImageStreamReader.Read(fileStreams[0], (int) fileStreams[0].Length, fileStreams[1],
                                 (int) fileStreams[1].Length);
                     }
                     finally
@@ -273,7 +273,7 @@ namespace RhythmCodex.Cli.Orchestration
                             fileStream?.Dispose();
                     }
 
-                    var files = _ddr573Decoder.Decode(image);
+                    var files = _ddr573ImageDecoder.Decode(image);
                     var fileIndex = 0;
                     ParallelProgress(task, files, file =>
                     {
