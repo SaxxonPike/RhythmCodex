@@ -5,10 +5,10 @@ namespace RhythmCodex.Ddr.Converters
     [Service]
     public class Ddr573AudioDecrypter : IDdr573AudioDecrypter
     {
-        private int Bit(int value, int n) =>
+        private static int Bit(int value, int n) =>
             (value >> n) & 1;
 
-        private int BitSwap16(int v, int b15, int b14, int b13, int b12, int b11, int b10, int b9, int b8,
+        private static int BitSwap16(int v, int b15, int b14, int b13, int b12, int b11, int b10, int b9, int b8,
             int b7, int b6, int b5, int b4, int b3, int b2, int b1, int b0) =>
             (Bit(v, b15) << 15) |
             (Bit(v, b14) << 14) |
