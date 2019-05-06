@@ -10,6 +10,9 @@ Many third party libraries are used to provide extra functionality. They are:
 - NVorbis
   - Provides OGG loading
   - https://github.com/ioctlLR/NVorbis
+- Blowfish
+  - Provides Blowfish (en/de)cryption
+  - https://github.com/Elskom/BlowFish
 
 # RhythmCodex license
 
