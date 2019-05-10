@@ -5,6 +5,6 @@ namespace RhythmCodex.Vag.Converters
 {
     public interface IVagDecrypter
     {
-        void Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagDecodeState decodeState);
+        void Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagState state);
     }
 }

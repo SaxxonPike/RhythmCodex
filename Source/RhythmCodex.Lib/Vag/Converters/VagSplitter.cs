@@ -29,7 +29,7 @@ namespace RhythmCodex.Vag.Converters
                 var length = (int) (chunk.Length ?? chunk.Data.Length);
                 var totalSamples = length * 28 / 16;
                 var output = new float[totalSamples];
-                _vagDecrypter.Decrypt(chunk.Data, output, length, new VagDecodeState());
+                _vagDecrypter.Decrypt(chunk.Data, output, length, new VagState());
                 
                 yield return new Sample
                 {
@@ -46,7 +46,7 @@ namespace RhythmCodex.Vag.Converters
                 for (var channel = 0; channel < chunk.Channels; channel++)
                 {
                     var output = new List<float>();
-                    var state = new VagDecodeState();
+                    var state = new VagState();
                     var offset = channel * interleave;
                     while (offset < length)
                     {

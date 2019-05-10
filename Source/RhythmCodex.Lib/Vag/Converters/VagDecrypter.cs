@@ -7,23 +7,13 @@ namespace RhythmCodex.Vag.Converters
     [Service]
     public class VagDecrypter : IVagDecrypter
     {
-        private static readonly int[] Coeff0 =
-        {
-            0, 60, 115, 98, 122
-        };
-
-        private static readonly int[] Coeff1 =
-        {
-            0, 0, -52, -55, -60
-        };
-
-        public void Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagDecodeState decodeState)
+        public void Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagState state)
         {
             var inOffset = 0;
             var outOffset = 0;
-            var last0 = decodeState.Prev0;
-            var last1 = decodeState.Prev1;
-            var enabled = decodeState.Enabled;
+            var last0 = state.Prev0;
+            var last1 = state.Prev1;
+            var enabled = state.Enabled;
 
             while (inOffset < length)
             {
@@ -51,8 +41,8 @@ namespace RhythmCodex.Vag.Converters
                         var deltas = input[inOffset + i];
                         var delta0 = (deltas & 0x0F) << 28;
                         var delta1 = (deltas & 0xF0) << 24;
-                        var coeff0 = Coeff0[filter];
-                        var coeff1 = Coeff1[filter];
+                        var coeff0 = VagCoefficients.Coeff0[filter];
+                        var coeff1 = VagCoefficients.Coeff1[filter];
 
                         var filter0 = coeff0 * last0;
                         var filter1 = coeff1 * last1;
@@ -87,9 +77,9 @@ namespace RhythmCodex.Vag.Converters
                 inOffset += 16;
             }
 
-            decodeState.Prev0 = last0;
-            decodeState.Prev1 = last1;
-            decodeState.Enabled = enabled;
+            state.Prev0 = last0;
+            state.Prev1 = last1;
+            state.Enabled = enabled;
         }
     }
 }
