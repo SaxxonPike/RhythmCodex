@@ -39,9 +39,9 @@ namespace RhythmCodex.Vag.Converters
                 }
 
                 var range = max - min;
-                var multiplier = 16f;
+                var multiplier = 8f;
                 var magnitude = 0;
-                while (range < 0.25 && magnitude < 12)
+                while (range <= 1 && magnitude < 12)
                 {
                     multiplier *= 2;
                     range *= 2;

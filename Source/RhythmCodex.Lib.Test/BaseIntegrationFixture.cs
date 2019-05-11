@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex
 {
-    public class BaseIntegrationFixture : BaseTestFixture
+    public class BaseIntegrationFixture : BaseTestFixture, IResolver
     {
         private readonly Lazy<IContainer> _container;
 
@@ -51,12 +51,14 @@ namespace RhythmCodex
         {
             return Container.Resolve<TObject>();
         }        
+        
+        TObject IResolver.Resolve<TObject>() => Resolve<TObject>();
     }
     
     /// <summary>
     ///     Base test fixture for all integration tests that use a simple container.
     /// </summary>
-    public class BaseIntegrationFixture<TSubject> : BaseTestFixture
+    public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver
     {
         private readonly Lazy<IContainer> _container;
         private readonly Lazy<TSubject> _subject;
@@ -106,5 +108,7 @@ namespace RhythmCodex
         {
             return Container.Resolve<TObject>();
         }
+
+        TObject IResolver.Resolve<TObject>() => Resolve<TObject>();
     }
 }

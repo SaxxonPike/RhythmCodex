@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Converters;
 using RhythmCodex.Vag.Streamers;
 
@@ -23,24 +24,16 @@ namespace RhythmCodex.Vag.Integration
 
             var decoder = Resolve<IVagDecoder>();
             var streamer = Resolve<IXa2StreamReader>();
-            var encoder = Resolve<IRiffPcm16SoundEncoder>();
-            var writer = Resolve<IRiffStreamWriter>();
 
             using (var stream = new MemoryStream(data))
             {
                 var vag = streamer.Read(stream);
                 var decoded = decoder.Decode(vag.VagChunk);
                 decoded[NumericData.Rate] = 44100;
-                var encoded = encoder.Encode(decoded);
-                using (var outStream = new MemoryStream())
-                {
-                    writer.Write(outStream, encoded);
-                    outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa2.wav"), outStream.ToArray());
-                }
+                this.WriteSound(decoded, "xa2.wav");
             }
         }
-        
+
         [Test]
         [Explicit]
         public void Test_Svag()
@@ -64,7 +57,9 @@ namespace RhythmCodex.Vag.Integration
                 {
                     writer.Write(outStream, encoded);
                     outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "svag.wav"), outStream.ToArray());
+                    File.WriteAllBytes(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "svag.wav"),
+                        outStream.ToArray());
                 }
             }
         }
