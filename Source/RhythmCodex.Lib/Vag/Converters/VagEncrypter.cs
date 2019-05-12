@@ -7,93 +7,118 @@ namespace RhythmCodex.Vag.Converters
     [Service]
     public class VagEncrypter : IVagEncrypter
     {
-        private readonly IVagDecrypter _vagDecrypter;
-
-        public VagEncrypter(IVagDecrypter vagDecrypter)
-        {
-            _vagDecrypter = vagDecrypter;
-        }
-        
         public void Encrypt(ReadOnlySpan<float> input, Span<byte> output, int length, VagState state)
         {
             var filterCount = VagCoefficients.Coeff0.Length;
+            const int magnitudeCount = 13;
             var inOffset = 0;
             var outOffset = 0;
             var maxOffset = length - 27;
-            var testDecodeBuffer = new float[28];
+            Span<double> frameDiff = new double[filterCount * magnitudeCount];
+            var workBuffer = new byte[16 * filterCount * magnitudeCount];
+            var workBufferSpan = workBuffer.AsSpan();
+            Span<double> nybbleDiff = new double[16];
+            Span<int> nybbleSample = new int[16];
+            Span<int> last0Buffer = new int[filterCount * magnitudeCount];
+            Span<int> last1Buffer = new int[filterCount * magnitudeCount];
+            Span<int> filterMagnitude = new int[filterCount];
 
             while (inOffset < maxOffset)
             {
+                var maxMagnitude = 12;
                 var inBuffer = input.Slice(inOffset);
                 var outBuffer = output.Slice(outOffset);
 
-                // Deduce the magnitude.
-                var min = float.MaxValue;
-                var max = float.MinValue;
-                for (var i = 0; i < 28; i++)
-                {
-                    if (inBuffer[i] < min)
-                        min = inBuffer[i];
-                    if (inBuffer[i] > max)
-                        max = inBuffer[i];
-                }
+                workBufferSpan.Fill(0x00);
+                frameDiff.Fill(0f);
 
-                var range = max - min;
-                var multiplier = 8f;
-                var magnitude = 0;
-                while (range <= 1 && magnitude < 12)
+                // Permute all filter + magnitude combinations (5 * 13 = 65)
+                for (var filter = 0; filter < filterCount; filter++)
                 {
-                    multiplier *= 2;
-                    range *= 2;
-                    magnitude++;
-                }
-
-                // Populate the frame.
-                for (var i = 0; i < 28; i += 2)
-                {
-                    var sample0 = (int) Math.Round(inBuffer[i] * multiplier);
-                    if (sample0 < -8)
-                        sample0 = -8;
-                    else if (sample0 > 7)
-                        sample0 = 7;
-                    var sample1 = (int) Math.Round(inBuffer[i + 1] * multiplier);
-                    if (sample1 < -8)
-                        sample1 = -8;
-                    else if (sample1 > 7)
-                        sample1 = 7;
-                    outBuffer[2 + (i >> 1)] = unchecked((byte) ((sample0 & 0xF) | ((sample1 & 0xF) << 4)));
-                }
-
-                // Deduce the filter.
-                byte bestFilter = 0;
-                var bestFilterDiff = double.MaxValue;
-                var prev0 = state.Prev0;
-                var prev1 = state.Prev1;
-                var bestPrev0 = prev0;
-                var bestPrev1 = prev1;
-                for (var i = 0; i < filterCount; i++)
-                {
-                    outBuffer[0] = unchecked((byte) (magnitude | (i << 4)));
-                    _vagDecrypter.Decrypt(outBuffer, testDecodeBuffer, 16, state);
-                    var diff = 0d;
-                    for (var j = 0; j < 28; j++)
-                        diff += Math.Pow((testDecodeBuffer[i] - inBuffer[i]) * 65536, 2);
-                    if (diff < bestFilterDiff)
+                    filterMagnitude[filter] = maxMagnitude;
+                    var coeff0 = VagCoefficients.Coeff0[filter];
+                    var coeff1 = VagCoefficients.Coeff1[filter];
+                    for (var magnitude = 0; magnitude < magnitudeCount; magnitude++)
                     {
-                        bestFilterDiff = diff;
-                        bestFilter = outBuffer[0];
-                        bestPrev0 = state.Prev0;
-                        bestPrev1 = state.Prev1;
+                        var diffIndex = filter + magnitude * filterCount;
+                        var workBufferIndex = diffIndex * 16;
+                        var last0 = state.Prev0;
+                        var last1 = state.Prev1;
+                        workBuffer[workBufferIndex] = unchecked((byte) (magnitude | (filter << 4)));
+                        for (var index = 0; index < 28; index++)
+                        {
+                            // Calculate samples for all nybble values
+                            for (var nybble = 0; nybble < 16; nybble++)
+                            {
+                                var filter0 = last0 * coeff0;
+                                var filter1 = last1 * coeff1;
+                                var sample = ((nybble << 28) >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
+                                var sampleF = sample / 32768f;
+                                var diffF = sampleF - inBuffer[index];
+                                diffF *= diffF;
+                                frameDiff[diffIndex] += diffF;
+                                nybbleDiff[nybble] = diffF;
+                                if (sample > short.MaxValue)
+                                    sample = short.MaxValue;
+                                else if (sample < short.MinValue)
+                                    sample = short.MinValue;
+                                nybbleSample[nybble] = sample;
+                            }
+
+                            // Determine the closest sample
+                            var bestNybbleDiff = double.MaxValue;
+                            var bestNybbleIndex = -1;
+                            for (var i = 0; i < 16; i++)
+                            {
+                                if (nybbleDiff[i] < bestNybbleDiff)
+                                {
+                                    bestNybbleIndex = i;
+                                    bestNybbleDiff = nybbleDiff[i];
+                                    if (bestNybbleDiff == 0)
+                                        break;
+                                }
+                            }
+
+                            // 4 5 6 7 8 9 A B
+                            if (((bestNybbleIndex + 4) & 0x8) != 0)
+                                filterMagnitude[filter] = Math.Min(filterMagnitude[filter], magnitude);
+
+                            // Populate the buffer with the nybble
+                            var shift = (index & 1) << 2;
+                            var workIndex = 2 + (index >> 1);
+                            workBuffer[workBufferIndex + workIndex] |= unchecked((byte) (bestNybbleIndex << shift));
+                            last1 = last0;
+                            last0 = nybbleSample[bestNybbleIndex];
+                        }
+
+                        last0Buffer[diffIndex] = last0;
+                        last1Buffer[diffIndex] = last1;
                     }
-                    if (bestFilterDiff == 0)
-                        break;
-                    state.Prev0 = prev0;
-                    state.Prev1 = prev1;
                 }
 
-                state.Prev0 = bestPrev0;
-                state.Prev1 = bestPrev1;
-                outBuffer[0] = bestFilter;
+                // Determine the most accurate frame
+                var bestFrameDiffIndex = 0;
+                var bestFrameDiff = double.MaxValue;
+                for (var filter = 0; filter < filterCount; filter++)
+                {
+                    for (var magnitude = filterMagnitude[filter]; magnitude >= 0; magnitude--)
+                    {
+                        var diffIndex = filter + magnitude * filterCount;
+                        if (frameDiff[diffIndex] < bestFrameDiff)
+                        {
+                            bestFrameDiffIndex = diffIndex;
+                            bestFrameDiff = frameDiff[diffIndex];
+                            if (bestFrameDiff == 0)
+                                break;
+                        }
+                    }
+                }
+                
+                // Write out the best frame
+                //File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "frame.bin"), workBuffer);
+                workBufferSpan.Slice(bestFrameDiffIndex * 16, 16).CopyTo(outBuffer);
+                state.Prev1 = last1Buffer[bestFrameDiffIndex];
+                state.Prev0 = last0Buffer[bestFrameDiffIndex];
                 inOffset += 28;
                 outOffset += 16;
             }
