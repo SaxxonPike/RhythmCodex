@@ -17,8 +17,6 @@ namespace RhythmCodex.Vag.Converters
             Span<double> frameDiff = new double[filterCount * magnitudeCount];
             var workBuffer = new byte[16 * filterCount * magnitudeCount];
             var workBufferSpan = workBuffer.AsSpan();
-            Span<double> nybbleDiff = new double[16];
-            Span<int> nybbleSample = new int[16];
             Span<int> last0Buffer = new int[filterCount * magnitudeCount];
             Span<int> last1Buffer = new int[filterCount * magnitudeCount];
             Span<int> filterMagnitude = new int[filterCount];
@@ -38,7 +36,7 @@ namespace RhythmCodex.Vag.Converters
                     filterMagnitude[filter] = maxMagnitude;
                     var coeff0 = VagCoefficients.Coeff0[filter];
                     var coeff1 = VagCoefficients.Coeff1[filter];
-                    for (var magnitude = 0; magnitude < magnitudeCount; magnitude++)
+                    for (var magnitude = 0; magnitude < filterMagnitude[filter]; magnitude++)
                     {
                         var diffIndex = filter + magnitude * filterCount;
                         var workBufferIndex = diffIndex * 16;
@@ -47,48 +45,26 @@ namespace RhythmCodex.Vag.Converters
                         workBuffer[workBufferIndex] = unchecked((byte) (magnitude | (filter << 4)));
                         for (var index = 0; index < 28; index++)
                         {
-                            // Calculate samples for all nybble values
-                            for (var nybble = 0; nybble < 16; nybble++)
-                            {
-                                var filter0 = last0 * coeff0;
-                                var filter1 = last1 * coeff1;
-                                var sample = ((nybble << 28) >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
-                                var sampleF = sample / 32768f;
-                                var diffF = sampleF - inBuffer[index];
-                                diffF *= diffF;
-                                frameDiff[diffIndex] += diffF;
-                                nybbleDiff[nybble] = diffF;
-                                if (sample > short.MaxValue)
-                                    sample = short.MaxValue;
-                                else if (sample < short.MinValue)
-                                    sample = short.MinValue;
-                                nybbleSample[nybble] = sample;
-                            }
-
-                            // Determine the closest sample
-                            var bestNybbleDiff = double.MaxValue;
-                            var bestNybbleIndex = -1;
-                            for (var i = 0; i < 16; i++)
-                            {
-                                if (nybbleDiff[i] < bestNybbleDiff)
-                                {
-                                    bestNybbleIndex = i;
-                                    bestNybbleDiff = nybbleDiff[i];
-                                    if (bestNybbleDiff == 0)
-                                        break;
-                                }
-                            }
-
-                            // 4 5 6 7 8 9 A B
-                            if (((bestNybbleIndex + 4) & 0x8) != 0)
+                            var filter0 = last0 * coeff0;
+                            var filter1 = last1 * coeff1;
+                            var inSample = (int)(inBuffer[index] * 32768f);
+                            var inAlu = inSample - ((filter0 + filter1) >> 6);
+                            if (inAlu > 32767)
+                                inAlu = 32767;
+                            if (inAlu < -32768)
+                                inAlu = -32768;
+                            var nybble = ((inAlu << (magnitude + 16)) >> 28) & 0xF;
+                            if (nybble == 0x8 || nybble == 0x7)
                                 filterMagnitude[filter] = Math.Min(filterMagnitude[filter], magnitude);
+                            var outSample = ((nybble << 28) >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
+                            frameDiff[diffIndex] += Math.Pow(outSample - inSample, 2);
 
                             // Populate the buffer with the nybble
                             var shift = (index & 1) << 2;
                             var workIndex = 2 + (index >> 1);
-                            workBuffer[workBufferIndex + workIndex] |= unchecked((byte) (bestNybbleIndex << shift));
+                            workBuffer[workBufferIndex + workIndex] |= unchecked((byte) (nybble << shift));
                             last1 = last0;
-                            last0 = nybbleSample[bestNybbleIndex];
+                            last0 = outSample;
                         }
 
                         last0Buffer[diffIndex] = last0;

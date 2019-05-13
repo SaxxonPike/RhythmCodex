@@ -17,7 +17,7 @@ namespace RhythmCodex.Vag.Integration
     public class VagEncodeIntegrationTests : BaseIntegrationFixture
     {
         [Test]
-        [TestCase("msadpcm")]
+        [TestCase("pcm16")]
         [Explicit("WIP")]
         public void Test1(string name)
         {
