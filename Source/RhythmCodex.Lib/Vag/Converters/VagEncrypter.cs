@@ -17,13 +17,15 @@ namespace RhythmCodex.Vag.Converters
             var inOffset = 0;
             var outOffset = 0;
             var maxOffset = length - 27;
-            Span<double> frameDiff = new double[filterCount * magnitudeCount];
+            var frameDiff = new double[filterCount * magnitudeCount];
+            var frameDiffSpan = frameDiff.AsSpan();
             var workBuffer = new byte[16 * filterCount * magnitudeCount];
             var workBufferSpan = workBuffer.AsSpan();
-            Span<int> last0Buffer = new int[filterCount * magnitudeCount];
-            Span<int> last1Buffer = new int[filterCount * magnitudeCount];
-            Span<int> filterMagnitude = new int[filterCount];
-            Span<int> inputSampleBuffer = new int[28];
+            var last0Buffer = new int[filterCount * magnitudeCount];
+            var last1Buffer = new int[filterCount * magnitudeCount];
+            var filterMagnitude = new int[filterCount];
+            var inputSampleBuffer = new int[28];
+            var lastOutOffset = -16;
 
             while (inOffset < maxOffset)
             {
@@ -31,7 +33,7 @@ namespace RhythmCodex.Vag.Converters
                 var outBuffer = output.Slice(outOffset);
 
                 workBufferSpan.Fill(0x00);
-                frameDiff.Fill(0f);
+                frameDiffSpan.Fill(0f);
 
                 for (var index = 0; index < 28; index++)
                     inputSampleBuffer[index] = (int) (inBuffer[index] * 32768f);
@@ -90,21 +92,45 @@ namespace RhythmCodex.Vag.Converters
                     for (var magnitude = highestMagnitude; magnitude >= lowestMagnitude; magnitude--)
                     {
                         var diffIndex = filter + magnitude * filterCount;
-                        if (frameDiff[diffIndex] < bestFrameDiff)
-                        {
-                            bestFrameDiffIndex = diffIndex;
-                            bestFrameDiff = frameDiff[diffIndex];
-                        }
+                        if (frameDiff[diffIndex] >= bestFrameDiff)
+                            continue;
+
+                        bestFrameDiffIndex = diffIndex;
+                        bestFrameDiff = frameDiff[diffIndex];
                     }
                 }
 
-                // Write out the best frame
+                // Write out the best frame.
                 workBufferSpan.Slice(bestFrameDiffIndex * 16, 16).CopyTo(outBuffer);
+                
+                // If the frame is empty, write out 0x0C for filter/magnitude.
+                var isEmptyFrame = true;
+                for (var i = 2; i < 16; i++)
+                {
+                    if (outBuffer[i] != 0)
+                    {
+                        isEmptyFrame = false;
+                        break;
+                    }
+                }
+
+                if (isEmptyFrame)
+                    outBuffer[0] = 0x0C;
+                
                 statePrev1 = last1Buffer[bestFrameDiffIndex];
                 statePrev0 = last0Buffer[bestFrameDiffIndex];
+                lastOutOffset = outOffset;
                 inOffset += 28;
                 outOffset += 16;
             }
+
+            // Mark the end of the stream.
+            if (lastOutOffset >= 0)
+                output[lastOutOffset + 1] |= 0x01;
+
+            // Mark the start of the stream.
+            if (outOffset >= 0)
+                output[1] |= 0x04;
 
             state.Prev0 = statePrev0;
             state.Prev1 = statePrev1;
