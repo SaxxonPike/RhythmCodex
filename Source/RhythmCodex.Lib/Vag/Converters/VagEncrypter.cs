@@ -9,7 +9,10 @@ namespace RhythmCodex.Vag.Converters
     {
         public void Encrypt(ReadOnlySpan<float> input, Span<byte> output, int length, VagState state)
         {
+            var statePrev0 = state.Prev0;
+            var statePrev1 = state.Prev1;
             var filterCount = VagCoefficients.Coeff0.Length;
+            const int maxMagnitude = 12;
             const int magnitudeCount = 13;
             var inOffset = 0;
             var outOffset = 0;
@@ -20,17 +23,19 @@ namespace RhythmCodex.Vag.Converters
             Span<int> last0Buffer = new int[filterCount * magnitudeCount];
             Span<int> last1Buffer = new int[filterCount * magnitudeCount];
             Span<int> filterMagnitude = new int[filterCount];
+            Span<int> inputSampleBuffer = new int[28];
 
             while (inOffset < maxOffset)
             {
-                var maxMagnitude = 12;
                 var inBuffer = input.Slice(inOffset);
                 var outBuffer = output.Slice(outOffset);
 
                 workBufferSpan.Fill(0x00);
                 frameDiff.Fill(0f);
 
-                // Permute all filter + magnitude combinations (5 * 13 = 65)
+                for (var index = 0; index < 28; index++)
+                    inputSampleBuffer[index] = (int) (inBuffer[index] * 32768f);
+
                 for (var filter = 0; filter < filterCount; filter++)
                 {
                     filterMagnitude[filter] = maxMagnitude;
@@ -40,31 +45,34 @@ namespace RhythmCodex.Vag.Converters
                     {
                         var diffIndex = filter + magnitude * filterCount;
                         var workBufferIndex = diffIndex * 16;
-                        var last0 = state.Prev0;
-                        var last1 = state.Prev1;
+                        var last0 = statePrev0;
+                        var last1 = statePrev1;
                         workBuffer[workBufferIndex] = unchecked((byte) (magnitude | (filter << 4)));
                         for (var index = 0; index < 28; index++)
                         {
                             var filter0 = last0 * coeff0;
                             var filter1 = last1 * coeff1;
-                            var inSample = (int)(inBuffer[index] * 32768f);
-                            var inAlu = inSample - ((filter0 + filter1) >> 6);
-                            if (inAlu > 32767)
-                                inAlu = 32767;
-                            if (inAlu < -32768)
-                                inAlu = -32768;
-                            var nybble = ((inAlu << (magnitude + 16)) >> 28) & 0xF;
+                            var inputSample = inputSampleBuffer[index];
+                            var sampleToEncode = inputSample - ((filter0 + filter1) >> 6);
+                            if (sampleToEncode > 32767)
+                                sampleToEncode = 32767;
+                            if (sampleToEncode < -32768)
+                                sampleToEncode = -32768;
+
+                            var nybble = ((sampleToEncode << (magnitude + 16)) >> 28) & 0xF;
                             if (nybble == 0x8 || nybble == 0x7)
                                 filterMagnitude[filter] = Math.Min(filterMagnitude[filter], magnitude);
-                            var outSample = ((nybble << 28) >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
-                            frameDiff[diffIndex] += Math.Pow(outSample - inSample, 2);
 
-                            // Populate the buffer with the nybble
+                            var encodedSample = ((nybble << 28) >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
+                            double outDiff = encodedSample - inputSample;
+                            frameDiff[diffIndex] += outDiff * outDiff;
+
                             var shift = (index & 1) << 2;
                             var workIndex = 2 + (index >> 1);
                             workBuffer[workBufferIndex + workIndex] |= unchecked((byte) (nybble << shift));
+
                             last1 = last0;
-                            last0 = outSample;
+                            last0 = encodedSample;
                         }
 
                         last0Buffer[diffIndex] = last0;
@@ -77,27 +85,29 @@ namespace RhythmCodex.Vag.Converters
                 var bestFrameDiff = double.MaxValue;
                 for (var filter = 0; filter < filterCount; filter++)
                 {
-                    for (var magnitude = filterMagnitude[filter]; magnitude >= 0; magnitude--)
+                    var highestMagnitude = filterMagnitude[filter];
+                    var lowestMagnitude = Math.Max(0, highestMagnitude - 1);
+                    for (var magnitude = highestMagnitude; magnitude >= lowestMagnitude; magnitude--)
                     {
                         var diffIndex = filter + magnitude * filterCount;
                         if (frameDiff[diffIndex] < bestFrameDiff)
                         {
                             bestFrameDiffIndex = diffIndex;
                             bestFrameDiff = frameDiff[diffIndex];
-                            if (bestFrameDiff == 0)
-                                break;
                         }
                     }
                 }
-                
+
                 // Write out the best frame
-                //File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "frame.bin"), workBuffer);
                 workBufferSpan.Slice(bestFrameDiffIndex * 16, 16).CopyTo(outBuffer);
-                state.Prev1 = last1Buffer[bestFrameDiffIndex];
-                state.Prev0 = last0Buffer[bestFrameDiffIndex];
+                statePrev1 = last1Buffer[bestFrameDiffIndex];
+                statePrev0 = last0Buffer[bestFrameDiffIndex];
                 inOffset += 28;
                 outOffset += 16;
             }
+
+            state.Prev0 = statePrev0;
+            state.Prev1 = statePrev1;
         }
     }
 }
