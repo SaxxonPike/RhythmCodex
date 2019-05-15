@@ -104,18 +104,21 @@ namespace RhythmCodex.Vag.Converters
                 workBufferSpan.Slice(bestFrameDiffIndex * 16, 16).CopyTo(outBuffer);
                 
                 // If the frame is empty, write out 0x0C for filter/magnitude.
-                var isEmptyFrame = true;
-                for (var i = 2; i < 16; i++)
+                if ((outBuffer[0] & 0xF0) == 0x00)
                 {
-                    if (outBuffer[i] != 0)
+                    var isEmptyFrame = true;
+                    for (var i = 2; i < 16; i++)
                     {
-                        isEmptyFrame = false;
-                        break;
+                        if (outBuffer[i] != 0)
+                        {
+                            isEmptyFrame = false;
+                            break;
+                        }
                     }
-                }
 
-                if (isEmptyFrame)
-                    outBuffer[0] = 0x0C;
+                    if (isEmptyFrame)
+                        outBuffer[0] = 0x0C;
+                }
                 
                 statePrev1 = last1Buffer[bestFrameDiffIndex];
                 statePrev0 = last0Buffer[bestFrameDiffIndex];
