@@ -39,7 +39,7 @@ namespace RhythmCodex.Compression
         {
             // Long:  0LLLLLDD DDDDDDDD (length 3-34, distance 0-1023)
             // Short: 10LLDDDD (length 2-5, distance 1-16)
-            // Block: 11LLLLLL (length 7-69, 1:1)
+            // Block: 11LLLLLL (length 8-70, 1:1)
 
             Match FindMatch(int lowIndex, int cursorIndex, int length,
                 int matchMinLength, int matchMaxLength)
@@ -137,7 +137,7 @@ namespace RhythmCodex.Compression
                     token.Data.Add(source[inputOffset++]);
 
                     // Maximum block length
-                    if (token.Data.Count == 69)
+                    if (token.Data.Count == 70)
                     {
                         tokens.Add(token);
                         token = new Token();
@@ -207,14 +207,14 @@ namespace RhythmCodex.Compression
                     }
                     case TokenType.Raw:
                     {
-                        if (token.Data.Count < 7)
+                        if (token.Data.Count < 8)
                         {
                             foreach (var datum in token.Data)
                                 AppendCommand(false, new[] {datum});
                         }
                         else
                         {
-                            AppendCommand(true, new[] {(byte) (0xB9 + token.Data.Count)}.Concat(token.Data));
+                            AppendCommand(true, new[] {(byte) (0xB8 + token.Data.Count)}.Concat(token.Data));
                         }
 
                         break;

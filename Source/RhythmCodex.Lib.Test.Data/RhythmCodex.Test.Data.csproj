@@ -14,6 +14,8 @@
         <EmbeddedResource Include="BeatmaniaPsx\keysounds.zip" />
         <EmbeddedResource Include="Bms\positive.zip" />
         <EmbeddedResource Include="Bms\random.zip" />
+        <EmbeddedResource Include="Compression\BemaniLz.TimTest.zip" />
+        <EmbeddedResource Include="Compression\BemaniLz.TimTest.Expected.zip" />
         <EmbeddedResource Include="Ddr\mp3.zip" />
         <EmbeddedResource Include="Dds\dxt1.zip" />
         <EmbeddedResource Include="Dds\dxt5.zip" />

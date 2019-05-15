@@ -35,5 +35,21 @@ namespace RhythmCodex.Compression.Integration
 
             decoded.Should().BeEquivalentTo(data);
         }
+
+        [Test]
+        public void Decoder_ShouldDecodeComplexObject()
+        {
+            var data = GetArchiveResource("Compression.BemaniLz.TimTest.zip")
+                .Values
+                .First();
+            var expected = GetArchiveResource("Compression.BemaniLz.TimTest.Expected.zip")
+                .Values
+                .First();
+
+            var decoder = Resolve<BemaniLzDecoder>();
+            var decoded = decoder.Decode(new MemoryStream(data));
+
+            decoded.Should().BeEquivalentTo(expected);
+        }
     }
 }

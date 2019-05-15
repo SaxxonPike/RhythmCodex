@@ -79,12 +79,13 @@ namespace RhythmCodex.Compression
 
                     // block copy
                     length = data - 0xB9;
-                    for (var i = 0; i < length; i++)
+                    while (length >= 0)
                     {
                         data = reader.ReadByte();
                         writer.Write(data);
                         buffer[bufferOffset] = data;
                         bufferOffset = (bufferOffset + 1) & BufferMask;
+                        length--;
                     }
                 }
 
