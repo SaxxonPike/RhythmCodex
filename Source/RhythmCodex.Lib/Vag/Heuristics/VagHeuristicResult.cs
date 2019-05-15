@@ -14,5 +14,9 @@ namespace RhythmCodex.Vag.Heuristics
         public int? Interleave { get; set; }
         public int? Start { get; set; }
         public int? Length { get; set; }
+        public BigRational? Volume { get; set; }
+        public int? LoopStart { get; set; }
+        public int? LoopEnd { get; set; }
+        public byte[] Key { get; set; }
     }
 }

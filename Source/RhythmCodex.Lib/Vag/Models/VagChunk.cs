@@ -9,5 +9,7 @@ namespace RhythmCodex.Vag.Models
         public int Channels { get; set; }
         public int Interleave { get; set; }
         public long? Length { get; set; }
+        public BigRational? Volume { get; set; }
+        public BigRational? SampleRate { get; set; }
     }
 }
