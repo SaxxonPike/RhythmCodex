@@ -14,7 +14,7 @@ namespace RhythmCodex.Ddr.Integration
     {
         [Test]
         [Explicit("wip")]
-        public void Test1()
+        public void DecryptNewTest()
         {
             // 3626_20f7_6b
             var inputArchive = GetArchiveResource($"Ddr.mp3.zip");
@@ -25,7 +25,25 @@ namespace RhythmCodex.Ddr.Integration
                 .First(name => name.Key.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
                 .Value;
             var decrypter = Resolve<IDdr573AudioDecrypter>();
-            var observed = decrypter.Decrypt(data, 0x3626, 0x20F7, 0x6B);
+            var observed = decrypter.DecryptNew(data, 0x3626, 0x20F7, 0x6B);
+            observed.Should().Equal(expected);
+        }
+
+        [Test]
+        [Explicit("wip")]
+        [TestCase("sbm1", 0x1C67)]
+        [TestCase("sbm2", 0x6546)]
+        public void DecryptOldTest(string archiveName, int key)
+        {
+            var inputArchive = GetArchiveResource($"Ddr.{archiveName}.zip");
+            var data = inputArchive
+                .First(name => name.Key.EndsWith(".dat", StringComparison.OrdinalIgnoreCase))
+                .Value;
+            var expected = inputArchive
+                .First(name => name.Key.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
+                .Value;
+            var decrypter = Resolve<IDdr573AudioDecrypter>();
+            var observed = decrypter.DecryptOld(data, key);
             observed.Should().Equal(expected);
         }
     }

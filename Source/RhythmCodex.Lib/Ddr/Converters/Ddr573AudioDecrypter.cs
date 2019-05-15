@@ -1,3 +1,6 @@
+using System;
+using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Converters
@@ -27,7 +30,7 @@ namespace RhythmCodex.Ddr.Converters
             (Bit(v, b1) << 1) |
             (Bit(v, b0) << 0);
 
-        public byte[] Decrypt(byte[] input, int key1, int key2, int key3)
+        public byte[] DecryptNew(byte[] input, int key1, int key2, int key3)
         {
             var length = input.Length & ~1;
             var output = new byte[length];
@@ -94,6 +97,21 @@ namespace RhythmCodex.Ddr.Converters
                 }
             }
 
+            return output;
+        }
+
+        public byte[] DecryptOld(byte[] input, int key)
+        {
+            var fullKey = new byte[0x20];
+            var fullKeyLocation = (input.Length & ~0x1F) - 0x20;
+            input.AsSpan().Slice(fullKeyLocation, 0x20).CopyTo(fullKey);
+            var output = new byte[input.Length];
+            input.AsSpan().CopyTo(output);
+            for (var i = 0; i < output.Length; i++)
+            {
+                output[i] ^= fullKey[i & 0x1F];
+            }
+            output.AsSpan().Swap16();
             return output;
         }
     }
