@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net472</TargetFrameworks>
+		<ApplicationIcon />
+		<StartupObject />
+		<VersionPrefix>0.0.1</VersionPrefix>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="4.8.1" />
+		<PackageReference Include="AutoFixture" Version="4.6.0" />
+		<PackageReference Include="FluentAssertions" Version="5.6.0" />
+		<PackageReference Include="Moqzilla" Version="1.1.0" />
+		<PackageReference Include="NUnit" Version="3.11.0" />
+		<PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RhythmCodex.Gui\RhythmCodex.Gui.csproj" />
+		<ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+	</ItemGroup>
+</Project>
