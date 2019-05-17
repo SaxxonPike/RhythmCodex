@@ -1,5 +1,12 @@
 # RhythmCodex License
 
+For paths:
+- /Source/RhythmCodex.Cli
+- /Source/RhythmCodex.Cli.Test
+- /Source/RhythmCodex.Lib
+- /Source/RhythmCodex.Lib.Test
+- /Source/RhythmCodex.Lib.Test.Data
+
 Copyright (c) 2017-2019 Tony Konzel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,7 +49,8 @@ used to provide extra functionality. They are:
 
 ## CsCore
 
-**This license applies to files in /Source/RhythmCodex.Lib.ThirdParty/CSCore**
+For paths:
+- /Source/RhythmCodex.Lib.ThirdParty/CSCore
 
 NOTE:
 This license does not apply to the CSCore.Ffmpeg project!
@@ -78,7 +86,8 @@ A "contributor" is any person that distributes its contribution under this licen
 
 ## MP3Sharp
 
-**This license applies to files in /Source/RhythmCodex.Lib.ThirdParty/MP3Sharp**
+For paths:
+- /Source/RhythmCodex.Lib.ThirdParty/MP3Sharp
 
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -248,7 +257,8 @@ Library.
 
 ## NVorbis
 
-**This license applies to files in /Source/RhythmCodex.Lib.ThirdParty/NVorbis**
+For paths:
+- /Source/RhythmCodex.Lib.ThirdParty/NVorbis
 
 Copyright (c) 2015 Andrew Ward, Ms-PL
 
@@ -272,6 +282,9 @@ Conditions and Limitations
 (E) The software is licensed "as-is." You bear the risk of using it. The contributors give no express warranties, guarantees, or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
 
 ## BlowFish license
+
+For paths:
+- /Source/RhythmCodex.Lib.ThirdParty/Blowfish
 
 MIT License
 
