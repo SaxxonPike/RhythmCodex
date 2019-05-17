@@ -1,22 +1,4 @@
-Many third party libraries are used to provide extra functionality. They are:
-
-- CsCore
-  - Provides FLAC loading
-  - Provides filtering audio DSP
-  - https://github.com/filoe/cscore
-- MP3Sharp
-  - Provides MP3 loading
-  - https://github.com/ZaneDubya/MP3Sharp
-- NVorbis
-  - Provides OGG loading
-  - https://github.com/ioctlLR/NVorbis
-- Blowfish
-  - Provides Blowfish (en/de)cryption
-  - https://github.com/Elskom/BlowFish
-
-# RhythmCodex license
-
-**This license applies to files not covered by the licenses below this one**
+# RhythmCodex License
 
 Copyright (c) 2017-2019 Tony Konzel
 
@@ -38,7 +20,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-# CsCore license
+# Third Party Licenses
+
+We do our best to abide by the wishes of other software authors and
+seek to adhere to all the applicable licenses. Many third party libraries are
+used to provide extra functionality. They are:
+
+- CsCore
+  - Provides FLAC loading
+  - Provides filtering audio DSP
+  - https://github.com/filoe/cscore
+- MP3Sharp
+  - Provides MP3 loading
+  - https://github.com/ZaneDubya/MP3Sharp
+- NVorbis
+  - Provides OGG loading
+  - https://github.com/ioctlLR/NVorbis
+- Blowfish
+  - Provides Blowfish (en/de)cryption
+  - https://github.com/Elskom/BlowFish
+
+## CsCore
 
 **This license applies to files in /Source/RhythmCodex.Lib.ThirdParty/CSCore**
 
@@ -74,7 +76,7 @@ A "contributor" is any person that distributes its contribution under this licen
 
 (E) The software is licensed "as-is." You bear the risk of using it. The contributors give no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
 
-# MP3Sharp license
+## MP3Sharp
 
 **This license applies to files in /Source/RhythmCodex.Lib.ThirdParty/MP3Sharp**
 
@@ -244,7 +246,7 @@ apply, that proxy's public statement of acceptance of any version is
 permanent authorization for you to choose that version for the
 Library.
 
-# NVorbis license
+## NVorbis
 
 **This license applies to files in /Source/RhythmCodex.Lib.ThirdParty/NVorbis**
 
@@ -269,7 +271,7 @@ Conditions and Limitations
 (D) If you distribute any portion of the software in source code form, you may do so only under this license by including a complete copy of this license with your distribution. If you distribute any portion of the software in compiled or object code form, you may only do so under a license that complies with this license.
 (E) The software is licensed "as-is." You bear the risk of using it. The contributors give no express warranties, guarantees, or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
 
-# BlowFish license
+## BlowFish license
 
 MIT License
 
