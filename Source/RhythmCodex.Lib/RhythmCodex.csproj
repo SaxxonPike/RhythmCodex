@@ -16,4 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib.ThirdParty\RhythmCodex.Thirdparty.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Ddr\Providers\Ddr573AudioKeyDatabase.zip" />
+  </ItemGroup>
 </Project>

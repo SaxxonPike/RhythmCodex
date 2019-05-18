@@ -41,10 +41,19 @@ namespace RhythmCodex.Ddr.Converters
             (Bit(v, b1) << 1) |
             (Bit(v, b0) << 0);
 
-        public byte[] DecryptNew(ReadOnlySpan<byte> input, int key1, int key2, int key3)
+        public byte[] DecryptNew(ReadOnlySpan<byte> input, params int[] key)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (key.Length < 3)
+                throw new RhythmCodexException($"Key must have at least 3 values. Found: {key.Length}");
+            
             var length = input.Length & ~1;
             var output = new byte[length];
+
+            var key1 = key[0];
+            var key2 = key[1];
+            var key3 = key[2];
             for (var i = 0; i < length; i += 2, key3++)
             {
                 var v = input[i] | (input[i + 1] << 8);
