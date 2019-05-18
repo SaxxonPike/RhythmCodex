@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -110,72 +111,63 @@ namespace RhythmCodex.Ddr.Converters
             return output;
         }
 
-        public byte[] DecryptOld(ReadOnlySpan<byte> input, int key1, int key2 = 0, int key3 = 0)
+        public byte[] DecryptOld(ReadOnlySpan<byte> data, int keyValue)
         {
-            // TODO: Tweak this to make it work.
-            var length = input.Length & ~1;
-            var output = new byte[length];
-            for (var i = 0; i < length; i += 2, key3++)
+            var seed = BitSwap16(keyValue,
+                0xD, 0xB, 0x9, 0x7,
+                0x5, 0x3, 0x1, 0xF,
+                0xE, 0xC, 0xA, 0x8,
+                0x6, 0x4, 0x2, 0x0);
+            var key = new byte[0x10];
+            key[0] = unchecked((byte) seed);
+            key[1] = unchecked((byte) (seed >> 8));
+            for (var i = 2; i < 16; i++)
             {
-                var v = input[i] | (input[i + 1] << 8);
-                var m = key1 ^ key2;
+                var j = key[i - 2];
+                key[i] = unchecked((byte) ((j << 1) | (j >> 7)));
+            }
 
-                v = BitSwap16(
-                    v,
-                    15 - Bit(m, 0xF),
-                    14 + Bit(m, 0xF),
-                    13 - Bit(m, 0xE),
-                    12 + Bit(m, 0xE),
-                    11 - Bit(m, 0xB),
-                    10 + Bit(m, 0xB),
-                    9 - Bit(m, 0x9),
-                    8 + Bit(m, 0x9),
-                    7 - Bit(m, 0x8),
-                    6 + Bit(m, 0x8),
-                    5 - Bit(m, 0x5),
-                    4 + Bit(m, 0x5),
-                    3 - Bit(m, 0x3),
-                    2 + Bit(m, 0x3),
-                    1 - Bit(m, 0x2),
-                    0 + Bit(m, 0x2)
-                );
+            var counter = 0;
+            var dataLen = data.Length & ~1;
+            var output = new byte[dataLen];
+            var outputIdx = 0;
+            var keyIdx = 0;
+            var curKey = key[0xF];
 
-                v = (
-                        v ^
-                        (Bit(m, 0xD) << 14) ^
-                        (Bit(m, 0xC) << 12) ^
-                        (Bit(m, 0xA) << 10) ^
-                        (Bit(m, 0x7) << 8) ^
-                        (Bit(m, 0x6) << 6) ^
-                        (Bit(m, 0x4) << 4) ^
-                        (Bit(m, 0x1) << 2) ^
-                        (Bit(m, 0x0) << 0)
-                    ) & 0xFFFF;
+            for (var idx = 0; idx < dataLen; idx += 2)
+            {
+                var outputWord = 0;
+                var curData = (data[idx + 1] << 8) | data[idx];
+                var curScramble = curKey;
+                curKey = key[keyIdx & 0xF];
+                keyIdx++;
 
-                v = v ^ BitSwap16(
-                        key3,
-                        7, 0, 6, 1,
-                        5, 2, 4, 3,
-                        3, 4, 2, 5,
-                        1, 6, 0, 7
-                    );
-
-                output[i] = unchecked((byte) (v >> 8));
-                output[i + 1] = unchecked((byte) v);
-
-                key1 = (
-                           (key1 & 0x8000) |
-                           ((key1 << 1) & 0x7FFE) |
-                           ((key1 >> 14) & 1)
-                       ) & 0xFFFF;
-
-                if ((((key1 >> 15) ^ key1) & 1) != 0)
+                for (var curBit = 0; curBit < 8; curBit++)
                 {
-                    key2 = (
-                               (key2 << 1) |
-                               (key2 >> 15)
-                           ) & 0xFFFF;
+                    var evenBitShift = (curBit << 1) & 0xFF;
+                    var oddBitShift = ((curBit << 1) + 1) & 0xFF;
+                    var isEvenBitSet = (curData & (1 << evenBitShift)) != 0;
+                    var isOddBitSet = (curData & (1 << oddBitShift)) != 0;
+                    var isKeyBitSet = (curKey & (1 << curBit)) != 0;
+                    var isScrambleBitSet = (curScramble & (1 << curBit)) != 0;
+
+                    if (isScrambleBitSet)
+                    {
+                        var temp = isEvenBitSet;
+                        isEvenBitSet = isOddBitSet;
+                        isOddBitSet = temp;
+                    }
+
+                    if (isEvenBitSet ^ isKeyBitSet)
+                        outputWord |= 1 << evenBitShift;
+                    if (isOddBitSet)
+                        outputWord |= 1 << oddBitShift;
                 }
+
+                output[outputIdx] = unchecked((byte) (outputWord >> 8));
+                output[outputIdx + 1] = unchecked((byte) outputWord);
+                outputIdx += 2;
+                counter = (counter + 1) & 0xFF;
             }
 
             return output;
