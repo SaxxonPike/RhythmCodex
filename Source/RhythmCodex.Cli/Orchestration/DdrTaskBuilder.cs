@@ -6,6 +6,7 @@ using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Ddr.Providers;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
@@ -44,6 +45,8 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly ISmStreamReader _smStreamReader;
         private readonly ISifSmMetadataChanger _sifSmMetadataChanger;
         private readonly IHeuristicTester _heuristicTester;
+        private readonly IDdr573AudioKeyProvider _ddr573AudioKeyProvider;
+        private readonly IDdr573AudioDecrypter _ddr573AudioDecrypter;
 
         public DdrTaskBuilder(
             IFileSystem fileSystem,
@@ -62,7 +65,9 @@ namespace RhythmCodex.Cli.Orchestration
             ISifStreamReader sifStreamReader,
             ISmStreamReader smStreamReader,
             ISifSmMetadataChanger sifSmMetadataChanger,
-            IHeuristicTester heuristicTester)
+            IHeuristicTester heuristicTester,
+            IDdr573AudioKeyProvider ddr573AudioKeyProvider,
+            IDdr573AudioDecrypter ddr573AudioDecrypter)
             : base(fileSystem, logger)
         {
             _ddr573ImageStreamReader = ddr573ImageStreamReader;
@@ -80,6 +85,8 @@ namespace RhythmCodex.Cli.Orchestration
             _smStreamReader = smStreamReader;
             _sifSmMetadataChanger = sifSmMetadataChanger;
             _heuristicTester = heuristicTester;
+            _ddr573AudioKeyProvider = ddr573AudioKeyProvider;
+            _ddr573AudioDecrypter = ddr573AudioDecrypter;
         }
 
         public ITask CreateDecodeSsq()
@@ -131,6 +138,44 @@ namespace RhythmCodex.Cli.Orchestration
                         }
                     }
                 });
+
+                return true;
+            });
+        }
+
+        public ITask CreateDecrypt573Audio()
+        {
+            return Build("Decrypt 573 Audio", task =>
+            {
+                var inputFiles = GetInputFiles(task);
+                if (!inputFiles.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                foreach (var inputFile in inputFiles)
+                {
+                    using (var inFile = OpenRead(task, inputFile))
+                    {
+                        var encoded = inFile.ReadAllBytes();
+                        var key = _ddr573AudioKeyProvider.Get(encoded);
+                        if (key == null)
+                        {
+                            task.Message = $"Can't find key for {inputFile.Name}";
+                            continue;
+                        }
+                        var decoded = (key.Length == 1)
+                            ? _ddr573AudioDecrypter.DecryptOld(encoded, key[0])
+                            : _ddr573AudioDecrypter.DecryptNew(encoded, key);
+
+                        using (var outFile = OpenWriteSingle(task, inputFile, i => $"{i}.mp3"))
+                        {
+                            decoded.WriteAllBytes(outFile);
+                            outFile.Flush();
+                        }
+                    }
+                }
 
                 return true;
             });

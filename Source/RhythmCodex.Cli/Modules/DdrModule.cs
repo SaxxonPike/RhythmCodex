@@ -47,6 +47,12 @@ namespace RhythmCodex.Cli.Modules
                 Name = "apply-sif",
                 Description = "Applies SIF metadata to a SM file.",
                 Execute = ApplySif
+            },
+            new Command
+            {
+                Name = "decrypt-573-audio",
+                Description = "Decrypts Digital 573 audio.",
+                Execute = Decrypt573Audio
             }
         };
 
@@ -65,6 +71,15 @@ namespace RhythmCodex.Cli.Modules
                 .BuildDdrTask()
                 .WithArgs(args)
                 .CreateExtract()
+                .Run();
+        }
+
+        private void Decrypt573Audio(Args args)
+        {
+            _taskFactory
+                .BuildDdrTask()
+                .WithArgs(args)
+                .CreateDecrypt573Audio()
                 .Run();
         }
     }
