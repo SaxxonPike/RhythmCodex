@@ -28,6 +28,8 @@ namespace RhythmCodex.Step1.Heuristics
                 var thisChunkLength = Bitter.ToInt32(data, thisOffset);
                 if (thisChunkLength == 0)
                     break;
+                if (thisChunkLength < 0)
+                    return null;
                 if (thisOffset + thisChunkLength >= data.Length)
                     return null;
                 if ((thisOffset & 0x3) != 0)
