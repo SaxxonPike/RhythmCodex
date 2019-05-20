@@ -14,9 +14,9 @@ namespace RhythmCodex.Ssq.Mappers
 
         protected override IDictionary<int, IPanelMapping> PanelMap => new Dictionary<int, IPanelMapping>
         {
-            {1, new PanelMapping {Player = 0, Panel = 2}},
-            {4, new PanelMapping {Player = 0, Panel = 1}},
-            {6, new PanelMapping {Player = 0, Panel = 4}},
+            {1, new PanelMapping {Player = 0, Panel = 1}},
+            {4, new PanelMapping {Player = 0, Panel = 0}},
+            {6, new PanelMapping {Player = 0, Panel = 2}},
         };
     }
 }
