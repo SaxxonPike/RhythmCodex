@@ -171,7 +171,7 @@ namespace RhythmCodex.Cli.Orchestration
 
                         using (var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
                             ? $"{_ddr573AudioDecrypter.ExtractName(i) ?? i}.mp3"
-                            : i))
+                            : $"{i}.mp3"))
                         {
                             decoded.WriteAllBytes(outFile);
                             outFile.Flush();
