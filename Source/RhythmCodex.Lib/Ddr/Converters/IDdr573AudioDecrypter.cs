@@ -6,5 +6,6 @@ namespace RhythmCodex.Ddr.Converters
     {
         byte[] DecryptNew(ReadOnlySpan<byte> input, params int[] key);
         byte[] DecryptOld(ReadOnlySpan<byte> input, int key1);
+        string ExtractName(string sourceName);
     }
 }
