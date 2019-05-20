@@ -198,7 +198,24 @@ namespace RhythmCodex.Cli.Orchestration
                     {
                         var chunks = _step1StreamReader.Read(inFile);
                         var charts = _step1Decoder.Decode(chunks);
-                        var encoded = _smEncoder.Encode(new ChartSet {Metadata = new Metadata(), Charts = charts});
+                        var aggregatedInfo = _metadataAggregator.Aggregate(charts);
+                        var title = aggregatedInfo[StringData.Title] ?? Path.GetFileNameWithoutExtension(inputFile.Name);
+                        var globalOffset = Args.Options.ContainsKey("-offset")
+                            ? BigRationalParser.ParseString(Args.Options["-offset"].FirstOrDefault() ?? "0")
+                            : BigRational.Zero;
+                        var encoded = _smEncoder.Encode(new ChartSet
+                        {
+                            Metadata = new Metadata
+                            {
+                                [StringData.Title] = title,
+                                [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
+                                [StringData.Artist] = aggregatedInfo[StringData.Artist],
+                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
+                                [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
+                                [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
+                            },
+                            Charts = charts
+                        });
 
                         using (var outFile = OpenWriteSingle(task, inputFile, i => $"{i}.sm"))
                         {

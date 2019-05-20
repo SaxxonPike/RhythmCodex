@@ -9,7 +9,7 @@ namespace RhythmCodex.Step1.Heuristics
     public class Step1Heuristic : IHeuristic
     {
         public string Description => "DDR Step Sequence (older)";
-        public string FileExtension => "step1";
+        public string FileExtension => "step";
         
         public HeuristicResult Match(ReadOnlySpan<byte> data)
         {

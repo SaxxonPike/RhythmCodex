@@ -7,10 +7,12 @@ using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
+using RhythmCodex.Ssq;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
 using RhythmCodex.Step1.Models;
+using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Step1.Converters
 {
@@ -94,17 +96,24 @@ namespace RhythmCodex.Step1.Converters
                 
                 // Output metadata.
                 var difficulty = info.Difficulty;
-                var type = info.Type;
+                var type = $"{SmGameTypes.Dance}-{info.Type}";
                 var description = $"step1 - {events.Count(ev => ev[FlagData.Note] == true)} panels - {steps.Count(s => s.Panels != 0)} steps";
-                
-                // Have a chart. :3
-                yield return new Chart
+
+                var chart = new Chart
                 {
                     Events = events,
                     [StringData.Difficulty] = difficulty,
                     [StringData.Type] = type,
                     [StringData.Description] = description
                 };
+                
+                var firstTiming = timings.Timings.OrderBy(t => t.LinearOffset).First();
+                chart[NumericData.LinearOffset] = chart.GetZeroLinearReference(
+                    (BigRational) firstTiming.LinearOffset / timings.Rate,
+                    (BigRational) firstTiming.MetricOffset / SsqConstants.MeasureLength);
+                
+                // Have a chart. :3
+                yield return chart;
             }
         }
     }
