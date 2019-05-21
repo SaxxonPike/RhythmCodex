@@ -8,7 +8,7 @@ namespace RhythmCodex.Ddr.Converters
         [Test]
         [TestCase("M5BZYH13", "LDYN")]
         [TestCase("M5BZYH13.DAT", "LDYN")]
-        [TestCase("MABC1RWH", "WILD")]
+        [TestCase("MABD1RWH", "WILD")]
         public void Test1(string input, string expected)
         {
             var observed = Subject.ExtractName(input);
