@@ -33,6 +33,7 @@
         <EmbeddedResource Include="Iso\test-iso.zip" />
         <EmbeddedResource Include="Mp3\example.mp3.zip" />
         <EmbeddedResource Include="Ogg\example.ogg.zip" />
+        <EmbeddedResource Include="Psf\ff9.zip" />
         <EmbeddedResource Include="Ssq\freeze.zip" />
         <EmbeddedResource Include="Ssq\offset.zip" />
         <EmbeddedResource Include="Ssq\shock.zip" />

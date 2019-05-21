@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using RhythmCodex.Compression;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Psf.Models;
@@ -10,6 +11,13 @@ namespace RhythmCodex.Psf.Streamers
     [Service]
     public class PsfStreamReader : IPsfStreamReader
     {
+        private readonly IZlibToGzipConverter _zlibToGzipConverter;
+
+        public PsfStreamReader(IZlibToGzipConverter zlibToGzipConverter)
+        {
+            _zlibToGzipConverter = zlibToGzipConverter;
+        }
+        
         public PsfChunk Read(Stream source)
         {
             var reader = new BinaryReader(source);
@@ -25,10 +33,11 @@ namespace RhythmCodex.Psf.Streamers
 
             var reserved = reader.ReadBytes(reservedSize);
             var dataCompressed = reader.ReadBytes(dataSize);
+            var dataGzip = _zlibToGzipConverter.Convert(dataCompressed);
             byte[] data;
             
-            using (var inputMemory = new MemoryStream(dataCompressed))
-            using (var deflate = new DeflateStream(inputMemory, CompressionMode.Decompress))
+            using (var inputMemory = new MemoryStream(dataGzip))
+            using (var deflate = new GZipStream(inputMemory, CompressionMode.Decompress))
             using (var outputMemory = new MemoryStream())
             {
                 deflate.CopyTo(outputMemory);

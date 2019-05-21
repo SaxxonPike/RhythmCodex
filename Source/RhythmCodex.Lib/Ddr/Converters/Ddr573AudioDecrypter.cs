@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -14,7 +13,7 @@ namespace RhythmCodex.Ddr.Converters
         private static int Bit(int value, int n) =>
             (value >> n) & 1;
 
-        private static Dictionary<char, char> NameMap = new Dictionary<char, char>
+        private static readonly Dictionary<char, char> NameMap = new Dictionary<char, char>
         {
             {'A', '0'},
             {'B', 'A'},
@@ -230,7 +229,8 @@ namespace RhythmCodex.Ddr.Converters
                 case 'M':
                 case 'S':
                 {
-                    var nameToDecode = $"{prunedSourceName[6]}{prunedSourceName[5]}{prunedSourceName[4]}{prunedSourceName[7]}_{prunedSourceName[3]}";
+                    var nameToDecode = $"{prunedSourceName[6]}{prunedSourceName[5]}" +
+                                       $"{prunedSourceName[4]}{prunedSourceName[7]}_{prunedSourceName[3]}";
                     if (nameToDecode.Any(c => !NameMap.ContainsKey(c)))
                         return null;
                     foreach (var c in nameToDecode)
@@ -249,7 +249,7 @@ namespace RhythmCodex.Ddr.Converters
             switch (prunedSourceName[0])
             {
                 case 'E':
-                    output = "system-" + output;
+                    output = $"system-{output}";
                     break;
                 case 'S':
                     output += "-preview";

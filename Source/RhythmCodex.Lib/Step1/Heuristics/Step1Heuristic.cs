@@ -1,13 +1,25 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Step1.Converters;
+using RhythmCodex.Step1.Models;
+using RhythmCodex.Step1.Streamers;
 
 namespace RhythmCodex.Step1.Heuristics
 {
     [Service]
-    public class Step1Heuristic : IHeuristic
+    public class Step1Heuristic : IReadableHeuristic<IEnumerable<Step1Chunk>>
     {
+        private readonly IStep1StreamReader _step1StreamReader;
+
+        public Step1Heuristic(IStep1StreamReader step1StreamReader)
+        {
+            _step1StreamReader = step1StreamReader;
+        }
+        
         public string Description => "DDR Step Sequence (older)";
         public string FileExtension => "step";
         
@@ -66,5 +78,10 @@ namespace RhythmCodex.Step1.Heuristics
         }
 
         public int MinimumLength => 0;
+        
+        public IEnumerable<Step1Chunk> Read(HeuristicResult heuristicResult, Stream stream)
+        {
+            return _step1StreamReader.Read(stream);
+        }
     }
 }
