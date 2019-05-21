@@ -4,7 +4,8 @@ namespace RhythmCodex.Ddr.Converters
 {
     public interface IDdr573AudioDecrypter
     {
-        byte[] DecryptNew(ReadOnlySpan<byte> input, int key1, int key2, int key3);
-        byte[] DecryptOld(ReadOnlySpan<byte> input, int key1, int key2 = 0, int key3 = 0);
+        byte[] DecryptNew(ReadOnlySpan<byte> input, params int[] key);
+        byte[] DecryptOld(ReadOnlySpan<byte> input, int key1);
+        string ExtractName(string sourceName);
     }
 }

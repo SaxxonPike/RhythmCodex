@@ -8,35 +8,31 @@ namespace RhythmCodex.Cd.Streamers
     [Service]
     public class CdSectorStreamReader : ICdSectorStreamReader
     {
-        private const int SectorLength = 2352;
-        
-        public IEnumerable<ICdSector> Read(Stream stream, long length, bool keepOnDisk)
+        public IEnumerable<ICdSector> Read(Stream stream, long length, bool keepOnDisk, int sectorLength = 2352)
         {
             if (keepOnDisk)
             {
                 var reader = new BinaryReader(stream);
-                return new CdSectorOnDiskCollection((int)(length / SectorLength), i =>
+                return new CdSectorOnDiskCollection((int)(length / sectorLength), i =>
                 {
-                    stream.Position = i * (long) SectorLength;
-                    return reader.ReadBytes(SectorLength);
+                    stream.Position = i * (long) sectorLength;
+                    return reader.ReadBytes(sectorLength);
                 });
             }
-            else
-            {
-                return ReadInternal(stream, length);                
-            }
+
+            return ReadInternal(stream, length, sectorLength);
         }
 
-        private static IEnumerable<ICdSector> ReadInternal(Stream stream, long length)
+        private static IEnumerable<ICdSector> ReadInternal(Stream stream, long length, int sectorLength)
         {
             var offset = 0;
             var reader = new BinaryReader(stream);
             var number = 0;
             
-            while (offset < length - SectorLength - 1)
+            while (offset < length - sectorLength - 1)
             {
-                var sector = reader.ReadBytes(SectorLength);
-                offset += SectorLength;
+                var sector = reader.ReadBytes(sectorLength);
+                offset += sectorLength;
                 
                 yield return new CdSector
                 {

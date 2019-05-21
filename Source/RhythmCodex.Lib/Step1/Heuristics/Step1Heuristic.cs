@@ -1,0 +1,70 @@
+using System;
+using RhythmCodex.Heuristics;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
+
+namespace RhythmCodex.Step1.Heuristics
+{
+    [Service]
+    public class Step1Heuristic : IHeuristic
+    {
+        public string Description => "DDR Step Sequence (older)";
+        public string FileExtension => "step";
+        
+        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        {
+            // Must have at least 4 bytes
+            if (data.Length < 4)
+                return null;
+            
+            // Must be divisible by 4
+            if ((data.Length & 0x3) != 0)
+                return null;
+            
+            // Make sure each chunk length makes sense
+            var thisOffset = 0;
+            while (thisOffset < data.Length)
+            {
+                var thisChunkLength = Bitter.ToInt32(data, thisOffset);
+                if (thisChunkLength == 0)
+                    break;
+                if (thisChunkLength < 0)
+                    return null;
+                if (thisOffset + thisChunkLength >= data.Length)
+                    return null;
+                if ((thisOffset & 0x3) != 0)
+                    return null;
+                thisOffset += thisChunkLength;
+            }
+            
+            // Try to make sense of the timing chunk length
+            var timingChunkLength = Bitter.ToInt32(data);
+            if (timingChunkLength < 20)
+                return null;
+            if (timingChunkLength >= data.Length)
+                return null;
+            if ((timingChunkLength & 0x3) != 0)
+                return null;
+            
+            // Check both the measure and the second offset, make sure they are increasing
+            var timingMeasure = int.MinValue;
+            var timingSector = int.MinValue;
+            for (var i = 1; i < timingChunkLength >> 2; i += 2)
+            {
+                var thisTimingMeasure = Bitter.ToInt32(data, i << 2);
+                var thisTimingSector = Bitter.ToInt32(data, 0x4 + (i << 2));
+                if (thisTimingMeasure < timingMeasure)
+                    return null;
+                if (thisTimingSector < timingSector)
+                    return null;
+                timingMeasure = thisTimingMeasure;
+                timingSector = thisTimingSector;
+            }
+            
+            // No reason to believe this isn't a step1 at this point
+            return new HeuristicResult(this);
+        }
+
+        public int MinimumLength => 0;
+    }
+}

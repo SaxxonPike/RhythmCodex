@@ -6,7 +6,7 @@ namespace RhythmCodex.Stepmania.Model
         public const string Double = "double";
         public const string Couple = "couple";
         public const string Solo = "solo";
-        public const string ThreePanel = "3panel";
+        public const string ThreePanel = "threepanel";
         public const string Real = "real";
 
         public const string Dance = "dance";

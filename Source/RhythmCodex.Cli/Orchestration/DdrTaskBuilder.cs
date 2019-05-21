@@ -6,6 +6,7 @@ using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Ddr.Providers;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
@@ -44,6 +45,8 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly ISmStreamReader _smStreamReader;
         private readonly ISifSmMetadataChanger _sifSmMetadataChanger;
         private readonly IHeuristicTester _heuristicTester;
+        private readonly IDdr573AudioKeyProvider _ddr573AudioKeyProvider;
+        private readonly IDdr573AudioDecrypter _ddr573AudioDecrypter;
 
         public DdrTaskBuilder(
             IFileSystem fileSystem,
@@ -62,7 +65,9 @@ namespace RhythmCodex.Cli.Orchestration
             ISifStreamReader sifStreamReader,
             ISmStreamReader smStreamReader,
             ISifSmMetadataChanger sifSmMetadataChanger,
-            IHeuristicTester heuristicTester)
+            IHeuristicTester heuristicTester,
+            IDdr573AudioKeyProvider ddr573AudioKeyProvider,
+            IDdr573AudioDecrypter ddr573AudioDecrypter)
             : base(fileSystem, logger)
         {
             _ddr573ImageStreamReader = ddr573ImageStreamReader;
@@ -80,6 +85,8 @@ namespace RhythmCodex.Cli.Orchestration
             _smStreamReader = smStreamReader;
             _sifSmMetadataChanger = sifSmMetadataChanger;
             _heuristicTester = heuristicTester;
+            _ddr573AudioKeyProvider = ddr573AudioKeyProvider;
+            _ddr573AudioDecrypter = ddr573AudioDecrypter;
         }
 
         public ITask CreateDecodeSsq()
@@ -136,6 +143,46 @@ namespace RhythmCodex.Cli.Orchestration
             });
         }
 
+        public ITask CreateDecrypt573Audio()
+        {
+            return Build("Decrypt 573 Audio", task =>
+            {
+                var inputFiles = GetInputFiles(task);
+                if (!inputFiles.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                foreach (var inputFile in inputFiles)
+                {
+                    using (var inFile = OpenRead(task, inputFile))
+                    {
+                        var encoded = inFile.ReadAllBytes();
+                        var key = _ddr573AudioKeyProvider.Get(encoded);
+                        if (key == null)
+                        {
+                            task.Message = $"Can't find key for {inputFile.Name}";
+                            continue;
+                        }
+                        var decoded = (key.Length == 1)
+                            ? _ddr573AudioDecrypter.DecryptOld(encoded, key[0])
+                            : _ddr573AudioDecrypter.DecryptNew(encoded, key);
+
+                        using (var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
+                            ? $"{_ddr573AudioDecrypter.ExtractName(i) ?? i}.mp3"
+                            : $"{i}.mp3"))
+                        {
+                            decoded.WriteAllBytes(outFile);
+                            outFile.Flush();
+                        }
+                    }
+                }
+
+                return true;
+            });
+        }
+
         public ITask CreateDecodeStep1()
         {
             return Build("Decode STEP", task =>
@@ -153,7 +200,24 @@ namespace RhythmCodex.Cli.Orchestration
                     {
                         var chunks = _step1StreamReader.Read(inFile);
                         var charts = _step1Decoder.Decode(chunks);
-                        var encoded = _smEncoder.Encode(new ChartSet {Metadata = new Metadata(), Charts = charts});
+                        var aggregatedInfo = _metadataAggregator.Aggregate(charts);
+                        var title = aggregatedInfo[StringData.Title] ?? Path.GetFileNameWithoutExtension(inputFile.Name);
+                        var globalOffset = Args.Options.ContainsKey("-offset")
+                            ? BigRationalParser.ParseString(Args.Options["-offset"].FirstOrDefault() ?? "0")
+                            : BigRational.Zero;
+                        var encoded = _smEncoder.Encode(new ChartSet
+                        {
+                            Metadata = new Metadata
+                            {
+                                [StringData.Title] = title,
+                                [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
+                                [StringData.Artist] = aggregatedInfo[StringData.Artist],
+                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
+                                [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
+                                [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
+                            },
+                            Charts = charts
+                        });
 
                         using (var outFile = OpenWriteSingle(task, inputFile, i => $"{i}.sm"))
                         {

@@ -43,7 +43,15 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "decode",
                 Description = "Decodes an SSQ file.",
-                Execute = Decode
+                Execute = Decode,
+                Parameters = new []
+                {
+                    new CommandParameter
+                    {
+                        Name = "-offset",
+                        Description = "Global offset to add to output #OFFSET tag."
+                    }
+                }
             }
         };
 
