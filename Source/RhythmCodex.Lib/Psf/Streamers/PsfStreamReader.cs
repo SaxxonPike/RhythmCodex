@@ -11,11 +11,11 @@ namespace RhythmCodex.Psf.Streamers
     [Service]
     public class PsfStreamReader : IPsfStreamReader
     {
-        private readonly IZlibToGzipConverter _zlibToGzipConverter;
+        private readonly IZlibStreamFactory _zlibStreamFactory;
 
-        public PsfStreamReader(IZlibToGzipConverter zlibToGzipConverter)
+        public PsfStreamReader(IZlibStreamFactory zlibStreamFactory)
         {
-            _zlibToGzipConverter = zlibToGzipConverter;
+            _zlibStreamFactory = zlibStreamFactory;
         }
         
         public PsfChunk Read(Stream source)
@@ -33,14 +33,12 @@ namespace RhythmCodex.Psf.Streamers
 
             var reserved = reader.ReadBytes(reservedSize);
             var dataCompressed = reader.ReadBytes(dataSize);
-            var dataGzip = _zlibToGzipConverter.Convert(dataCompressed);
             byte[] data;
             
-            using (var inputMemory = new MemoryStream(dataGzip))
-            using (var deflate = new GZipStream(inputMemory, CompressionMode.Decompress))
+            using (var inputMemory = _zlibStreamFactory.Create(new MemoryStream(dataCompressed)))
             using (var outputMemory = new MemoryStream())
             {
-                deflate.CopyTo(outputMemory);
+                inputMemory.CopyTo(outputMemory);
                 data = outputMemory.ToArray();
             }
             

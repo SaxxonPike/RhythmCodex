@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Psf.Streamers;
 
@@ -9,15 +11,20 @@ namespace RhythmCodex.Psf.Integration
     {
         [Test]
         [TestCase("ff9")]
-        public void Test1(string name)
+        public void Read_ShouldReturnCorrectData(string name)
         {
             // Arrange.
-            var data = GetArchiveResource($"Psf.{name}.zip")
-                .First()
+            var source = GetArchiveResource($"Psf.{name}.zip")
+                .First(f => f.Key.EndsWith(".psf", StringComparison.OrdinalIgnoreCase))
+                .Value;
+            var expected = GetArchiveResource($"Psf.{name}.zip")
+                .First(f => f.Key.EndsWith(".bin", StringComparison.OrdinalIgnoreCase))
                 .Value;
 
             var reader = Resolve<IPsfStreamReader>();
-            var psf = reader.Read(new MemoryStream(data));
+            var psf = reader.Read(new MemoryStream(source));
+            psf.Reserved.Should().BeEmpty();
+            psf.Data.Should().BeEquivalentTo(expected);
         }
     }
 }
