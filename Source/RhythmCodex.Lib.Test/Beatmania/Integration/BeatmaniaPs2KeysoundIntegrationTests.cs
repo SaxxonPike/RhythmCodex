@@ -51,7 +51,7 @@ namespace RhythmCodex.Beatmania.Integration
         [Explicit]
         public void Test_Keys_New()
         {
-            var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2key.zip")
+            var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2newkey.zip")
                 .First()
                 .Value;
 

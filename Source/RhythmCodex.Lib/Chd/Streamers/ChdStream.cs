@@ -1,0 +1,475 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using RhythmCodex.Chd.Model;
+using RhythmCodex.Compression;
+using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
+
+namespace RhythmCodex.Chd.Streamers
+{
+    public class ChdStream : Stream
+    {
+        private const int CompressionRleSmall = 7;
+        private const int CompressionRleLarge = 8;
+        
+        private readonly Stream _baseStream;
+        private readonly ChdStream _parent;
+
+        internal ChdStream(Stream baseStream)
+        {
+            _reader = new BinaryReader(baseStream);
+
+            if (new string(_reader.ReadChars(8)) != "MComprHD")
+                throw new RhythmCodexException("Bad CHD header");
+
+            var headerLength = _reader.ReadUInt32S();
+            var version = _reader.ReadUInt32S();
+
+            switch (version)
+            {
+                case 1:
+                    _header = ReadHeaderV1();
+                    _map = ReadMapV1();
+                    _readHunk = ReadHunkV1;
+                    break;
+                case 2:
+                    _header = ReadHeaderV2();
+                    _map = ReadMapV1();
+                    _readHunk = ReadHunkV1;
+                    break;
+                case 3:
+                    _header = ReadHeaderV3();
+                    _map = ReadMapV3();
+                    _readHunk = ReadHunkV3;
+                    break;
+                case 4:
+                    _header = ReadHeaderV4();
+                    _map = ReadMapV3();
+                    _readHunk = ReadHunkV3;
+                    break;
+                case 5:
+                    _header = ReadHeaderV5();
+                    _map = ReadMapV5();
+                    _readHunk = ReadHunkV5;
+                    break;
+                default:
+                    throw new RhythmCodexException("Unrecognized CHD version");
+            }
+        }
+
+        internal ChdStream(Stream baseStream, ChdStream parent)
+        {
+            _baseStream = baseStream;
+            _parent = parent;
+        }
+
+        private struct CachedHunk
+        {
+            public int Index;
+            public byte[] Data;
+        }
+
+        private const int HunkCacheMaxSize = 256;
+
+        private CachedHunk _currentHunk;
+        private readonly List<CachedHunk> _hunkCache = new List<CachedHunk>();
+        private readonly BinaryReader _reader;
+        private readonly Func<int, byte[]> _readHunk;
+
+        private long _hunkOffset;
+        private long _hunkSize;
+        private ulong _dataLength = 0;
+        private long _position;
+        private readonly ChdHeaderInfo _header;
+        private readonly List<ChdMapInfo> _map;
+
+        private CachedHunk CacheHunk(int index)
+        {
+            var hunk = new CachedHunk
+            {
+                Data = _readHunk(index),
+                Index = index
+            };
+
+            _hunkCache.Add(hunk);
+            if (_hunkCache.Count >= HunkCacheMaxSize)
+                _hunkCache.RemoveAt(0);
+
+            return hunk;
+        }
+
+        public override bool CanRead => true;
+
+        public override bool CanSeek => true;
+
+        public override bool CanWrite => false;
+
+        public override void Flush()
+        {
+            // do nothing
+        }
+
+        private void GetHunk(int index)
+        {
+            _hunkOffset = index * _hunkSize;
+            var count = _hunkCache.Count;
+            for (var i = 0; i < count; i++)
+            {
+                var hunk = _hunkCache[i];
+                if (hunk.Index == index)
+                {
+                    _currentHunk = hunk;
+                    return;
+                }
+            }
+
+            _currentHunk = CacheHunk(index);
+        }
+
+        public override long Length => (long) _dataLength;
+
+        public override long Position
+        {
+            get => _position;
+            set => _position = value;
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            var total = count;
+
+            if (_currentHunk.Data == null)
+                GetHunk((int) (_position / _hunkSize));
+
+            var hunkPosition = _position - _hunkOffset;
+            while (count > 0)
+            {
+                if (hunkPosition >= _hunkSize || hunkPosition < 0)
+                {
+                    GetHunk((int) (_position / _hunkSize));
+                    hunkPosition = _position - _hunkOffset;
+                }
+
+                buffer[offset] = _currentHunk.Data[hunkPosition];
+                hunkPosition++;
+                offset++;
+                _position++;
+                count--;
+            }
+
+            return total;
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            switch (origin)
+            {
+                case SeekOrigin.Current:
+                    Position = _position + offset;
+                    break;
+                case SeekOrigin.End:
+                    Position = _position - offset;
+                    break;
+                default:
+                    Position = offset;
+                    break;
+            }
+
+            return _position;
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        private byte[] DecompressMini(ulong data, uint decompressedLength)
+        {
+            var result = new byte[decompressedLength];
+            var buffer = new byte[8];
+
+            buffer[0] = (byte) ((data >> 56) & 0xFF);
+            buffer[1] = (byte) ((data >> 48) & 0xFF);
+            buffer[2] = (byte) ((data >> 40) & 0xFF);
+            buffer[3] = (byte) ((data >> 32) & 0xFF);
+            buffer[4] = (byte) ((data >> 24) & 0xFF);
+            buffer[5] = (byte) ((data >> 16) & 0xFF);
+            buffer[6] = (byte) ((data >> 8) & 0xFF);
+            buffer[7] = (byte) (data & 0xFF);
+
+            var j = 0;
+            for (var i = 0; i < decompressedLength; i++)
+            {
+                result[i] = buffer[j];
+                j++;
+                if (j == 8)
+                    j = 0;
+            }
+
+            return result;
+        }
+
+        private byte[] DecompressParentHunk(ulong offs)
+        {
+            return _parent._readHunk((int) (offs & 0x7FFFFFFFul));
+        }
+
+        private byte[] DecompressSelfHunk(ulong offs)
+        {
+            return _readHunk((int) (offs & 0x7FFFFFFFul));
+        }
+
+        private byte[] DecompressZlib(uint decompressedLength)
+        {
+            var buffer = new byte[decompressedLength];
+            using (var ds = new DeflateStream(_baseStream, CompressionMode.Decompress, true))
+            {
+                ds.Read(buffer, 0, (int) decompressedLength);
+            }
+
+            return buffer;
+        }
+
+        private ChdHeaderInfo ReadHeaderV1()
+        {
+            var header = new ChdHeaderInfo
+            {
+                flags = _reader.ReadUInt32S(),
+                compression = _reader.ReadUInt32S(),
+                hunkSize = _reader.ReadUInt32S(),
+                totalHunks = _reader.ReadUInt32S(),
+                cylinders = _reader.ReadUInt32S(),
+                heads = _reader.ReadUInt32S(),
+                sectors = _reader.ReadUInt32S(),
+                md5 = _reader.ReadMD5S(),
+                parentmd5 = _reader.ReadMD5S(),
+                seclen = 512
+            };
+
+            _dataLength = header.totalHunks * header.hunkSize * 512;
+            _hunkSize = header.hunkSize * 512;
+            return header;
+        }
+
+        private ChdHeaderInfo ReadHeaderV2()
+        {
+            var header = new ChdHeaderInfo
+            {
+                flags = _reader.ReadUInt32S(),
+                compression = _reader.ReadUInt32S(),
+                hunkSize = _reader.ReadUInt32S(),
+                totalHunks = _reader.ReadUInt32S(),
+                cylinders = _reader.ReadUInt32S(),
+                heads = _reader.ReadUInt32S(),
+                sectors = _reader.ReadUInt32S(),
+                md5 = _reader.ReadMD5S(),
+                parentmd5 = _reader.ReadMD5S(),
+                seclen = _reader.ReadUInt32S()
+            };
+
+            _dataLength = header.totalHunks * header.hunkSize * header.seclen;
+            _hunkSize = header.hunkSize * header.seclen;
+            return header;
+        }
+
+        private ChdHeaderInfo ReadHeaderV3()
+        {
+            var header = new ChdHeaderInfo
+            {
+                flags = _reader.ReadUInt32S(),
+                compression = _reader.ReadUInt32S(),
+                totalHunks = _reader.ReadUInt32S(),
+                logicalBytes = _reader.ReadUInt64S(),
+                metaOffset = _reader.ReadUInt64S(),
+                md5 = _reader.ReadMD5S(),
+                parentmd5 = _reader.ReadMD5S(),
+                hunkBytes = _reader.ReadUInt32S(),
+                sha1 = _reader.ReadSHA1S(),
+                parentsha1 = _reader.ReadSHA1S()
+            };
+
+            _dataLength = header.logicalBytes;
+            _hunkSize = header.hunkBytes;
+            return header;
+        }
+
+        private ChdHeaderInfo ReadHeaderV4()
+        {
+            var header = new ChdHeaderInfo
+            {
+                flags = _reader.ReadUInt32S(),
+                compression = _reader.ReadUInt32S(),
+                totalHunks = _reader.ReadUInt32S(),
+                logicalBytes = _reader.ReadUInt64S(),
+                metaOffset = _reader.ReadUInt64S(),
+                hunkBytes = _reader.ReadUInt32S(),
+                sha1 = _reader.ReadSHA1S(),
+                parentsha1 = _reader.ReadSHA1S(),
+                rawsha1 = _reader.ReadSHA1S()
+            };
+
+            _dataLength = header.logicalBytes;
+            _hunkSize = header.hunkBytes;
+            return header;
+        }
+
+        private ChdHeaderInfo ReadHeaderV5()
+        {
+            var header = new ChdHeaderInfo
+            {
+                compressors =
+                    new[]
+                    {
+                        _reader.ReadUInt32S(),
+                        _reader.ReadUInt32S(),
+                        _reader.ReadUInt32S(),
+                        _reader.ReadUInt32S()
+                    },
+                logicalBytes = _reader.ReadUInt64S(),
+                mapOffset = _reader.ReadUInt64S(),
+                metaOffset = _reader.ReadUInt64S(),
+                hunkBytes = _reader.ReadUInt32S(),
+                unitBytes = _reader.ReadUInt32S(),
+                rawsha1 = _reader.ReadSHA1S(),
+                sha1 = _reader.ReadSHA1S(),
+                parentsha1 = _reader.ReadSHA1S()
+            };
+            _dataLength = header.logicalBytes;
+            _hunkSize = header.hunkBytes;
+            header.totalHunks = (uint) ((header.logicalBytes + header.hunkBytes - 1) / header.hunkBytes);
+            return header;
+        }
+
+        private byte[] ReadHunkV1(int index)
+        {
+            var entry = _map[index];
+            byte[] result;
+
+            _baseStream.Position = (long) entry.offset;
+            if (entry.length == _header.hunkSize)
+            {
+                result = new byte[_header.hunkSize];
+                _baseStream.Read(result, 0, (int) (_header.hunkSize * _header.seclen));
+            }
+            else
+            {
+                result = DecompressZlib(_header.hunkSize * _header.seclen);
+            }
+
+            return result;
+        }
+
+        private byte[] ReadHunkV3(int index)
+        {
+            var entry = _map[index];
+            byte[] result;
+
+            switch (entry.flags & 0xF)
+            {
+                case 0x1:
+                    _baseStream.Position = (long) entry.offset;
+                    result = DecompressZlib(_header.hunkBytes);
+                    break;
+                case 0x2:
+                    _baseStream.Position = (long) entry.offset;
+                    result = new byte[_header.hunkBytes];
+                    _baseStream.Read(result, 0, (int) _header.hunkBytes);
+                    break;
+                case 0x3:
+                    result = DecompressMini(entry.offset, _header.hunkBytes);
+                    break;
+                case 0x4:
+                    result = DecompressSelfHunk(entry.offset);
+                    break;
+                case 0x5:
+                    result = DecompressParentHunk(entry.offset);
+                    break;
+                case 0x6:
+                    throw new Exception("Unsupported V3 hunk type.");
+                default:
+                    throw new Exception("Invalid V3 hunk type.");
+            }
+
+            return result;
+        }
+
+        private byte[] ReadHunkV5(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        private List<ChdMapInfo> ReadMapV1()
+        {
+            var map = new List<ChdMapInfo>();
+            for (uint i = 0; i < _header.totalHunks; i++)
+            {
+                var entry = new ChdMapInfo();
+                var raw = _reader.ReadUInt64S();
+                entry.offset = (raw >> 20) & 0xFFFFFFFFFFFul;
+                entry.length = raw & 0xFFFFFul;
+                _map.Add(entry);
+            }
+
+            return map;
+        }
+
+        private List<ChdMapInfo> ReadMapV3()
+        {
+            var map = new List<ChdMapInfo>();
+            for (uint i = 0; i < _header.totalHunks; i++)
+            {
+                var entry = new ChdMapInfo
+                {
+                    offset = _reader.ReadUInt64S(),
+                    crc32 = _reader.ReadUInt32S(),
+                    length = _reader.ReadUInt16S()
+                };
+                entry.length |= (ulong) _reader.ReadByte() << 16;
+                entry.flags = _reader.ReadByte();
+                _map.Add(entry);
+            }
+
+            return map;
+        }
+
+        private List<ChdMapInfo> ReadMapV5()
+        {
+            var map = new List<ChdMapInfo>();
+            _reader.BaseStream.Position = (long) _header.mapOffset;
+
+            var compressed = _header.compressors[0] != 0;
+
+            if (compressed)
+            {
+                // compressed map header
+                var mapBytes = _reader.ReadUInt32S();
+                var firstOffs = _reader.ReadUValueS(6);
+                var mapCrc = _reader.ReadUInt16S();
+                var lengthBits = _reader.ReadByte();
+                var selfBits = _reader.ReadByte();
+                var parentBits = _reader.ReadByte();
+                _reader.ReadByte(); // reserved
+
+                // decompress the map
+                var huffmanDecoder = new Huffman(16, 8, null, null, null);
+                huffmanDecoder.ImportTreeRle(new BitReader(_reader.BaseStream));
+                byte lastComp = 0;
+                var repCount = 0;
+
+                using (var mem = new MemoryStream())
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            return map;
+        }
+    }
+}
