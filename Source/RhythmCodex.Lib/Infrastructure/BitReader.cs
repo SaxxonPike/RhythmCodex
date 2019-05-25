@@ -37,13 +37,13 @@ namespace RhythmCodex.Infrastructure
                 {
                     var b = _stream.ReadByte();
                     if (b >= 0)
-                        _buffer |= unchecked((uint)(b << (24 - _bits)));
+                        _buffer |= unchecked((ulong) (b << (24 - _bits)));
 
                     _bits += 8;
                 }
             }
 
-            var result = _buffer >> (32 - numBits);
+            var result = (_buffer >> (32 - numBits)) & ~0xFFFFFFFFU;
             _buffer <<= numBits;
             _bits -= numBits;
             return unchecked((int) result);
