@@ -7,11 +7,23 @@ namespace RhythmCodex.Infrastructure
     {
         private readonly Stream _stream;
         private int _bits;
-        private uint _buffer;
+        private ulong _buffer;
 
         public BitReader(Stream stream)
         {
             _stream = stream;
+        }
+
+        public void UnRead(int value, int numBits)
+        {
+            for (var i = 0; i < numBits; i++)
+            {
+                var bit = 1UL << _bits;
+                _buffer &= ~bit;
+                if (((value >> i) & 0x1) != 0)
+                    _buffer |= bit;
+                _bits++;
+            }
         }
 
         public int Read(int numBits)

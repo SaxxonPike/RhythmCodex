@@ -148,6 +148,15 @@ namespace RhythmCodex.Compression
             BuildLookupTable();
         }
 
+        public int DecodeOne(BitReader reader)
+        {
+            var bits = reader.Read(_maxBits);
+            reader.UnRead(bits, _maxBits);
+            var lookup = _lookup[bits];
+            reader.Read(lookup & 0x1F);
+            return lookup >> 5;
+        }
+
         private static ushort MakeLookup(int code, int bits) =>
             (ushort) ((code << 5) | (bits & 0x1F));
     }

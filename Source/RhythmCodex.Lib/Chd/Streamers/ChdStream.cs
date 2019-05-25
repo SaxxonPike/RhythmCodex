@@ -13,7 +13,7 @@ namespace RhythmCodex.Chd.Streamers
     {
         private const int CompressionRleSmall = 7;
         private const int CompressionRleLarge = 8;
-        
+
         private readonly Stream _baseStream;
         private readonly ChdStream _parent;
 
@@ -449,23 +449,119 @@ namespace RhythmCodex.Chd.Streamers
             if (compressed)
             {
                 // compressed map header
-                var mapBytes = _reader.ReadUInt32S();
-                var firstOffs = _reader.ReadUValueS(6);
-                var mapCrc = _reader.ReadUInt16S();
-                var lengthBits = _reader.ReadByte();
-                var selfBits = _reader.ReadByte();
-                var parentBits = _reader.ReadByte();
+                var mapbytes = _reader.ReadUInt32S();
+                var firstoffs = _reader.ReadUValueS(6);
+                var mapcrc = _reader.ReadUInt16S();
+                var lengthbits = _reader.ReadByte();
+                var selfbits = _reader.ReadByte();
+                var parentbits = _reader.ReadByte();
                 _reader.ReadByte(); // reserved
 
                 // decompress the map
-                var huffmanDecoder = new Huffman(16, 8, null, null, null);
-                huffmanDecoder.ImportTreeRle(new BitReader(_reader.BaseStream));
-                byte lastComp = 0;
-                var repCount = 0;
+                var bitbuf = new BitReader(_reader.BaseStream);
+                var decoder = new Huffman(16, 8, null, null, null);
+                decoder.ImportTreeRle(bitbuf);
+                byte lastcomp = 0;
+                var repcount = 0;
 
-                using (var mem = new MemoryStream())
+                for (var hunknum = 0; hunknum < _header.totalHunks; hunknum++)
                 {
-                    throw new NotImplementedException();
+                    var rawmap = new ChdMapInfo();
+                    if (repcount > 0)
+                    {
+                        rawmap.compression = lastcomp;
+                        repcount--;
+                    }
+                    else
+                    {
+                        var val = decoder.DecodeOne(bitbuf);
+                        if (val == CompressionRleSmall)
+                        {
+                            rawmap.compression = lastcomp;
+                            repcount = 2 + decoder.DecodeOne(bitbuf);
+                        }
+                        else if (val == CompressionRleLarge)
+                        {
+                            rawmap.compression = lastcomp;
+                            repcount = 2 + 16 + (decoder.DecodeOne(bitbuf) << 4);
+                            repcount += decoder.DecodeOne(bitbuf);
+                        }
+                        else
+                        {
+                            rawmap.compression = lastcomp = unchecked((byte) val);
+                        }
+                    }
+
+                    map.Add(rawmap);
+                }
+                
+                var curoffset = firstoffs;
+                var last_self = 0UL;
+                var last_parent = 0UL;
+
+                for (var hunknum = 0; hunknum < _header.totalHunks; hunknum++)
+                {
+                    var rawmap = map[hunknum];
+                    var offset = curoffset;
+                    uint length = 0;
+                    ushort crc = 0;
+                    switch (rawmap.compression)
+                    {
+                        // base types
+                        case 0x0:
+                        case 0x1:
+                        case 0x2:
+                        case 0x3:
+                            curoffset += length = (uint) bitbuf.Read(lengthbits);
+                            crc = (ushort) bitbuf.Read(16);
+                            break;
+
+                        case 0x4:
+                            curoffset += length = _header.hunkBytes;
+                            crc = (ushort) bitbuf.Read(16);
+                            break;
+
+                        case 0x5:
+                            offset = (ulong) bitbuf.Read(selfbits);
+                            last_self = (uint) offset;
+                            break;
+
+                        case 0x6:
+                            offset = (ulong) bitbuf.Read(parentbits);
+                            last_parent = offset;
+                            break;
+
+                        // pseudo-types; convert into base types
+                        case 0xA:
+                            last_self++;
+                            rawmap.compression = 0x5;
+                            offset = last_self;
+                            break;
+                        case 0x9:
+                            rawmap.compression = 0x5;
+                            offset = last_self;
+                            break;
+
+                        case 0xB:
+                            rawmap.compression = 0x6;
+                            last_parent = offset = unchecked((ulong) (hunknum * _header.hunkBytes / _header.unitBytes));
+                            break;
+
+                        case 0xD:
+                            last_parent += _header.hunkBytes / _header.unitBytes;
+                            rawmap.compression = 0x6;
+                            offset = last_parent;
+                            break;
+                        case 0xC:
+                            rawmap.compression = 0x6;
+                            offset = last_parent;
+                            break;
+                    }
+
+                    rawmap.length = length;
+                    rawmap.offset = offset;
+                    rawmap.crc32 = crc;
+                    map[hunknum] = rawmap;
                 }
             }
 
