@@ -6,16 +6,18 @@ using RhythmCodex.Chd.Model;
 using RhythmCodex.Compression;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.ThirdParty;
 using SevenZip.Compression.LZMA;
 
 namespace RhythmCodex.Chd.Streamers
 {
     public class ChdStream : Stream
     {
+        private readonly IFlacDecoder _flacDecoder;
         private readonly Stream _baseStream;
         private readonly ChdStream _parent;
 
-        internal ChdStream(Stream baseStream)
+        internal ChdStream(IFlacDecoder flacDecoder, Stream baseStream)
         {
             _reader = new BinaryReader(baseStream);
 
@@ -55,11 +57,13 @@ namespace RhythmCodex.Chd.Streamers
                 default:
                     throw new RhythmCodexException("Unrecognized CHD version");
             }
-            
+
+            _flacDecoder = flacDecoder;
             _baseStream = baseStream;
         }
 
-        internal ChdStream(Stream baseStream, ChdStream parent) : this(baseStream)
+        internal ChdStream(IFlacDecoder flacDecoder, Stream baseStream, ChdStream parent)
+            : this(flacDecoder, baseStream)
         {
             _parent = parent;
         }
@@ -244,10 +248,10 @@ namespace RhythmCodex.Chd.Streamers
             var lp = 0;
             var pb = 2;
             var dictSize = 1 << 26;
-            
-            lzma.SetDecoderProperties(new byte[]
+
+            lzma.SetDecoderProperties(new[]
             {
-                (byte)(lc + (lp * 9) + (pb * 45)),
+                (byte) (lc + lp * 9 + pb * 45),
                 unchecked((byte) dictSize),
                 unchecked((byte) (dictSize >> 8)),
                 unchecked((byte) (dictSize >> 16)),
@@ -261,6 +265,46 @@ namespace RhythmCodex.Chd.Streamers
             }
         }
 
+        private byte[] DecompressFlac()
+        {
+            Action<byte[]> postProcess;
+            var endian = _baseStream.ReadByte();
+            switch (endian)
+            {
+                case 0x42: // B
+                    postProcess = buffer =>
+                    {
+                        for (var i = 0; i < buffer.Length; i += 2)
+                        {
+                            var temp = buffer[i];
+                            buffer[i] = buffer[i + 1];
+                            buffer[i + 1] = temp;
+                        }
+                    };
+                    break;
+                case 0x4C: // L
+                    postProcess = buffer => { };
+                    break;
+                default:
+                    throw new Exception($"Unknown FLAC endian type {endian:X2}");
+            }
+
+            // determine FLAC block size, which must be 16-65535
+            // clamp to 2k since that's supposed to be the sweet spot
+            var flacBlockSize = _header.hunkBytes / 4;
+            while (flacBlockSize > 2048)
+                flacBlockSize /= 2;
+
+            var frame = _flacDecoder
+                .DecodeFrame(_baseStream, (int) flacBlockSize)
+                .Span
+                .Slice(0, (int) _header.hunkBytes)
+                .ToArray();
+
+            postProcess(frame);
+            return frame;
+        }
+
         private byte[] DecompressCustom(ChdMapInfo map)
         {
             var id = _header.compressors[map.compression];
@@ -272,8 +316,10 @@ namespace RhythmCodex.Chd.Streamers
                 case 0x6C7A6D61: //lzma
                     _baseStream.Position = (long) map.offset;
                     return DecompressLzma((uint) map.length, _header.hunkBytes);
-                case 0x68756666: //huff
                 case 0x666C6163: //flac
+                    _baseStream.Position = (long) map.offset;
+                    return DecompressFlac();
+                case 0x68756666: //huff
                     throw new NotImplementedException();
                 default:
                     throw new RhythmCodexException($"Unknown compression type {id:X8}");
@@ -466,7 +512,7 @@ namespace RhythmCodex.Chd.Streamers
 
                 case V5CompressionType.COMPRESSION_PARENT:
                     return DecompressParentHunk(entry.offset);
-                
+
                 default:
                     throw new Exception("Invalid V5 hunk type.");
             }
@@ -561,7 +607,7 @@ namespace RhythmCodex.Chd.Streamers
 
                     map.Add(rawmap);
                 }
-                
+
                 var curoffset = firstoffs;
                 var last_self = 0UL;
                 var last_parent = 0UL;

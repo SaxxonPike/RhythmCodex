@@ -59,7 +59,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The minimum size of the block in samples.
         /// </value>
-        public short MinBlockSize { get; private set; }
+        public short MinBlockSize { get; set; }
 
         /// <summary>
         /// Gets the maximum size of the block in samples.
@@ -67,7 +67,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The maximum size of the block in samples.
         /// </value>
-        public short MaxBlockSize { get; private set; }
+        public short MaxBlockSize { get; set; }
 
         /// <summary>
         /// Gets the maximum size of the frame in bytes.
@@ -75,7 +75,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The maximum size of the frame in bytes.
         /// </value>
-        public int MaxFrameSize { get; private set; }
+        public int MaxFrameSize { get; set; }
 
         /// <summary>
         /// Gets the minimum size of the frame in bytes.
@@ -83,7 +83,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The minimum size of the frame in bytes.
         /// </value>
-        public int MinFrameSize { get; private set; }
+        public int MinFrameSize { get; set; }
 
         /// <summary>
         /// Gets the sample rate in Hz.
@@ -91,7 +91,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The sample rate.
         /// </value>
-        public int SampleRate { get; private set; }
+        public int SampleRate { get; set; }
 
         /// <summary>
         /// Gets the number of channels.
@@ -99,7 +99,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The number of channels.
         /// </value>
-        public int Channels { get; private set; }
+        public int Channels { get; set; }
 
         /// <summary>
         /// Gets the number of bits per sample.
@@ -107,12 +107,12 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The number of bits per sample.
         /// </value>
-        public int BitsPerSample { get; private set; }
+        public int BitsPerSample { get; set; }
 
         /// <summary>
         /// Gets the total number of samples inside of the stream.
         /// </summary>
-        public long TotalSamples { get; private set; }
+        public long TotalSamples { get; set; }
 
         /// <summary>
         /// Gets MD5 signature of the unencoded audio data.
@@ -120,6 +120,6 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The MD5 signature of the unencoded audio data.
         /// </value>
-        public string Md5 { get; private set; }
+        public string Md5 { get; set; }
     }
 }

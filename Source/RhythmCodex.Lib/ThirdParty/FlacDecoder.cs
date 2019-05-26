@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using CSCore.Codecs.FLAC;
@@ -32,6 +33,20 @@ namespace RhythmCodex.ThirdParty
                     [NumericData.Rate] = inputStream.WaveFormat.SampleRate
                 };
             }
+        }
+
+        public Memory<byte> DecodeFrame(Stream stream, int blockSize)
+        {
+            var frame = FlacFrame.FromStream(stream, new FlacMetadataStreamInfo
+            {
+                SampleRate = 44100,
+                Channels = 2,
+                BitsPerSample = 16
+            });
+            Memory<byte> buffer = null;
+            frame.NextFrame();
+            frame.GetBuffer(ref buffer);
+            return buffer;
         }
     }
 }

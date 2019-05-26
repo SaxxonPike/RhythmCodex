@@ -10,7 +10,7 @@ namespace CSCore.Codecs.FLAC
     /// <summary>
     /// Represents a frame inside of an Flac-Stream.
     /// </summary>
-    internal sealed class FlacFrame : IDisposable
+    public sealed class FlacFrame : IDisposable
     {
         private List<FlacSubFrameData> _subFrameData;
         private Stream _stream;

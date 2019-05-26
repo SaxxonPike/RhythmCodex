@@ -18,7 +18,7 @@ namespace RhythmCodex.Chd.Integration
                 var chd = factory.Create(stream);
                 chd.Position = 0;
                 var reader = new BinaryReader(chd);
-                var output = reader.ReadBytes(0x4000);
+                var output = reader.ReadBytes(0x2000000);
                 File.WriteAllBytes(@"c:\users\saxxon\desktop\chd.bin", output);
             }
         }
