@@ -150,10 +150,14 @@ namespace RhythmCodex.Compression
 
         public int DecodeOne(BitReader reader)
         {
-            var bits = reader.Read(_maxBits);
-            reader.UnRead(bits, _maxBits);
+            // peek ahead to get maxbits worth of data
+            var bits = reader.Peek(_maxBits);
+
+            // look it up, then remove the actual number of bits for this code
             var lookup = _lookup[bits];
-            reader.Read(lookup & 0x1F);
+            reader.Remove(lookup & 0x1f);
+
+            // return the value
             return lookup >> 5;
         }
 

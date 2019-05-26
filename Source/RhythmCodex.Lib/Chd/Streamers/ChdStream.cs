@@ -6,14 +6,12 @@ using RhythmCodex.Chd.Model;
 using RhythmCodex.Compression;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
+using SevenZip.Compression.LZMA;
 
 namespace RhythmCodex.Chd.Streamers
 {
     public class ChdStream : Stream
     {
-        private const int CompressionRleSmall = 7;
-        private const int CompressionRleLarge = 8;
-
         private readonly Stream _baseStream;
         private readonly ChdStream _parent;
 
@@ -57,11 +55,12 @@ namespace RhythmCodex.Chd.Streamers
                 default:
                     throw new RhythmCodexException("Unrecognized CHD version");
             }
+            
+            _baseStream = baseStream;
         }
 
-        internal ChdStream(Stream baseStream, ChdStream parent)
+        internal ChdStream(Stream baseStream, ChdStream parent) : this(baseStream)
         {
-            _baseStream = baseStream;
             _parent = parent;
         }
 
@@ -237,6 +236,50 @@ namespace RhythmCodex.Chd.Streamers
             return buffer;
         }
 
+        private byte[] DecompressLzma(uint compressedLength, uint decompressedLength)
+        {
+            var buffer = new byte[decompressedLength];
+            var lzma = new LzmaDecoder();
+            var lc = 3;
+            var lp = 0;
+            var pb = 2;
+            var dictSize = 1 << 26;
+            
+            lzma.SetDecoderProperties(new byte[]
+            {
+                (byte)(lc + (lp * 9) + (pb * 45)),
+                unchecked((byte) dictSize),
+                unchecked((byte) (dictSize >> 8)),
+                unchecked((byte) (dictSize >> 16)),
+                unchecked((byte) (dictSize >> 24))
+            });
+            using (var outStream = new MemoryStream(buffer))
+            {
+                lzma.Code(_baseStream, outStream, compressedLength, decompressedLength, null);
+                outStream.Flush();
+                return outStream.ToArray();
+            }
+        }
+
+        private byte[] DecompressCustom(ChdMapInfo map)
+        {
+            var id = _header.compressors[map.compression];
+            switch (id)
+            {
+                case 0x7A6C6962: //zlib
+                    _baseStream.Position = (long) map.offset;
+                    return DecompressZlib(_header.hunkBytes);
+                case 0x6C7A6D61: //lzma
+                    _baseStream.Position = (long) map.offset;
+                    return DecompressLzma((uint) map.length, _header.hunkBytes);
+                case 0x68756666: //huff
+                case 0x666C6163: //flac
+                    throw new NotImplementedException();
+                default:
+                    throw new RhythmCodexException($"Unknown compression type {id:X8}");
+            }
+        }
+
         private ChdHeaderInfo ReadHeaderV1()
         {
             var header = new ChdHeaderInfo
@@ -402,7 +445,31 @@ namespace RhythmCodex.Chd.Streamers
 
         private byte[] ReadHunkV5(int index)
         {
-            throw new NotImplementedException();
+            var entry = _map[index];
+
+            switch ((V5CompressionType) entry.compression)
+            {
+                case V5CompressionType.COMPRESSION_TYPE_0:
+                case V5CompressionType.COMPRESSION_TYPE_1:
+                case V5CompressionType.COMPRESSION_TYPE_2:
+                case V5CompressionType.COMPRESSION_TYPE_3:
+                    return DecompressCustom(entry);
+
+                case V5CompressionType.COMPRESSION_NONE:
+                    _baseStream.Position = (long) entry.offset;
+                    var result = new byte[_header.hunkBytes];
+                    _baseStream.Read(result, 0, (int) _header.hunkBytes);
+                    return result;
+
+                case V5CompressionType.COMPRESSION_SELF:
+                    return DecompressSelfHunk(entry.offset);
+
+                case V5CompressionType.COMPRESSION_PARENT:
+                    return DecompressParentHunk(entry.offset);
+                
+                default:
+                    throw new Exception("Invalid V5 hunk type.");
+            }
         }
 
         private List<ChdMapInfo> ReadMapV1()
@@ -475,12 +542,12 @@ namespace RhythmCodex.Chd.Streamers
                     else
                     {
                         var val = decoder.DecodeOne(bitbuf);
-                        if (val == CompressionRleSmall)
+                        if (val == (int) V5CompressionType.COMPRESSION_RLE_SMALL)
                         {
                             rawmap.compression = lastcomp;
                             repcount = 2 + decoder.DecodeOne(bitbuf);
                         }
-                        else if (val == CompressionRleLarge)
+                        else if (val == (int) V5CompressionType.COMPRESSION_RLE_LARGE)
                         {
                             rawmap.compression = lastcomp;
                             repcount = 2 + 16 + (decoder.DecodeOne(bitbuf) << 4);
@@ -505,55 +572,55 @@ namespace RhythmCodex.Chd.Streamers
                     var offset = curoffset;
                     uint length = 0;
                     ushort crc = 0;
-                    switch (rawmap.compression)
+                    switch ((V5CompressionType) rawmap.compression)
                     {
                         // base types
-                        case 0x0:
-                        case 0x1:
-                        case 0x2:
-                        case 0x3:
+                        case V5CompressionType.COMPRESSION_TYPE_0:
+                        case V5CompressionType.COMPRESSION_TYPE_1:
+                        case V5CompressionType.COMPRESSION_TYPE_2:
+                        case V5CompressionType.COMPRESSION_TYPE_3:
                             curoffset += length = (uint) bitbuf.Read(lengthbits);
                             crc = (ushort) bitbuf.Read(16);
                             break;
 
-                        case 0x4:
+                        case V5CompressionType.COMPRESSION_NONE:
                             curoffset += length = _header.hunkBytes;
                             crc = (ushort) bitbuf.Read(16);
                             break;
 
-                        case 0x5:
+                        case V5CompressionType.COMPRESSION_SELF:
                             offset = (ulong) bitbuf.Read(selfbits);
                             last_self = (uint) offset;
                             break;
 
-                        case 0x6:
+                        case V5CompressionType.COMPRESSION_PARENT:
                             offset = (ulong) bitbuf.Read(parentbits);
                             last_parent = offset;
                             break;
 
                         // pseudo-types; convert into base types
-                        case 0xA:
+                        case V5CompressionType.COMPRESSION_SELF_1:
                             last_self++;
-                            rawmap.compression = 0x5;
+                            rawmap.compression = (uint) V5CompressionType.COMPRESSION_SELF;
                             offset = last_self;
                             break;
-                        case 0x9:
-                            rawmap.compression = 0x5;
+                        case V5CompressionType.COMPRESSION_SELF_0:
+                            rawmap.compression = (uint) V5CompressionType.COMPRESSION_SELF;
                             offset = last_self;
                             break;
 
-                        case 0xB:
-                            rawmap.compression = 0x6;
+                        case V5CompressionType.COMPRESSION_PARENT_SELF:
+                            rawmap.compression = (uint) V5CompressionType.COMPRESSION_PARENT;
                             last_parent = offset = unchecked((ulong) (hunknum * _header.hunkBytes / _header.unitBytes));
                             break;
 
-                        case 0xD:
+                        case V5CompressionType.COMPRESSION_PARENT_1:
                             last_parent += _header.hunkBytes / _header.unitBytes;
-                            rawmap.compression = 0x6;
+                            rawmap.compression = (uint) V5CompressionType.COMPRESSION_PARENT;
                             offset = last_parent;
                             break;
-                        case 0xC:
-                            rawmap.compression = 0x6;
+                        case V5CompressionType.COMPRESSION_PARENT_0:
+                            rawmap.compression = (uint) V5CompressionType.COMPRESSION_PARENT;
                             offset = last_parent;
                             break;
                     }

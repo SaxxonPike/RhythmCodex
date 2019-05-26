@@ -15,7 +15,11 @@ namespace RhythmCodex.Chd.Integration
             var factory = Resolve<IChdStreamFactory>();
             using (var stream = File.OpenRead(path))
             {
-                factory.Create(stream);
+                var chd = factory.Create(stream);
+                chd.Position = 0;
+                var reader = new BinaryReader(chd);
+                var output = reader.ReadBytes(0x4000);
+                File.WriteAllBytes(@"c:\users\saxxon\desktop\chd.bin", output);
             }
         }
     }
