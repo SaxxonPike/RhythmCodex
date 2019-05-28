@@ -14,28 +14,6 @@ namespace RhythmCodex.Wav.Converters
     {
         // Reference: https://wiki.multimedia.cx/index.php/Microsoft_ADPCM
 
-        private static readonly int[] AdaptationTable =
-        {
-            230, 230, 230, 230, 307, 409, 512, 614,
-            768, 614, 512, 409, 307, 230, 230, 230
-        };
-
-        private static readonly int[] DefaultCoefficients =
-        {
-            256, 0,
-            512, -256,
-            0, 0,
-            192, 64,
-            240, 0,
-            460, -208,
-            392, -232
-        };
-
-        private static readonly int[] IndexTable =
-        {
-            0, 1, 2, 3, 4, 5, 6, 7, -8, -7, -6, -5, -4, -3, -2, -1
-        };
-
         public ISound Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat)
         {
             var channels = fmtChunk.Channels;
@@ -47,8 +25,8 @@ namespace RhythmCodex.Wav.Converters
 
             // Apply coefficients
             var coefficients =
-                new int[Math.Max(DefaultCoefficients.Length, microsoftAdpcmFormat.Coefficients.Length)].AsMemory();
-            DefaultCoefficients.AsSpan().CopyTo(coefficients.Span);
+                new int[Math.Max(MicrosoftAdpcmConstants.DefaultCoefficients.Length, microsoftAdpcmFormat.Coefficients.Length)].AsMemory();
+            MicrosoftAdpcmConstants.DefaultCoefficients.AsSpan().CopyTo(coefficients.Span);
             microsoftAdpcmFormat.Coefficients.AsSpan().CopyTo(coefficients.Span);
 
             for (var offset = 0; offset < max; offset += frameSize)
@@ -107,7 +85,7 @@ namespace RhythmCodex.Wav.Converters
                     if (sample1 > 32767)
                         sample1 = 32767;
 
-                    delta = AdaptationTable[data] * delta / 256;
+                    delta = MicrosoftAdpcmConstants.AdaptationTable[data] * delta / 256;
                     if (delta < 16)
                         delta = 16;
 
