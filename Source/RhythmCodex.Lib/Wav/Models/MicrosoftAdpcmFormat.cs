@@ -20,5 +20,26 @@ namespace RhythmCodex.Wav.Models
 
         public int[] Coefficients { get; set; }
         public int SamplesPerBlock { get; set; }
+
+        public byte[] ToBytes()
+        {
+            var output = new byte[6 + (Coefficients.Length * 2)];
+            var coeffCount = Coefficients.Length / 2;
+
+            output[0x0] = 0x20;
+            output[0x1] = 0x00;
+            output[0x2] = unchecked((byte) SamplesPerBlock);
+            output[0x3] = unchecked((byte) (SamplesPerBlock >> 8));
+            output[0x4] = unchecked((byte) coeffCount);
+            output[0x5] = unchecked((byte) (coeffCount >> 8));
+
+            for (var i = 0; i < Coefficients.Length; i++)
+            {
+                output[0x6 + (i << 1)] = unchecked((byte) Coefficients[i]);
+                output[0x7 + (i << 1)] = unchecked((byte) (Coefficients[i] >> 8));
+            }
+
+            return output;
+        }
     }
 }
