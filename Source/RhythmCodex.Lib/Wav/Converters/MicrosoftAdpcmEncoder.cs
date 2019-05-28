@@ -62,6 +62,7 @@ namespace RhythmCodex.Wav.Converters
             // frame[(channelCount * 7) + channel] = delta
             // frame[(channelCount * 21) + channel] = sample1
             // frame[(channelCount * 35) + channel] = sample2
+            throw new NotImplementedException();
         }
     }
 }
