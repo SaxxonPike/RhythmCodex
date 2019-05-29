@@ -18,11 +18,5 @@ namespace RhythmCodex.Wav.Models
             460, -208,
             392, -232
         };
-
-        public static readonly int[] IndexTable =
-        {
-            0, 1, 2, 3, 4, 5, 6, 7, -8, -7, -6, -5, -4, -3, -2, -1
-        };
-
     }
 }

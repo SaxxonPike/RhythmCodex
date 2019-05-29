@@ -49,6 +49,7 @@ namespace RhythmCodex.Wav.Converters
                     encoded.Write(output, 0, output.Length);
                     offset += samplesPerBlock;
                     remaining -= samplesPerBlock;
+                    output.AsSpan().Fill(0x00);
                 }
 
                 return encoded.ToArray();
@@ -62,61 +63,6 @@ namespace RhythmCodex.Wav.Converters
         private int EncodeFrame(Span<byte> frame, ReadOnlySpan<float> buffer, int channel, int channelCount,
             ReadOnlySpan<int> coefficients, int initialDelta)
         {
-            int SaturateDelta(int d)
-            {
-                if (d < 16)
-                    return 16;
-                return d;
-            }
-            
-            int ToSample(float sample)
-            {
-                var s = (int) (sample * 32768);
-                if (s > 32767)
-                    return 32767;
-                if (s < -32768)
-                    return -32768;
-                return s;
-            }
-
-            (double error, int data, int d, int s1) FindBestNybble(float target, int s1, int ce1, int s2, int ce2,
-                int d)
-            {
-                var bestNybble = -1;
-                var bestError = double.MaxValue;
-                var bestS1 = 0;
-                var bestD = 0;
-
-                for (var data = 0; data < 16; data++)
-                {
-                    var predictor = (s1 * ce1 + s2 * ce2) / 256;
-                    predictor += ((data & 0x08) != 0 ? (data - 0x10) : data) * d;
-
-                    var newS1 = predictor;
-                    if (newS1 < -32768)
-                        newS1 = -32768;
-                    if (newS1 > 32767)
-                        newS1 = 32767;
-
-                    var newD = SaturateDelta(MicrosoftAdpcmConstants.AdaptationTable[data] * d / 256);
-
-                    var error = newS1 - ToSample(target);
-                    error *= error;
-                    if (error < bestError)
-                    {
-                        bestError = error;
-                        bestNybble = data;
-                        bestD = newD;
-                        bestS1 = newS1;
-                    }
-
-                    if (error != 0)
-                        break;
-                }
-
-                return (bestError, bestNybble, bestD, bestS1);
-            }
-
             // write starting sample to buffer
             var sample2 = ToSample(buffer[0]);
             var sample1 = ToSample(buffer[1]);
@@ -162,8 +108,12 @@ namespace RhythmCodex.Wav.Converters
                     bestCoeffError = coeffError;
                     bestCoeff = coeff;
                 }
+
+                if (bestCoeffError == 0)
+                    break;
             }
 
+            // Populate the frame.
             var frameIndex = channelCount * 7;
             var channelIndex = -1;
             var bufferIndex = 2;
@@ -206,6 +156,58 @@ namespace RhythmCodex.Wav.Converters
             }
 
             return delta;
+        }
+        
+        private static (double error, int data, int d, int s1) FindBestNybble(float target, int s1, int ce1, int s2, int ce2,
+            int d)
+        {
+            var bestNybble = -1;
+            var bestError = double.MaxValue;
+            var bestS1 = 0;
+            var bestD = 0;
+            var targetSample = ToSample(target);
+
+            for (var data = 0; data < 16; data++)
+            {
+                var predictor = (s1 * ce1 + s2 * ce2) >> 8;
+                predictor += ((data << 28) >> 28) * d;
+
+                var newS1 = predictor;
+                if (newS1 < -32768)
+                    newS1 = -32768;
+                if (newS1 > 32767)
+                    newS1 = 32767;
+
+                var newD = SaturateDelta((MicrosoftAdpcmConstants.AdaptationTable[data] * d) >> 8);
+
+                double error = newS1 - targetSample;
+                error *= error;
+                if (error < bestError)
+                {
+                    bestError = error;
+                    bestNybble = data;
+                    bestD = newD;
+                    bestS1 = newS1;
+                }
+
+                if (bestError == 0)
+                    break;
+            }
+
+            return (bestError, bestNybble, bestD, bestS1);
+        }
+
+        private static int SaturateDelta(int d) => 
+            d < 16 ? 16 : d;
+
+        private static int ToSample(float sample)
+        {
+            var s = (int) (sample * 32768);
+            if (s > 32767)
+                return 32767;
+            if (s < -32768)
+                return -32768;
+            return s;
         }
     }
 }
