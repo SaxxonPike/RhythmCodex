@@ -45,6 +45,7 @@
         <EmbeddedResource Include="Step2\couple.zip" />
         <EmbeddedResource Include="Step2\double.zip" />
         <EmbeddedResource Include="Step2\single.zip" />
+        <EmbeddedResource Include="Twinkle\8th.zip" />
         <EmbeddedResource Include="Vag\svag.zip" />
         <EmbeddedResource Include="Vag\xa2.zip" />
         <EmbeddedResource Include="Wav\alaw.zip" />
