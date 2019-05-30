@@ -1,5 +1,8 @@
+using RhythmCodex.Infrastructure;
+
 namespace RhythmCodex.Ddr.Models
 {
+    [Model]
     public class Ddr573DirectoryEntry
     {
         public int Id { get; set; }

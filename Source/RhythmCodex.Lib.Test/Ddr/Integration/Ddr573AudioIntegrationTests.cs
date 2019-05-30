@@ -3,7 +3,8 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Ddr.Converters;
-using RhythmCodex.Ddr.Providers;
+using RhythmCodex.Digital573.Converters;
+using RhythmCodex.Digital573.Providers;
 
 namespace RhythmCodex.Ddr.Integration
 {
@@ -20,8 +21,8 @@ namespace RhythmCodex.Ddr.Integration
             var expected = inputArchive
                 .First(name => name.Key.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
                 .Value;
-            var decrypter = Resolve<IDdr573AudioDecrypter>();
-            var keyProvider = Resolve<IDdr573AudioKeyProvider>();
+            var decrypter = Resolve<IDigital573AudioDecrypter>();
+            var keyProvider = Resolve<IDigital573AudioKeyProvider>();
             var key = keyProvider.Get(data);
             var observed = decrypter.DecryptNew(data, key);
             observed.Should().Equal(expected);
@@ -39,8 +40,8 @@ namespace RhythmCodex.Ddr.Integration
             var expected = inputArchive
                 .First(name => name.Key.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase))
                 .Value;
-            var decrypter = Resolve<IDdr573AudioDecrypter>();
-            var keyProvider = Resolve<IDdr573AudioKeyProvider>();
+            var decrypter = Resolve<IDigital573AudioDecrypter>();
+            var keyProvider = Resolve<IDigital573AudioKeyProvider>();
             var key = keyProvider.Get(data);
             var observed = decrypter.DecryptOld(data, key[0]);
             observed.Should().Equal(expected);

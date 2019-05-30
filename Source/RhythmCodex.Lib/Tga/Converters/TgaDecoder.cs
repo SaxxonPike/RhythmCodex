@@ -102,8 +102,6 @@ namespace RhythmCodex.Tga.Converters
                             throw new RhythmCodexException($"Bit depth is not supported: {tgaImage.BitsPerPixel}");
                         }
                     }
-
-                    break;
                 }
                 default:
                 {
@@ -205,7 +203,6 @@ namespace RhythmCodex.Tga.Converters
                         Data = pixels,
                         Palette = palette
                     };
-                    break;
                 }
                 default:
                 {

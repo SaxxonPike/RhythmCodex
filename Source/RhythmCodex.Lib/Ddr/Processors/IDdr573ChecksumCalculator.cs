@@ -1,4 +1,4 @@
-namespace RhythmCodex.Ddr.Converters
+namespace RhythmCodex.Ddr.Processors
 {
     public interface IDdr573ChecksumCalculator
     {

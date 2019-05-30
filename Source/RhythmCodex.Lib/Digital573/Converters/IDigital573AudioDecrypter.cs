@@ -1,11 +1,10 @@
 using System;
 
-namespace RhythmCodex.Ddr.Converters
+namespace RhythmCodex.Digital573.Converters
 {
-    public interface IDdr573AudioDecrypter
+    public interface IDigital573AudioDecrypter
     {
         byte[] DecryptNew(ReadOnlySpan<byte> input, params int[] key);
         byte[] DecryptOld(ReadOnlySpan<byte> input, int key1);
-        string ExtractName(string sourceName);
     }
 }

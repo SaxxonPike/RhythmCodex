@@ -6,8 +6,12 @@ using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
-using RhythmCodex.Ddr.Providers;
+using RhythmCodex.Ddr.Processors;
 using RhythmCodex.Ddr.Streamers;
+using RhythmCodex.Digital573.Converters;
+using RhythmCodex.Digital573.Models;
+using RhythmCodex.Digital573.Providers;
+using RhythmCodex.Digital573.Streamers;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -45,8 +49,9 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly ISmStreamReader _smStreamReader;
         private readonly ISifSmMetadataChanger _sifSmMetadataChanger;
         private readonly IHeuristicTester _heuristicTester;
-        private readonly IDdr573AudioKeyProvider _ddr573AudioKeyProvider;
-        private readonly IDdr573AudioDecrypter _ddr573AudioDecrypter;
+        private readonly IDigital573AudioKeyProvider _digital573AudioKeyProvider;
+        private readonly IDigital573AudioDecrypter _digital573AudioDecrypter;
+        private readonly IDdr573AudioNameFinder _ddr573AudioNameFinder;
 
         public DdrTaskBuilder(
             IFileSystem fileSystem,
@@ -66,8 +71,9 @@ namespace RhythmCodex.Cli.Orchestration
             ISmStreamReader smStreamReader,
             ISifSmMetadataChanger sifSmMetadataChanger,
             IHeuristicTester heuristicTester,
-            IDdr573AudioKeyProvider ddr573AudioKeyProvider,
-            IDdr573AudioDecrypter ddr573AudioDecrypter)
+            IDigital573AudioKeyProvider digital573AudioKeyProvider,
+            IDigital573AudioDecrypter digital573AudioDecrypter,
+            IDdr573AudioNameFinder ddr573AudioNameFinder)
             : base(fileSystem, logger)
         {
             _ddr573ImageStreamReader = ddr573ImageStreamReader;
@@ -85,8 +91,9 @@ namespace RhythmCodex.Cli.Orchestration
             _smStreamReader = smStreamReader;
             _sifSmMetadataChanger = sifSmMetadataChanger;
             _heuristicTester = heuristicTester;
-            _ddr573AudioKeyProvider = ddr573AudioKeyProvider;
-            _ddr573AudioDecrypter = ddr573AudioDecrypter;
+            _digital573AudioKeyProvider = digital573AudioKeyProvider;
+            _digital573AudioDecrypter = digital573AudioDecrypter;
+            _ddr573AudioNameFinder = ddr573AudioNameFinder;
         }
 
         public ITask CreateDecodeSsq()
@@ -159,18 +166,18 @@ namespace RhythmCodex.Cli.Orchestration
                     using (var inFile = OpenRead(task, inputFile))
                     {
                         var encoded = inFile.ReadAllBytes();
-                        var key = _ddr573AudioKeyProvider.Get(encoded);
+                        var key = _digital573AudioKeyProvider.Get(encoded);
                         if (key == null)
                         {
                             task.Message = $"Can't find key for {inputFile.Name}";
                             continue;
                         }
                         var decoded = (key.Length == 1)
-                            ? _ddr573AudioDecrypter.DecryptOld(encoded, key[0])
-                            : _ddr573AudioDecrypter.DecryptNew(encoded, key);
+                            ? _digital573AudioDecrypter.DecryptOld(encoded, key[0])
+                            : _digital573AudioDecrypter.DecryptNew(encoded, key);
 
                         using (var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
-                            ? $"{_ddr573AudioDecrypter.ExtractName(i) ?? i}.mp3"
+                            ? $"{_ddr573AudioNameFinder.GetName(i) ?? i}.mp3"
                             : $"{i}.mp3"))
                         {
                             decoded.WriteAllBytes(outFile);

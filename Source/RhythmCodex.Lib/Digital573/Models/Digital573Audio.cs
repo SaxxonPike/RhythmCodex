@@ -1,6 +1,6 @@
-namespace RhythmCodex.Ddr.Models
+namespace RhythmCodex.Digital573.Models
 {
-    public class Ddr573Audio
+    public class Digital573Audio
     {
         public byte[] Data { get; set; }
         public byte[] Key { get; set; }

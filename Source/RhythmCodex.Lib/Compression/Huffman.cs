@@ -18,15 +18,11 @@ namespace RhythmCodex.Compression
         private readonly ushort[] _lookup;
         private readonly byte _maxBits;
         private readonly uint _numCodes;
-        private byte _prevData;
-        private int _rleRemaining;
 
         public Huffman(int newNumCodes, int newMaxBits, ushort[] newLookup, uint[] newHisto, HuffmanNode[] newNodes)
         {
             _numCodes = (uint) newNumCodes;
             _maxBits = (byte) newMaxBits;
-            _prevData = 0;
-            _rleRemaining = 0;
             if (newLookup != null)
                 _lookup = newLookup;
             else

@@ -2,20 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Security.Cryptography;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Ddr.Providers
+namespace RhythmCodex.Digital573.Providers
 {
     [Service]
-    public class Ddr573AudioKeyProvider : IDdr573AudioKeyProvider
+    public class Digital573AudioKeyProvider : IDigital573AudioKeyProvider
     {
         private readonly Lazy<Dictionary<string, int[]>> _keys = new Lazy<Dictionary<string, int[]>>(() =>
         {
-            var archive = EmbeddedResources.GetArchive("RhythmCodex.Ddr.Providers.Ddr573AudioKeyDatabase.zip");
+            var archive = EmbeddedResources.GetArchive("RhythmCodex.Digital573.Providers.Digital573AudioKeyDatabase.zip");
             var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, int[]>), new DataContractJsonSerializerSettings
             {
                 UseSimpleDictionaryFormat = true

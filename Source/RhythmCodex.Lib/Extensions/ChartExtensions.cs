@@ -108,11 +108,6 @@ namespace RhythmCodex.Extensions
 
                 if (ev[NumericData.Bpm] is BigRational newTempo && newTempo > BigRational.Zero)
                 {
-                    if (ev[NumericData.LinearOffset] > 0)
-                    {
-                        var r = 0;
-                    }
-
                     linearRate = GetLinearRate(newTempo);
                     referenceMetric = ev[NumericData.MetricOffset];
                     referenceLinear = ev[NumericData.LinearOffset];

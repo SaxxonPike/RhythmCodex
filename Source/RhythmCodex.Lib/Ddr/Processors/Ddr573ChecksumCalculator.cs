@@ -1,7 +1,7 @@
 using RhythmCodex.IoC;
 using RhythmCodex.Thirdparty;
 
-namespace RhythmCodex.Ddr.Converters
+namespace RhythmCodex.Ddr.Processors
 {
     [Service]
     public class Ddr573ChecksumCalculator : IDdr573ChecksumCalculator
