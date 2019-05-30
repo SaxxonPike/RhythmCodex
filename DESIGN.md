@@ -2,6 +2,18 @@
 
 These things get ignored everywhere, but bear with me here.
 
+### RhythmCodex.Lib Folder structure
+
+- Formats that are not specific to one game series hardware setup (generic audio/video/graphic formats)
+  - Make a folder named for the extension (TIM, SSQ)
+  - If a formal extension does not exist, invent one and keep it consistent
+- Formats that are specific to a hardware setup (generic formats on specific hardware)
+  - Make a folder named for the hardware (Djmain, Firebeat, Digital 573 flash images)
+  - Generally this is a good spot for chip-specific code (Konami's sound chip, etc)
+- Formats that are specific to a game series (DDR, Beatmania)
+  - Make a folder named for the game series (Ddr, Beatmania, Popn)
+  - These work best for a format that is the same for a whole game but may be across different hardware configurations
+
 ### Special rules
 
 - Infrastructure
