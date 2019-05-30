@@ -40,9 +40,7 @@ namespace RhythmCodex.Riff.Converters
                 sampleRate = 44100;
 
             var channels = sound.Samples.Count;
-            var totalSamplesPerBlock = samplesPerBlock * channels;
-            var byteEquivalentPerBlock = ((totalSamplesPerBlock - (2 * channels)) * 4) + (channels * 4);
-            var byteRate = sampleRate * channels * 2 / byteEquivalentPerBlock;  //sampleRate * channels;
+            var byteRate = sampleRate * channels * 2 / 4;  //not accurate but not far off
             
             var container = new RiffContainer
             {
@@ -62,7 +60,7 @@ namespace RhythmCodex.Riff.Converters
                 SampleRate = (int) sampleRate,
                 Channels = channels,
                 ByteRate = (int) byteRate,
-                BitsPerSample = 16,
+                BitsPerSample = 4,
                 BlockAlign = _microsoftAdpcmEncoder.GetBlockSize(samplesPerBlock, channels),
                 ExtraData = extraFormat.ToBytes()
             };
