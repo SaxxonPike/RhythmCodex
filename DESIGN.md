@@ -14,6 +14,22 @@ These things get ignored everywhere, but bear with me here.
   - You probably don't need to go in here. Changing any of this
     will very likely break things for third party consumers.
 
+### Mark your classes with the correct attributes
+
+Attributes should be attached to all classes that are to be exposed via IoC.
+
+- Every exposed service class must have the `[Service]` attribute attached.
+- Every model must have the `[Model]` attribute attached.
+
+### Add an interface for every service
+
+For the sake of testing and integration later on:
+
+- When creating a new service, create an interface named the same. `MyService` would implement `IMyService`
+  in the same folder.
+- When accepting a service via the constructor, only use the interface version of the service. This makes
+  it easy to mock up for automated unit testing.
+
 ### Breaking up individual units
 
 There needs to be an obvious division between the following things for any
