@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Charting;
 using RhythmCodex.Charting.Models;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Stepmania.Model;

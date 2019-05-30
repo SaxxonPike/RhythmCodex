@@ -1,4 +1,3 @@
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Riff.Models;
 using RhythmCodex.Sounds.Models;
 

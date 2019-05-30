@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using RhythmCodex.Heuristics;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Tim.Models;
 using RhythmCodex.Tim.Streamers;

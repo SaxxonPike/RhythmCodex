@@ -3,8 +3,6 @@ using System.IO;
 using System.Linq;
 using NVorbis;
 using RhythmCodex.Extensions;
-using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Models;

@@ -6,7 +6,6 @@ using RhythmCodex.Extensions;
 using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Streamers;

@@ -1,5 +1,3 @@
-using System;
-
 namespace RhythmCodex.Compression
 {
     public interface IBemaniLzEncoder

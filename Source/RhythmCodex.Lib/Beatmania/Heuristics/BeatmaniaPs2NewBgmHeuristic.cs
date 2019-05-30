@@ -3,7 +3,6 @@ using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Meta.Models;
 using RhythmCodex.Vag.Heuristics;
 using RhythmCodex.Vag.Models;
 using RhythmCodex.Vag.Streamers;

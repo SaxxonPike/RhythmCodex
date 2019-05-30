@@ -4,7 +4,6 @@ using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Step1.Converters;
 using RhythmCodex.Step1.Models;
 using RhythmCodex.Step1.Streamers;
 

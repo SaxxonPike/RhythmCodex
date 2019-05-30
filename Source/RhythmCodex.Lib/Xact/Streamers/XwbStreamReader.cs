@@ -2,12 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Extensions;
-using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
-using RhythmCodex.Wav.Models;
 using RhythmCodex.Xact.Model;
 
 namespace RhythmCodex.Xact.Streamers

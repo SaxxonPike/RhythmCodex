@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Xbox.Model;
 

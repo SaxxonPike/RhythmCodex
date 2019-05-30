@@ -1,6 +1,4 @@
-﻿using RhythmCodex.Charting;
-using RhythmCodex.Infrastructure;
-using RhythmCodex.IoC;
+﻿using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 
 namespace RhythmCodex.Stepmania.Converters

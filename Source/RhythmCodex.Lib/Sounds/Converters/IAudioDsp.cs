@@ -1,5 +1,4 @@
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Dsp

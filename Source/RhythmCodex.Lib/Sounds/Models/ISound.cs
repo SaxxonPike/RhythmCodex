@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Charting;
 using RhythmCodex.Meta.Models;
 
 namespace RhythmCodex.Sounds.Models

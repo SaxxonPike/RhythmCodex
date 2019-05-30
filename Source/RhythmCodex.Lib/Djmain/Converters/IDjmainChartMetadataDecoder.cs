@@ -1,4 +1,3 @@
-using RhythmCodex.Charting;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Djmain.Model;
 

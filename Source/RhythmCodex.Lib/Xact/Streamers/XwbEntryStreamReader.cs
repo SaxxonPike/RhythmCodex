@@ -1,6 +1,4 @@
 using System.IO;
-using System.Linq;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Xact.Model;
 

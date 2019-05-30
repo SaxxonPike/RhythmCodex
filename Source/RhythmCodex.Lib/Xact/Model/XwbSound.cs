@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Xact.Model

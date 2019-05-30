@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Tim.Models;
 

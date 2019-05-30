@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using RhythmCodex.Compression;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;

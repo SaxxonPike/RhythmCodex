@@ -1,5 +1,4 @@
-﻿using RhythmCodex.Infrastructure;
-using RhythmCodex.IoC;
+﻿using RhythmCodex.IoC;
 
 namespace RhythmCodex.Djmain
 {

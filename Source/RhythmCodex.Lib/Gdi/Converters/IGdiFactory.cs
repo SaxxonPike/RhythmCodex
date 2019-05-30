@@ -1,6 +1,5 @@
 using System.Drawing;
 using RhythmCodex.Graphics.Models;
-using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Gdi.Converters
 {

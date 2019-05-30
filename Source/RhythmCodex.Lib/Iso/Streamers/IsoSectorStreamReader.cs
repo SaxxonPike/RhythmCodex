@@ -5,7 +5,6 @@ using RhythmCodex.Cd.Model;
 using RhythmCodex.Cd.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Iso.Model;
 
 namespace RhythmCodex.Iso.Streamers
 {

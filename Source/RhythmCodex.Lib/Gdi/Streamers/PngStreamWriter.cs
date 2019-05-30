@@ -2,8 +2,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Graphics.Models;
-using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Gdi.Streamers

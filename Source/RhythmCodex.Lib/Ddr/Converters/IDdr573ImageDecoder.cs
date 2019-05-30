@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using RhythmCodex.Ddr.Models;
-using RhythmCodex.Digital573.Models;
 
 namespace RhythmCodex.Ddr.Converters
 {

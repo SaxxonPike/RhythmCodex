@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Iso.Model;
-using RhythmCodex.Iso.Streamers;
 using RhythmCodex.Xbox.Converters;
 using RhythmCodex.Xbox.Model;
 

@@ -1,5 +1,4 @@
 using System;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Models;
 

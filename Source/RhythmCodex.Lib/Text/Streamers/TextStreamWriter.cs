@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Text.Streamers

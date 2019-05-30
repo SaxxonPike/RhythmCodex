@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Heuristics;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 using RhythmCodex.Ssq.Streamers;
