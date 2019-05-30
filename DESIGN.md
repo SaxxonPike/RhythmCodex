@@ -77,3 +77,22 @@ Formats such as SM and BMS are "command based", the interpretation and
 creation of commands within these files should be split out from the act of
 reading and writing them.
 
+### Things that will help
+
+- If you accept `IEnumerable<T>` as a parameter type, but will need the functionality
+  of either `IList<T>` or `T[]`, don't use .NET's `.ToList()` or `.ToArray()`. Instead,
+  use the `.AsList()` or `.AsArray()` extension methods provided by the library.
+  This will automatically cast or build a new object as needed, to cut back on memory
+  copy operations.
+
+### Things to look out for (consistency, quality, usability)
+
+- In your service (and by extension, interface)
+  - Do not use tuples for return types in public methods.
+    - Stick the fields in a model and return that.
+    - It's okay for private methods.
+  - Do not use `ref` or `out` variables in public methods.
+    - Stick the variables in a model and return that.
+    - These are *hell* to mock up for testing.
+    - It's okay for private methods.
+    - Seriously, don't use them anywhere else.
