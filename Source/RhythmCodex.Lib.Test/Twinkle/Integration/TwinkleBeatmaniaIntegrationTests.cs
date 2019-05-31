@@ -3,8 +3,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Bms.Converters;
+using RhythmCodex.Bms.Streamers;
+using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
+using RhythmCodex.Riff.Processing;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Twinkle.Converters;
 using RhythmCodex.Twinkle.Streamers;
@@ -42,15 +47,28 @@ namespace RhythmCodex.Twinkle.Integration
                 .Value;
             var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
             var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
+            var bmsEncoder = Resolve<IBmsEncoder>();
+            var bmsWriter = Resolve<IBmsStreamWriter>();
 
             // Act.
             var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
             var archive = decoder.Decode(chunk);
 
             // Assert.
-            foreach (var sound in archive.Samples)
+            foreach (var sound in archive.Samples.Where(s => s.Samples.Any()))
             {
-                this.WriteSound(sound, Path.Combine("bmiidx", $"{(int)sound[NumericData.Id]:D3}.wav"));
+                this.WriteSound(sound, Path.Combine("bmiidx", $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id], 4)}.wav"));
+            }
+
+            foreach (var chart in archive.Charts)
+            {
+                chart.PopulateMetricOffsets();
+                using (var outStream =
+                    this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]}.bms")))
+                {
+                    bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
+                    outStream.Flush();
+                }
             }
         }
     }

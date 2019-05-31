@@ -33,5 +33,19 @@ namespace RhythmCodex
                 File.WriteAllBytes(outPath, outStream.ToArray());
             }
         }
+
+        public static void WriteFile(this IResolver resolver, byte[] data, string outFileName)
+        {
+            var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
+            CreateDirectory(resolver, Path.GetDirectoryName(outPath));
+            File.WriteAllBytes(outPath, data);
+        }
+
+        public static Stream OpenWrite(this IResolver resolver, string outFileName)
+        {
+            var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
+            CreateDirectory(resolver, Path.GetDirectoryName(outPath));
+            return File.OpenWrite(outPath);
+        }
     }
 }
