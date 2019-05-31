@@ -5,14 +5,17 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
+using RhythmCodex.Dsp;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Processing;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Twinkle.Converters;
 using RhythmCodex.Twinkle.Streamers;
+using RhythmCodex.Wav.Converters;
 
 namespace RhythmCodex.Twinkle.Integration
 {
@@ -70,6 +73,29 @@ namespace RhythmCodex.Twinkle.Integration
                     outStream.Flush();
                 }
             }
+        }
+        
+        [Test]
+        [Explicit("wip")]
+        public void Test3()
+        {
+            // Arrange.
+            var data = GetArchiveResource("Twinkle.8th.zip")
+                .First()
+                .Value;
+            var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
+            var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
+            var renderer = Resolve<IChartRenderer>();
+            var dsp = Resolve<IAudioDsp>();
+
+            // Act.
+            var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
+            var archive = decoder.Decode(chunk);
+            var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, 44100), 1.0f);
+            
+
+            // Assert.
+            this.WriteSound(rendered, Path.Combine($"twinkle.wav"));
         }
     }
 }

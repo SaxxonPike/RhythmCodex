@@ -7,6 +7,7 @@ using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Dsp;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Converters;
 
 namespace RhythmCodex.Beatmania.Integration
 {

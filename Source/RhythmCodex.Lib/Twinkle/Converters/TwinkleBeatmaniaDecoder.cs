@@ -4,7 +4,6 @@ using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
-using RhythmCodex.Riff.Processing;
 using RhythmCodex.Twinkle.Model;
 
 namespace RhythmCodex.Twinkle.Converters
@@ -14,7 +13,6 @@ namespace RhythmCodex.Twinkle.Converters
     {
         private readonly ITwinkleBeatmaniaSoundDefinitionDecoder _twinkleBeatmaniaSoundDefinitionDecoder;
         private readonly ITwinkleBeatmaniaSoundDecoder _twinkleBeatmaniaSoundDecoder;
-        private readonly ISoundConsolidator _soundConsolidator;
         private readonly ITwinkleBeatmaniaChartDecoder _twinkleBeatmaniaChartDecoder;
         private readonly ITwinkleBeatmaniaChartEventConverter _twinkleBeatmaniaChartEventConverter;
         private readonly IBeatmaniaPc1ChartDecoder _beatmaniaPc1ChartDecoder;
@@ -23,7 +21,6 @@ namespace RhythmCodex.Twinkle.Converters
         public TwinkleBeatmaniaDecoder(
             ITwinkleBeatmaniaSoundDefinitionDecoder twinkleBeatmaniaSoundDefinitionDecoder,
             ITwinkleBeatmaniaSoundDecoder twinkleBeatmaniaSoundDecoder,
-            ISoundConsolidator soundConsolidator,
             ITwinkleBeatmaniaChartDecoder twinkleBeatmaniaChartDecoder,
             ITwinkleBeatmaniaChartEventConverter twinkleBeatmaniaChartEventConverter,
             IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder,
@@ -32,7 +29,6 @@ namespace RhythmCodex.Twinkle.Converters
         {
             _twinkleBeatmaniaSoundDefinitionDecoder = twinkleBeatmaniaSoundDefinitionDecoder;
             _twinkleBeatmaniaSoundDecoder = twinkleBeatmaniaSoundDecoder;
-            _soundConsolidator = soundConsolidator;
             _twinkleBeatmaniaChartDecoder = twinkleBeatmaniaChartDecoder;
             _twinkleBeatmaniaChartEventConverter = twinkleBeatmaniaChartEventConverter;
             _beatmaniaPc1ChartDecoder = beatmaniaPc1ChartDecoder;
@@ -90,8 +86,6 @@ namespace RhythmCodex.Twinkle.Converters
                 .Where(c => c != null)
                 .ToList();
 
-            _soundConsolidator.Consolidate(sounds, charts.SelectMany(c => c.Events));
-            
             return new TwinkleArchive
             {
                 Charts = charts,

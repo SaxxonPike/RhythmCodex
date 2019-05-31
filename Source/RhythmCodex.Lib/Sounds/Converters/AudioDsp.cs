@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Dsp;
@@ -29,6 +30,9 @@ namespace RhythmCodex.Sounds.Converters
         public ISound ApplyResampling(ISound sound, BigRational rate)
         {
             // Garbage non-interpolated resampling? Check.
+            if (sound == null || !sound.Samples.Any())
+                return null;
+            
             if (rate <= BigRational.Zero || sound[NumericData.Rate] == rate)
                 return sound;
 
@@ -64,6 +68,21 @@ namespace RhythmCodex.Sounds.Converters
             result.CloneMetadataFrom((Metadata) sound);
             result[NumericData.Rate] = rate;
             return result;
+        }
+
+        public ISound Normalize(ISound sound, BigRational target)
+        {
+            var level = sound.Samples.SelectMany(s => s.Data).Max(s => Math.Abs(s));
+            var amp = (float) (target / level);
+            var newSound = new Sound
+            {
+                Samples = new List<ISample>(sound.Samples)
+            };
+
+            newSound.CloneMetadataFrom((Metadata) sound);
+            foreach (var sample in newSound.Samples)
+                ApplyGain(sample.Data, amp);
+            return newSound;
         }
 
         public ISound ApplyEffects(ISound sound)

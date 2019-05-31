@@ -29,6 +29,7 @@
         <EmbeddedResource Include="Djmain\bmcm2.zip" />
         <EmbeddedResource Include="Djmain\bmfinal.zip" />
         <EmbeddedResource Include="Djmain\chart.zip" />
+        <EmbeddedResource Include="Djmain\popn1.zip" />
         <EmbeddedResource Include="Flac\example.flac.zip" />
         <EmbeddedResource Include="ImaAdpcm\RawXboxAdpcm.zip" />
         <EmbeddedResource Include="Iso\test-iso.zip" />

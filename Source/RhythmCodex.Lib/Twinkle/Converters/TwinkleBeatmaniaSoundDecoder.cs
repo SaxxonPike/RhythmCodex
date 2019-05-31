@@ -41,7 +41,7 @@ namespace RhythmCodex.Twinkle.Converters
             {
                 [NumericData.Rate] = definition.Frequency,
                 [NumericData.SourceRate] = definition.Frequency,
-                [NumericData.Volume] = BeatmaniaPcConstants.VolumeTable[definition.Volume],
+                [NumericData.Volume] = TwinkleConstants.VolumeTable[definition.Volume],
                 [NumericData.SourceVolume] = definition.Volume,
                 [NumericData.Panning] = (float)(definition.Panning - 1) / 0x7E,
                 [NumericData.SourcePanning] = definition.Panning,
