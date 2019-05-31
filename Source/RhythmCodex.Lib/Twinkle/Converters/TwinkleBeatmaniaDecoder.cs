@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
-using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -18,6 +16,7 @@ namespace RhythmCodex.Twinkle.Converters
         private readonly ITwinkleBeatmaniaSoundDecoder _twinkleBeatmaniaSoundDecoder;
         private readonly ISoundConsolidator _soundConsolidator;
         private readonly ITwinkleBeatmaniaChartDecoder _twinkleBeatmaniaChartDecoder;
+        private readonly ITwinkleBeatmaniaChartEventConverter _twinkleBeatmaniaChartEventConverter;
         private readonly IBeatmaniaPc1ChartDecoder _beatmaniaPc1ChartDecoder;
 
         public TwinkleBeatmaniaDecoder(
@@ -25,6 +24,7 @@ namespace RhythmCodex.Twinkle.Converters
             ITwinkleBeatmaniaSoundDecoder twinkleBeatmaniaSoundDecoder,
             ISoundConsolidator soundConsolidator,
             ITwinkleBeatmaniaChartDecoder twinkleBeatmaniaChartDecoder,
+            ITwinkleBeatmaniaChartEventConverter twinkleBeatmaniaChartEventConverter,
             IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder
             )
         {
@@ -32,11 +32,11 @@ namespace RhythmCodex.Twinkle.Converters
             _twinkleBeatmaniaSoundDecoder = twinkleBeatmaniaSoundDecoder;
             _soundConsolidator = soundConsolidator;
             _twinkleBeatmaniaChartDecoder = twinkleBeatmaniaChartDecoder;
+            _twinkleBeatmaniaChartEventConverter = twinkleBeatmaniaChartEventConverter;
             _beatmaniaPc1ChartDecoder = beatmaniaPc1ChartDecoder;
         }
 
-        private readonly int[] ChartOffsets = new int[]
-        {
+        private readonly int[] ChartOffsets = {
             0x0002000,
             0x0006000,
             0x000A000,
@@ -47,8 +47,7 @@ namespace RhythmCodex.Twinkle.Converters
             0x001E000
         };
 
-        private readonly string[] Difficulties = new string[]
-        {
+        private readonly string[] Difficulties = {
             "5key",
             "light",
             "normal",
@@ -78,7 +77,11 @@ namespace RhythmCodex.Twinkle.Converters
             var charts = ChartOffsets
                 .Select((offset, index) =>
                 {
-                    var events = _twinkleBeatmaniaChartDecoder.Decode(chunk.Data.AsSpan(offset), 0x4000);
+                    var events = _twinkleBeatmaniaChartDecoder
+                        .Decode(chunk.Data.AsSpan(offset), 0x4000)
+                        .Select(_twinkleBeatmaniaChartEventConverter.ConvertToBeatmaniaPc1)
+                        .ToList();
+
                     if (!events.Any())
                         return null;
                     

@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
-using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Twinkle.Model;
 
 namespace RhythmCodex.Twinkle.Converters
 {
     [Service]
     public class TwinkleBeatmaniaChartDecoder : ITwinkleBeatmaniaChartDecoder
     {
-        public IList<BeatmaniaPc1Event> Decode(ReadOnlySpan<byte> data, int length)
+        public IList<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data, int length)
         {
-            var result = new List<BeatmaniaPc1Event>();
+            var result = new List<TwinkleBeatmaniaChartEvent>();
             var noteCountMode = true;
             var noteCount = 0;
 
@@ -30,11 +30,10 @@ namespace RhythmCodex.Twinkle.Converters
                 
                 var value = data[i + 0x02];
                 var command = data[i + 0x03];
-                result.Add(new BeatmaniaPc1Event
+                result.Add(new TwinkleBeatmaniaChartEvent
                 {
-                    LinearOffset = offset,
-                    Parameter0 = (byte)(command & 0xF),
-                    Parameter1 = (byte)(command >> 4),
+                    Offset = (ushort)offset,
+                    Param = command,
                     Value = value
                 });
             }
