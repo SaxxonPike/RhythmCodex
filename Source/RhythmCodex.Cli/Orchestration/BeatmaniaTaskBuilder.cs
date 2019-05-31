@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
+using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
@@ -108,25 +109,25 @@ namespace RhythmCodex.Cli.Orchestration
                                 case 0:
                                 case 6:
                                 {
-                                    newChart[NumericData.Difficulty] = 3;
+                                    newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.NormalId;
                                     break;
                                 }
                                 case 1:
                                 case 7:
                                 {
-                                    newChart[NumericData.Difficulty] = 2;
+                                    newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.LightId;
                                     break;
                                 }
                                 case 2:
                                 case 8:
                                 {
-                                    newChart[NumericData.Difficulty] = 4;
+                                    newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.AnotherId;
                                     break;
                                 }
                                 case 3:
                                 case 9:
                                 {
-                                    newChart[NumericData.Difficulty] = 1;
+                                    newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.BeginnerId;
                                     break;
                                 }
                             }

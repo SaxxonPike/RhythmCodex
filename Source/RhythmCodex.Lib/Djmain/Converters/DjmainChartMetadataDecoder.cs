@@ -1,3 +1,4 @@
+using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.IoC;
@@ -16,7 +17,7 @@ namespace RhythmCodex.Djmain.Converters
                 case DjmainChunkFormat.Second:
                 {
                     if (index == 0)
-                        chart[NumericData.Difficulty] = 3;
+                        chart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.NormalId;
                     break;
                 }
                 default:
@@ -25,15 +26,15 @@ namespace RhythmCodex.Djmain.Converters
                     {
                         case 0:
                         case 3:
-                            chart[NumericData.Difficulty] = 3;
+                            chart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.NormalId;
                             break;
                         case 1:
                         case 4:
-                            chart[NumericData.Difficulty] = 2;
+                            chart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.LightId;
                             break;
                         case 2:
                         case 5:
-                            chart[NumericData.Difficulty] = 4;
+                            chart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.AnotherId;
                             break;
                     }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -82,11 +83,27 @@ namespace RhythmCodex.Djmain.Heuristics
                     throw new RhythmCodexException("Can't get chart names for unknown format.");
                 case DjmainChunkFormat.First:
                 case DjmainChunkFormat.Second:
-                    return new List<string> {"normal"};
+                    return new List<string>
+                    {
+                        BeatmaniaDifficultyConstants.Normal
+                    };
                 case DjmainChunkFormat.Final:
-                    return new List<string> {"normal", "light", "another", "normal", "light", "another"};
+                    return new List<string>
+                    {
+                        BeatmaniaDifficultyConstants.Normal, 
+                        BeatmaniaDifficultyConstants.Light, 
+                        BeatmaniaDifficultyConstants.Another,
+                        BeatmaniaDifficultyConstants.Normal,
+                        BeatmaniaDifficultyConstants.Light,
+                        BeatmaniaDifficultyConstants.Another
+                    };
                 default:
-                    return new List<string> {"normal", "light", "another"};
+                    return new List<string>
+                    {
+                        BeatmaniaDifficultyConstants.Normal, 
+                        BeatmaniaDifficultyConstants.Light, 
+                        BeatmaniaDifficultyConstants.Another,
+                    };
             }
         }
 

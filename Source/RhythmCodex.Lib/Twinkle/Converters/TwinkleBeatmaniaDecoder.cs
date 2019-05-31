@@ -18,6 +18,7 @@ namespace RhythmCodex.Twinkle.Converters
         private readonly ITwinkleBeatmaniaChartDecoder _twinkleBeatmaniaChartDecoder;
         private readonly ITwinkleBeatmaniaChartEventConverter _twinkleBeatmaniaChartEventConverter;
         private readonly IBeatmaniaPc1ChartDecoder _beatmaniaPc1ChartDecoder;
+        private readonly ITwinkleBeatmaniaChartMetadataDecoder _twinkleBeatmaniaChartMetadataDecoder;
 
         public TwinkleBeatmaniaDecoder(
             ITwinkleBeatmaniaSoundDefinitionDecoder twinkleBeatmaniaSoundDefinitionDecoder,
@@ -25,7 +26,8 @@ namespace RhythmCodex.Twinkle.Converters
             ISoundConsolidator soundConsolidator,
             ITwinkleBeatmaniaChartDecoder twinkleBeatmaniaChartDecoder,
             ITwinkleBeatmaniaChartEventConverter twinkleBeatmaniaChartEventConverter,
-            IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder
+            IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder,
+            ITwinkleBeatmaniaChartMetadataDecoder twinkleBeatmaniaChartMetadataDecoder
             )
         {
             _twinkleBeatmaniaSoundDefinitionDecoder = twinkleBeatmaniaSoundDefinitionDecoder;
@@ -34,6 +36,7 @@ namespace RhythmCodex.Twinkle.Converters
             _twinkleBeatmaniaChartDecoder = twinkleBeatmaniaChartDecoder;
             _twinkleBeatmaniaChartEventConverter = twinkleBeatmaniaChartEventConverter;
             _beatmaniaPc1ChartDecoder = beatmaniaPc1ChartDecoder;
+            _twinkleBeatmaniaChartMetadataDecoder = twinkleBeatmaniaChartMetadataDecoder;
         }
 
         private readonly int[] ChartOffsets = {
@@ -47,17 +50,6 @@ namespace RhythmCodex.Twinkle.Converters
             0x001E000
         };
 
-        private readonly string[] Difficulties = {
-            "5key",
-            "light",
-            "normal",
-            "another",
-            "12000",
-            "16000",
-            "1A000",
-            "1E000"
-        };
-        
         public TwinkleArchive Decode(TwinkleBeatmaniaChunk chunk)
         {
             var definitions = Enumerable.Range(0, 255)
@@ -85,12 +77,12 @@ namespace RhythmCodex.Twinkle.Converters
                     if (!events.Any())
                         return null;
                     
-                    var chart = _beatmaniaPc1ChartDecoder.Decode(events, new BigRational(598, 10));
+                    var chart = _beatmaniaPc1ChartDecoder.Decode(events, TwinkleConstants.BeatmaniaRate);
                     if (chart != null)
                     {
                         chart[NumericData.ByteOffset] = offset;
                         chart[NumericData.Id] = index;
-                        chart[StringData.Difficulty] = Difficulties[index];
+                        _twinkleBeatmaniaChartMetadataDecoder.AddMetadata(chart, index);
                     }
 
                     return chart;
