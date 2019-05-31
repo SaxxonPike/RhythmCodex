@@ -6,6 +6,7 @@ using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Djmain.Converters;
+using RhythmCodex.Djmain.Model;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
@@ -54,7 +55,7 @@ namespace RhythmCodex.BeatmaniaPsx.Integration
                             extension = "cs5";
                             using (var chartStream = new MemoryStream())
                             {
-                                var chart = chartDecoder.Decode(chartReader.Read(new MemoryStream(data), data.Length));
+                                var chart = chartDecoder.Decode(chartReader.Read(new MemoryStream(data), data.Length), DjmainChartType.Beatmania);
                                 chart.PopulateMetricOffsets();
                                 chartWriter.Write(chartStream, chartEncoder.Encode(chart));
                                 File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.bme"), chartStream.ToArray());

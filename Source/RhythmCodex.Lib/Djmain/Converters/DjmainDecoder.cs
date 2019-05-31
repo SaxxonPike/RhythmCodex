@@ -79,6 +79,33 @@ namespace RhythmCodex.Djmain.Converters
             }
         }
 
+        private DjmainChartType GetChartType(DjmainChunkFormat format)
+        {
+            switch (format)
+            {
+                case DjmainChunkFormat.Popn1:
+                case DjmainChunkFormat.Popn2:
+                case DjmainChunkFormat.Popn3:
+                    return DjmainChartType.Popn;
+                case DjmainChunkFormat.BeatmaniaClub:
+                case DjmainChunkFormat.BeatmaniaComplete:
+                case DjmainChunkFormat.BeatmaniaComplete2:
+                case DjmainChunkFormat.BeatmaniaCore:
+                case DjmainChunkFormat.BeatmaniaDct:
+                case DjmainChunkFormat.BeatmaniaFifth:
+                case DjmainChunkFormat.BeatmaniaFinal:
+                case DjmainChunkFormat.BeatmaniaFirst:
+                case DjmainChunkFormat.BeatmaniaFourth:
+                case DjmainChunkFormat.BeatmaniaSecond:
+                case DjmainChunkFormat.BeatmaniaSeventh:
+                case DjmainChunkFormat.BeatmaniaSixth:
+                case DjmainChunkFormat.BeatmaniaThird:
+                    return DjmainChartType.Beatmania;
+                default:
+                    throw new RhythmCodexException($"Not sure what chart type this format is: {format}");
+            }
+        }
+
         private IDictionary<int, IEnumerable<IDjmainChartEvent>> ExtractCharts(Stream stream, DjmainChunkFormat format)
         {
             return _offsetProvider.GetChartOffsets(format)
@@ -102,7 +129,7 @@ namespace RhythmCodex.Djmain.Converters
                 if (x.Value == null)
                     return null;
 
-                var chart = _chartDecoder.Decode(x.Value);
+                var chart = _chartDecoder.Decode(x.Value, GetChartType(chunkFormat));
                 chart[NumericData.Id] = x.Key;
                 chart[NumericData.SampleMap] = chartSoundMap[x.Key];
                 _djmainChartMetadataDecoder.AddMetadata(chart, chunkFormat, x.Key);

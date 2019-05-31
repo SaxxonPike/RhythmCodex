@@ -13,19 +13,19 @@ namespace RhythmCodex.Djmain.Heuristics
             {
                 switch (formatId)
                 {
-                    case @"GQ753": return DjmainChunkFormat.First;
-                    case @"GX853": return DjmainChunkFormat.Second;
-                    case @"GQ825": return DjmainChunkFormat.Third;
-                    case @"GQ847": return DjmainChunkFormat.Fourth;
-                    case @"GQ981": return DjmainChunkFormat.Fifth;
-                    case @"GCA21": return DjmainChunkFormat.Sixth;
-                    case @"GEB07": return DjmainChunkFormat.Seventh;
-                    case @"GQ993": return DjmainChunkFormat.Club;
-                    case @"GQ858": return DjmainChunkFormat.Complete;
-                    case @"GQ988": return DjmainChunkFormat.Complete2;
-                    case @"GQA05": return DjmainChunkFormat.Core;
-                    case @"GQ995": return DjmainChunkFormat.Dct;
-                    case @" GCC0": return DjmainChunkFormat.Final;
+                    case @"GQ753": return DjmainChunkFormat.BeatmaniaFirst;
+                    case @"GX853": return DjmainChunkFormat.BeatmaniaSecond;
+                    case @"GQ825": return DjmainChunkFormat.BeatmaniaThird;
+                    case @"GQ847": return DjmainChunkFormat.BeatmaniaFourth;
+                    case @"GQ981": return DjmainChunkFormat.BeatmaniaFifth;
+                    case @"GCA21": return DjmainChunkFormat.BeatmaniaSixth;
+                    case @"GEB07": return DjmainChunkFormat.BeatmaniaSeventh;
+                    case @"GQ993": return DjmainChunkFormat.BeatmaniaClub;
+                    case @"GQ858": return DjmainChunkFormat.BeatmaniaComplete;
+                    case @"GQ988": return DjmainChunkFormat.BeatmaniaComplete2;
+                    case @"GQA05": return DjmainChunkFormat.BeatmaniaCore;
+                    case @"GQ995": return DjmainChunkFormat.BeatmaniaDct;
+                    case @" GCC0": return DjmainChunkFormat.BeatmaniaFinal;
                     default: return DjmainChunkFormat.Unknown;
                 }
             }

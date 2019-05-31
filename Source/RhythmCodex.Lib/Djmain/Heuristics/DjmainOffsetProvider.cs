@@ -15,10 +15,10 @@ namespace RhythmCodex.Djmain.Heuristics
             {
                 case DjmainChunkFormat.Unknown:
                     throw new RhythmCodexException("Can't get sample chart map for unknown format.");
-                case DjmainChunkFormat.Final:
+                case DjmainChunkFormat.BeatmaniaFinal:
                     return new List<int> {0, 0, 0, 1, 1, 1};
-                case DjmainChunkFormat.First:
-                case DjmainChunkFormat.Second:
+                case DjmainChunkFormat.BeatmaniaFirst:
+                case DjmainChunkFormat.BeatmaniaSecond:
                     return new List<int> {0};
                 default:
                     return new List<int> {0, 0, 0};
@@ -31,13 +31,13 @@ namespace RhythmCodex.Djmain.Heuristics
             {
                 case DjmainChunkFormat.Unknown:
                     throw new RhythmCodexException("Can't get chart offsets for unknown format.");
-                case DjmainChunkFormat.First:
-                case DjmainChunkFormat.Second:
+                case DjmainChunkFormat.BeatmaniaFirst:
+                case DjmainChunkFormat.BeatmaniaSecond:
                     return new List<int> {0x000400};
-                case DjmainChunkFormat.Third:
-                case DjmainChunkFormat.Complete:
+                case DjmainChunkFormat.BeatmaniaThird:
+                case DjmainChunkFormat.BeatmaniaComplete:
                     return new List<int> {0x000400, 0xF02000, 0xF03000};
-                case DjmainChunkFormat.Final:
+                case DjmainChunkFormat.BeatmaniaFinal:
                     return new List<int> {0x002000, 0x006000, 0x00A000, 0x00E000, 0x012000, 0x016000};
                 default:
                     return new List<int> {0x000800, 0xF02000, 0xF03000};
@@ -50,7 +50,7 @@ namespace RhythmCodex.Djmain.Heuristics
             {
                 case DjmainChunkFormat.Unknown:
                     throw new RhythmCodexException("Can't get sound offsets for unknown format.");
-                case DjmainChunkFormat.Final:
+                case DjmainChunkFormat.BeatmaniaFinal:
                     return 0x020000;
                 default:
                     return 0x002000;
@@ -63,12 +63,12 @@ namespace RhythmCodex.Djmain.Heuristics
             {
                 case DjmainChunkFormat.Unknown:
                     throw new RhythmCodexException("Can't get sample map offsets for unknown format.");
-                case DjmainChunkFormat.First:
-                case DjmainChunkFormat.Second:
-                case DjmainChunkFormat.Third:
-                case DjmainChunkFormat.Complete:
+                case DjmainChunkFormat.BeatmaniaFirst:
+                case DjmainChunkFormat.BeatmaniaSecond:
+                case DjmainChunkFormat.BeatmaniaThird:
+                case DjmainChunkFormat.BeatmaniaComplete:
                     return new List<int> {0x000000, 0x000200};
-                case DjmainChunkFormat.Final:
+                case DjmainChunkFormat.BeatmaniaFinal:
                     return new List<int> {0x000000, 0x001000};
                 default:
                     return new List<int> {0x000000, 0x000400};
@@ -81,13 +81,13 @@ namespace RhythmCodex.Djmain.Heuristics
             {
                 case DjmainChunkFormat.Unknown:
                     throw new RhythmCodexException("Can't get chart names for unknown format.");
-                case DjmainChunkFormat.First:
-                case DjmainChunkFormat.Second:
+                case DjmainChunkFormat.BeatmaniaFirst:
+                case DjmainChunkFormat.BeatmaniaSecond:
                     return new List<string>
                     {
                         BeatmaniaDifficultyConstants.Normal
                     };
-                case DjmainChunkFormat.Final:
+                case DjmainChunkFormat.BeatmaniaFinal:
                     return new List<string>
                     {
                         BeatmaniaDifficultyConstants.Normal, 

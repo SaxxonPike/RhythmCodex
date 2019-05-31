@@ -1,6 +1,6 @@
 ﻿namespace RhythmCodex.Djmain.Model
 {
-    public enum DjmainColumnType
+    public enum DjmainBeatmaniaColumnType
     {
         Player0Key0 = 0x0,
         Player1Key0,

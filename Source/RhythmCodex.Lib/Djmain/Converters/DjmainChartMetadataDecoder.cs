@@ -13,8 +13,8 @@ namespace RhythmCodex.Djmain.Converters
         {
             switch (format)
             {
-                case DjmainChunkFormat.First:
-                case DjmainChunkFormat.Second:
+                case DjmainChunkFormat.BeatmaniaFirst:
+                case DjmainChunkFormat.BeatmaniaSecond:
                 {
                     if (index == 0)
                         chart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.NormalId;
