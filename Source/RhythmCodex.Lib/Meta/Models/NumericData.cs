@@ -40,6 +40,7 @@
         SourceVolume,
         SourcePanning,
         Meter,
-        NoteCount
+        NoteCount,
+        SourceRate
     }
 }

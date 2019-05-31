@@ -6,6 +6,6 @@ namespace RhythmCodex.Twinkle.Streamers
 {
     public interface ITwinkleBeatmaniaStreamReader
     {
-        IEnumerable<TwinkleBeatmaniaChunk> Read(Stream stream, long length);
+        IEnumerable<TwinkleBeatmaniaChunk> Read(Stream stream, long length, bool skipHeader = false);
     }
 }

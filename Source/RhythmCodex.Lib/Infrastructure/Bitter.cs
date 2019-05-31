@@ -16,6 +16,18 @@ namespace RhythmCodex.Infrastructure
         public static int ToInt16S(ReadOnlySpan<byte> span, int offset) =>
             ToInt16(span[offset + 1], span[offset]);
 
+        public static int ToInt24(ReadOnlySpan<byte> span, int offset) =>
+            ToInt24(span[offset], span[offset + 1], span[offset + 2]);
+
+        public static int ToInt24(byte lsb, byte mid, byte msb) =>
+            ((lsb << 8) | (mid << 16) | (msb << 24)) >> 8;
+
+        public static int ToInt24S(ReadOnlySpan<byte> span) =>
+            ToInt24S(span, 0);
+
+        public static int ToInt24S(ReadOnlySpan<byte> span, int offset) =>
+            ToInt24(span[offset + 2], span[offset + 1], span[offset]);
+
         public static int ToInt32(ReadOnlySpan<byte> span, int offset) =>
             ToInt32(span[offset], span[offset + 1], span[offset + 2], span[offset + 3]);
 

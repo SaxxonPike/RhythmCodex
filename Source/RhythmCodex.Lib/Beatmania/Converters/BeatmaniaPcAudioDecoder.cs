@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Beatmania.Providers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -19,12 +20,6 @@ namespace RhythmCodex.Beatmania.Converters
             _wavDecoder = wavDecoder;
         }
 
-        private static readonly BigRational[] VolumeTable =
-            Enumerable
-                .Range(0, 256)
-                .Select(i => new BigRational(Math.Pow(10.0f, -36.0f * i / 64f / 20.0f)))
-                .ToArray();
-
         public ISound Decode(BeatmaniaPcAudioEntry entry)
         {
             using (var wavDataMem = new ReadOnlyMemoryStream(entry.Data))
@@ -42,7 +37,7 @@ namespace RhythmCodex.Beatmania.Converters
                     volume = 0xFF;
 
                 result[NumericData.Panning] = (panning - 1.0d) / 126.0d;
-                result[NumericData.Volume] = VolumeTable[volume];
+                result[NumericData.Volume] = BeatmaniaPcConstants.VolumeTable[volume];
                 result[NumericData.Channel] = entry.Channel;
                 result[NumericData.SourceVolume] = volume;
                 result[NumericData.SourcePanning] = panning;

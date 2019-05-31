@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Twinkle.Model;
@@ -12,17 +14,20 @@ namespace RhythmCodex.Twinkle.Streamers
         private const int ChunkLength = 0x1A00000;
         private const int DataStart = 0x8000000;
 
-        public IEnumerable<TwinkleBeatmaniaChunk> Read(Stream stream, long length)
+        public IEnumerable<TwinkleBeatmaniaChunk> Read(Stream stream, long length, bool skipHeader = true)
         {
             var index = 0;
             var reader = new BinaryReader(stream);
-            stream.SkipBytes(DataStart);
-            //stream.Seek(DataStart, SeekOrigin.Current);
+            
+            if (skipHeader)
+                stream.SkipBytes(DataStart);
 
             var offset = 0L;
             while (offset < length)
             {
                 var data = reader.ReadBytes(ChunkLength);
+                data.AsSpan().Swap16();
+
                 yield return new TwinkleBeatmaniaChunk
                 {
                     Data = data,
