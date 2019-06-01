@@ -9,5 +9,6 @@ namespace RhythmCodex.Sounds.Converters
         ISound ApplyPanVolume(ISound sound, BigRational volume, BigRational panning);
         ISound ApplyResampling(ISound sound, BigRational rate);
         ISound Normalize(ISound sound, BigRational target);
+        ISound IntegerDownsample(ISound sound, int factor);
     }
 }

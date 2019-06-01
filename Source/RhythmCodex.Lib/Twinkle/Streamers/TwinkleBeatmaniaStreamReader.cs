@@ -18,7 +18,7 @@ namespace RhythmCodex.Twinkle.Streamers
         {
             var index = 0;
             var reader = new BinaryReader(stream);
-            
+
             if (skipHeader)
                 stream.SkipBytes(DataStart);
 

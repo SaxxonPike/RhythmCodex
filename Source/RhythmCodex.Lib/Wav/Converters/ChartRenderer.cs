@@ -74,7 +74,7 @@ namespace RhythmCodex.Wav.Converters
             {
                 var sample = sampleMap.FirstOrDefault(sm => sm.Player == player && sm.Column == column);
                 ISound sound = null;
-                if (sample.SoundIndex != null)
+                if (sample?.SoundIndex != null)
                     sound = sounds.FirstOrDefault(s => s[NumericData.Id] == sample.SoundIndex);
                 var v = (float) Math.Sqrt(0.5f);
                 var channel = sound?[NumericData.Channel];

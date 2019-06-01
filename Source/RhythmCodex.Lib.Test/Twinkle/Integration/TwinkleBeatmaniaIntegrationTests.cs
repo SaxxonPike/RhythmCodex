@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -14,6 +15,7 @@ using RhythmCodex.Riff.Processing;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Twinkle.Converters;
+using RhythmCodex.Twinkle.Model;
 using RhythmCodex.Twinkle.Streamers;
 using RhythmCodex.Wav.Converters;
 
@@ -34,7 +36,7 @@ namespace RhythmCodex.Twinkle.Integration
                 using (var entryStream = entry.Open())
                 {
                     var chunks = streamer.Read(entryStream, stream.Length);
-                    var chunk = chunks.First();
+                    var chunk = chunks.Skip(1).First();
                     File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data);
                 }
             }
@@ -92,10 +94,45 @@ namespace RhythmCodex.Twinkle.Integration
             var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
             var archive = decoder.Decode(chunk);
             var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, 44100), 1.0f);
-            
 
             // Assert.
             this.WriteSound(rendered, Path.Combine($"twinkle.wav"));
+        }
+        
+        [Test]
+        [Explicit("wip")]
+        public void Test4()
+        {
+            var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
+            var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
+            var renderer = Resolve<IChartRenderer>();
+            var dsp = Resolve<IAudioDsp>();
+            var oversample = 2;
+
+            using (var stream = File.OpenRead(@"D:\iidx8th.zip"))
+            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
+            {
+                var entry = zipStream.Entries.Single();
+                using (var entryStream = entry.Open())
+                {
+                    var chunks = streamer.Read(entryStream, stream.Length, true);
+
+                    foreach (var chunk in chunks.Skip(18).Take(1).AsParallel())
+                    {
+                        if (chunk.Data[0x2000] != 0 || chunk.Data[0x2001] != 0 || chunk.Data[0x2002] == 0 ||
+                            chunk.Data[0x2003] != 0)
+                            continue;
+
+                        var archive = decoder.Decode(chunk);
+                        foreach (var chart in archive.Charts.Take(1))
+                        {
+                            var rendered = dsp.Normalize(renderer.Render(archive.Charts.First().Events, archive.Samples, 44100 * oversample), 1.0f);
+                            var downsampled = dsp.IntegerDownsample(rendered, oversample);
+                            this.WriteSound(downsampled, Path.Combine($"twinkle\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
+                        }
+                    }
+                }
+            }
         }
     }
 }

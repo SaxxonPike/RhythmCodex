@@ -85,6 +85,37 @@ namespace RhythmCodex.Sounds.Converters
             return newSound;
         }
 
+        public ISound IntegerDownsample(ISound sound, int factor)
+        {
+            var newSound = new Sound
+            {
+                Samples = sound.Samples.Select(s =>
+                {
+                    var rate = s[NumericData.Rate] ?? sound[NumericData.Rate] ??
+                               throw new RhythmCodexException("Can't downsample without a source rate.");
+                    var sample = new Sample();
+                    sample.CloneMetadataFrom((Metadata) s);
+                    if (s[NumericData.Rate] != null)
+                        s[NumericData.Rate] /= factor;
+                    var length = s.Data.Count / 2;
+                    sample.Data = new float[length];
+                    var offset = 0;
+                    for (var i = 0; i < length; i++)
+                    {
+                        var buffer = s.Data[offset++];
+                        for (var j = 1; j < factor; j++)
+                            buffer += s.Data[offset++];
+                        sample.Data[i] = buffer / factor;
+                    }
+                    return sample;
+                }).Cast<ISample>().ToList()
+            };
+
+            newSound.CloneMetadataFrom((Metadata) sound);
+            newSound[NumericData.Rate] /= factor;
+            return newSound;
+        }
+
         public ISound ApplyEffects(ISound sound)
         {
             if (!sound.Samples.Any())

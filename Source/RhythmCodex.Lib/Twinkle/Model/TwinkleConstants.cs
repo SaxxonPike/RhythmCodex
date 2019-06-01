@@ -6,7 +6,7 @@ namespace RhythmCodex.Twinkle.Model
 {
     public static class TwinkleConstants
     {
-        public static BigRational BeatmaniaRate => new BigRational(598, 10);
+        public static BigRational BeatmaniaRate => new BigRational(598245, 10000);
         
         public static readonly BigRational[] VolumeTable =
             Enumerable
