@@ -41,18 +41,25 @@ namespace RhythmCodex.Sounds.Converters
             {
                 Samples = samples.Select(s =>
                 {
-                    var interval = rate / sound[NumericData.Rate].Value;
-                    var targetSize = (int) (interval * s.Data.Count + interval);
+                    var accumulator = 0;
+                    var targetRate = (int) rate;
+                    var sourceRate = (int) (s[NumericData.Rate] ?? sound[NumericData.Rate]);
+                    var targetSize = (((long) s.Data.Count * targetRate) + (sourceRate - 1)) / sourceRate;
                     var data = new float[targetSize];
                     var sourceData = s.Data;
-                    var targetOffset = BigRational.Zero;
-                    var targetPointer = 0;
+                    var sourceCounter = 0;
+                    var targetCounter = 0;
 
-                    for (var sourceOffset = 0; sourceOffset < sourceData.Count; sourceOffset++)
+                    while (targetCounter < targetSize)
                     {
-                        targetOffset += interval;
-                        while (targetPointer < targetOffset)
-                            data[targetPointer++] = sourceData[sourceOffset];
+                        while (accumulator > targetRate)
+                        {
+                            accumulator -= targetRate;
+                            sourceCounter++;
+                        }
+
+                        data[targetCounter++] = sourceData[sourceCounter];
+                        accumulator += sourceRate;
                     }
 
                     var sample = new Sample
@@ -72,16 +79,20 @@ namespace RhythmCodex.Sounds.Converters
 
         public ISound Normalize(ISound sound, BigRational target)
         {
-            var level = sound.Samples.SelectMany(s => s.Data).Max(s => Math.Abs(s));
-            var amp = (float) (target / level);
             var newSound = new Sound
             {
                 Samples = new List<ISample>(sound.Samples)
             };
 
+            var level = sound.Samples.SelectMany(s => s.Data).Max(s => Math.Abs(s));
+            if (level > 0 && level != 1)
+            {
+                var amp = (float) (target / level);
+                foreach (var sample in newSound.Samples)
+                    ApplyGain(sample.Data, amp);
+            }
+
             newSound.CloneMetadataFrom((Metadata) sound);
-            foreach (var sample in newSound.Samples)
-                ApplyGain(sample.Data, amp);
             return newSound;
         }
 
