@@ -107,7 +107,6 @@ namespace RhythmCodex.Twinkle.Integration
             var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
             var renderer = Resolve<IChartRenderer>();
             var dsp = Resolve<IAudioDsp>();
-            var oversample = 2;
 
             using (var stream = File.OpenRead(@"D:\iidx8th.zip"))
             using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
@@ -117,7 +116,7 @@ namespace RhythmCodex.Twinkle.Integration
                 {
                     var chunks = streamer.Read(entryStream, stream.Length, true);
 
-                    foreach (var chunk in chunks.Skip(18).Take(1).AsParallel())
+                    foreach (var chunk in chunks.AsParallel().Skip(153).Take(1))
                     {
                         if (chunk.Data[0x2000] != 0 || chunk.Data[0x2001] != 0 || chunk.Data[0x2002] == 0 ||
                             chunk.Data[0x2003] != 0)
@@ -126,9 +125,8 @@ namespace RhythmCodex.Twinkle.Integration
                         var archive = decoder.Decode(chunk);
                         foreach (var chart in archive.Charts.Take(1))
                         {
-                            var rendered = dsp.Normalize(renderer.Render(archive.Charts.First().Events, archive.Samples, 44100 * oversample), 1.0f);
-                            var downsampled = dsp.IntegerDownsample(rendered, oversample);
-                            this.WriteSound(downsampled, Path.Combine($"twinkle\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
+                            var rendered = dsp.Normalize(renderer.Render(archive.Charts.First().Events, archive.Samples, 44100), 1.0f);
+                            this.WriteSound(rendered, Path.Combine($"twinkle\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
                         }
                     }
                 }
