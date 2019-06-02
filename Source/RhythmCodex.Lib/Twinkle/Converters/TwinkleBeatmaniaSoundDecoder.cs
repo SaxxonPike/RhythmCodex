@@ -36,6 +36,12 @@ namespace RhythmCodex.Twinkle.Converters
                     channelIndex -= channelCount;
                 offset += 2;
             }
+
+            var panning = (float) (definition.Panning - 1) / 0x7E;
+            if (panning < 0)
+                panning = 0;
+            else if (panning > 1)
+                panning = 1;
             
             return new Sound
             {
@@ -43,7 +49,7 @@ namespace RhythmCodex.Twinkle.Converters
                 [NumericData.SourceRate] = definition.Frequency,
                 [NumericData.Volume] = TwinkleConstants.VolumeTable[definition.Volume],
                 [NumericData.SourceVolume] = definition.Volume,
-                [NumericData.Panning] = (float)(definition.Panning - 1) / 0x7E,
+                [NumericData.Panning] = panning,
                 [NumericData.SourcePanning] = definition.Panning,
                 [NumericData.Channel] = definition.Channel,
                 Samples = channels.Select(c => new Sample

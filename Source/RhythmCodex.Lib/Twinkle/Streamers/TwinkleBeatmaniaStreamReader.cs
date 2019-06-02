@@ -18,12 +18,13 @@ namespace RhythmCodex.Twinkle.Streamers
         {
             var index = 0;
             var reader = new BinaryReader(stream);
+            var actualLength = length / ChunkLength * ChunkLength;
 
             if (skipHeader)
                 stream.SkipBytes(DataStart);
 
             var offset = 0L;
-            while (offset < length)
+            while (offset < actualLength)
             {
                 var data = reader.ReadBytes(ChunkLength);
                 data.AsSpan().Swap16();

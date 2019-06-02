@@ -19,7 +19,7 @@ namespace RhythmCodex.Twinkle.Converters
             {
                 if (noteCountMode)
                 {
-                    if ((data[i + 0x03] & 0xF) == 0)
+                    if (data[i + 0x03] == 0 || data[i + 0x03] == 1)
                         continue;
                     noteCountMode = false;
                 }
