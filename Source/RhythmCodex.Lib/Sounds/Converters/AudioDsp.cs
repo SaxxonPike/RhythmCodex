@@ -191,9 +191,12 @@ namespace RhythmCodex.Sounds.Converters
 
         private void ApplyGain(IList<float> data, BigRational value)
         {
-            var amp = (double) value;
+            if (value == BigRational.One)
+                return;
+
+            var amp = (float) value;
             for (var i = 0; i < data.Count; i++)
-                data[i] = (float) (data[i] * amp);
+                data[i] = data[i] * amp;
         }
     }
 }
