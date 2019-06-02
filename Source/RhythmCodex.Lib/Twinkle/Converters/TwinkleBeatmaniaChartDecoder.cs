@@ -13,7 +13,6 @@ namespace RhythmCodex.Twinkle.Converters
         {
             var result = new List<TwinkleBeatmaniaChartEvent>();
             var noteCountMode = true;
-            var noteCount = 0;
 
             for (var i = 0; i < length; i += 4)
             {
@@ -36,6 +35,20 @@ namespace RhythmCodex.Twinkle.Converters
                     Param = command,
                     Value = value
                 });
+            }
+
+            return result;
+        }
+
+        public int[] GetNoteCounts(ReadOnlySpan<byte> data, int length)
+        {
+            var result = new int[2];
+
+            for (var i = 0; i < length; i += 4)
+            {
+                if (data[i + 0x03] != 0 && data[i + 0x03] != 1)
+                    return result;
+                result[data[i + 0x03]] += data[i + 0x02];
             }
 
             return result;

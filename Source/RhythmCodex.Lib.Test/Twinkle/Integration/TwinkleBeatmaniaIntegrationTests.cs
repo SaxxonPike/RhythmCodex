@@ -143,5 +143,27 @@ namespace RhythmCodex.Twinkle.Integration
                 }
             }
         }
+
+        [Test]
+        [Explicit("wip")]
+        public void Test6()
+        {
+            var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
+            var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
+            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip"))
+            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
+            {
+                var entry = zipStream.Entries.Single();
+                using (var entryStream = entry.Open())
+                {
+                    var chunks = streamer.Read(entryStream, entry.Length, true);
+
+                    foreach (var chunk in chunks.Take(1))
+                    {
+                        var bpc = decoder.MigrateToBemaniPc(chunk);
+                    }
+                }
+            }
+        }
     }
 }
