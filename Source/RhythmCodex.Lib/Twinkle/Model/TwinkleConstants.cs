@@ -6,7 +6,9 @@ namespace RhythmCodex.Twinkle.Model
 {
     public static class TwinkleConstants
     {
-        public static BigRational BeatmaniaRate => new BigRational(598248, 10000);
+        // orig: 598248
+        // test1: 598186
+        public static BigRational BeatmaniaRate => new BigRational(598186, 10000);
 
         private static readonly Lazy<BigRational[]> VolumeTableLazy = new Lazy<BigRational[]>(() =>
         {

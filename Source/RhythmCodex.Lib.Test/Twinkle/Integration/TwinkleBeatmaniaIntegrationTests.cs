@@ -101,7 +101,7 @@ namespace RhythmCodex.Twinkle.Integration
             var renderer = Resolve<IChartRenderer>();
             var dsp = Resolve<IAudioDsp>();
 
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidxsubstream.zip"))
+            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx7th.zip"))
             using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
             {
                 var entry = zipStream.Entries.Single();
@@ -118,7 +118,7 @@ namespace RhythmCodex.Twinkle.Integration
                         foreach (var chart in archive.Charts.AsParallel())
                         {
                             var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, 44100), 1.0f);
-                            this.WriteSound(rendered, Path.Combine($"twinkle\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
+                            this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
                         }
                     }
                 }
@@ -130,7 +130,7 @@ namespace RhythmCodex.Twinkle.Integration
         public void Test5()
         {
             var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidxsubstream.zip"))
+            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip"))
             using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
             {
                 var entry = zipStream.Entries.Single();
@@ -139,7 +139,7 @@ namespace RhythmCodex.Twinkle.Integration
                     var chunks = streamer.Read(entryStream, entry.Length, true);
 
                     foreach (var chunk in chunks.AsParallel())
-                        this.WriteFile(chunk.Data, Path.Combine("twinkle", $"{chunk.Index:D4}.twinkle"));
+                        this.WriteFile(chunk.Data, Path.Combine("twinkle1st", $"{chunk.Index:D4}.twinkle"));
                 }
             }
         }

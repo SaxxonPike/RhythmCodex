@@ -1,10 +1,12 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Converters;
 using RhythmCodex.Djmain.Model;
+using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
@@ -51,6 +53,26 @@ namespace RhythmCodex.Djmain.Integration
                     Resolve<IRiffStreamWriter>().Write(stream, sound);
                 }
             }
+        }
+        
+        [Test]
+        [Explicit]
+        public void Test2()
+        {
+            var streamer = Resolve<IDjmainChunkStreamReader>();
+            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\bm1stmix.zip"))
+            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
+            {
+                var entry = zipStream.Entries.Single();
+                using (var entryStream = entry.Open())
+                {
+                    var chunks = streamer.Read(entryStream);
+
+                    foreach (var chunk in chunks.AsParallel())
+                        this.WriteFile(chunk.Data, Path.Combine("djmain1st", $"{chunk.Id:D4}.djmain"));
+                }
+            }
+
         }
         
         [Test]
