@@ -2,6 +2,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Extensions;
@@ -150,6 +151,7 @@ namespace RhythmCodex.Twinkle.Integration
         {
             var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
             var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
+            var chartWriter = Resolve<IBeatmaniaPc1StreamWriter>();
             using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip"))
             using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
             {
@@ -161,6 +163,12 @@ namespace RhythmCodex.Twinkle.Integration
                     foreach (var chunk in chunks.Take(1))
                     {
                         var bpc = decoder.MigrateToBemaniPc(chunk);
+                        using (var mem = new MemoryStream())
+                        {
+                            chartWriter.Write(mem, bpc.Charts);
+                            mem.Flush();
+                            this.WriteFile(mem.ToArray(), $"{chunk.Index:D4}.1");
+                        }
                     }
                 }
             }
