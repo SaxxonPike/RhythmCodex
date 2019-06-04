@@ -18,7 +18,7 @@ namespace RhythmCodex.Stepmania.Streamers
 
             return commands
                 .Select(c => c.Split(':'))
-                .Select(cl => new Command {Name = cl.First(), Values = cl.Skip(1).ToArray()});
+                .Select(cl => new Command {Name = cl.First(), Values = cl.Skip(1).ToList()});
         }
 
         private static IEnumerable<string> ExtractCommands(IEnumerable<string> lines)

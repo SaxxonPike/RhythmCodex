@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Stepmania;
 using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
@@ -15,7 +17,78 @@ namespace RhythmCodex.OneShots
     {
         [Test]
         [Explicit("This is a tool, not a test")]
-        [TestCase("c:\\stepmania\\songs\\DDR SOLO 2000", 0.002)]
+        [TestCase("c:\\stepmania\\songs\\DDR EXTREME")]
+        public void PopulateMetadataInSmFolders(string path)
+        {
+            var smReader = Resolve<ISmStreamReader>();
+            var smWriter = Resolve<ISmStreamWriter>();
+
+            var files = Directory.GetFiles(path, "*.sm", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                IList<Command> commands;
+                using (var stream = File.OpenRead(file))
+                    commands = smReader.Read(stream).ToList();
+
+                var smPath = Path.GetDirectoryName(file);
+                var images = Directory.GetFiles(smPath, "*.png").ToDictionary(f => f, Image.FromFile);
+                var musics = Directory.GetFiles(smPath, "*.mp3").ToDictionary(f => f, f => new FileInfo(f));
+
+                // replace banner
+                var command = GetOrCreateCommand(commands, ChartTag.BannerTag);
+                command.Values.Clear();
+                var bannerImage = images.FirstOrDefault(i => i.Value.Width == 256);
+                if (bannerImage.Value != null)
+                    command.Values.Add(Path.GetFileName(bannerImage.Key));
+                
+                // replace bg
+                command = GetOrCreateCommand(commands, ChartTag.BackgroundTag);
+                command.Values.Clear();
+                var bgImage = images.FirstOrDefault(i => i.Value.Width == 320 || i.Value.Width == 640);
+                if (bgImage.Value != null)
+                    command.Values.Add(Path.GetFileName(bgImage.Key));
+                
+                // replace mp3
+                command = GetOrCreateCommand(commands, ChartTag.MusicTag);
+                command.Values.Clear();
+                var mainMusic = musics.OrderBy(m => m.Value.Length).LastOrDefault();
+                if (mainMusic.Value != null)
+                    command.Values.Add(Path.GetFileName(mainMusic.Key));
+
+                // replace preview
+                command = GetOrCreateCommand(commands, ChartTag.PreviewTag);
+                command.Values.Clear();
+                var prevMusic = musics.OrderBy(m => m.Value.Length).FirstOrDefault();
+                if (prevMusic.Value != null)
+                    command.Values.Add(Path.GetFileName(prevMusic.Key));
+                
+                // replace file name
+                command = GetOrCreateCommand(commands, ChartTag.TitleTag);
+                command.Values.Clear();
+                command.Values.Add(Path.GetFileNameWithoutExtension(smPath));
+                
+                using (var stream = File.Open(file, FileMode.Create, FileAccess.Write))
+                {
+                    smWriter.Write(stream, commands);
+                    stream.Flush();
+                }
+            }
+        }
+
+        private Command GetOrCreateCommand(ICollection<Command> commands, string name)
+        {
+            var existingCommand = commands.FirstOrDefault(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (existingCommand != null) return existingCommand;
+
+            existingCommand = new Command {Name = name, Values = new List<string>()};
+
+            commands.Add(existingCommand);
+            return existingCommand;
+        }
+
+        [Test]
+        [Explicit("This is a tool, not a test")]
+        [TestCase("c:\\stepmania\\songs\\DDR EXTREME", -0.048)]
         public void AdjustGapForFolder(string path, double amount)
         {
             var smReader = Resolve<ISmStreamReader>();

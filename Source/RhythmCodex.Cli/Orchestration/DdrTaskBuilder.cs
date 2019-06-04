@@ -52,6 +52,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IDigital573AudioKeyProvider _digital573AudioKeyProvider;
         private readonly IDigital573AudioDecrypter _digital573AudioDecrypter;
         private readonly IDdr573AudioNameFinder _ddr573AudioNameFinder;
+        private readonly IDdr573ImageFileNameHasher _ddr573ImageFileNameHasher;
 
         public DdrTaskBuilder(
             IFileSystem fileSystem,
@@ -73,7 +74,8 @@ namespace RhythmCodex.Cli.Orchestration
             IHeuristicTester heuristicTester,
             IDigital573AudioKeyProvider digital573AudioKeyProvider,
             IDigital573AudioDecrypter digital573AudioDecrypter,
-            IDdr573AudioNameFinder ddr573AudioNameFinder)
+            IDdr573AudioNameFinder ddr573AudioNameFinder,
+            IDdr573ImageFileNameHasher ddr573ImageFileNameHasher)
             : base(fileSystem, logger)
         {
             _ddr573ImageStreamReader = ddr573ImageStreamReader;
@@ -94,6 +96,7 @@ namespace RhythmCodex.Cli.Orchestration
             _digital573AudioKeyProvider = digital573AudioKeyProvider;
             _digital573AudioDecrypter = digital573AudioDecrypter;
             _ddr573AudioNameFinder = ddr573AudioNameFinder;
+            _ddr573ImageFileNameHasher = ddr573ImageFileNameHasher;
         }
 
         public ITask CreateDecodeSsq()
@@ -345,18 +348,21 @@ namespace RhythmCodex.Cli.Orchestration
                     }
 
                     var files = _ddr573ImageDecoder.Decode(image);
+                    var fileNames = _ddr573ImageFileNameHasher.Reverse(files.Select(f => f.Id).ToArray());
                     var fileIndex = 0;
                     ParallelProgress(task, files, file =>
                     {
                         task.Progress = fileIndex / (float) files.Count;
-                        var outFileName = $"{file.Module:X4}{file.Offset:X7}.bin";
-                        task.Message = $"Writing {outFileName}";
-
                         var extension = (_heuristicTester.Match(file.Data.Span).FirstOrDefault()?.Heuristic.FileExtension ?? "bin")
                             .ToLowerInvariant();
+                        var outFileName = fileNames.ContainsKey(file.Id)
+                            ? Path.Combine("./", fileNames[file.Id])
+                            : $"{file.Module:X4}{file.Offset:X7}.{extension}";
+                        task.Message = $"Writing {outFileName}";
+
 
                         using (var stream =
-                            OpenWriteMulti(task, gameImage, _ => $"{file.Module:X4}{file.Offset:X7}.{extension}"))
+                            OpenWriteMulti(task, gameImage, _ => outFileName))
                         {
                             var writer = new BinaryWriter(stream);
                             writer.Write(file.Data.ToArray());
