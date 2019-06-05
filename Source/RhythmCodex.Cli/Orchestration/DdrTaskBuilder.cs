@@ -347,7 +347,7 @@ namespace RhythmCodex.Cli.Orchestration
                             fileStream?.Dispose();
                     }
 
-                    var files = _ddr573ImageDecoder.Decode(image);
+                    var files = _ddr573ImageDecoder.Decode(image, Args.Options.ContainsKey("k") ? Args.Options["k"].Last() : null);
                     var fileNames = _ddr573ImageFileNameHasher.Reverse(files.Select(f => f.Id).ToArray());
                     var fileIndex = 0;
                     ParallelProgress(task, files, file =>
@@ -355,9 +355,17 @@ namespace RhythmCodex.Cli.Orchestration
                         task.Progress = fileIndex / (float) files.Count;
                         var extension = (_heuristicTester.Match(file.Data.Span).FirstOrDefault()?.Heuristic.FileExtension ?? "bin")
                             .ToLowerInvariant();
-                        var outFileName = fileNames.ContainsKey(file.Id)
-                            ? Path.Combine("./", fileNames[file.Id])
-                            : $"{file.Module:X4}{file.Offset:X7}.{extension}";
+                        string outFileName;
+                        if (Args.Options.ContainsKey("+name"))
+                        {
+                            outFileName = fileNames.ContainsKey(file.Id)
+                                ? Path.Combine("./", fileNames[file.Id])
+                                : $"{file.Module:X4}{file.Offset:X7}.{extension}";
+                        }
+                        else
+                        {
+                            outFileName = $"{file.Module:X4}{file.Offset:X7}.{extension}";
+                        }
                         task.Message = $"Writing {outFileName}";
 
 

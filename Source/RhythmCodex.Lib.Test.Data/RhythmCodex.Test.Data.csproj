@@ -17,6 +17,7 @@
         <EmbeddedResource Include="Compression\BemaniLz.TimTest.zip" />
         <EmbeddedResource Include="Compression\BemaniLz.TimTest.Expected.zip" />
         <EmbeddedResource Include="Compression\lzma.zip" />
+        <EmbeddedResource Include="Ddr\mdb.zip" />
         <EmbeddedResource Include="Ddr\mp3.zip" />
         <EmbeddedResource Include="Ddr\sbm1.zip" />
         <EmbeddedResource Include="Ddr\sbm2.zip" />

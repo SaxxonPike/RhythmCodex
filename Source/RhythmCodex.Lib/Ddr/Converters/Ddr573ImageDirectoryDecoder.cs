@@ -34,7 +34,7 @@ namespace RhythmCodex.Ddr.Converters
                     Offset = reader.ReadInt16() * 0x800,
                     Module = reader.ReadInt16(),
                     CompressionType = reader.ReadByte(),
-                    Reserved0 = reader.ReadByte(),
+                    EncryptionType = reader.ReadByte(),
                     Reserved1 = reader.ReadByte(),
                     Reserved2 = reader.ReadByte(),
                     Length = reader.ReadInt32()

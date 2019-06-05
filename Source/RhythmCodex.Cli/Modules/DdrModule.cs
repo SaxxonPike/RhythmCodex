@@ -37,7 +37,15 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "extract-573-flash",
                 Description = "Extracts files from a 573 GAME (and optionally additionally CARD) image.",
-                Execute = Extract573Flash
+                Execute = Extract573Flash,
+                Parameters = new []
+                {
+                    new CommandParameter
+                    {
+                        Description = "Decryption key for MDB.",
+                        Name = "k"
+                    }
+                }
             },
             new Command
             {

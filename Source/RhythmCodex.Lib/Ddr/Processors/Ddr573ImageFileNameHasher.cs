@@ -47,7 +47,8 @@ namespace RhythmCodex.Ddr.Processors
                 "data/movie/howto/hwnora.sbs",
                 "data/movie/howto/hwhaja.sbs",
                 "data/mp3/enc/M81D7HHJ.DAT",
-                "boot/checksum.dat"
+                "boot/checksum.dat",
+                "data/mdb/ja_mdb.bin"
             };
 
             var knownSongPatterns = new[]

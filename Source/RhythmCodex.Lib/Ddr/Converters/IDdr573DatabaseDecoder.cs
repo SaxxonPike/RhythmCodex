@@ -3,8 +3,8 @@ using RhythmCodex.Ddr.Models;
 
 namespace RhythmCodex.Ddr.Converters
 {
-    public interface IDdr573ImageDecoder
+    public interface IDdr573DatabaseDecoder
     {
-        IList<Ddr573File> Decode(Ddr573Image image, string dbKey);
+        IList<Ddr573DatabaseEntry> Decode(byte[] database);
     }
 }
