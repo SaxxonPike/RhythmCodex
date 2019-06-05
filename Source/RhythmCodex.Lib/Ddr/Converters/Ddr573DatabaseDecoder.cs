@@ -14,21 +14,68 @@ namespace RhythmCodex.Ddr.Converters
             var offset = 0;
             var length = database.Length;
             var result = new List<Ddr573DatabaseEntry>();
+            var shortNameOffsets = new Dictionary<int, int>();
+            var longNameOffsets = new Dictionary<int, int>();
+            var index = 0;
 
             // Read database entries
             while (offset < length)
             {
                 var raw = database.AsSpan(offset, 0x80);
+                var id = Encodings.CP437.GetStringWithoutNulls(raw.Slice(0x00, 5));
+                if (id == string.Empty)
+                    break;
+
                 var entry = new Ddr573DatabaseEntry
                 {
-                    Id = Encodings.CP437.GetStringWithoutNulls(raw.Slice(0, 5))
+                    Index = index,
+                    Id = id,
+                    Type = raw[0x06],
+                    CdTitle = raw[0x07],
+                    InternalId = Bitter.ToInt16(raw, 0x08),
+                    MaxBpm = Bitter.ToInt16(raw, 0x10),
+                    MinBpm = Bitter.ToInt16(raw, 0x12),
+                    Unknown014 = Bitter.ToInt16(raw, 0x14),
+                    SonglistOrder = Bitter.ToInt16(raw, 0x16),
+                    UnlockNumber = Bitter.ToInt16(raw, 0x18),
+                    Difficulties = new[]
+                    {
+                        raw[0x1C] & 0xF,
+                        raw[0x1C] >> 4,
+                        raw[0x1D] & 0xF,
+                        raw[0x1D] >> 4,
+                        raw[0x20] & 0xF,
+                        raw[0x20] >> 4,
+                        raw[0x21] & 0xF,
+                        raw[0x21] >> 4,
+                    },
+                    Unknown01E = Bitter.ToInt16(raw, 0x1E),
+                    Unknown022 = Bitter.ToInt16(raw, 0x22),
+                    Flags = Bitter.ToInt32(raw, 0x24),
+                    Radar0 = Bitter.ToInt16Array(raw, 0x28, 8),
+                    Radar1 = Bitter.ToInt16Array(raw, 0x38, 8),
+                    Radar2 = Bitter.ToInt16Array(raw, 0x48, 8),
+                    Radar3 = Bitter.ToInt16Array(raw, 0x58, 8),
+                    Radar4 = Bitter.ToInt16Array(raw, 0x68, 8)
                 };
+                
+                longNameOffsets[index] = Bitter.ToInt32(raw, 0x78);
+                shortNameOffsets[index] = Bitter.ToInt32(raw, 0x7C);
+                
                 result.Add(entry);
                 offset += 0x80;
+                index++;
             }
+
+            offset += 0x80;
             
             // Read string table
-            // TODO
+            var strings = database.AsSpan(offset);
+            foreach (var kv in longNameOffsets)
+                result[kv.Key].LongName = Encodings.CP437.GetStringWithoutNulls(strings.Slice(kv.Value));
+
+            foreach (var kv in shortNameOffsets)
+                result[kv.Key].ShortName = Encodings.CP437.GetStringWithoutNulls(strings.Slice(kv.Value));
 
             return result;
         }

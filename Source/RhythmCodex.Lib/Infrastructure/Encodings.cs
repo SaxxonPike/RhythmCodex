@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,19 @@ namespace RhythmCodex.Infrastructure
         public static string GetString(this Encoding encoding, ReadOnlySpan<byte> bytes) =>
             encoding.GetString(bytes.ToArray());
 
-        public static string GetStringWithoutNulls(this Encoding encoding, ReadOnlySpan<byte> bytes) =>
-            encoding.GetString(bytes.ToArray().TakeWhile(b => b != 0).ToArray());
+        public static string GetStringWithoutNulls(this Encoding encoding, ReadOnlySpan<byte> bytes)
+        {
+            var input = new List<byte>();
+            var length = bytes.Length;
+            var offset = 0;
+            while (offset < length)
+            {
+                var b = bytes[offset++];
+                if (b == 0)
+                    break;
+                input.Add(b);
+            }
+            return encoding.GetString(input.ToArray());
+        }
     }
 }

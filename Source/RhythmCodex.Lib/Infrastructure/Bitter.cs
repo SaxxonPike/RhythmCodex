@@ -1,9 +1,18 @@
 using System;
+using System.Linq;
 
 namespace RhythmCodex.Infrastructure
 {
     public static class Bitter
     {
+        public static int[] ToInt16Array(ReadOnlySpan<byte> span, int offset, int count)
+        {
+            var output = new int[count];
+            for (var i = 0; i < count; i++)
+                output[i] = ToInt16(span, offset + i * 2);
+            return output;
+        }
+        
         public static int ToInt16(ReadOnlySpan<byte> span, int offset) =>
             ToInt16(span[offset], span[offset + 1]);
 
