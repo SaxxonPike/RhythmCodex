@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using RhythmCodex.Compression;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -7,12 +9,20 @@ namespace RhythmCodex.Ddr.Converters
     [Service]
     public class Ddr573DatabaseDecrypter : IDdr573DatabaseDecrypter
     {
+        private readonly IBemaniLzDecoder _bemaniLzDecoder;
+
+        public Ddr573DatabaseDecrypter(IBemaniLzDecoder bemaniLzDecoder)
+        {
+            _bemaniLzDecoder = bemaniLzDecoder;
+        }
+        
         public int FindKey(ReadOnlySpan<byte> database)
         {
             var header = database.Slice(0, 16);
             for (var i = 0; i < 256; i++)
             {
-                var test = Decrypt(header, i);
+                var test = _bemaniLzDecoder.Decode(new MemoryStream(Decrypt(header, i)));
+                
                 if (!char.IsLetter((char) test[0]))
                     continue;
                 if (!char.IsLetter((char) test[1]))
