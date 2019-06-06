@@ -1613,7 +1613,16 @@ namespace RhythmCodex.Ddr.Models
             "kord",
             "kor5",
             "kor6",
-            "peti"
+            "peti",
+            "twen",
+            "inst", 
+            "name", 
+            "rank", 
+            "scal", 
+            "selc", 
+            "sele", 
+            "stae", 
+            "staf"
         };
     }
 }
