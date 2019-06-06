@@ -4,6 +4,8 @@ namespace RhythmCodex.Ddr.Converters
 {
     public interface IDdr573DatabaseDecrypter
     {
-        byte[] Decrypt(ReadOnlySpan<byte> database, string key);
+        int ConvertKey(string key);
+        int FindKey(ReadOnlySpan<byte> database);
+        byte[] Decrypt(ReadOnlySpan<byte> database, int key);
     }
 }

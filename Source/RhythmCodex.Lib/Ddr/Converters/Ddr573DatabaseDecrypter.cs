@@ -1,4 +1,5 @@
 using System;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Converters
@@ -6,10 +7,34 @@ namespace RhythmCodex.Ddr.Converters
     [Service]
     public class Ddr573DatabaseDecrypter : IDdr573DatabaseDecrypter
     {
-        public byte[] Decrypt(ReadOnlySpan<byte> database, string key)
+        public int FindKey(ReadOnlySpan<byte> database)
+        {
+            var header = database.Slice(0, 16);
+            for (var i = 0; i < 256; i++)
+            {
+                var test = Decrypt(header, i);
+                if (!char.IsLetter((char) test[0]))
+                    continue;
+                if (!char.IsLetter((char) test[1]))
+                    continue;
+                if (!char.IsLetter((char) test[2]))
+                    continue;
+                if (!char.IsLetterOrDigit((char) test[3]))
+                    continue;
+                if (!char.IsLetterOrDigit((char) test[4]) && test[4] != 0)
+                    continue;
+                if (test[5] != 0)
+                    continue;
+                return i;
+            }
+
+            throw new RhythmCodexException("Can't seem to find the key for this MDB");
+        }
+
+        public byte[] Decrypt(ReadOnlySpan<byte> database, int key)
         {
             var val = 0x41C64E6D;
-            var key1 = unchecked(val * CalculateKey(key));
+            var key1 = unchecked(val * key);
             var counter = 0;
             var output = new byte[database.Length];
 
@@ -23,7 +48,7 @@ namespace RhythmCodex.Ddr.Converters
             return output;
         }
 
-        private static int CalculateKey(string input)
+        public int ConvertKey(string input)
         {
             var key = 0;
 

@@ -26,10 +26,8 @@ namespace RhythmCodex.Ddr.Integration
             var decompressor = Resolve<IBemaniLzDecoder>();
             var decoder = Resolve<IDdr573DatabaseDecoder>();
 
-            var decrypted = decrypter.Decrypt(data, "EXTREME");
+            var decrypted = decrypter.Decrypt(data, decrypter.ConvertKey("EXTREME"));
             var decompressed = decompressor.Decode(new MemoryStream(decrypted));
-            var decoded = decoder.Decode(decompressed);
-
             decompressed.Should().BeEquivalentTo(expected);
         }
     }
