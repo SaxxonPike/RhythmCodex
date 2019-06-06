@@ -17,7 +17,7 @@ namespace RhythmCodex.OneShots
     {
         [Test]
         [Explicit("This is a tool, not a test")]
-        [TestCase("c:\\stepmania\\songs\\DDR EXTREME")]
+        [TestCase(@"C:\StepMania\Songs\DDR 4TH MIX PLUS")]
         public void PopulateMetadataInSmFolders(string path)
         {
             var smReader = Resolve<ISmStreamReader>();
@@ -37,14 +37,18 @@ namespace RhythmCodex.OneShots
                 // replace banner
                 var command = GetOrCreateCommand(commands, ChartTag.BannerTag);
                 command.Values.Clear();
-                var bannerImage = images.FirstOrDefault(i => i.Value.Width == 256);
+                var bannerImage = images.FirstOrDefault(i => 
+                    (i.Value.Width == 256 && i.Value.Height == 80) || 
+                    (i.Value.Width == 192 && i.Value.Height == 55));
                 if (bannerImage.Value != null)
                     command.Values.Add(Path.GetFileName(bannerImage.Key));
                 
                 // replace bg
                 command = GetOrCreateCommand(commands, ChartTag.BackgroundTag);
                 command.Values.Clear();
-                var bgImage = images.FirstOrDefault(i => i.Value.Width == 320 || i.Value.Width == 640);
+                var bgImage = images.FirstOrDefault(i =>
+                    (i.Value.Width == 320 && i.Value.Height == 240) ||
+                    (i.Value.Width == 640 && i.Value.Height == 480));
                 if (bgImage.Value != null)
                     command.Values.Add(Path.GetFileName(bgImage.Key));
                 
@@ -58,9 +62,12 @@ namespace RhythmCodex.OneShots
                 // replace preview
                 command = GetOrCreateCommand(commands, ChartTag.PreviewTag);
                 command.Values.Clear();
-                var prevMusic = musics.OrderBy(m => m.Value.Length).FirstOrDefault();
-                if (prevMusic.Value != null)
-                    command.Values.Add(Path.GetFileName(prevMusic.Key));
+                if (musics.Count > 1)
+                {
+                    var prevMusic = musics.OrderBy(m => m.Value.Length).FirstOrDefault();
+                    if (prevMusic.Value != null)
+                        command.Values.Add(Path.GetFileName(prevMusic.Key));
+                }
                 
                 // replace file name
                 command = GetOrCreateCommand(commands, ChartTag.TitleTag);
@@ -88,7 +95,7 @@ namespace RhythmCodex.OneShots
 
         [Test]
         [Explicit("This is a tool, not a test")]
-        [TestCase("c:\\stepmania\\songs\\DDR EXTREME", -0.048)]
+        [TestCase(@"C:\StepMania\Songs\DDR 4TH MIX PLUS", -0.033)]
         public void AdjustGapForFolder(string path, double amount)
         {
             var smReader = Resolve<ISmStreamReader>();
