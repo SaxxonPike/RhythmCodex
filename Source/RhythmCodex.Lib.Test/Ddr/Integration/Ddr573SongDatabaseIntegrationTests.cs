@@ -41,5 +41,18 @@ namespace RhythmCodex.Ddr.Integration
             var observed = decrypter.FindKey(data);
             observed.Should().Be(decrypter.ConvertKey("EXTREME"));
         }
+
+        [Test]
+        public void FindRecordSize_Test()
+        {
+            var inputArchive = GetArchiveResource($"Ddr.mdb.zip");
+            var data = inputArchive
+                .First(name => name.Key.Equals("expected", StringComparison.OrdinalIgnoreCase))
+                .Value;
+
+            var decoder = Resolve<IDdr573DatabaseDecoder>();
+            var observed = decoder.FindRecordSize(data);
+            observed.Should().Be(0x80);
+        }
     }
 }

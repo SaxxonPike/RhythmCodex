@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -9,7 +10,7 @@ namespace RhythmCodex.Ddr.Converters
     [Service]
     public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
     {
-        public IList<Ddr573DatabaseEntry> Decode(byte[] database)
+        public IList<Ddr573DatabaseEntry> Decode(ReadOnlySpan<byte> database)
         {
             var offset = 0;
             var length = database.Length;
@@ -21,7 +22,7 @@ namespace RhythmCodex.Ddr.Converters
             // Read database entries
             while (offset < length)
             {
-                var raw = database.AsSpan(offset, 0x80);
+                var raw = database.Slice(offset, 0x80);
                 var id = Encodings.CP437.GetStringWithoutNulls(raw.Slice(0x00, 5));
                 if (id == string.Empty)
                     break;
@@ -70,7 +71,7 @@ namespace RhythmCodex.Ddr.Converters
             offset += 0x80;
             
             // Read string table
-            var strings = database.AsSpan(offset);
+            var strings = database.Slice(offset);
             foreach (var kv in longNameOffsets)
                 result[kv.Key].LongName = Encodings.CP437.GetStringWithoutNulls(strings.Slice(kv.Value));
 
@@ -78,6 +79,55 @@ namespace RhythmCodex.Ddr.Converters
                 result[kv.Key].ShortName = Encodings.CP437.GetStringWithoutNulls(strings.Slice(kv.Value));
 
             return result;
+        }
+
+        public int FindRecordSize(ReadOnlySpan<byte> database)
+        {
+            for (var size = 16; size < 256; size++)
+            {
+                var fail = false;
+                for (var i = 0; i < 16; i++)
+                {
+                    var test = database.Slice(size * i);
+                    if (!test[0].IsLetter())
+                    {
+                        fail = true;
+                        break;
+                    }
+                    if (!test[1].IsLetter())
+                    {
+                        fail = true;
+                        break;
+                    }
+                    if (!test[2].IsLetter())
+                    {
+                        fail = true;
+                        break;
+                    }
+                    if (!test[3].IsLetterOrDigit())
+                    {
+                        fail = true;
+                        break;
+                    }
+                    if (!test[4].IsLetterOrDigit() && test[4] != 0)
+                    {
+                        fail = true;
+                        break;
+                    }
+                    if (test[5] != 0)
+                    {
+                        fail = true;
+                        break;
+                    }
+                }
+
+                if (fail)
+                    continue;
+
+                return size;
+            }
+            
+            throw new RhythmCodexException("Can't seem to find record size for MDB");
         }
     }
 }

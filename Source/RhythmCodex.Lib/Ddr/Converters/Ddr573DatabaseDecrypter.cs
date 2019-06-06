@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using RhythmCodex.Compression;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -16,19 +17,6 @@ namespace RhythmCodex.Ddr.Converters
             _bemaniLzDecoder = bemaniLzDecoder;
         }
 
-        private static bool IsLetter(byte value)
-        {
-            return (value >= 0x41 && value <= 0x5A) ||
-                   (value >= 0x61 && value <= 0x7A);
-        }
-
-        private static bool IsLetterOrDigit(byte value)
-        {
-            return (value >= 0x41 && value <= 0x5A) ||
-                   (value >= 0x61 && value <= 0x7A) ||
-                   (value >= 0x30 && value <= 0x39);
-        }
-        
         public int FindKey(ReadOnlySpan<byte> database)
         {
             var header = database.Slice(0, 16);
@@ -36,15 +24,15 @@ namespace RhythmCodex.Ddr.Converters
             {
                 var test = _bemaniLzDecoder.Decode(new MemoryStream(Decrypt(header, i)));
                 
-                if (!IsLetter(test[0]))
+                if (!test[0].IsLetter())
                     continue;
-                if (!IsLetter(test[1]))
+                if (!test[1].IsLetter())
                     continue;
-                if (!IsLetter(test[2]))
+                if (!test[2].IsLetter())
                     continue;
-                if (!IsLetterOrDigit(test[3]))
+                if (!test[3].IsLetterOrDigit())
                     continue;
-                if (!IsLetterOrDigit(test[4]) && test[4] != 0)
+                if (!test[4].IsLetterOrDigit() && test[4] != 0)
                     continue;
                 if (test[5] != 0)
                     continue;
