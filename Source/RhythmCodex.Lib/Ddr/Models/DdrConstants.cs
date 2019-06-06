@@ -1603,7 +1603,17 @@ namespace RhythmCodex.Ddr.Models
             "bye5",
             "fac6",
             "sen7",
-            "bak8"
+            "bak8",
+            "kor7",
+            "kor8",
+            "kor2",
+            "korc",
+            "kor9",
+            "kora",
+            "kord",
+            "kor5",
+            "kor6",
+            "peti"
         };
     }
 }
