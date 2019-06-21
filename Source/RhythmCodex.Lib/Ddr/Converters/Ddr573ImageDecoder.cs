@@ -61,7 +61,7 @@ namespace RhythmCodex.Ddr.Converters
                         case 1:
                         {
                             if (dbKey != null)
-                                data = _ddr573DatabaseDecrypter.Decrypt(data.Span, dbKey);
+                                data = _ddr573DatabaseDecrypter.Decrypt(data.Span, _ddr573DatabaseDecrypter.ConvertKey(dbKey));
                             else
                                 canDecompress = false;
                             break;

@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.IO;
 using RhythmCodex.IoC;
 
@@ -11,9 +13,11 @@ namespace RhythmCodex.Compression
 
         public byte[] Decode(Stream source)
         {
-            using (var mem = new MemoryStream())
+            var mem = new MemoryStream();
+            var writer = new BinaryWriter(mem);
+
+            try
             {
-                var writer = new BinaryWriter(mem);
                 var reader = new BinaryReader(source);
 
                 var buffer = new byte[BufferSize];
@@ -86,10 +90,19 @@ namespace RhythmCodex.Compression
                         length--;
                     }
                 }
-
-                writer.Flush();
-                return mem.ToArray();
             }
+            catch (Exception)
+            {
+                if (Debugger.IsAttached)
+                    throw;
+            }
+            finally
+            {
+                writer.Flush();
+            }
+
+            using (mem)
+                return mem.ToArray();
         }
     }
 }
