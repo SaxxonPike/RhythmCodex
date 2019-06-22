@@ -50,6 +50,21 @@ namespace RhythmCodex.Ddr.Processors
             {'_', '_'}
         };
 
+        public string GetPath(string sourceName)
+        {
+            var name = GetName(sourceName).ToLowerInvariant();
+            var prunedSourceName = Path.GetFileNameWithoutExtension(sourceName.ToUpperInvariant());
+            switch (prunedSourceName[0])
+            {
+                case 'E':
+                    return string.Join("/", "data", "mp3", "enc", $"{name}.mp3");
+                case 'S':
+                    return string.Join("/", "data", "mp3", "enc", name, $"{name}-preview.mp3");
+                default:
+                    return string.Join("/", "data", "mp3", "enc", name, $"{name}.mp3");
+            }
+        }
+
         public string GetName(string sourceName)
         {
             if (sourceName == null)
@@ -80,16 +95,6 @@ namespace RhythmCodex.Ddr.Processors
 
                 default:
                     return null;
-            }
-
-            switch (prunedSourceName[0])
-            {
-                case 'E':
-                    output = $"system-{output}";
-                    break;
-                case 'S':
-                    output += "-preview";
-                    break;
             }
 
             return output;
