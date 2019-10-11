@@ -17,9 +17,6 @@ namespace Ionic
 
     [Guid("ebc25cf6-9120-4283-b972-0e5520d0000C")]
     [ComVisible(true)]
-#if !NETCF
-    [ClassInterface(ClassInterfaceType.AutoDispatch)]
-#endif
     public sealed class IonicCrc32
     {
         /// <summary>
