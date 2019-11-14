@@ -17,10 +17,10 @@ namespace RhythmCodex.Bms.Converters
             _randomizer = randomizer;
         }
 
-        public IEnumerable<BmsCommand> Resolve(IEnumerable<BmsCommand> commands)
+        public IList<BmsCommand> Resolve(IEnumerable<BmsCommand> commands)
         {
             var scope = new BmsResolverScope();
-            return ResolveScope(commands, scope, true).ToArray();
+            return ResolveScope(commands, scope, true).ToList();
         }
 
         private IEnumerable<BmsCommand> ResolveScope(IEnumerable<BmsCommand> commands, BmsResolverScope scope,

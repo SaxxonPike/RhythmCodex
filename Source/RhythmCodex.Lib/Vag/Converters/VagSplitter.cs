@@ -19,7 +19,7 @@ namespace RhythmCodex.Vag.Converters
 
         public IList<ISample> Split(VagChunk chunk)
         {
-            return SplitInternal(chunk).ToList();
+            return SplitInternal(chunk).AsParallel().ToList();
         }
 
         private IEnumerable<ISample> SplitInternal(VagChunk chunk)

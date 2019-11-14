@@ -5,6 +5,6 @@ namespace RhythmCodex.Stepmania.Converters
 {
     public interface ISmEncoder
     {
-        IEnumerable<Command> Encode(ChartSet chartSet);
+        IList<Command> Encode(ChartSet chartSet);
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RhythmCodex.Heuristics
 {
@@ -8,9 +9,9 @@ namespace RhythmCodex.Heuristics
     {
         public ContextAttribute(params Context[] contexts)
         {
-            Contexts = contexts;
+            Contexts = contexts.ToList();
         }
 
-        public IEnumerable<Context> Contexts { get; }
+        public IList<Context> Contexts { get; }
     }
 }

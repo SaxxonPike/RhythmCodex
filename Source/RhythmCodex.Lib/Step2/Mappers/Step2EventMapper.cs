@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Step2.Mappers
@@ -6,16 +7,21 @@ namespace RhythmCodex.Step2.Mappers
     [Service]
     public class Step2EventMapper : IStep2EventMapper
     {
-        public IEnumerable<int> Map(int panels)
+        public IList<int> Map(int panels)
         {
-            if ((panels & 0x01) != 0)
-                yield return 0;
-            if ((panels & 0x02) != 0)
-                yield return 3;
-            if ((panels & 0x04) != 0)
-                yield return 2;
-            if ((panels & 0x08) != 0)
-                yield return 1;                
+            IEnumerable<int> Do()
+            {
+                if ((panels & 0x01) != 0)
+                    yield return 0;
+                if ((panels & 0x02) != 0)
+                    yield return 3;
+                if ((panels & 0x04) != 0)
+                    yield return 2;
+                if ((panels & 0x08) != 0)
+                    yield return 1;                
+            }
+
+            return Do().ToList();
         }
 
         public int Map(IEnumerable<int> panels)

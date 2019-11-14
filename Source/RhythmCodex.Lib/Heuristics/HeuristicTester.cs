@@ -17,7 +17,7 @@ namespace RhythmCodex.Heuristics
             _heuristics = heuristics;
         }
 
-        public IEnumerable<HeuristicResult> Match(ReadOnlySpan<byte> data, params Context[] contexts)
+        public IList<HeuristicResult> Match(ReadOnlySpan<byte> data, params Context[] contexts)
         {
             var result = new List<HeuristicResult>();
             foreach (var heuristic in _heuristics

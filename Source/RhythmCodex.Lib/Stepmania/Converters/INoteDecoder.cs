@@ -6,6 +6,6 @@ namespace RhythmCodex.Stepmania.Converters
 {
     public interface INoteDecoder
     {
-        IEnumerable<IEvent> Decode(IEnumerable<Note> events, int columns);
+        IList<IEvent> Decode(IEnumerable<Note> events, int columns);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ssq.Converters
@@ -6,24 +7,29 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class StepPanelSplitter : IStepPanelSplitter
     {
-        public IEnumerable<int> Split(int panels)
+        public IList<int> Split(int panels)
         {
-            var n = 0;
-
-            if (panels == -1)
+            IEnumerable<int> Do()
             {
-                yield return 0;
-                panels ^= int.MinValue;
-                n++;
+                var n = 0;
+
+                if (panels == -1)
+                {
+                    yield return 0;
+                    panels ^= int.MinValue;
+                    n++;
+                }
+
+                while (panels > 0)
+                {
+                    if ((panels & 1) != 0)
+                        yield return n;
+                    panels >>= 1;
+                    n++;
+                }
             }
 
-            while (panels > 0)
-            {
-                if ((panels & 1) != 0)
-                    yield return n;
-                panels >>= 1;
-                n++;
-            }
+            return Do().ToList();
         }
     }
 }

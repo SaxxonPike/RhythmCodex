@@ -4,6 +4,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface IStepPanelSplitter
     {
-        IEnumerable<int> Split(int panels);
+        IList<int> Split(int panels);
     }
 }

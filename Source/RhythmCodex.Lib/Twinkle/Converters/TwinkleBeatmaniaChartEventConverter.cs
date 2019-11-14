@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Twinkle.Model;
@@ -8,21 +9,26 @@ namespace RhythmCodex.Twinkle.Converters
     [Service]
     public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventConverter
     {
-        public IEnumerable<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts)
+        public IList<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts)
         {
-            for (var i = 0; i < 2; i++)
+            IEnumerable<BeatmaniaPc1Event> Do()
             {
-                if (noteCounts[i] > 0)
+                for (var i = 0; i < 2; i++)
                 {
-                    yield return new BeatmaniaPc1Event
+                    if (noteCounts[i] > 0)
                     {
-                        LinearOffset = 0,
-                        Parameter0 = 0x10,
-                        Parameter1 = (byte) i,
-                        Value = (short) noteCounts[i]
-                    };
+                        yield return new BeatmaniaPc1Event
+                        {
+                            LinearOffset = 0,
+                            Parameter0 = 0x10,
+                            Parameter1 = (byte) i,
+                            Value = (short) noteCounts[i]
+                        };
+                    }
                 }
             }
+
+            return Do().ToList();
         }
 
         public BeatmaniaPc1Event ConvertToBeatmaniaPc1(TwinkleBeatmaniaChartEvent chartEvent)

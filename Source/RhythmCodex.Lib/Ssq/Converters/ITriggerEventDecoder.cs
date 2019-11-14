@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ITriggerEventDecoder
     {
-        IEnumerable<IEvent> Decode(IEnumerable<Trigger> triggers);
+        IList<IEvent> Decode(IEnumerable<Trigger> triggers);
     }
 }

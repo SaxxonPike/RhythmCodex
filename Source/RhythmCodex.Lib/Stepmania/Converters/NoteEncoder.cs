@@ -19,60 +19,65 @@ namespace RhythmCodex.Stepmania.Converters
             _logger = logger;
         }
 
-        public IEnumerable<Note> Encode(IEnumerable<IEvent> events)
+        public IList<Note> Encode(IEnumerable<IEvent> events)
         {
-            var result = new List<Note>();
-            var eventList = events.AsList();
-            var columnCount = (int) eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
-            var playerCount = (int) eventList.Max(e => e[NumericData.Player] ?? BigRational.Zero) + 1;
-
-            foreach (var ev in eventList.Where(e => e[NumericData.MetricOffset] != null))
+            IEnumerable<Note> Do()
             {
-                var offset = ev[NumericData.MetricOffset];
-                if (offset == null)
-                    throw new RhythmCodexException($"{nameof(NumericData.MetricOffset)} must be present.");
+                var result = new List<Note>();
+                var eventList = events.AsList();
+                var columnCount = (int) eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
+                var playerCount = (int) eventList.Max(e => e[NumericData.Player] ?? BigRational.Zero) + 1;
 
-                var offsetValue = offset.Value;
-
-                if (ev[NumericData.Column] != null)
+                foreach (var ev in eventList.Where(e => e[NumericData.MetricOffset] != null))
                 {
-                    var column = (int) ev[NumericData.Column].Value +
-                                 (int) (ev[NumericData.Player] ?? BigRational.Zero) * columnCount;
+                    var offset = ev[NumericData.MetricOffset];
+                    if (offset == null)
+                        throw new RhythmCodexException($"{nameof(NumericData.MetricOffset)} must be present.");
 
-                    if (ev[FlagData.Note] == true)
+                    var offsetValue = offset.Value;
+
+                    if (ev[NumericData.Column] != null)
                     {
-                        result.Add(new Note
+                        var column = (int) ev[NumericData.Column].Value +
+                                     (int) (ev[NumericData.Player] ?? BigRational.Zero) * columnCount;
+
+                        if (ev[FlagData.Note] == true)
                         {
-                            MetricOffset = offsetValue,
-                            Type = NoteType.Step,
-                            Column = column
-                        });
-                        continue;
+                            result.Add(new Note
+                            {
+                                MetricOffset = offsetValue,
+                                Type = NoteType.Step,
+                                Column = column
+                            });
+                            continue;
+                        }
+
+                        if (ev[FlagData.Freeze] == true)
+                        {
+                            result.Add(new Note
+                            {
+                                MetricOffset = offsetValue,
+                                Type = NoteType.Tail,
+                                Column = column
+                            });
+                            continue;
+                        }
                     }
 
-                    if (ev[FlagData.Freeze] == true)
-                    {
-                        result.Add(new Note
+                    if (ev[FlagData.Shock] == true)
+                        result.AddRange(Enumerable.Range(0, columnCount * playerCount).Select(i => new Note
                         {
                             MetricOffset = offsetValue,
-                            Type = NoteType.Tail,
-                            Column = column
-                        });
-                        continue;
-                    }
+                            Type = NoteType.Mine,
+                            Column = i
+                        }));
                 }
 
-                if (ev[FlagData.Shock] == true)
-                    result.AddRange(Enumerable.Range(0, columnCount * playerCount).Select(i => new Note
-                    {
-                        MetricOffset = offsetValue,
-                        Type = NoteType.Mine,
-                        Column = i
-                    }));
+                ApplyFreezeHeads(result);
+                return result;
             }
 
-            ApplyFreezeHeads(result);
-            return result;
+            return Do().ToList();
         }
 
         private void ApplyFreezeHeads(IEnumerable<Note> notes)

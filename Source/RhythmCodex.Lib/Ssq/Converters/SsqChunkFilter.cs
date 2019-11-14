@@ -48,7 +48,7 @@ namespace RhythmCodex.Ssq.Converters
             return result;
         }
 
-        public IEnumerable<Trigger> GetTriggers(IEnumerable<SsqChunk> chunks)
+        public IList<Trigger> GetTriggers(IEnumerable<SsqChunk> chunks)
         {
             var result = chunks.Where(c => c.Parameter0 == Parameter0.Triggers)
                 .SelectMany(tc => _triggerChunkDecoder.Convert(tc.Data))
@@ -56,7 +56,7 @@ namespace RhythmCodex.Ssq.Converters
             return result;
         }
 
-        public IEnumerable<StepChunk> GetSteps(IEnumerable<SsqChunk> chunks)
+        public IList<StepChunk> GetSteps(IEnumerable<SsqChunk> chunks)
         {
             var result = chunks.Where(c => c.Parameter0 == Parameter0.Steps)
                 .Select(c => new StepChunk
@@ -71,7 +71,7 @@ namespace RhythmCodex.Ssq.Converters
             return result;
         }
 
-        public IEnumerable<SsqInfoChunk> GetInfos(IEnumerable<SsqChunk> chunks)
+        public IList<SsqInfoChunk> GetInfos(IEnumerable<SsqChunk> chunks)
         {
             var result = chunks.Where(c => c.Parameter0 == Parameter0.Meta)
                 .Select(c => _ssqInfoChunkDecoder.Decode(c))

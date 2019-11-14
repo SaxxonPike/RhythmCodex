@@ -13,37 +13,42 @@ namespace RhythmCodex.Stepmania.Converters
         private static readonly char[] SkippedChars = {' ', '\t', '\n', '\r'};
         private static readonly char[] Delimiters = {';', ','};
 
-        public IEnumerable<Note> Decode(int columns, string notes)
+        public IList<Note> Decode(int columns, string notes)
         {
-            var column = 0;
-            var measures = notes.Split(Delimiters, StringSplitOptions.None);
-            var measureId = 0;
-
-            foreach (var measure in measures)
+            IEnumerable<Note> Do()
             {
-                var buffer = new List<Note>();
-                var rows = measure.Length / columns;
-                var row = 0;
+                var column = 0;
+                var measures = notes.Split(Delimiters, StringSplitOptions.None);
+                var measureId = 0;
 
-                foreach (var c in notes.Where(c => !SkippedChars.Contains(c)))
+                foreach (var measure in measures)
                 {
-                    if (c != '0')
-                        yield return new Note
-                        {
-                            MetricOffset = new BigRational(measureId, row, rows),
-                            Column = column,
-                            Type = c
-                        };
+                    var buffer = new List<Note>();
+                    var rows = measure.Length / columns;
+                    var row = 0;
 
-                    if (++column < columns)
-                        continue;
+                    foreach (var c in notes.Where(c => !SkippedChars.Contains(c)))
+                    {
+                        if (c != '0')
+                            yield return new Note
+                            {
+                                MetricOffset = new BigRational(measureId, row, rows),
+                                Column = column,
+                                Type = c
+                            };
 
-                    column = 0;
-                    row++;
+                        if (++column < columns)
+                            continue;
+
+                        column = 0;
+                        row++;
+                    }
+
+                    measureId++;
                 }
-
-                measureId++;
             }
+
+            return Do().ToList();
         }
     }
 }

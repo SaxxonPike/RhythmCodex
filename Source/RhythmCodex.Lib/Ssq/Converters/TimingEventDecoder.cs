@@ -11,49 +11,54 @@ namespace RhythmCodex.Ssq.Converters
     [Service]
     public class TimingEventDecoder : ITimingEventDecoder
     {
-        public IEnumerable<IEvent> Decode(TimingChunk timingChunk)
+        public IList<IEvent> Decode(TimingChunk timingChunk)
         {
-            var timings = timingChunk.Timings;
-            var ticksPerSecond = timingChunk.Rate;
-
-            var orderedTimings = timings
-                .OrderBy(t => t.LinearOffset)
-                .ThenBy(t => t.MetricOffset)
-                .ToArray();
-
-            var firstOrderedTiming = orderedTimings.First();
-
-            var previous = new
+            IEnumerable<IEvent> Do()
             {
-                firstOrderedTiming.MetricOffset,
-                firstOrderedTiming.LinearOffset
-            };
+                var timings = timingChunk.Timings;
+                var ticksPerSecond = timingChunk.Rate;
 
-            foreach (var timing in orderedTimings.Skip(1))
-            {
-                var ev = new Event
+                var orderedTimings = timings
+                    .OrderBy(t => t.LinearOffset)
+                    .ThenBy(t => t.MetricOffset)
+                    .ToArray();
+
+                var firstOrderedTiming = orderedTimings.First();
+
+                var previous = new
                 {
-                    [NumericData.MetricOffset] = (BigRational) previous.MetricOffset / SsqConstants.MeasureLength,
-                    [NumericData.LinearOffset] = (BigRational) previous.LinearOffset / ticksPerSecond
+                    firstOrderedTiming.MetricOffset,
+                    firstOrderedTiming.LinearOffset
                 };
 
-                BigRational deltaOffset = timing.MetricOffset - previous.MetricOffset;
-                BigRational deltaTicks = timing.LinearOffset - previous.LinearOffset;
-
-                if (deltaOffset == 0)
-                    ev[NumericData.Stop] = deltaTicks / ticksPerSecond;
-                else
-                    ev[NumericData.Bpm] =
-                        deltaOffset / SsqConstants.MeasureLength / (deltaTicks / ticksPerSecond / 240);
-
-                yield return ev;
-
-                previous = new
+                foreach (var timing in orderedTimings.Skip(1))
                 {
-                    timing.MetricOffset,
-                    timing.LinearOffset
-                };
+                    var ev = new Event
+                    {
+                        [NumericData.MetricOffset] = (BigRational) previous.MetricOffset / SsqConstants.MeasureLength,
+                        [NumericData.LinearOffset] = (BigRational) previous.LinearOffset / ticksPerSecond
+                    };
+
+                    BigRational deltaOffset = timing.MetricOffset - previous.MetricOffset;
+                    BigRational deltaTicks = timing.LinearOffset - previous.LinearOffset;
+
+                    if (deltaOffset == 0)
+                        ev[NumericData.Stop] = deltaTicks / ticksPerSecond;
+                    else
+                        ev[NumericData.Bpm] =
+                            deltaOffset / SsqConstants.MeasureLength / (deltaTicks / ticksPerSecond / 240);
+
+                    yield return ev;
+
+                    previous = new
+                    {
+                        timing.MetricOffset,
+                        timing.LinearOffset
+                    };
+                }
             }
+
+            return Do().ToList();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace RhythmCodex.Ssq.Converters
             _triggerEventDecoder = triggerEventDecoder;
         }
 
-        public IEnumerable<IEvent> Decode(
+        public IList<IEvent> Decode(
             TimingChunk timings,
             IEnumerable<Step> steps,
             IEnumerable<Trigger> triggers,

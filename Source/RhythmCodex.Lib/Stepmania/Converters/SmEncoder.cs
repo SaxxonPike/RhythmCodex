@@ -72,7 +72,7 @@ namespace RhythmCodex.Stepmania.Converters
             return new string[0];
         }
 
-        public IEnumerable<Command> Encode(ChartSet chartSet)
+        public IList<Command> Encode(ChartSet chartSet)
         {
             var chartList = chartSet.Charts.AsList();
 
@@ -103,7 +103,8 @@ namespace RhythmCodex.Stepmania.Converters
 
             return metaCommands
                 .Concat(timingCommands)
-                .Concat(noteCommands);
+                .Concat(noteCommands)
+                .ToList();
         }
 
         private IEnumerable<TimedEvent> GetBpmEvents(IEnumerable<IChart> charts)

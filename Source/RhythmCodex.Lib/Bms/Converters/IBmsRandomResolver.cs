@@ -5,6 +5,6 @@ namespace RhythmCodex.Bms.Converters
 {
     public interface IBmsRandomResolver
     {
-        IEnumerable<BmsCommand> Resolve(IEnumerable<BmsCommand> commands);
+        IList<BmsCommand> Resolve(IEnumerable<BmsCommand> commands);
     }
 }

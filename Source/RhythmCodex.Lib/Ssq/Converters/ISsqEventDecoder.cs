@@ -7,7 +7,7 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ISsqEventDecoder
     {
-        IEnumerable<IEvent> Decode(
+        IList<IEvent> Decode(
             TimingChunk timings,
             IEnumerable<Step> steps,
             IEnumerable<Trigger> triggers,

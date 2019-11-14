@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -9,9 +10,9 @@ namespace RhythmCodex.Stepmania.Converters
     [Service]
     public class NoteDecoder : INoteDecoder
     {
-        public IEnumerable<IEvent> Decode(IEnumerable<Note> events, int columns)
+        public IList<IEvent> Decode(IEnumerable<Note> events, int columns)
         {
-            return DecodeInternal(events, columns);
+            return DecodeInternal(events, columns).ToList();
         }
 
         private IEnumerable<IEvent> DecodeInternal(IEnumerable<Note> events, int columns)
