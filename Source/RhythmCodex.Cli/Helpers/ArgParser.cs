@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Cli.Helpers

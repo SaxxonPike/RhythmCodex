@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Autofac.Core;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;

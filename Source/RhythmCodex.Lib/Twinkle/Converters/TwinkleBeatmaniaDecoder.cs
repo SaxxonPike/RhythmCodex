@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Models;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;

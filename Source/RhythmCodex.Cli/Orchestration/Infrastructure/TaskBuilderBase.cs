@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using RhythmCodex.Charting;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Cli.Orchestration.Infrastructure
 {

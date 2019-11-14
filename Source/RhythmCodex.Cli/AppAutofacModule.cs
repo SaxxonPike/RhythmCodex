@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using Autofac;
-using RhythmCodex.Charting;
 using RhythmCodex.Charting.Models;
-using RhythmCodex.Djmain.Model;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Ssq.Converters;
-using RhythmCodex.Stepmania.Streamers;
 
 namespace RhythmCodex.Cli
 {

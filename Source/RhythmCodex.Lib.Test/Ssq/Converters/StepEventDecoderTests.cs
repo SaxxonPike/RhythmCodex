@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using RhythmCodex.Charting;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;

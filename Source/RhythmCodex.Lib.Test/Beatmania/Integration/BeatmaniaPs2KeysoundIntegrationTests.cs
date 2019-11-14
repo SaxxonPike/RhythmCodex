@@ -4,7 +4,6 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Streamers;
-using RhythmCodex.Dsp;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;

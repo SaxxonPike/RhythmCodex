@@ -1,13 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.Extensions;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Ssq.Converters;
-using RhythmCodex.Ssq.Streamers;
-using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Cli.Modules
 {

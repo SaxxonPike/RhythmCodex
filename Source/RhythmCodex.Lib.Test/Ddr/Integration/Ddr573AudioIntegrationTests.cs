@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Digital573.Converters;
 using RhythmCodex.Digital573.Providers;
 

@@ -4,15 +4,11 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Cd.Streamers;
 using RhythmCodex.Iso.Converters;
-using RhythmCodex.Iso.Streamers;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
-using RhythmCodex.Vag.Converters;
-using RhythmCodex.Vag.Streamers;
 using RhythmCodex.Xa.Converters;
 using RhythmCodex.Xa.Heuristics;
-using RhythmCodex.Xa.Models;
 
 namespace RhythmCodex.Xa.Integration
 {

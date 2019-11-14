@@ -1,8 +1,6 @@
-using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Ddr.Processors;
-using RhythmCodex.Digital573.Converters;
 
 namespace RhythmCodex.Ddr.Converters
 {

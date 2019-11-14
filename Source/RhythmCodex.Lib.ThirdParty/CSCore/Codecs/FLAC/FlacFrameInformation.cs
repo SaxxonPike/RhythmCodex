@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CSCore.Codecs.FLAC
+﻿namespace CSCore.Codecs.FLAC
 {
     /// <summary>
     /// Provides some basic information about a flac frame. This structure is typically used for implementing a seeking algorithm. 

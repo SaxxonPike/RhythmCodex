@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RhythmCodex.Beatmania.Providers;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Models;

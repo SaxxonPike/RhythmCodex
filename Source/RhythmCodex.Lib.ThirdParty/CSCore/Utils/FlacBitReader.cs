@@ -1,5 +1,4 @@
-﻿using System;
-using CSCore.Utils;
+﻿using CSCore.Utils;
 
 namespace CSCore.Codecs.FLAC
 {

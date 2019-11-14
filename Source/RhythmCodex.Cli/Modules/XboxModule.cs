@@ -1,15 +1,7 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.Extensions;
-using RhythmCodex.ImaAdpcm.Converters;
-using RhythmCodex.ImaAdpcm.Models;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
 
 namespace RhythmCodex.Cli.Modules
 {

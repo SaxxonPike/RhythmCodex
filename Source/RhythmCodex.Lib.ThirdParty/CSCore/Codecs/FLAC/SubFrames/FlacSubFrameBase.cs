@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 // ReSharper disable once CheckNamespace
 namespace CSCore.Codecs.FLAC

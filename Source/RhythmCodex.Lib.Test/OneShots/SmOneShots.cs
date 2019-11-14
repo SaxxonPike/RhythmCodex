@@ -6,7 +6,6 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania;
-using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
 

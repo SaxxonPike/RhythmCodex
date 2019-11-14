@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
-using RhythmCodex.Charting;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Ssq.Model;

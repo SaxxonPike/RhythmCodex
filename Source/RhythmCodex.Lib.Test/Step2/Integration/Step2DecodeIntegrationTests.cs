@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using FluentAssertions;
@@ -6,9 +5,6 @@ using NUnit.Framework;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Step2.Converters;
 using RhythmCodex.Step2.Streamers;
-using RhythmCodex.Stepmania.Converters;
-using RhythmCodex.Stepmania.Model;
-using RhythmCodex.Stepmania.Streamers;
 
 namespace RhythmCodex.Step2.Integration
 {

@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
-using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Converters;
 using RhythmCodex.Vag.Models;
-using RhythmCodex.Vag.Streamers;
 using RhythmCodex.Wav.Converters;
 
 namespace RhythmCodex.Vag.Integration

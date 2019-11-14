@@ -1,11 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using RhythmCodex.Cli.Helpers;
-using RhythmCodex.Cli.Orchestration;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.Extensions;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Cli.Modules
