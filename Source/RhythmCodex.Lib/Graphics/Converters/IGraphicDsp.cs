@@ -1,7 +1,7 @@
 using System.Drawing;
 using RhythmCodex.Graphics.Models;
 
-namespace RhythmCodex.Dsp
+namespace RhythmCodex.Graphics.Converters
 {
     public interface IGraphicDsp
     {

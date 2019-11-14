@@ -1,5 +1,4 @@
 using System.Drawing;
-using RhythmCodex.Dsp;
 using RhythmCodex.Gdi.Converters;
 using RhythmCodex.Graphics.Models;
 using RhythmCodex.IoC;
