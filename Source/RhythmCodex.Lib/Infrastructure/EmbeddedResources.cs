@@ -3,13 +3,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace RhythmCodex.Infrastructure
 {
     internal static class EmbeddedResources
     {
         public static byte[] Get(string name, Assembly assembly = null)
         {
-            //var resources = typeof(EmbeddedResources).Assembly.GetManifestResourceNames();
             using (var stream =
                 (assembly ?? typeof(EmbeddedResources).Assembly).GetManifestResourceStream(name))
             using (var mem = new MemoryStream())
