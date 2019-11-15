@@ -1,7 +1,9 @@
 ﻿using System.Text;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Beatmania.Converters
 {
+    [Service]
     public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
     {
         // credit: windyfairy
