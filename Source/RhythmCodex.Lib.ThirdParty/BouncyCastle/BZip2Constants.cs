@@ -22,8 +22,6 @@
  * great code.
  */
 
-using System;
-
 namespace Org.BouncyCastle.Apache.Bzip2
 {
     /**

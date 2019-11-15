@@ -1,7 +1,6 @@
 using System;
+using System.Numerics;
 using System.Text;
-
-using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Utilities
 {

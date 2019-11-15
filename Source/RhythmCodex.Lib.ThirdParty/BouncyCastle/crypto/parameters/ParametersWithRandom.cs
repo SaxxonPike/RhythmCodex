@@ -1,18 +1,16 @@
 using System;
 
-using Org.BouncyCastle.Security;
-
 namespace Org.BouncyCastle.Crypto.Parameters
 {
     public class ParametersWithRandom
 		: ICipherParameters
     {
         private readonly ICipherParameters	parameters;
-		private readonly SecureRandom		random;
+		private readonly Random		random;
 
 		public ParametersWithRandom(
             ICipherParameters	parameters,
-            SecureRandom		random)
+            Random		random)
         {
 			if (parameters == null)
 				throw new ArgumentNullException("parameters");
@@ -25,17 +23,17 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
 		public ParametersWithRandom(
             ICipherParameters parameters)
-			: this(parameters, new SecureRandom())
+			: this(parameters, new Random())
         {
 		}
 
 		[Obsolete("Use Random property instead")]
-		public SecureRandom GetRandom()
+		public Random GetRandom()
 		{
 			return Random;
 		}
 
-		public SecureRandom Random
+		public Random Random
         {
 			get { return random; }
         }
