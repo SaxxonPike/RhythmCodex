@@ -39,9 +39,4 @@ namespace RhythmCodex.Beatmania.Converters
             throw new NotImplementedException();
         }
     }
-
-    public interface IBeatmaniaPs2SampleRateFinder
-    {
-        BigRational GetRate(int encodedRate);
-    }
 }
