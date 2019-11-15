@@ -12,6 +12,13 @@
 		<PackageReference Include="Autofac" Version="4.9.4" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\RhythmCodex.Lib.ThirdParty\RhythmCodex.Thirdparty.csproj" />
 		<ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+		<ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj" />
+		<ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj" />
+		<ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj" />
+		<ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj" />
+		<ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj" />
+		<ProjectReference Include="..\RhythmCodex.Plugin.SincInterpolation\RhythmCodex.Plugin.SincInterpolation.csproj" />
 	</ItemGroup>
 </Project>

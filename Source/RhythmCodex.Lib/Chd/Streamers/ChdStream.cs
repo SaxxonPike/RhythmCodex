@@ -7,17 +7,17 @@ using RhythmCodex.Compression;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.ThirdParty;
-using SevenZip.Compression.LZMA;
 
 namespace RhythmCodex.Chd.Streamers
 {
     public class ChdStream : Stream
     {
         private readonly IFlacDecoder _flacDecoder;
+        private readonly ILzmaDecoder _lzmaDecoder;
         private readonly Stream _baseStream;
         private readonly ChdStream _parent;
 
-        internal ChdStream(IFlacDecoder flacDecoder, Stream baseStream)
+        internal ChdStream(IFlacDecoder flacDecoder, ILzmaDecoder lzmaDecoder, Stream baseStream)
         {
             _reader = new BinaryReader(baseStream);
 
@@ -59,11 +59,12 @@ namespace RhythmCodex.Chd.Streamers
             }
 
             _flacDecoder = flacDecoder;
+            _lzmaDecoder = lzmaDecoder;
             _baseStream = baseStream;
         }
 
-        internal ChdStream(IFlacDecoder flacDecoder, Stream baseStream, ChdStream parent)
-            : this(flacDecoder, baseStream)
+        internal ChdStream(IFlacDecoder flacDecoder, ILzmaDecoder lzmaDecoder, Stream baseStream, ChdStream parent)
+            : this(flacDecoder, lzmaDecoder, baseStream)
         {
             _parent = parent;
         }
@@ -243,26 +244,21 @@ namespace RhythmCodex.Chd.Streamers
         private byte[] DecompressLzma(uint compressedLength, uint decompressedLength)
         {
             var buffer = new byte[decompressedLength];
-            var lzma = new LzmaDecoder();
             var lc = 3;
             var lp = 0;
             var pb = 2;
             var dictSize = 1 << 26;
 
-            lzma.SetDecoderProperties(new[]
+            var decoderProperties = new[]
             {
                 (byte) (lc + lp * 9 + pb * 45),
                 unchecked((byte) dictSize),
                 unchecked((byte) (dictSize >> 8)),
                 unchecked((byte) (dictSize >> 16)),
                 unchecked((byte) (dictSize >> 24))
-            });
-            using (var outStream = new MemoryStream(buffer))
-            {
-                lzma.Code(_baseStream, outStream, compressedLength, decompressedLength, null);
-                outStream.Flush();
-                return outStream.ToArray();
-            }
+            };
+
+            return _lzmaDecoder.Decode(_baseStream, (int) compressedLength, (int) decompressedLength, decoderProperties);
         }
 
         private byte[] DecompressFlac()

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RhythmCodex.Infrastructure
 {
-    internal static class StreamExtensions
+    public static class StreamExtensions
     {
         private const int BufferSize = 1 << 16;
 

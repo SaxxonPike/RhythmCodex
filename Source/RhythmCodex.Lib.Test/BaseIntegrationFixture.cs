@@ -24,22 +24,11 @@ namespace RhythmCodex
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterModule<TestAutofacModule>();
             builder.RegisterInstance(TestContext.Out).As<TextWriter>().SingleInstance();
             builder.Register(c => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
                 .As<ILoggerConfigurationSource>();
             builder.RegisterType<TextWriterLogger>().As<ILogger>();
-
-            var assemblies = new[]
-            {
-                typeof(ServiceAttribute).Assembly
-            };
-
-            foreach (var assembly in assemblies)
-                builder.RegisterAssemblyTypes(assembly)
-                    .Where(t => t.GetTypeInfo().CustomAttributes.Any(a => a.AttributeType == typeof(ServiceAttribute)))
-                    .AsSelf()
-                    .AsImplementedInterfaces()
-                    .SingleInstance();
 
             return builder.Build();
         }

@@ -15,15 +15,14 @@ namespace RhythmCodex.Cli
         /// </summary>
         private static readonly IEnumerable<Type> IocTypes = new[]
         {
-            typeof(App),   // RhythmCodex.Cli
-            typeof(Chart)  // RhythmCodex.Lib
+            typeof(App)    // RhythmCodex.Cli
         };
 
         /// <inheritdoc />
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            var mappings = ServiceTypes.GetMappings(IocTypes.Select(t => t.Assembly).ToArray());
+            var mappings = ServiceTypes.GetMappings(typeof(App).Assembly);
 
             foreach (var mapping in mappings)
             {

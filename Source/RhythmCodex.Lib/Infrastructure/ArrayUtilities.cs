@@ -2,7 +2,7 @@ using System;
 
 namespace RhythmCodex.Infrastructure
 {
-    internal static class ArrayUtilities
+    public static class ArrayUtilities
     {
         /// <summary>
         /// Slice an array.

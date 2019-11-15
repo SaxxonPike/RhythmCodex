@@ -5,10 +5,18 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="7zip" />
     <Folder Include="BouncyCastle" />
-    <Folder Include="CSCore\Utils" />
+    <Folder Include="Bridge" />
+    <Folder Include="CSCore" />
+    <Folder Include="MP3Sharp" />
+    <Folder Include="NVorbis" />
+    <Folder Include="SincInterpolation" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
   </ItemGroup>
 </Project>
