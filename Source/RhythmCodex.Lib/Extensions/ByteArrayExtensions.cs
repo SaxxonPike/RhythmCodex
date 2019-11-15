@@ -17,5 +17,19 @@ namespace RhythmCodex.Extensions
                 array[i + 1] = temp;
             }
         }
+
+        public static byte[] Pad(this byte[] array, int length) => Pad(array.AsSpan(), length);
+        
+        public static byte[] Pad(this Span<byte> array, int length) => Pad((ReadOnlySpan<byte>) array, length);
+
+        public static byte[] Pad(this ReadOnlySpan<byte> array, int length)
+        {
+            var bytesToAdd = length - array.Length;
+            if (bytesToAdd <= 0)
+                return array.ToArray();
+            var result = new byte[array.Length + bytesToAdd];
+            array.CopyTo(result);
+            return result;
+        }
     }
 }

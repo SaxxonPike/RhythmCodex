@@ -5,6 +5,7 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="BouncyCastle" />
     <Folder Include="CSCore\Utils" />
   </ItemGroup>
   <ItemGroup>

@@ -63,6 +63,8 @@
         <EmbeddedResource Include="Wav\ulaw.zip" />
         <EmbeddedResource Include="Xact\xsb.zip" />
         <EmbeddedResource Include="Xact\xwb.zip" />
+        <None Remove="BeatmaniaPs2\bm2dxps2encchart.zip" />
+        <EmbeddedResource Include="BeatmaniaPs2\bm2dxps2encchart.zip" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Ddr" />
