@@ -10,6 +10,18 @@ namespace RhythmCodex.Infrastructure
     {
         private const int BufferSize = 1 << 16;
 
+        public static byte[] ReadZeroTerminated(this Stream stream)
+        {
+            var buffer = new List<byte>();
+            while (true)
+            {
+                var b = stream.ReadByte();
+                if (b <= 0)
+                    return buffer.ToArray();
+                buffer.Add(unchecked((byte) b));
+            }
+        }
+        
         public static void SkipBytes(this Stream stream, long length)
         {
             var buffer = new byte[BufferSize];

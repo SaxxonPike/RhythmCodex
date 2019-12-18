@@ -22,7 +22,7 @@ namespace RhythmCodex.Cli
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            var mappings = ServiceTypes.GetMappings(typeof(App).Assembly);
+            var mappings = ServiceTypes.GetMappings(IocTypes.Select(a => a.Assembly).ToArray());
 
             foreach (var mapping in mappings)
             {
