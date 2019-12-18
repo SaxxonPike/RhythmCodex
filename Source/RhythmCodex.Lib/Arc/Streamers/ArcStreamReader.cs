@@ -8,6 +8,8 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Arc.Streamers
 {
+    // source: arcunpack (gergc)
+    
     [Service]
     public class ArcStreamReader : IArcStreamReader
     {
@@ -24,10 +26,15 @@ namespace RhythmCodex.Arc.Streamers
             var baseOffset = source.Position;
             var reader = new BinaryReader(source);
             var header = ReadHeader(reader);
+            
+            if (header.Id != 0x19751120)
+                throw new RhythmCodexException("Unrecognized arc ID");
+            
             var directory = Enumerable.Range(0, header.FileCount).Select(i => ReadEntry(reader)).ToList();
 
             foreach (var entry in directory)
             {
+                // TODO: consider if it's worth doing a forward-only implementation
                 source.Position = baseOffset + entry.NameOffset;
                 var nameBytes = source.ReadZeroTerminated();
                 var name = nameBytes.GetString();
