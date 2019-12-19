@@ -1,63 +1,60 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using RhythmCodex.Meta.Models;
+using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Providers;
 
-namespace RhythmCodex.Thirdparty.SincInterpolation
+namespace RhythmCodex.Plugin.SincInterpolation
 {
     // https://codefying.com/2015/06/07/linear-and-cubic-spline-interpolation/
-    
-    internal  abstract class Interpolation: IInterpolate
+
+    public interface IInterpolation
     {
-         
-        public Interpolation(double[] _x, double[] _y)
+        float? Interpolate(float p);
+    }
+    
+    internal abstract class Interpolation : IInterpolation
+    {
+        protected Interpolation(IList<float> x, IList<float> y)
         {
-            int xLength = _x.Length;
-            if (xLength == _y.Length && xLength > 1 && _x.Distinct().Count() == xLength)
-            {
-                x = _x;
-                y = _y;
-            }
+            var xLength = x.Count;
+            if (xLength != y.Count || xLength <= 1 || x.Distinct().Count() != xLength)
+                return;
+
+            X = x;
+            Y = y;
         }
- 
+
         // cubic spline relies on the abscissa values to be sorted
-        public Interpolation(double[] _x, double[] _y, bool checkSorted=true)
+        protected Interpolation(IList<float> x, IList<float> y, bool checkSorted = true)
         {
-            int xLength = _x.Length;
+            var xLength = x.Count;
             if (checkSorted)
             {
-                if (xLength == _y.Length && xLength > 1 && _x.Distinct().Count() == xLength && Enumerable.SequenceEqual(_x.SortedList(),_x.ToList()))
-                {
-                    x = _x;
-                    y = _y;
-                }
+                if (xLength != y.Count || xLength <= 1 || x.Distinct().Count() != xLength ||
+                    !x.SortedList().SequenceEqual(x.ToList()))
+                    return;
+
+                X = x;
+                Y = y;
             }
             else
             {
-                if (xLength == _y.Length && xLength > 1 && _x.Distinct().Count() == xLength)
-                {
-                    x = _x;
-                    y = _y;
-                }
+                if (xLength != y.Count || xLength <= 1 || x.Distinct().Count() != xLength)
+                    return;
+
+                X = x;
+                Y = y;
             }
         }
- 
-        public double[] X
-        {
-            get
-            {
-                return x;
-            }
-        }
- 
-        public double[] Y
-        {
-            get
-            {
-                return y;
-            }
-        }
- 
-        public abstract double? Interpolate(double p);
- 
-        private double[] x;
-        private double[] y;
+
+        protected IList<float> X { get; }
+
+        protected IList<float> Y { get; }
+
+        public abstract float? Interpolate(float p);
+        
+        public abstract string Name { get; }
     }
 }

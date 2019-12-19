@@ -2,77 +2,75 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RhythmCodex.Thirdparty.SincInterpolation
+namespace RhythmCodex.Plugin.SincInterpolation
 {
     // https://codefying.com/2015/06/07/linear-and-cubic-spline-interpolation/
-    
-    internal sealed class LinearInterpolation: Interpolation
+
+    internal sealed class LinearInterpolation : Interpolation
     {
-         
-        public LinearInterpolation(double[] _x, double [] _y):base(_x,_y)
+        public LinearInterpolation(IList<float> x, IList<float> y) : base(x, y)
         {
-            len = X.Length;
-            if (len > 1)
+            _len = X.Count;
+            if (_len > 1)
             {
-                Console.WriteLine("Successfully set abscissa and ordinate.");
-                baseset = true;
+                _baseset = true;
                 // make a copy of X as a list for later use
-                lX = X.ToList();
+                _lX = X.ToList();
             }
             else
-                Console.WriteLine("Ensure x and y are the same length and have at least 2 elements. All x values must be unique.");
+                throw new Exception(
+                    "Ensure x and y are the same length and have at least 2 elements. All x values must be unique.");
         }
- 
-        public override double? Interpolate(double p)
+
+        public override float? Interpolate(float p)
         {
-            if (baseset)
+            if (_baseset)
             {
-                double? result = null;
-                double Rx;
- 
+                float rx;
+
                 try
                 {
                     // point p may be outside abscissa's range
                     // if it is, we return null
-                    Rx = X.First(s => s >= p);
+                    rx = X.First(s => s >= p);
                 }
-                catch(ArgumentNullException)
+                catch (ArgumentNullException)
                 {
                     return null;
                 }
- 
+
                 // at this stage we know that Rx contains a valid value
                 // find the index of the value close to the point required to be interpolated for
-                int i = lX.IndexOf(Rx);
- 
+                var i = _lX.IndexOf(rx);
+
                 // provide for index not found and lower and upper tabulated bounds
-                if (i==-1)
+                if (i == -1)
                     return null;
-                         
-                if (i== len-1 && X[i]==p)
-                    return Y[len - 1];
- 
+
+                if (i == _len - 1 && X[i] == p)
+                    return Y[_len - 1];
+
                 if (i == 0)
                     return Y[0];
- 
+
                 // linearly interpolate between two adjacent points
-                double h = (X[i] - X[i - 1]);
-                double A = (X[i] - p) / h;
-                double B = (p - X[i - 1]) / h;
- 
-                result = Y[i - 1] * A + Y[i] * B;
- 
+                var h = (X[i] - X[i - 1]);
+                var a = (X[i] - p) / h;
+                var b = (p - X[i - 1]) / h;
+
+                var result = Y[i - 1] * a + Y[i] * b;
                 return result;
-                 
             }
             else
             {
                 return null;
             }
         }
- 
-        private bool baseset = false;
-        private int len;
-        private List<double> lX;
+
+        public override string Name => "linear";
+
+        private readonly bool _baseset;
+        private readonly int _len;
+        private readonly List<float> _lX;
     }
 }

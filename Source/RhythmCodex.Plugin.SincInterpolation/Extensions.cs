@@ -2,49 +2,49 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RhythmCodex.Thirdparty.SincInterpolation
+namespace RhythmCodex.Plugin.SincInterpolation
 {
     // https://codefying.com/2015/06/07/linear-and-cubic-spline-interpolation/
-    
-    public static class Extensions
+
+    internal static class Extensions
     {
         // returns a list sorted in ascending order 
-        public static List<T> SortedList<T>(this T[] array)
+        public static IList<T> SortedList<T>(this IList<T> array)
         {
-            List<T> l = array.ToList();
+            var l = array.ToList();
             l.Sort();
             return l;
- 
         }
- 
+
         // returns a difference between consecutive elements of an array
-        public static double[] Diff(this double[] array)
+        public static IList<float> Diff(this IList<float> array)
         {
-            int len = array.Length - 1;
-            double[] diffsArray = new double[len];
-            for (int i = 1; i <= len;i++)
+            var len = array.Count - 1;
+            var diffsArray = new float[len];
+            for (var i = 1; i <= len; i++)
             {
                 diffsArray[i - 1] = array[i] - array[i - 1];
             }
+
             return diffsArray;
         }
- 
+
         // scaled an array by another array of doubles
-        public static double[] Scale(this double[] array, double[] scalor, bool mult=true)
+        public static IList<float> Scale(this IList<float> array, IList<float> scalor, bool mult = true)
         {
-            int len = array.Length;
-            double[] scaledArray = new double[len];
-             
+            var len = array.Count;
+            var scaledArray = new float[len];
+
             if (mult)
             {
-                for (int i = 0; i < len; i++)
+                for (var i = 0; i < len; i++)
                 {
                     scaledArray[i] = array[i] * scalor[i];
                 }
             }
             else
             {
-                for (int i = 0; i < len; i++)
+                for (var i = 0; i < len; i++)
                 {
                     if (scalor[i] != 0)
                     {
@@ -53,29 +53,28 @@ namespace RhythmCodex.Thirdparty.SincInterpolation
                     else
                     {
                         // basic fix to prevent division by zero
-                        scalor[i] = 0.00001;
+                        scalor[i] = 0.00001f;
                         scaledArray[i] = array[i] / scalor[i];
- 
                     }
                 }
             }
- 
+
             return scaledArray;
         }
- 
-        public static double[,] Diag(this double[,] matrix, double[] diagVals)
+
+        public static float[,] Diag(this float[,] matrix, IList<float> diagVals)
         {
-            int rows = matrix.GetLength(0);
-            int cols = matrix.GetLength(1);
+            var rows = matrix.GetLength(0);
+            var cols = matrix.GetLength(1);
             // the matrix has to be scare
-            if (rows==cols)
+            if (rows == cols)
             {
-                double[,] diagMatrix = new double[rows, cols];
-                int k = 0;
-                for (int i = 0; i < rows; i++)
-                for (int j = 0; j < cols; j++ )
+                var diagMatrix = new float[rows, cols];
+                var k = 0;
+                for (var i = 0; i < rows; i++)
+                for (var j = 0; j < cols; j++)
                 {
-                    if(i==j)
+                    if (i == j)
                     {
                         diagMatrix[i, j] = diagVals[k];
                         k++;
@@ -85,15 +84,11 @@ namespace RhythmCodex.Thirdparty.SincInterpolation
                         diagMatrix[i, j] = 0;
                     }
                 }
+
                 return diagMatrix;
             }
-            else
-            {
-                Console.WriteLine("Diag should be used on square matrix only.");
-                return null;
-            }
- 
-             
+
+            throw new Exception("Diag should be used on square matrix only.");
         }
     }
 }

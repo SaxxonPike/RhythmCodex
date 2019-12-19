@@ -5,6 +5,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Providers;
 
 namespace RhythmCodex.Sounds.Converters
 {
@@ -26,44 +27,24 @@ namespace RhythmCodex.Sounds.Converters
             return newSound;
         }
 
-        public ISound ApplyResampling(ISound sound, BigRational rate)
+        public ISound ApplyResampling(ISound sound, IResampler resampler, BigRational rate)
         {
-            // Garbage non-interpolated resampling? Check.
             if (sound == null || !sound.Samples.Any())
                 return null;
             
             if (rate <= BigRational.Zero || sound[NumericData.Rate] == rate)
                 return sound;
 
+            var targetRate = (float) (double) rate;
             var samples = new List<ISample>(sound.Samples);
             var result = new Sound
             {
                 Samples = samples.Select(s =>
                 {
-                    var accumulator = 0;
-                    var targetRate = (int) rate;
-                    var sourceRate = (int) (s[NumericData.Rate] ?? sound[NumericData.Rate]);
-                    var targetSize = (((long) s.Data.Count * targetRate) + (sourceRate - 1)) / sourceRate;
-                    var data = new float[targetSize];
-                    var sourceData = s.Data;
-                    var sourceCounter = 0;
-                    var targetCounter = 0;
-
-                    while (targetCounter < targetSize)
-                    {
-                        while (accumulator > targetRate)
-                        {
-                            accumulator -= targetRate;
-                            sourceCounter++;
-                        }
-
-                        data[targetCounter++] = sourceData[sourceCounter];
-                        accumulator += sourceRate;
-                    }
-
+                    var sourceRate = (float) (double) (s[NumericData.Rate] ?? sound[NumericData.Rate]);
                     var sample = new Sample
                     {
-                        Data = data
+                        Data = resampler.Resample(s.Data, sourceRate, targetRate)
                     };
                     sample.CloneMetadataFrom((Metadata) s);
                     sample[NumericData.Rate] = rate;

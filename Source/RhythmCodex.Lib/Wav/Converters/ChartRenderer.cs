@@ -8,6 +8,7 @@ using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Providers;
 
 namespace RhythmCodex.Wav.Converters
 {
@@ -15,10 +16,12 @@ namespace RhythmCodex.Wav.Converters
     public class ChartRenderer : IChartRenderer
     {
         private readonly IAudioDsp _audioDsp;
+        private readonly IResamplerProvider _resamplerProvider;
 
-        public ChartRenderer(IAudioDsp audioDsp)
+        public ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvider)
         {
             _audioDsp = audioDsp;
+            _resamplerProvider = resamplerProvider;
         }
 
         private class ChannelState
@@ -51,7 +54,7 @@ namespace RhythmCodex.Wav.Converters
                 throw new RhythmCodexException("Can't render without all events having linear offsets.");
 
             var sounds = inSounds
-                .Select(s => _audioDsp.ApplyResampling(_audioDsp.ApplyEffects(s), sampleRate))
+                .Select(s => _audioDsp.ApplyResampling(_audioDsp.ApplyEffects(s), _resamplerProvider.GetBest(), sampleRate))
                 .Where(s => s != null)
                 .ToArray();
 
