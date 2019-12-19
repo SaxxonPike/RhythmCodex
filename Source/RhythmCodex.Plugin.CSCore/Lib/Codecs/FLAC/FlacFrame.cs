@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using CSCore.Codecs.FLAC;
+using RhythmCodex.Plugin.CSCore.Lib.Utils;
 
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     /// <summary>
     /// Represents a frame inside of an Flac-Stream.

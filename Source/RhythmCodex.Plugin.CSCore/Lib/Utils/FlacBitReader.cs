@@ -1,6 +1,4 @@
-﻿using CSCore.Utils;
-
-namespace CSCore.Codecs.FLAC
+﻿namespace RhythmCodex.Plugin.CSCore.Lib.Utils
 {
     /// <summary>
     /// This method is based on the CUETools.NET BitReader (see http://sourceforge.net/p/cuetoolsnet/code/ci/default/tree/CUETools.Codecs/BitReader.cs)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CSCore.Codecs.FLAC.Metadata;
+using RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC.Metadata;
 
 // ReSharper disable once CheckNamespace
 namespace CSCore.Codecs.FLAC

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Meta.Models;
-using RhythmCodex.Sounds.Models;
+using RhythmCodex.IoC;
+using RhythmCodex.Sounds.Providers;
 
-namespace RhythmCodex.Sounds.Providers
+namespace RhythmCodex.Sounds.Resamplers
 {
+    [Service]
     public class SampleAndHoldResampler : IResampler
     {
         public string Name => "sampleandhold";

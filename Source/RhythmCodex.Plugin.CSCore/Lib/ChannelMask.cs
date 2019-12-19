@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSCore
+namespace RhythmCodex.Plugin.CSCore.Lib
 {
     /// <summary>
     ///     Channelmask used by <see cref="WaveFormatExtensible" />. For more information see

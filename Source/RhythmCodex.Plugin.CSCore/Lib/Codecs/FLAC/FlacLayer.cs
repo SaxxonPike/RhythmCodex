@@ -1,4 +1,4 @@
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     /// <summary>
     /// Splits a flac file into a few basic layers and defines them. Mainly used for debugging purposes.

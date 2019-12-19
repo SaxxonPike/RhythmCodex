@@ -4,7 +4,7 @@
 
 using System;
 
-namespace CSCore.DSP
+namespace RhythmCodex.Plugin.CSCore.Lib.DSP
 {
     /// <summary>
     /// Used to apply a lowshelf-filter to a signal.

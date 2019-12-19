@@ -1,4 +1,4 @@
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     /// <summary>
     /// Defines the blocking strategy of the a flac frame.

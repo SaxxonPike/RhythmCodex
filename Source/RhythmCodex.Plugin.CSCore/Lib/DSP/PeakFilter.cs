@@ -4,7 +4,7 @@
 
 using System;
 
-namespace CSCore.DSP
+namespace RhythmCodex.Plugin.CSCore.Lib.DSP
 {
     /// <summary>
     /// Used to apply an peak-filter to a signal.

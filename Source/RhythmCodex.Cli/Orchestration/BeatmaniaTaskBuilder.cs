@@ -19,6 +19,7 @@ using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Providers;
 using RhythmCodex.Statistics;
 
 namespace RhythmCodex.Cli.Orchestration
@@ -39,6 +40,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IUsedSamplesCounter _usedSamplesCounter;
         private readonly IBeatmaniaPcAudioDecoder _beatmaniaPcAudioDecoder;
         private readonly IEncryptedBeatmaniaPcAudioStreamReader _encryptedBeatmaniaPcAudioStreamReader;
+        private readonly IResamplerProvider _resamplerProvider;
 
         public BeatmaniaTaskBuilder(
             IFileSystem fileSystem,
@@ -55,7 +57,8 @@ namespace RhythmCodex.Cli.Orchestration
             IDjmainChunkStreamReader djmainChunkStreamReader,
             IUsedSamplesCounter usedSamplesCounter,
             IBeatmaniaPcAudioDecoder beatmaniaPcAudioDecoder,
-            IEncryptedBeatmaniaPcAudioStreamReader encryptedBeatmaniaPcAudioStreamReader
+            IEncryptedBeatmaniaPcAudioStreamReader encryptedBeatmaniaPcAudioStreamReader,
+            IResamplerProvider resamplerProvider
         )
             : base(fileSystem, logger)
         {
@@ -72,6 +75,7 @@ namespace RhythmCodex.Cli.Orchestration
             _usedSamplesCounter = usedSamplesCounter;
             _beatmaniaPcAudioDecoder = beatmaniaPcAudioDecoder;
             _encryptedBeatmaniaPcAudioStreamReader = encryptedBeatmaniaPcAudioStreamReader;
+            _resamplerProvider = resamplerProvider;
         }
 
         public ITask CreateDecode1()
@@ -230,7 +234,7 @@ namespace RhythmCodex.Cli.Orchestration
             
             foreach (var sound in sounds.Where(s => usedSamples.Contains((int)s[NumericData.Id])))
             {
-                var outSound = _audioDsp.ApplyEffects(_audioDsp.ApplyResampling(sound, 44100));
+                var outSound = _audioDsp.ApplyEffects(_audioDsp.ApplyResampling(sound, _resamplerProvider.GetBest(), 44100));
                 using (var outStream =
                     OpenWriteMulti(task, file,
                         i => Path.Combine(path,

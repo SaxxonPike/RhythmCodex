@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using CSCore.Codecs.FLAC;
+using RhythmCodex.Plugin.CSCore.Lib.Utils;
 
-namespace CSCore.Codecs.FLAC.Metadata
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC.Metadata
 {
     /// <summary>
     /// Flac metadata factory.

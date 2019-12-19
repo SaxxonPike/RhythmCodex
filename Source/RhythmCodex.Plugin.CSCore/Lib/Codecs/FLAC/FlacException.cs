@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     /// <summary>
     /// FLAC Exception.

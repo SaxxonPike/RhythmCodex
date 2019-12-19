@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using CSCore.Codecs.FLAC;
 
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     internal sealed class FlacPreScan
     {

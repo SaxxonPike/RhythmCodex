@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     internal class FlacSubFrameData
     {

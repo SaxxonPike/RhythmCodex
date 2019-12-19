@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
-namespace CSCore
+namespace RhythmCodex.Plugin.CSCore.Lib
 {
     //Copied from NAudio (including a few modifications)
     /// <summary>

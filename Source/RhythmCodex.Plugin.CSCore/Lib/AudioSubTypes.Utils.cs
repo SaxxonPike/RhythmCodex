@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSCore
+namespace RhythmCodex.Plugin.CSCore.Lib
 {
     /// <summary>
     /// Defines <see cref="AudioSubTypes"/> and provides methods to convert between <see cref="AudioEncoding"/>-values and <see cref="AudioSubTypes"/>-values.

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using CSCore.Codecs.FLAC;
+using RhythmCodex.Plugin.CSCore.Lib.Utils;
 
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     /// <summary>
     /// Represents the header of a <see cref="FlacFrame"/>.
@@ -67,7 +69,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The frame's starting sample number.
         /// </value>
-        /// <remarks>Only available if the <see cref="BlockingStrategy"/> is set to <see cref="FLAC.BlockingStrategy.VariableBlockSize"/>.</remarks>
+        /// <remarks>Only available if the <see cref="BlockingStrategy"/> is set to <see cref="CSCore.Codecs.FLAC.BlockingStrategy.VariableBlockSize"/>.</remarks>
         public long SampleNumber { get; private set; }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace CSCore.Codecs.FLAC
         /// <value>
         /// The frame's number.
         /// </value>
-        /// <remarks>Only available if the <see cref="BlockingStrategy"/> is set to <see cref="FLAC.BlockingStrategy.FixedBlockSize"/>.</remarks>
+        /// <remarks>Only available if the <see cref="BlockingStrategy"/> is set to <see cref="CSCore.Codecs.FLAC.BlockingStrategy.FixedBlockSize"/>.</remarks>
         public int FrameNumber { get; private set; }
 
         /// <summary>

@@ -66,7 +66,7 @@ namespace RhythmCodex.Plugin.SincInterpolation
         {
             var rows = matrix.GetLength(0);
             var cols = matrix.GetLength(1);
-            // the matrix has to be scare
+            // the matrix has to be square
             if (rows == cols)
             {
                 var diagMatrix = new float[rows, cols];

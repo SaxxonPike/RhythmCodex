@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CSCore
+namespace RhythmCodex.Plugin.CSCore.Lib
 {
     //http://msdn.microsoft.com/en-us/library/windows/hardware/ff536383(v=vs.85).aspx
     //http://msdn.microsoft.com/en-us/library/windows/hardware/gg463006.aspx

@@ -1,4 +1,4 @@
-﻿namespace CSCore.Utils
+﻿namespace RhythmCodex.Plugin.CSCore.Lib.Utils
 {
     /// <summary>
     /// This class is based on the CUETools.NET project (see http://sourceforge.net/p/cuetoolsnet/)

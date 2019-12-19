@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC;
+using RhythmCodex.Plugin.CSCore.Lib.Utils;
 
 // ReSharper disable once CheckNamespace
 namespace CSCore.Codecs.FLAC

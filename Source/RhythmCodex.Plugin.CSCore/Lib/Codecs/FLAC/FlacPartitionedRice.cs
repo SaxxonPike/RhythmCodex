@@ -1,6 +1,7 @@
 ﻿using System;
+using RhythmCodex.Plugin.CSCore.Lib.Utils;
 
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     internal static class FlacPartitionedRice
     {

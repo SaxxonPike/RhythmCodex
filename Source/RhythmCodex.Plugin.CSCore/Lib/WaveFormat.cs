@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CSCore
+namespace RhythmCodex.Plugin.CSCore.Lib
 {
     // ReSharper disable ConvertToAutoProperty
     /// <summary>

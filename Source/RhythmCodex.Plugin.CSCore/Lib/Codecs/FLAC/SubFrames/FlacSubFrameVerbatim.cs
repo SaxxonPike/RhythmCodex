@@ -1,5 +1,8 @@
 ﻿// ReSharper disable once CheckNamespace
 
+using RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC;
+using RhythmCodex.Plugin.CSCore.Lib.Utils;
+
 namespace CSCore.Codecs.FLAC
 {
     internal sealed class FlacSubFrameVerbatim : FlacSubFrameBase

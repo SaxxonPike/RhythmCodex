@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSCore
+namespace RhythmCodex.Plugin.CSCore.Lib
 {
     public static partial class AudioSubTypes
     {

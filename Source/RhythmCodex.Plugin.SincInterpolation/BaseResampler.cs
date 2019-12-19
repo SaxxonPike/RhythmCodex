@@ -13,6 +13,7 @@ namespace RhythmCodex.Plugin.SincInterpolation
 
         public IList<float> Resample(IList<float> data, float sourceRate, float targetRate)
         {
+            
             var inputLength = data.Count;
             var ex = new float[inputLength];
             var ey = new float[inputLength];

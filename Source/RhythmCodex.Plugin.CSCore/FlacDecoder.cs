@@ -6,9 +6,11 @@ using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
+using RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.ThirdParty;
 
-namespace RhythmCodex.ThirdParty
+namespace RhythmCodex.Plugin.CSCore
 {
     [Service]
     public class FlacDecoder : IFlacDecoder

@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using CSCore.Codecs.FLAC;
 
-namespace CSCore.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 {
     /// <summary>
     ///     Provides a decoder for decoding flac (Free Lostless Audio Codec) data.
@@ -24,7 +25,7 @@ namespace CSCore.Codecs.FLAC
         private int _frameIndex;
 
         /// <summary>
-        ///     Gets the output <see cref="CSCore.WaveFormat" /> of the decoder.
+        ///     Gets the output <see cref="Lib.WaveFormat" /> of the decoder.
         /// </summary>
         public WaveFormat WaveFormat { get; }
 
