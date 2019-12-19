@@ -1,7 +1,10 @@
 using System.IO;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
+using RhythmCodex.Arc.Converters;
 using RhythmCodex.Arc.Streamers;
+using RhythmCodex.Compression;
 
 namespace RhythmCodex.Arc.Integration
 {
@@ -9,13 +12,46 @@ namespace RhythmCodex.Arc.Integration
     public class ArcDecodeIntegrationTests : BaseIntegrationFixture
     {
         [Test]
-        public void Test1()
+        public void LoadAndDecompress()
         {
             var reader = Resolve<IArcStreamReader>();
-            var data = GetArchiveResource("Arc.ddra-arc.zip").First().Value;
+            var converter = Resolve<IArcFileConverter>();
+            var archive = GetArchiveResource("Arc.ddra-arc.zip");
+            var data = archive["test.arc"];
+            var expected = archive["expected.dds"];
             using var stream = new MemoryStream(data);
 
-            var output = reader.Read(stream).ToList();
+            var output = reader
+                .Read(stream)
+                .Select(converter.Decompress)
+                .ToList();
+
+            var file = output[1];
+            file.Name.Should().Be("data/chara/pl_shadow00/pl_shadow00.dds");
+            file.Data.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        [Explicit("this writes to the desktop, don't bother with this one")]
+        public void DecryptTheWholeDamnUniverse()
+        {
+            var reader = Resolve<IArcStreamReader>();
+            var converter = Resolve<IArcFileConverter>();
+            var fileNames = Directory.GetFiles(@"\\tamarat\ddr\MDX-001-2018102200\contents", "*.arc", SearchOption.AllDirectories);
+
+            foreach (var fileName in fileNames)
+            {
+                var data = File.ReadAllBytes(fileName);
+                using var stream = new MemoryStream(data);
+                
+                var output = reader
+                    .Read(stream)
+                    .Select(converter.Decompress)
+                    .ToList();
+
+                foreach (var file in output)
+                    this.WriteFile(file.Data, Path.Combine("arc", file.Name));
+            }
         }
     }
 }

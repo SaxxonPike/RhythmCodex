@@ -8,10 +8,10 @@ namespace RhythmCodex.Compression
     [Service]
     public class ArcLzDecoder : IArcLzDecoder
     {
-        public byte[] Decode(Stream source)
+        public byte[] Decode(byte[] source)
         {
             var context = new LzDecompress();
-            return context.Decompress(source);
+            return context.Decompress(new MemoryStream(source));
         }
 
         private sealed class LzDecompress
