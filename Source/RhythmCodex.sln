@@ -34,8 +34,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.NVorbis"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.SevenZip", "RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj", "{7A815285-3FAC-4021-B00D-EFE23AE4988C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.SincInterpolation", "RhythmCodex.Plugin.SincInterpolation\RhythmCodex.Plugin.SincInterpolation.csproj", "{5BEDB9BE-1AD1-43FD-8C6F-9176D439B338}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,10 +88,6 @@ Global
 		{7A815285-3FAC-4021-B00D-EFE23AE4988C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A815285-3FAC-4021-B00D-EFE23AE4988C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A815285-3FAC-4021-B00D-EFE23AE4988C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5BEDB9BE-1AD1-43FD-8C6F-9176D439B338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5BEDB9BE-1AD1-43FD-8C6F-9176D439B338}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5BEDB9BE-1AD1-43FD-8C6F-9176D439B338}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5BEDB9BE-1AD1-43FD-8C6F-9176D439B338}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +105,5 @@ Global
 		{81F8EFE9-CF36-4982-BC2C-229961A67286} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 		{D29B83DD-BBBF-4E81-8C35-A5B7F665F4D4} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 		{7A815285-3FAC-4021-B00D-EFE23AE4988C} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
-		{5BEDB9BE-1AD1-43FD-8C6F-9176D439B338} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 	EndGlobalSection
 EndGlobal
