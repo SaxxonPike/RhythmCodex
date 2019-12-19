@@ -4,6 +4,7 @@
         <RootNamespace>RhythmCodex.Data</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
+        <EmbeddedResource Include="Arc\ddra-arc.zip" />
         <EmbeddedResource Include="Beatmania\2dx9th.zip" />
         <EmbeddedResource Include="Beatmania\chart9th.zip" />
         <EmbeddedResource Include="BeatmaniaPs2\bm2dxps2bgm.zip" />
