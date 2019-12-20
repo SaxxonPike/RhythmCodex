@@ -42,7 +42,8 @@ namespace RhythmCodex.Arc.Streamers
                 yield return new ArcFile
                 {
                     Data = reader.ReadBytes(entry.CompressedSize),
-                    IsCompressed = entry.CompressedSize != entry.DecompressedSize,
+                    CompressedSize = entry.CompressedSize,
+                    DecompressedSize = entry.DecompressedSize,
                     Name = name
                 };
             }

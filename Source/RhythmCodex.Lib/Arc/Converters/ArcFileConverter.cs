@@ -19,25 +19,31 @@ namespace RhythmCodex.Arc.Converters
 
         public ArcFile Compress(ArcFile file)
         {
+            var data = file.CompressedSize != file.DecompressedSize
+                ? file.Data.ToArray()
+                : _arcLzEncoder.Encode(file.Data);
+            
             return new ArcFile
             {
                 Name = file.Name,
-                IsCompressed = true,
-                Data = file.IsCompressed
-                    ? file.Data.ToArray()
-                    : _arcLzEncoder.Encode(file.Data)
+                DecompressedSize = file.DecompressedSize,
+                CompressedSize = data.Length,
+                Data = data
             };
         }
 
         public ArcFile Decompress(ArcFile file)
         {
+            var data = file.CompressedSize == file.DecompressedSize
+                ? file.Data.ToArray()
+                : _arcLzDecoder.Decode(file.Data);
+            
             return new ArcFile
             {
                 Name = file.Name,
-                IsCompressed = false,
-                Data = file.IsCompressed
-                    ? _arcLzDecoder.Decode(file.Data)
-                    : file.Data.ToArray()
+                DecompressedSize = data.Length,
+                CompressedSize = data.Length,
+                Data = data
             };
         }
     }

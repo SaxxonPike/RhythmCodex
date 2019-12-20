@@ -6,6 +6,6 @@ namespace RhythmCodex.Arc.Streamers
 {
     public interface IArcStreamWriter
     {
-        void Write(Stream target, IEnumerable<ArcFile> charts);
+        void Write(Stream target, IEnumerable<ArcFile> files);
     }
 }
