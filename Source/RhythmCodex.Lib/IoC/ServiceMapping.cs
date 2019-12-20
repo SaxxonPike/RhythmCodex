@@ -33,5 +33,8 @@ namespace RhythmCodex.IoC
         /// If true, this service should only have a single instance in the container.
         /// </summary>
         public bool SingleInstance { get; }
+
+        public override string ToString() => 
+            $"{Implementation.FullName} <- {string.Join(", ", Services.Select(s => s.FullName))}";
     }
 }
