@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using NUnit.Framework;
+using RhythmCodex.Arc.Converters;
+using RhythmCodex.Arc.Streamers;
+using RhythmCodex.Ddr.Streamers;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania;
 using RhythmCodex.Stepmania.Model;
@@ -14,6 +19,30 @@ namespace RhythmCodex.OneShots
     [TestFixture]
     public class SmOneShots : BaseIntegrationFixture
     {
+        [Test]
+        [Explicit("This is a tool, not a test")]
+        [TestCase(@"\\tamarat\ddr\MDX-001-2018102200\contents\data")]
+        public void ConvertModernDdrData(string basePath)
+        {
+            var ssqPath = Path.Combine(basePath, "mdb_apx", "ssq");
+            var jacketPath = Path.Combine(basePath, "arc", "jacket");
+            var soundPath = Path.Combine(basePath, "sound", "win", "dance");
+            var startupPath = Path.Combine(basePath, "arc", "startup.arc");
+
+            var arcReader = Resolve<IArcStreamReader>();
+            var arcConverter = Resolve<IArcFileConverter>();
+            var musicDbReader = Resolve<IMusicDbXmlStreamReader>();
+
+            using var startupArc = File.OpenRead(startupPath);
+            var startupFiles = arcReader.Read(startupArc);
+            var musicDb = startupFiles.Single(x =>
+                x.Name.Split('/').Last().Equals("musicdb.xml", StringComparison.CurrentCultureIgnoreCase));
+            musicDb = arcConverter.Decompress(musicDb);
+            using var musicDbStream = new MemoryStream(musicDb.Data);
+            var musicDbEntries = musicDbReader.Read(musicDbStream).AsList();
+
+        }
+
         [Test]
         [Explicit("This is a tool, not a test")]
         [TestCase(@"C:\StepMania\Songs\DDR 4TH MIX PLUS")]
@@ -36,12 +65,12 @@ namespace RhythmCodex.OneShots
                 // replace banner
                 var command = GetOrCreateCommand(commands, ChartTag.BannerTag);
                 command.Values.Clear();
-                var bannerImage = images.FirstOrDefault(i => 
-                    (i.Value.Width == 256 && i.Value.Height == 80) || 
+                var bannerImage = images.FirstOrDefault(i =>
+                    (i.Value.Width == 256 && i.Value.Height == 80) ||
                     (i.Value.Width == 192 && i.Value.Height == 55));
                 if (bannerImage.Value != null)
                     command.Values.Add(Path.GetFileName(bannerImage.Key));
-                
+
                 // replace bg
                 command = GetOrCreateCommand(commands, ChartTag.BackgroundTag);
                 command.Values.Clear();
@@ -50,7 +79,7 @@ namespace RhythmCodex.OneShots
                     (i.Value.Width == 640 && i.Value.Height == 480));
                 if (bgImage.Value != null)
                     command.Values.Add(Path.GetFileName(bgImage.Key));
-                
+
                 // replace mp3
                 command = GetOrCreateCommand(commands, ChartTag.MusicTag);
                 command.Values.Clear();
@@ -67,12 +96,12 @@ namespace RhythmCodex.OneShots
                     if (prevMusic.Value != null)
                         command.Values.Add(Path.GetFileName(prevMusic.Key));
                 }
-                
+
                 // replace file name
                 command = GetOrCreateCommand(commands, ChartTag.TitleTag);
                 command.Values.Clear();
                 command.Values.Add(Path.GetFileNameWithoutExtension(smPath));
-                
+
                 using (var stream = File.Open(file, FileMode.Create, FileAccess.Write))
                 {
                     smWriter.Write(stream, commands);
