@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Xact.Model;
@@ -60,8 +61,8 @@ namespace RhythmCodex.Xact.Streamers
                             break;
                         case (int) XwbSegIdx.EntryNames:
                             for (var j = 0; j < sampleCount; j++)
-                                names[j] = new string(memReader.ReadChars(XwbConstants.WavebankEntrynameLength)
-                                    .TakeWhile(c => c != 0).ToArray());
+                                names[j] = memReader.ReadBytes(XwbConstants.WavebankEntrynameLength)
+                                    .TakeWhile(c => c != 0).ToArray().GetString();
                             break;
                         case (int) XwbSegIdx.EntryWaveData:
                             dataChunk = buffer;

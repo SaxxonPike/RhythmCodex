@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using NUnit.Framework;
-using RhythmCodex.Arc.Converters;
-using RhythmCodex.Arc.Streamers;
-using RhythmCodex.Ddr.Streamers;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania;
 using RhythmCodex.Stepmania.Model;
@@ -19,30 +14,6 @@ namespace RhythmCodex.OneShots
     [TestFixture]
     public class SmOneShots : BaseIntegrationFixture
     {
-        [Test]
-        [Explicit("This is a tool, not a test")]
-        [TestCase(@"\\tamarat\ddr\MDX-001-2018102200\contents\data")]
-        public void ConvertModernDdrData(string basePath)
-        {
-            var ssqPath = Path.Combine(basePath, "mdb_apx", "ssq");
-            var jacketPath = Path.Combine(basePath, "arc", "jacket");
-            var soundPath = Path.Combine(basePath, "sound", "win", "dance");
-            var startupPath = Path.Combine(basePath, "arc", "startup.arc");
-
-            var arcReader = Resolve<IArcStreamReader>();
-            var arcConverter = Resolve<IArcFileConverter>();
-            var musicDbReader = Resolve<IMusicDbXmlStreamReader>();
-
-            using var startupArc = File.OpenRead(startupPath);
-            var startupFiles = arcReader.Read(startupArc);
-            var musicDb = startupFiles.Single(x =>
-                x.Name.Split('/').Last().Equals("musicdb.xml", StringComparison.CurrentCultureIgnoreCase));
-            musicDb = arcConverter.Decompress(musicDb);
-            using var musicDbStream = new MemoryStream(musicDb.Data);
-            var musicDbEntries = musicDbReader.Read(musicDbStream).AsList();
-
-        }
-
         [Test]
         [Explicit("This is a tool, not a test")]
         [TestCase(@"C:\StepMania\Songs\DDR 4TH MIX PLUS")]

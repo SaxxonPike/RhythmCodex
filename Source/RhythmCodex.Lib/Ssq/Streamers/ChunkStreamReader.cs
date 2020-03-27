@@ -10,6 +10,13 @@ namespace RhythmCodex.Ssq.Streamers
         public SsqChunk Read(Stream stream)
         {
             var reader = new BinaryReader(stream);
+
+            if (stream.CanSeek)
+            {
+                if (stream.Position >= stream.Length)
+                    return null;
+            }
+            
             var length = reader.ReadInt32();
 
             if (length == 0)

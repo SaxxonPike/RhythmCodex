@@ -75,13 +75,14 @@ namespace RhythmCodex.Stepmania.Converters
         public IList<Command> Encode(ChartSet chartSet)
         {
             var chartList = chartSet.Charts.AsList();
+            var chartMetadata = chartSet.Metadata ?? new Metadata();
 
             var metaCommands = TagsToEncode
                 .Select(s => new Command
                 {
                     Name = s,
-                    Values = chartSet.Metadata[s] != null
-                        ? new[] {chartSet.Metadata?[s]}
+                    Values = chartMetadata[s] != null
+                        ? new[] {chartMetadata[s]}
                         : GetDefault(s, chartSet)
                 });
             

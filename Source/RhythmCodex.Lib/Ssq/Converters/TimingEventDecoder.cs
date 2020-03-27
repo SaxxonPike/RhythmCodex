@@ -18,7 +18,8 @@ namespace RhythmCodex.Ssq.Converters
                 var timings = timingChunk.Timings;
                 var ticksPerSecond = timingChunk.Rate;
 
-                var orderedTimings = timings
+                var deduplicatedOffsetTimings = timings.GroupBy(x => x.LinearOffset).Select(x => x.OrderBy(y => y.MetricOffset).First());
+                var orderedTimings = deduplicatedOffsetTimings
                     .OrderBy(t => t.LinearOffset)
                     .ThenBy(t => t.MetricOffset)
                     .ToArray();

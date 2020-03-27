@@ -61,18 +61,18 @@ namespace RhythmCodex.Ssq
             if (data[11] != 0)
                 return null;
 
-            if (data[data.Length - 1] != 0)
-                return null;
-
-            if (data[data.Length - 2] != 0)
-                return null;
-
-            if (data[data.Length - 3] != 0)
-                return null;
-
-            if (data[data.Length - 4] != 0)
-                return null;
-            
+            // if (data[data.Length - 1] != 0)
+            //     return null;
+            //
+            // if (data[data.Length - 2] != 0)
+            //     return null;
+            //
+            // if (data[data.Length - 3] != 0)
+            //     return null;
+            //
+            // if (data[data.Length - 4] != 0)
+            //     return null;
+            //
             return new HeuristicResult(this);
         }
 
