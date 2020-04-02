@@ -24,7 +24,7 @@ namespace RhythmCodex.Stepmania.Converters
                 events.Select(ev =>
                 {
                     var key = _numberFormatter.Format(ev.Offset * 4, places);
-                    var value = _numberFormatter.Format(ev.Value, places);
+                    var value = _numberFormatter.Format(BigRational.IsInfinity(ev.Value) ? (ev.Offset == 0 ? 99999 : -1) : ev.Value, places);
                     return $"{key}={value}";
                 }));
         }

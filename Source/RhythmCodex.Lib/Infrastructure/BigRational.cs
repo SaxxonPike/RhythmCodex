@@ -214,8 +214,27 @@ namespace RhythmCodex.Infrastructure
         /// <summary>
         ///     Create a BigRational with the specified floating point value.
         /// </summary>
-        public BigRational(double value) : this((decimal)value)
+        public BigRational(double value)
         {
+            Numerator = BigInteger.Zero;
+            Denominator = BigInteger.One;
+            
+            if (double.IsPositiveInfinity(value))
+            {
+                Numerator = BigInteger.One;
+                Denominator = BigInteger.Zero;
+            }
+            else if (double.IsNegativeInfinity(value))
+            {
+                Numerator = BigInteger.MinusOne;
+                Denominator = BigInteger.Zero;
+            }
+            else
+            {
+                var ratio = Init((decimal) value);
+                Numerator = ratio.Item1;
+                Denominator = ratio.Item2;
+            }
         }
 
         /// <summary>
@@ -223,6 +242,19 @@ namespace RhythmCodex.Infrastructure
         /// </summary>
         public BigRational(decimal value)
         {
+            Numerator = BigInteger.Zero;
+            Denominator = BigInteger.One;
+            
+            var ratio = Init(value);
+            Numerator = ratio.Item1;
+            Denominator = ratio.Item2;
+        }
+
+        private (BigInteger, BigInteger) Init(decimal value)
+        {
+            BigInteger numerator;
+            BigInteger denominator;
+
             var bits = decimal.GetBits(value);
             if (bits == null || bits.Length != 4 || (bits[3] & ~(DecimalSignMask | DecimalScaleMask)) != 0 ||
                 (bits[3] & DecimalScaleMask) > 28 << 16)
@@ -230,33 +262,33 @@ namespace RhythmCodex.Infrastructure
 
             if (value == decimal.Zero)
             {
-                this = Zero;
-                return;
+                return (BigInteger.Zero, BigInteger.One);
             }
 
             // build up the numerator
             var ul = ((ulong) (uint) bits[2] << 32) | (uint) bits[1]; // (hi    << 32) | (mid)
-            Numerator = (new BigInteger(ul) << 32) | (uint) bits[0]; // (hiMid << 32) | (low)
+            numerator = (new BigInteger(ul) << 32) | (uint) bits[0]; // (hiMid << 32) | (low)
 
             var isNegative = (bits[3] & DecimalSignMask) != 0;
             if (isNegative)
-                Numerator = BigInteger.Negate(Numerator);
+                numerator = BigInteger.Negate(Numerator);
 
             // build up the denominator
             var scale = (bits[3] & DecimalScaleMask) >> 16; // 0-28, power of 10 to divide numerator by
-            Denominator = BigInteger.Pow(10, scale);
+            denominator = BigInteger.Pow(10, scale);
 
-            var simplified = Simplify(Numerator, Denominator);
-            (Numerator, Denominator) = simplified;
+            var simplified = Simplify(numerator, denominator);
+            (numerator, denominator) = simplified;
+            return (numerator, denominator);
         }
 
         /// <summary>
         ///     Create a BigRational with the specified numerator and denominator.
         /// </summary>
         /// <exception cref="DivideByZeroException">Thrown when the denominator is zero.</exception>
-        public BigRational(BigInteger numerator, BigInteger denominator)
+        public BigRational(BigInteger numerator, BigInteger denominator, bool allowZeroDenominator = false)
         {
-            if (denominator.Sign == 0)
+            if (!allowZeroDenominator && denominator.Sign == 0)
                 throw new DivideByZeroException();
 
             if (numerator.Sign == 0)
@@ -276,8 +308,11 @@ namespace RhythmCodex.Infrastructure
                 Denominator = denominator;
             }
 
-            var simplified = Simplify(Numerator, Denominator);
-            (Numerator, Denominator) = simplified;
+            if (denominator.Sign != 0)
+            {
+                var simplified = Simplify(Numerator, Denominator);
+                (Numerator, Denominator) = simplified;
+            }
         }
 
         /// <summary>
@@ -666,6 +701,8 @@ namespace RhythmCodex.Infrastructure
             return new BigRational(r1.Numerator * r2.Denominator % (r1.Denominator * r2.Numerator),
                 r1.Denominator * r2.Denominator);
         }
+        
+        public static BigRational PositiveInfinity => new BigRational(BigInteger.One, BigInteger.Zero, true);
 
         #endregion Operator Overloads
 
@@ -731,6 +768,9 @@ namespace RhythmCodex.Infrastructure
         // values that do not fit into this range are returned as +/-Infinity
         public static explicit operator double(BigRational value)
         {
+            if (IsInfinity(value))
+                return value.Sign == 1 ? double.PositiveInfinity : double.NegativeInfinity;
+            
             if (SafeCastToDouble(value.Numerator) && SafeCastToDouble(value.Denominator))
                 return (double) value.Numerator / (double) value.Denominator;
 

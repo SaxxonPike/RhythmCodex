@@ -33,13 +33,19 @@ namespace RhythmCodex.Ddr.Integration
 
             var ssqReader = Resolve<ISsqStreamReader>();
             var ssqDecoder = Resolve<ISsqDecoder>();
-            var chartSets = table.Select((e, i) => new ChartSet
-            { 
-                Charts = ssqDecoder.Decode(ssqReader.Read(new MemoryStream(e.Data))),
-                Metadata = new Metadata
+            var chartSets = table.Select((e, i) =>
+            {
+                var charts = ssqDecoder.Decode(ssqReader.Read(new MemoryStream(e.Data)));
+
+                return new ChartSet
                 {
-                    [ChartTag.MusicTag] = $"{i:D4}.wav"
-                }
+                    Charts = charts,
+                    Metadata = new Metadata
+                    {
+                        [ChartTag.MusicTag] = $"{i:D4}.wav",
+                        [ChartTag.OffsetTag] = $"{(decimal) -charts.First()[NumericData.LinearOffset]}"
+                    }
+                };
             }).ToList();
 
             var smEncoder = Resolve<ISmEncoder>();

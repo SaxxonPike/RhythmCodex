@@ -53,14 +53,23 @@ namespace RhythmCodex.Stepmania.Converters
             _grooveRadarEncoder = grooveRadarEncoder;
             _timedCommandStringEncoder = timedCommandStringEncoder;
         }
-        
+
         private string[] GetDefault(string name, ChartSet chartSet)
         {
             switch (name)
             {
                 case ChartTag.DisplayBpmTag:
                 {
-                    var bpms = GetBpmEvents(chartSet.Charts).Select(e => e.Value).AsList();
+                    var bpms = GetBpmEvents(chartSet.Charts)
+                        .Select(e => (double) e.Value)
+                        .Where(e => !double.IsInfinity(e))
+                        .Select(e => Math.Round(e))
+                        .AsList();
+
+                    IList<double> validBpms = bpms.Where(e => e > 0 && e < 1000).ToList();
+                    if (!validBpms.Any())
+                        validBpms = bpms;
+
                     var min = Math.Round((decimal) bpms.Min());
                     var max = Math.Round((decimal) bpms.Max());
                     return (min == max)
@@ -85,7 +94,7 @@ namespace RhythmCodex.Stepmania.Converters
                         ? new[] {chartMetadata[s]}
                         : GetDefault(s, chartSet)
                 });
-            
+
             var timingCommands = GetTimingCommands(chartList);
 
             var noteCommands = chartList.Select(chart => new Command
@@ -145,11 +154,11 @@ namespace RhythmCodex.Stepmania.Converters
                     });
                 }
             }
-            
+
             return bpms
                 .Where(ev => ev[NumericData.MetricOffset] >= 0)
                 .Select(ev =>
-                    new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value});            
+                    new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value});
         }
 
         private IEnumerable<TimedEvent> GetStopEvents(IEnumerable<IChart> charts)
@@ -161,7 +170,7 @@ namespace RhythmCodex.Stepmania.Converters
                 .Select(ev =>
                     new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Stop].Value});
         }
-        
+
         private IEnumerable<Command> GetTimingCommands(IList<IChart> charts)
         {
             yield return new Command

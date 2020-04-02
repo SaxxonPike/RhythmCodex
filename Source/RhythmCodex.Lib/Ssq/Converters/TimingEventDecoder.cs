@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -18,8 +19,7 @@ namespace RhythmCodex.Ssq.Converters
                 var timings = timingChunk.Timings;
                 var ticksPerSecond = timingChunk.Rate;
 
-                var deduplicatedOffsetTimings = timings.GroupBy(x => x.LinearOffset).Select(x => x.OrderBy(y => y.MetricOffset).First());
-                var orderedTimings = deduplicatedOffsetTimings
+                var orderedTimings = timings
                     .OrderBy(t => t.LinearOffset)
                     .ThenBy(t => t.MetricOffset)
                     .ToArray();
@@ -45,6 +45,8 @@ namespace RhythmCodex.Ssq.Converters
 
                     if (deltaOffset == 0)
                         ev[NumericData.Stop] = deltaTicks / ticksPerSecond;
+                    else if (deltaTicks == 0)
+                        ev[NumericData.Bpm] = BigRational.PositiveInfinity;
                     else
                         ev[NumericData.Bpm] =
                             deltaOffset / SsqConstants.MeasureLength / (deltaTicks / ticksPerSecond / 240);
