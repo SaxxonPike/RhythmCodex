@@ -10,11 +10,11 @@ namespace RhythmCodex.Ddr.Converters
     [Service]
     public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
     {
-        public IList<Ddr573DatabaseEntry> Decode(ReadOnlySpan<byte> database)
+        public IList<DdrDatabaseEntry> Decode(ReadOnlySpan<byte> database)
         {
             var offset = 0;
             var length = database.Length;
-            var result = new List<Ddr573DatabaseEntry>();
+            var result = new List<DdrDatabaseEntry>();
             var shortNameOffsets = new Dictionary<int, int>();
             var longNameOffsets = new Dictionary<int, int>();
             var index = 0;
@@ -27,7 +27,7 @@ namespace RhythmCodex.Ddr.Converters
                 if (id == string.Empty)
                     break;
 
-                var entry = new Ddr573DatabaseEntry
+                var entry = new DdrDatabaseEntry
                 {
                     Index = index,
                     Id = id,
