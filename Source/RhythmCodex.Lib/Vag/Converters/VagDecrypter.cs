@@ -28,7 +28,10 @@ namespace RhythmCodex.Vag.Converters
                 if (!enabled)
                 {
                     for (var i = 2; i < 16; i++)
+                    {
                         output[outOffset++] = 0;
+                        output[outOffset++] = 0;
+                    }
                 }
                 else
                 {

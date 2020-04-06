@@ -22,7 +22,7 @@ namespace RhythmCodex.Ddr.Streamers
                 throw new Exception("Can't read enough bytes into the buffer");
             var offset = BufferSize;
 
-            bool IsName(byte[] buff, int offs)
+            static bool IsName(byte[] buff, int offs)
             {
                 return buff[offs].IsLetter() &&
                        buff[offs + 1].IsLetter() &&
@@ -32,9 +32,10 @@ namespace RhythmCodex.Ddr.Streamers
                        buff[offs + 5] == 0;
             }
 
-            string GetName(byte[] buff, int offs)
+            static string GetName(byte[] buff, int offs)
             {
-                return buff.AsSpan(offs, 6).ToArray().TakeWhile(c => c != 0).ToArray().GetString();
+                var name = buff.AsSpan(offs, 6).ToArray().TakeWhile(c => c != 0).ToArray().GetString();
+                return name;
             }
 
             while (offset < length)

@@ -53,12 +53,18 @@ namespace RhythmCodex.Ddr.Converters
                 return null;
 
             var bpmOffset = 0;
-            while (Bitter.ToInt32(record, 0x10 + bpmOffset) == 0)
-                bpmOffset += 4;
+            if (Bitter.ToInt32(record, 0x14) != -1)
+            {
+                while (Bitter.ToInt32(record, 0x10 + bpmOffset) == 0)
+                    bpmOffset += 4;
+            }
 
             var difficultyOffset = bpmOffset;
-            while (Bitter.ToInt32(record, 0x24 + difficultyOffset) == 0)
-                difficultyOffset += 4;
+            if (bpmOffset > 0)
+            {
+                while (Bitter.ToInt32(record, 0x24 + difficultyOffset) == 0)
+                    difficultyOffset += 4;
+            }
 
             return new DdrDatabaseEntry
             {

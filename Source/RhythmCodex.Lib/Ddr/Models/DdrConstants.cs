@@ -1622,7 +1622,8 @@ namespace RhythmCodex.Ddr.Models
             "selc", 
             "sele", 
             "stae", 
-            "staf"
+            "staf",
+            "titl"
         };
     }
 }

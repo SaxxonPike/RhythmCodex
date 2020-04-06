@@ -1,9 +1,8 @@
-using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Converters;
+using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Processors;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Meta.Models;
@@ -21,11 +20,19 @@ namespace RhythmCodex.Ddr.Integration
 {
     public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
     {
+        // private string ExecutablePath => Path.Combine("K:", "SLUS_207.11");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "max2usa");
+
+        private string ExecutablePath => Path.Combine("K:", "SLUS_204.37");
+        private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        private string OutPath => Path.Combine("ddr-out", "maxusa");
+        
         [Test]
         [Explicit]
         public void Test0()
         {
-            using var mdSource = new FileStream(Path.Combine("L:", "SLUS_207.11"), FileMode.Open, FileAccess.Read);
+            using var mdSource = new FileStream(ExecutablePath, FileMode.Open, FileAccess.Read);
             var metadataDecoder = Resolve<IDdrPs2MetadataTableStreamReader>();
             var dbDecoder = Resolve<IDdrPs2DatabaseDecoder>();
             var rawMetaDatas = metadataDecoder.Get(mdSource, mdSource.Length).Select(dbDecoder.Decode).ToList();
@@ -33,55 +40,46 @@ namespace RhythmCodex.Ddr.Integration
         
         [Test]
         [Explicit]
-        public void test1()
+        public void Test_Export_SM()
         {
-            using var mdSource = new FileStream(Path.Combine("I:", "SLUS_209.16"), FileMode.Open, FileAccess.Read);
+            using var mdSource = new FileStream(ExecutablePath, FileMode.Open, FileAccess.Read);
             var metadataDecoder = Resolve<IDdrPs2MetadataTableStreamReader>();
             var dbDecoder = Resolve<IDdrPs2DatabaseDecoder>();
             var rawMetaDatas = metadataDecoder.Get(mdSource, mdSource.Length).Select(dbDecoder.Decode).ToList();
 
-            using var source = new FileStream(Path.Combine("I:", "data", "filedata.bin"), FileMode.Open, FileAccess.Read);
+            using var source = new FileStream(FileDataPath, FileMode.Open, FileAccess.Read);
             var streamer = Resolve<IDdrPs2FileDataStepStreamReader>();
             var output = streamer.Read(source, source.Length);
 
             var tableDecoder = Resolve<IDdrPs2FileDataTableDecoder>();
             var table = tableDecoder.Decode(output);
 
-            var metadataDecorator = Resolve<IDdrPs2MetadataDecorator>();
+            var metadataDecorator = Resolve<IDdrMetadataDecorator>();
             var ssqReader = Resolve<ISsqStreamReader>();
             var ssqDecoder = Resolve<ISsqDecoder>();
             var chartSets = table.Select((e, i) =>
             {
                 var charts = ssqDecoder.Decode(ssqReader.Read(new MemoryStream(e.Data)));
                 var idMd = rawMetaDatas.FirstOrDefault(md => md.InternalId == i + 1);
-                var id = idMd?.Id ?? $"{i:D4}";
                 
                 var chartSet = new ChartSet
                 {
                     Charts = charts,
-                    Metadata = new Metadata
-                    {
-                        [ChartTag.TitleTag] = id,
-                        [ChartTag.MusicTag] = $"{id}.wav",
-                        [ChartTag.OffsetTag] = $"{(decimal) -charts.First()[NumericData.LinearOffset]}",
-                        [ChartTag.DisplayBpmTag] = $"{idMd.MinBpm}:{idMd.MaxBpm}",
-                        [ChartTag.BannerTag] = $"{id}_th.png",
-                        [ChartTag.BackgroundTag] = $"{id}_bk.png"
-                    }
+                    Metadata = new Metadata()
                 };
                 
-                metadataDecorator.Decorate(chartSet, idMd);
+                metadataDecorator.Decorate(chartSet, idMd, new MetadataDecoratorFileExtensions());
                 return chartSet;
             }).ToList();
 
             var smEncoder = Resolve<ISmEncoder>();
             var smWriter = Resolve<ISmStreamWriter>();
-            var index = 6;
+            var index = 0;
 
             foreach (var cs in chartSets)
             {
                 var commands = smEncoder.Encode(cs);
-                using var stream = this.OpenWrite(Path.Combine("ddr-out", "extreme", cs.Metadata[ChartTag.TitleTag], $"{index:D4}.sm"));
+                using var stream = this.OpenWrite(Path.Combine(OutPath, cs.Metadata[ChartTag.TitleTag], $"{index:D4}.sm"));
                 smWriter.Write(stream, commands);
                 stream.Flush();
                 index++;
@@ -90,13 +88,13 @@ namespace RhythmCodex.Ddr.Integration
 
         [Test]
         [Explicit]
-        public void test2()
+        public void Test_Export_WAV()
         {
-            using var mdSource = new FileStream(Path.Combine("I:", "SLUS_209.16"), FileMode.Open, FileAccess.Read);
+            using var mdSource = new FileStream(ExecutablePath, FileMode.Open, FileAccess.Read);
             var md = Resolve<IDdrPs2MetadataTableStreamReader>();
             var metaDatas = md.Get(mdSource, mdSource.Length);
 
-            using var source = new FileStream(Path.Combine("I:", "data", "filedata.bin"), FileMode.Open, FileAccess.Read);
+            using var source = new FileStream(FileDataPath, FileMode.Open, FileAccess.Read);
             var remaining = source.Length;
             var reader = new BinaryReader(source);
             var heuristic = new SvagHeuristic(Resolve<IVagStreamReader>());
@@ -114,7 +112,7 @@ namespace RhythmCodex.Ddr.Integration
                 source.Position = oldPosition;
                 var svag = heuristic.Read(match, source);
                 var decoded = decoder.Decode(svag);
-                this.WriteSound(decoded, Path.Combine("ddr-out", "extreme", $"{index:D4}.wav"));
+                this.WriteSound(decoded, Path.Combine(OutPath, $"{index:D4}.wav"));
                 index++;
                 
                 source.Position = oldPosition + 0x800;
