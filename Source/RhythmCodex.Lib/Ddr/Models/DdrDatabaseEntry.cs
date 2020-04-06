@@ -3,7 +3,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Ddr.Models
 {
     [Model]
-    public class Ddr573DatabaseEntry
+    public class DdrDatabaseEntry
     {
         public int Index { get; set; }
         public string Id { get; set; }

@@ -59,6 +59,11 @@ namespace RhythmCodex.Beatmania.Heuristics
             };
         }
 
+        public HeuristicResult Match(Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
         public int MinimumLength => 0x10;
 
         public VagChunk Read(HeuristicResult result, Stream stream)

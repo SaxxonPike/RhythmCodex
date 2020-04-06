@@ -7,16 +7,22 @@ namespace RhythmCodex.Vag.Converters
     [Service]
     public class VagDecrypter : IVagDecrypter
     {
-        public void Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagState state)
+        public int Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagState state)
         {
             var inOffset = 0;
             var outOffset = 0;
             var last0 = state.Prev0;
             var last1 = state.Prev1;
             var enabled = state.Enabled;
+            var maxLength = Math.Min(length, input.Length - 0x0F);
 
             while (inOffset < length)
             {
+                if (inOffset >= maxLength)
+                {
+                    enabled = false;
+                }
+
                 var flags = input[inOffset + 1];
 
                 if (!enabled)
@@ -80,6 +86,8 @@ namespace RhythmCodex.Vag.Converters
             state.Prev0 = last0;
             state.Prev1 = last1;
             state.Enabled = enabled;
+
+            return outOffset;
         }
     }
 }

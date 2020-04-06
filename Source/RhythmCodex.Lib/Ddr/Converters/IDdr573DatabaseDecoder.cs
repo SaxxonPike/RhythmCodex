@@ -6,7 +6,7 @@ namespace RhythmCodex.Ddr.Converters
 {
     public interface IDdr573DatabaseDecoder
     {
-        IList<Ddr573DatabaseEntry> Decode(ReadOnlySpan<byte> database);
+        IList<DdrDatabaseEntry> Decode(ReadOnlySpan<byte> database);
         int FindRecordSize(ReadOnlySpan<byte> database);
     }
 }

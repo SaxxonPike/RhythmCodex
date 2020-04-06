@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -38,6 +39,11 @@ namespace RhythmCodex.Beatmania.Heuristics
                 return null;
 
             return new HeuristicResult(this);
+        }
+
+        public HeuristicResult Match(Stream stream)
+        {
+            throw new NotImplementedException();
         }
 
         public int MinimumLength => 0x10;

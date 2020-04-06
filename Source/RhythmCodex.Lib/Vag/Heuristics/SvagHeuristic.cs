@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Vag.Converters;
 using RhythmCodex.Vag.Models;
 using RhythmCodex.Vag.Streamers;
 
@@ -92,6 +91,11 @@ namespace RhythmCodex.Vag.Heuristics
                 LoopStart = words[5],
                 LoopEnd = words[6]
             };
+        }
+
+        public HeuristicResult Match(Stream stream)
+        {
+            throw new NotImplementedException();
         }
 
         public int MinimumLength => 0x1C;

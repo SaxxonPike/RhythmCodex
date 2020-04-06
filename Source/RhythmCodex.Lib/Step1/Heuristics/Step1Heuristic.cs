@@ -76,6 +76,11 @@ namespace RhythmCodex.Step1.Heuristics
             return new HeuristicResult(this);
         }
 
+        public HeuristicResult Match(Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
         public int MinimumLength => 0;
         
         public IEnumerable<Step1Chunk> Read(HeuristicResult heuristicResult, Stream stream)

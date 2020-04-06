@@ -22,7 +22,7 @@ namespace RhythmCodex.Ddr.Converters
         {
             var result = new List<DdrPs2FileDataTableEntry>();
             var stream = new MemoryStream(data);
-            var offsets = MemoryMarshal.Cast<byte, int>(data);
+            var offsets = MemoryMarshal.Cast<byte, int>(data.AsSpan(0, data.Length / 4 * 4));
             var offsetCount = offsets.Length;
             for (var i = 0; i < offsetCount; i++)
             {
@@ -36,6 +36,7 @@ namespace RhythmCodex.Ddr.Converters
                 stream.Position = offsets[i];
                 result.Add(new DdrPs2FileDataTableEntry
                 {
+                    Index = i,
                     Data = _bemaniLzDecoder.Decode(stream)
                 });
             }
