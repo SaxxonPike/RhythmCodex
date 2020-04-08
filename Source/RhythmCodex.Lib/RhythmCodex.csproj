@@ -13,4 +13,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Digital573\Providers\Digital573AudioKeyDatabase.zip" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tcb\Streamers" />
+  </ItemGroup>
 </Project>

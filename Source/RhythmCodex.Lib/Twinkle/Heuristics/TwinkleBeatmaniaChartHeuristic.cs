@@ -12,26 +12,28 @@ namespace RhythmCodex.Twinkle.Heuristics
         public string Description { get; }
 
         public string FileExtension { get; }
-
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        
+        public HeuristicResult Match(IHeuristicReader reader)
         {
-            var offset = 0;
-            var length = data.Length & ~0x3;
             var noteCountMode = true;
             var hasBpm = false;
             var hasEnd = false;
             var hasTerminator = false;
+            var evData = new byte[4];
 
-            while (offset < length)
+            while (true)
             {
-                var eventOffset = Bitter.ToInt16S(data, offset);
-                var eventValue = data[offset + 2];
-                var eventCommand = data[offset + 3];
+                if (reader.Read(evData, 0, 4) < 4)
+                    break;
+
+                var eventOffset = Bitter.ToInt16S(evData);
+                var eventValue = evData[2];
+                var eventCommand = evData[3];
                 var eventParameter = eventCommand >> 4;
                 var eventType = eventCommand & 0xF;
 
                 // empty event = invalid
-                if (Bitter.ToInt32(data, offset) == 0)
+                if (Bitter.ToInt32(evData) == 0)
                     return null;
                 
                 // positive event offsets only
@@ -48,10 +50,7 @@ namespace RhythmCodex.Twinkle.Heuristics
                 
                 // skip the rest of processing if in note count mode
                 if (noteCountMode)
-                {
-                    offset += 4;
                     continue;
-                }
 
                 // terminator bytes
                 if (eventOffset == 0x7FFF)
@@ -65,8 +64,6 @@ namespace RhythmCodex.Twinkle.Heuristics
                     hasEnd = true;
                 else if (eventType == 4 && eventValue + (eventParameter << 8) != 0)
                     hasBpm = true;
-
-                offset += 4;
             }
 
             if (!(hasBpm && hasEnd && hasTerminator))
@@ -74,13 +71,6 @@ namespace RhythmCodex.Twinkle.Heuristics
             
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 12;
     }
 
     public interface ITwinkleBeatmaniaChartHeuristic : IHeuristic

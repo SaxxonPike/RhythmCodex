@@ -12,11 +12,13 @@ namespace RhythmCodex.Mjpeg.Heuristics
         public string Description => "MJPEG Movie";
         public string FileExtension => "mjpg";
 
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        public HeuristicResult Match(IHeuristicReader reader)
         {
+            var data = reader.Read(0x4);
+
             if (data[0x0000] == 0x00 && data[0x0001] == 0x00)
                 return null;
-            
+
             if ((data[0x0000] & 0x1F) != 0)
                 return null;
 
@@ -29,29 +31,26 @@ namespace RhythmCodex.Mjpeg.Heuristics
             if (data[0x0003] != 0x38)
                 return null;
 
-            if (data[0x2000] == 0x00 && data[0x2001] == 0x00)
-                return null;
-
-            if ((data[0x2000] & 0x1F) != 0)
-                return null;
-
-            if (data[0x2001] >= 0x20)
-                return null;
-
-            if (data[0x2002] != 0x00)
-                return null;
-
-            if (data[0x2003] != 0x38)
-                return null;
+            reader.Skip(0x1FFC);
             
+            var data2 = reader.Read(0x4);
+
+            if (data2[0x0000] == 0x00 && data2[0x0001] == 0x00)
+                return null;
+
+            if ((data2[0x0000] & 0x1F) != 0)
+                return null;
+
+            if (data2[0x0001] >= 0x20)
+                return null;
+
+            if (data2[0x0002] != 0x00)
+                return null;
+
+            if (data2[0x0003] != 0x38)
+                return null;
+
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 0x4000;
     }
 }

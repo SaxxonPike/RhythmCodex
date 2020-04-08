@@ -24,9 +24,10 @@ namespace RhythmCodex.Tim
 
         public string Description => "Playstation TIM image";
         public string FileExtension => "TIM";
-        
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+
+        public HeuristicResult Match(IHeuristicReader reader)
         {
+            var data = reader.Read(8);
             if (data.Length < 8)
                 return null;
 
@@ -58,12 +59,5 @@ namespace RhythmCodex.Tim
             
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 8;
     }
 }

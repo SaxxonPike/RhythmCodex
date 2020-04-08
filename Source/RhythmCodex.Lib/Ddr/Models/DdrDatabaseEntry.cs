@@ -26,5 +26,10 @@ namespace RhythmCodex.Ddr.Models
         public int[] Radar4 { get; set; }
         public string LongName { get; set; }
         public string ShortName { get; set; }
+
+        public override string ToString()
+        {
+            return $"db[{Index:D4}] Id:{Id} Long:{LongName ?? ""} Short:{ShortName ?? ""}";
+        }
     }
 }

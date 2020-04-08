@@ -21,27 +21,29 @@ namespace RhythmCodex.Step1.Heuristics
         
         public string Description => "DDR Step Sequence (older)";
         public string FileExtension => "step";
-        
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+
+        public HeuristicResult Match(IHeuristicReader reader)
         {
             // Must have at least 4 bytes
-            if (data.Length < 4)
+            if (reader.Length == null || reader.Length < 4)
                 return null;
             
             // Must be divisible by 4
-            if ((data.Length & 0x3) != 0)
+            if ((reader.Length & 0x3) != 0)
                 return null;
+
+            var data = reader.Read((int) reader.Length);
             
             // Make sure each chunk length makes sense
             var thisOffset = 0;
-            while (thisOffset < data.Length)
+            while (thisOffset < reader.Length)
             {
                 var thisChunkLength = Bitter.ToInt32(data, thisOffset);
                 if (thisChunkLength == 0)
                     break;
                 if (thisChunkLength < 0)
                     return null;
-                if (thisOffset + thisChunkLength >= data.Length)
+                if (thisOffset + thisChunkLength >= reader.Length)
                     return null;
                 if ((thisOffset & 0x3) != 0)
                     return null;
@@ -52,7 +54,7 @@ namespace RhythmCodex.Step1.Heuristics
             var timingChunkLength = Bitter.ToInt32(data);
             if (timingChunkLength < 20)
                 return null;
-            if (timingChunkLength >= data.Length)
+            if (timingChunkLength >= reader.Length)
                 return null;
             if ((timingChunkLength & 0x3) != 0)
                 return null;
@@ -76,13 +78,6 @@ namespace RhythmCodex.Step1.Heuristics
             return new HeuristicResult(this);
         }
 
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 0;
-        
         public IEnumerable<Step1Chunk> Read(HeuristicResult heuristicResult, Stream stream)
         {
             return _step1StreamReader.Read(stream);

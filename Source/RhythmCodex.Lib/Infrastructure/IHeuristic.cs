@@ -8,8 +8,6 @@ namespace RhythmCodex.Infrastructure
     {
         string Description { get; }
         string FileExtension { get; }
-        HeuristicResult Match(ReadOnlySpan<byte> data);
-        HeuristicResult Match(Stream stream);
-        int MinimumLength { get; }
+        HeuristicResult Match(IHeuristicReader reader);
     }
 }

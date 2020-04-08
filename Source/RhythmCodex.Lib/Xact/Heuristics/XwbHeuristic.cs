@@ -11,9 +11,10 @@ namespace RhythmCodex.Xact.Heuristics
     {
         public string Description => "Xbox Wave Bank";
         public string FileExtension => "xwb";
-        
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+
+        public HeuristicResult Match(IHeuristicReader reader)
         {
+            var data = reader.Read(4);
             if (data.Length < 4)
                 return null;
 
@@ -31,12 +32,5 @@ namespace RhythmCodex.Xact.Heuristics
             
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 4;
     }
 }

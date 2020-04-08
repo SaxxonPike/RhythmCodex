@@ -5,6 +5,7 @@ using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Processors;
 using RhythmCodex.Ddr.Streamers;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Streamers;
@@ -20,13 +21,43 @@ namespace RhythmCodex.Ddr.Integration
 {
     public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
     {
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_621.54");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "maxjpn");
+
+        // private string ExecutablePath => Path.Combine("K:", "SLUS_204.37");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "maxusa");
+
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_652.77");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "max2jpn");
+        
         // private string ExecutablePath => Path.Combine("K:", "SLUS_207.11");
         // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
         // private string OutPath => Path.Combine("ddr-out", "max2usa");
 
-        private string ExecutablePath => Path.Combine("K:", "SLUS_204.37");
-        private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
-        private string OutPath => Path.Combine("ddr-out", "maxusa");
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_653.58");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "extremejpn");
+
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_652.77");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "extremeusa");
+        
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_624.27");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "pcjpn");
+
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_657.75");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "festivaljpn");
+
+        private string ExecutablePath => Path.Combine("K:", "SLPM_662.42");
+        //private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        private string FileDataPath => Path.Combine("K:", "DATA", "FILEDT02.BIN");
+        //private string FileDataPath => Path.Combine("K:", "DATA", "FILEDT03.BIN");
+        private string OutPath => Path.Combine("ddr-out", "strikejpn");
         
         [Test]
         [Explicit]
@@ -36,6 +67,8 @@ namespace RhythmCodex.Ddr.Integration
             var metadataDecoder = Resolve<IDdrPs2MetadataTableStreamReader>();
             var dbDecoder = Resolve<IDdrPs2DatabaseDecoder>();
             var rawMetaDatas = metadataDecoder.Get(mdSource, mdSource.Length).Select(dbDecoder.Decode).ToList();
+            foreach (var md in rawMetaDatas)
+                TestContext.WriteLine($"{md}");
         }
         
         [Test]
@@ -90,10 +123,6 @@ namespace RhythmCodex.Ddr.Integration
         [Explicit]
         public void Test_Export_WAV()
         {
-            using var mdSource = new FileStream(ExecutablePath, FileMode.Open, FileAccess.Read);
-            var md = Resolve<IDdrPs2MetadataTableStreamReader>();
-            var metaDatas = md.Get(mdSource, mdSource.Length);
-
             using var source = new FileStream(FileDataPath, FileMode.Open, FileAccess.Read);
             var remaining = source.Length;
             var reader = new BinaryReader(source);

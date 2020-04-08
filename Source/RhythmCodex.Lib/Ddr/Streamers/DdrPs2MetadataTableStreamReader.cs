@@ -24,9 +24,9 @@ namespace RhythmCodex.Ddr.Streamers
 
             static bool IsName(byte[] buff, int offs)
             {
-                return buff[offs].IsLetter() &&
-                       buff[offs + 1].IsLetter() &&
-                       buff[offs + 2].IsLetter() &&
+                return buff[offs].IsLetterOrDigit() &&
+                       buff[offs + 1].IsLetterOrDigit() &&
+                       buff[offs + 2].IsLetterOrDigit() &&
                        buff[offs + 3].IsLetterOrDigit() &&
                        (buff[offs + 4] == 0 || buff[offs + 4].IsLetterOrDigit()) &&
                        buff[offs + 5] == 0;

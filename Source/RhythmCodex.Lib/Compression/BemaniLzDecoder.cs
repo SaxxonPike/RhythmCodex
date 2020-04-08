@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Compression
@@ -8,8 +9,14 @@ namespace RhythmCodex.Compression
     [Service]
     public class BemaniLzDecoder : IBemaniLzDecoder
     {
+        private readonly ILogger _logger;
         private const int BufferMask = 0x3FF; // 10 bits window
         private const int BufferSize = 0x400;
+
+        public BemaniLzDecoder(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public byte[] Decode(Stream source)
         {
@@ -91,10 +98,9 @@ namespace RhythmCodex.Compression
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                if (Debugger.IsAttached)
-                    throw;
+                _logger.Debug($"BemaniLZdecoder failed{Environment.NewLine}{e}");
             }
             finally
             {

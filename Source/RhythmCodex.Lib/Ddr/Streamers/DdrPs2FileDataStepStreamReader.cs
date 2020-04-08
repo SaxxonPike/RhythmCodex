@@ -37,6 +37,9 @@ namespace RhythmCodex.Ddr.Streamers
             while (position < max)
             {
                 position += 0x800;
+                if (position == 0x433E1000)
+                    position = position;
+                
                 var block = reader.ReadBytes(0x800);
 
                 if (append)

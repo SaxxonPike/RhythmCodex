@@ -35,36 +35,27 @@ namespace RhythmCodex.Ddr.Heuristics
 
         public string FileExtension => "fdbtable";
         
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        public HeuristicResult Match(IHeuristicReader reader)
         {
-            var maxTable = data.Length / 4;
-            var offsetBlock = MemoryMarshal.Cast<byte, int>(data);
+            var maxTable = int.MaxValue;
             var offsets = new List<int>();
 
             for (var i = 0; i < maxTable; i++)
             {
-                var offset = offsetBlock[i];
+                var offset = reader.ReadInt();
                 if (offset >= 4 && offset < 0x1000000 && !offsets.Contains(offset))
                 {
                     offsets.Add(offset);
+                    if (maxTable > offset / 4)
+                        maxTable = offset / 4;
                 }
-                else
+                else if (offset != 0 && offset < i * 4)
                 {
                     return null; 
                 }
-
-                if (maxTable > offset / 4)
-                    maxTable = offset / 4;
             }
             
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 5;
     }
 }
