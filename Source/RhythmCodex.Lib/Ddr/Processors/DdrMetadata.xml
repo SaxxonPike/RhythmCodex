@@ -3232,6 +3232,7 @@
         <Id>487</Id>
         <Code>rand</Code>
         <Title>RANDOM</Title>
+        <Artist>NAOKI</Artist>
     </Song>
     <Song>
         <Id>24576</Id>
@@ -3275,6 +3276,7 @@
         <Id>24582</Id>
         <Code>satn</Code>
         <Title>Saturday Night Love</Title>
+        <Artist>Sota feat. Brenda V.</Artist>
     </Song>
     <Song>
         <Id>28672</Id>
@@ -3641,6 +3643,7 @@
         <Id>32779</Id>
         <Code>onem</Code>
         <Title>One More Time</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>32780</Id>
@@ -3671,6 +3674,7 @@
         <Id>32784</Id>
         <Code>free</Code>
         <Title>Freedom</Title>
+        <Artist>BeForU</Artist>
     </Song>
     <Song>
         <Id>32785</Id>
@@ -3683,21 +3687,25 @@
         <Id>32786</Id>
         <Code>kids</Code>
         <Title>Kids In America</Title>
+        <Artist>KIM WILDE</Artist>
     </Song>
     <Song>
         <Id>32787</Id>
         <Code>viva</Code>
         <Title>Viva espana</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>32788</Id>
         <Code>ente</Code>
         <Title>Let Me Entertain You</Title>
+        <Artist>Robbie Williams</Artist>
     </Song>
     <Song>
         <Id>32789</Id>
         <Code>sunl</Code>
         <Title>Sunlight</Title>
+        <Artist>DJ SAMMY</Artist>
     </Song>
     <Song>
         <Id>32790</Id>
@@ -3708,42 +3716,51 @@
     <Song>
         <Id>32791</Id>
         <Code>ine3</Code>
-        <Title>I Need You(True Platinum Mix)</Title>
+        <Title>I Need You</Title>
+        <Subtitle>(True Platinum Mix)</Subtitle>
+        <Artist>Sho-T</Artist>
     </Song>
     <Song>
         <Id>32792</Id>
         <Code>move</Code>
         <Title>Move Your Feet</Title>
+        <Artist>Junior Senior</Artist>
     </Song>
     <Song>
         <Id>32793</Id>
         <Code>rapp</Code>
         <Title>Rappers Delight</Title>
+        <Artist>Sugarhill Gang</Artist>
     </Song>
     <Song>
         <Id>32794</Id>
         <Code>shur</Code>
         <Title>You're Not Here</Title>
+        <Artist>Heather</Artist>
     </Song>
     <Song>
         <Id>32795</Id>
         <Code>ymca</Code>
         <Title>YMCA</Title>
+        <Artist>VILLAGE PEOPLE</Artist>
     </Song>
     <Song>
         <Id>32796</Id>
         <Code>supe</Code>
         <Title>Superstar</Title>
+        <Artist>Jamelia</Artist>
     </Song>
     <Song>
         <Id>32797</Id>
         <Code>nout</Code>
         <Title>Over N Out</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>32798</Id>
         <Code>prom</Code>
         <Title>Promises</Title>
+        <Artist>Kylie Minogue</Artist>
     </Song>
     <Song>
         <Id>32799</Id>
@@ -3755,86 +3772,104 @@
         <Id>32800</Id>
         <Code>beli</Code>
         <Title>Believe</Title>
+        <Artist>Eddie.J</Artist>
     </Song>
     <Song>
         <Id>32801</Id>
         <Code>biza</Code>
         <Title>BIZARRE LOVE TRIANGLE</Title>
+        <Artist>Jerry</Artist>
     </Song>
     <Song>
         <Id>32802</Id>
         <Code>ladi</Code>
         <Title>LADIES' NIGHT</Title>
+        <Artist>∠R</Artist>
     </Song>
     <Song>
         <Id>32803</Id>
         <Code>call</Code>
         <Title>I BELIEVE IN A THING CALLED LOVE</Title>
+        <Artist>The Darkness</Artist>
     </Song>
     <Song>
         <Id>32804</Id>
         <Code>volt</Code>
         <Title>Danger! High Voltage</Title>
+        <Artist>Electric Six</Artist>
     </Song>
     <Song>
         <Id>32805</Id>
         <Code>gott</Code>
         <Title>Gotta Get Thru This</Title>
+        <Artist>Daniel Bedingfield</Artist>
     </Song>
     <Song>
         <Id>32806</Id>
         <Code>fami</Code>
         <Title>Familiar Feeling</Title>
+        <Artist>MOLOKO</Artist>
     </Song>
     <Song>
         <Id>32807</Id>
         <Code>lyou</Code>
         <Title>SOMEBODY LIKE YOU</Title>
+        <Artist>Atomic Kitten</Artist>
     </Song>
     <Song>
         <Id>32808</Id>
         <Code>wait</Code>
         <Title>WAITING FOR TONIGHT</Title>
+        <Artist>P.A.T</Artist>
     </Song>
     <Song>
         <Id>32809</Id>
         <Code>virg</Code>
         <Title>Like A Virgin</Title>
+        <Artist>tama_happytone</Artist>
     </Song>
     <Song>
         <Id>32810</Id>
         <Code>rage</Code>
-        <Title>Your Rain(RAGE MIX)</Title>
+        <Title>Your Rain</Title>
+        <Subtitle>(RAGE MIX)</Subtitle>
+        <Artist>Akira Yamaoka feat. Mary Elizabeth McGlynn</Artist>
     </Song>
     <Song>
         <Id>32811</Id>
         <Code>chih</Code>
         <Title>Chihuahua 2002</Title>
+        <Artist>DJ BOBO</Artist>
     </Song>
     <Song>
         <Id>32812</Id>
         <Code>jama</Code>
         <Title>SEXIEST MAN IN JAMAICA</Title>
+        <Artist>Mint Royale (feat Prince Buster)</Artist>
     </Song>
     <Song>
         <Id>32813</Id>
         <Code>good</Code>
         <Title>Good Luck</Title>
+        <Artist>BASEMENT JAXX feat. Lisa Kekaula</Artist>
     </Song>
     <Song>
         <Id>32814</Id>
         <Code>okok</Code>
         <Title>OK</Title>
+        <Artist>Big Brovaz</Artist>
     </Song>
     <Song>
         <Id>32815</Id>
         <Code>come2</Code>
         <Title>Come Into My World</Title>
+        <Artist>Kylie Minogue</Artist>
     </Song>
     <Song>
         <Id>32816</Id>
         <Code>eart</Code>
         <Title>HEAVEN AND EARTH</Title>
+        <Artist>POP!</Artist>
     </Song>
     <Song>
         <Id>33024</Id>
@@ -3847,16 +3882,19 @@
         <Id>33025</Id>
         <Code>anly</Code>
         <Title>ANALYZE</Title>
+        <Artist>B.BANDJ</Artist>
     </Song>
     <Song>
         <Id>33026</Id>
         <Code>babx</Code>
         <Title>BABY BABY GIMME YOUR LOVE 2002</Title>
+        <Artist>DIVAS</Artist>
     </Song>
     <Song>
         <Id>33027</Id>
         <Code>bail</Code>
         <Title>BAILA! BAILA!</Title>
+        <Artist>DANDY MINEIRO</Artist>
     </Song>
     <Song>
         <Id>33028</Id>
@@ -3869,36 +3907,44 @@
         <Id>33029</Id>
         <Code>batt</Code>
         <Title>BATTLE BREAKS</Title>
+        <Artist>DJ TAKAWO</Artist>
     </Song>
     <Song>
         <Id>33030</Id>
         <Code>bt4u</Code>
         <Title>There 4 you</Title>
+        <Artist>Thuggie D.</Artist>
     </Song>
     <Song>
         <Id>33031</Id>
         <Code>eyes</Code>
         <Title>In My Eyes</Title>
+        <Artist>ric</Artist>
     </Song>
     <Song>
         <Id>33032</Id>
         <Code>fdub</Code>
         <Title>FIRE DUB</Title>
+        <Artist>ASLETICS</Artist>
     </Song>
     <Song>
         <Id>33033</Id>
         <Code>geti</Code>
         <Title>GET IT ALL</Title>
+        <Artist>BRASS TRICKS</Artist>
     </Song>
     <Song>
         <Id>33034</Id>
         <Code>gorg</Code>
         <Title>GORGEOUS 2012</Title>
+        <Artist>THE SURRENDERS</Artist>
     </Song>
     <Song>
         <Id>33035</Id>
         <Code>inff</Code>
-        <Title>INFINITE PRAYER (floating flock style)</Title>
+        <Title>INFINITE PRAYER</Title>
+        <Subtitle>(floating flock style)</Subtitle>
+        <Artist>BRASS TRICKS</Artist>
     </Song>
     <Song>
         <Id>33036</Id>
@@ -3924,101 +3970,131 @@
         <Id>33039</Id>
         <Code>kybm</Code>
         <Title>Keep Ya Body Movin'</Title>
+        <Artist>Thuggie D.</Artist>
     </Song>
     <Song>
         <Id>33040</Id>
         <Code>madb</Code>
         <Title>MAD BLAST</Title>
+        <Artist>THE INFECTION</Artist>
     </Song>
     <Song>
         <Id>33041</Id>
         <Code>matj</Code>
-        <Title>MATSURI (J-SUMMER MIX)</Title>
+        <Title>MATSURI</Title>
+        <Subtitle>(J-SUMMER MIX)</Subtitle>
+        <Artist>RE-VENGE</Artist>
     </Song>
     <Song>
         <Id>33042</Id>
         <Code>mean</Code>
         <Title>MEANING OF LIFE</Title>
+        <Artist>K.Wit feat. GARY</Artist>
     </Song>
     <Song>
         <Id>33043</Id>
         <Code>mgs2</Code>
         <Title>MGS2 mission R</Title>
+        <Artist>L.E.D.</Artist>
     </Song>
     <Song>
         <Id>33044</Id>
         <Code>mind</Code>
         <Title>Mind Parasite</Title>
+        <Artist>TOMOSUKE</Artist>
     </Song>
     <Song>
         <Id>33045</Id>
         <Code>nems</Code>
         <Title>NEMESIS</Title>
+        <Artist>D.J.SETUP</Artist>
     </Song>
     <Song>
         <Id>33046</Id>
         <Code>oute</Code>
         <Title>OUTER LIMITS</Title>
+        <Artist>L.E.D.-G</Artist>
     </Song>
     <Song>
         <Id>33047</Id>
         <Code>put3</Code>
-        <Title>PUT YOUR FAITH IN ME (SATURDAY NIGHT MIX)</Title>
+        <Title>PUT YOUR FAITH IN ME</Title>
+        <Subtitle>(SATURDAY NIGHT MIX)</Subtitle>
+        <Artist>UZI-LAY</Artist>
     </Song>
     <Song>
         <Id>33048</Id>
         <Code>quic</Code>
         <Title>Quickening</Title>
+        <Artist>dj.TAKA</Artist>
     </Song>
     <Song>
         <Id>33049</Id>
         <Code>san2</Code>
-        <Title>SANA MOLLETE NE ENTE (B.L.T.STYLE)</Title>
+        <Title>サナ・モレッテ・ネ・エンテ</Title>
+        <TitleRoman>SANA MOLLETE NE ENTE</TitleRoman>
+        <Subtitle>(B.L.T.STYLE)</Subtitle>
+        <Artist>Togo Project feat. Sana</Artist>
     </Song>
     <Song>
         <Id>33050</Id>
         <Code>swon</Code>
         <Title>SOMETHING WONDERFUL</Title>
+        <Artist>L.E.D.</Artist>
     </Song>
     <Song>
         <Id>33051</Id>
         <Code>whas</Code>
         <Title>What is Love?</Title>
+        <Artist>TOMOSUKE</Artist>
     </Song>
     <Song>
         <Id>33280</Id>
         <Code>diam</Code>
         <Title>Diamonds</Title>
+        <Artist>(J-POP)</Artist>
     </Song>
     <Song>
         <Id>33281</Id>
         <Code>smap</Code>
         <Title>SHAKE</Title>
+        <Artist>SMAP</Artist>
     </Song>
     <Song>
         <Id>33282</Id>
         <Code>odor</Code>
-        <Title>ODORU PONPOKOLIN</Title>
+        <Title>おどるポンポコリン</Title>
+        <TitleRoman>ODORU PONPOKOLIN</TitleRoman>
+        <Artist>アニメ</Artist>
+        <ArtistRoman>ANIME</ArtistRoman>
     </Song>
     <Song>
         <Id>33283</Id>
         <Code>gaku</Code>
-        <Title>GAKUEN TENGOKU</Title>
+        <Title>学園天国</Title>
+        <TitleRoman>GAKUEN TENGOKU</TitleRoman>
+        <Artist>(J-POP)</Artist>
     </Song>
     <Song>
         <Id>33284</Id>
         <Code>hone</Code>
-        <Title>CUTIE HONEY</Title>
+        <Title>キューティーハニー</Title>
+        <TitleRoman>CUTIE HONEY</TitleRoman>
+        <Artist>アニメ</Artist>
+        <ArtistRoman>ANIME</ArtistRoman>
     </Song>
     <Song>
         <Id>33285</Id>
         <Code>kise</Code>
-        <Title>KI SE KI(DDR edit)</Title>
+        <Title>KI・SE・KI</Title>
+        <Subtitle>(DDR edit)</Subtitle>
+        <Artist>BeForU</Artist>
     </Song>
     <Song>
         <Id>32832</Id>
         <Code>tuff</Code>
         <Title>Tough Enough</Title>
+        <Artist>Vanilla Ninja</Artist>
     </Song>
     <Song>
         <Id>33536</Id>
@@ -4030,6 +4106,7 @@
         <Id>33537</Id>
         <Code>dizz</Code>
         <Title>Dizzy</Title>
+        <Artist>Vic Reeves &amp; The Wonder Stuff</Artist>
     </Song>
     <Song>
         <Id>33538</Id>
@@ -4113,6 +4190,7 @@
         <Id>33551</Id>
         <Code>geni</Code>
         <Title>Genie In A Bottle</Title>
+        <Artist>nc ft. NRG Factory</Artist>
     </Song>
     <Song>
         <Id>33552</Id>
@@ -4123,17 +4201,21 @@
     <Song>
         <Id>33553</Id>
         <Code>asth</Code>
-        <Title>As The Rush Comes(Gabriel &amp; Dresden Sweeping Strings Radio Edit)</Title>
+        <Title>As The Rush Comes</Title>
+        <Subtitle>(Gabriel &amp; Dresden Sweeping Strings Radio Edit)</Subtitle>
+        <Artist>Motorcycle</Artist>
     </Song>
     <Song>
         <Id>33554</Id>
         <Code>bloc</Code>
         <Title>Block Rockin' Beats</Title>
+        <Artist>Chemical Brothers</Artist>
     </Song>
     <Song>
         <Id>33555</Id>
         <Code>busy</Code>
         <Title>Get Busy</Title>
+        <Artist>Sean Paul</Artist>
     </Song>
     <Song>
         <Id>33556</Id>
@@ -4150,7 +4232,9 @@
     <Song>
         <Id>33558</Id>
         <Code>ilen</Code>
-        <Title>Silence(Airscape Remix)</Title>
+        <Title>Silence</Title>
+        <Subtitle>(Airscape Remix)</Subtitle>
+        <Artist>Delerium with Sarah McLachlan</Artist>
     </Song>
     <Song>
         <Id>33559</Id>
@@ -4168,26 +4252,32 @@
         <Id>33561</Id>
         <Code>opsi</Code>
         <Title>Oops!...I Did It Again</Title>
+        <Artist>AKIRA feat. Susan Z</Artist>
     </Song>
     <Song>
         <Id>33562</Id>
         <Code>iwsu</Code>
         <Title>I will Survive</Title>
+        <Artist>AKIRA feat. Daline</Artist>
     </Song>
     <Song>
         <Id>33563</Id>
         <Code>spsp</Code>
-        <Title>Spin Spin Sugar(Armand's Dark Garage Mix)</Title>
+        <Title>Spin Spin Sugar</Title>
+        <Subtitle>(Armand's Dark Garage Mix)</Subtitle>
+        <Artist>Sneaker Pimps</Artist>
     </Song>
     <Song>
         <Id>33564</Id>
         <Code>pump</Code>
         <Title>Pump Up The Volume</Title>
+        <Artist>M/A/R/R/S</Artist>
     </Song>
     <Song>
         <Id>33565</Id>
         <Code>fnkm</Code>
         <Title>Play That Funky Music</Title>
+        <Artist>wg feat.Tony L</Artist>
     </Song>
     <Song>
         <Id>33566</Id>
@@ -4200,46 +4290,56 @@
         <Id>33567</Id>
         <Code>craz</Code>
         <Title>Crazy In Love</Title>
+        <Artist>wg feat. Indra J</Artist>
     </Song>
     <Song>
         <Id>33568</Id>
         <Code>myma</Code>
         <Title>My My My</Title>
+        <Artist>Armand Van Helden</Artist>
     </Song>
     <Song>
         <Id>33569</Id>
         <Code>lose</Code>
         <Title>Lose My Breath</Title>
+        <Artist>Destiny's Child</Artist>
     </Song>
     <Song>
         <Id>33664</Id>
         <Code>polo</Code>
         <Title>Polovtsian Dances And Chorus</Title>
+        <Artist>Naoto Suzuki feat. Martha</Artist>
     </Song>
     <Song>
         <Id>33665</Id>
         <Code>oran</Code>
         <Title>LOVE IS ORANGE</Title>
+        <Artist>ORANGE LOUNGE</Artist>
     </Song>
     <Song>
         <Id>33666</Id>
         <Code>diff</Code>
         <Title>Make A Difference</Title>
+        <Artist>Lala Moore with CoCoRo*Co</Artist>
     </Song>
     <Song>
         <Id>33667</Id>
         <Code>mari</Code>
-        <Title>MARIA(I believe...)</Title>
+        <Title>MARIA</Title>
+        <Subtitle>(I believe...)</Subtitle>
+        <Artist>NAOKI feat. PAULA TERRY</Artist>
     </Song>
     <Song>
         <Id>33668</Id>
         <Code>tmrr</Code>
         <Title>TOMORROW</Title>
+        <Artist>nc ft. Dreamscanner</Artist>
     </Song>
     <Song>
         <Id>33669</Id>
         <Code>sedu</Code>
         <Title>Seduction</Title>
+        <Artist>nc ft. FINALFORCE</Artist>
     </Song>
     <Song>
         <Id>33670</Id>
@@ -4250,3030 +4350,3806 @@
     <Song>
         <Id>33671</Id>
         <Code>inje</Code>
-        <Title>INJECTION OF LOVE(HINA MIX)</Title>
+        <Title>INJECTION OF LOVE</Title>
+        <Subtitle>(HINA MIX)</Subtitle>
+        <Artist>AKIRA YAMAOKA</Artist>
     </Song>
     <Song>
         <Id>33672</Id>
         <Code>pass</Code>
         <Title>PASSION OF LOVE</Title>
+        <Artist>NAOKI feat. PAULA TERRY</Artist>
     </Song>
     <Song>
         <Id>33673</Id>
         <Code>youg</Code>
-        <Title>You gotta move it(feat. Julie Rugaard)</Title>
+        <Title>You gotta move it</Title>
+        <Subtitle>(feat. Julie Rugaard)</Subtitle>
+        <Artist>Yuzo Koshiro</Artist>
     </Song>
     <Song>
         <Id>33792</Id>
         <Code>nine</Code>
         <Title>19, November</Title>
+        <Artist>good-cool</Artist>
     </Song>
     <Song>
         <Id>33793</Id>
         <Code>ridl</Code>
         <Title>RIDE ON THE LIGHT(HI GREAT MIX)</Title>
+        <Artist>Mr. T</Artist>
     </Song>
     <Song>
         <Id>33794</Id>
         <Code>mine</Code>
         <Title>Starmine</Title>
+        <Artist>Ryu</Artist>
     </Song>
     <Song>
         <Id>33795</Id>
         <Code>gtwo</Code>
         <Title>G2</Title>
+        <Artist>Aya</Artist>
     </Song>
     <Song>
         <Id>33796</Id>
         <Code>zero</Code>
         <Title>ZERO-ONE</Title>
+        <Artist>Mr. T</Artist>
     </Song>
     <Song>
         <Id>33797</Id>
         <Code>rout</Code>
         <Title>route 80s</Title>
+        <Artist>samplingmasters MEGA</Artist>
     </Song>
     <Song>
         <Id>33798</Id>
         <Code>luvu</Code>
-        <Title>Luv To Me(UCCHIE'S EDTION)</Title>
+        <Title>Luv To Me</Title>
+        <Subtitle>(UCCHIE'S EDTION)</Subtitle>
+        <Artist>tiger YAMATO</Artist>
     </Song>
     <Song>
         <Id>33799</Id>
         <Code>vjar</Code>
         <Title>VJ Army</Title>
+        <Artist>good-cool</Artist>
     </Song>
     <Song>
         <Id>33800</Id>
         <Code>rten</Code>
         <Title>R10K</Title>
+        <Artist>tiger YAMATO</Artist>
     </Song>
     <Song>
         <Id>33801</Id>
         <Code>lovd</Code>
         <Title>Love Is Dreaminess</Title>
+        <Artist>L.E.D.-G</Artist>
     </Song>
     <Song>
         <Id>33802</Id>
         <Code>catc</Code>
         <Title>Catch It!</Title>
+        <Artist>TOTAL SCIENCE</Artist>
     </Song>
     <Song>
         <Id>33803</Id>
         <Code>voya</Code>
-        <Title>THE BIG VOYAGER -INFINITE PRAYER REINTERPRETATION-</Title>
+        <Title>THE BIG VOYAGER</Title>
+        <Subtitle>-INFINITE PRAYER REINTERPRETATION-</Subtitle>
+        <Artist>L.E.D.</Artist>
     </Song>
     <Song>
         <Id>33804</Id>
         <Code>flyt</Code>
         <Title>fly through the night</Title>
+        <Artist>Mr. T</Artist>
     </Song>
     <Song>
         <Id>33805</Id>
         <Code>hitn</Code>
         <Title>Hit 'n' Slap</Title>
+        <Artist>Asletics</Artist>
     </Song>
     <Song>
         <Id>33806</Id>
         <Code>mids</Code>
         <Title>Midnight Special</Title>
+        <Artist>Love Machineguns</Artist>
     </Song>
     <Song>
         <Id>33807</Id>
         <Code>toej</Code>
         <Title>TOE JAM</Title>
+        <Artist>Big Idea</Artist>
     </Song>
     <Song>
         <Id>33808</Id>
         <Code>monk</Code>
         <Title>Monkey Punk</Title>
+        <Artist>Big Idea</Artist>
     </Song>
     <Song>
         <Id>33809</Id>
         <Code>istn</Code>
-        <Title>Istanbul CafΘ</Title>
+        <Title>Istanbul Café</Title>
+        <Artist>Jesper Kyd</Artist>
     </Song>
     <Song>
         <Id>33810</Id>
         <Code>redr</Code>
         <Title>Red Room</Title>
+        <Artist>Jesper Kyd</Artist>
     </Song>
     <Song>
         <Id>33811</Id>
         <Code>bais</Code>
         <Title>Baile Le Samba</Title>
+        <Artist>Big Idea</Artist>
     </Song>
     <Song>
         <Id>33812</Id>
         <Code>cuca</Code>
         <Title>La Cucaracha</Title>
+        <Artist>Big Idea</Artist>
     </Song>
     <Song>
         <Id>33813</Id>
         <Code>gyru</Code>
-        <Title>GYRUSS -FULL TILT-</Title>
+        <Title>GYRUSS</Title>
+        <Subtitle>-FULL TILT-</Subtitle>
+        <Artist>JT.1Up</Artist>
     </Song>
     <Song>
         <Id>33814</Id>
         <Code>jamd</Code>
-        <Title>MAKE A JAM!(Dub/House)</Title>
+        <Title>MAKE A JAM!</Title>
+        <Subtitle>(Dub/House)</Subtitle>
+        <Artist>Big Idea</Artist>
     </Song>
     <Song>
         <Id>33815</Id>
         <Code>tenr</Code>
         <Title>.59 remix</Title>
+        <Artist>Jesper Kyd</Artist>
     </Song>
     <Song>
         <Id>33816</Id>
         <Code>imem</Code>
-        <Title>In My Eyes(Midihead Remix)</Title>
+        <Title>In My Eyes</Title>
+        <Subtitle>(Midihead Remix)</Subtitle>
+        <Artist>Midihead</Artist>
     </Song>
     <Song>
         <Id>33817</Id>
         <Code>itoy</Code>
-        <Title>I feel...(T.O.Y. Remix)</Title>
+        <Title>I feel...</Title>
+        <Subtitle>(T.O.Y. Remix)</Subtitle>
+        <Artist>T.O.Y.</Artist>
     </Song>
     <Song>
         <Id>33818</Id>
         <Code>remx</Code>
-        <Title>MAX 300 (Super-Max-Me Mix)</Title>
+        <Title>MAX 300</Title>
+        <Subtitle>(Super-Max-Me Mix)</Subtitle>
+        <Artist>Jondi &amp; Spesh</Artist>
     </Song>
     <Song>
         <Id>33824</Id>
         <Code>popn</Code>
         <Title>Knock Out Regrets</Title>
+        <Artist>MAKI@TOGO.BAND</Artist>
     </Song>
     <Song>
         <Id>33825</Id>
         <Code>banz</Code>
         <Title>banzai</Title>
+        <Artist>MISA</Artist>
     </Song>
     <Song>
         <Id>33826</Id>
         <Code>brin</Code>
         <Title>Bring Me To Life(Radio Edit)</Title>
+        <Artist>ROCHELLE</Artist>
     </Song>
     <Song>
         <Id>33827</Id>
         <Code>hipe</Code>
-        <Title>HEAVEN IS A PLACE ON EARTH (German Election Mix)</Title>
+        <Title>HEAVEN IS A PLACE ON EARTH</Title>
+        <Subtitle>(German Election Mix)</Subtitle>
+        <Artist>JULIA</Artist>
     </Song>
     <Song>
         <Id>33828</Id>
         <Code>letd</Code>
         <Title>Let's Dance</Title>
+        <Artist>DAVID BOWIE</Artist>
     </Song>
     <Song>
         <Id>33829</Id>
         <Code>stck</Code>
         <Title>Stuck</Title>
+        <Artist>Stacie Orrico</Artist>
     </Song>
     <Song>
         <Id>33830</Id>
         <Code>vola</Code>
         <Title>Volare</Title>
+        <Artist>CAPTAIN JACK</Artist>
     </Song>
     <Song>
         <Id>33831</Id>
         <Code>choo</Code>
         <Title>Choo Choo TRAIN</Title>
+        <Artist>(J-POP)</Artist>
     </Song>
     <Song>
         <Id>33832</Id>
         <Code>skrb</Code>
         <Title>SAKURANBO</Title>
+        <Artist>大塚愛</Artist>
+        <ArtistRoman>Ai Otsuka</ArtistRoman>
     </Song>
     <Song>
         <Id>33833</Id>
         <Code>inje2</Code>
         <Title>INJECTION OF LOVE(e)</Title>
+        <Artist>AKIRA YAMAOKA</Artist>
     </Song>
     <Song>
         <Id>33834</Id>
         <Code>doll</Code>
         <Title>DoLL</Title>
+        <Artist>TËЯRA</Artist>
     </Song>
     <Song>
         <Id>33835</Id>
         <Code>ifut</Code>
-        <Title>iFUTURELIST(DDR VERSION)</Title>
+        <Title>iFUTURELIST</Title>
+        <Subtitle>(DDR VERSION)</Subtitle>
+        <Artist>AKIRA YAMAOKA</Artist>
     </Song>
     <Song>
         <Id>33836</Id>
         <Code>evrd</Code>
         <Title>EVERYDAY AT THE BUS STOP</Title>
+        <Artist>(J-POP)</Artist>
     </Song>
     <Song>
         <Id>36864</Id>
         <Code>aaaa2</Code>
         <Title>AA</Title>
+        <Artist>D.J.Amuro</Artist>
     </Song>
     <Song>
         <Id>36865</Id>
         <Code>rzon</Code>
         <Title>RED ZONE</Title>
+        <Artist>Tatsh&amp;NAOKI</Artist>
     </Song>
     <Song>
         <Id>36866</Id>
         <Code>hpan</Code>
-        <Title>HAPPY ANGEL</Title>
+        <Title>HAPPY☆ANGEL</Title>
+        <Artist>jun with TAHIRIH</Artist>
     </Song>
     <Song>
         <Id>36867</Id>
         <Code>xeph</Code>
         <Title>Xepher</Title>
+        <Artist>Tatsh</Artist>
     </Song>
     <Song>
         <Id>36868</Id>
         <Code>hima</Code>
-        <Title>Himawari</Title>
+        <Title>ヒマワリ</Title>
+        <TitleRoman>Himawari</TitleRoman>
+        <Artist>RIYU from BeForU</Artist>
     </Song>
     <Song>
         <Id>36869</Id>
         <Code>drab</Code>
         <Title>Dragon Blade</Title>
+        <Artist>Kozo Nakamura</Artist>
     </Song>
     <Song>
         <Id>36870</Id>
         <Code>curu</Code>
         <Title>CURUS</Title>
+        <Artist>D-crew</Artist>
     </Song>
     <Song>
         <Id>36871</Id>
         <Code>muge</Code>
-        <Title>Mugen</Title>
+        <Title>夢幻ノ光</Title>
+        <TitleRoman>Mugen no hikari</TitleRoman>
+        <Artist>TËЯRA</Artist>
     </Song>
     <Song>
         <Id>36872</Id>
         <Code>nizi</Code>
-        <Title>NIJIIRO</Title>
+        <Title>虹色</Title>
+        <TitleRoman>NIJIIRO</TitleRoman>
+        <Artist>DJ YOSHITAKA feat G.S.C license</Artist>
     </Song>
     <Song>
         <Id>36873</Id>
         <Code>gekk</Code>
-        <Title>Gekkou chou</Title>
+        <Title>月光蝶</Title>
+        <TitleRoman>Gekkou chou</TitleRoman>
+        <Artist>あさき</Artist>
+        <ArtistRoman>Asaki</ArtistRoman>
     </Song>
     <Song>
         <Id>36874</Id>
         <Code>kono</Code>
-        <Title>konoko no nanatsu no oiwaini</Title>
+        <Title>この子の七つのお祝いに</Title>
+        <TitleRoman>konoko no nanatsu no oiwaini</TitleRoman>
+        <Artist>あさき</Artist>
+        <ArtistRoman>Asaki</ArtistRoman>
     </Song>
     <Song>
         <Id>36875</Id>
         <Code>mooo</Code>
         <Title>MOON</Title>
+        <Artist>dj TAKA feat. Erika</Artist>
     </Song>
     <Song>
         <Id>36876</Id>
         <Code>thir</Code>
         <Title>No.13</Title>
+        <Artist>TAKA respect for J.S.B.</Artist>
     </Song>
     <Song>
         <Id>36877</Id>
         <Code>dand</Code>
-        <Title>Dan Dan Do The true MAN's Road</Title>
+        <Title>男々道</Title>
+        <TitleRoman>DanDanDo</TitleRoman>
+        <SubtitleLocal>(The true MAN's Road)</SubtitleLocal>
+        <Artist>Des-ROW・組</Artist>
+        <ArtistRoman>Des-ROW·Kumi</ArtistRoman>
+        <ArtistLocal>Des-ROW·UNITED</ArtistLocal>
     </Song>
     <Song>
         <Id>36878</Id>
         <Code>kage</Code>
-        <Title>KAGEROW(Dragonfly)</Title>
+        <Title>カゲロウ</Title>
+        <TitleRoman>KAGEROW</TitleRoman>
+        <SubtitleLocal>(Dragonfly)</SubtitleLocal>
+        <Artist>Des-ROW・組スペシアルr</Artist>
+        <ArtistRoman>Des-ROW・Kumi supeshiaru r</ArtistRoman>
+        <ArtistLocal>Des-ROW UNITED special+r</ArtistLocal>
     </Song>
     <Song>
         <Id>36879</Id>
         <Code>tika</Code>
-        <Title>Chikara</Title>
+        <Title>チカラ</Title>
+        <TitleRoman>Chikara</TitleRoman>
+        <Artist>BeForU</Artist>
     </Song>
     <Song>
         <Id>36880</Id>
         <Code>unde</Code>
         <Title>Under the Sky</Title>
+        <Artist>南さやか(BeForU) with platoniX</Artist>
+        <ArtistRoman>Sayaka Minami(BeForU) with platoniX</ArtistRoman>
     </Song>
     <Song>
         <Id>36881</Id>
         <Code>time</Code>
-        <Title>Timepiece Phase¡╢</Title>
+        <Title>Timepiece Phase II</Title>
+        <Artist>佐々木博史</Artist>
+        <ArtistRoman>Hirofumi Sasaki</ArtistRoman>
     </Song>
     <Song>
         <Id>36882</Id>
         <Code>rara</Code>
         <Title>rainbow rainbow</Title>
+        <Artist>Ryu☆</Artist>
     </Song>
     <Song>
         <Id>36883</Id>
         <Code>braz</Code>
         <Title>Brazilian Anthem</Title>
+        <Artist>Berimbau '66</Artist>
     </Song>
     <Song>
         <Id>36884</Id>
         <Code>taur</Code>
         <Title>CENTAUR</Title>
+        <Artist>Jimmy Weckl</Artist>
     </Song>
     <Song>
         <Id>36885</Id>
         <Code>tier</Code>
         <Title>TIERRA BUENA</Title>
+        <Artist>WILMA DE OLIVEIRA</Artist>
     </Song>
     <Song>
         <Id>36886</Id>
         <Code>sksk</Code>
         <Title>Ska Ska No.3</Title>
+        <Artist>亜熱帯マジ-SKA爆弾</Artist>
+        <ArtistRoman>ANETTAI MAJI-SKA BAKUDAN</ArtistRoman>
     </Song>
     <Song>
         <Id>36887</Id>
         <Code>okor</Code>
-        <Title>Tino'sWhite Horse</Title>
+        <Title>怒れる大きな白い馬</Title>
+        <TitleRoman>Okoreru okina shiroi uma</TitleRoman>
+        <TitleLocal>Tino's White Horse</TitleLocal>
+        <Artist>Morning Blue Dragon</Artist>
     </Song>
     <Song>
         <Id>36888</Id>
         <Code>murm</Code>
         <Title>murmur twins</Title>
+        <Artist>yu_tokiwa.djw</Artist>
     </Song>
     <Song>
         <Id>36889</Id>
         <Code>flya</Code>
         <Title>Fly away</Title>
+        <Artist>ChiyoTia</Artist>
     </Song>
     <Song>
         <Id>36890</Id>
         <Code>inno</Code>
         <Title>INNOCENCE OF SILENCE</Title>
+        <Artist>nc ft NRG Factory</Artist>
     </Song>
     <Song>
         <Id>36891</Id>
         <Code>myon</Code>
         <Title>My Only Shining Star</Title>
+        <Artist>NAOKI feat. Becky Lucinda</Artist>
     </Song>
     <Song>
         <Id>36892</Id>
         <Code>flow</Code>
         <Title>Flow</Title>
+        <Artist>Scotty D. revisits U1</Artist>
     </Song>
     <Song>
         <Id>36893</Id>
         <Code>rbow</Code>
         <Title>rainbow flyer</Title>
+        <Artist>dj TAKA</Artist>
     </Song>
     <Song>
         <Id>36894</Id>
         <Code>bala</Code>
         <Title>BALALAIKA, CARRIED WITH THE WIND</Title>
+        <Artist>Julie ann Frost</Artist>
     </Song>
     <Song>
         <Id>36895</Id>
         <Code>gate</Code>
         <Title>Star Gate Heaven</Title>
+        <Artist>SySF. feat. Donna Burke</Artist>
     </Song>
     <Song>
         <Id>36896</Id>
         <Code>fold</Code>
-        <Title>CENTERFOLD(130BPM move it remix)</Title>
+        <Title>CENTERFOLD</Title>
+        <Subtitle>(130BPM move it remix)</Subtitle>
+        <Artist>CAPTAIN JACK</Artist>
     </Song>
     <Song>
         <Id>36897</Id>
         <Code>long2</Code>
         <Title>LONG TRAIN RUNNIN'</Title>
+        <Artist>X-TREME</Artist>
     </Song>
     <Song>
         <Id>36898</Id>
         <Code>mgir</Code>
         <Title>MODERN GIRL</Title>
+        <Artist>SHEENA EASTON</Artist>
     </Song>
     <Song>
         <Id>36899</Id>
         <Code>alov</Code>
         <Title>A LOVE LIKE THIS</Title>
+        <Artist>PANDORA</Artist>
     </Song>
     <Song>
         <Id>36900</Id>
         <Code>sigh2</Code>
-        <Title>LOVE AT FIRSTSIGHT(TwinMasterplan Mix)</Title>
+        <Title>LOVE AT FIRST SIGHT</Title>
+        <Subtitle>(TwinMasterplan Mix)</Subtitle>
+        <Artist>KYLIE MINOGUE</Artist>
     </Song>
     <Song>
         <Id>36901</Id>
         <Code>daba</Code>
-        <Title>MR.DABADA (Groove Wonder Remix)</Title>
+        <Title>MR.DABADA</Title>
+        <Subtitle>(Groove Wonder Remix)</Subtitle>
+        <Artist>CARLOS JEAN</Artist>
     </Song>
     <Song>
         <Id>36902</Id>
         <Code>toxi</Code>
-        <Title>TOXIC (FT company Edit)</Title>
+        <Title>TOXIC</Title>
+        <Subtitle>(FT company Edit)</Subtitle>
+        <Artist>HELEN</Artist>
     </Song>
     <Song>
         <Id>36903</Id>
         <Code>waww</Code>
         <Title>WHAT A WONDERFUL WORLD</Title>
+        <Artist>BEATBOX vs DJ MIKO</Artist>
     </Song>
     <Song>
         <Id>36904</Id>
         <Code>laba2</Code>
         <Title>La Bamba</Title>
+        <Artist>メキシコ民謡</Artist>
+        <ArtistRoman>MEKISHIKO MINYOU</ArtistRoman>
+        <ArtistLocal>Mexican Folk Song</ArtistLocal>
     </Song>
     <Song>
         <Id>36905</Id>
         <Code>jerk</Code>
         <Title>JERK IT OUT</Title>
+        <Artist>CAESARS</Artist>
     </Song>
     <Song>
         <Id>36906</Id>
         <Code>fasc</Code>
         <Title>Fascination MAXX</Title>
+        <Artist>100-200-400</Artist>
     </Song>
     <Song>
         <Id>36907</Id>
         <Code>lare</Code>
-        <Title>VOLARE -radio mix</Title>
+        <Title>VOLARE</Title>
+        <Subtitle>-radio mix-</Subtitle>
+        <Artist>CAPTAIN JACK</Artist>
     </Song>
     <Song>
         <Id>36908</Id>
         <Code>punc</Code>
-        <Title>HONEY PUNCH</Title>
+        <Title>HONEY♂PUNCH</Title>
+        <Artist>小坂りゆ</Artist>
+        <ArtistRoman>Riyu Kosaka</ArtistRoman>
     </Song>
     <Song>
         <Id>36909</Id>
         <Code>eace</Code>
         <Title>PEACE(^^)v</Title>
+        <Artist>BeForU</Artist>
     </Song>
     <Song>
         <Id>36910</Id>
         <Code>gold</Code>
         <Title>GOLDEN SKY</Title>
+        <Artist>SMILE.dk</Artist>
     </Song>
     <Song>
         <Id>36911</Id>
         <Code>glor</Code>
         <Title>Morning Glory</Title>
+        <Artist>BeForU</Artist>
     </Song>
     <Song>
         <Id>36912</Id>
         <Code>dayd</Code>
         <Title>GIRL IN A DAYDREAM</Title>
+        <Artist>PANDORA</Artist>
     </Song>
     <Song>
         <Id>36913</Id>
         <Code>mond</Code>
         <Title>MONDO STREET</Title>
+        <Artist>Orange Lounge</Artist>
     </Song>
     <Song>
         <Id>36914</Id>
         <Code>cach</Code>
         <Title>cachaca</Title>
+        <Artist>Mokky de Yah Yah's</Artist>
     </Song>
     <Song>
         <Id>36915</Id>
         <Code>driv</Code>
         <Title>Drivin'</Title>
+        <Artist>NAOKI feat. Paula Terry</Artist>
     </Song>
     <Song>
         <Id>36916</Id>
         <Code>qmas</Code>
         <Title>Quick Master</Title>
+        <Artist>act deft</Artist>
     </Song>
     <Song>
         <Id>36917</Id>
         <Code>stop2</Code>
-        <Title>CAN'T STOP FALLIN' IN LOVE (super euro version)</Title>
+        <Title>CAN'T STOP FALLIN' IN LOVE</Title>
+        <Subtitle>(super euro version)</Subtitle>
+        <Artist>NAOKI with Y&amp;Co.</Artist>
     </Song>
     <Song>
         <Id>36918</Id>
         <Code>dyna2</Code>
-        <Title>DYNAMITE RAVE (super euro version)</Title>
+        <Title>DYNAMITE RAVE</Title>
+        <Subtitle>(super euro version)</Subtitle>
+        <Artist>NAOKI with Y&amp;Co.</Artist>
     </Song>
     <Song>
         <Id>36919</Id>
         <Code>surr</Code>
-        <Title>SURRENDER(YOUR LOVE)</Title>
+        <Title>SURRENDER</Title>
+        <Subtitle>(YOUR LOVE)</Subtitle>
+        <Artist>JAVINE</Artist>
     </Song>
     <Song>
         <Id>36920</Id>
         <Code>sedu2</Code>
-        <Title>SEDUCTION(Vocal Remix)</Title>
+        <Title>SEDUCTION</Title>
+        <Subtitle>(Vocal Remix)</Subtitle>
+        <Artist>NC feat. NRG Factory</Artist>
     </Song>
     <Song>
         <Id>36921</Id>
         <Code>hunt</Code>
         <Title>Hunting for you</Title>
+        <Artist>Togo Project feat. Megu &amp; Scotty D.</Artist>
     </Song>
     <Song>
         <Id>36922</Id>
         <Code>daca</Code>
         <Title>DA CAPO</Title>
+        <Artist>ACE OF BASE</Artist>
     </Song>
     <Song>
         <Id>36923</Id>
         <Code>give</Code>
         <Title>GIVE ME UP</Title>
+        <Artist>LH MUSIC CREATION</Artist>
     </Song>
     <Song>
         <Id>36924</Id>
         <Code>does</Code>
         <Title>DOESN'T REALLY MATTER</Title>
+        <Artist>JANET JACKSON</Artist>
     </Song>
     <Song>
         <Id>36925</Id>
         <Code>chao</Code>
         <Title>CHAOS</Title>
+        <Artist>DE-SIRE retunes</Artist>
     </Song>
     <Song>
         <Id>36926</Id>
         <Code>bred</Code>
-        <Title>Brilliant RED</Title>
+        <Title>Brilliant R•E•D</Title>
+        <Artist>NAOKI feat. Tahirih Walker</Artist>
     </Song>
     <Song>
         <Id>36927</Id>
         <Code>colo2</Code>
-        <Title>Colors (Midihead's Saphire Mix)</Title>
+        <Title>Colors</Title>
+        <Artist>(Midihead's Saphire Mix)</Artist>
     </Song>
     <Song>
         <Id>36928</Id>
         <Code>lab3</Code>
         <Title>La Bamba</Title>
+        <Artist>LH MUSIC CREATION</Artist>
     </Song>
     <Song>
         <Id>36929</Id>
         <Code>illm</Code>
         <Title>I'll Make Love To You</Title>
+        <Artist>LH MUSIC CREATION</Artist>
     </Song>
     <Song>
         <Id>36930</Id>
         <Code>fjus</Code>
         <Title>FEELS JUST LIKE IT SHOULD</Title>
+        <Artist>LH MUSIC CREATION</Artist>
     </Song>
     <Song>
         <Id>36931</Id>
         <Code>tlov</Code>
-        <Title>TRUE LOVE</Title>
+        <Title>TRUE♥LOVE</Title>
+        <Artist>jun feat. Schanita</Artist>
     </Song>
     <Song>
         <Id>36932</Id>
         <Code>btea</Code>
         <Title>Baby's Tears</Title>
+        <Artist>MIKI ROBERTS</Artist>
     </Song>
     <Song>
         <Id>36933</Id>
         <Code>wowo</Code>
         <Title>WOOKIE WOOKIE</Title>
+        <Artist>MACHOMAN</Artist>
     </Song>
     <Song>
         <Id>36934</Id>
         <Code>dvis</Code>
         <Title>Healing-D-Vision</Title>
+        <Artist>DE-STRAD</Artist>
     </Song>
     <Song>
         <Id>36935</Id>
         <Code>hana</Code>
-        <Title>Flowers</Title>
+        <Title>華爛漫 -Flowers-</Title>
+        <TitleRoman>Hana ranman -Flowers-</TitleRoman>
+        <TitleLocal>Flowers</TitleLocal>
+        <Artist>TËЯRA</Artist>
     </Song>
     <Song>
         <Id>36936</Id>
         <Code>flow2</Code>
-        <Title>Flow(True Style)</Title>
+        <Title>Flow</Title>
+        <Subtitle>(True Style)</Subtitle>
+        <Artist>Scotty D. revisits U1</Artist>
     </Song>
     <Song>
         <Id>36937</Id>
         <Code>fasc2</Code>
-        <Title>Fascination (eternal love mix)</Title>
+        <Title>Fascination</Title>
+        <Subtitle>～eternal love mix～</Subtitle>
+        <Artist>2MB</Artist>
     </Song>
     <Song>
         <Id>36938</Id>
         <Code>comc</Code>
         <Title>COME CLEAN</Title>
+        <Artist>NM featuring Susan Z</Artist>
     </Song>
     <Song>
         <Id>36939</Id>
         <Code>fain</Code>
         <Title>FAINT</Title>
+        <Artist>PEGASUS</Artist>
     </Song>
     <Song>
         <Id>36940</Id>
         <Code>meag</Code>
         <Title>ME AGINST THE MUSIC</Title>
+        <Artist>HELEN</Artist>
     </Song>
     <Song>
         <Id>37120</Id>
         <Code>flya2</Code>
-        <Title>Fly away-mix del matador-</Title>
+        <Title>Fly away</Title>
+        <Subtitle>-mix del matador-</Subtitle>
+        <Artist>Shawn the Horny Master feat. ChiyoTia</Artist>
     </Song>
     <Song>
         <Id>37121</Id>
         <Code>soul</Code>
         <Title>SOUL CRASH</Title>
+        <Artist>nc ft. HARDCORE NATION</Artist>
     </Song>
     <Song>
         <Id>37122</Id>
         <Code>gate2</Code>
-        <Title>Star Gate Heaven(FUTURE LOVE Mix)</Title>
+        <Title>Star Gate Heaven</Title>
+        <Subtitle>(FUTURE LOVE Mix)</Subtitle>
+        <Artist>SySF. feat. Donna Burke</Artist>
     </Song>
     <Song>
         <Id>37123</Id>
         <Code>moos</Code>
         <Title>MOONSTER</Title>
+        <Artist>kobo uniting Marsha &amp; D.</Artist>
     </Song>
     <Song>
         <Id>37124</Id>
         <Code>flow3</Code>
-        <Title>Flow(Jammin' Ragga Mix)</Title>
+        <Title>Flow</Title>
+        <Subtitle>(Jammin' Ragga Mix)</Subtitle>
+        <Artist>Scotty D. revisits U1</Artist>
     </Song>
     <Song>
         <Id>37125</Id>
         <Code>felw</Code>
-        <Title>Feelings Won't Fade(Extend Trance Mix)</Title>
+        <Title>Feelings Won't Fade</Title>
+        <Subtitle>(Extend Trance Mix)</Subtitle>
+        <Artist>SySF.</Artist>
     </Song>
     <Song>
         <Id>37126</Id>
         <Code>silv</Code>
-        <Title>Silver Platform - I wanna get your heart -</Title>
+        <Title>Silver Platform</Title>
+        <Subtitle>-I wanna get your heart-</Subtitle>
+        <Artist>U1 Reincarnates w/Leah</Artist>
     </Song>
     <Song>
         <Id>37127</Id>
         <Code>trim</Code>
         <Title>Trim</Title>
+        <Artist>kobo</Artist>
     </Song>
     <Song>
         <Id>37128</Id>
         <Code>fnky</Code>
         <Title>Funkytown</Title>
+        <Artist>Lipps's, Inc</Artist>
     </Song>
     <Song>
         <Id>37129</Id>
         <Code>leff</Code>
         <Title>L.E.F.</Title>
+        <Subtitle>(Loud Electronic Ferocious)</Subtitle>
+        <Artist>Ferry Corsten</Artist>
     </Song>
     <Song>
         <Id>37130</Id>
         <Code>shiv</Code>
-        <Title>Shivers(Radio Edit)</Title>
+        <Title>Shivers</Title>
+        <Subtitle>(Radio Edit)</Subtitle>
+        <Artist>Armin van Buuren</Artist>
     </Song>
     <Song>
         <Id>37131</Id>
         <Code>ikno</Code>
         <Title>I KNOW YOU GOT SOUL</Title>
+        <Artist>Jason Nevins vs. Erik B. &amp; Rakim</Artist>
     </Song>
     <Song>
         <Id>37132</Id>
         <Code>sinc</Code>
         <Title>SINCE U BEEN GONE</Title>
+        <Artist>KELLY CLARKSON</Artist>
     </Song>
     <Song>
         <Id>37133</Id>
         <Code>such</Code>
         <Title>Such Great Heights</Title>
+        <Artist>The Postal Service</Artist>
     </Song>
     <Song>
         <Id>37134</Id>
         <Code>theo</Code>
-        <Title>The Other Side (radio mix)</Title>
+        <Title>The Other Side</Title>
+        <Subtitle>(radio mix)</Subtitle>
+        <Artist>Paul van Dyk feat. Wayne Jackson</Artist>
     </Song>
     <Song>
         <Id>37135</Id>
         <Code>onew</Code>
-        <Title>One Word (Chris Cox Radio Mix)</Title>
+        <Title>One Word</Title>
+        <Subtitle>(Chris Cox Radio Mix)</Subtitle>
+        <Artist>Kelly Osbourne</Artist>
     </Song>
     <Song>
         <Id>37136</Id>
         <Code>runi</Code>
-        <Title>Run It</Title>
+        <Title>Run It!</Title>
+        <Artist>Chris Brown</Artist>
     </Song>
     <Song>
         <Id>37137</Id>
         <Code>dare</Code>
         <Title>Dare</Title>
+        <Artist>Gorillaz</Artist>
     </Song>
     <Song>
         <Id>37138</Id>
         <Code>trno</Code>
-        <Title>Turn On the Music(Axwell Radio Edit)</Title>
+        <Title>Turn On the Music</Title>
+        <Subtitle>(Axwell Radio Edit)</Subtitle>
+        <Artist>Roger Sanchez</Artist>
     </Song>
     <Song>
         <Id>37139</Id>
         <Code>doyw</Code>
         <Title>Do You Want To</Title>
+        <Artist>Franz Ferdinand</Artist>
     </Song>
     <Song>
         <Id>37140</Id>
         <Code>city</Code>
         <Title>City Of Blinding Lights</Title>
+        <Artist>U2</Artist>
     </Song>
     <Song>
         <Id>37141</Id>
         <Code>bttw</Code>
         <Title>Battle Without Honor Or Humanity</Title>
+        <Artist>Tomoyasu Hotei</Artist>
     </Song>
     <Song>
         <Id>37142</Id>
         <Code>sorr</Code>
         <Title>Sorry</Title>
+        <Artist>Madonna</Artist>
     </Song>
     <Song>
         <Id>37143</Id>
         <Code>yoex</Code>
         <Title>Yo (Excuse Me Miss)</Title>
+        <Artist>Chris Brown</Artist>
     </Song>
     <Song>
         <Id>37144</Id>
         <Code>mams</Code>
         <Title>Mama Said Knock You Out</Title>
+        <Artist>LL Cool J</Artist>
     </Song>
     <Song>
         <Id>37145</Id>
         <Code>chec</Code>
         <Title>Check On It</Title>
+        <Artist>Beyoncé</Artist>
     </Song>
     <Song>
         <Id>37146</Id>
         <Code>whyr</Code>
-        <Title>WHY(RADIO EDIT)</Title>
+        <Title>WHY</Title>
+        <Subtitle>(RADIO EDIT)</Subtitle>
+        <Artist>3T feat. Michael Jackson</Artist>
     </Song>
     <Song>
         <Id>37147</Id>
         <Code>soss</Code>
         <Title>SOS</Title>
+        <Artist>Rihanna</Artist>
     </Song>
     <Song>
         <Id>37148</Id>
         <Code>danc</Code>
         <Title>Dance, Dance</Title>
+        <Artist>Fall Out Boy</Artist>
     </Song>
     <Song>
         <Id>37149</Id>
         <Code>galv</Code>
         <Title>Galvinize</Title>
+        <Artist>The Chemical Brothers</Artist>
     </Song>
     <Song>
         <Id>37150</Id>
         <Code>numb</Code>
-        <Title>Number 1(Alan Braxe &amp; Fred Falke Main Remix)</Title>
+        <Title>Number 1</Title>
+        <Subtitle>(Alan Braxe &amp; Fred Falke Main Remix)</Subtitle>
+        <Artist>Goldfrapp</Artist>
     </Song>
     <Song>
         <Id>37151</Id>
         <Code>gett</Code>
         <Title>Get Together</Title>
+        <Artist>Madonna</Artist>
     </Song>
     <Song>
         <Id>37152</Id>
         <Code>brkf</Code>
         <Title>Breaking Free</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37153</Id>
         <Code>blab</Code>
         <Title>Beautiful Loved And Blessed</Title>
+        <Artist>Támar feat. Prince</Artist>
     </Song>
     <Song>
         <Id>37154</Id>
         <Code>prnc</Code>
         <Title>Prince</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37155</Id>
         <Code>sosi</Code>
         <Title>So Sick</Title>
+        <Artist>Ne-Yo</Artist>
     </Song>
     <Song>
         <Id>37156</Id>
         <Code>temp</Code>
         <Title>Temperature</Title>
+        <Artist>Sean Paul</Artist>
     </Song>
     <Song>
         <Id>37157</Id>
         <Code>dscc</Code>
         <Title>DISCO CLUB</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37158</Id>
         <Code>robo</Code>
         <Title>Robogirl</Title>
+        <Artist>The Crystal Method</Artist>
     </Song>
     <Song>
         <Id>37159</Id>
         <Code>beau</Code>
         <Title>Beautiful Life</Title>
+        <Artist>ARIA</Artist>
     </Song>
     <Song>
         <Id>37160</Id>
         <Code>btea2</Code>
-        <Title>Baby's Tears (SKY GIRLS opening theme)</Title>
+        <Title>Baby's Tears</Title>
+        <Subtitle>(SKY GIRLS opening theme)</Subtitle>
+        <Artist>小坂りゆ</Artist>
+        <ArtistRoman>Riyu Kosaka</ArtistRoman>
     </Song>
     <Song>
         <Id>37161</Id>
         <Code>biol</Code>
         <Title>Biology</Title>
+        <Artist>Girls Aloud</Artist>
     </Song>
     <Song>
         <Id>37162</Id>
         <Code>hood</Code>
         <Title>Hoodie</Title>
+        <Artist>Lady Sovereign</Artist>
     </Song>
     <Song>
         <Id>37163</Id>
         <Code>godi</Code>
         <Title>God is a DJ</Title>
+        <Artist>Faithless</Artist>
     </Song>
     <Song>
         <Id>37164</Id>
         <Code>rome</Code>
         <Title>Romeo</Title>
+        <Artist>Basement Jaxx</Artist>
     </Song>
     <Song>
         <Id>37165</Id>
         <Code>rhrn</Code>
-        <Title>Right Here. Right Now</Title>
+        <Title>Right Here, Right Now</Title>
+        <Artist>Fatboy Slim</Artist>
     </Song>
     <Song>
         <Id>37166</Id>
         <Code>brui</Code>
         <Title>Bruised</Title>
+        <Artist>Sugababes</Artist>
     </Song>
     <Song>
         <Id>37167</Id>
         <Code>soni</Code>
         <Title>Supersonic</Title>
+        <Artist>Jamiroquai</Artist>
     </Song>
     <Song>
         <Id>37168</Id>
         <Code>onme</Code>
         <Title>Take On Me</Title>
+        <Artist>A-ha</Artist>
     </Song>
     <Song>
         <Id>37169</Id>
         <Code>said</Code>
         <Title>All The Things She Said</Title>
+        <Artist>t.A.T.u.</Artist>
     </Song>
     <Song>
         <Id>37170</Id>
         <Code>jacq</Code>
-        <Title>Jacques Your Body (Make Me Sweat)</Title>
+        <Title>Jacques Your Body</Title>
+        <Subtitle>(Make Me Sweat)</Subtitle>
+        <Artist>Les Rythmes Digitales</Artist>
     </Song>
     <Song>
         <Id>37171</Id>
         <Code>heyb</Code>
         <Title>Hey Boy, Hey Girl</Title>
+        <Artist>The Chemical Brothers</Artist>
     </Song>
     <Song>
         <Id>37172</Id>
         <Code>step</Code>
-        <Title>1,2 Step</Title>
+        <Title>1, 2 Step</Title>
+        <Artist>LADY-S</Artist>
     </Song>
     <Song>
         <Id>37173</Id>
         <Code>luft</Code>
-        <Title>99 Luftballons</Title>
+        <Title>99 Red Balloons</Title>
+        <Artist>M-CREW project</Artist>
     </Song>
     <Song>
         <Id>37174</Id>
         <Code>cloc</Code>
         <Title>Clocks</Title>
+        <Artist>T.R.MASTER MC</Artist>
     </Song>
     <Song>
         <Id>37175</Id>
         <Code>fina</Code>
         <Title>Finally</Title>
+        <Artist>CLUB 90's</Artist>
     </Song>
     <Song>
         <Id>37176</Id>
         <Code>gonn</Code>
         <Title>Gonna Make You Sweat</Title>
+        <Subtitle>(Everybody Dance Now)</Subtitle>
+        <Artist>RAVE ATTACKERS</Artist>
     </Song>
     <Song>
         <Id>37177</Id>
         <Code>hots</Code>
         <Title>Hot Stuff</Title>
+        <Artist>DISCO QUEEN</Artist>
     </Song>
     <Song>
         <Id>37178</Id>
         <Code>karm</Code>
         <Title>Karma Chameleon</Title>
+        <Artist>happy happy cores</Artist>
     </Song>
     <Song>
         <Id>37179</Id>
         <Code>byou</Code>
         <Title>Nothing But You</Title>
+        <Artist>TRANCE JACK</Artist>
     </Song>
     <Song>
         <Id>37180</Id>
         <Code>risa</Code>
         <Title>Rhythm Is a Dancer</Title>
+        <Artist>SPOTS</Artist>
     </Song>
     <Song>
         <Id>37181</Id>
         <Code>sign</Code>
         <Title>The Sign</Title>
+        <Artist>Honey Sweets</Artist>
     </Song>
     <Song>
         <Id>37182</Id>
         <Code>ysme</Code>
-        <Title>You Spin Me 'Round (Like a Record)</Title>
+        <Title>You Spin Me 'Round</Title>
+        <Subtitle>(Like a Record)</Subtitle>
+        <Artist>M.A.N</Artist>
     </Song>
     <Song>
         <Id>37183</Id>
         <Code>fara</Code>
         <Title>Far Away</Title>
+        <Artist>Traveler</Artist>
     </Song>
     <Song>
         <Id>37184</Id>
         <Code>lips</Code>
         <Title>Lips of an Angel</Title>
+        <Artist>JET ROCKERS</Artist>
     </Song>
     <Song>
         <Id>37185</Id>
         <Code>conm</Code>
         <Title>Call On Me</Title>
+        <Artist>2000's STARS</Artist>
     </Song>
     <Song>
         <Id>37186</Id>
-        <Code>alieBuried a Lie</Code>
+        <Code>alie</Code>
+        <Title>Buried a Lie</Title>
+        <Artist>COOLS K</Artist>
     </Song>
     <Song>
         <Id>37187</Id>
         <Code>fied</Code>
         <Title>Electrified</Title>
+        <Artist>SySF.</Artist>
     </Song>
     <Song>
         <Id>37188</Id>
         <Code>mitr</Code>
         <Title>Music In The Rhythm</Title>
+        <Artist>nc feat.触電</Artist>
+        <ArtistRoman>nc feat.Sawa-den</ArtistRoman>
+        <ArtistLocal>nc ft. Electric Touch</ArtistLocal>
     </Song>
     <Song>
         <Id>37189</Id>
         <Code>mala</Code>
         <Title>Malacca</Title>
+        <Artist>nc ft NRG factory</Artist>
     </Song>
     <Song>
         <Id>37190</Id>
         <Code>rasp</Code>
-        <Title>Raspberry Heart(English version)</Title>
+        <Title>Raspberry Heart</Title>
+        <Subtitle>(English version)</Subtitle>
+        <Artist>jun feat. PAULA TERRY</Artist>
     </Song>
     <Song>
         <Id>37191</Id>
         <Code>bloo</Code>
-        <Title>Bloody Tears(IIDX EDITION)</Title>
+        <Title>Bloody Tears</Title>
+        <Subtitle>(IIDX EDITION)</Subtitle>
+        <Artist>DJ YOSHITAKA</Artist>
     </Song>
     <Song>
         <Id>37192</Id>
         <Code>agir</Code>
-        <Title>Just A Girl(Radio Edit)</Title>
+        <Title>Just A Girl</Title>
+        <Subtitle>(Radio Edit)</Subtitle>
+        <Artist>Ian Van Dahl</Artist>
     </Song>
     <Song>
         <Id>37193</Id>
         <Code>mber</Code>
-        <Title>Number 1(Alan Braxe &amp; Fred Falke Main Remix)</Title>
+        <Title>Number 1</Title>
+        <Subtitle>(Alan Braxe &amp; Fred Falke Main Remix)</Subtitle>
+        <Artist>Goldfrapp</Artist>
     </Song>
     <Song>
         <Id>37194</Id>
         <Code>lefr</Code>
         <Title>LE FREAK</Title>
+        <Artist>CHIC</Artist>
     </Song>
     <Song>
         <Id>37195</Id>
         <Code>subu</Code>
         <Title>Suburban Train</Title>
+        <Artist>DJ Tiësto</Artist>
     </Song>
     <Song>
         <Id>37196</Id>
         <Code>unbe</Code>
         <Title>Unbelievable</Title>
+        <Artist>EMF</Artist>
     </Song>
     <Song>
         <Id>37197</Id>
         <Code>prol</Code>
-        <Title>Prologue(Carl Cox &amp; Paul Van Dyke Mix)</Title>
+        <Title>Prologue</Title>
+        <Subtitle>(Carl Cox &amp; Paul Van Dyke Mix)</Subtitle>
+        <Artist>Tenth Chapter</Artist>
     </Song>
     <Song>
         <Id>37198</Id>
         <Code>hook</Code>
-        <Title>Hooked (feat. Dom and Roland)-Tech itch and Deiselboy Remix</Title>
+        <Title>Hooked (feat. Dom and Roland)</Title>
+        <Subtitle>-Tech Itch and Dieselboy Remix-</Subtitle>
+        <Artist>Gridlok</Artist>
     </Song>
     <Song>
         <Id>37199</Id>
         <Code>ofth</Code>
         <Title>Beginning of the End</Title>
+        <Artist>Klayton (Celldweller)</Artist>
     </Song>
     <Song>
         <Id>37200</Id>
         <Code>reas</Code>
         <Title>Give Me A Reason</Title>
+        <Artist>The Corrs</Artist>
     </Song>
     <Song>
         <Id>37201</Id>
         <Code>fast</Code>
         <Title>Faster Kill Pussycat</Title>
+        <Artist>Paul Oakenfold feat. Brittany Murphy</Artist>
     </Song>
     <Song>
         <Id>37202</Id>
         <Code>ange</Code>
-        <Title>ANGELUS</Title>
+        <Title>ANGELUS -アンジェラス-</Title>
+        <TitleRoman>ANGELUS -Anjerasu-</TitleRoman>
+        <Artist>島谷ひとみ</Artist>
+        <ArtistRoman>Hitomi Shimatani</ArtistRoman>
     </Song>
     <Song>
         <Id>37203</Id>
         <Code>csto</Code>
         <Title>Can't Stop the Rain</Title>
+        <Artist>Cascada</Artist>
     </Song>
     <Song>
         <Id>37204</Id>
         <Code>lste</Code>
         <Title>Every Little Step</Title>
+        <Artist>Bobby Brown</Artist>
     </Song>
     <Song>
         <Id>37205</Id>
         <Code>unwr</Code>
-        <Title>Unwritten(Vicious Club Mix)</Title>
+        <Title>Unwritten</Title>
+        <Subtitle>(Vicious Club Mix)</Subtitle>
+        <Artist>Natasha Bedingfield</Artist>
     </Song>
     <Song>
         <Id>37206</Id>
         <Code>dazz</Code>
         <Title>dazzle</Title>
+        <Artist>kobo feat.kr:agué</Artist>
     </Song>
     <Song>
         <Id>37207</Id>
         <Code>fway</Code>
         <Title>Freeway Shuffle</Title>
+        <Artist>dj TAKA</Artist>
     </Song>
     <Song>
         <Id>37208</Id>
         <Code>alwa</Code>
-        <Title>Always (Microbots Trance Dance Mix)</Title>
+        <Title>Always</Title>
+        <Subtitle>(Microbots Trance Dance Mix)</Subtitle>
+        <Artist>MAN'S COOL</Artist>
     </Song>
     <Song>
         <Id>37209</Id>
         <Code>infe</Code>
         <Title>Disco Inferno</Title>
+        <Artist>OK･OK･OK</Artist>
     </Song>
     <Song>
         <Id>37210</Id>
         <Code>tlel</Code>
         <Title>Little L</Title>
+        <Artist>Single Funk</Artist>
     </Song>
     <Song>
         <Id>37211</Id>
         <Code>buty</Code>
         <Title>Nothing But You</Title>
+        <Artist>TRANCE JACK</Artist>
     </Song>
     <Song>
         <Id>37212</Id>
         <Code>away</Code>
         <Title>Far Away</Title>
+        <Artist>Traveler</Artist>
     </Song>
     <Song>
         <Id>37213</Id>
         <Code>caug</Code>
         <Title>Caught Up</Title>
+        <Artist>Stopped Cold</Artist>
     </Song>
     <Song>
         <Id>37214</Id>
         <Code>gyps</Code>
         <Title>Gypsy woman</Title>
+        <Artist>neo-GRUV</Artist>
     </Song>
     <Song>
         <Id>37215</Id>
         <Code>flik</Code>
         <Title>I Don't Feel Like Dancin'</Title>
+        <Artist>Life Aloud</Artist>
     </Song>
     <Song>
         <Id>37216</Id>
         <Code>memi</Code>
         <Title>Yo, Excuse Me Miss</Title>
+        <Artist>Smooth-1</Artist>
     </Song>
     <Song>
         <Id>37217</Id>
         <Code>unap</Code>
-        <Title>Unappreciated</Title>
+        <Title>unappreciated</Title>
+        <Artist>Wrapped Up</Artist>
     </Song>
     <Song>
         <Id>37218</Id>
         <Code>bmon</Code>
         <Title>Blue Monday</Title>
+        <Artist>wg</Artist>
     </Song>
     <Song>
         <Id>37219</Id>
         <Code>stim</Code>
         <Title>Summertime</Title>
+        <Artist>Eazin'</Artist>
     </Song>
     <Song>
         <Id>37220</Id>
         <Code>tltl</Code>
         <Title>Too Little, Too Late</Title>
+        <Artist>Okokoro</Artist>
     </Song>
     <Song>
         <Id>37221</Id>
         <Code>lshi</Code>
-        <Title>LOVE SHINE (Body Grooverz 2006 mix)</Title>
+        <Title>LOVE SHINE</Title>
+        <Subtitle>(Body Grooverz 2006 mix)</Subtitle>
+        <Artist>W.W.S</Artist>
     </Song>
     <Song>
         <Id>37222</Id>
         <Code>bdow</Code>
-        <Title>BREAK DOWN! (World Version)</Title>
+        <Title>BREAK DOWN!</Title>
+        <Subtitle>(World Version)</Subtitle>
+        <Artist>ELE ROCKS</Artist>
     </Song>
     <Song>
         <Id>37223</Id>
         <Code>spar</Code>
-        <Title>1998 (Sparky 2006)</Title>
+        <Title>1998</Title>
+        <Subtitle>(Sparky 2006)</Subtitle>
+        <Artist>J-RAVERS</Artist>
     </Song>
     <Song>
         <Id>37224</Id>
         <Code>cufo</Code>
-        <Title>CANDY (UFO mix)</Title>
+        <Title>CANDY</Title>
+        <Subtitle>(UFO mix)</Subtitle>
+        <Artist>The Sweetest</Artist>
     </Song>
     <Song>
         <Id>37225</Id>
         <Code>acol</Code>
-        <Title>B4U (The Acolyte mix)</Title>
+        <Title>B4U</Title>
+        <Subtitle>(The Acolyte mix)</Subtitle>
+        <Artist>J-RAVERS</Artist>
     </Song>
     <Song>
         <Id>37226</Id>
         <Code>conf</Code>
         <Title>Confession</Title>
+        <Artist>trance star</Artist>
     </Song>
     <Song>
         <Id>37227</Id>
         <Code>leti</Code>
         <Title>let it out</Title>
+        <Artist>true dreamer</Artist>
     </Song>
     <Song>
         <Id>37228</Id>
         <Code>will</Code>
         <Title>will</Title>
+        <Artist>NAOKI</Artist>
     </Song>
     <Song>
         <Id>37229</Id>
         <Code>lits</Code>
         <Title>little steps</Title>
+        <Artist>Freeman</Artist>
     </Song>
     <Song>
         <Id>37230</Id>
         <Code>touc</Code>
         <Title>Touchin'</Title>
+        <Artist>The Lonely Hearts</Artist>
     </Song>
     <Song>
         <Id>37231</Id>
         <Code>ifly</Code>
         <Title>I'm Flying Away</Title>
+        <Artist>Stepper</Artist>
     </Song>
     <Song>
         <Id>37232</Id>
         <Code>wwlt</Code>
         <Title>We Will Live Together</Title>
+        <Artist>Happy CoreMAN</Artist>
     </Song>
     <Song>
         <Id>37233</Id>
         <Code>hand</Code>
         <Title>Heavens and the Earth</Title>
+        <Artist>The Lonely Hearts</Artist>
     </Song>
     <Song>
         <Id>37234</Id>
         <Code>ngon</Code>
         <Title>Moving On</Title>
+        <Artist>J.J. Pops</Artist>
     </Song>
     <Song>
         <Id>37235</Id>
         <Code>higo</Code>
         <Title>Here I Go Again</Title>
+        <Artist>NM feat. Malaya</Artist>
     </Song>
     <Song>
         <Id>37236</Id>
         <Code>tbea</Code>
         <Title>the beat</Title>
+        <Artist>Sparky</Artist>
     </Song>
     <Song>
         <Id>37237</Id>
         <Code>bins</Code>
-        <Title>Beautiful Inside (Cube::Hard Mix)</Title>
+        <Title>Beautiful Inside</Title>
+        <Subtitle>(Cube::Hard Mix)</Subtitle>
+        <Artist>NM feat. Alison Wade</Artist>
     </Song>
     <Song>
         <Id>37238</Id>
         <Code>mwit</Code>
         <Title>Mess With My Emotions</Title>
+        <Artist>Latenighter</Artist>
     </Song>
     <Song>
         <Id>37239</Id>
         <Code>trea</Code>
         <Title>THE REASON</Title>
+        <Artist>Black Rose Garden</Artist>
     </Song>
     <Song>
         <Id>37240</Id>
         <Code>samu</Code>
         <Title>SUPER SAMURAI</Title>
+        <Artist>jun</Artist>
     </Song>
     <Song>
         <Id>37241</Id>
         <Code>ucha</Code>
         <Title>Such A Feeling</Title>
+        <Artist>U1</Artist>
     </Song>
     <Song>
         <Id>37242</Id>
         <Code>tigh</Code>
         <Title>Hold Tight</Title>
+        <Artist>800 Slopes</Artist>
     </Song>
     <Song>
         <Id>37243</Id>
         <Code>ryou</Code>
         <Title>Rock Your Body</Title>
+        <Artist>Justin Timberlake</Artist>
     </Song>
     <Song>
         <Id>37244</Id>
         <Code>tobe</Code>
         <Title>Got To Be Real</Title>
+        <Artist>Cheryl Lynn</Artist>
     </Song>
     <Song>
         <Id>37245</Id>
         <Code>onmy</Code>
         <Title>Love On My Mind</Title>
+        <Artist>Freemasons feat. Amanda Wilson</Artist>
     </Song>
     <Song>
         <Id>37246</Id>
         <Code>andt</Code>
-        <Title>And Then We Kiss (Junkie XL Mix)</Title>
+        <Title>And Then We Kiss</Title>
+        <Subtitle>(Junkie XL Mix)</Subtitle>
+        <Artist>Britney Spears</Artist>
     </Song>
     <Song>
         <Id>37247</Id>
         <Code>sudd</Code>
         <Title>Suddenly I See</Title>
+        <Artist>KT Tunstall</Artist>
     </Song>
     <Song>
         <Id>37248</Id>
         <Code>toky</Code>
         <Title>tokyoEVOLVED</Title>
+        <Artist>NAOKI underground</Artist>
     </Song>
     <Song>
         <Id>37249</Id>
         <Code>orig</Code>
         <Title>ORIGINAL19(prac)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37250</Id>
         <Code>aint</Code>
         <Title>FAINT</Title>
+        <Artist>PEGASUS</Artist>
     </Song>
     <Song>
         <Id>37251</Id>
         <Code>ngoo</Code>
         <Title>NGO</Title>
+        <Artist>鍋島圭一</Artist>
+        <ArtistRoman>Keiichi Nabeshima</ArtistRoman>
     </Song>
     <Song>
         <Id>37252</Id>
         <Code>smac</Code>
         <Title>Strict Machine</Title>
+        <Artist>Goldfrapp</Artist>
     </Song>
     <Song>
         <Id>37253</Id>
         <Code>btol</Code>
         <Title>Back to Life</Title>
+        <Artist>Soul II Soul</Artist>
     </Song>
     <Song>
         <Id>37254</Id>
         <Code>firr</Code>
         <Title>FIRE</Title>
+        <Artist>Mutsuhiko Izumi</Artist>
     </Song>
     <Song>
         <Id>37255</Id>
         <Code>unre</Code>
         <Title>Unreal</Title>
+        <Artist>Black Rose Garden</Artist>
     </Song>
     <Song>
         <Id>37256</Id>
         <Code>stah</Code>
-        <Title>STARS(Re-tuned by HAL) - DDR EDITION -</Title>
+        <Title>STARS★★★</Title>
+        <Subtitle>(Re-tuned by HΛL) -DDR EDITION-</Subtitle>
+        <Artist>TЁЯRA</Artist>
     </Song>
     <Song>
         <Id>37257</Id>
         <Code>skan</Code>
         <Title>The Rockafeller Skank</Title>
+        <Artist>Fatboy Slim</Artist>
     </Song>
     <Song>
         <Id>37258</Id>
         <Code>hesa</Code>
         <Title>He Said She Said</Title>
+        <Artist>Ashley Tisdale</Artist>
     </Song>
     <Song>
         <Id>37259</Id>
         <Code>cbac</Code>
-        <Title>Come Back to Me (Single Version)</Title>
+        <Title>Come Back to Me</Title>
+        <Subtitle>(Single Version)</Subtitle>
+        <Artist>Vanessa Hudgens</Artist>
     </Song>
     <Song>
         <Id>37260</Id>
         <Code>sayg</Code>
         <Title>Say Goodbye</Title>
+        <Artist>Chris Brown</Artist>
     </Song>
     <Song>
         <Id>37261</Id>
         <Code>feva</Code>
         <Title>Fevah</Title>
+        <Artist>Nightriders</Artist>
     </Song>
     <Song>
         <Id>37262</Id>
         <Code>arou</Code>
         <Title>The World Around Me</Title>
+        <Artist>DJ Micro</Artist>
     </Song>
     <Song>
         <Id>37263</Id>
         <Code>twom</Code>
         <Title>Two Months Off</Title>
+        <Artist>TECHNO MASTERS</Artist>
     </Song>
     <Song>
         <Id>37264</Id>
         <Code>vate</Code>
-        <Title>CaptivAte～CHIKAI～</Title>
+        <Title>CaptivAte</Title>
+        <Subtitle>～誓い～</Subtitle>
+        <SubtitleRoman>～CHIKAI～</SubtitleRoman>
+        <Artist>DJ YOSHITAKA feat.A/I</Artist>
     </Song>
     <Song>
         <Id>37265</Id>
         <Code>venu</Code>
         <Title>Venus</Title>
+        <Artist>Tatsh+RayZY</Artist>
     </Song>
     <Song>
         <Id>37266</Id>
         <Code>blin</Code>
-        <Title>Blind Justice ～Torn souls, Hurt Faiths～</Title>
+        <Title>Blind Justice</Title>
+        <Subtitle>～Torn souls, Hurt Faiths～</Subtitle>
+        <Artist>Zektbach</Artist>
     </Song>
     <Song>
         <Id>37267</Id>
         <Code>athi</Code>
         <Title>A thing called LOVE</Title>
+        <Artist>D-crew 2 US</Artist>
     </Song>
     <Song>
         <Id>37268</Id>
         <Code>wind</Code>
-        <Title>Wind it Up(Original Neptunes Mix)</Title>
+        <Title>Wind it Up</Title>
+        <Subtitle>(Original Neptunes Mix)</Subtitle>
+        <Artist>Gwen Stefani</Artist>
     </Song>
     <Song>
         <Id>37269</Id>
         <Code>uber</Code>
-        <Title>Ubertreffen</Title>
+        <Title>Übertreffen</Title>
+        <Artist>TAKA respect for J.S.B.</Artist>
     </Song>
     <Song>
         <Id>37270</Id>
         <Code>arra</Code>
         <Title>Arrabbiata</Title>
+        <Artist>Reven-G改</Artist>
+        <ArtistRoman>Reven-G Aratame</ArtistRoman>
     </Song>
     <Song>
         <Id>37271</Id>
         <Code>dori</Code>
         <Title>Do It Right</Title>
+        <Artist>SOTA feat. Ebony Fay</Artist>
     </Song>
     <Song>
         <Id>37272</Id>
         <Code>unti</Code>
         <Title>Until Forever</Title>
+        <Artist>Beatdrop</Artist>
     </Song>
     <Song>
         <Id>37273</Id>
         <Code>trix</Code>
         <Title>TRIP MACHINE PhoeniX</Title>
+        <Artist>DE-SIRE alterative</Artist>
     </Song>
     <Song>
         <Id>37274</Id>
         <Code>vemb</Code>
         <Title>Vem brincar</Title>
+        <Artist>Caldeira feat. Téka Penteriche</Artist>
     </Song>
     <Song>
         <Id>37275</Id>
         <Code>eter</Code>
         <Title>EternuS</Title>
+        <Artist>Sanxion7</Artist>
     </Song>
     <Song>
         <Id>37276</Id>
         <Code>dofl</Code>
         <Title>dream of love</Title>
+        <Artist>Kaori Nishina</Artist>
     </Song>
     <Song>
         <Id>37277</Id>
         <Code>volc</Code>
         <Title>volcano</Title>
+        <Artist>Yasuhiro Abe</Artist>
     </Song>
     <Song>
         <Id>37278</Id>
         <Code>eday</Code>
-        <Title>Every Day,Every Night(NM STYLE)</Title>
+        <Title>Every Day, Every Night</Title>
+        <Subtitle>(NM STYLE)</Subtitle>
+        <Artist>LEA DROP feat. Ant Johnston</Artist>
     </Song>
     <Song>
         <Id>37279</Id>
         <Code>plut</Code>
         <Title>Pluto</Title>
+        <Artist>Black∞Hole</Artist>
     </Song>
     <Song>
         <Id>37280</Id>
         <Code>sunr</Code>
-        <Title>SUNRISE(JASON NEVINS REMIX)</Title>
+        <Title>SUNRISE</Title>
+        <Subtitle>(JASON NEVINS REMIX)</Subtitle>
+        <Artist>DURAN DURAN</Artist>
     </Song>
     <Song>
         <Id>37281</Id>
         <Code>pard</Code>
-        <Title>PARANOiA -HADES-</Title>
+        <Title>PARANOiA</Title>
+        <Subtitle>～HADES～</Subtitle>
+        <Artist>αTYPE-300</Artist>
     </Song>
     <Song>
         <Id>37282</Id>
         <Code>swit</Code>
         <Title>switch</Title>
+        <Artist>DAISUKE ASAKURA ex. TËЯRA</Artist>
     </Song>
     <Song>
         <Id>37283</Id>
         <Code>alth</Code>
         <Title>stealth</Title>
+        <Artist>DAISUKE ASAKURA</Artist>
     </Song>
     <Song>
         <Id>37284</Id>
         <Code>bbbu</Code>
         <Title>Burn Baby Burn</Title>
+        <Artist>SLOTH MUSIC PROJECT feat. ANDY L</Artist>
     </Song>
     <Song>
         <Id>37285</Id>
         <Code>favo</Code>
         <Title>My Favorite Things</Title>
+        <Artist>SLOTH MUSIC PROJECT feat. ALISON WADE</Artist>
     </Song>
     <Song>
         <Id>37286</Id>
         <Code>nomo</Code>
         <Title>AIN'T NO MOUNTAIN HIGH ENOUGH</Title>
+        <Artist>SLOTH MUSIC PROJECT feat. MALAYA</Artist>
     </Song>
     <Song>
         <Id>37287</Id>
         <Code>trus</Code>
-        <Title>Trust -DanceDanceRevolution mix-</Title>
+        <Title>Trust</Title>
+        <Subtitle>-DanceDanceRevolution mix-</Subtitle>
+        <Artist>Tatsh feat. ヨーコ</Artist>
+        <ArtistRoman>Tatsh feat. Youko</ArtistRoman>
     </Song>
     <Song>
         <Id>37288</Id>
         <Code>plur</Code>
         <Title>Pluto Relinquish</Title>
+        <Artist>2MB</Artist>
     </Song>
     <Song>
         <Id>37289</Id>
         <Code>lamd</Code>
-        <Title>L'amour et la libertΘ(Darwin &amp; DJ Silver remix)</Title>
+        <Title>L'amour et la liberté</Title>
+        <Subtitle>(Darwin &amp; DJ Silver remix)</Subtitle>
+        <Artist>NAOKI in the MERCURE</Artist>
     </Song>
     <Song>
         <Id>37290</Id>
         <Code>votu</Code>
-        <Title>Votum stellarum -forest #25 DDR RMX-</Title>
+        <Title>Votum stellarum</Title>
+        <Subtitle>-forest #25 DDR RMX-</Subtitle>
+        <Artist>iconoclasm</Artist>
     </Song>
     <Song>
         <Id>37291</Id>
         <Code>jupi</Code>
-        <Title>JUPITER:The Bringer of Jollity</Title>
+        <Title>木星～組曲『惑星』より</Title>
+        <TitleRoman>Mokusei～kumikyoku "wakusei" yori</TitleRoman>
+        <TitleLocal>JUPITER: The Bringer of Jollity</TitleLocal>
+        <Artist>PLEIADES PRODUCTION</Artist>
     </Song>
     <Song>
         <Id>37292</Id>
         <Code>sunj</Code>
-        <Title>SUNKiSS DROP -Japanese ver-</Title>
+        <Title>SUNKiSS♥DROP</Title>
+        <Subtitle>-Japanese ver-</Subtitle>
+        <Artist>jun with Alison</Artist>
     </Song>
     <Song>
         <Id>37293</Id>
         <Code>uran</Code>
         <Title>Uranus</Title>
+        <Artist>Tatsh SN 2 Style</Artist>
     </Song>
     <Song>
         <Id>37294</Id>
         <Code>mars</Code>
         <Title>MARS WAR 3</Title>
+        <Artist>JET GIRL SPIN</Artist>
     </Song>
     <Song>
         <Id>37295</Id>
         <Code>whyn</Code>
         <Title>Why not</Title>
+        <Artist>Darwin</Artist>
     </Song>
     <Song>
         <Id>37296</Id>
         <Code>shad</Code>
         <Title>Shades of Grey</Title>
+        <Artist>Fracus</Artist>
     </Song>
     <Song>
         <Id>37297</Id>
         <Code>gili</Code>
-        <Title>GIRIGILI Burning 24H!</Title>
+        <Title>GIRIGILI門前雀羅</Title>
+        <TitleRoman>GIRIGILI monzen jakura</TitleRoman>
+        <TitleLocal>GIRIGILI Burning 24H!</TitleLocal>
+        <Artist>Cheki-ROWS</Artist>
     </Song>
     <Song>
         <Id>37298</Id>
         <Code>pose</Code>
         <Title>Poseidon</Title>
+        <Artist>NAOKI underground</Artist>
     </Song>
     <Song>
         <Id>37299</Id>
         <Code>bris</Code>
-        <Title>BRILLIANT 2U ("STREAM" Special)</Title>
+        <Title>BRILLIANT 2U</Title>
+        <Subtitle>("STREAM" Special)</Subtitle>
+        <Artist>NAOKI</Artist>
     </Song>
     <Song>
         <Id>37300</Id>
         <Code>amch</Code>
-        <Title>AM-3P ("CHAOS" Special)</Title>
+        <Title>AM-3P</Title>
+        <Subtitle>("CHAOS" Special)</Subtitle>
+        <Artist>KTz</Artist>
     </Song>
     <Song>
         <Id>37301</Id>
         <Code>dtwf</Code>
-        <Title>D2R ("FREEZE" Special)</Title>
+        <Title>D2R</Title>
+        <Subtitle>("FREEZE" Special)</Subtitle>
+        <Artist>NAOKI</Artist>
     </Song>
     <Song>
         <Id>37302</Id>
         <Code>dyns</Code>
-        <Title>DYNAMITE RAVE ("AIR" Special)</Title>
+        <Title>DYNAMITE RAVE</Title>
+        <Subtitle>("AIR" Special)</Subtitle>
+        <Artist>NAOKI</Artist>
     </Song>
     <Song>
         <Id>37303</Id>
         <Code>bfov</Code>
-        <Title>B4U ("VOLTAGE" Special)</Title>
+        <Title>B4U</Title>
+        <Subtitle>("VOLTAGE" Special)</Subtitle>
+        <Artist>NAOKI</Artist>
     </Song>
     <Song>
         <Id>37304</Id>
         <Code>deag</Code>
-        <Title>DEAD END ("GROOVE RADAR" Special)</Title>
+        <Title>DEAD END</Title>
+        <Subtitle>("GROOVE RADAR" Special)</Subtitle>
+        <Artist>N&amp;S</Artist>
     </Song>
     <Song>
         <Id>37305</Id>
         <Code>sune</Code>
-        <Title>SUNKiSS DROP -English ver-</Title>
+        <Title>SUNKiSS♥DROP</Title>
+        <Subtitle>-English ver-</Subtitle>
+        <Artist>jun with Alison</Artist>
     </Song>
     <Song>
         <Id>37306</Id>
-        <Code>sune</Code>
-        <Title>SUNKiSS DROP</Title>
+        <Code>sunk</Code>
+        <Title>SUNKiSS♥DROP</Title>
+        <Artist>jun with Alison</Artist>
     </Song>
     <Song>
         <Id>37307</Id>
         <Code>satu</Code>
         <Title>Saturn</Title>
+        <Artist>Mr.Saturn</Artist>
     </Song>
     <Song>
         <Id>37308</Id>
         <Code>tloc</Code>
-        <Title>TRUE LOVE (Clubstar's True Club Mix)</Title>
+        <Title>TRUE♥LOVE</Title>
+        <Subtitle>(Clubstar's True Club Mix)</Subtitle>
+        <Artist>jun feat. Schanita</Artist>
     </Song>
     <Song>
         <Id>37309</Id>
         <Code>pluf</Code>
         <Title>Pluto The First</Title>
+        <Artist>WHITE WALL</Artist>
     </Song>
     <Song>
         <Id>37310</Id>
         <Code>bfos</Code>
         <Title>B4U (Rising Sun mix)</Title>
+        <Artist>NAOKI with J-RAVERS</Artist>
     </Song>
     <Song>
         <Id>37311</Id>
         <Code>doub</Code>
-        <Title>DOUBLE TORNAR</Title>
+        <Title>DOUBLE TORNARD</Title>
+        <Artist>evo-X</Artist>
     </Song>
     <Song>
         <Id>37312</Id>
         <Code>smil</Code>
         <Title>The flower in your smile</Title>
+        <Artist>TACOS NAOMI feat.小久保裕之</Artist>
+        <ArtistRoman>TACOS NAOMI feat.Hiroyuki Kokubo</ArtistRoman>
     </Song>
     <Song>
         <Id>37313</Id>
         <Code>puzz</Code>
         <Title>puzzle</Title>
+        <Artist>日本少年</Artist>
+        <ArtistRoman>Nihon Shounen</ArtistRoman>
     </Song>
     <Song>
         <Id>37314</Id>
         <Code>leav</Code>
         <Title>LEAVE ME ALONE</Title>
+        <Artist>TUT1026</Artist>
     </Song>
     <Song>
         <Id>37315</Id>
         <Code>timh</Code>
         <Title>TimeHollow</Title>
+        <Artist>Masanori Akita</Artist>
     </Song>
     <Song>
         <Id>37316</Id>
         <Code>saga</Code>
-        <Title>SAGA</Title>
+        <Title>S・A・G・A</Title>
+        <Artist>Veeton</Artist>
     </Song>
     <Song>
         <Id>37317</Id>
         <Code>cara</Code>
         <Title>Cara Mia</Title>
+        <Artist>Måns Zelmerlöw</Artist>
     </Song>
     <Song>
         <Id>37318</Id>
         <Code>ontb</Code>
         <Title>On The Break</Title>
+        <Artist>Darwin</Artist>
     </Song>
     <Song>
         <Id>37319</Id>
         <Code>feee</Code>
         <Title>Feel</Title>
+        <Artist>Neuropa</Artist>
     </Song>
     <Song>
         <Id>37320</Id>
         <Code>ghet</Code>
         <Title>Ghetto Blasta Deluxe</Title>
+        <Artist>Audio Magnetics</Artist>
     </Song>
     <Song>
         <Id>37321</Id>
         <Code>mcry</Code>
         <Title>Make Me Cry</Title>
+        <Artist>Junk Circuit</Artist>
     </Song>
     <Song>
         <Id>37322</Id>
         <Code>trac</Code>
-        <Title>Tracers (4Beat Remix)</Title>
+        <Title>Tracers</Title>
+        <Subtitle>(4Beat Remix)</Subtitle>
+        <Artist>Ruffage &amp; Size</Artist>
     </Song>
     <Song>
         <Id>37323</Id>
         <Code>waiu</Code>
         <Title>Waiting 4 u</Title>
+        <Artist>DDT</Artist>
     </Song>
     <Song>
         <Id>37324</Id>
         <Code>drem</Code>
         <Title>Dream Machine</Title>
+        <Artist>Darwin</Artist>
     </Song>
     <Song>
         <Id>37325</Id>
         <Code>disn</Code>
-        <Title>Disney Carnival(Rio Unit)</Title>
+        <Title>Disney Carnival</Title>
+        <Subtitle>(Rio Unit)</Subtitle>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37326</Id>
         <Code>fotl</Code>
         <Title>Following The Leader</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37327</Id>
         <Code>bibb</Code>
         <Title>Bibbidi-Bobbidi-Boo</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37328</Id>
         <Code>ball</Code>
         <Title>The Ballad of Davy Crokett</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37329</Id>
         <Code>tiki</Code>
         <Title>The Tiki, Tiki, Tiki Room</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37330</Id>
         <Code>circ</Code>
         <Title>Circle Of Life</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37331</Id>
         <Code>cohm</Code>
         <Title>Colonel Hathi`s March</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37332</Id>
         <Code>wish</Code>
         <Title>A Dream Is a Wish Your Heart Makes</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37333</Id>
         <Code>spoo</Code>
         <Title>A Spoonful of Sugar</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37334</Id>
         <Code>hawa</Code>
         <Title>Hawaiian Roller Coaster Ride</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37335</Id>
         <Code>heme</Code>
         <Title>He Mele No Lilo</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37336</Id>
         <Code>bout</Code>
         <Title>Crazy 'Bout The Mouse/Mickey Mouse Club March/Dance With Mickey</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37337</Id>
         <Code>cmix</Code>
         <Title>Mickey Mouse Club Mix</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37338</Id>
         <Code>apir</Code>
         <Title>A Pirate's Life</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37339</Id>
         <Code>cany</Code>
         <Title>Can You Feel The Love Tonight</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37340</Id>
         <Code>chim</Code>
         <Title>Chim Chim Cher-ee</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37341</Id>
         <Code>evry</Code>
         <Title>Ev'rybody Wants To Be A Cat</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37342</Id>
         <Code>ijus</Code>
         <Title>I Just Can't Wait To Be King</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37343</Id>
         <Code>ltle</Code>
         <Title>Little Red Rappinghood</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37344</Id>
         <Code>bare</Code>
         <Title>The Bare Necessities</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37345</Id>
         <Code>zadd</Code>
         <Title>Zip-A-Dee-Doo-Dah</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37346</Id>
         <Code>cmar</Code>
         <Title>Mickey Mouse Club March</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37347</Id>
         <Code>wabe</Code>
         <Title>I Wan'na Be Like You</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37348</Id>
         <Code>youc</Code>
         <Title>You Can Fly!</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37349</Id>
         <Code>stet</Code>
         <Title>Step In Time</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37350</Id>
         <Code>itsa</Code>
         <Title>It's a Small World</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37351</Id>
         <Code>supc</Code>
         <Title>Supercalifragilsticexpialidocious</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37352</Id>
         <Code>devi</Code>
         <Title>Cruella De Vil</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37353</Id>
         <Code>haku</Code>
         <Title>Hakuna Matata</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37354</Id>
         <Code>flig</Code>
         <Title>Flight of the Phoenix</Title>
+        <Artist>Jena Rose</Artist>
     </Song>
     <Song>
         <Id>37355</Id>
         <Code>tick</Code>
         <Title>Ticket To Bombay</Title>
+        <Artist>Jena Rose</Artist>
     </Song>
     <Song>
         <Id>37356</Id>
         <Code>tajh</Code>
         <Title>Taj He Spitz</Title>
+        <Artist>DKC Crew</Artist>
     </Song>
     <Song>
         <Id>37357</Id>
         <Code>sabe</Code>
         <Title>SABER WING</Title>
+        <Artist>TAG</Artist>
     </Song>
     <Song>
         <Id>37358</Id>
         <Code>lovy</Code>
-        <Title>LOVING YOU (Epidemik remix)</Title>
+        <Title>LOVING YOU</Title>
+        <Subtitle>(Epidemik remix)</Subtitle>
+        <Artist>TONI LEO</Artist>
     </Song>
     <Song>
         <Id>37359</Id>
         <Code>iyhr</Code>
-        <Title>INTO YOUR HEART (Ruffage remix)</Title>
+        <Title>INTO YOUR HEART</Title>
+        <Subtitle>(Ruffage remix)</Subtitle>
+        <Artist>NAOKI feat.YASMINE</Artist>
     </Song>
     <Song>
         <Id>37360</Id>
         <Code>staa</Code>
-        <Title>STAY (Joey Riot remix)</Title>
+        <Title>STAY</Title>
+        <Subtitle>(Joey Riot remix)</Subtitle>
+        <Artist>DANNY D</Artist>
     </Song>
     <Song>
         <Id>37361</Id>
         <Code>reac</Code>
-        <Title>REACH THE SKY (Orbit1 remix)</Title>
+        <Title>REACH THE SKY</Title>
+        <Subtitle>(Orbit1 remix)</Subtitle>
+        <Artist>TAYA</Artist>
     </Song>
     <Song>
         <Id>37362</Id>
         <Code>want</Code>
-        <Title>I WANT YOUR LOVE (Darwin remix)</Title>
+        <Title>I WANT YOUR LOVE</Title>
+        <Subtitle>(Darwin remix)</Subtitle>
+        <Artist>GAV</Artist>
     </Song>
     <Song>
         <Id>37363</Id>
         <Code>noma</Code>
         <Title>No Matter What</Title>
+        <Artist>jun feat.Rita Boudreau</Artist>
     </Song>
     <Song>
         <Id>37364</Id>
         <Code>crcs</Code>
         <Title>Come rain Come Shine</Title>
+        <Artist>Jenn Cuneta</Artist>
     </Song>
     <Song>
         <Id>37365</Id>
         <Code>trbu</Code>
         <Title>Tribulations</Title>
+        <Artist>LCD Soundsystem</Artist>
     </Song>
     <Song>
         <Id>37366</Id>
         <Code>here</Code>
         <Title>Here We Go</Title>
+        <Artist>Ozomatli</Artist>
     </Song>
     <Song>
         <Id>37367</Id>
         <Code>wine</Code>
         <Title>Wine Red (Tommie Sunshine's Brooklyn Fire Retouch)</Title>
+        <Artist>The Hush Sound</Artist>
     </Song>
     <Song>
         <Id>37368</Id>
         <Code>lift</Code>
         <Title>Lift You Up</Title>
+        <Artist>wolli</Artist>
     </Song>
     <Song>
         <Id>37369</Id>
         <Code>flou</Code>
         <Title>Flourish</Title>
+        <Artist>sonic-coll. feat. frances maya</Artist>
     </Song>
     <Song>
         <Id>37370</Id>
         <Code>taka</Code>
         <Title>Take A Chance</Title>
+        <Artist>neuras feat. GATZ</Artist>
     </Song>
     <Song>
         <Id>37371</Id>
         <Code>boyd</Code>
-        <Title>Boy (DJ Irene Rockstar Mix)</Title>
+        <Title>Boy</Title>
+        <Subtitle>(DJ Irene Rockstar Mix)</Subtitle>
+        <Artist>Book Of Love</Artist>
     </Song>
     <Song>
         <Id>37372</Id>
         <Code>pute</Code>
         <Title>Put 'Em Up</Title>
+        <Artist>Edun</Artist>
     </Song>
     <Song>
         <Id>37373</Id>
         <Code>swin</Code>
         <Title>Swingin`</Title>
+        <Artist>Bill Hamel &amp; Naughty G.</Artist>
     </Song>
     <Song>
         <Id>37374</Id>
         <Code>myde</Code>
         <Title>My Destiny</Title>
+        <Artist>ASHER</Artist>
     </Song>
     <Song>
         <Id>37375</Id>
         <Code>umbr</Code>
         <Title>Umbrella</Title>
+        <Artist>Haley Hunt</Artist>
     </Song>
     <Song>
         <Id>37376</Id>
         <Code>caom</Code>
         <Title>Call On Me</Title>
+        <Artist>flow</Artist>
     </Song>
     <Song>
         <Id>37377</Id>
         <Code>niru</Code>
-        <Title>Night Runner</Title>
+        <Title>Nite-Runner</Title>
+        <Artist>FRAZ</Artist>
     </Song>
     <Song>
         <Id>37378</Id>
         <Code>oclo</Code>
-        <Title>5 o`clock</Title>
+        <Title>FIVE O' Clock</Title>
+        <Artist>flow</Artist>
     </Song>
     <Song>
         <Id>37379</Id>
         <Code>allg</Code>
-        <Title>All Good Things (Come To An End)</Title>
+        <Title>All Good Things</Title>
+        <Subtitle>(Come To An End)</Subtitle>
+        <Artist>Hamel &amp; Naughty G.</Artist>
     </Song>
     <Song>
         <Id>37380</Id>
         <Code>mawo</Code>
         <Title>Makes Me Wonder</Title>
+        <Artist>Sunshine Superman</Artist>
     </Song>
     <Song>
         <Id>37381</Id>
         <Code>reda</Code>
         <Title>Red Alert</Title>
+        <Artist>Basement Jaxx</Artist>
     </Song>
     <Song>
         <Id>37382</Id>
         <Code>feto</Code>
         <Title>Feel Togther</Title>
+        <Artist>Mickey Disco</Artist>
     </Song>
     <Song>
         <Id>37383</Id>
         <Code>slac</Code>
         <Title>Scramble</Title>
+        <Artist>System 7</Artist>
     </Song>
     <Song>
         <Id>37384</Id>
         <Code>blac</Code>
         <Title>Black Or White</Title>
+        <Artist>Prince Royal</Artist>
     </Song>
     <Song>
         <Id>37385</Id>
         <Code>cahe</Code>
-        <Title>Can't Help Falling In Love With You</Title>
+        <Title>Can't Help Falling In Love</Title>
+        <Artist>Cut N Edge</Artist>
     </Song>
     <Song>
         <Id>37386</Id>
         <Code>toot</Code>
         <Title>Tootsee Roll</Title>
+        <Artist>The Block Brothers &amp; Hollywood J</Artist>
     </Song>
     <Song>
         <Id>37387</Id>
         <Code>wasu</Code>
         <Title>Walking On Sunshine</Title>
+        <Artist>The Flash</Artist>
     </Song>
     <Song>
         <Id>37388</Id>
         <Code>ican</Code>
         <Title>I Want Candy</Title>
+        <Artist>Pop n' Fresh</Artist>
     </Song>
     <Song>
         <Id>37389</Id>
         <Code>iran</Code>
         <Title>I Ran</Title>
+        <Artist>Spacebar vs. Naughty G.</Artist>
     </Song>
     <Song>
         <Id>37390</Id>
         <Code>wego</Code>
         <Title>We Got the Beat</Title>
+        <Artist>Pop n' Fresh</Artist>
     </Song>
     <Song>
         <Id>37391</Id>
         <Code>youi</Code>
         <Title>You're The One That I Want</Title>
+        <Artist>DAVE V &amp; TAYA</Artist>
     </Song>
     <Song>
         <Id>37392</Id>
         <Code>evda</Code>
         <Title>Everybody Dance</Title>
+        <Artist>TSMV</Artist>
     </Song>
     <Song>
         <Id>37393</Id>
         <Code>dane</Code>
         <Title>D.A.N.C.E.</Title>
+        <Artist>Justice</Artist>
     </Song>
     <Song>
         <Id>37394</Id>
         <Code>thom</Code>
         <Title>Thomas O`Malley Cat</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37395</Id>
         <Code>stre</Code>
         <Title>Streets Of Gold</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37396</Id>
         <Code>hetr</Code>
         <Title>He`s A Tramp</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37397</Id>
         <Code>mmla</Code>
         <Title>Mickey`s Magic Land</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37398</Id>
         <Code>djgo</Code>
         <Title>D.J. Goof</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37399</Id>
         <Code>icei</Code>
         <Title>Ice Ice Mickey</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37400</Id>
         <Code>duck</Code>
         <Title>Ducks In the Hood</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37401</Id>
         <Code>mcmi</Code>
         <Title>M.C. Mickey</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37402</Id>
         <Code>almy</Code>
         <Title>Always on My Mind</Title>
+        <Artist>Pet Shop Boys</Artist>
     </Song>
     <Song>
         <Id>37403</Id>
         <Code>heit</Code>
         <Title>Here It Goes Again</Title>
+        <Artist>OK Go</Artist>
     </Song>
     <Song>
         <Id>37404</Id>
         <Code>happ</Code>
         <Title>Happy</Title>
+        <Artist>Fischerspooner</Artist>
     </Song>
     <Song>
         <Id>37405</Id>
         <Code>ucan</Code>
         <Title>U Can't Touch This</Title>
+        <Artist>MC Hammer</Artist>
     </Song>
     <Song>
         <Id>37406</Id>
         <Code>play</Code>
         <Title>Playa (Original Mix)</Title>
+        <Artist>Hamel and St. Croix feat. Jules Mari</Artist>
     </Song>
     <Song>
         <Id>37407</Id>
         <Code>dace</Code>
         <Title>Dance Celebration</Title>
+        <Artist>Bill Hamel feat. Kevens</Artist>
     </Song>
     <Song>
         <Id>37408</Id>
         <Code>slip</Code>
         <Title>Slip Out</Title>
+        <Artist>Harmony Machine</Artist>
     </Song>
     <Song>
         <Id>37409</Id>
         <Code>hora</Code>
         <Title>Horatio</Title>
+        <Artist>OR-IF-IS</Artist>
     </Song>
     <Song>
         <Id>37410</Id>
         <Code>bust</Code>
         <Title>Bust a Move</Title>
+        <Artist>Young MC</Artist>
     </Song>
     <Song>
         <Id>37411</Id>
         <Code>dyou</Code>
         <Title>Don't You (Forget About Me)</Title>
+        <Artist>NuFoundation</Artist>
     </Song>
     <Song>
         <Id>37412</Id>
         <Code>obse</Code>
         <Title>Obsession</Title>
+        <Artist>Brooklyn Fire</Artist>
     </Song>
     <Song>
         <Id>37413</Id>
         <Code>bigg</Code>
         <Title>Big Girls Don`t Cry</Title>
+        <Artist>Purefocus</Artist>
     </Song>
     <Song>
         <Id>37414</Id>
         <Code>bene</Code>
         <Title>Party Lights</Title>
+        <Artist>Tommie Sunshine</Artist>
     </Song>
     <Song>
         <Id>37415</Id>
         <Code>tare</Code>
-        <Title>Taj He Spitz (Tommie Sunshine's Brooklyn Fire Re-Touch)</Title>
+        <Title>Taj He Spitz</Title>
+        <Subtitle>(Tommie Sunshine's Brooklyn Fire Re-Touch)</Subtitle>
+        <Artist>DKC Crew</Artist>
     </Song>
     <Song>
         <Id>37416</Id>
         <Code>sare</Code>
-        <Title>SABER WING (AKIRA ISHIHARA Headshot mix)</Title>
+        <Title>SABER WING</Title>
+        <Subtitle>(AKIRA ISHIHARA Headshot mix)</Subtitle>
+        <Artist>TAG</Artist>
     </Song>
     <Song>
         <Id>37417</Id>
         <Code>slre</Code>
-        <Title>Slip Out (bounce in beat mix)</Title>
+        <Title>Slip Out</Title>
+        <Subtitle>(bounce in beat mix)</Subtitle>
+        <Artist>Harmony Machine</Artist>
     </Song>
     <Song>
         <Id>37418</Id>
         <Code>dacr</Code>
-        <Title>Dance Celebration (System 7 Remix)</Title>
+        <Title>Dance Celebration</Title>
+        <Subtitle>(System 7 Remix)</Subtitle>
+        <Artist>Bill Hamel feat. Kevens</Artist>
     </Song>
     <Song>
         <Id>37419</Id>
         <Code>jube</Code>
         <Title>JUST BELIEVE</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37420</Id>
         <Code>esce</Code>
         <Title>escape</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37421</Id>
         <Code>sett</Code>
         <Title>Settin' the Scene</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37422</Id>
         <Code>soyo</Code>
         <Title>Somehow You Found Me</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37423</Id>
         <Code>suhe</Code>
         <Title>SUPER HERO</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37424</Id>
         <Code>unit</Code>
         <Title>Unity</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37425</Id>
         <Code>open</Code>
         <Title>Open Your Eyes</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37426</Id>
         <Code>mylo</Code>
         <Title>My Love</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37427</Id>
         <Code>opee</Code>
         <Title>Open</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37428</Id>
         <Code>soun</Code>
         <Title>Sound Of Freedom</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37429</Id>
         <Code>butt2</Code>
         <Title>Butterfly (2008 X-edit)</Title>
+        <Artist>SMiLE.dk</Artist>
     </Song>
     <Song>
         <Id>37430</Id>
         <Code>boys2</Code>
         <Title>Boys (2008 X-edit)</Title>
+        <Artist>SMiLE.dk</Artist>
     </Song>
     <Song>
         <Id>37431</Id>
         <Code>thli</Code>
-        <Title>30 Lives (Up-Up-Down-Dance Mix)</Title>
+        <Title>30 Lives</Title>
+        <Subtitle>(Up-Up-Down-Dance Mix)</Subtitle>
+        <Artist>The Motion Sick</Artist>
     </Song>
     <Song>
         <Id>37432</Id>
         <Code>ttlg</Code>
         <Title>Till the lonely's gone</Title>
+        <Artist>Z-licious</Artist>
     </Song>
     <Song>
         <Id>37433</Id>
         <Code>clos</Code>
         <Title>Closer To Your Heart</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37434</Id>
         <Code>orig2</Code>
         <Title>Lesson2 by DJ</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37435</Id>
         <Code>kyou</Code>
         <Title>KYOKA-SUIGETSU-ROW (DDR EDITION)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37436</Id>
         <Code>dmin</Code>
         <Title>Dreamin'</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37437</Id>
         <Code>weve</Code>
         <Title>We've Got To Make It Tonight</Title>
+        <Artist>Babamars</Artist>
     </Song>
     <Song>
         <Id>37438</Id>
         <Code>synt</Code>
         <Title>Synthesized</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37439</Id>
         <Code>dubi2</Code>
         <Title>DUB-I-DUB (2008 X-edit)</Title>
+        <Artist>ME&amp;MY</Artist>
     </Song>
     <Song>
         <Id>37440</Id>
         <Code>getu2</Code>
         <Title>GET UP'N MOVE (2008 X-edit)</Title>
+        <Artist>S&amp;K</Artist>
     </Song>
     <Song>
         <Id>37441</Id>
         <Code>hero2</Code>
         <Title>HERO (2008 X-edit)</Title>
+        <Artist>PAPAYA</Artist>
     </Song>
     <Song>
         <Id>37442</Id>
         <Code>reup</Code>
         <Title>Reach Up</Title>
+        <Artist>Alien Six</Artist>
     </Song>
     <Song>
         <Id>37443</Id>
         <Code>weco</Code>
         <Title>We Come Alive</Title>
+        <Artist>Alien Six</Artist>
     </Song>
     <Song>
         <Id>37444</Id>
         <Code>insp</Code>
         <Title>Inspiration</Title>
+        <Artist>DKC Crew</Artist>
     </Song>
     <Song>
         <Id>37445</Id>
         <Code>onbo</Code>
         <Title>on the bounce</Title>
+        <Artist>neuras</Artist>
     </Song>
     <Song>
         <Id>37446</Id>
         <Code>trig</Code>
         <Title>Trigger</Title>
+        <Artist>sonic-coll.</Artist>
     </Song>
     <Song>
         <Id>37447</Id>
         <Code>danf</Code>
         <Title>Dance Floor</Title>
+        <Artist>neuras feat. Yurai</Artist>
     </Song>
     <Song>
         <Id>37448</Id>
         <Code>weca</Code>
         <Title>We Can Win the Fight</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37449</Id>
         <Code>raci</Code>
         <Title>Racing with Time</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37450</Id>
         <Code>dese</Code>
         <Title>Desert Journey</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37451</Id>
         <Code>sidr</Code>
         <Title>SILVER DREAM</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37452</Id>
         <Code>thlo</Code>
         <Title>The Lonely Streets</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37453</Id>
         <Code>habi</Code>
         <Title>Habibe?(Antuh muhleke)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37454</Id>
         <Code>osak1</Code>
         <Title>osaka EVOLVED -MAIDO,OHKINIí¬-</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37455</Id>
         <Code>osak2</Code>
         <Title>osaka EVOLVED -MAIDO,OHKINIí¬-</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37456</Id>
         <Code>osak3</Code>
         <Title>osaka EVOLVED -MAIDO,OHKINIí¬-</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37457</Id>
         <Code>xmix1</Code>
-        <Title>Xmix1 (Midnight Dawn)</Title>
+        <Title>Xmix1</Title>
+        <Subtitle>(Midnight Dawn)</Subtitle>
+        <Artist>dj jiggens</Artist>
     </Song>
     <Song>
         <Id>37458</Id>
         <Code>xmix2</Code>
-        <Title>Xmix2 (Beats 'n Bangs)</Title>
+        <Title>Xmix2</Title>
+        <Subtitle>(Beats 'n Bangs)</Subtitle>
+        <Artist>DJ Inhabit</Artist>
     </Song>
     <Song>
         <Id>37459</Id>
         <Code>xmix3</Code>
-        <Title>Xmix3 (Stomp Dem Groove)</Title>
+        <Title>Xmix3</Title>
+        <Subtitle>(Stomp Dem Groove)</Subtitle>
+        <Artist>dj nagi</Artist>
     </Song>
     <Song>
         <Id>37460</Id>
         <Code>xmix4</Code>
-        <Title>Xmix4 (Linear Momentum)</Title>
+        <Title>Xmix4</Title>
+        <Subtitle>(Linear Momentum)</Subtitle>
+        <Artist>dj jiggens</Artist>
     </Song>
     <Song>
         <Id>37461</Id>
         <Code>xmix5</Code>
-        <Title>Xmix5 (Overcrush)</Title>
+        <Title>Xmix5</Title>
+        <Subtitle>(Overcrush)</Subtitle>
+        <Artist>DJ Inhabit</Artist>
     </Song>
     <Song>
         <Id>37462</Id>
         <Code>rint</Code>
-        <Title>NADESHIKO</Title>
+        <Title>凛として咲く花の如く</Title>
+        <TitleRoman>Rin to shite saku hana no gotoku</TitleRoman>
+        <Artist>紅色リトマス</Artist>
+        <ArtistRoman>Koushokuritomasu</ArtistRoman>
     </Song>
     <Song>
         <Id>37463</Id>
         <Code>turk</Code>
         <Title>Turkey In The Straw</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37464</Id>
         <Code>jung</Code>
         <Title>Jungle Beat</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37465</Id>
         <Code>blue</Code>
         <Title>Magical House Cleaning/Blue or Pink</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37466</Id>
         <Code>zerr</Code>
-        <Title>ZERO</Title>
+        <Title>零 - ZERO -</Title>
+        <TitleRoman>Rei - ZERO -</TitleRoman>
+        <TitleLocal>ZERO</TitleLocal>
+        <Artist>TЁЯRA</Artist>
     </Song>
     <Song>
         <Id>37467</Id>
         <Code>purp</Code>
         <Title>Purple Line</Title>
+        <Artist>東方神起</Artist>
+        <ArtistRoman>Touhoushinki</ArtistRoman>
     </Song>
     <Song>
         <Id>37468</Id>
         <Code>brea</Code>
         <Title>Break the Chain</Title>
+        <Artist>Tourbillon</Artist>
     </Song>
     <Song>
         <Id>37469</Id>
         <Code>sust</Code>
-        <Title>Super Star</Title>
+        <Title>Superstar</Title>
+        <Artist>tomboy</Artist>
     </Song>
     <Song>
         <Id>37470</Id>
         <Code>crgo</Code>
         <Title>CRAZY GONNA CRAZY</Title>
+        <Artist>TRF</Artist>
     </Song>
     <Song>
         <Id>37471</Id>
         <Code>bigt</Code>
-        <Title>Bigger Than Big (Original Vocal Mix)</Title>
+        <Title>Bigger Than Big</Title>
+        <Subtitle>(Original Vocal Mix)</Subtitle>
+        <Artist>Super Mal feat. Luciana</Artist>
     </Song>
     <Song>
         <Id>37472</Id>
         <Code>reso</Code>
         <Title>resonance</Title>
+        <Artist>NAOKI-EX</Artist>
     </Song>
     <Song>
         <Id>37476</Id>
         <Code>keep3</Code>
         <Title>Keep on movin'</Title>
+        <Artist>NM</Artist>
     </Song>
     <Song>
         <Id>37480</Id>
         <Code>trav</Code>
         <Title>Travelling</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37481</Id>
         <Code>hous</Code>
         <Title>HOUSE NATION</Title>
+        <Artist>ravex</Artist>
     </Song>
     <Song>
         <Id>37482</Id>
         <Code>ours</Code>
         <Title>Our Song</Title>
+        <Artist>Shinichi Osawa</Artist>
     </Song>
     <Song>
         <Id>37483</Id>
         <Code>crim</Code>
         <Title>NO CRIME</Title>
+        <Artist>SHANADOO</Artist>
     </Song>
     <Song>
         <Id>37484</Id>
         <Code>blra</Code>
         <Title>Blue Rain</Title>
+        <Artist>dj TAKA Vs. Ryu☆</Artist>
     </Song>
     <Song>
         <Id>37485</Id>
         <Code>chan</Code>
         <Title>Chance and Dice</Title>
+        <Artist>日本少年</Artist>
+        <ArtistRoman>Nihon Shounen</ArtistRoman>
     </Song>
     <Song>
         <Id>37486</Id>
         <Code>koko</Code>
         <Title>Koko Soko</Title>
+        <Artist>SMiLE.dk</Artist>
     </Song>
     <Song>
         <Id>37487</Id>
         <Code>parx</Code>
-        <Title>PARANOiA (X-Special)</Title>
+        <Title>PARANOiA</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>180</Artist>
     </Song>
     <Song>
         <Id>37488</Id>
         <Code>trxs</Code>
-        <Title>TRIP MACHINE (X-Special)</Title>
+        <Title>TRIP MACHINE</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>DE-SIRE</Artist>
     </Song>
     <Song>
         <Id>37489</Id>
         <Code>parx2</Code>
-        <Title>PARANOiA MAX(DIRTY MIX)(X-Special)</Title>
+        <Title>PARANOiA MAX</Title>
+        <Subtitle>～DIRTY MIX～(X-Special)</Subtitle>
+        <Artist>190</Artist>
     </Song>
     <Song>
         <Id>37490</Id>
         <Code>sptx</Code>
-        <Title>SP-TRIP MACHINE(JUNGLE MIX)(X-Special)</Title>
+        <Title>SP-TRIP MACHINE</Title>
+        <Subtitle>～JUNGLE MIX～(X-Special)</Subtitle>
+        <Artist>DE-SIRE</Artist>
     </Song>
     <Song>
         <Id>37491</Id>
         <Code>rebx</Code>
-        <Title>PARANOiA Rebirth(X-Special)</Title>
+        <Title>PARANOiA Rebirth</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>190'</Artist>
     </Song>
     <Song>
         <Id>37492</Id>
         <Code>afrx</Code>
-        <Title>AFRONOVA(X-Special)</Title>
+        <Title>AFRONOVA</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>RE-VENGE</Artist>
     </Song>
     <Song>
         <Id>37493</Id>
         <Code>pevx</Code>
-        <Title>PARANOIA EVOLUTION(X-Special)</Title>
+        <Title>PARANOIA EVOLUTION</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>200</Artist>
     </Song>
     <Song>
         <Id>37494</Id>
         <Code>clix</Code>
-        <Title>TRIP MACHINE CLIMAX(X-Special)</Title>
+        <Title>TRIP MACHINE CLIMAX</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>DE-SIRE</Artist>
     </Song>
     <Song>
         <Id>37495</Id>
         <Code>petx</Code>
-        <Title>PARANOiA ETERNAL(X-Special)</Title>
+        <Title>PARANOiA ETERNAL</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>STM200</Artist>
     </Song>
     <Song>
         <Id>37496</Id>
         <Code>feax</Code>
-        <Title>Healing Vision(X-Special)</Title>
+        <Title>Healing Vision</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>DE-SIRE</Artist>
     </Song>
     <Song>
         <Id>37497</Id>
         <Code>canx</Code>
-        <Title>CANDY(X-Special)</Title>
+        <Title>CANDY☆</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>Luv UNLIMITED</Artist>
     </Song>
     <Song>
         <Id>37498</Id>
         <Code>xmax</Code>
-        <Title>MAX 300(X-Special)</Title>
+        <Title>MAX 300</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>Ω</Artist>
+        <ArtistRoman>OMEGA</ArtistRoman>
     </Song>
     <Song>
         <Id>37499</Id>
         <Code>unlx</Code>
-        <Title>MAXX UNLIMITED(X-Special)</Title>
+        <Title>MAXX UNLIMITED</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>Z</Artist>
     </Song>
     <Song>
         <Id>37500</Id>
         <Code>kakx</Code>
-        <Title>kakumei(X-Special)</Title>
+        <Title>革命</Title>
+        <TitleRoman>KAKUMEI</TitleRoman>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>dj TAKA with NAOKI</Artist>
     </Song>
     <Song>
         <Id>37501</Id>
         <Code>legx</Code>
-        <Title>The legend of MAX(X-Special)</Title>
+        <Title>The legend of MAX</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>ZZ</Artist>
     </Song>
     <Song>
         <Id>37502</Id>
         <Code>ddrx</Code>
-        <Title>Dance Dance Revolution(X-Special)</Title>
+        <Title>Dance Dance Revolution</Title>
+        <Subtitle>(X-Special)</Subtitle>
+        <Artist>DDR ALL STARS</Artist>
     </Song>
     <Song>
         <Id>37503</Id>
         <Code>xpar</Code>
-        <Title>PARANOiA MAX(DIRTY MIX)in roulette(X-Special)</Title>
+        <Title>PARANOiA MAX</Title>
+        <Subtitle>～DIRTY MIX～ in roulette(X-Special)</Subtitle>
+        <Artist>190</Artist>
     </Song>
     <Song>
         <Id>37504</Id>
         <Code>geis</Code>
         <Title>A Geisha's Dream</Title>
+        <Artist>NAOKI feat. SMiLE.dk</Artist>
     </Song>
     <Song>
         <Id>37505</Id>
         <Code>tric</Code>
         <Title>Trickster</Title>
+        <Artist>水樹奈々</Artist>
+        <ArtistRoman>Mizuki Nana</ArtistRoman>
+        <ArtistLocal>Nana Mizuki</ArtistLocal>
     </Song>
     <Song>
         <Id>37506</Id>
         <Code>seka</Code>
-        <Title>SEKAI HA ODORU</Title>
+        <Title>世界は踊る</Title>
+        <TitleRoman>SEKAI WA ODORU</TitleRoman>
+        <Artist>BREAKERZ</Artist>
     </Song>
     <Song>
         <Id>37507</Id>
         <Code>suki</Code>
-        <Title>Suki Melo</Title>
+        <Title>スキ☆メロ</Title>
+        <TitleRoman>Suki Melo</TitleRoman>
+        <Artist>小倉優子</Artist>
+        <ArtistRoman>Ogura Yuko</ArtistRoman>
+        <ArtistLocal>Yuko Ogura</ArtistLocal>
     </Song>
     <Song>
         <Id>37508</Id>
         <Code>tabi</Code>
-        <Title>Tabibito</Title>
+        <Title>旅人</Title>
+        <TitleRoman>Tabibito</TitleRoman>
+        <Artist>高杉さと美</Artist>
+        <ArtistRoman>Takasugi Satomi</ArtistRoman>
+        <ArtistLocal>Satomi Takasugi</ArtistLocal>
     </Song>
     <Song>
         <Id>37509</Id>
         <Code>cspa</Code>
         <Title>PARANOiA MAX(DIRTY MIX)(SMM-Special)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37510</Id>
         <Code>cssp</Code>
         <Title>SP-TRIP MACHINE(JUNGLE MIX)(SMM-Special)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37511</Id>
         <Code>inlo</Code>
         <Title>in love wit you</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37512</Id>
         <Code>sttb</Code>
         <Title>real-high-SPEED</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37513</Id>
         <Code>pori</Code>
         <Title>poririzumu</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37514</Id>
         <Code>less</Code>
         <Title>HOW TO PLAY</Title>
+        <Artist>MC X</Artist>
     </Song>
     <Song>
         <Id>37515</Id>
         <Code>geis2</Code>
         <Title>A Geisha's Dream (Ruffage Remix)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37516</Id>
         <Code>eoti</Code>
         <Title>SAY IT AGAIN</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37517</Id>
         <Code>tone</Code>
         <Title>Rescue Me</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37518</Id>
         <Code>bewi</Code>
         <Title>Be With You(Still Miss you)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37519</Id>
         <Code>orig3</Code>
         <Title>Lesson3 by DJ</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37520</Id>
         <Code>ropp1</Code>
         <Title>roppongi EVOLVED</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37521</Id>
         <Code>ropp2</Code>
         <Title>roppongi EVOLVED</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37522</Id>
         <Code>ropp3</Code>
         <Title>roppongi EVOLVED</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37523</Id>
         <Code>prds</Code>
         <Title>PARADISE</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37524</Id>
         <Code>ille</Code>
         <Title>I'll Find You Again</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37525</Id>
         <Code>hott1</Code>
         <Title>HOTTEST PARTY</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37526</Id>
         <Code>hott2</Code>
         <Title>HOTTEST PARTY 2</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37527</Id>
         <Code>sabe2</Code>
         <Title>SABER WING (satellite silhouette remix)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37528</Id>
         <Code>sidr2</Code>
         <Title>SILVER DREAM (Twinkle Mix)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37529</Id>
         <Code>dyna4</Code>
         <Title>DYNAMITE RAVE</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37530</Id>
         <Code>newg</Code>
         <Title>New Generation</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37531</Id>
         <Code>nows</Code>
         <Title>Nows the Time</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37532</Id>
         <Code>taki</Code>
         <Title>Taking It To The Sky</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37533</Id>
         <Code>dist</Code>
         <Title>Disturbia</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37534</Id>
         <Code>detr</Code>
         <Title>Detroit Rock City</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37535</Id>
         <Code>drdr</Code>
         <Title>Dream On Dreamer</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37536</Id>
         <Code>imco</Code>
         <Title>I'm Coming Out</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37537</Id>
         <Code>priv</Code>
         <Title>Private eye</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37538</Id>
         <Code>teme</Code>
         <Title>Tell me what to do</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37539</Id>
         <Code>frez</Code>
         <Title>Freeze</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37540</Id>
         <Code>haun</Code>
         <Title>Haunted Rhapsody</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37541</Id>
         <Code>wick</Code>
         <Title>Wicked Plastic</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37542</Id>
         <Code>sosp</Code>
         <Title>Something Special</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37543</Id>
         <Code>thei</Code>
         <Title>The Island Song</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37544</Id>
         <Code>jena</Code>
         <Title>On the Night of a Still Wind</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37545</Id>
         <Code>sacr</Code>
         <Title>Sacred Oath</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37546</Id>
         <Code>wwcm</Code>
         <Title>What Will Come of Me</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37547</Id>
         <Code>vila</Code>
         <Title>Viva La Vida</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37548</Id>
         <Code>clsr</Code>
         <Title>Closer</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37549</Id>
         <Code>iceb</Code>
         <Title>ICE ICE BABY</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37550</Id>
         <Code>daft</Code>
         <Title>DAFT PUNK IS PLAYING AT MY HOUSE</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37551</Id>
         <Code>canu</Code>
         <Title>Hoping To Be Good</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37552</Id>
         <Code>rist</Code>
         <Title>You Got It (The Right Stuff)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37553</Id>
         <Code>pock</Code>
         <Title>Pocketful Of Sunshine</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37554</Id>
         <Code>nver</Code>
         <Title>Never Gonna Give You Up</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37555</Id>
         <Code>hung</Code>
         <Title>Hungry Like The Wolf</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37556</Id>
         <Code>boog</Code>
         <Title>Boogie Wonderland</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37557</Id>
         <Code>gtim</Code>
         <Title>Good Times</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37558</Id>
         <Code>vood</Code>
         <Title>Voodoo People (Pendulum Remix)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37559</Id>
         <Code>fego</Code>
         <Title>Feel Good Inc.</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37560</Id>
         <Code>sout</Code>
         <Title>South Side</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37561</Id>
         <Code>twau</Code>
         <Title>The Way U Move</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37562</Id>
         <Code>curr</Code>
         <Title>Curry Up</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37563</Id>
         <Code>tame</Code>
         <Title>Take Me</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37564</Id>
         <Code>iair</Code>
         <Title>In The Air</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37565</Id>
         <Code>ahla</Code>
         <Title>Ah La La La</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37566</Id>
         <Code>down</Code>
         <Title>Downtown</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37567</Id>
         <Code>spac</Code>
         <Title>Space Dance</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37568</Id>
         <Code>rnow</Code>
         <Title>Right Here Right Now</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37569</Id>
         <Code>ensi</Code>
         <Title>Enjoy The Silence</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37570</Id>
         <Code>bbay</Code>
         <Title>Bombay Bomb</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37571</Id>
         <Code>shie</Code>
         <Title>Shine</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37572</Id>
         <Code>lvag</Code>
         <Title>Love Again</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37573</Id>
         <Code>bona</Code>
         <Title>Bonafied Lovin'</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37574</Id>
         <Code>pork</Code>
         <Title>Pork &amp; Beans</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37575</Id>
         <Code>mypr</Code>
         <Title>My Prerogative</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37576</Id>
         <Code>onst</Code>
         <Title>One Step At A Time (Nevins Radio Mix)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37577</Id>
         <Code>laca</Code>
         <Title>La Camisa Negra</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37578</Id>
         <Code>ikny</Code>
         <Title>I Know You Want Me (Calle Ocho)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37579</Id>
         <Code>inty</Code>
         <Title>Infinity 2008</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37580</Id>
         <Code>imag</Code>
         <Title>Imagination</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37581</Id>
         <Code>nost</Code>
         <Title>No Stress</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37582</Id>
         <Code>hien</Code>
         <Title>Hi-End</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37583</Id>
         <Code>grav</Code>
         <Title>Graviton</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37584</Id>
         <Code>hest</Code>
         <Title>Heatstroke</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37585</Id>
         <Code>tasf</Code>
         <Title>Take A Step Forward</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37586</Id>
         <Code>inzo</Code>
         <Title>In The Zone</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37587</Id>
         <Code>ttim</Code>
         <Title>Time</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37588</Id>
         <Code>eine</Code>
         <Title>Everything I Need</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37589</Id>
         <Code>kimp</Code>
         <Title>KIMONO PRINCESS</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37590</Id>
         <Code>shlo</Code>
         <Title>Share The Love</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37591</Id>
         <Code>dokn</Code>
         <Title>Do You Know (The Ping Pong Song)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37592</Id>
         <Code>lget</Code>
         <Title>Let's Get It Started</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37593</Id>
         <Code>juda</Code>
         <Title>Just Dance</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37594</Id>
         <Code>when</Code>
         <Title>When I Grow Up</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37595</Id>
         <Code>abri</Code>
         <Title>A Brighter Day</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37596</Id>
         <Code>bene2</Code>
         <Title>Party Lights (Tommie Sunshine's Brooklyn Fire Remix)</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37597</Id>
         <Code>yyou</Code>
         <Title>You</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37598</Id>
         <Code>drec</Code>
         <Title>dreaming can make a wish come true</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37599</Id>
         <Code>thni</Code>
         <Title>THIS NIGHT</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37600</Id>
         <Code>geba</Code>
         <Title>Get Back Up!</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37601</Id>
         <Code>theh</Code>
         <Title>The Heavens Above</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37602</Id>
         <Code>goda</Code>
         <Title>Gotta Dance</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37603</Id>
         <Code>sowa</Code>
         <Title>So What</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37604</Id>
         <Code>elrt</Code>
         <Title>El ritmo te controla</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37605</Id>
         <Code>ceye</Code>
         <Title>CAT'S EYE</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37612</Id>
         <Code>aper</Code>
         <Title>A Perfect Sky</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37613</Id>
         <Code>youa</Code>
         <Title>You are the Star</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37614</Id>
         <Code>seul</Code>
         <Title>Seule</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37615</Id>
         <Code>lali</Code>
         <Title>La libertad</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37616</Id>
         <Code>unen</Code>
         <Title>Until the End</Title>
+        <Artist></Artist>
     </Song>
     <Song>
         <Id>37617</Id>
         <Code>letg</Code>
         <Title>Let's Get Away</Title>
+        <Artist></Artist>
     </Song>
 </DdrEditDatabase>
