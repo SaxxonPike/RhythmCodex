@@ -28,7 +28,8 @@ namespace RhythmCodex.Infrastructure
             if (remaining >= count)
                 return DoCacheRead(buffer, offset, count);
 
-            return DoCacheRead(buffer, offset, (int) remaining) + DoStreamRead(buffer, offset, count - (int) remaining);
+            return DoCacheRead(buffer, offset, (int) remaining) + 
+                   DoStreamRead(buffer, (int) (offset + remaining), (int) (count - remaining));
         }
 
         private int DoStreamRead(byte[] buffer, int offset, int length)
@@ -97,19 +98,35 @@ namespace RhythmCodex.Infrastructure
             _cache.Position = 0;
         }
 
+        /// <summary>
+        /// Removes a specified number of bytes from the front of the buffer and adjusts the cache pointer accordingly.
+        /// </summary>
         public void Advance(int offset)
         {
+            if (offset == 0)
+                return;
+            
+            if (offset < 0)
+                throw new InvalidOperationException("Can't advance a negative number of bytes.");
+            
             if (offset >= _cache.Length)
             {
                 Reset();
                 return;
             }
 
-            var newBuffer =
-                new MemoryStream(_cache.GetBuffer().AsSpan(offset, (int) (_cache.Length - offset)).ToArray());
+            var newPosition = _cache.Position - offset;
+            _cache.Position = offset;
+            var newBuffer = new MemoryStream();
+            _cache.CopyTo(newBuffer);
             var oldBuffer = _cache;
             _cache = newBuffer;
             oldBuffer.Dispose();
+
+            if (newPosition < 0)
+                newPosition = 0;
+
+            _cache.Position = newPosition;
         }
     }
 }

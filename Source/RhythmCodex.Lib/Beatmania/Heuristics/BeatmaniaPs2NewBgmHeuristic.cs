@@ -27,7 +27,7 @@ namespace RhythmCodex.Beatmania.Heuristics
             if (reader.Length < 0x804)
                 return null;
 
-            var data = reader.Read(0x24);
+            var data = reader.Read(0x2C);
             
             if (Bitter.ToInt32(data.Slice(0x00)) != 0x08640001)
                 return null;

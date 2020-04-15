@@ -27,6 +27,10 @@ namespace RhythmCodex.Step1.Heuristics
             // Must have at least 4 bytes
             if (reader.Length == null || reader.Length < 4)
                 return null;
+
+            // Put a hard cap of 64k as a sanity check
+            if (reader.Length > 65536)
+                return null;
             
             // Must be divisible by 4
             if ((reader.Length & 0x3) != 0)

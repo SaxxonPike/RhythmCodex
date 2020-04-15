@@ -1,12 +1,15 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Beatmania.Heuristics;
 using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Processors;
 using RhythmCodex.Ddr.Streamers;
+using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
+using RhythmCodex.Ssq;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Stepmania;
@@ -53,11 +56,53 @@ namespace RhythmCodex.Ddr.Integration
         // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
         // private string OutPath => Path.Combine("ddr-out", "festivaljpn");
 
-        private string ExecutablePath => Path.Combine("K:", "SLPM_662.42");
-        //private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
-        private string FileDataPath => Path.Combine("K:", "DATA", "FILEDT02.BIN");
-        //private string FileDataPath => Path.Combine("K:", "DATA", "FILEDT03.BIN");
-        private string OutPath => Path.Combine("ddr-out", "strikejpn");
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_662.42");
+        // //private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDT02.BIN");
+        // //private string FileDataPath => Path.Combine("K:", "DATA", "FILEDT03.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "strikejpn");
+        
+        // private string ExecutablePath => Path.Combine("I:", "SLUS_211.74");
+        // //private string FileDataPath => Path.Combine("I:", "DATA", "FILEDATA.BIN");
+        // //private string FileDataPath => Path.Combine("I:", "DATA", "FILEDT02.BIN");
+        // //private string FileDataPath => Path.Combine("I:", "DATA", "FILEDT03.BIN");
+        // private string FileDataPath => Path.Combine("I:", "DATA", "FILEDT04.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "extreme2usa");
+
+        // private string StepDataPath => Path.Combine("I:", "DATA", "IMAGE.DAT");
+        // private string FileDataPath => Path.Combine("I:", "DATA", "MDB_SN1.DAT");
+        // private string ExecutablePath => Path.Combine("I:", "SLUS_213.77");
+        // private string OutPath => Path.Combine("ddr-out", "snusa");
+
+        // private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "MDB_SN1.DAT");
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_666.09");
+        // private string OutPath => Path.Combine("ddr-out", "snjpn");
+        
+        // private string StepDataPath => Path.Combine("I:", "DATA", "IMAGE.DAT");
+        // private string FileDataPath => Path.Combine("I:", "DATA", "MDB_SN1.DAT");
+        // private string ExecutablePath => Path.Combine("I:", "SLUS_216.08");
+        // private string OutPath => Path.Combine("ddr-out", "sn2usa");
+
+        // private string StepDataPath => Path.Combine("I:", "DATA", "IMAGE.DAT");
+        // private string FileDataPath => Path.Combine("I:", "DATA", "MDB_SN2.DAT");
+        // private string ExecutablePath => Path.Combine("I:", "SLPM_669.30");
+        // private string OutPath => Path.Combine("ddr-out", "sn2jpn");
+
+        private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
+        private string FileDataPath => Path.Combine("K:", "DATA", "MDB_X1.DAT");
+        private string ExecutablePath => Path.Combine("K:", "SLUS_217.67");
+        private string OutPath => Path.Combine("ddr-out", "xusa");
+
+        // private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "MDB_X1.DAT");
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_550.90");
+        // private string OutPath => Path.Combine("ddr-out", "xjpn");
+
+        // private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "MDB_X1.DAT");
+        // private string ExecutablePath => Path.Combine("K:", "SLUS_219.17");
+        // private string OutPath => Path.Combine("ddr-out", "x2usa");
         
         [Test]
         [Explicit]
@@ -70,6 +115,79 @@ namespace RhythmCodex.Ddr.Integration
             foreach (var md in rawMetaDatas)
                 TestContext.WriteLine($"{md}");
         }
+
+        [Test]
+        [Explicit]
+        public void Test_Export_SN_WAV()
+        {
+            using var mdSource = new FileStream(ExecutablePath, FileMode.Open, FileAccess.Read);
+            var metadataDecoder = Resolve<IDdrPs2MetadataTableStreamReader>();
+            var dbDecoder = Resolve<IDdrPs2DatabaseDecoder>();
+            var rawMetaDatas = metadataDecoder.Get(mdSource, mdSource.Length).Select(dbDecoder.Decode)
+                .OrderBy(x => x.AudioTrack).ToList();
+            foreach (var md in rawMetaDatas)
+                TestContext.WriteLine($"{md}");
+            var firstSongIndex = rawMetaDatas.Where(x => x.AudioTrack > 0).Select(x => x.AudioTrack).Min();
+            
+            
+            
+            using var source = new FileStream(FileDataPath, FileMode.Open, FileAccess.Read);
+            var vagDecoder = Resolve<VagDecoder>();
+            
+            // var metadataDecorator = Resolve<IDdrMetadataDecorator>();
+            // var ssqDecoder = Resolve<ISsqDecoder>();
+            // var smEncoder = Resolve<ISmEncoder>();
+            // var smWriter = Resolve<ISmStreamWriter>();
+
+            var soundIndex = 0;
+            // var chartIndex = 0;
+            var max = source.Length - 0x800;
+            // var ssqHeuristic = Resolve<SsqHeuristic>();
+            var bgmHeuristic = Resolve<BeatmaniaPs2NewBgmHeuristic>();
+            var cache = new CachedStream(source);
+
+            for (var offset = 0L; offset < max; offset += 0x800)
+            {
+                source.Position = offset;
+                cache.Reset();
+                
+                // if (ssqHeuristic.Match(cache) is HeuristicResult ssqResult)
+                // {
+                //     cache.Rewind();
+                //     var charts = ssqDecoder.Decode(ssqHeuristic.Read(ssqResult, cache));
+                //     // var idMd = rawMetaDatas.FirstOrDefault(md => md.InternalId == chartIndex + 1);
+                //
+                //     var chartSet = new ChartSet
+                //     {
+                //         Charts = charts,
+                //         Metadata = new Metadata()
+                //     };
+                //
+                //     // metadataDecorator.Decorate(chartSet, idMd, new MetadataDecoratorFileExtensions());
+                //     var commands = smEncoder.Encode(chartSet);
+                //     using var stream = this.OpenWrite(Path.Combine(OutPath, $"{chartIndex:D4}.sm"));
+                //     smWriter.Write(stream, commands);
+                //     stream.Flush();
+                //     chartIndex++;
+                //     
+                //     continue;
+                // }
+                // cache.Rewind();
+
+                if (bgmHeuristic.Match(cache) is HeuristicResult bgmResult)
+                {
+                    cache.Rewind();
+
+                    //var idMd = rawMetaDatas.FirstOrDefault(md => md.AudioTrack == soundIndex + firstSongIndex);
+                    //var idMd = soundIndex >= rawMetaDatas.Count ? null : rawMetaDatas[soundIndex];
+                    var fileName = $"{soundIndex:D4}"; //idMd?.Id ?? $"{soundIndex:D4}";
+                    var vag = bgmHeuristic.Read(bgmResult, cache);
+                    var decoded = vagDecoder.Decode(vag);
+                    this.WriteSound(decoded, Path.Combine(OutPath, $"{fileName}.wav"));
+                    soundIndex++;
+                }
+            }
+        }
         
         [Test]
         [Explicit]
@@ -80,7 +198,7 @@ namespace RhythmCodex.Ddr.Integration
             var dbDecoder = Resolve<IDdrPs2DatabaseDecoder>();
             var rawMetaDatas = metadataDecoder.Get(mdSource, mdSource.Length).Select(dbDecoder.Decode).ToList();
 
-            using var source = new FileStream(FileDataPath, FileMode.Open, FileAccess.Read);
+            using var source = new FileStream(StepDataPath, FileMode.Open, FileAccess.Read);
             var streamer = Resolve<IDdrPs2FileDataStepStreamReader>();
             var output = streamer.Read(source, source.Length);
 
@@ -112,7 +230,7 @@ namespace RhythmCodex.Ddr.Integration
             foreach (var cs in chartSets)
             {
                 var commands = smEncoder.Encode(cs);
-                using var stream = this.OpenWrite(Path.Combine(OutPath, cs.Metadata[ChartTag.TitleTag], $"{index:D4}.sm"));
+                using var stream = this.OpenWrite(Path.Combine(OutPath, cs.Metadata[ChartTag.TitleTag] ?? $"{index:D4}", $"{index:D4}.sm"));
                 smWriter.Write(stream, commands);
                 stream.Flush();
                 index++;

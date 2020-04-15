@@ -27,16 +27,17 @@ namespace RhythmCodex.Heuristics
 
             while (offset <= max)
             {
-                if (stream.TryRead(block, 0, blockSize) < blockSize)
+                if (cache.TryRead(block, 0, blockSize) < blockSize)
                     break;
 
+                cache.Rewind();
                 foreach (var result in _heuristicTester.Match(cache, length - offset, contexts))
                 {
                     yield return new HeuristicBlockResult
                     {
                         BlockIndex = index,
                         Offset = offset,
-                        Heuristic = result.Heuristic
+                        Result = result
                     };
                 }
                 offset += blockSize;
@@ -52,7 +53,7 @@ namespace RhythmCodex.Heuristics
 
     public class HeuristicBlockResult
     {
-        public IHeuristic Heuristic { get; set; }
+        public HeuristicResult Result { get; set; }
         public int BlockIndex { get; set; }
         public long Offset { get; set; }
     }

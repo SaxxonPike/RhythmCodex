@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -49,36 +50,84 @@ namespace RhythmCodex.Ddr.Converters
         {
             var record = records.Data.AsSpan();
             var id = Encodings.CP437.GetStringWithoutNulls(record.Slice(0x00, 5));
+            var mdbIndex = 0;
+            var difficultyOffset = 0;
+            int[] difficulties;
+
             if (id == string.Empty)
                 return null;
 
             var bpmOffset = 0;
-            if (Bitter.ToInt32(record, 0x14) != -1)
+            var isXDifficulties = Bitter.ToInt16(record, 0x06) == Bitter.ToInt16(record, 0x08) && 
+                                  record.Slice(0x25, 10).ToArray().All(x => x <= 20) &&
+                                  record.Slice(0x25, 10).ToArray().Any(x => x != 0x00);
+
+            if (isXDifficulties)
             {
-                while (Bitter.ToInt32(record, 0x10 + bpmOffset) == 0)
-                    bpmOffset += 4;
+                mdbIndex = Bitter.ToInt16(record, 0x08);
+                bpmOffset += 0x0C;
+            }
+            else
+            {
+                if (Bitter.ToInt16(record, 0x10) != 0 && Bitter.ToInt16(record, 0x12) == 0)
+                {
+                    if (record[0x06] == 0x05 && Bitter.ToInt16(record, 0x08) == Bitter.ToInt16(record, 0x0A))
+                    {
+                        // SN JP, SN US, SN2 US
+                        mdbIndex = Bitter.ToInt16(record, 0x0C);
+                        bpmOffset += 0x10;
+                        difficultyOffset += 0x10;
+                    }
+                    else
+                    {
+                        // SN2 JP
+                        mdbIndex = Bitter.ToInt16(record, 0x08);
+                        bpmOffset += 0x0C;
+                    }
+                }
+
+                if (Bitter.ToInt32(record, 0x14 + bpmOffset) != -1)
+                {
+                    // SN, SN2
+                    while (Bitter.ToInt32(record, 0x10 + bpmOffset) == 0)
+                    {
+                        bpmOffset += 4;
+                        difficultyOffset += 4;
+                    }
+                }
+
+                if (bpmOffset > 0)
+                {
+                    while (Bitter.ToInt32(record, 0x24 + difficultyOffset) == 0)
+                        difficultyOffset += 4;
+                }
             }
 
-            var difficultyOffset = bpmOffset;
-            if (bpmOffset > 0)
+            if (isXDifficulties)
             {
-                while (Bitter.ToInt32(record, 0x24 + difficultyOffset) == 0)
-                    difficultyOffset += 4;
+                difficulties = new[]
+                {
+                    record[0x26],
+                    record[0x27],
+                    record[0x28],
+                    record[0x29],
+                    record[0x25],
+                    0,
+                    0,
+                    0,
+                    record[0x2B],
+                    record[0x2C],
+                    record[0x2D],
+                    record[0x2E],
+                    record[0x2A],
+                    0,
+                    0,
+                    0,
+                };
             }
-
-            return new DdrDatabaseEntry
+            else
             {
-                Index = records.Index,
-                Id = id,
-                Type = record[0x06],
-                CdTitle = record[0x07],
-                InternalId = Bitter.ToInt16(record, 0x08),
-                MaxBpm = Bitter.ToInt16(record, 0x10 + bpmOffset),
-                MinBpm = Bitter.ToInt16(record, 0x12 + bpmOffset),
-                Unknown014 = Bitter.ToInt16(record, 0x14 + bpmOffset),
-                SonglistOrder = Bitter.ToInt16(record, 0x16 + bpmOffset),
-                UnlockNumber = Bitter.ToInt16(record, 0x18 + bpmOffset),
-                Difficulties = new[]
+                difficulties = new[]
                 {
                     record[0x24 + difficultyOffset] & 0xF,
                     record[0x24 + difficultyOffset] >> 4,
@@ -96,8 +145,24 @@ namespace RhythmCodex.Ddr.Converters
                     record[0x2A + difficultyOffset] >> 4,
                     record[0x2B + difficultyOffset] & 0xF,
                     record[0x2B + difficultyOffset] >> 4
-                },
+                };
+            }
+            
+            return new DdrDatabaseEntry
+            {
+                Index = records.Index,
+                Id = id,
+                Type = record[0x06],
+                CdTitle = record[0x07],
+                InternalId = Bitter.ToInt16(record, 0x08),
+                MaxBpm = Bitter.ToInt16(record, 0x10 + bpmOffset),
+                MinBpm = Bitter.ToInt16(record, 0x12 + bpmOffset),
+                Unknown014 = Bitter.ToInt16(record, 0x14 + bpmOffset),
+                SonglistOrder = Bitter.ToInt16(record, 0x16 + bpmOffset),
+                UnlockNumber = Bitter.ToInt16(record, 0x18 + bpmOffset),
+                Difficulties = difficulties,
                 Flags = Bitter.ToInt32(record, 0x2C + difficultyOffset),
+                AudioTrack = mdbIndex
                 // Radar0 = Bitter.ToInt16Array(record, 0x30, 6),
                 // Radar1 = Bitter.ToInt16Array(record, 0x3C, 6),
                 // Radar2 = Bitter.ToInt16Array(record, 0x48, 6),

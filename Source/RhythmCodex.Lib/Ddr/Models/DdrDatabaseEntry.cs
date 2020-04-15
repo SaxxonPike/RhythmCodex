@@ -1,3 +1,4 @@
+using System.Linq;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Ddr.Models
@@ -26,10 +27,18 @@ namespace RhythmCodex.Ddr.Models
         public int[] Radar4 { get; set; }
         public string LongName { get; set; }
         public string ShortName { get; set; }
+        public int AudioTrack { get; set; }
 
         public override string ToString()
         {
-            return $"db[{Index:D4}] Id:{Id} Long:{LongName ?? ""} Short:{ShortName ?? ""}";
+            return $"db[idx={Index:D4} " +
+                   $"int={InternalId:D3} " +
+                   $"aud={AudioTrack:D3}] " +
+                   $"Id:{Id} " +
+                   $"Long:{LongName ?? ""} " +
+                   $"Short:{ShortName ?? ""} " +
+                   $"BPM:{MinBpm}-{MaxBpm} " +
+                   $"Diff:[{string.Join(",", Difficulties?.Select(d => $"{d}") ?? new string[0])}]";
         }
     }
 }
