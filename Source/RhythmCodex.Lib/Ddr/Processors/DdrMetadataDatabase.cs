@@ -1,35 +1,55 @@
 using System;
-using System.Runtime.Serialization.Json;
-using System.Xml;
+using System.IO;
+using System.Linq;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Processors
 {
+    [Service]
     public class DdrMetadataDatabase : IDdrMetadataDatabase
     {
-        private Lazy<DdrMetadataDatabaseEntry[]> _entries;
+        private readonly Lazy<DdrMetadataDatabaseEntry[]> _entries;
         
         public DdrMetadataDatabase()
         {
-            _entries = new Lazy<DdrMetadataDatabaseEntry[]>(() =>
-                {
-                    var db = EmbeddedResources.Open("RhythmCodex.Ddr.Processors.DdrMetadata.xml");
-                    var doc = XDocument.Load(db);
-                    throw new NotImplementedException();
-                });
+            _entries = new Lazy<DdrMetadataDatabaseEntry[]>(Load);
         }
-        
-        public DdrMetadataDatabaseEntry GetById(string id)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
 
-    public interface IDdrMetadataDatabase
-    {
-        DdrMetadataDatabaseEntry GetById(string id);
+        private static DdrMetadataDatabaseEntry[] Load()
+        {
+            var db = EmbeddedResources
+                .GetArchive("RhythmCodex.Ddr.Processors.DdrMetadata.zip")
+                .Single()
+                .Value;
+                    
+            using var mem = new MemoryStream(db); 
+            var doc = XDocument.Load(mem);
+            var root = doc.Root;
+            var songs = root.Elements("Song").ToArray();
+
+            return songs.Select(xml => new DdrMetadataDatabaseEntry
+            {
+                Id = xml.GetInt("Id").Value,
+                Code = xml.GetString("Code"),
+                Title = xml.GetString("Title"),
+                Subtitle = xml.GetString("Subtitle"),
+                Artist = xml.GetString("Artist"),
+                TitleRoman = xml.GetString("TitleRoman"),
+                SubtitleRoman = xml.GetString("SubtitleRoman"),
+                ArtistRoman = xml.GetString("ArtistRoman"),
+                TitleLocal = xml.GetString("TitleLocal"),
+                SubtitleLocal = xml.GetString("SubtitleLocal"),
+                ArtistLocal = xml.GetString("ArtistLocal"),
+            }).ToArray();
+        }
+
+        public DdrMetadataDatabaseEntry GetByCode(string code) => 
+            _entries.Value.SingleOrDefault(x => x.Code == code);
+        
+        public DdrMetadataDatabaseEntry GetById(int id) => 
+            _entries.Value.SingleOrDefault(x => x.Id == id);
     }
 }

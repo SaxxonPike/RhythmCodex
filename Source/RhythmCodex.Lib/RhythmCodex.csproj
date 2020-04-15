@@ -13,7 +13,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Digital573\Providers\Digital573AudioKeyDatabase.zip" />
     <None Remove="Ddr\Processors\DdrMetadata.json" />
-    <EmbeddedResource Include="Ddr\Processors\DdrMetadata.xml" />
+    <None Remove="Ddr\Processors\DdrMetadata.zip" />
+    <EmbeddedResource Include="Ddr\Processors\DdrMetadata.zip" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tcb\Streamers" />

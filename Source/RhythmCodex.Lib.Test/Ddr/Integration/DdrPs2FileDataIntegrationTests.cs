@@ -89,15 +89,15 @@ namespace RhythmCodex.Ddr.Integration
         // private string ExecutablePath => Path.Combine("I:", "SLPM_669.30");
         // private string OutPath => Path.Combine("ddr-out", "sn2jpn");
 
-        private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
-        private string FileDataPath => Path.Combine("K:", "DATA", "MDB_X1.DAT");
-        private string ExecutablePath => Path.Combine("K:", "SLUS_217.67");
-        private string OutPath => Path.Combine("ddr-out", "xusa");
-
         // private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
         // private string FileDataPath => Path.Combine("K:", "DATA", "MDB_X1.DAT");
-        // private string ExecutablePath => Path.Combine("K:", "SLPM_550.90");
-        // private string OutPath => Path.Combine("ddr-out", "xjpn");
+        // private string ExecutablePath => Path.Combine("K:", "SLUS_217.67");
+        // private string OutPath => Path.Combine("ddr-out", "xusa");
+
+        private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
+        private string FileDataPath => Path.Combine("K:", "DATA", "MDB_X1.DAT");
+        private string ExecutablePath => Path.Combine("K:", "SLPM_550.90");
+        private string OutPath => Path.Combine("ddr-out", "xjpn");
 
         // private string StepDataPath => Path.Combine("K:", "DATA", "IMAGE.DAT");
         // private string FileDataPath => Path.Combine("K:", "DATA", "MDB_X1.DAT");
@@ -198,6 +198,8 @@ namespace RhythmCodex.Ddr.Integration
             var dbDecoder = Resolve<IDdrPs2DatabaseDecoder>();
             var rawMetaDatas = metadataDecoder.Get(mdSource, mdSource.Length).Select(dbDecoder.Decode).ToList();
 
+            var metadataDb = Resolve<IDdrMetadataDatabase>();
+
             using var source = new FileStream(StepDataPath, FileMode.Open, FileAccess.Read);
             var streamer = Resolve<IDdrPs2FileDataStepStreamReader>();
             var output = streamer.Read(source, source.Length);
@@ -212,14 +214,25 @@ namespace RhythmCodex.Ddr.Integration
             {
                 var charts = ssqDecoder.Decode(ssqReader.Read(new MemoryStream(e.Data)));
                 var idMd = rawMetaDatas.FirstOrDefault(md => md.InternalId == i + 1);
-                
+
+                var newMd = new Metadata();
                 var chartSet = new ChartSet
                 {
                     Charts = charts,
-                    Metadata = new Metadata()
+                    Metadata = newMd
                 };
                 
                 metadataDecorator.Decorate(chartSet, idMd, new MetadataDecoratorFileExtensions());
+                
+                var fullMd = idMd != null ? metadataDb.GetByCode(idMd.Id) : null;
+                newMd[StringData.Comment] = idMd?.Id;
+                newMd[ChartTag.TitleTag] = fullMd?.Title ?? fullMd?.TitleRoman ?? fullMd?.TitleLocal ?? newMd[ChartTag.TitleTag];
+                newMd[ChartTag.SubTitleTag] = fullMd?.Subtitle ?? fullMd?.SubtitleRoman ?? fullMd?.SubtitleLocal ?? newMd[ChartTag.SubTitleTag];
+                newMd[ChartTag.ArtistTag] = fullMd?.Artist ?? fullMd?.ArtistRoman ?? fullMd?.ArtistLocal ?? newMd[ChartTag.ArtistTag];
+                newMd[ChartTag.TitleTranslitTag] = fullMd?.TitleRoman ?? fullMd?.TitleLocal ?? newMd[ChartTag.TitleTranslitTag];
+                newMd[ChartTag.SubTitleTranslitTag] = fullMd?.SubtitleRoman ?? fullMd?.SubtitleLocal ?? newMd[ChartTag.SubTitleTranslitTag];
+                newMd[ChartTag.ArtistTranslitTag] = fullMd?.ArtistRoman ?? fullMd?.ArtistLocal ?? newMd[ChartTag.ArtistTranslitTag];
+                
                 return chartSet;
             }).ToList();
 
@@ -230,7 +243,7 @@ namespace RhythmCodex.Ddr.Integration
             foreach (var cs in chartSets)
             {
                 var commands = smEncoder.Encode(cs);
-                using var stream = this.OpenWrite(Path.Combine(OutPath, cs.Metadata[ChartTag.TitleTag] ?? $"{index:D4}", $"{index:D4}.sm"));
+                using var stream = this.OpenWrite(Path.Combine(OutPath, cs.Metadata[StringData.Comment] ?? $"{index:D4}", $"{index:D4}.sm"));
                 smWriter.Write(stream, commands);
                 stream.Flush();
                 index++;
