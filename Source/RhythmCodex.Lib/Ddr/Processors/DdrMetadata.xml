@@ -2119,7 +2119,8 @@
         <Title>true...</Title>
         <Subtitle>(radio edit)</Subtitle>
         <Artist>小坂りゆ</Artist>
-        <ArtistRoman>Riyu Kosaka</ArtistRoman>
+        <ArtistRoman>Kosaka Riyu</ArtistRoman>
+        <ArtistLocal>Riyu Kosaka</ArtistLocal>
     </Song>
     <Song>
         <Id>327</Id>
@@ -2172,7 +2173,8 @@
         <Title>true...</Title>
         <Subtitle>(Trance Sunrise Mix)</Subtitle>
         <Artist>小坂りゆ</Artist>
-        <ArtistRoman>Riyu Kosaka</ArtistRoman>
+        <ArtistRoman>Kosaka Riyu</ArtistRoman>
+        <ArtistLocal>Riyu Kosaka</ArtistLocal>
     </Song>
     <Song>
         <Id>335</Id>
@@ -2332,7 +2334,8 @@
         <Title>DIVE TO THE NIGHT</Title>
         <TitleSimple>DIVE TO THE NIGHT</TitleSimple>
         <Artist>小坂りゆ</Artist>
-        <ArtistRoman>Riyu Kosaka</ArtistRoman>
+        <ArtistRoman>Kosaka Riyu</ArtistRoman>
+        <ArtistLocal>Riyu Kosaka</ArtistLocal>
     </Song>
     <Song>
         <Id>359</Id>
@@ -2384,7 +2387,8 @@
         <Title>CANDY♥</Title>
         <TitleSimple>CANDY(DDR MAX2)</TitleSimple>
         <Artist>小坂りゆ</Artist>
-        <ArtistRoman>Riyu Kosaka</ArtistRoman>
+        <ArtistRoman>Kosaka Riyu</ArtistRoman>
+        <ArtistLocal>Riyu Kosaka</ArtistLocal>
     </Song>
     <Song>
         <Id>366</Id>
@@ -2850,7 +2854,8 @@
         <Code>suns</Code>
         <Title>LOVE♥SHINE</Title>
         <Artist>小坂りゆ</Artist>
-        <ArtistRoman>Riyu Kosaka</ArtistRoman>
+        <ArtistRoman>Kosaka Riyu</ArtistRoman>
+        <ArtistLocal>Riyu Kosaka</ArtistLocal>
     </Song>
     <Song>
         <Id>430</Id>
@@ -2921,7 +2926,8 @@
         <Code>stin</Code>
         <Title>Destiny lovers</Title>
         <Artist>くにたけ みゆき</Artist>
-        <ArtistRoman>Miyuki Kunitake</ArtistRoman>
+        <ArtistRoman>Kunitake Miyuki</ArtistRoman>
+        <ArtistLocal>Miyuki Kunitake</ArtistLocal>
     </Song>
     <Song>
         <Id>441</Id>
@@ -3018,7 +3024,8 @@
         <Code>wite</Code>
         <Title>White Lovers</Title>
         <Artist>新谷さなえ</Artist>
-        <ArtistRoman>Sanae Shintani</ArtistRoman>
+        <ArtistRoman>Shintani Sanae</ArtistRoman>
+        <ArtistLocal>Sanae Shintani</ArtistLocal>
     </Song>
     <Song>
         <Id>456</Id>
@@ -4590,7 +4597,8 @@
         <Code>skrb</Code>
         <Title>SAKURANBO</Title>
         <Artist>大塚愛</Artist>
-        <ArtistRoman>Ai Otsuka</ArtistRoman>
+        <ArtistRoman>Otsuka Ai</ArtistRoman>
+        <ArtistLocal>Ai Otsuka</ArtistLocal>
     </Song>
     <Song>
         <Id>33833</Id>
@@ -4734,14 +4742,16 @@
         <Code>unde</Code>
         <Title>Under the Sky</Title>
         <Artist>南さやか(BeForU) with platoniX</Artist>
-        <ArtistRoman>Sayaka Minami(BeForU) with platoniX</ArtistRoman>
+        <ArtistRoman>Minami Sayaka(BeForU) with platoniX</ArtistRoman>
+        <ArtistLocal>Sayaka Minami(BeForU) with platoniX</ArtistLocal>
     </Song>
     <Song>
         <Id>36881</Id>
         <Code>time</Code>
         <Title>Timepiece Phase II</Title>
         <Artist>佐々木博史</Artist>
-        <ArtistRoman>Hirofumi Sasaki</ArtistRoman>
+        <ArtistRoman>Sasaki Hirofumi</ArtistRoman>
+        <ArtistLocal>Hirofumi Sasaki</ArtistLocal>
     </Song>
     <Song>
         <Id>36882</Id>
@@ -4914,7 +4924,8 @@
         <Code>punc</Code>
         <Title>HONEY♂PUNCH</Title>
         <Artist>小坂りゆ</Artist>
-        <ArtistRoman>Riyu Kosaka</ArtistRoman>
+        <ArtistRoman>Kosaka Riyu</ArtistRoman>
+        <ArtistLocal>Riyu Kosaka</ArtistLocal>
     </Song>
     <Song>
         <Id>36909</Id>
@@ -5374,7 +5385,8 @@
         <Title>Baby's Tears</Title>
         <Subtitle>(SKY GIRLS opening theme)</Subtitle>
         <Artist>小坂りゆ</Artist>
-        <ArtistRoman>Riyu Kosaka</ArtistRoman>
+        <ArtistRoman>Kosaka Riyu</ArtistRoman>
+        <ArtistLocal>Riyu Kosaka</ArtistLocal>
     </Song>
     <Song>
         <Id>37161</Id>
@@ -5639,7 +5651,8 @@
         <Title>ANGELUS -アンジェラス-</Title>
         <TitleRoman>ANGELUS -Anjerasu-</TitleRoman>
         <Artist>島谷ひとみ</Artist>
-        <ArtistRoman>Hitomi Shimatani</ArtistRoman>
+        <ArtistRoman>Shimatani Hitomi</ArtistRoman>
+        <ArtistLocal>Hitomi Shimatani</ArtistLocal>
     </Song>
     <Song>
         <Id>37203</Id>
@@ -5943,7 +5956,8 @@
         <Code>ngoo</Code>
         <Title>NGO</Title>
         <Artist>鍋島圭一</Artist>
-        <ArtistRoman>Keiichi Nabeshima</ArtistRoman>
+        <ArtistRoman>Nabeshima Keiichi</ArtistRoman>
+        <ArtistLocal>Keiichi Nabeshima</ArtistLocal>
     </Song>
     <Song>
         <Id>37252</Id>
@@ -6337,7 +6351,8 @@
         <Code>smil</Code>
         <Title>The flower in your smile</Title>
         <Artist>TACOS NAOMI feat.小久保裕之</Artist>
-        <ArtistRoman>TACOS NAOMI feat.Hiroyuki Kokubo</ArtistRoman>
+        <ArtistRoman>TACOS NAOMI feat.Kokubo Hiroyuki</ArtistRoman>
+        <ArtistLocal>TACOS NAOMI feat.Hiroyuki Kokubo</ArtistLocal>
     </Song>
     <Song>
         <Id>37313</Id>
