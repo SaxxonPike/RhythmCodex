@@ -13,21 +13,21 @@ namespace RhythmCodex.Ddr.Heuristics
     [Service]
     public class DdrFileDataBinCompressedTableHeuristic : IReadableHeuristic<IList<DdrPs2FileDataTableEntry>>
     {
-        private readonly IDdrPs2FileDataTableStreamReader _ddrPs2FileDataTableStreamReader;
-        private readonly IDdrPs2FileDataTableDecoder _ddrPs2FileDataTableDecoder;
+        private readonly IDdrPs2FileDataTableChunkStreamReader _ddrPs2FileDataTableChunkStreamReader;
+        private readonly IDdrPs2FileDataUnboundTableDecoder _ddrPs2FileDataUnboundTableDecoder;
 
         public DdrFileDataBinCompressedTableHeuristic(
-            IDdrPs2FileDataTableStreamReader ddrPs2FileDataTableStreamReader,
-            IDdrPs2FileDataTableDecoder ddrPs2FileDataTableDecoder)
+            IDdrPs2FileDataTableChunkStreamReader ddrPs2FileDataTableChunkStreamReader,
+            IDdrPs2FileDataUnboundTableDecoder ddrPs2FileDataUnboundTableDecoder)
         {
-            _ddrPs2FileDataTableStreamReader = ddrPs2FileDataTableStreamReader;
-            _ddrPs2FileDataTableDecoder = ddrPs2FileDataTableDecoder;
+            _ddrPs2FileDataTableChunkStreamReader = ddrPs2FileDataTableChunkStreamReader;
+            _ddrPs2FileDataUnboundTableDecoder = ddrPs2FileDataUnboundTableDecoder;
         }
 
         public IList<DdrPs2FileDataTableEntry> Read(HeuristicResult heuristicResult, Stream stream)
         {
-            var table = _ddrPs2FileDataTableStreamReader.Get(stream);
-            var decoded = _ddrPs2FileDataTableDecoder.Decode(table);
+            var table = _ddrPs2FileDataTableChunkStreamReader.GetUnbound(stream);
+            var decoded = _ddrPs2FileDataUnboundTableDecoder.Decode(table);
             return decoded;
         }
 

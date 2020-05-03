@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using RhythmCodex.Compression;
+using RhythmCodex.Ddr.Models;
 using RhythmCodex.Heuristics;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq;
@@ -22,7 +23,7 @@ namespace RhythmCodex.Ddr.Streamers
             _heuristicTester = heuristicTester;
         }
         
-        public byte[] Read(Stream fileDataBinStream, long length)
+        public DdrPs2FileDataTableChunk Read(Stream fileDataBinStream, long length)
         {
             var position = -0x800L;
             var max = length / 0x800 * 0x800;
@@ -76,7 +77,11 @@ namespace RhythmCodex.Ddr.Streamers
                             continue;
                         }
 
-                        return buffer.ToArray();
+                        return new DdrPs2FileDataTableChunk
+                        {
+                            Data = buffer.ToArray(),
+                            HasHeaders = false
+                        };
                     }
 
                     continue;

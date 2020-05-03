@@ -16,7 +16,4 @@
     <None Remove="Ddr\Processors\DdrMetadata.zip" />
     <EmbeddedResource Include="Ddr\Processors\DdrMetadata.zip" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tcb\Streamers" />
-  </ItemGroup>
 </Project>

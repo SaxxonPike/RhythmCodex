@@ -1,3 +1,4 @@
+using System;
 using System.Drawing.Imaging;
 using System.IO;
 using RhythmCodex.Gdi.Converters;
@@ -16,9 +17,12 @@ namespace RhythmCodex.Gdi.Streamers
             _gdiFactory = gdiFactory;
         }
         
-        public void Write(Stream stream, RawBitmap rawBitmap)
+        public void Write(Stream stream, IRawBitmap rawBitmap)
         {
-            using (var adapter = _gdiFactory.CreateAdapter(rawBitmap))
+            if (!(rawBitmap is RawBitmap rawBitmapImpl)) 
+                throw new Exception("Can only work with implementations of RawBitmap for now..");
+
+            using (var adapter = _gdiFactory.CreateAdapter(rawBitmapImpl))
             using (var output = _gdiFactory.CreateBitmap(rawBitmap.Width, rawBitmap.Height))
             using (var g = _gdiFactory.CreateGraphics(output))
             {
