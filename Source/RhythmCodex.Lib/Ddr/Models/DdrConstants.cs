@@ -1626,7 +1626,8 @@ namespace RhythmCodex.Ddr.Models
             "titl",
             "sunk",
             "swin",
-            "keep3"
+            "keep3",
+            "goin"
         };
     }
 }

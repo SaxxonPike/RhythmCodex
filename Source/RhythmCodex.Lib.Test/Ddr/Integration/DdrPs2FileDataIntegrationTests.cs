@@ -28,10 +28,40 @@ namespace RhythmCodex.Ddr.Integration
 {
     public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
     {
-        private string ExecutablePath => Path.Combine("K:", "SLPM_621.54");
-        private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
-        private string StepDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
-        private string OutPath => Path.Combine("ddr-out", "maxjpn");
+        private string ExecutablePath => Path.Combine("I:", "SLES_551.97");
+        private string StepDataPath => Path.Combine("I:", "DATA", "IMAGE.DAT");
+        private string FileDataPath => Path.Combine("I:", "DATA", "MDB_SN2.DAT");
+        private string OutPath => Path.Combine("ddr-out", "sn2eu");
+        
+        // private string ExecutablePath => Path.Combine("I:", "SLES_543.41");
+        // private string StepDataPath => Path.Combine("I:", "DATA", "IMAGE.DAT");
+        // private string FileDataPath => Path.Combine("I:", "DATA", "MDB_SN1.DAT");
+        // private string OutPath => Path.Combine("ddr-out", "sneu");
+        
+        // private string ExecutablePath => Path.Combine("I:", "SLES_515.10");
+        // private string FileDataPath => Path.Combine("I:", "DATA", "FILEDATA.BIN");
+        // private string StepDataPath => Path.Combine("I:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "megamixeu");
+        
+        // private string ExecutablePath => Path.Combine("I:", "SLES_532.18");
+        // private string FileDataPath => Path.Combine("I:", "DATA", "FILEDT03.BIN");
+        // private string StepDataPath => Path.Combine("I:", "DATA", "FILEDT03.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "maxeu");
+        
+        // private string ExecutablePath => Path.Combine("K:", "SLES_525.98");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string StepDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "fusioneu");
+
+        // private string ExecutablePath => Path.Combine("K:", "SLES_517.57");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string StepDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "fevereu");
+
+        // private string ExecutablePath => Path.Combine("K:", "SLPM_621.54");
+        // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string StepDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
+        // private string OutPath => Path.Combine("ddr-out", "maxjpn");
 
         // private string ExecutablePath => Path.Combine("K:", "SLUS_204.37");
         // private string FileDataPath => Path.Combine("K:", "DATA", "FILEDATA.BIN");
