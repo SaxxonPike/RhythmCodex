@@ -13,7 +13,7 @@
 //  * Lesser General Public License for more details.
 //  *
 //  ***************************************************************************/
-namespace MP3Sharp.Decoding.Decoders
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders
 {
     /// <summary>
     ///     Implementations of FrameDecoder are responsible for decoding

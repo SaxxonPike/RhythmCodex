@@ -2,7 +2,7 @@
 
 using System;
 
-namespace SevenZip.Compression.LZ
+namespace RhythmCodex.Plugin.SevenZip.Compress.LZ
 {
 	interface IInWindowStream
 	{

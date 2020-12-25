@@ -1,6 +1,4 @@
-using System;
-
-namespace Org.BouncyCastle.Crypto
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto
 {
 	/// <remarks>Base interface for a symmetric key block cipher.</remarks>
     public interface IBlockCipher

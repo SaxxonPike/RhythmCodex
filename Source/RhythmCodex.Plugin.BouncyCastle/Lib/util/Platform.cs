@@ -1,15 +1,13 @@
-using System;
-using System.Globalization;
-using System.IO;
-using System.Text;
-
 #if SILVERLIGHT || PORTABLE
 using System.Collections.Generic;
 #else
 using System.Collections;
 #endif
+using System;
+using System.Globalization;
+using System.IO;
 
-namespace Org.BouncyCastle.Utilities
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.util
 {
     internal abstract class Platform
     {

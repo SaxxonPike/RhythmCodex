@@ -15,9 +15,9 @@
 //  ***************************************************************************/
 
 using System;
-using MP3Sharp.Decoding.Decoders;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders;
 
-namespace MP3Sharp.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
 {
     /// <summary>
     ///     Encapsulates the details of decoding an MPEG audio frame.

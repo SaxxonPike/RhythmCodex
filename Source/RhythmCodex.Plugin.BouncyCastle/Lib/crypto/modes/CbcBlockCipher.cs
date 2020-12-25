@@ -1,8 +1,7 @@
 using System;
+using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.parameters;
 
-using Org.BouncyCastle.Crypto.Parameters;
-
-namespace Org.BouncyCastle.Crypto.Modes
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.modes
 {
     /**
     * implements Cipher-Block-Chaining (CBC) mode on top of a simple cipher.

@@ -5,9 +5,10 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
+
 using System.IO;
 
-namespace NVorbis
+namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     internal abstract class VorbisTime
     {

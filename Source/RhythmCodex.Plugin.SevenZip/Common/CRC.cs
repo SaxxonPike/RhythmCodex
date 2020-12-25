@@ -1,6 +1,6 @@
 // Common/CRC.cs
 
-namespace SevenZip
+namespace RhythmCodex.Plugin.SevenZip.Common
 {
 	class CRC
 	{

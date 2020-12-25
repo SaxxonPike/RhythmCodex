@@ -3,7 +3,7 @@
 using System;
 using System.Collections;
 
-namespace SevenZip.CommandLineParser
+namespace RhythmCodex.Plugin.SevenZip.Common
 {
 	public enum SwitchType
 	{

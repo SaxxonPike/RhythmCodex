@@ -1,8 +1,7 @@
 using System;
+using RhythmCodex.Plugin.BouncyCastle.Lib.util;
 
-using Org.BouncyCastle.Utilities;
-
-namespace Org.BouncyCastle.Crypto.Parameters
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.parameters
 {
     public class ParametersWithIV
         : ICipherParameters

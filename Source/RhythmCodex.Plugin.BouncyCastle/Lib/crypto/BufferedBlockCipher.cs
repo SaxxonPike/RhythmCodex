@@ -1,9 +1,7 @@
 using System;
-using System.Diagnostics;
+using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.parameters;
 
-using Org.BouncyCastle.Crypto.Parameters;
-
-namespace Org.BouncyCastle.Crypto
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto
 {
 	/**
 	* A wrapper class that allows block ciphers to be used to process data in

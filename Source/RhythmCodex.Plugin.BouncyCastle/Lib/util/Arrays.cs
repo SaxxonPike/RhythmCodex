@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using System.Text;
 
-namespace Org.BouncyCastle.Utilities
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.util
 {
     /// <summary> General array utilities.</summary>
     public abstract class Arrays

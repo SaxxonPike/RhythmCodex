@@ -5,9 +5,10 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
+
 using System;
 
-namespace NVorbis
+namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     internal class RingBuffer
     {

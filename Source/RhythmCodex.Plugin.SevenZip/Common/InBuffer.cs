@@ -1,6 +1,6 @@
 // InBuffer.cs
 
-namespace SevenZip.Buffer
+namespace RhythmCodex.Plugin.SevenZip.Common
 {
 	public class InBuffer
 	{

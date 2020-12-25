@@ -5,7 +5,7 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
-namespace NVorbis
+namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     internal static class Utils
     {

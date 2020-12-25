@@ -1,6 +1,4 @@
-using System;
-
-namespace Org.BouncyCastle.Crypto
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto
 {
 	/// <remarks>Block cipher engines are expected to conform to this interface.</remarks>
     public interface IBufferedCipher

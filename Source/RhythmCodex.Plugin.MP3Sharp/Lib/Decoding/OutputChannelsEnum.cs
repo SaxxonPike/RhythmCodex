@@ -13,7 +13,7 @@
 //  * Lesser General Public License for more details.
 //  *
 //  ***************************************************************************/
-namespace MP3Sharp.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
 {
     internal enum OutputChannelsEnum
     {

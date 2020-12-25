@@ -1,10 +1,9 @@
 using System;
+using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.parameters;
+using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.util;
+using RhythmCodex.Plugin.BouncyCastle.Lib.util;
 
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Utilities;
-using Org.BouncyCastle.Utilities;
-
-namespace Org.BouncyCastle.Crypto.Engines
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.engines
 {
     /**
     * A class that provides Blowfish key encryption operations,

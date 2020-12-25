@@ -34,6 +34,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.NVorbis"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.SevenZip", "RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj", "{7A815285-3FAC-4021-B00D-EFE23AE4988C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{44A45635-5452-4399-99D9-40F6A496A2C1}"
+ProjectSection(SolutionItems) = preProject
+	..\.gitignore = ..\.gitignore
+	..\DESIGN.md = ..\DESIGN.md
+	..\LICENSE.md = ..\LICENSE.md
+	..\README.md = ..\README.md
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C33870F0-797F-4C36-9CBB-14CAF0E1235E}"
+ProjectSection(SolutionItems) = preProject
+	..\publish.bat = ..\publish.bat
+	..\publish.sh = ..\publish.sh
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,11 +1,10 @@
 // LzmaEncoder.cs
 
 using System;
+using RhythmCodex.Plugin.SevenZip.Compress.RangeCoder;
 
-namespace SevenZip.Compression.LZMA
+namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 {
-	using RangeCoder;
-
 	public class LzmaEncoder : ICoder, ISetCoderProperties, IWriteCoderProperties
 	{
 		enum EMatchFinderType

@@ -22,7 +22,7 @@
  * great code.
  */
 
-namespace Org.BouncyCastle.Apache.Bzip2
+namespace RhythmCodex.Plugin.BouncyCastle.Lib
 {
     /**
     * Base class for both the compress and decompress classes.

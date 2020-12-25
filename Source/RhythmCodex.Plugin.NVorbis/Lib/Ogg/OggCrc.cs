@@ -6,7 +6,7 @@
  *                                                                          *
  ***************************************************************************/
 
-namespace NVorbis.Ogg
+namespace RhythmCodex.Plugin.NVorbis.Lib.Ogg
 {
     internal class Crc
     {

@@ -15,9 +15,9 @@
 //  ***************************************************************************/
 
 using System;
-using MP3Sharp.Decoding;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Decoding;
 
-namespace MP3Sharp
+namespace RhythmCodex.Plugin.MP3Sharp.Lib
 {
     /// <summary>
     ///     Internal class used to queue samples that are being obtained from an Mp3 stream. 

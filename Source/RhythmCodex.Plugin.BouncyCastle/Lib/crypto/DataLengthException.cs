@@ -1,6 +1,6 @@
 using System;
 
-namespace Org.BouncyCastle.Crypto
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto
 {
     /**
      * this exception is thrown if a buffer that is meant to have output

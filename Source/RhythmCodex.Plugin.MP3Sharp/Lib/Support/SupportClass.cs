@@ -17,7 +17,7 @@
 using System;
 using System.IO;
 
-namespace MP3Sharp.Support
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Support
 {
     internal static class SupportClass
     {

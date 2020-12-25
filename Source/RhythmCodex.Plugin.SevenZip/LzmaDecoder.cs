@@ -1,14 +1,15 @@
 ﻿using System.IO;
 using RhythmCodex.IoC;
+using RhythmCodex.ThirdParty;
 
-namespace RhythmCodex.ThirdParty
+namespace RhythmCodex.Plugin.SevenZip
 {
     [Service]
     public class LzmaDecoder : ILzmaDecoder
     {
         public byte[] Decode(Stream baseStream, int compressedLength, int decompressedLength, byte[] decoderProperties = null)
         {
-            var lzma = new SevenZip.Compression.LZMA.LzmaDecoder();
+            var lzma = new Compress.LZMA.LzmaDecoder();
             
             if (decoderProperties != null)
                 lzma.SetDecoderProperties(decoderProperties);

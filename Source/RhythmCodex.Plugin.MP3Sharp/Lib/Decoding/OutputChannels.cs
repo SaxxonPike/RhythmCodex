@@ -16,7 +16,7 @@
 
 using System;
 
-namespace MP3Sharp.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
 {
     /// <summary>
     ///     A Type-safe representation of the the supported output channel

@@ -16,9 +16,9 @@
 
 using System;
 using System.IO;
-using MP3Sharp.Decoding;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Decoding;
 
-namespace MP3Sharp
+namespace RhythmCodex.Plugin.MP3Sharp.Lib
 {
     /// <summary>
     ///     Provides a view of the sequence of bytes that are produced during the conversion of an MP3 stream
