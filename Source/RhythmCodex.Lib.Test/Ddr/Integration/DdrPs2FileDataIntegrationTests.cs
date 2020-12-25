@@ -253,6 +253,7 @@ namespace RhythmCodex.Ddr.Integration
         }
 
         [Test]
+        [Explicit]
         public void Test_Export_Filedata_TCB()
         {
             using var source = new FileStream(FileDataPath, FileMode.Open, FileAccess.Read);
@@ -467,6 +468,7 @@ namespace RhythmCodex.Ddr.Integration
                 index++;
                 
                 source.Position = oldPosition + 0x800;
+                remaining -= 0x800;
             }
         }
     }
