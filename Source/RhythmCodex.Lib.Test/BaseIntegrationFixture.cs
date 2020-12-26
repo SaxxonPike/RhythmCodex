@@ -25,7 +25,8 @@ namespace RhythmCodex
             var builder = new ContainerBuilder();
 
             builder.RegisterModule<TestAutofacModule>();
-            builder.RegisterInstance(TestContext.Out).As<TextWriter>().SingleInstance();
+            builder.RegisterInstance(new TestConsole())
+                .As<IConsole>();
             builder.Register(c => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
                 .As<ILoggerConfigurationSource>();
             builder.RegisterType<TextWriterLogger>().As<ILogger>();
@@ -69,7 +70,8 @@ namespace RhythmCodex
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterInstance(TestContext.Out).As<TextWriter>().SingleInstance();
+            builder.RegisterInstance(new TestConsole())
+                .As<IConsole>();
             builder.Register(c => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
                 .As<ILoggerConfigurationSource>();
             builder.RegisterType<TextWriterLogger>().As<ILogger>();
