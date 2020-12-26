@@ -6,7 +6,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Cli
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class Program
+    internal class Boot
     {
         /// <summary>
         /// Entry point for the application.
@@ -57,7 +57,7 @@ namespace RhythmCodex.Cli
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<AppInfrastructureAutofacModule>();
-            builder.RegisterModule<AppAutofacModule>();
+            builder.RegisterModule<AppAutofacModule<App>>();
             return builder.Build();
         }
     }

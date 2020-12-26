@@ -8,6 +8,6 @@
         /// <summary>
         /// Begins executing this instance of the application container.
         /// </summary>
-        void Run(string[] args);
+        void Run(params string[] args);
     }
 }

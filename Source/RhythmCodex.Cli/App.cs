@@ -15,14 +15,14 @@ namespace RhythmCodex.Cli
     {
         private readonly IArgParser _argParser;
         private readonly ILoggerConfigurationSource _loggerConfigurationSource;
-        private readonly TextWriter _console;
+        private readonly IConsole _console;
         private readonly IEnumerable<ICliModule> _modules;
 
         /// <summary>
         /// Create an instance of the main application container.
         /// </summary>
         public App(
-            TextWriter console,
+            IConsole console,
             IEnumerable<ICliModule> modules,
             IArgParser argParser,
             ILoggerConfigurationSource loggerConfigurationSource)
@@ -43,7 +43,7 @@ namespace RhythmCodex.Cli
                 .InformationalVersion;
 
         /// <inheritdoc />
-        public void Run(string[] args)
+        public void Run(params string[] args)
         {
             _console.WriteLine($"{AppName} {AppVersion}");
 

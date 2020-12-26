@@ -2,7 +2,7 @@
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Cli
+namespace RhythmCodex.Gui
 {
     internal class AppInfrastructureAutofacModule : Module
     {
@@ -10,7 +10,7 @@ namespace RhythmCodex.Cli
         {
             base.Load(builder);
             
-            builder.RegisterInstance(new Console())
+            builder.RegisterInstance(new ConsoleEventSource())
                 .AsImplementedInterfaces()
                 .AsSelf()
                 .SingleInstance();

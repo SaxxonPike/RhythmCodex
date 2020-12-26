@@ -48,7 +48,7 @@ namespace RhythmCodex.Cli
                 .AsImplementedInterfaces()
                 .InstancePerRequest();
             
-            builder.RegisterModule<AppAutofacModule>();
+            builder.RegisterModule<AppAutofacModule<App>>();
             AppContainer = builder.Build();
         }
 

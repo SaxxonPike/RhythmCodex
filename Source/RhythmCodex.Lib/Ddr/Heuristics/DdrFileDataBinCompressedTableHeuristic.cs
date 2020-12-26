@@ -11,6 +11,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Heuristics
 {
     [Service]
+    [Context(Context.DdrCs)]
     public class DdrFileDataBinCompressedTableHeuristic : IReadableHeuristic<IList<DdrPs2FileDataTableEntry>>
     {
         private readonly IDdrPs2FileDataTableChunkStreamReader _ddrPs2FileDataTableChunkStreamReader;
