@@ -13,7 +13,7 @@
 //  * Lesser General Public License for more details.
 //  *
 //  ***************************************************************************/
-namespace MP3Sharp
+namespace RhythmCodex.Plugin.MP3Sharp.Lib
 {
     /// <summary>
     ///     Describes sound formats that can be produced by the Mp3Stream class.

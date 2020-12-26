@@ -1,6 +1,6 @@
 using System;
 
-namespace SevenZip.Compression.RangeCoder
+namespace RhythmCodex.Plugin.SevenZip.Compress.RangeCoder
 {
 	struct BitTreeEncoder
 	{

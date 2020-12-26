@@ -14,12 +14,12 @@
 //  *
 //  ***************************************************************************/
 
-using MP3Sharp.Support;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Support;
 
-namespace MP3Sharp
+namespace RhythmCodex.Plugin.MP3Sharp.Lib
 {
     /// <summary>
     ///     MP3SharpException is the base class for all API-level

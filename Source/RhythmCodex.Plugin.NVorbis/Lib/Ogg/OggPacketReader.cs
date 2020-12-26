@@ -5,11 +5,12 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace NVorbis.Ogg
+namespace RhythmCodex.Plugin.NVorbis.Lib.Ogg
 {
     [System.Diagnostics.DebuggerTypeProxy(typeof(DebugView))]
     internal class PacketReader : IPacketProvider

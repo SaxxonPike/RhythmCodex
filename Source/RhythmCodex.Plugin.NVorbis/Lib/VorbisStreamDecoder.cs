@@ -5,13 +5,14 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 
-namespace NVorbis
+namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     internal class VorbisStreamDecoder : IVorbisStreamStatus, IDisposable
     {

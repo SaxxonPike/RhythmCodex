@@ -1,6 +1,6 @@
 // LzmaBase.cs
 
-namespace SevenZip.Compression.LZMA
+namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 {
 	internal abstract class LzmaBase
 	{

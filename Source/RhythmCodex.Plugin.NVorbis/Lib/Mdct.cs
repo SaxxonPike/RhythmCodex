@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NVorbis
+namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     internal class Mdct
     {

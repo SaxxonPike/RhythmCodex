@@ -1623,7 +1623,11 @@ namespace RhythmCodex.Ddr.Models
             "sele", 
             "stae", 
             "staf",
-            "titl"
+            "titl",
+            "sunk",
+            "swin",
+            "keep3",
+            "goin"
         };
     }
 }

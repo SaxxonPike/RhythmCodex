@@ -14,9 +14,9 @@
 //  *
 //  ***************************************************************************/
 
-using MP3Sharp.Support;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Support;
 
-namespace MP3Sharp.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
 {
     /// <summary>
     /// Implements a Huffman decoder.

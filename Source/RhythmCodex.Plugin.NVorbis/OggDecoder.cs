@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NVorbis;
 using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
+using RhythmCodex.Plugin.NVorbis.Lib;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.ThirdParty;
 
-namespace RhythmCodex.ThirdParty
+namespace RhythmCodex.Plugin.NVorbis
 {
     [Service]
     public class OggDecoder : IOggDecoder

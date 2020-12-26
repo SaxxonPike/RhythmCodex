@@ -5,10 +5,11 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
-using System;
-using System.Collections.Generic;
 
- namespace NVorbis
+ using System;
+ using System.Collections.Generic;
+
+ namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     /// <summary>
     /// A single data packet from a logical Vorbis stream.

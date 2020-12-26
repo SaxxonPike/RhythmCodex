@@ -5,9 +5,10 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
+
 using System;
 
-namespace NVorbis.Ogg
+namespace RhythmCodex.Plugin.NVorbis.Lib.Ogg
 {
     internal class Packet : DataPacket
     {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Streamers
@@ -22,50 +23,27 @@ namespace RhythmCodex.Ddr.Streamers
 
         private static MusicDbEntry Decode(XElement parent)
         {
-            string GetString(string key)
-            {
-                var element = parent.Elements(key).FirstOrDefault();
-                return element?.Value;
-            }
-
-            int? GetInt(string key)
-            {
-                var value = GetString(key);
-                if (value == null)
-                    return null;
-                return int.Parse(value);
-            }
-
-            int[] GetInts(string key)
-            {
-                var values = GetString(key)?
-                    .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(int.Parse)
-                    .ToArray();
-                return values ?? new int[0];
-            }
-
             return new MusicDbEntry
             {
-                Mcode = GetInt("mcode"),
-                BaseName = GetString("basename"),
-                Title = GetString("title"),
-                Artist = GetString("artist"),
-                BpmMax = GetInt("bpmmax"),
-                BpmMin = GetInt("bpmmin"),
-                Series = GetInt("series"),
-                BemaniFlag = GetInt("bemaniflag"),
-                Lamp = GetInt("lamp"),
-                DiffLv = GetInts("diffLv"),
-                Limited = GetInt("limited"),
-                LimitedCha = GetInt("limited_cha"),
-                BgStage = GetInt("bgstage"),
-                GenreFlag = GetInt("genreflag"),
-                EventNo = GetInt("eventno"),
-                Movie = GetInt("movie"),
-                Region = GetInt("region"),
-                MovieOffset = GetInt("movieoffset"),
-                TitleYomi = GetString("title_yomi")
+                Mcode = parent.GetInt("mcode"),
+                BaseName = parent.GetString("basename"),
+                Title = parent.GetString("title"),
+                Artist = parent.GetString("artist"),
+                BpmMax = parent.GetInt("bpmmax"),
+                BpmMin = parent.GetInt("bpmmin"),
+                Series = parent.GetInt("series"),
+                BemaniFlag = parent.GetInt("bemaniflag"),
+                Lamp = parent.GetInt("lamp"),
+                DiffLv = parent.GetInts("diffLv"),
+                Limited = parent.GetInt("limited"),
+                LimitedCha = parent.GetInt("limited_cha"),
+                BgStage = parent.GetInt("bgstage"),
+                GenreFlag = parent.GetInt("genreflag"),
+                EventNo = parent.GetInt("eventno"),
+                Movie = parent.GetInt("movie"),
+                Region = parent.GetInt("region"),
+                MovieOffset = parent.GetInt("movieoffset"),
+                TitleYomi = parent.GetString("title_yomi")
             };
         }
     }

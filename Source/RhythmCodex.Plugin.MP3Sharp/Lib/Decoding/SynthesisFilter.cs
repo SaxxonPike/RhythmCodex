@@ -16,7 +16,7 @@
 
 using System;
 
-namespace MP3Sharp.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
 {
     /// <summary>
     ///     A class for the synthesis filter bank.

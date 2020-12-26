@@ -17,7 +17,7 @@
 using System;
 using System.IO;
 
-namespace MP3Sharp.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
 {
     /// <summary>
     /// A PushbackStream is a stream that can "push back" or "unread" data. This is useful in situations where it is convenient for a

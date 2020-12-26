@@ -5,12 +5,13 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
-namespace NVorbis
+namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     internal abstract class VorbisFloor
     {

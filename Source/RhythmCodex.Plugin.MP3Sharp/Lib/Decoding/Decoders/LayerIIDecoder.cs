@@ -14,9 +14,9 @@
 //  *
 //  ***************************************************************************/
 
-using MP3Sharp.Decoding.Decoders.LayerII;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerII;
 
-namespace MP3Sharp.Decoding.Decoders
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders
 {
     /// <summary>
     ///     Implements decoding of MPEG Audio Layer II frames.

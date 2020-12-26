@@ -17,7 +17,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace MP3Sharp.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
 {
     /// <summary>
     ///     Instances of BitstreamException are thrown

@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Autofac;
+﻿using Autofac;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
@@ -12,9 +10,9 @@ namespace RhythmCodex.Cli
         {
             base.Load(builder);
             
-            builder.RegisterInstance(Console.Out)
-                .As<TextWriter>()
-                .ExternallyOwned()
+            builder.RegisterInstance(new Console())
+                .AsImplementedInterfaces()
+                .AsSelf()
                 .SingleInstance();
             builder.RegisterType<LoggerConfigurationSource>()
                 .AsImplementedInterfaces()

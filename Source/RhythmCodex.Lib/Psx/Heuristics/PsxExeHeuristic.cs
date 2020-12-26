@@ -11,9 +11,9 @@ namespace RhythmCodex.Psx.Heuristics
     {
         public string Description => "Playstation Executable (PS-X EXE)";
         public string FileExtension => "exe";
-        
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        public HeuristicResult Match(IHeuristicReader reader)
         {
+            var data = reader.Read(8);
             if (data.Length < 8)
                 return null;
 
@@ -22,12 +22,5 @@ namespace RhythmCodex.Psx.Heuristics
             
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 8;
     }
 }

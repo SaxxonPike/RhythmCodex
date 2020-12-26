@@ -14,7 +14,7 @@
 //  *
 //  ***************************************************************************/
 
-namespace MP3Sharp.Decoding.Decoders.LayerI
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerI
 {
     /// <summary>
     ///     Class for layer I subbands in single channel mode.

@@ -15,10 +15,10 @@
 //  ***************************************************************************/
 
 using System;
-using MP3Sharp.Decoding.Decoders.LayerIII;
-using MP3Sharp.Support;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII;
+using RhythmCodex.Plugin.MP3Sharp.Lib.Support;
 
-namespace MP3Sharp.Decoding.Decoders
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders
 {
     /// <summary>
     ///     Implements decoding of MPEG Audio Layer 3 frames.

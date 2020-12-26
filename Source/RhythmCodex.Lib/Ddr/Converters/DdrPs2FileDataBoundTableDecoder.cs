@@ -9,31 +9,28 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Converters
 {
     [Service]
-    public class DdrPs2FileDataTableDecoder : IDdrPs2FileDataTableDecoder
+    public class DdrPs2FileDataBoundTableDecoder : IDdrPs2FileDataBoundTableDecoder
     {
         private readonly IBemaniLzDecoder _bemaniLzDecoder;
 
-        public DdrPs2FileDataTableDecoder(IBemaniLzDecoder bemaniLzDecoder)
+        public DdrPs2FileDataBoundTableDecoder(IBemaniLzDecoder bemaniLzDecoder)
         {
             _bemaniLzDecoder = bemaniLzDecoder;
         }
-        
-        public IList<DdrPs2FileDataTableEntry> Decode(byte[] data)
+
+        public IList<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk)
         {
+            var data = chunk.Data;
             var result = new List<DdrPs2FileDataTableEntry>();
             var stream = new MemoryStream(data);
             var offsets = MemoryMarshal.Cast<byte, int>(data.AsSpan(0, data.Length / 4 * 4));
-            var offsetCount = offsets.Length;
-            for (var i = 0; i < offsetCount; i++)
-            {
-                var newCount = offsets[i] / 4;
-                if (newCount < offsetCount)
-                    offsetCount = newCount;
-            }
+            var count = offsets[0];
 
-            for (var i = 0; i < offsetCount; i++)
+            for (var i = 0; i < count; i++)
             {
-                stream.Position = offsets[i];
+                var offset = offsets[i + 1];
+                var length = offsets[i + 1 + count];
+                stream.Position = offset;
                 result.Add(new DdrPs2FileDataTableEntry
                 {
                     Index = i,

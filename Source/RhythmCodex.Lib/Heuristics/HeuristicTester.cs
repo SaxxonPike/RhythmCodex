@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using RhythmCodex.Infrastructure;
@@ -11,32 +14,63 @@ namespace RhythmCodex.Heuristics
     public class HeuristicTester : IHeuristicTester
     {
         private readonly IEnumerable<IHeuristic> _heuristics;
+        private readonly ILogger _logger;
 
-        public HeuristicTester(IEnumerable<IHeuristic> heuristics)
+        public HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger)
         {
             _heuristics = heuristics;
+            _logger = logger;
         }
 
-        public IList<HeuristicResult> Match(ReadOnlySpan<byte> data, params Context[] contexts)
+        public IList<HeuristicResult> Match(Stream stream, long length, params Context[] contexts)
         {
+            var cache = new CachedStream(stream);
             var result = new List<HeuristicResult>();
-            foreach (var heuristic in _heuristics
-                .Where(h => !contexts.Any() ||
-                            h.GetType().GetCustomAttributes<ContextAttribute>()
-                                .SelectMany(a => a.Contexts)
-                                .Intersect(contexts).Any()
-                )
-            )
+            foreach (var heuristic in GetHeuristics(contexts))
             {
-                if (data.Length < heuristic.MinimumLength)
-                    continue;
-
-                var match = heuristic.Match(data);
-                if (match != null)
-                    result.Add(match);
+                cache.Rewind();
+                try
+                {
+                    var match = heuristic.Match(new StreamHeuristicReader(cache));
+                    if (match != null)
+                        result.Add(match);
+                }
+                catch (Exception e)
+                {
+                    _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
+                }
             }
 
             return result;
+        }
+
+        public IList<HeuristicResult> Match(Memory<byte> data, params Context[] contexts)
+        {
+            var result = new List<HeuristicResult>();
+            foreach (var heuristic in GetHeuristics(contexts))
+            {
+                try
+                {
+                    var match = heuristic.Match(new MemoryHeuristicReader(data));
+                    if (match != null)
+                        result.Add(match);
+                }
+                catch (Exception e)
+                {
+                    _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
+                }
+            }
+
+            return result;
+        }
+
+        private IEnumerable<IHeuristic> GetHeuristics(Context[] contexts)
+        {
+            return _heuristics
+                .Where(h => !contexts.Any() ||
+                            h.GetType().GetCustomAttributes<ContextAttribute>()
+                                .SelectMany(a => a.Contexts)
+                                .Intersect(contexts).Any());
         }
     }
 }

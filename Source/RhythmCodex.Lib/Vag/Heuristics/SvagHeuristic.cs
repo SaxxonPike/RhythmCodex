@@ -43,8 +43,9 @@ namespace RhythmCodex.Vag.Heuristics
 
         public string FileExtension => "svag";
         
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        public HeuristicResult Match(IHeuristicReader reader)
         {
+            var data = reader.Read(0x1C);
             var words = MemoryMarshal.Cast<byte, int>(data);
 
             // "Svag"
@@ -92,12 +93,5 @@ namespace RhythmCodex.Vag.Heuristics
                 LoopEnd = words[6]
             };
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 0x1C;
     }
 }

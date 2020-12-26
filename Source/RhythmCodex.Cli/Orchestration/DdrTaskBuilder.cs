@@ -351,7 +351,7 @@ namespace RhythmCodex.Cli.Orchestration
                     ParallelProgress(task, files, file =>
                     {
                         task.Progress = fileIndex / (float) files.Count;
-                        var extension = (_heuristicTester.Match(file.Data.Span).FirstOrDefault()?.Heuristic.FileExtension ?? "bin")
+                        var extension = (_heuristicTester.Match(file.Data).FirstOrDefault()?.Heuristic.FileExtension ?? "bin")
                             .ToLowerInvariant();
                         string outFileName;
                         if (Args.Options.ContainsKey("+name"))

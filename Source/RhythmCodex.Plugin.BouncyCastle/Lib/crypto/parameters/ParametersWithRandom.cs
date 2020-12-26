@@ -1,6 +1,6 @@
 using System;
 
-namespace Org.BouncyCastle.Crypto.Parameters
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.parameters
 {
     public class ParametersWithRandom
 		: ICipherParameters

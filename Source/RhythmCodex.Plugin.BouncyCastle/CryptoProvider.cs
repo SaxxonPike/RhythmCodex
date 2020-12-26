@@ -1,10 +1,11 @@
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Modes;
-using Org.BouncyCastle.Crypto.Parameters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.engines;
+using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.modes;
+using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.parameters;
+using RhythmCodex.ThirdParty;
 
-namespace RhythmCodex.ThirdParty
+namespace RhythmCodex.Plugin.BouncyCastle
 {
     [Service]
     public class CryptoProvider : ICryptoProvider

@@ -95,16 +95,19 @@ namespace RhythmCodex.Infrastructure
 
         public static int TryRead(this Stream stream, byte[] buffer, int offset, long count)
         {
+            var result = 0;
+            
             while (true)
             {
                 var actualBytesRead = stream.Read(buffer, offset, (int) Math.Min(int.MaxValue, count));
                 offset += actualBytesRead;
+                result += actualBytesRead;
                 if (actualBytesRead >= count || actualBytesRead <= 0)
                     break;
                 count -= actualBytesRead;
             }
 
-            return offset;
+            return result;
         }
 
         private static void PipeAllBytes(Func<byte[], int, int, int> read, Action<byte[], int, int> write)

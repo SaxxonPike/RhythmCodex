@@ -1,6 +1,7 @@
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Step1.Heuristics
 {

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
@@ -76,7 +77,7 @@ namespace RhythmCodex.Twinkle.Converters
             var charts = ChartOffsets
                 .Select((offset, index) =>
                 {
-                    if (_twinkleBeatmaniaChartHeuristic.Match(chunk.Data.AsSpan(offset, 0x4000)) == null)
+                    if (_twinkleBeatmaniaChartHeuristic.Match(chunk.Data.AsMemory(offset, 0x4000)) == null)
                         return null;
 
                     var events = _twinkleBeatmaniaChartDecoder
@@ -142,7 +143,7 @@ namespace RhythmCodex.Twinkle.Converters
             var charts = ChartOffsets
                 .Select((offset, index) =>
                 {
-                    if (_twinkleBeatmaniaChartHeuristic.Match(chunk.Data.AsSpan(offset, 0x4000)) == null)
+                    if (_twinkleBeatmaniaChartHeuristic.Match(chunk.Data.AsMemory(offset, 0x4000)) == null)
                         return null;
 
                     var events = _twinkleBeatmaniaChartDecoder

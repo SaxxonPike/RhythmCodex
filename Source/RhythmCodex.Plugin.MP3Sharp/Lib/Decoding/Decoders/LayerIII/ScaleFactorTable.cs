@@ -14,7 +14,7 @@
 //  *
 //  ***************************************************************************/
 
-namespace MP3Sharp.Decoding.Decoders.LayerIII
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII
 {
     internal sealed class ScaleFactorTable
     {

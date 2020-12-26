@@ -7,29 +7,29 @@ namespace RhythmCodex.Infrastructure
     /// </summary>
     public abstract class StreamWrapper : Stream
     {
-        private readonly Stream _baseStream;
+        protected readonly Stream BaseStream;
 
         protected StreamWrapper(Stream baseStream)
         {
-            _baseStream = baseStream;
+            BaseStream = baseStream;
         }
 
-        public override void Flush() => _baseStream.Flush();
-        public override int Read(byte[] buffer, int offset, int count) => _baseStream.Read(buffer, offset, count);
-        public override long Seek(long offset, SeekOrigin origin) => _baseStream.Seek(offset, origin);
-        public override void SetLength(long value) => _baseStream.SetLength(value);
-        public override void Write(byte[] buffer, int offset, int count) => _baseStream.Write(buffer, offset, count);
-        public override bool CanRead => _baseStream.CanRead;
-        public override bool CanSeek => _baseStream.CanSeek;
-        public override bool CanWrite => _baseStream.CanWrite;
-        public override long Length => _baseStream.Length;
+        public override void Flush() => BaseStream.Flush();
+        public override int Read(byte[] buffer, int offset, int count) => BaseStream.Read(buffer, offset, count);
+        public override long Seek(long offset, SeekOrigin origin) => BaseStream.Seek(offset, origin);
+        public override void SetLength(long value) => BaseStream.SetLength(value);
+        public override void Write(byte[] buffer, int offset, int count) => BaseStream.Write(buffer, offset, count);
+        public override bool CanRead => BaseStream.CanRead;
+        public override bool CanSeek => BaseStream.CanSeek;
+        public override bool CanWrite => BaseStream.CanWrite;
+        public override long Length => BaseStream.Length;
 
         public override long Position
         {
-            get => _baseStream.Position;
-            set => _baseStream.Position = value;
+            get => BaseStream.Position;
+            set => BaseStream.Position = value;
         }
 
-        protected override void Dispose(bool disposing) => _baseStream.Dispose();
+        protected override void Dispose(bool disposing) => BaseStream.Dispose();
     }
 }

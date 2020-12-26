@@ -1,6 +1,4 @@
-using System;
-
-namespace Org.BouncyCastle.Crypto.Utilities
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.util
 {
     internal sealed class Pack
     {

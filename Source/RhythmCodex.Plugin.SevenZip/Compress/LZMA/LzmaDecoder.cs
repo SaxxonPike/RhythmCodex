@@ -1,11 +1,10 @@
 // LzmaDecoder.cs
 
 using System;
+using RhythmCodex.Plugin.SevenZip.Compress.RangeCoder;
 
-namespace SevenZip.Compression.LZMA
+namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 {
-	using RangeCoder;
-
 	public class LzmaDecoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
 	{
 		class LenDecoder

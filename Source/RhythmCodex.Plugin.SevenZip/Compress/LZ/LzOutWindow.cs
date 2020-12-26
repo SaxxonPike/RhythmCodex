@@ -1,6 +1,6 @@
 // LzOutWindow.cs
 
-namespace SevenZip.Compression.LZ
+namespace RhythmCodex.Plugin.SevenZip.Compress.LZ
 {
 	public class OutWindow
 	{

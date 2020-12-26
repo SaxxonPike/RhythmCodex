@@ -5,11 +5,12 @@
  * See COPYING for license terms (Ms-PL).                                   *
  *                                                                          *
  ***************************************************************************/
-using System;
-using System.Linq;
-using System.IO;
 
-namespace NVorbis
+using System;
+using System.IO;
+using System.Linq;
+
+namespace RhythmCodex.Plugin.NVorbis.Lib
 {
     internal abstract class VorbisResidue
     {

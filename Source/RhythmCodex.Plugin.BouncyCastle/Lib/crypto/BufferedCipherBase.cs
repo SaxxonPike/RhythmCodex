@@ -1,6 +1,4 @@
-using System;
-
-namespace Org.BouncyCastle.Crypto
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto
 {
 	public abstract class BufferedCipherBase
 		: IBufferedCipher

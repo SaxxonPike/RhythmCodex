@@ -14,7 +14,7 @@
 //  *
 //  ***************************************************************************/
 
-namespace MP3Sharp.Decoding.Decoders.LayerII
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerII
 {
     /// <summary>
     ///     Class for layer II subbands in joint stereo mode.

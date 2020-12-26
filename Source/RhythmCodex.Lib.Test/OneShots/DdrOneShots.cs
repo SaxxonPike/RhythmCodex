@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
 using RhythmCodex.Arc.Converters;
 using RhythmCodex.Arc.Streamers;
+using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Dds.Converters;
 using RhythmCodex.Dds.Streamers;
+using RhythmCodex.Digital573.Converters;
 using RhythmCodex.Extensions;
 using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Meta.Models;
@@ -26,6 +30,87 @@ namespace RhythmCodex.OneShots
     [TestFixture]
     public class DdrOneShots : BaseIntegrationFixture
     {
+        [Test]
+        [Explicit("This is a tool, not a test")]
+        [TestCase("Z:\\Bemani\\Dance Dance Revolution 573\\ddr4mps CARD.DAT", 0)]
+        public void GetAcDb(string path, int offset)
+        {
+            var decoder = Resolve<BemaniLzDecoder>();
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            var data = decoder.Decode(stream);
+            this.WriteFile(data, "db.bin");
+        }
+        
+        [Test]
+        [Explicit("This is a tool, not a test")]
+        [TestCase("K:\\SLUS_219.17", 0x1AF904, 0x1E7550, 0x2E73D0)]
+        public void GenerateEditDb(string executable, int recordOffset, int stringOffset, int stringBase)
+        {
+            var output = new StringBuilder();
+            output.AppendLine("<?xml version=\"1.0\"?>");
+            output.AppendLine("<DdrEditDatabase>");
+            
+            using var stream = new FileStream(executable, FileMode.Open, FileAccess.Read);
+            var reader = new BinaryReader(stream);
+
+            string ReadZeroString(int offs)
+            {
+                var realOffs = offs - stringBase + stringOffset;
+                if (realOffs < 0)
+                    return null;
+                stream.Position = realOffs;
+                var result = new List<byte>();
+                while (true)
+                {
+                    var b = reader.ReadByte();
+                    if (b == 0)
+                        break;
+                    result.Add(b);
+                }
+
+                return result.ToArray().GetString();
+            }
+
+            var offset = recordOffset;
+            while (true)
+            {
+                stream.Position = offset;
+                var id = reader.ReadInt32();
+                if (id == 0)
+                    break;
+
+                var letterOffset = reader.ReadInt32();
+                var titleOffset = reader.ReadInt32();
+                var altTitleOffset = reader.ReadInt32();
+                var artistOffset = reader.ReadInt32();
+
+                var letterString = ReadZeroString(letterOffset);
+                var titleString = ReadZeroString(titleOffset);
+                var altTitleString = ReadZeroString(altTitleOffset);
+                var artistString = ReadZeroString(artistOffset);
+
+                output.AppendLine($"    <Song Id=\"{id}\">");
+                if (letterString != null)
+                    output.AppendLine($"        <Code>{letterString}</Code>");
+                if (titleString != null)
+                    output.AppendLine($"        <Title>{titleString}</Title>");
+                if (altTitleString != null)
+                    output.AppendLine($"        <ShortTitle>{altTitleString}</ShortTitle>");
+                if (artistString != null)
+                    output.AppendLine($"        <Artist>{artistString}</Artist>");
+                output.AppendLine("    </Song>");
+                
+                offset += 0x14;
+            }
+            
+            output.AppendLine("</DdrEditDatabase>");
+
+            using var outStream = this.OpenWrite("editdb.xml");
+            var writer = new StreamWriter(outStream);
+            writer.Write(output);
+            writer.Flush();
+        }
+        
         [Test]
         [Explicit("This is a tool, not a test")]
         [TestCase(@"\\tamarat\ddr\MDX-001-2018102200\contents\data", true, true, true)]

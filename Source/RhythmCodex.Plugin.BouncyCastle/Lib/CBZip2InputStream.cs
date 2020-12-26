@@ -23,10 +23,9 @@
  */
 
 using System.IO;
+using RhythmCodex.Plugin.BouncyCastle.Lib.util;
 
-using Org.BouncyCastle.Utilities;
-
-namespace Org.BouncyCastle.Apache.Bzip2
+namespace RhythmCodex.Plugin.BouncyCastle.Lib
 {
 	/**
     * An input stream that decompresses from the BZip2 format (with the file

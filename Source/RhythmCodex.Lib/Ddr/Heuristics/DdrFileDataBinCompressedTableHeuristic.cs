@@ -11,23 +11,24 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Heuristics
 {
     [Service]
+    [Context(Context.DdrCs)]
     public class DdrFileDataBinCompressedTableHeuristic : IReadableHeuristic<IList<DdrPs2FileDataTableEntry>>
     {
-        private readonly IDdrPs2FileDataTableStreamReader _ddrPs2FileDataTableStreamReader;
-        private readonly IDdrPs2FileDataTableDecoder _ddrPs2FileDataTableDecoder;
+        private readonly IDdrPs2FileDataTableChunkStreamReader _ddrPs2FileDataTableChunkStreamReader;
+        private readonly IDdrPs2FileDataUnboundTableDecoder _ddrPs2FileDataUnboundTableDecoder;
 
         public DdrFileDataBinCompressedTableHeuristic(
-            IDdrPs2FileDataTableStreamReader ddrPs2FileDataTableStreamReader,
-            IDdrPs2FileDataTableDecoder ddrPs2FileDataTableDecoder)
+            IDdrPs2FileDataTableChunkStreamReader ddrPs2FileDataTableChunkStreamReader,
+            IDdrPs2FileDataUnboundTableDecoder ddrPs2FileDataUnboundTableDecoder)
         {
-            _ddrPs2FileDataTableStreamReader = ddrPs2FileDataTableStreamReader;
-            _ddrPs2FileDataTableDecoder = ddrPs2FileDataTableDecoder;
+            _ddrPs2FileDataTableChunkStreamReader = ddrPs2FileDataTableChunkStreamReader;
+            _ddrPs2FileDataUnboundTableDecoder = ddrPs2FileDataUnboundTableDecoder;
         }
 
         public IList<DdrPs2FileDataTableEntry> Read(HeuristicResult heuristicResult, Stream stream)
         {
-            var table = _ddrPs2FileDataTableStreamReader.Get(stream);
-            var decoded = _ddrPs2FileDataTableDecoder.Decode(table);
+            var table = _ddrPs2FileDataTableChunkStreamReader.GetUnbound(stream);
+            var decoded = _ddrPs2FileDataUnboundTableDecoder.Decode(table);
             return decoded;
         }
 
@@ -35,36 +36,27 @@ namespace RhythmCodex.Ddr.Heuristics
 
         public string FileExtension => "fdbtable";
         
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        public HeuristicResult Match(IHeuristicReader reader)
         {
-            var maxTable = data.Length / 4;
-            var offsetBlock = MemoryMarshal.Cast<byte, int>(data);
+            var maxTable = int.MaxValue;
             var offsets = new List<int>();
 
             for (var i = 0; i < maxTable; i++)
             {
-                var offset = offsetBlock[i];
+                var offset = reader.ReadInt();
                 if (offset >= 4 && offset < 0x1000000 && !offsets.Contains(offset))
                 {
                     offsets.Add(offset);
+                    if (maxTable > offset / 4)
+                        maxTable = offset / 4;
                 }
-                else
+                else if (offset != 0 && offset < i * 4)
                 {
                     return null; 
                 }
-
-                if (maxTable > offset / 4)
-                    maxTable = offset / 4;
             }
             
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 5;
     }
 }

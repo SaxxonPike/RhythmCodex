@@ -1,8 +1,9 @@
 // LzBinTree.cs
 
 using System;
+using RhythmCodex.Plugin.SevenZip.Common;
 
-namespace SevenZip.Compression.LZ
+namespace RhythmCodex.Plugin.SevenZip.Compress.LZ
 {
 	public class BinTree : InWindow, IMatchFinder
 	{

@@ -22,7 +22,7 @@
  * great code.
  */
 
-namespace Org.BouncyCastle.Apache.Bzip2
+namespace RhythmCodex.Plugin.BouncyCastle.Lib
 {
 	/**
     * A simple class the hold and calculate the CRC for sanity checking

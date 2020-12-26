@@ -12,10 +12,11 @@ namespace RhythmCodex.Beatmania.Heuristics
     {
         public string Description => "BeatmaniaIIDX CS Keysounds (old)";
         public string FileExtension => "bmcskey";
-
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        
+        public HeuristicResult Match(IHeuristicReader reader)
         {
-            if (data.Length < MinimumLength)
+            var data = reader.Read(0x10);
+            if (data.Length < 0x10)
                 return null;
 
             var a = Bitter.ToInt32(data);
@@ -40,12 +41,5 @@ namespace RhythmCodex.Beatmania.Heuristics
 
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 0x10;
     }
 }

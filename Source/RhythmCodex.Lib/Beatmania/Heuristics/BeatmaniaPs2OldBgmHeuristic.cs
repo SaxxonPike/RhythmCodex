@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
@@ -22,10 +21,12 @@ namespace RhythmCodex.Beatmania.Heuristics
         
         public string Description => "BeatmaniaIIDX CS BGM (old)";
         public string FileExtension => "bmcsbgm";
-
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        
+        public HeuristicResult Match(IHeuristicReader reader)
         {
-            if (data.Length < MinimumLength)
+            var data = reader.Read(0x10);
+
+            if (data.Length < 0x10)
                 return null;
 
             var length = Bitter.ToInt32S(data);
@@ -58,13 +59,6 @@ namespace RhythmCodex.Beatmania.Heuristics
                 Length = length
             };
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 0x10;
 
         public VagChunk Read(HeuristicResult result, Stream stream)
         {

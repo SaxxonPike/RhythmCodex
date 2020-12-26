@@ -25,9 +25,10 @@ namespace RhythmCodex.Ssq
 
         public string Description => "DDR Step Sequence";
         public string FileExtension => "SSQ";
-
-        public HeuristicResult Match(ReadOnlySpan<byte> data)
+        
+        public HeuristicResult Match(IHeuristicReader reader)
         {
+            var data = reader.Read(12);
             if (data.Length < 12)
                 return null;
 
@@ -61,26 +62,7 @@ namespace RhythmCodex.Ssq
             if (data[11] != 0)
                 return null;
 
-            // if (data[data.Length - 1] != 0)
-            //     return null;
-            //
-            // if (data[data.Length - 2] != 0)
-            //     return null;
-            //
-            // if (data[data.Length - 3] != 0)
-            //     return null;
-            //
-            // if (data[data.Length - 4] != 0)
-            //     return null;
-            //
             return new HeuristicResult(this);
         }
-
-        public HeuristicResult Match(Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int MinimumLength => 12;
     }
 }
