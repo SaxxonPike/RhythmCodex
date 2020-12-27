@@ -93,7 +93,11 @@ namespace RhythmCodex.Djmain.Converters
                         case DjmainBeatmaniaColumnType.Player0Measure:
                         case DjmainBeatmaniaColumnType.Player1Measure:
                         {
-                            ev[FlagData.Measure] = true;
+                            // Sometimes you get commands like 0xD1 (2p measure sound select?? wtf??)
+                            // which are absolutely absurd, so we don't bother.
+                            if (command == DjmainEventType.Marker)
+                                ev[FlagData.Measure] = true;
+
                             ev[NumericData.Player] = param0 & 1;
                             break;
                         }
