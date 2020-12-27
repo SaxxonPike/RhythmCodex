@@ -16,7 +16,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP
         /// </summary>
         /// <param name="sampleRate">The sample rate.</param>
         /// <param name="frequency">The filter's corner frequency.</param>
-        public NotchFilter(int sampleRate, double frequency) 
+        public NotchFilter(double sampleRate, double frequency) 
             : base(sampleRate, frequency)
         {
         }

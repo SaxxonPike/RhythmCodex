@@ -23,6 +23,9 @@ namespace RhythmCodex.Gui.FluentForms
             if (Text != null)
                 control.Text = Text;
 
+            if (Id != null)
+                control.Name = Id;
+
             control.AutoSize = AutoSize;
         }
 

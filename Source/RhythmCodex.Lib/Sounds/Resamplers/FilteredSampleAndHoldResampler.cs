@@ -24,9 +24,16 @@ namespace RhythmCodex.Sounds.Resamplers
         public IList<float> Resample(IList<float> data, float sourceRate, float targetRate)
         {
             var unfiltered = _baseResampler.Resample(data, sourceRate, targetRate);
-            var filter = _filterProvider.Get(FilterType.LowPass).First();
-            var context = filter.Create(targetRate, sourceRate / 2);
-            return context.Filter(unfiltered);
+            if (targetRate > sourceRate)
+            {
+                var filter = _filterProvider.Get(FilterType.LowPass).First();
+                var context = filter.Create(targetRate, sourceRate / 2);
+                return context.Filter(unfiltered);
+            }
+            else
+            {
+                return unfiltered;
+            }
         }
     }
 }

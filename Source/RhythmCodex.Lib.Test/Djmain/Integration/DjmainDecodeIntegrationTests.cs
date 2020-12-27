@@ -23,7 +23,7 @@ namespace RhythmCodex.Djmain.Integration
             {
                 Data = data,
                 Format = format
-            });
+            }, new DjmainDecodeOptions());
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace RhythmCodex.Djmain.Integration
         public void Test2()
         {
             var streamer = Resolve<IDjmainChunkStreamReader>();
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\bm1stmix.zip"))
+            using (var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\bm1stmix.zip"))
             using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
             {
                 var entry = zipStream.Entries.Single();

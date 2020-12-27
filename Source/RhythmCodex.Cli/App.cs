@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using RhythmCodex.Cli.Helpers;
+using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using Console = System.Console;
 
 namespace RhythmCodex.Cli
 {
@@ -15,6 +16,7 @@ namespace RhythmCodex.Cli
     {
         private readonly IArgParser _argParser;
         private readonly ILoggerConfigurationSource _loggerConfigurationSource;
+        private readonly IAppProgressTracker _appProgressTracker;
         private readonly IConsole _console;
         private readonly IEnumerable<ICliModule> _modules;
 
@@ -25,12 +27,14 @@ namespace RhythmCodex.Cli
             IConsole console,
             IEnumerable<ICliModule> modules,
             IArgParser argParser,
-            ILoggerConfigurationSource loggerConfigurationSource)
+            ILoggerConfigurationSource loggerConfigurationSource,
+            IAppProgressTracker appProgressTracker)
         {
             _console = console;
             _modules = modules;
             _argParser = argParser;
             _loggerConfigurationSource = loggerConfigurationSource;
+            _appProgressTracker = appProgressTracker;
         }
 
         private string AppName => "RhythmCodex";
@@ -86,7 +90,21 @@ namespace RhythmCodex.Cli
             }
 
             _console.WriteLine($"Executing {module.Name} {command.Name}.");
-            command.Execute(cmd);
+            var task = command.TaskFactory(cmd);
+            _appProgressTracker.Add(task);
+            try
+            {
+                task.Run();
+            }
+            catch (Exception e)
+            {
+                _appProgressTracker.Fail(task, e);
+                throw;
+            }
+            finally
+            {
+                _appProgressTracker.Remove(task);
+            }
             _console.WriteLine($"Task complete.");
         }
 
@@ -134,7 +152,7 @@ namespace RhythmCodex.Cli
                 new CommandParameter
                 {
                     Name = "+zip",
-                    Description = "Indicate input files are ZIP archies. All files inside will be processed."
+                    Description = "Indicate input files are ZIP archives. All files inside will be processed."
                 }
             };
 

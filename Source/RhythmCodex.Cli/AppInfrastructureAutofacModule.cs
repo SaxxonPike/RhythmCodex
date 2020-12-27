@@ -9,7 +9,7 @@ namespace RhythmCodex.Cli
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            
+
             builder.RegisterInstance(new Console())
                 .AsImplementedInterfaces()
                 .AsSelf()

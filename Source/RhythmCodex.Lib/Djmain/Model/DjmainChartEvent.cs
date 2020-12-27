@@ -8,5 +8,7 @@ namespace RhythmCodex.Djmain.Model
         public ushort Offset { get; set; }
         public byte Param0 { get; set; }
         public byte Param1 { get; set; }
+
+        public override string ToString() => Json.Serialize(this);
     }
 }

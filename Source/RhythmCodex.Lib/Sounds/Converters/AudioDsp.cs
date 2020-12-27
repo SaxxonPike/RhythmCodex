@@ -32,7 +32,12 @@ namespace RhythmCodex.Sounds.Converters
             if (sound == null || !sound.Samples.Any())
                 return null;
             
-            if (rate <= BigRational.Zero || sound[NumericData.Rate] == rate)
+            if (rate <= BigRational.Zero || 
+                sound[NumericData.Rate] == rate || 
+                sound[NumericData.Rate] == 0 ||
+                sound.Samples == null ||
+                !sound.Samples.Any() ||
+                sound.Samples.Any(sa => sa[NumericData.Rate] != null && sa[NumericData.Rate] <= 0))
                 return sound;
 
             var targetRate = (float) (double) rate;

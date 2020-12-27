@@ -86,7 +86,6 @@ namespace RhythmCodex.Djmain.Converters
                         case DjmainBeatmaniaColumnType.Player1Scratch:
                         {
                             ev[FlagData.Scratch] = true;
-                            ev[FlagData.Note] = true;
                             ev[NumericData.Player] = param0 & 1;
                             break;
                         }
@@ -115,10 +114,12 @@ namespace RhythmCodex.Djmain.Converters
                         {
                             ev[NumericData.Column] = param0 >> 1;
                             ev[NumericData.Player] = param0 & 1;
-                            ev[FlagData.Note] = true;
                             break;
                         }
                     }
+
+                    if (command == DjmainEventType.Marker && ev[FlagData.Measure] != true)
+                        ev[FlagData.Note] = true;
 
                     if (command == DjmainEventType.SoundSelect)
                         ev[NumericData.LoadSound] = param1 - 1;

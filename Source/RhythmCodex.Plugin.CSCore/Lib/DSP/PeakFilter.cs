@@ -32,7 +32,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP
         /// <param name="frequency">The center frequency to adjust.</param>
         /// <param name="bandWidth">The bandWidth.</param>
         /// <param name="peakGainDB">The gain value in dB.</param>
-        public PeakFilter(int sampleRate, double frequency, double bandWidth, double peakGainDB)
+        public PeakFilter(double sampleRate, double frequency, double bandWidth, double peakGainDB)
             : base(sampleRate, frequency, bandWidth)
         {
             GainDB = peakGainDB;

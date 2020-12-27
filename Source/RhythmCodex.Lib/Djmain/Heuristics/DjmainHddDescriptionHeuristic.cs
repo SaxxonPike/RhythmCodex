@@ -13,25 +13,25 @@ namespace RhythmCodex.Djmain.Heuristics
             {
                 switch (formatId)
                 {
-                    case @"GQ753": return DjmainChunkFormat.BeatmaniaFirst;
-                    case @"GX853": return DjmainChunkFormat.BeatmaniaSecond;
-                    case @"GQ825": return DjmainChunkFormat.BeatmaniaThird;
-                    case @"GQ847": return DjmainChunkFormat.BeatmaniaFourth;
-                    case @"GQ981": return DjmainChunkFormat.BeatmaniaFifth;
-                    case @"GCA21": return DjmainChunkFormat.BeatmaniaSixth;
-                    case @"GEB07": return DjmainChunkFormat.BeatmaniaSeventh;
-                    case @"GQ993": return DjmainChunkFormat.BeatmaniaClub;
-                    case @"GQ858": return DjmainChunkFormat.BeatmaniaComplete;
-                    case @"GQ988": return DjmainChunkFormat.BeatmaniaComplete2;
-                    case @"GQA05": return DjmainChunkFormat.BeatmaniaCore;
-                    case @"GQ995": return DjmainChunkFormat.BeatmaniaDct;
-                    case @" GCC0": return DjmainChunkFormat.BeatmaniaFinal;
+                    case @" GQ753": return DjmainChunkFormat.BeatmaniaFirst;
+                    case @" GX853": return DjmainChunkFormat.BeatmaniaSecond;
+                    case @" GQ825": return DjmainChunkFormat.BeatmaniaThird;
+                    case @" GQ847": return DjmainChunkFormat.BeatmaniaFourth;
+                    case @" GQ981": return DjmainChunkFormat.BeatmaniaFifth;
+                    case @" GCA21": return DjmainChunkFormat.BeatmaniaSixth;
+                    case @" GEB07": return DjmainChunkFormat.BeatmaniaSeventh;
+                    case @" GQ993": return DjmainChunkFormat.BeatmaniaClub;
+                    case @" GQ858": return DjmainChunkFormat.BeatmaniaComplete;
+                    case @" GQ988": return DjmainChunkFormat.BeatmaniaComplete2;
+                    case @" GQA05": return DjmainChunkFormat.BeatmaniaCore;
+                    case @" GQ995": return DjmainChunkFormat.BeatmaniaDct;
+                    case @" GCC01": return DjmainChunkFormat.BeatmaniaFinal;
                     default: return DjmainChunkFormat.Unknown;
                 }
             }
 
             var format =
-                GetFormat(new[] {chunk[1], chunk[0], chunk[3], chunk[2], chunk[5]}.GetString());
+                GetFormat(new[] {chunk[1], chunk[0], chunk[3], chunk[2], chunk[5], chunk[4]}.GetString());
             if (format != DjmainChunkFormat.Unknown)
                 return new DjmainHddDescription
                 {
@@ -40,7 +40,7 @@ namespace RhythmCodex.Djmain.Heuristics
                 };
 
             format = 
-                GetFormat(new[] {chunk[0], chunk[1], chunk[2], chunk[3], chunk[4]}.GetString());
+                GetFormat(new[] {chunk[0], chunk[1], chunk[2], chunk[3], chunk[4], chunk[5]}.GetString());
             if (format != DjmainChunkFormat.Unknown)
                 return new DjmainHddDescription
                 {

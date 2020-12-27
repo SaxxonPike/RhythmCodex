@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace RhythmCodex.Gui
+namespace RhythmCodex.Gui.Forms
 {
     public interface IFormFactory
     {

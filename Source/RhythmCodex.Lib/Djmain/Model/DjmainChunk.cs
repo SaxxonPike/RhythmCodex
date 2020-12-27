@@ -8,5 +8,7 @@ namespace RhythmCodex.Djmain.Model
         public DjmainChunkFormat Format { get; set; }
         public byte[] Data { get; set; }
         public int Id { get; set; }
+        
+        public override string ToString() => Json.Serialize(this);
     }
 }

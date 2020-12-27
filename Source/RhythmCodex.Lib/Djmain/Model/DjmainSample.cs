@@ -8,5 +8,7 @@ namespace RhythmCodex.Djmain.Model
     {
         public IDjmainSampleInfo Info { get; set; }
         public IList<byte> Data { get; set; }
+        
+        public override string ToString() => Json.Serialize(this);
     }
 }

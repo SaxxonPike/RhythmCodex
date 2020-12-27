@@ -32,55 +32,70 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "decode-djmain-hdd",
                 Description = "Extracts and decodes BMS files from a DJMAIN hard drive image.",
-                Execute = DecodeDjmainHdd
+                TaskFactory = DecodeDjmainHdd,
+                Parameters = new[]
+                {
+                    new CommandParameter
+                    {
+                        Name = "+noaudio",
+                        Description = "Disable extracting audio."
+                    },
+                    new CommandParameter
+                    {
+                        Name = "+nochart",
+                        Description = "Disable extracting converted charts."
+                    },
+                    new CommandParameter
+                    {
+                        Name = "+raw",
+                        Description = "Enable saving the original encoded chart."
+                    }
+                }
             },
             new Command
             {
                 Name = "extract-2dx",
                 Description = "Extracts sound files from a 2DX file.",
-                Execute = Extract2dx
+                TaskFactory = Extract2dx
             },
             new Command
             {
                 Name = "decode-1",
                 Description = "Decode a .1 file chart set.",
-                Execute = Decode1,
+                TaskFactory = Decode1,
                 Parameters = new[]
                 {
                     new CommandParameter
                     {
-                        Name = "rate",
+                        Name = "-rate",
                         Description = "Ticks per second. Pre-GOLD uses 59.94. GOLD uses 60.94. Default is 1000."
                     }
                 }
             },
         };
 
-        private void DecodeDjmainHdd(Args args)
+        private ITask DecodeDjmainHdd(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildBeatmaniaTask()
                 .WithArgs(args)
-                .CreateDecodeDjmainHdd()
-                .Run();
+                .CreateDecodeDjmainHdd();
         }
 
-        private void Decode1(Args args)
+        private ITask Decode1(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildBeatmaniaTask()
                 .WithArgs(args)
-                .CreateDecode1()
-                .Run();
+                .CreateDecode1();
         }
 
-        private void Extract2dx(Args args)
+        private ITask Extract2dx(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildBeatmaniaTask()
                 .WithArgs(args)
-                .CreateExtract2dx()
-                .Run();
+                .CreateExtract2dx();
         }
     }
 }

@@ -25,9 +25,13 @@ namespace RhythmCodex.Cli
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
-            builder.RegisterInstance(TestContext.Out)
-                .As<TextWriter>()
-                .ExternallyOwned()
+            // builder.RegisterInstance(TestContext.Out)
+            //     .As<TextWriter>()
+            //     .ExternallyOwned()
+            //     .SingleInstance();
+            builder.RegisterInstance(new TestConsole())
+                .AsSelf()
+                .AsImplementedInterfaces()
                 .SingleInstance();
             builder.RegisterType<TextWriterLogger>()
                 .AsSelf()

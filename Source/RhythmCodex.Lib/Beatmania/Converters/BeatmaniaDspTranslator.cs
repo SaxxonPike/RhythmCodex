@@ -39,7 +39,9 @@ namespace RhythmCodex.Beatmania.Converters
             panning &= 0xF;
             if (panning < 0x1)
                 panning = 0x1;
-            return new BigRational(panning - 1, 0xE);
+            
+            // Djmain swaps its stereo channels.
+            return new BigRational(0xE - (panning - 1), 0xE);
         }
 
         public BigRational GetDjmainRate(int rate)

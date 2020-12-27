@@ -32,32 +32,30 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "compress",
                 Description = "Compress a file with Bemani LZ.",
-                Execute = CompressBemaniLz
+                TaskFactory = CompressBemaniLz
             },
             new Command
             {
                 Name = "decompress",
                 Description = "Decompress a file with Bemani LZ.",
-                Execute = DecompressBemaniLz
+                TaskFactory = DecompressBemaniLz
             }
         };
 
-        private void CompressBemaniLz(Args args)
+        private ITask CompressBemaniLz(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildCompressionTask()
                 .WithArgs(args)
-                .CreateCompressBemaniLz()
-                .Run();
+                .CreateCompressBemaniLz();
         }
 
-        private void DecompressBemaniLz(Args args)
+        private ITask DecompressBemaniLz(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildCompressionTask()
                 .WithArgs(args)
-                .CreateDecompressBemaniLz()
-                .Run();
+                .CreateDecompressBemaniLz();
         }
     }
 }

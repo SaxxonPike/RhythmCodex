@@ -30,7 +30,7 @@ namespace RhythmCodex.Cli.Modules
             Action act = () => subject
                 .Commands
                 .Single(c => c.Name.Equals("decode", StringComparison.OrdinalIgnoreCase))
-                .Execute(parsedArgs);
+                .TaskFactory(parsedArgs);
 
             // Assert.
             act.Should().NotThrow();

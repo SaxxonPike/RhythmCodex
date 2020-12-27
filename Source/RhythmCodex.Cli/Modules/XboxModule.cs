@@ -32,77 +32,72 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "decode-xst",
                 Description = "Decodes a raw blob of Xbox ADCPM data.",
-                Execute = DecodeAdpcm
+                TaskFactory = DecodeAdpcm
             },
             new Command
             {
                 Name = "extract-xwb",
                 Description = "Extracts an XWB sound bank.",
-                Execute = ExtractXwb
+                TaskFactory = ExtractXwb
             },
             new Command
             {
                 Name = "extract-iso",
                 Description = "Extracts files from an Xbox ISO.",
-                Execute = ExtractXiso
+                TaskFactory = ExtractXiso
             },
             new Command
             {
                 Name = "extract-sng",
                 Description = "Extracts songs from an SNG file.",
-                Execute = ExtractSng
+                TaskFactory = ExtractSng
             },
             new Command
             {
                 Name = "extract-hbn",
                 Description = "Extracts files using an HBN index.",
-                Execute = ExtractHbn
+                TaskFactory = ExtractHbn
             }
         };
 
-        private void DecodeAdpcm(Args args)
+        private ITask DecodeAdpcm(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildXboxTask()
                 .WithArgs(args)
-                .CreateDecodeXst()
-                .Run();
+                .CreateDecodeXst();
         }
 
-        private void ExtractXwb(Args args)
+        private ITask ExtractXwb(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildXboxTask()
                 .WithArgs(args)
-                .CreateExtractXwb()
-                .Run();
+                .CreateExtractXwb();
         }
 
-        private void ExtractXiso(Args args)
+        private ITask ExtractXiso(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildXboxTask()
                 .WithArgs(args)
-                .CreateExtractXiso()
-                .Run();
+                .CreateExtractXiso();
         }
 
-        private void ExtractSng(Args args)
+        private ITask ExtractSng(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildXboxTask()
                 .WithArgs(args)
-                .CreateExtractSng()
-                .Run();
+                .CreateExtractSng();
         }
 
-        private void ExtractHbn(Args args)
+        private ITask ExtractHbn(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildXboxTask()
                 .WithArgs(args)
-                .CreateExtractHbn()
-                .Run();
+                .CreateExtractHbn();
         }
     }
 }

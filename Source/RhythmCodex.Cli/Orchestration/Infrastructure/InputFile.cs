@@ -20,6 +20,8 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         }
 
         public string Name { get; }
+        
+        public long? Length { get; set; }
 
         public Stream Open()
         {

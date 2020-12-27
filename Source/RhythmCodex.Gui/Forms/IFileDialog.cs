@@ -1,4 +1,4 @@
-﻿namespace RhythmCodex.Gui
+﻿namespace RhythmCodex.Gui.Forms
 {
     public interface IFileDialog
     {

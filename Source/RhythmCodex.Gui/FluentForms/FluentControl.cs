@@ -16,6 +16,9 @@ namespace RhythmCodex.Gui.FluentForms
         public Font Font { get; set; }
         public int RowSpan { get; set; } = 1;
         public int ColumnSpan { get; set; } = 1;
+        public Size MinimumSize { get; set; } = Size.Empty;
+        public Color? ForeColor { get; set; }
+        public Color? BackColor { get; set; }
 
         protected abstract Control OnBuild(FluentState state);
 
@@ -33,6 +36,12 @@ namespace RhythmCodex.Gui.FluentForms
                     }
                 });
             }
+
+            if (ForeColor.HasValue)
+                result.ForeColor = ForeColor.Value;
+            if (BackColor.HasValue)
+                result.BackColor = BackColor.Value;
+
             return result;
         }
 
@@ -42,12 +51,22 @@ namespace RhythmCodex.Gui.FluentForms
         protected override void SetDefault(Control control)
         {
             base.SetDefault(control);
-            control.Anchor = Anchor;
-            control.Dock = Dock;
+
+            // MSDN:
+            // The Anchor and Dock properties are mutually exclusive.
+            // Only one can be set at a time, and the last one set takes precedence.
+            if (Anchor != AnchorStyles.None)
+                control.Anchor = Anchor;
+            else if (Dock != DockStyle.None)
+                control.Dock = Dock;
+
             control.Padding = Padding;
 
             if (Font != null)
                 control.Font = Font;
+
+            if (MinimumSize != Size.Empty)
+                control.MinimumSize = MinimumSize;
         }
     }
 
@@ -57,7 +76,7 @@ namespace RhythmCodex.Gui.FluentForms
         public override Type Type => typeof(TControl);
 
         public Action<FluentContext<FluentControl<TControl>, TControl>> AfterBuild { get; set; }
-        
+
         public Action OnClick { get; set; }
         public Action OnEnter { get; set; }
         public Action OnLeave { get; set; }
@@ -93,6 +112,7 @@ namespace RhythmCodex.Gui.FluentForms
     public abstract class FluentControl<TControl, TValue> : FluentControl<TControl>
         where TControl : Control
     {
+        public TValue InitialValue { get; set; }
         public Action<TControl, TValue> OnChange { get; set; }
     }
 }

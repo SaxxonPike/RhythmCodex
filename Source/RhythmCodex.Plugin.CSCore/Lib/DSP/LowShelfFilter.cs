@@ -17,7 +17,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP
         /// <param name="sampleRate">The sample rate.</param>
         /// <param name="frequency">The filter's corner frequency.</param>
         /// <param name="gainDB">Gain value in dB.</param>
-        public LowShelfFilter(int sampleRate, double frequency, double gainDB) 
+        public LowShelfFilter(double sampleRate, double frequency, double gainDB) 
             : base(sampleRate, frequency)
         {
             GainDB = gainDB;

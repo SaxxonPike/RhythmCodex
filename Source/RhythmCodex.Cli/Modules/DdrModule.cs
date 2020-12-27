@@ -32,7 +32,7 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "extract-573-flash",
                 Description = "Extracts files from a 573 GAME (and optionally additionally CARD) image.",
-                Execute = Extract573Flash,
+                TaskFactory = Extract573Flash,
                 Parameters = new []
                 {
                     new CommandParameter
@@ -46,41 +46,38 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "apply-sif",
                 Description = "Applies SIF metadata to a SM file.",
-                Execute = ApplySif
+                TaskFactory = ApplySif
             },
             new Command
             {
                 Name = "decrypt-573-audio",
                 Description = "Decrypts Digital 573 audio.",
-                Execute = Decrypt573Audio
+                TaskFactory = Decrypt573Audio
             }
         };
 
-        private void ApplySif(Args args)
+        private ITask ApplySif(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildDdrTask()
                 .WithArgs(args)
-                .CreateApplySif()
-                .Run();
+                .CreateApplySif();
         }
 
-        private void Extract573Flash(Args args)
+        private ITask Extract573Flash(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildDdrTask()
                 .WithArgs(args)
-                .CreateExtract()
-                .Run();
+                .CreateExtract();
         }
 
-        private void Decrypt573Audio(Args args)
+        private ITask Decrypt573Audio(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildDdrTask()
                 .WithArgs(args)
-                .CreateDecrypt573Audio()
-                .Run();
+                .CreateDecrypt573Audio();
         }
     }
 }

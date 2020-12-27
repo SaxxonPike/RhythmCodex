@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Gui
+namespace RhythmCodex.Gui.Forms
 {
     [Service]
     public class FileDialog : IFileDialog

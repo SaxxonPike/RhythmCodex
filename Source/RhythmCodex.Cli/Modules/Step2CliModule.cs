@@ -36,20 +36,19 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "decode",
                 Description = "Decodes a STEP2 file.",
-                Execute = Decode
+                TaskFactory = Decode
             }
         };
 
         /// <summary>
         /// Perform the DECODE command.
         /// </summary>
-        private void Decode(Args args)
+        private ITask Decode(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildDdrTask()
                 .WithArgs(args)
-                .CreateDecodeStep2()
-                .Run();
+                .CreateDecodeStep2();
         }
     }
 }
