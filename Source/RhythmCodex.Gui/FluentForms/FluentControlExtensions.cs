@@ -5,10 +5,11 @@ namespace RhythmCodex.Gui.FluentForms
 {
     public static class FluentControlExtensions
     {
-        public static Control Build(this FluentControl fc)
+        public static Control Build(this FluentControl fc, Control parent = null)
         {
             var state = new FluentState();
-            var result = fc.Build(state);
+            var result = fc.Build(state, parent);
+            parent?.Controls.Add(result);
             foreach (var callback in state.Callbacks)
                 callback();
             return result;

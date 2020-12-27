@@ -101,17 +101,17 @@ namespace RhythmCodex.Gui.Forms
             var tasksToAdd = statuses.Where(s => !existingStatuses.Select(c => c.Name).Contains(s.Id))
                 .ToList();
 
-            var newControls = tasksToAdd
-                .SelectMany(p => _controlFactory.CreateProgress(p.Id, p.Name))
-                .Select(fc => fc.Build())
-                .ToArray();
-
             tab.SuspendLayout();
+
+            var newControls = tasksToAdd
+                .SelectMany(p => _controlFactory.CreateProgress(p.Id, p.Name));
 
             foreach (var control in controlsToRemove)
                 tab.Controls.Remove(control);
 
-            tab.Controls.AddRange(newControls);
+            foreach (var control in newControls)
+                control.Build(tab);
+
             var controls = tab.Controls;
             
             foreach (var status in statuses)

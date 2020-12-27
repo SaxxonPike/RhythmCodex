@@ -22,14 +22,15 @@ namespace RhythmCodex.Gui.FluentForms
 
         protected abstract Control OnBuild(FluentState state);
 
-        public virtual Control Build(FluentState state)
+        public virtual Control Build(FluentState state, Control parent = null)
         {
             var result = OnBuild(state);
             if (RowSpan != 1 || ColumnSpan != 1)
             {
                 state.Callbacks.Add(() =>
                 {
-                    if (result?.Parent is TableLayoutPanel tlp)
+                    var p = result?.Parent ?? parent;
+                    if (p is TableLayoutPanel tlp)
                     {
                         tlp.SetRowSpan(result, RowSpan);
                         tlp.SetColumnSpan(result, ColumnSpan);
@@ -81,9 +82,9 @@ namespace RhythmCodex.Gui.FluentForms
         public Action OnEnter { get; set; }
         public Action OnLeave { get; set; }
 
-        public override Control Build(FluentState state)
+        public override Control Build(FluentState state, Control parent = null)
         {
-            var result = base.Build(state);
+            var result = base.Build(state, parent);
             state.Callbacks.Add(() => AfterBuild?.Invoke(
                 new FluentContext<FluentControl<TControl>, TControl>(this, (TControl) result, state)));
             return result;
