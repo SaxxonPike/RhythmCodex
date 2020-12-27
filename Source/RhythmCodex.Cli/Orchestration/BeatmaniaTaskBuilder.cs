@@ -233,7 +233,7 @@ namespace RhythmCodex.Cli.Orchestration
                     {
                         long offset = 0;
                         var chunks = _djmainChunkStreamReader.Read(stream);
-                        foreach (var chunk in chunks.Skip(222))
+                        foreach (var chunk in chunks)
                         {
                             var chunkPath = $"{Alphabet.EncodeNumeric(chunk.Id, 4)}";
                             var decoded = _djmainDecoder.Decode(chunk, options);
