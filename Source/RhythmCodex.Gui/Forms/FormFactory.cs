@@ -43,6 +43,10 @@ namespace RhythmCodex.Gui.Forms
             public static readonly string BeatmaniaDecodeDjmainHddSkipAudio = Id(nameof(BeatmaniaDecodeDjmainHddSkipAudio));
             public static readonly string BeatmaniaDecodeDjmainHddSkipCharts = Id(nameof(BeatmaniaDecodeDjmainHddSkipCharts));
             public static readonly string BeatmaniaDecodeDjmainHddRawCharts = Id(nameof(BeatmaniaDecodeDjmainHddRawCharts));
+            public static readonly string BmsRenderPath = Id(nameof(BmsRenderPath));
+            public static readonly string BmsRenderStart = Id(nameof(BmsRenderStart));
+            public static readonly string BeatmaniaRenderDjmainGstPath = Id(nameof(BeatmaniaRenderDjmainGstPath));
+            public static readonly string BeatmaniaRenderDjmainGstStart = Id(nameof(BeatmaniaRenderDjmainGstStart));
         }
 
         public FormFactory(IConsoleEventSource consoleEventSource, IFileDialog fileDialog, IGuiTasks guiTasks,
@@ -224,7 +228,23 @@ namespace RhythmCodex.Gui.Forms
 
         private FluentControl CreateMainFormBmsPage()
         {
-            return new FluentPanel();
+            return new FluentPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = false,
+                AutoScroll = true,
+                Controls = new List<FluentControl>
+                {
+                    _controlFactory.CreateStandardTable(null,
+                        _controlFactory.CreateSpacer("Render BMS to WAV")
+                            .Concat(_controlFactory
+                                .CreateFileSelect(Ids.BmsRenderPath, "BMS file", true))
+                            .Concat(_controlFactory
+                                .CreateBigButton(Ids.BmsRenderStart, "Go",
+                                    BmsRender))
+                        , false)
+                }
+            };
         }
 
         private FluentControl CreateMainFormDanceDanceRevolutionPage()
@@ -397,6 +417,12 @@ namespace RhythmCodex.Gui.Forms
                             .Concat(_controlFactory
                                 .CreateBigButton(Ids.BeatmaniaDecodeDjmainHddStart, "Go",
                                     BeatmaniaDecodeDjmainHdd))
+                            .Concat(_controlFactory.CreateSpacer("Render Djmain HDD to GST"))
+                            .Concat(_controlFactory
+                                .CreateFileSelect(Ids.BeatmaniaRenderDjmainGstPath, "HDD image", false))
+                            .Concat(_controlFactory
+                                .CreateBigButton(Ids.BeatmaniaRenderDjmainGstStart, "Go",
+                                    BeatmaniaRenderDjmainGst))
                         , false)
                 }
             };
@@ -447,6 +473,22 @@ namespace RhythmCodex.Gui.Forms
                 context.GetControl<CheckBox>(Ids.BeatmaniaDecodeDjmainHddSkipAudio).Checked,
                 context.GetControl<CheckBox>(Ids.BeatmaniaDecodeDjmainHddSkipCharts).Checked,
                 context.GetControl<CheckBox>(Ids.BeatmaniaDecodeDjmainHddRawCharts).Checked);
+        }
+
+        private void BmsRender(FluentContext context)
+        {
+            ShowLogTab(context);
+            _guiTasks.BmsRender(
+                context.GetControl<TextBox>(Ids.BmsRenderPath).Text,
+                context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
+        }
+
+        private void BeatmaniaRenderDjmainGst(FluentContext context)
+        {
+            ShowLogTab(context);
+            _guiTasks.BeatmaniaRenderDjmainGst(
+                context.GetControl<TextBox>(Ids.BeatmaniaRenderDjmainGstPath).Text,
+                context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
         }
     }
 }

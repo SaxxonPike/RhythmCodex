@@ -23,6 +23,8 @@ using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Providers;
 using RhythmCodex.Statistics;
+using RhythmCodex.Wav.Converters;
+using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Cli.Orchestration
 {
@@ -44,6 +46,7 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IEncryptedBeatmaniaPcAudioStreamReader _encryptedBeatmaniaPcAudioStreamReader;
         private readonly IResamplerProvider _resamplerProvider;
         private readonly IDjmainChartEventStreamWriter _djmainChartEventStreamWriter;
+        private readonly IChartRenderer _chartRenderer;
 
         public BeatmaniaTaskBuilder(
             IFileSystem fileSystem,
@@ -62,7 +65,8 @@ namespace RhythmCodex.Cli.Orchestration
             IBeatmaniaPcAudioDecoder beatmaniaPcAudioDecoder,
             IEncryptedBeatmaniaPcAudioStreamReader encryptedBeatmaniaPcAudioStreamReader,
             IResamplerProvider resamplerProvider,
-            IDjmainChartEventStreamWriter djmainChartEventStreamWriter
+            IDjmainChartEventStreamWriter djmainChartEventStreamWriter,
+            IChartRenderer chartRenderer
         )
             : base(fileSystem, logger)
         {
@@ -81,6 +85,7 @@ namespace RhythmCodex.Cli.Orchestration
             _encryptedBeatmaniaPcAudioStreamReader = encryptedBeatmaniaPcAudioStreamReader;
             _resamplerProvider = resamplerProvider;
             _djmainChartEventStreamWriter = djmainChartEventStreamWriter;
+            _chartRenderer = chartRenderer;
         }
 
         private bool EnableExportingCharts => !Args.Options.ContainsKey("+nocharts");
@@ -250,6 +255,62 @@ namespace RhythmCodex.Cli.Orchestration
                                         _djmainChartEventStreamWriter.Write(rawChartStream, value);
                                         rawChartStream.Flush();
                                     }
+                                }
+                            }
+
+                            if (file.Length != null)
+                            {
+                                offset += DjmainConstants.ChunkSize;
+                                task.Progress = offset / (float)file.Length;
+                            }
+                        }
+                    }
+                });
+
+                return true;
+            });
+        }
+
+        public ITask CreateRenderDjmainGst()
+        {
+            return Build("Render DJMAIN GST", task =>
+            {
+                var files = GetInputFiles(task);
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    var options = new DjmainDecodeOptions
+                    {
+                        DoNotConsolidateSamples = true
+                    };
+
+                    var renderOptions = new ChartRendererOptions();
+                    
+                    using (var stream = OpenRead(task, file))
+                    {
+                        long offset = 0;
+                        var chunks = _djmainChunkStreamReader.Read(stream);
+                        foreach (var chunk in chunks)
+                        {
+                            var chunkPath = $"{Alphabet.EncodeNumeric(chunk.Id, 4)}";
+                            var decoded = _djmainDecoder.Decode(chunk, options);
+
+                            foreach (var chart in decoded.Charts)
+                            {
+                                using (var outStream = OpenWriteMulti(task, file,
+                                    i => Path.Combine(chunkPath,
+                                        $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.render.wav")))
+                                {
+                                    var rendered = _chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
+                                    var normalized = _audioDsp.Normalize(rendered, 1.0f, true);
+                                    var encoded = _riffPcm16SoundEncoder.Encode(normalized);
+                                    _riffStreamWriter.Write(outStream, encoded);
+                                    outStream.Flush();
                                 }
                             }
 

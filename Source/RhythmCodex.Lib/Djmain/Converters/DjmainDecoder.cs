@@ -70,7 +70,7 @@ namespace RhythmCodex.Djmain.Converters
                 var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format);
                 var sounds = options.DisableAudio
                     ? null
-                    : DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts)
+                    : DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts, options)
                         .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
 
                 return new DjmainArchive
@@ -140,12 +140,12 @@ namespace RhythmCodex.Djmain.Converters
             });
         }
 
-        private IDictionary<int, IDictionary<int, ISound>> DecodeSounds(
-            Stream stream,
+        private IDictionary<int, IDictionary<int, ISound>> DecodeSounds(Stream stream,
             DjmainChunkFormat format,
             IReadOnlyDictionary<int, int> chartSoundMap,
             IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> charts,
-            IEnumerable<KeyValuePair<int, IChart>> decodedCharts)
+            IEnumerable<KeyValuePair<int, IChart>> decodedCharts, 
+            DjmainDecodeOptions options)
         {
             return _offsetProvider.GetSampleMapOffsets(format)
                 .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
@@ -157,8 +157,9 @@ namespace RhythmCodex.Djmain.Converters
                         .ToList();
                     var samples = DecodeSamples(stream, format, kv.Value, chartData);
                     var decodedSamples = _soundDecoder.Decode(samples);
-                    _soundConsolidator.Consolidate(decodedSamples.Values,
-                        decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<IEvent>()));
+                    if (!options.DoNotConsolidateSamples)
+                        _soundConsolidator.Consolidate(decodedSamples.Values,
+                            decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<IEvent>()));
 
                     foreach (var sample in decodedSamples.Where(s => s.Value.Samples.Any()))
                     {

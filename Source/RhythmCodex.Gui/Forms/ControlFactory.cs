@@ -138,7 +138,8 @@ namespace RhythmCodex.Gui.Forms
                 new FluentTextBox
                 {
                     Id = id,
-                    Dock = DockStyle.Fill
+                    Dock = DockStyle.Fill,
+                    AllowDrop = true
                 },
                 new FluentButton
                 {

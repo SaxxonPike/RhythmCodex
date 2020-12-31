@@ -54,6 +54,12 @@ namespace RhythmCodex.Cli.Modules
             },
             new Command
             {
+                Name = "render-djmain-gst",
+                Description = "Renders all charts on a DJMAIN hard drive image to WAV.",
+                TaskFactory = RenderDjmainGst
+            },
+            new Command
+            {
                 Name = "extract-2dx",
                 Description = "Extracts sound files from a 2DX file.",
                 TaskFactory = Extract2dx
@@ -73,6 +79,14 @@ namespace RhythmCodex.Cli.Modules
                 }
             },
         };
+
+        private ITask RenderDjmainGst(Args args)
+        {
+            return _taskFactory
+                .BuildBeatmaniaTask()
+                .WithArgs(args)
+                .CreateRenderDjmainGst();
+        }
 
         private ITask DecodeDjmainHdd(Args args)
         {

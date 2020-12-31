@@ -117,5 +117,21 @@ namespace RhythmCodex.Gui
                 args.Add("+raw");
             Run(args);
         }
+
+        public void BmsRender(string files, string outPath)
+        {
+            var args = new List<string> {"bms", "render"};
+            AddFiles(args, files);
+            AddOutPath(args, outPath);
+            Run(args);
+        }
+
+        public void BeatmaniaRenderDjmainGst(string files, string outPath)
+        {
+            var args = new List<string> {"bm", "render-djmain-gst"};
+            AddFiles(args, files);
+            AddOutPath(args, outPath);
+            Run(args);
+        }
     }
 }

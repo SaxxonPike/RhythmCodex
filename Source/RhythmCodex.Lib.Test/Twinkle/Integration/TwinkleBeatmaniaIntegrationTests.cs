@@ -12,6 +12,7 @@ using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Twinkle.Converters;
 using RhythmCodex.Twinkle.Streamers;
 using RhythmCodex.Wav.Converters;
+using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Twinkle.Integration
 {
@@ -83,11 +84,12 @@ namespace RhythmCodex.Twinkle.Integration
             var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
             var renderer = Resolve<IChartRenderer>();
             var dsp = Resolve<IAudioDsp>();
+            var options = new ChartRendererOptions();
 
             // Act.
             var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
             var archive = decoder.Decode(chunk);
-            var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, 44100), 1.0f);
+            var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, options), 1.0f, true);
 
             // Assert.
             this.WriteSound(rendered, Path.Combine($"twinkle.wav"));
@@ -101,6 +103,7 @@ namespace RhythmCodex.Twinkle.Integration
             var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
             var renderer = Resolve<IChartRenderer>();
             var dsp = Resolve<IAudioDsp>();
+            var options = new ChartRendererOptions();
 
             using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx7th.zip"))
             using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
@@ -118,7 +121,7 @@ namespace RhythmCodex.Twinkle.Integration
 
                         foreach (var chart in archive.Charts.AsParallel())
                         {
-                            var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, 44100), 1.0f);
+                            var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
                             this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
                         }
                     }
