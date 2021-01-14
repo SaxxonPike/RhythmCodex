@@ -40,6 +40,8 @@ namespace RhythmCodex.Gui
         {
             using var fbd = new FolderBrowserDialog
             {
+                AutoUpgradeEnabled = true,
+                ShowNewFolderButton = true
             };
 
             if (folder != null)
