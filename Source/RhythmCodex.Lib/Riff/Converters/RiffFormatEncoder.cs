@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using RhythmCodex.IoC;
 using RhythmCodex.Riff.Models;
@@ -18,7 +19,7 @@ namespace RhythmCodex.Riff.Converters
                 writer.Write(format.ByteRate);
                 writer.Write(unchecked((short)format.BlockAlign));
                 writer.Write(unchecked((short)format.BitsPerSample));
-                writer.Write(format.ExtraData);
+                writer.Write(format.ExtraData ?? Array.Empty<byte>());
                 writer.Flush();
                 
                 return new RiffChunk

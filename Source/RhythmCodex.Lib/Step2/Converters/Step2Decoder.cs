@@ -43,7 +43,8 @@ namespace RhythmCodex.Step2.Converters
                             [NumericData.Column] = panel,
                             [NumericData.SourceColumn] = _step2EventMapper.Map(new[]{panel}),
                             [FlagData.Note] = true,
-                            [NumericData.MetricOffset] = new BigRational(step.MetricOffset, 64)
+                            [NumericData.MetricOffset] = new BigRational(step.MetricOffset, 64),
+                            [NumericData.SourceOffset] = step.MetricOffset
                         });
                     }
 
