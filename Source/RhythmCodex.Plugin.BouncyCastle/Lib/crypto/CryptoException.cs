@@ -2,9 +2,7 @@ using System;
 
 namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto
 {
-#if !(NETCF_1_0 || NETCF_2_0 || SILVERLIGHT || PORTABLE)
-    [Serializable]
-#endif
+	[Serializable]
     public class CryptoException
 		: Exception
     {

@@ -472,35 +472,35 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.util
         public static byte[] CopyOf(byte[] data, int newLength)
         {
             byte[] tmp = new byte[newLength];
-            Array.Copy(data, 0, tmp, 0, System.Math.Min(newLength, data.Length));
+            Array.Copy(data, 0, tmp, 0, Math.Min(newLength, data.Length));
             return tmp;
         }
 
         public static char[] CopyOf(char[] data, int newLength)
         {
             char[] tmp = new char[newLength];
-            Array.Copy(data, 0, tmp, 0, System.Math.Min(newLength, data.Length));
+            Array.Copy(data, 0, tmp, 0, Math.Min(newLength, data.Length));
             return tmp;
         }
 
         public static int[] CopyOf(int[] data, int newLength)
         {
             int[] tmp = new int[newLength];
-            Array.Copy(data, 0, tmp, 0, System.Math.Min(newLength, data.Length));
+            Array.Copy(data, 0, tmp, 0, Math.Min(newLength, data.Length));
             return tmp;
         }
 
         public static long[] CopyOf(long[] data, int newLength)
         {
             long[] tmp = new long[newLength];
-            Array.Copy(data, 0, tmp, 0, System.Math.Min(newLength, data.Length));
+            Array.Copy(data, 0, tmp, 0, Math.Min(newLength, data.Length));
             return tmp;
         }
 
         public static BigInteger[] CopyOf(BigInteger[] data, int newLength)
         {
             BigInteger[] tmp = new BigInteger[newLength];
-            Array.Copy(data, 0, tmp, 0, System.Math.Min(newLength, data.Length));
+            Array.Copy(data, 0, tmp, 0, Math.Min(newLength, data.Length));
             return tmp;
         }
 
@@ -519,7 +519,7 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.util
         {
             int newLength = GetLength(from, to);
             byte[] tmp = new byte[newLength];
-            Array.Copy(data, from, tmp, 0, System.Math.Min(newLength, data.Length - from));
+            Array.Copy(data, from, tmp, 0, Math.Min(newLength, data.Length - from));
             return tmp;
         }
 
@@ -527,7 +527,7 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.util
         {
             int newLength = GetLength(from, to);
             int[] tmp = new int[newLength];
-            Array.Copy(data, from, tmp, 0, System.Math.Min(newLength, data.Length - from));
+            Array.Copy(data, from, tmp, 0, Math.Min(newLength, data.Length - from));
             return tmp;
         }
 
@@ -535,7 +535,7 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.util
         {
             int newLength = GetLength(from, to);
             long[] tmp = new long[newLength];
-            Array.Copy(data, from, tmp, 0, System.Math.Min(newLength, data.Length - from));
+            Array.Copy(data, from, tmp, 0, Math.Min(newLength, data.Length - from));
             return tmp;
         }
 
@@ -543,7 +543,7 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.util
         {
             int newLength = GetLength(from, to);
             BigInteger[] tmp = new BigInteger[newLength];
-            Array.Copy(data, from, tmp, 0, System.Math.Min(newLength, data.Length - from));
+            Array.Copy(data, from, tmp, 0, Math.Min(newLength, data.Length - from));
             return tmp;
         }
 

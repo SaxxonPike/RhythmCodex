@@ -23,11 +23,11 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.modes
             IBlockCipher cipher)
         {
             this.cipher = cipher;
-            this.blockSize = cipher.GetBlockSize();
+            blockSize = cipher.GetBlockSize();
 
-            this.IV = new byte[blockSize];
-            this.cbcV = new byte[blockSize];
-            this.cbcNextV = new byte[blockSize];
+            IV = new byte[blockSize];
+            cbcV = new byte[blockSize];
+            cbcNextV = new byte[blockSize];
         }
 
         /**
@@ -54,9 +54,9 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.modes
             bool forEncryption,
             ICipherParameters parameters)
         {
-            bool oldEncrypting = this.encrypting;
+            bool oldEncrypting = encrypting;
 
-            this.encrypting = forEncryption;
+            encrypting = forEncryption;
 
             if (parameters is ParametersWithIV)
             {

@@ -331,9 +331,9 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.engines
             if (!(parameters is KeyParameter))
 				throw new ArgumentException("invalid parameter passed to Blowfish init - " + Platform.GetTypeName(parameters));
 
-			this.encrypting = forEncryption;
-			this.workingKey = ((KeyParameter)parameters).GetKey();
-			SetKey(this.workingKey);
+			encrypting = forEncryption;
+			workingKey = ((KeyParameter)parameters).GetKey();
+			SetKey(workingKey);
         }
 
 		public string AlgorithmName

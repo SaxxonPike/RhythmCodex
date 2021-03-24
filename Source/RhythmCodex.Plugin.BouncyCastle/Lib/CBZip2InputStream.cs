@@ -288,9 +288,9 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib
 
         private void BsFinishedWithStream() {
             try {
-                if (this.bsStream != null) {
-                    Platform.Dispose(this.bsStream);
-                    this.bsStream = null;
+                if (bsStream != null) {
+                    Platform.Dispose(bsStream);
+                    bsStream = null;
                 }
             } catch {
                 //ignore
