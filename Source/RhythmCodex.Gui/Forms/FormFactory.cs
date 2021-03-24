@@ -40,9 +40,18 @@ namespace RhythmCodex.Gui.Forms
             public static readonly string BeatmaniaDecodeDjmainHddPath = Id(nameof(BeatmaniaDecodeDjmainHddPath));
             public static readonly string BeatmaniaDecodeDjmainHddStart = Id(nameof(BeatmaniaDecodeDjmainHddStart));
             public static readonly string ProgressTable = Id(nameof(ProgressTable));
-            public static readonly string BeatmaniaDecodeDjmainHddSkipAudio = Id(nameof(BeatmaniaDecodeDjmainHddSkipAudio));
-            public static readonly string BeatmaniaDecodeDjmainHddSkipCharts = Id(nameof(BeatmaniaDecodeDjmainHddSkipCharts));
-            public static readonly string BeatmaniaDecodeDjmainHddRawCharts = Id(nameof(BeatmaniaDecodeDjmainHddRawCharts));
+            public static readonly string ArcExtractPath = Id(nameof(ArcExtractPath));
+            public static readonly string ArcExtractStart = Id(nameof(ArcExtractStart));
+
+            public static readonly string BeatmaniaDecodeDjmainHddSkipAudio =
+                Id(nameof(BeatmaniaDecodeDjmainHddSkipAudio));
+
+            public static readonly string BeatmaniaDecodeDjmainHddSkipCharts =
+                Id(nameof(BeatmaniaDecodeDjmainHddSkipCharts));
+
+            public static readonly string BeatmaniaDecodeDjmainHddRawCharts =
+                Id(nameof(BeatmaniaDecodeDjmainHddRawCharts));
+
             public static readonly string BmsRenderPath = Id(nameof(BmsRenderPath));
             public static readonly string BmsRenderStart = Id(nameof(BmsRenderStart));
             public static readonly string BeatmaniaRenderDjmainGstPath = Id(nameof(BeatmaniaRenderDjmainGstPath));
@@ -79,11 +88,12 @@ namespace RhythmCodex.Gui.Forms
                 {
                     x.Control.MainMenuStrip = x.GetControl<MenuStrip>(Ids.MainFormMenu);
                     progressTimer.Tick += (s, e) => UpdateProgress(x.GetControl<TableLayoutPanel>(Ids.ProgressTable));
-                }
+                },
+                MinimumSize = new Size(640, 480),
+                MaximumSize = new Size(640, int.MaxValue)
             };
 
             var builtForm = (Form) form.Build();
-            builtForm.MinimumSize = builtForm.Size = new Size(640, 480);
             builtForm.Closing += (s, e) => progressTimer.Dispose();
 
             progressTimer.Start();
@@ -117,19 +127,19 @@ namespace RhythmCodex.Gui.Forms
                 control.Build(tab);
 
             var controls = tab.Controls;
-            
+
             foreach (var status in statuses)
             {
                 var bar = controls.OfType<ProgressBar>().Single(c => c.Name == status.Id);
                 bar.Minimum = 0;
                 bar.Maximum = 100;
                 bar.Value = (int) (status.Progress * 100);
-                
+
                 var message = controls.OfType<Label>().Single(c => c.Name == status.Id + "Message");
                 message.Text = status.Message;
-                
+
                 var percent = controls.OfType<Label>().Single(c => c.Name == status.Id + "Percent");
-                percent.Text = $"{(int)(status.Progress * 100)}%";
+                percent.Text = $"{(int) (status.Progress * 100)}%";
             }
 
             tab.ResumeLayout();
@@ -293,8 +303,34 @@ namespace RhythmCodex.Gui.Forms
                     },
                     new FluentTabPage
                     {
-                        Text = "PC"
+                        Text = "PC",
+                        AutoScroll = true,
+                        Controls = new List<FluentControl>
+                        {
+                            CreateMainFormDanceDanceRevolutionPcPage()
+                        }
                     }
+                }
+            };
+        }
+
+        private FluentControl CreateMainFormDanceDanceRevolutionPcPage()
+        {
+            return new FluentPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = false,
+                AutoScroll = true,
+                Controls = new List<FluentControl>
+                {
+                    _controlFactory.CreateStandardTable(null,
+                        _controlFactory.CreateSpacer("Extract ARC")
+                            .Concat(_controlFactory
+                                .CreateFileSelect(Ids.ArcExtractPath, "ARC file", true))
+                            .Concat(_controlFactory
+                                .CreateBigButton(Ids.ArcExtractStart, "Go",
+                                    ArcExtract))
+                        , false)
                 }
             };
         }
@@ -321,7 +357,7 @@ namespace RhythmCodex.Gui.Forms
                 }
             };
         }
-        
+
         private FluentControl CreateMainFormDanceDanceRevolution573Page()
         {
             return new FluentPanel
@@ -410,7 +446,7 @@ namespace RhythmCodex.Gui.Forms
                             .Concat(_controlFactory
                                 .CreateFileSelect(Ids.BeatmaniaDecodeDjmainHddPath, "HDD image", false))
                             .Concat(_controlFactory
-                                .CreateDualCheckbox(Ids.BeatmaniaDecodeDjmainHddSkipAudio, "Disable audio", 
+                                .CreateDualCheckbox(Ids.BeatmaniaDecodeDjmainHddSkipAudio, "Disable audio",
                                     Ids.BeatmaniaDecodeDjmainHddSkipCharts, "Disable charts"))
                             .Concat(_controlFactory
                                 .CreateCheckbox(Ids.BeatmaniaDecodeDjmainHddRawCharts, "Enable raw charts"))
@@ -453,11 +489,20 @@ namespace RhythmCodex.Gui.Forms
                 context.GetControl<CheckBox>(Ids.DdrDecrypt573AudioRename).Checked);
         }
 
+        private void ArcExtract(FluentContext context)
+        {
+            ShowLogTab(context);
+            _guiTasks.ArcExtract(
+                context.GetControl<TextBox>(Ids.ArcExtractPath).Text,
+                context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
+        }
+
         private void SsqDecode(FluentContext context)
         {
             ShowLogTab(context);
             var offsetArg = double.TryParse(context.GetControl<TextBox>(Ids.SsqDecodeOffset).Text, out var offset)
-                ? offset : 0;
+                ? offset
+                : 0;
             _guiTasks.SsqDecode(
                 context.GetControl<TextBox>(Ids.SsqDecodePath).Text,
                 context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text,

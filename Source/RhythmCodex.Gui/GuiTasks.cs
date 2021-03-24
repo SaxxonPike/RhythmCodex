@@ -133,5 +133,13 @@ namespace RhythmCodex.Gui
             AddOutPath(args, outPath);
             Run(args);
         }
+
+        public void ArcExtract(string files, string outPath)
+        {
+            var args = new List<string> {"arc", "extract"};
+            AddFiles(args, files);
+            AddOutPath(args, outPath);
+            Run(args);
+        }
     }
 }

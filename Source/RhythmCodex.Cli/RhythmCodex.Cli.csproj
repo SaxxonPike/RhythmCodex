@@ -6,6 +6,7 @@
     <OutputTypeEx>exe</OutputTypeEx>
     <StartupObject />
     <VersionPrefix>0.0.1</VersionPrefix>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.1.0" />

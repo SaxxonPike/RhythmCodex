@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
@@ -7,7 +6,6 @@ using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Infrastructure.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
@@ -28,24 +26,6 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IRiffStreamWriter _riffStreamWriter;
         private readonly IBmsSoundLoader _bmsSoundLoader;
         private readonly IAudioDsp _audioDsp;
-
-        public class TaskFileAccessor : IFileAccessor
-        {
-            public bool FileExists(string name)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public Stream OpenRead(string name)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public ExtensionMatchedFile GetFileNameByExtension(string name, IEnumerable<string> extensions)
-            {
-                throw new System.NotImplementedException();
-            }
-        }
 
         public BmsTaskBuilder(
             IFileSystem fileSystem, 

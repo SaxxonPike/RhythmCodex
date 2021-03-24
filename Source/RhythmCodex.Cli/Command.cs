@@ -11,7 +11,7 @@ namespace RhythmCodex.Cli
         /// <inheritdoc />
         public string Name { get; set; }
         /// <inheritdoc />
-        public IEnumerable<ICommandParameter> Parameters { get; set; } = new List<ICommandParameter>();
+        public IEnumerable<ICommandParameter> Parameters { get; set; } = Array.Empty<ICommandParameter>();
         /// <inheritdoc />
         public string Description { get; set; }
         /// <inheritdoc />

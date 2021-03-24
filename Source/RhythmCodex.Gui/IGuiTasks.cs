@@ -8,5 +8,6 @@
         void BeatmaniaDecodeDjmainHdd(string files, string outPath, bool skipAudio, bool skipCharts, bool rawCharts);
         void BmsRender(string files, string outPath);
         void BeatmaniaRenderDjmainGst(string files, string outPath);
+        void ArcExtract(string files, string outPath);
     }
 }

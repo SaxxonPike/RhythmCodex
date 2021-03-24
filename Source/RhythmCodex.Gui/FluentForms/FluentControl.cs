@@ -17,6 +17,7 @@ namespace RhythmCodex.Gui.FluentForms
         public int RowSpan { get; set; } = 1;
         public int ColumnSpan { get; set; } = 1;
         public Size MinimumSize { get; set; } = Size.Empty;
+        public Size MaximumSize { get; set; } = Size.Empty;
         public Color? ForeColor { get; set; }
         public Color? BackColor { get; set; }
 
@@ -68,6 +69,9 @@ namespace RhythmCodex.Gui.FluentForms
 
             if (MinimumSize != Size.Empty)
                 control.MinimumSize = MinimumSize;
+
+            if (MaximumSize != Size.Empty)
+                control.MaximumSize = MaximumSize;
         }
     }
 
