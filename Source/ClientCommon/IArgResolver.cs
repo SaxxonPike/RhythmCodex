@@ -1,4 +1,4 @@
-namespace RhythmCodex.Cli.Helpers
+namespace ClientCommon
 {
     public interface IArgResolver
     {

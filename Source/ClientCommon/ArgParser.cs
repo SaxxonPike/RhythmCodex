@@ -2,7 +2,7 @@
 using System.Linq;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Cli.Helpers
+namespace ClientCommon
 {
     [Service]
     // ReSharper disable once ClassNeverInstantiated.Global

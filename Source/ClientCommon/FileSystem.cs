@@ -2,9 +2,11 @@
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 
-namespace RhythmCodex.Cli.Helpers
+namespace ClientCommon
 {
+    [Service]
     public class FileSystem : IFileSystem
     {
         private readonly ILogger _logger;
@@ -39,7 +41,17 @@ namespace RhythmCodex.Cli.Helpers
         public Stream OpenWrite(string path)
         {
             _logger.Debug($"Open for write: {path}");
+            BuildPathIfNotExists(path);
             return File.OpenWrite(path);
+        }
+
+        private void BuildPathIfNotExists(string path)
+        {
+            var dir = Path.GetDirectoryName(path);
+            if (string.IsNullOrWhiteSpace(dir) || Directory.Exists(dir))
+                return;
+
+            Directory.CreateDirectory(dir);
         }
 
         /// <inheritdoc />

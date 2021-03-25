@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
+using ClientCommon;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Cli.Helpers;

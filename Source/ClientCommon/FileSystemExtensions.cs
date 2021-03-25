@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
-namespace RhythmCodex.Cli.Helpers
+namespace ClientCommon
 {
     public static class FileSystemExtensions
     {
@@ -10,5 +11,9 @@ namespace RhythmCodex.Cli.Helpers
             var pattern = fileSystem.GetFileName(path);
             return fileSystem.GetFileNames(directory, pattern, recursive);
         }
+
+        public static IEnumerable<string> GetFileNames(this IFileSystem fileSystem, IEnumerable<string> paths,
+            bool recursive = false) =>
+            paths.SelectMany(p => GetFileNames(fileSystem, p, recursive)).Distinct();
     }
 }

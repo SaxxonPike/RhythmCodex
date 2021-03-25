@@ -1,6 +1,6 @@
 ﻿using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Cli.Helpers
+namespace ClientCommon
 {
     public class Console : IConsole
     {

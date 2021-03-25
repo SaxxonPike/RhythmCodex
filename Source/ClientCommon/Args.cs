@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Cli.Helpers
+namespace ClientCommon
 {
     public sealed class Args
     {

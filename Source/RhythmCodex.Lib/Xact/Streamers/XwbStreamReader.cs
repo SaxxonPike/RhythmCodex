@@ -30,9 +30,9 @@ namespace RhythmCodex.Xact.Streamers
         {
             var reader = new BinaryReader(source);
             var sampleCount = 0;
-            XwbEntry[] entries = { };
-            string[] names = { };
-            var dataChunk = new byte[0];
+            var entries = Array.Empty<XwbEntry>();
+            var names = Array.Empty<string>();
+            var dataChunk = Array.Empty<byte>();
 
             var header = _xwbHeaderStreamReader.Read(source);
 

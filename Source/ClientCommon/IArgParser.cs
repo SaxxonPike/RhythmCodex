@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RhythmCodex.Cli.Helpers
+namespace ClientCommon
 {
     /// <summary>
     /// Parses command line arguments into key-value pairs.

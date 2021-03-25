@@ -54,7 +54,7 @@ namespace RhythmCodex.IoC
         /// <summary>
         /// Register all RhythmCodex services with a .NET DI compatible service collection.
         /// </summary>
-        public static void RegisterRhythmCodex(this IServiceCollection serviceCollection, params Assembly[] externalAssemblies)
+        public static void AddRhythmCodex(this IServiceCollection serviceCollection, params Assembly[] externalAssemblies)
         {
             foreach (var mapping in GetMappings(externalAssemblies))
             {

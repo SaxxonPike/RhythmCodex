@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ClientCommon;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Infrastructure;

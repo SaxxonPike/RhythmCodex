@@ -17,6 +17,34 @@ namespace RhythmCodex.Xact.Integration
     public class XactIntegrationTests : BaseIntegrationFixture
     {
         [Test]
+        [Explicit]
+        public void Test_XSB()
+        {
+            // Arrange.
+            var data = GetArchiveResource($"Xact.xsb.zip")
+                .First()
+                .Value;
+            var reader = Resolve<IXsbStreamReader>();
+
+            // Act.
+            using var observed = new MemoryStream(data);
+            var info = reader.Read(observed, observed.Length);
+        }
+
+        [Test]
+        [Explicit]
+        public void Test_XSB_Big()
+        {
+            // Arrange.
+            var data = File.ReadAllBytes("Z:\\Mount\\DDR\\MDX-001-2019042200\\contents\\data\\sound\\win\\dance\\aaaa.xsb");
+            var reader = Resolve<IXsbStreamReader>();
+
+            // Act.
+            using var observed = new MemoryStream(data);
+            var info = reader.Read(observed, observed.Length);
+        }
+        
+        [Test]
         [Explicit("writes to the desktop")]
         public void Test_XWB()
         {

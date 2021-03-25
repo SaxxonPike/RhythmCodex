@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ClientCommon;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Beatmania.Streamers;

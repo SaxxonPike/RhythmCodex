@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using ClientCommon;
 using FluentAssertions;
 using NUnit.Framework;
 

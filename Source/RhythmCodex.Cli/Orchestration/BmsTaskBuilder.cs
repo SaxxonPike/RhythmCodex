@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using ClientCommon;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Cli.Helpers;
