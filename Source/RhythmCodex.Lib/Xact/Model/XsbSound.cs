@@ -14,9 +14,9 @@ namespace RhythmCodex.Xact.Model
         
         public short TrackIndex { get; set; }
         public byte WaveBankIndex { get; set; }
-        
-        public byte[] RpcData { get; set; }
-        public byte[] DspData { get; set; }
+
+        public XsbSoundRpc Rpc { get; set; }
+        public XsbSoundDsp Dsp { get; set; }
         public XsbSoundClip[] Clips { get; set; }
     }
 }

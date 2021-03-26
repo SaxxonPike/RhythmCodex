@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.IoC;
 using RhythmCodex.Xact.Model;
@@ -9,6 +8,20 @@ namespace RhythmCodex.Xact.Streamers
     [Service]
     public class XsbSoundStreamReader : IXsbSoundStreamReader
     {
+        private readonly IXsbSoundDspStreamReader _xsbSoundDspStreamReader;
+        private readonly IXsbSoundRpcStreamReader _xsbSoundRpcStreamReader;
+        private readonly IXsbSoundClipStreamReader _xsbSoundClipStreamReader;
+
+        public XsbSoundStreamReader(
+            IXsbSoundDspStreamReader xsbSoundDspStreamReader,
+            IXsbSoundRpcStreamReader xsbSoundRpcStreamReader,
+            IXsbSoundClipStreamReader xsbSoundClipStreamReader)
+        {
+            _xsbSoundDspStreamReader = xsbSoundDspStreamReader;
+            _xsbSoundRpcStreamReader = xsbSoundRpcStreamReader;
+            _xsbSoundClipStreamReader = xsbSoundClipStreamReader;
+        }
+        
         public XsbSound Read(Stream stream)
         {
             var reader = new BinaryReader(stream);
@@ -25,36 +38,18 @@ namespace RhythmCodex.Xact.Streamers
             sound.Priority = reader.ReadByte();
             sound.Unk0 = reader.ReadInt16();
 
-            sound.Clips = new XsbSoundClip[isComplex ? reader.ReadByte() : 0];
+            var numClips = isComplex ? reader.ReadByte() : 0;
             sound.TrackIndex = isComplex ? (short) 0 : reader.ReadInt16();
             sound.WaveBankIndex = isComplex ? (byte) 0 : reader.ReadByte();
 
-            if (!hasRpc)
-            {
-                sound.RpcData = Array.Empty<byte>();
-            }
-            else
-            {
-                var length = reader.ReadInt16();
-                if (length >= 2)
-                    sound.RpcData = reader.ReadBytes(length - 2);
-            }
+            if (hasRpc)
+                sound.Rpc = _xsbSoundRpcStreamReader.Read(stream);
 
-            if (!hasDsp)
-            {
-                sound.DspData = Array.Empty<byte>();
-            }
-            else
-            {
-                var length = reader.ReadInt16();
-                if (length >= 2)
-                    sound.DspData = reader.ReadBytes(length - 2);
-            }
+            if (hasDsp)
+                sound.Dsp = _xsbSoundDspStreamReader.Read(stream);
 
             if (isComplex)
-            {
-                // load clips here- I'm not doing this right now.
-            }
+                sound.Clips = _xsbSoundClipStreamReader.Read(stream, numClips);
 
             return sound;
         }

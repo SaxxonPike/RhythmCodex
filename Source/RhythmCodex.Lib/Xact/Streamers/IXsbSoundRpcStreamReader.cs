@@ -3,8 +3,8 @@ using RhythmCodex.Xact.Model;
 
 namespace RhythmCodex.Xact.Streamers
 {
-    public interface IXsbSoundStreamReader
+    public interface IXsbSoundRpcStreamReader
     {
-        XsbSound Read(Stream stream);
+        XsbSoundRpc Read(Stream stream);
     }
 }
