@@ -5,6 +5,6 @@ namespace RhythmCodex.Xact.Streamers
 {
     public interface IXsbSoundClipStreamReader
     {
-        XsbSoundClip[] Read(Stream stream, int count);
+        XsbSoundClip Read(Stream stream);
     }
 }

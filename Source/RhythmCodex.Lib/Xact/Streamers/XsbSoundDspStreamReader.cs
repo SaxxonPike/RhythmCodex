@@ -9,7 +9,9 @@ namespace RhythmCodex.Xact.Streamers
     {
         public XsbSoundDsp Read(Stream stream)
         {
-            throw new System.NotImplementedException();
+            var reader = new BinaryReader(stream);
+            var result = new XsbSoundDsp {ExtraData = reader.ReadBytes(7)};
+            return result;
         }
     }
 }

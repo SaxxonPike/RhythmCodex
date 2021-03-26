@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using RhythmCodex.IoC;
 using RhythmCodex.Xact.Model;
 
@@ -49,7 +50,11 @@ namespace RhythmCodex.Xact.Streamers
                 sound.Dsp = _xsbSoundDspStreamReader.Read(stream);
 
             if (isComplex)
-                sound.Clips = _xsbSoundClipStreamReader.Read(stream, numClips);
+            {
+                sound.Clips = new XsbSoundClip[numClips];
+                for (var i = 0; i < numClips; i++)
+                    sound.Clips[i] = _xsbSoundClipStreamReader.Read(stream);
+            }
 
             return sound;
         }
