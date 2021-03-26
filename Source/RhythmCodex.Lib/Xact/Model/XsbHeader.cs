@@ -17,7 +17,7 @@ namespace RhythmCodex.Xact.Model
         public short TotalCueCount { get; set; }
         public byte WaveBankCount { get; set; }
         public short SoundCount { get; set; }
-        public int CueNameTableLength { get; set; }
+        public short CueNameTableLength { get; set; }
         public short Unk1 { get; set; }
         public int SimpleCuesOffset { get; set; }
         public int ComplexCuesOffset { get; set; }
