@@ -52,6 +52,16 @@ namespace RhythmCodex.Cli
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .InstancePerRequest();
+            builder.RegisterAssemblyTypes(typeof(ArgParser).Assembly)
+                .Where(t => t.GetCustomAttributes<ServiceAttribute>().FirstOrDefault()?.SingleInstance ?? false)
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+            builder.RegisterAssemblyTypes(typeof(ArgParser).Assembly)
+                .Where(t => !(t.GetCustomAttributes<ServiceAttribute>().FirstOrDefault()?.SingleInstance ?? true))
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .InstancePerRequest();
             
             builder.RegisterModule<AppAutofacModule<App>>();
             AppContainer = builder.Build();
