@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
+using ClientCommon;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Cli.Helpers;
@@ -30,7 +31,7 @@ namespace RhythmCodex.Cli.Modules
             Action act = () => subject
                 .Commands
                 .Single(c => c.Name.Equals("decode", StringComparison.OrdinalIgnoreCase))
-                .Execute(parsedArgs);
+                .TaskFactory(parsedArgs);
 
             // Assert.
             act.Should().NotThrow();

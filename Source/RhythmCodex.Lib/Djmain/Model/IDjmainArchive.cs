@@ -9,5 +9,6 @@ namespace RhythmCodex.Djmain.Model
         int Id { get; }
         IList<IChart> Charts { get; }
         IList<ISound> Samples { get; }
+        IDictionary<int, IEnumerable<IDjmainChartEvent>> RawCharts { get; set; }
     }
 }

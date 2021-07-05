@@ -41,6 +41,7 @@
         SourcePanning,
         Meter,
         NoteCount,
-        SourceRate
+        SourceRate,
+        SourceOffset
     }
 }

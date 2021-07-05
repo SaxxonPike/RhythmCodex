@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using ClientCommon;
 using NUnit.Framework;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
@@ -25,9 +26,13 @@ namespace RhythmCodex.Cli
                 .AsSelf()
                 .AsImplementedInterfaces()
                 .SingleInstance();
-            builder.RegisterInstance(TestContext.Out)
-                .As<TextWriter>()
-                .ExternallyOwned()
+            // builder.RegisterInstance(TestContext.Out)
+            //     .As<TextWriter>()
+            //     .ExternallyOwned()
+            //     .SingleInstance();
+            builder.RegisterInstance(new TestConsole())
+                .AsSelf()
+                .AsImplementedInterfaces()
                 .SingleInstance();
             builder.RegisterType<TextWriterLogger>()
                 .AsSelf()

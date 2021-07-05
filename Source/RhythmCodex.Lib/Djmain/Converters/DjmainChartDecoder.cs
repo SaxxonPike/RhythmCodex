@@ -45,6 +45,7 @@ namespace RhythmCodex.Djmain.Converters
                 {
                     [NumericData.SourceCommand] = ev.Param0,
                     [NumericData.SourceData] = ev.Param1,
+                    [NumericData.SourceOffset] = ev.Offset,
                     [NumericData.LinearOffset] = offset,
                 };
 

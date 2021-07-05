@@ -7,6 +7,7 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         event EventHandler<string> MessageUpdated;
         event EventHandler<float> ProgressUpdated;
         
+        string Id { get; }
         string Name { get; }
         float Progress { get; }
         string Message { get; }

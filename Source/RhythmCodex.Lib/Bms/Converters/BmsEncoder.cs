@@ -100,6 +100,9 @@ namespace RhythmCodex.Bms.Converters
 
             foreach (var kv in sampleMap)
             {
+                if (kv.Key < 0)
+                    continue;
+
                 yield return new BmsCommand
                 {
                     Name = $"WAV{Alphabet.EncodeAlphanumeric(kv.Value, 2)}",

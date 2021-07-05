@@ -21,5 +21,7 @@ namespace RhythmCodex.Djmain.Model
         public byte SampleType { get; set; }
         /// <inheritdoc />
         public byte Volume { get; set; }
+        
+        public override string ToString() => Json.Serialize(this);
     }
 }

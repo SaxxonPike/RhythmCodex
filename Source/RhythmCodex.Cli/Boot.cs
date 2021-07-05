@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Autofac;
+using ClientCommon;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli
@@ -58,6 +59,7 @@ namespace RhythmCodex.Cli
             var builder = new ContainerBuilder();
             builder.RegisterModule<AppInfrastructureAutofacModule>();
             builder.RegisterModule<AppAutofacModule<App>>();
+            builder.RegisterModule<AppAutofacModule<ArgParser>>();
             return builder.Build();
         }
     }

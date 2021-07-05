@@ -29,10 +29,10 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.modes
             int          bitBlockSize)
         {
             this.cipher = cipher;
-            this.blockSize = bitBlockSize / 8;
-            this.IV = new byte[cipher.GetBlockSize()];
-            this.cfbV = new byte[cipher.GetBlockSize()];
-            this.cfbOutV = new byte[cipher.GetBlockSize()];
+            blockSize = bitBlockSize / 8;
+            IV = new byte[cipher.GetBlockSize()];
+            cfbV = new byte[cipher.GetBlockSize()];
+            cfbOutV = new byte[cipher.GetBlockSize()];
         }
         /**
         * return the underlying block cipher that we are wrapping.
@@ -58,7 +58,7 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.modes
             bool forEncryption,
             ICipherParameters parameters)
         {
-            this.encrypting = forEncryption;
+            encrypting = forEncryption;
             if (parameters is ParametersWithIV)
             {
                 ParametersWithIV ivParam = (ParametersWithIV) parameters;

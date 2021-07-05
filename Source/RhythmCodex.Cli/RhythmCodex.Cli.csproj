@@ -12,6 +12,7 @@
     <PackageReference Include="Autofac" Version="6.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientCommon\ClientCommon.csproj" />
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
     <ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj" />
     <ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj" />

@@ -50,7 +50,7 @@ namespace RhythmCodex.Djmain.Converters
             _djmainChartMetadataDecoder = djmainChartMetadataDecoder;
         }
 
-        public IDjmainArchive Decode(IDjmainChunk chunk)
+        public IDjmainArchive Decode(IDjmainChunk chunk, DjmainDecodeOptions options)
         {
             if (chunk.Data.Length != 0x1000000)
                 throw new RhythmCodexException("Chunk length must be exactly 16mb (0x1000000 bytes)");
@@ -68,13 +68,16 @@ namespace RhythmCodex.Djmain.Converters
                     .ToDictionary(kv => kv.Key, kv => kv.Value);
                 var rawCharts = ExtractCharts(stream, chunk.Format).Where(c => c.Value != null).ToList();
                 var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format);
-                var sounds = DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts)
-                    .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
+                var sounds = options.DisableAudio
+                    ? null
+                    : DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts, options)
+                        .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
 
                 return new DjmainArchive
                 {
-                    Charts = decodedCharts.Select(c => c.Value).ToList(),
-                    Samples = sounds.SelectMany(s => s.Value).Select(s => s.Value).ToList()
+                    RawCharts = rawCharts.ToDictionary(kv => kv.Key, kv => kv.Value),
+                    Charts = decodedCharts?.Select(c => c.Value).ToList(),
+                    Samples = sounds?.SelectMany(s => s.Value).Select(s => s.Value).ToList()
                 };
             }
         }
@@ -137,12 +140,12 @@ namespace RhythmCodex.Djmain.Converters
             });
         }
 
-        private IDictionary<int, IDictionary<int, ISound>> DecodeSounds(
-            Stream stream,
+        private IDictionary<int, IDictionary<int, ISound>> DecodeSounds(Stream stream,
             DjmainChunkFormat format,
             IReadOnlyDictionary<int, int> chartSoundMap,
             IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> charts,
-            IEnumerable<KeyValuePair<int, IChart>> decodedCharts)
+            IEnumerable<KeyValuePair<int, IChart>> decodedCharts, 
+            DjmainDecodeOptions options)
         {
             return _offsetProvider.GetSampleMapOffsets(format)
                 .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
@@ -154,8 +157,9 @@ namespace RhythmCodex.Djmain.Converters
                         .ToList();
                     var samples = DecodeSamples(stream, format, kv.Value, chartData);
                     var decodedSamples = _soundDecoder.Decode(samples);
-                    _soundConsolidator.Consolidate(decodedSamples.Values,
-                        decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<IEvent>()));
+                    if (!options.DoNotConsolidateSamples)
+                        _soundConsolidator.Consolidate(decodedSamples.Values,
+                            decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<IEvent>()));
 
                     foreach (var sample in decodedSamples.Where(s => s.Value.Samples.Any()))
                     {

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace RhythmCodex.Gui.FluentForms
@@ -14,6 +15,21 @@ namespace RhythmCodex.Gui.FluentForms
             result.WordWrap = WordWrap;
             if (OnChange != null)
                 result.TextChanged += (o, e) => OnChange?.Invoke(result, result.Text);
+
+            result.AllowDrop = AllowDrop;
+
+            result.DragEnter += (o, e) =>
+            {
+                if (result.AllowDrop && e.Data.GetDataPresent(DataFormats.FileDrop))
+                    e.Effect = DragDropEffects.Link;
+            };
+
+            result.DragDrop += (o, e) =>
+            {
+                if (result.AllowDrop && e.Data.GetDataPresent(DataFormats.FileDrop))
+                    result.Text = string.Join('|', (string[]) e.Data.GetData(DataFormats.FileDrop));
+            };
+            
             UpdateMap(state, result);
             return result;
         }
@@ -21,5 +37,6 @@ namespace RhythmCodex.Gui.FluentForms
         public bool MultiLine { get; set; }
         public ScrollBars ScrollBars { get; set; }
         public bool WordWrap { get; set; }
+        public bool AllowDrop { get; set; }
     }
 }

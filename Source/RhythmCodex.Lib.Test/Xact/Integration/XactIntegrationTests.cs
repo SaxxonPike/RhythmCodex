@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
@@ -16,6 +17,47 @@ namespace RhythmCodex.Xact.Integration
     [TestFixture]
     public class XactIntegrationTests : BaseIntegrationFixture
     {
+        [Test]
+        [Explicit]
+        [TestCase("Xact.xsb.zip")]
+        public void Test_XSB_Archive(string file)
+        {
+            // Arrange.
+            var data = GetArchiveResource(file)
+                .First()
+                .Value;
+            var reader = Resolve<IXsbStreamReader>();
+
+            // Act.
+            using var observed = new MemoryStream(data);
+            var info = reader.Read(observed, observed.Length);
+
+            using var written = new MemoryStream();
+            var writer = Resolve<IXsbStreamWriter>();
+            var total = writer.Write(written, info);
+
+            // Assert.
+            this.WriteFile(written.ToArray(), "out.xsb");
+            total.Should().Be(data.Length);
+            written.ToArray().Should().BeEquivalentTo(data);
+        }
+
+        [Test]
+        [Explicit]
+        [TestCase("Z:\\Mount\\DDR\\MDX-001-2019042200\\contents\\data\\sound\\win\\dance\\aaaa.xsb")]
+        [TestCase(
+            "Z:\\User Data\\Bemani\\Bemani PC\\Dance Dance Revolution X\\drive_d\\HDX\\data\\SOUND\\Win\\BGM_DANCE.xsb")]
+        public void Test_XSB_External(string file)
+        {
+            // Arrange.
+            var data = File.ReadAllBytes(file);
+            var reader = Resolve<IXsbStreamReader>();
+
+            // Act.
+            using var observed = new MemoryStream(data);
+            var info = reader.Read(observed, observed.Length);
+        }
+
         [Test]
         [Explicit("writes to the desktop")]
         public void Test_XWB()
@@ -56,7 +98,8 @@ namespace RhythmCodex.Xact.Integration
         [Explicit("long test written for a blanket test, don't run this one")]
         public void TestDdraXwb()
         {
-            var fileNames = Directory.GetFiles(@"\\tamarat\ddr\MDX-001-2018102200\contents", "*.xwb", SearchOption.AllDirectories);
+            var fileNames = Directory.GetFiles(@"\\tamarat\ddr\MDX-001-2018102200\contents", "*.xwb",
+                SearchOption.AllDirectories);
             var reader = Resolve<IXwbStreamReader>();
             var decoder = Resolve<IXwbDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
@@ -70,16 +113,17 @@ namespace RhythmCodex.Xact.Integration
 
                 if (!heuristicTester.Match(rawBytes).Any(x => x.Heuristic is XwbHeuristic))
                     continue;
-                
+
                 using var observed = new MemoryStream(rawBytes);
-                
-                
+
+
                 // Assert.
                 foreach (var sound in reader.Read(observed))
                 {
                     var decoded = decoder.Decode(sound);
                     var encoded = encoder.Encode(decoded);
-                    var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xwb", outPath);
+                    var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xwb",
+                        outPath);
                     if (!Directory.Exists(outfolder))
                         Directory.CreateDirectory(outfolder);
 

@@ -31,7 +31,8 @@ namespace RhythmCodex.Beatmania.Converters
                     [NumericData.SourceCommand] = input.Parameter0,
                     [NumericData.SourceColumn] = input.Parameter1,
                     [NumericData.SourceData] = input.Value,
-                    [NumericData.LinearOffset] = input.LinearOffset / rate
+                    [NumericData.LinearOffset] = input.LinearOffset / rate,
+                    [NumericData.SourceOffset] = input.LinearOffset
                 };
             }
 

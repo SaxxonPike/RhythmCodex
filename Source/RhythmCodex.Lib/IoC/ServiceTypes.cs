@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
-#if !NET48
 using System.Runtime.Loader;
-#endif
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RhythmCodex.IoC
 {
     /// <summary>
-    /// A type mapper for RhythmCodex services. Use this with your favorte IoC container.
+    /// A type mapper for RhythmCodex services. Use this with your favorite IoC container.
     /// </summary>
     public static class ServiceTypes
     {
@@ -21,25 +19,13 @@ namespace RhythmCodex.IoC
         public static IEnumerable<ServiceMapping> GetMappings(params Assembly[] externalAssemblies)
         {
             var myPath = Path.GetDirectoryName(typeof(ServiceTypes).Assembly.Location);
-            
-            #if NET48
 
-            var assemblies = new List<Assembly> {Assembly.LoadFile(Path.Combine(myPath, "RhythmCodex.dll"))};
-            var pluginAssemblies = Directory
-                .GetFiles(myPath, "RhythmCodex.Plugin.*.dll")
-                .Select(Assembly.LoadFile)
-                .ToList();
-
-            #else
-            
             var assemblies = new List<Assembly> {AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(myPath, "RhythmCodex.dll"))};
             var pluginAssemblies = Directory
                 .GetFiles(myPath, "RhythmCodex.Plugin.*.dll")
                 .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath)
                 .ToList();
             
-            #endif
-                
             assemblies.AddRange(pluginAssemblies);
             assemblies.AddRange(externalAssemblies.Where(x => !assemblies.Contains(x)).ToList());
 
@@ -63,6 +49,21 @@ namespace RhythmCodex.IoC
                         (bool) at.GetValue(a));
                 })
                 .ToList();
+        }
+
+        /// <summary>
+        /// Register all RhythmCodex services with a .NET DI compatible service collection.
+        /// </summary>
+        public static void AddRhythmCodex(this IServiceCollection serviceCollection, params Assembly[] externalAssemblies)
+        {
+            foreach (var mapping in GetMappings(externalAssemblies))
+            {
+                foreach (var service in mapping.Services)
+                    if (mapping.SingleInstance)
+                        serviceCollection.AddSingleton(service, mapping.Implementation);
+                    else
+                        serviceCollection.AddTransient(service, mapping.Implementation);
+            }
         }
     }
 }

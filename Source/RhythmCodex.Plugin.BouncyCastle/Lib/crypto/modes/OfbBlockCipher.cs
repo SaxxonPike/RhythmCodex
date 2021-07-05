@@ -30,9 +30,9 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.modes
             this.cipher = cipher;
             this.blockSize = blockSize / 8;
 
-            this.IV = new byte[cipher.GetBlockSize()];
-            this.ofbV = new byte[cipher.GetBlockSize()];
-            this.ofbOutV = new byte[cipher.GetBlockSize()];
+            IV = new byte[cipher.GetBlockSize()];
+            ofbV = new byte[cipher.GetBlockSize()];
+            ofbOutV = new byte[cipher.GetBlockSize()];
         }
 
         /**

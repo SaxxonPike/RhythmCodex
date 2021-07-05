@@ -73,7 +73,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP
         /// <summary>
         /// Gets the sample rate.
         /// </summary>
-        public int SampleRate { get; }
+        public double SampleRate { get; }
 
         /// <summary>
         /// The q value.
@@ -117,7 +117,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP
         /// or
         /// q
         /// </exception>
-        protected BiQuad(int sampleRate, double frequency)
+        protected BiQuad(double sampleRate, double frequency)
             : this(sampleRate, frequency, 1.0 / Math.Sqrt(2))
         {
         }
@@ -135,7 +135,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP
         /// or
         /// q
         /// </exception>
-        protected BiQuad(int sampleRate, double frequency, double q)
+        protected BiQuad(double sampleRate, double frequency, double q)
         {
             if (sampleRate <= 0)
                 throw new ArgumentOutOfRangeException(nameof(sampleRate));

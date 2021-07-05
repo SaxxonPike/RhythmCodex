@@ -8,5 +8,7 @@ namespace RhythmCodex.Djmain.Model
     {
         public int DataOffset { get; set; }
         public IDictionary<int, DjmainSample> Samples { get; set; }
+        
+        public override string ToString() => Json.Serialize(this);
     }
 }

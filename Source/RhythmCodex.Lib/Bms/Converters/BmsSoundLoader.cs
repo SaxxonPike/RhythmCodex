@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.ThirdParty;
 using RhythmCodex.Wav.Converters;
@@ -54,7 +55,22 @@ namespace RhythmCodex.Bms.Converters
                     continue;
 
                 using (var stream = accessor.OpenRead(decoder.Filename))
-                    yield return decoder.Decoder(stream);
+                {
+                    ISound decoded;
+
+                    try
+                    {
+                        decoded = decoder.Decoder(stream);
+                        decoded[NumericData.Id] = kv.Key;
+                    }
+                    catch
+                    {
+                        decoded = null;
+                    }
+
+                    if (decoded != null)
+                        yield return decoded;
+                }
             }
         }
 
@@ -62,7 +78,7 @@ namespace RhythmCodex.Bms.Converters
         {
             var file = accessor.GetFileNameByExtension(name, Extensions.Keys);
             if (file == null)
-                throw new RhythmCodexException($"Unable to find a decoder for {name}.");
+                return (name, null); //throw new RhythmCodexException($"Unable to find a decoder for {name}.");
             return (file.Filename, Extensions[file.Extension]);
         }
     }

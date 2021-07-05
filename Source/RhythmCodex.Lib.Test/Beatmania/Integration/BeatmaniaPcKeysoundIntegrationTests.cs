@@ -30,7 +30,10 @@ namespace RhythmCodex.Beatmania.Integration
             if (!Directory.Exists(outFolder))
                 Directory.CreateDirectory(outFolder);
 
-            using (var dataStream = new MemoryStream(decrypter.Decrypt(new MemoryStream(data), data.Length)))
+            var decrypted = decrypter.Decrypt(new MemoryStream(data), data.Length);
+            File.WriteAllBytes(Path.Combine(outFolder, $"decrypted.2dx"), decrypted);
+            
+            using (var dataStream = new MemoryStream(decrypted))
             {
                 var keysounds = streamer.Read(dataStream, dataStream.Length);
                 var index = 1;

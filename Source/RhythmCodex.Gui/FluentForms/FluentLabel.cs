@@ -12,6 +12,7 @@ namespace RhythmCodex.Gui.FluentForms
         }
 
         public ContentAlignment Align { get; set; }
+        public BorderStyle BorderStyle { get; set; }
 
         protected override Control OnBuild(FluentState state)
         {
@@ -19,6 +20,7 @@ namespace RhythmCodex.Gui.FluentForms
             SetDefault(result);
 
             result.TextAlign = Align;
+            result.BorderStyle = BorderStyle;
 
             UpdateMap(state, result);
             return result;

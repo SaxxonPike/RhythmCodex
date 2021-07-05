@@ -9,7 +9,7 @@ namespace RhythmCodex.Sounds.Converters
         ISound ApplyEffects(ISound sound);
         ISound ApplyPanVolume(ISound sound, BigRational volume, BigRational panning);
         ISound ApplyResampling(ISound sound, IResampler resampler, BigRational rate);
-        ISound Normalize(ISound sound, BigRational target);
+        ISound Normalize(ISound sound, BigRational target, bool cutOnly);
         ISound IntegerDownsample(ISound sound, int factor);
     }
 }

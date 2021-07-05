@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Providers;
 
@@ -14,6 +15,7 @@ namespace RhythmCodex.Sounds.Resamplers
         public IList<float> Resample(IList<float> data, float sourceRate, float targetRate)
         {
             var accumulator = 0f;
+            var sourceMax = data.Count - 1;
             var targetSize = (int) ((data.Count * targetRate + (sourceRate - 1)) / sourceRate);
             var result = new float[targetSize];
             var sourceData = data;
@@ -25,7 +27,10 @@ namespace RhythmCodex.Sounds.Resamplers
                 while (accumulator > targetRate)
                 {
                     accumulator -= targetRate;
-                    sourceCounter++;
+                    
+                    // just keep repeating last sample if we're out of data
+                    if (sourceCounter < sourceMax)
+                        sourceCounter++;
                 }
 
                 result[targetCounter++] = sourceData[sourceCounter];

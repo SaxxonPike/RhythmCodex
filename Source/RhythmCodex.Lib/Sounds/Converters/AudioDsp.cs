@@ -32,7 +32,12 @@ namespace RhythmCodex.Sounds.Converters
             if (sound == null || !sound.Samples.Any())
                 return null;
             
-            if (rate <= BigRational.Zero || sound[NumericData.Rate] == rate)
+            if (rate <= BigRational.Zero || 
+                sound[NumericData.Rate] == rate || 
+                sound[NumericData.Rate] == 0 ||
+                sound.Samples == null ||
+                !sound.Samples.Any() ||
+                sound.Samples.Any(sa => sa[NumericData.Rate] != null && sa[NumericData.Rate] <= 0))
                 return sound;
 
             var targetRate = (float) (double) rate;
@@ -57,15 +62,15 @@ namespace RhythmCodex.Sounds.Converters
             return result;
         }
 
-        public ISound Normalize(ISound sound, BigRational target)
+        public ISound Normalize(ISound sound, BigRational target, bool cutOnly)
         {
             var newSound = new Sound
             {
                 Samples = new List<ISample>(sound.Samples)
             };
 
-            var level = sound.Samples.SelectMany(s => s.Data).Max(s => Math.Abs(s));
-            if (level > 0 && level != 1)
+            var level = sound.Samples.SelectMany(s => s.Data).Max(Math.Abs);
+            if (level > 0 && level != 1 && (!cutOnly || level > 1))
             {
                 var amp = (float) (target / level);
                 foreach (var sample in newSound.Samples)

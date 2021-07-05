@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using ClientCommon;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
@@ -60,11 +61,24 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                 return GetArchivedFiles(sourceFiles);
 
             return sourceFiles
-                .Select(sf => new InputFile(
-                    sf,
-                    () => _fileSystem.OpenRead(sf),
-                    f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
-                    s => s.Dispose()))
+                .Select(sf =>
+                {
+                    var info = new FileInfo(sf);
+
+                    if (info.Exists)
+                    {
+                        return new InputFile(
+                            sf,
+                            () => _fileSystem.OpenRead(sf),
+                            f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                            s => s.Dispose())
+                            { Length = info.Length };
+                    }
+                    else
+                    {
+                        throw new RhythmCodexException($"File doesn't exist: {sf}");
+                    }
+                })
                 .ToArray();
         }
 
@@ -93,7 +107,7 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                             {
                                 s.Dispose();
                                 parentArc.Dispose();
-                            }));
+                            }) {Length = e.Length} );
                     }
                 }).ToArray();
         }
@@ -106,11 +120,25 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
                 return GetArchivedFiles(sourceFiles).Single();
 
             return sourceFiles
-                .Select(sf => new InputFile(
-                    sf,
-                    () => _fileSystem.OpenRead(sf),
-                    f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
-                    s => s.Dispose()))
+                .Select(sf =>
+                {
+                    var info = new FileInfo(sf);
+                    if (info.Exists)
+                    {
+                        return new InputFile(
+                            sf,
+                            () => _fileSystem.OpenRead(sf),
+                            f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                            s => s.Dispose())
+                        {
+                            Length = info.Length
+                        };
+                    }
+                    else
+                    {
+                        throw new RhythmCodexException($"File doesn't exist: {sf}");
+                    }
+                })
                 .Single();
         }
 
@@ -172,10 +200,12 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
 
             public BuiltTask(string name, Func<bool> run)
             {
+                Id = Guid.NewGuid().ToString();
                 Name = name;
                 Run = run;
             }
 
+            public string Id { get; }
             public string Name { get; }
 
             public float Progress

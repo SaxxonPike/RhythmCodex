@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using ClientCommon;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
@@ -9,7 +10,7 @@ namespace RhythmCodex.Cli
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            
+
             builder.RegisterInstance(new Console())
                 .AsImplementedInterfaces()
                 .AsSelf()

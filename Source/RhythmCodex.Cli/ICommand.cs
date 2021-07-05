@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using ClientCommon;
 using RhythmCodex.Cli.Helpers;
+using RhythmCodex.Cli.Orchestration.Infrastructure;
 
 namespace RhythmCodex.Cli
 {
@@ -15,9 +17,9 @@ namespace RhythmCodex.Cli
         string Description { get; }
         
         /// <summary>
-        /// Execute the function with the specified command line parameters.
+        /// Gets a delegate that can be used to create tasks that execute this command.
         /// </summary>
-        Action<Args> Execute { get; }
+        Func<Args, ITask> TaskFactory { get; }
         
         /// <summary>
         /// Name of the command the user can refer to this command with.

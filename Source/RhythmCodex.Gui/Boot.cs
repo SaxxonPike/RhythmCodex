@@ -1,8 +1,10 @@
 using System;
 using System.Windows.Forms;
 using Autofac;
+using ClientCommon;
 using RhythmCodex.Cli;
 using RhythmCodex.Cli.Helpers;
+using RhythmCodex.Gui.Forms;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Gui
@@ -16,12 +18,14 @@ namespace RhythmCodex.Gui
         private static void Main(string[] args)
         {
             var container = BuildContainer();
-            var form = container.Resolve<IFormFactory>();
+            var formFactory = container.Resolve<IFormFactory>();
             var logger = container.Resolve<ILogger>();
             
             logger.Debug("IoC container initialized.");
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.Run(form.CreateMainForm());
+
+            var form = formFactory.CreateMainForm();
+            Application.Run(form);
         }
 
         /// <summary>
@@ -43,6 +47,7 @@ namespace RhythmCodex.Gui
             builder.RegisterModule<AppInfrastructureAutofacModule>();
             builder.RegisterModule<AppAutofacModule<App>>();
             builder.RegisterModule<AppAutofacModule<FormFactory>>();
+            builder.RegisterModule<AppAutofacModule<ArgParser>>();
             return builder.Build();
         }
 

@@ -98,9 +98,13 @@ namespace RhythmCodex.Wav.Converters
                 {
                     var (error, _, d, s1) = FindBestNybble(buffer[i], sample1, coeff1, sample2, coeff2, delta);
                     coeffError += error;
+                    coeffError /= 2;
                     sample2 = sample1;
                     sample1 = s1;
                     delta = d;
+
+                    if (coeffError > bestCoeffError)
+                        break;
                 }
 
                 if (coeffError < bestCoeffError)

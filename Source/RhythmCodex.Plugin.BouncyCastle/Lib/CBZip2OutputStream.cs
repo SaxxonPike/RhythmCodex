@@ -384,21 +384,6 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib
 //            Close();
 //        }
 
-#if PORTABLE
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (closed)
-                    return;
-
-                Finish();
-                closed = true;
-                Platform.Dispose(this.bsStream);
-            }
-            base.Dispose(disposing);
-        }
-#else
         public override void Close() {
             if (closed)
                 return;
@@ -406,11 +391,10 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib
             Finish();
 
             closed = true;
-            Platform.Dispose(this.bsStream);
+            Platform.Dispose(bsStream);
 
             base.Close();
         }
-#endif
 
         public void Finish() {
             if (finished) {

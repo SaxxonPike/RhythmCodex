@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ClientCommon;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.IoC;
@@ -32,47 +33,44 @@ namespace RhythmCodex.Cli.Modules
             {
                 Name = "decode-dds",
                 Description = "Decodes a DDS image.",
-                Execute = DecodeDds
+                TaskFactory = DecodeDds
             },
             new Command
             {
                 Name = "decode-tga",
                 Description = "Decodes a TGA image.",
-                Execute = DecodeTga
+                TaskFactory = DecodeTga
             },
             new Command
             {
                 Name = "decode-tim",
                 Description = "Decodes a TIM image.",
-                Execute = DecodeTim
+                TaskFactory = DecodeTim
             }
         };
 
-        private void DecodeTim(Args args)
+        private ITask DecodeTim(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildGraphicsTask()
                 .WithArgs(args)
-                .CreateDecodeTim()
-                .Run();
+                .CreateDecodeTim();
         }
 
-        private void DecodeDds(Args args)
+        private ITask DecodeDds(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildGraphicsTask()
                 .WithArgs(args)
-                .CreateDecodeDds()
-                .Run();
+                .CreateDecodeDds();
         }
 
-        private void DecodeTga(Args args)
+        private ITask DecodeTga(Args args)
         {
-            _taskFactory
+            return _taskFactory
                 .BuildGraphicsTask()
                 .WithArgs(args)
-                .CreateDecodeTga()
-                .Run();
+                .CreateDecodeTga();
         }
     }
 }

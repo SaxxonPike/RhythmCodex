@@ -16,7 +16,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP
         /// </summary>
         /// <param name="sampleRate">The sample rate.</param>
         /// <param name="frequency">The filter's corner frequency.</param>
-        public BandpassFilter(int sampleRate, double frequency) 
+        public BandpassFilter(double sampleRate, double frequency) 
             : base(sampleRate, frequency)
         {
         }

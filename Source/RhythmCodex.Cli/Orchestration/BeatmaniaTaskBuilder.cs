@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ClientCommon;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Beatmania.Streamers;
@@ -9,7 +10,9 @@ using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
+using RhythmCodex.Djmain;
 using RhythmCodex.Djmain.Converters;
+using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
@@ -21,6 +24,8 @@ using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Providers;
 using RhythmCodex.Statistics;
+using RhythmCodex.Wav.Converters;
+using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Cli.Orchestration
 {
@@ -41,6 +46,8 @@ namespace RhythmCodex.Cli.Orchestration
         private readonly IBeatmaniaPcAudioDecoder _beatmaniaPcAudioDecoder;
         private readonly IEncryptedBeatmaniaPcAudioStreamReader _encryptedBeatmaniaPcAudioStreamReader;
         private readonly IResamplerProvider _resamplerProvider;
+        private readonly IDjmainChartEventStreamWriter _djmainChartEventStreamWriter;
+        private readonly IChartRenderer _chartRenderer;
 
         public BeatmaniaTaskBuilder(
             IFileSystem fileSystem,
@@ -58,7 +65,9 @@ namespace RhythmCodex.Cli.Orchestration
             IUsedSamplesCounter usedSamplesCounter,
             IBeatmaniaPcAudioDecoder beatmaniaPcAudioDecoder,
             IEncryptedBeatmaniaPcAudioStreamReader encryptedBeatmaniaPcAudioStreamReader,
-            IResamplerProvider resamplerProvider
+            IResamplerProvider resamplerProvider,
+            IDjmainChartEventStreamWriter djmainChartEventStreamWriter,
+            IChartRenderer chartRenderer
         )
             : base(fileSystem, logger)
         {
@@ -76,7 +85,14 @@ namespace RhythmCodex.Cli.Orchestration
             _beatmaniaPcAudioDecoder = beatmaniaPcAudioDecoder;
             _encryptedBeatmaniaPcAudioStreamReader = encryptedBeatmaniaPcAudioStreamReader;
             _resamplerProvider = resamplerProvider;
+            _djmainChartEventStreamWriter = djmainChartEventStreamWriter;
+            _chartRenderer = chartRenderer;
         }
+
+        private bool EnableExportingCharts => !Args.Options.ContainsKey("+nocharts");
+        private bool EnableExportingSounds => !Args.Options.ContainsKey("+noaudio");
+        private bool EnableExportingBms => !Args.Options.ContainsKey("+noconvert");
+        private bool EnableExportingRaw => Args.Options.ContainsKey("+raw");
 
         public ITask CreateDecode1()
         {
@@ -138,6 +154,9 @@ namespace RhythmCodex.Cli.Orchestration
                             return newChart;
                         }).ToList();
 
+                        if (!EnableExportingCharts) 
+                            return;
+
                         foreach (var chart in decoded)
                         {
                             chart.PopulateMetricOffsets();
@@ -174,18 +193,22 @@ namespace RhythmCodex.Cli.Orchestration
                         var decrypted = _encryptedBeatmaniaPcAudioStreamReader.Decrypt(stream, stream.Length);
                         var sounds = _beatmaniaPcAudioStreamReader.Read(new MemoryStream(decrypted), decrypted.Length);
                         var index = 1;
-                        foreach (var sound in sounds)
-                        {
-                            var decoded = _beatmaniaPcAudioDecoder.Decode(sound);
-                            var outSound = _audioDsp.ApplyEffects(decoded);
-                            using (var outStream =
-                                OpenWriteMulti(task, file, i => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
-                            {
-                                var encoded = _riffPcm16SoundEncoder.Encode(outSound);
-                                _riffStreamWriter.Write(outStream, encoded);
-                            }
 
-                            index++;
+                        if (EnableExportingSounds)
+                        {
+                            foreach (var sound in sounds)
+                            {
+                                var decoded = _beatmaniaPcAudioDecoder.Decode(sound);
+                                var outSound = _audioDsp.ApplyEffects(decoded);
+                                using (var outStream =
+                                    OpenWriteMulti(task, file, i => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
+                                {
+                                    var encoded = _riffPcm16SoundEncoder.Encode(outSound);
+                                    _riffStreamWriter.Write(outStream, encoded);
+                                }
+
+                                index++;
+                            }
                         }
                     }
                 });
@@ -207,15 +230,96 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
+                    var options = new DjmainDecodeOptions
+                    {
+                        DisableAudio = !EnableExportingSounds
+                    };
+                    
                     using (var stream = OpenRead(task, file))
                     {
+                        long offset = 0;
                         var chunks = _djmainChunkStreamReader.Read(stream);
                         foreach (var chunk in chunks)
                         {
                             var chunkPath = $"{Alphabet.EncodeNumeric(chunk.Id, 4)}";
-                            var decoded = _djmainDecoder.Decode(chunk);
+                            var decoded = _djmainDecoder.Decode(chunk, options);
                             ExportKeysoundedChart(task, file, chunkPath, $"{Alphabet.EncodeNumeric(chunk.Id, 4)}",
                                 decoded.Charts, decoded.Samples);
+
+                            if (EnableExportingRaw)
+                            {
+                                foreach (var (key, value) in decoded.RawCharts)
+                                {
+                                    using (var rawChartStream = OpenWriteMulti(task, file,
+                                        _ => Path.Combine(chunkPath, $"{Alphabet.EncodeNumeric(key, 2)}.cs5")))
+                                    {
+                                        _djmainChartEventStreamWriter.Write(rawChartStream, value);
+                                        rawChartStream.Flush();
+                                    }
+                                }
+                            }
+
+                            if (file.Length != null)
+                            {
+                                offset += DjmainConstants.ChunkSize;
+                                task.Progress = offset / (float)file.Length;
+                            }
+                        }
+                    }
+                });
+
+                return true;
+            });
+        }
+
+        public ITask CreateRenderDjmainGst()
+        {
+            return Build("Render DJMAIN GST", task =>
+            {
+                var files = GetInputFiles(task);
+                if (!files.Any())
+                {
+                    task.Message = "No input files.";
+                    return false;
+                }
+
+                ParallelProgress(task, files, file =>
+                {
+                    var options = new DjmainDecodeOptions
+                    {
+                        DoNotConsolidateSamples = true
+                    };
+
+                    var renderOptions = new ChartRendererOptions();
+                    
+                    using (var stream = OpenRead(task, file))
+                    {
+                        long offset = 0;
+                        var chunks = _djmainChunkStreamReader.Read(stream);
+                        foreach (var chunk in chunks)
+                        {
+                            var chunkPath = $"{Alphabet.EncodeNumeric(chunk.Id, 4)}";
+                            var decoded = _djmainDecoder.Decode(chunk, options);
+
+                            foreach (var chart in decoded.Charts)
+                            {
+                                using (var outStream = OpenWriteMulti(task, file,
+                                    i => Path.Combine(chunkPath,
+                                        $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.render.wav")))
+                                {
+                                    var rendered = _chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
+                                    var normalized = _audioDsp.Normalize(rendered, 1.0f, true);
+                                    var encoded = _riffPcm16SoundEncoder.Encode(normalized);
+                                    _riffStreamWriter.Write(outStream, encoded);
+                                    outStream.Flush();
+                                }
+                            }
+
+                            if (file.Length != null)
+                            {
+                                offset += DjmainConstants.ChunkSize;
+                                task.Progress = offset / (float)file.Length;
+                            }
                         }
                     }
                 });
@@ -231,31 +335,37 @@ namespace RhythmCodex.Cli.Orchestration
                 .SelectMany(chart => _usedSamplesCounter.GetUsedSamples(chart.Events))
                 .Distinct()
                 .ToArray();
-            
-            foreach (var sound in sounds.Where(s => usedSamples.Contains((int)s[NumericData.Id])))
+
+            if (EnableExportingSounds)
             {
-                var outSound = _audioDsp.ApplyEffects(_audioDsp.ApplyResampling(sound, _resamplerProvider.GetBest(), 44100));
-                using (var outStream =
-                    OpenWriteMulti(task, file,
-                        i => Path.Combine(path,
-                            $"{Alphabet.EncodeAlphanumeric((int) sound[NumericData.Id], 4)}.wav")))
+                foreach (var sound in sounds.Where(s => usedSamples.Contains((int)s[NumericData.Id])))
                 {
-                    var encoded = _riffPcm16SoundEncoder.Encode(outSound);
-                    _riffStreamWriter.Write(outStream, encoded);
+                    var outSound = _audioDsp.ApplyEffects(_audioDsp.ApplyResampling(sound, _resamplerProvider.GetBest(), 44100));
+                    using (var outStream =
+                        OpenWriteMulti(task, file,
+                            i => Path.Combine(path,
+                                $"{Alphabet.EncodeAlphanumeric((int) sound[NumericData.Id], 4)}.wav")))
+                    {
+                        var encoded = _riffPcm16SoundEncoder.Encode(outSound);
+                        _riffStreamWriter.Write(outStream, encoded);
+                    }
                 }
             }
 
-            foreach (var chart in charts)
+            if (EnableExportingCharts)
             {
-                chart.PopulateMetricOffsets();
-                chart[StringData.Title] = id;
-                var encoded = _bmsEncoder.Encode(chart);
-                using (var outStream =
-                    OpenWriteMulti(task, file,
-                        i => Path.Combine(path,
-                            $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme")))
+                foreach (var chart in charts)
                 {
-                    _bmsStreamWriter.Write(outStream, encoded);
+                    chart.PopulateMetricOffsets();
+                    chart[StringData.Title] = id;
+                    var encoded = _bmsEncoder.Encode(chart);
+                    using (var outStream =
+                        OpenWriteMulti(task, file,
+                            i => Path.Combine(path,
+                                $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme")))
+                    {
+                        _bmsStreamWriter.Write(outStream, encoded);
+                    }
                 }
             }
         }

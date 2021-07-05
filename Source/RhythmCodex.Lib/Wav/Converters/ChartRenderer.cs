@@ -9,6 +9,7 @@ using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Providers;
+using RhythmCodex.Wav.Models;
 
 namespace RhythmCodex.Wav.Converters
 {
@@ -43,18 +44,18 @@ namespace RhythmCodex.Wav.Converters
             public BigRational? SoundIndex { get; set; }
         }
 
-        public ISound Render(IEnumerable<IEvent> inEvents, IEnumerable<ISound> inSounds, BigRational sampleRate, BigRational? volume = null)
+        public ISound Render(IEnumerable<IEvent> inEvents, IEnumerable<ISound> inSounds, ChartRendererOptions options)
         {
             var state = new List<ChannelState>();
             var sampleMap = new List<SampleMapping>();
-            var masterVolume = (float) (volume ?? BigRational.One);
+            var masterVolume = (float) (options.Volume ?? BigRational.One);
 
             var events = inEvents.AsList();
             if (events.Any(ev => ev[NumericData.LinearOffset] == null))
                 throw new RhythmCodexException("Can't render without all events having linear offsets.");
-
+            
             var sounds = inSounds
-                .Select(s => _audioDsp.ApplyResampling(_audioDsp.ApplyEffects(s), _resamplerProvider.GetBest(), sampleRate))
+                .Select(s => _audioDsp.ApplyResampling(_audioDsp.ApplyEffects(s), _resamplerProvider.GetBest(), options.SampleRate))
                 .Where(s => s != null)
                 .ToArray();
 
@@ -158,7 +159,7 @@ namespace RhythmCodex.Wav.Converters
 
             foreach (var tick in eventTicks)
             {
-                var nowSample = (int) (tick.Key.Value * sampleRate);
+                var nowSample = (int) (tick.Key.Value * options.SampleRate);
                 var tickEvents = tick.ToArray();
 
                 for (; lastSample < nowSample; lastSample++)
@@ -177,6 +178,8 @@ namespace RhythmCodex.Wav.Converters
                     var column = ev[NumericData.Column] ?? BigRational.Zero;
                     if (ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true)
                         column += 1000;
+                    if (options.UseSourceDataForSamples && ev[NumericData.SourceData] != null)
+                        MapSample(ev[NumericData.Player], column, ev[NumericData.SourceData]);
                     StartUserSample(ev[NumericData.Player], column);
                 }
 
@@ -193,7 +196,7 @@ namespace RhythmCodex.Wav.Converters
 
             return new Sound
             {
-                [NumericData.Rate] = sampleRate,
+                [NumericData.Rate] = options.SampleRate,
                 Samples = new List<ISample>
                 {
                     new Sample {Data = mixdownLeft},

@@ -67,6 +67,8 @@
         <EmbeddedResource Include="Xact\xwb.zip" />
         <None Remove="BeatmaniaPs2\bm2dxps2encchart.zip" />
         <EmbeddedResource Include="BeatmaniaPs2\bm2dxps2encchart.zip" />
+        <None Remove="Xbox\kas.zip" />
+        <EmbeddedResource Include="Xbox\kas.zip" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Ddr" />

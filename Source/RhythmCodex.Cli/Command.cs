@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using ClientCommon;
 using RhythmCodex.Cli.Helpers;
+using RhythmCodex.Cli.Orchestration.Infrastructure;
 
 namespace RhythmCodex.Cli
 {
@@ -10,10 +12,10 @@ namespace RhythmCodex.Cli
         /// <inheritdoc />
         public string Name { get; set; }
         /// <inheritdoc />
-        public IEnumerable<ICommandParameter> Parameters { get; set; } = new List<ICommandParameter>();
+        public IEnumerable<ICommandParameter> Parameters { get; set; } = Array.Empty<ICommandParameter>();
         /// <inheritdoc />
         public string Description { get; set; }
         /// <inheritdoc />
-        public Action<Args> Execute { get; set; } = args => throw new Exception("Execute is not defined.");
+        public Func<Args, ITask> TaskFactory { get; set; } = args => throw new Exception("Execute is not defined.");
     }
 }

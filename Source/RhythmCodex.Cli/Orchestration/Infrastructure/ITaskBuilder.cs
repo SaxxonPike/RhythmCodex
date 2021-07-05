@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ClientCommon;
 using RhythmCodex.Cli.Helpers;
 
 namespace RhythmCodex.Cli.Orchestration.Infrastructure

@@ -36,6 +36,17 @@ namespace RhythmCodex.Djmain.Converters
             {
                 var props = info.Value;
 
+                if (props.Frequency == 0)
+                    continue;
+                
+                // There's fuckery in some of the samples. This addresses a specific anomaly in the input
+                // data where the whole line is 0x0A repeated.
+                if (props.Frequency == 0x0A0A &&
+                    props.Channel == 0x0A &&
+                    props.Panning == 0x0A &&
+                    props.Volume == 0x0A)
+                    continue;
+
                 IList<byte> GetSampleData()
                 {
                     switch (props.SampleType & 0xC)

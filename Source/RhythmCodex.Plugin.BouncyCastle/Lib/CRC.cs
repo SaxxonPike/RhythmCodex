@@ -124,7 +124,7 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib
             if (temp < 0) {
                 temp = 256 + temp;
             }
-            globalCrc = (globalCrc << 8) ^ CRC.crc32Table[temp];
+            globalCrc = (globalCrc << 8) ^ crc32Table[temp];
         }
 
         internal int globalCrc;

@@ -16,23 +16,34 @@ namespace RhythmCodex.Gui.FluentForms
         public Font Font { get; set; }
         public int RowSpan { get; set; } = 1;
         public int ColumnSpan { get; set; } = 1;
+        public Size MinimumSize { get; set; } = Size.Empty;
+        public Size MaximumSize { get; set; } = Size.Empty;
+        public Color? ForeColor { get; set; }
+        public Color? BackColor { get; set; }
 
         protected abstract Control OnBuild(FluentState state);
 
-        public virtual Control Build(FluentState state)
+        public virtual Control Build(FluentState state, Control parent = null)
         {
             var result = OnBuild(state);
             if (RowSpan != 1 || ColumnSpan != 1)
             {
                 state.Callbacks.Add(() =>
                 {
-                    if (result?.Parent is TableLayoutPanel tlp)
+                    var p = result?.Parent ?? parent;
+                    if (p is TableLayoutPanel tlp)
                     {
                         tlp.SetRowSpan(result, RowSpan);
                         tlp.SetColumnSpan(result, ColumnSpan);
                     }
                 });
             }
+
+            if (ForeColor.HasValue)
+                result.ForeColor = ForeColor.Value;
+            if (BackColor.HasValue)
+                result.BackColor = BackColor.Value;
+
             return result;
         }
 
@@ -42,12 +53,25 @@ namespace RhythmCodex.Gui.FluentForms
         protected override void SetDefault(Control control)
         {
             base.SetDefault(control);
-            control.Anchor = Anchor;
-            control.Dock = Dock;
+
+            // MSDN:
+            // The Anchor and Dock properties are mutually exclusive.
+            // Only one can be set at a time, and the last one set takes precedence.
+            if (Anchor != AnchorStyles.None)
+                control.Anchor = Anchor;
+            else if (Dock != DockStyle.None)
+                control.Dock = Dock;
+
             control.Padding = Padding;
 
             if (Font != null)
                 control.Font = Font;
+
+            if (MinimumSize != Size.Empty)
+                control.MinimumSize = MinimumSize;
+
+            if (MaximumSize != Size.Empty)
+                control.MaximumSize = MaximumSize;
         }
     }
 
@@ -57,14 +81,14 @@ namespace RhythmCodex.Gui.FluentForms
         public override Type Type => typeof(TControl);
 
         public Action<FluentContext<FluentControl<TControl>, TControl>> AfterBuild { get; set; }
-        
+
         public Action OnClick { get; set; }
         public Action OnEnter { get; set; }
         public Action OnLeave { get; set; }
 
-        public override Control Build(FluentState state)
+        public override Control Build(FluentState state, Control parent = null)
         {
-            var result = base.Build(state);
+            var result = base.Build(state, parent);
             state.Callbacks.Add(() => AfterBuild?.Invoke(
                 new FluentContext<FluentControl<TControl>, TControl>(this, (TControl) result, state)));
             return result;
@@ -93,6 +117,7 @@ namespace RhythmCodex.Gui.FluentForms
     public abstract class FluentControl<TControl, TValue> : FluentControl<TControl>
         where TControl : Control
     {
+        public TValue InitialValue { get; set; }
         public Action<TControl, TValue> OnChange { get; set; }
     }
 }
