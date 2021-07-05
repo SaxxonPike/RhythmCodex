@@ -9,5 +9,6 @@
         void BmsRender(string files, string outPath);
         void BeatmaniaRenderDjmainGst(string files, string outPath);
         void ArcExtract(string files, string outPath);
+        void HbnExtract(string files, string outPath);
     }
 }

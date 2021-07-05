@@ -17,6 +17,7 @@ namespace RhythmCodex.Xbox.Integration
             using (var stream = File.OpenRead(inputPath))
             {
                 var filesystem = reader.Read(stream, stream.Length);
+                
             }
         }
     }

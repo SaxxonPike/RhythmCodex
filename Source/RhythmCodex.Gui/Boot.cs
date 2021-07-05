@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Autofac;
+using ClientCommon;
 using RhythmCodex.Cli;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Gui.Forms;
@@ -46,6 +47,7 @@ namespace RhythmCodex.Gui
             builder.RegisterModule<AppInfrastructureAutofacModule>();
             builder.RegisterModule<AppAutofacModule<App>>();
             builder.RegisterModule<AppAutofacModule<FormFactory>>();
+            builder.RegisterModule<AppAutofacModule<ArgParser>>();
             return builder.Build();
         }
 

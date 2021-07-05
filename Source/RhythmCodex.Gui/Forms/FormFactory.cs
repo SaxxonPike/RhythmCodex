@@ -42,6 +42,8 @@ namespace RhythmCodex.Gui.Forms
             public static readonly string ProgressTable = Id(nameof(ProgressTable));
             public static readonly string ArcExtractPath = Id(nameof(ArcExtractPath));
             public static readonly string ArcExtractStart = Id(nameof(ArcExtractStart));
+            public static readonly string HbnExtractPath = Id(nameof(HbnExtractPath));
+            public static readonly string HbnExtractStart = Id(nameof(HbnExtractStart));
 
             public static readonly string BeatmaniaDecodeDjmainHddSkipAudio =
                 Id(nameof(BeatmaniaDecodeDjmainHddSkipAudio));
@@ -282,7 +284,12 @@ namespace RhythmCodex.Gui.Forms
                     },
                     new FluentTabPage
                     {
-                        Text = "Xbox"
+                        Text = "Xbox",
+                        AutoScroll = true,
+                        Controls = new List<FluentControl>
+                        {
+                            CreateMainFormDanceDanceRevolutionXboxPage()
+                        }
                     },
                     new FluentTabPage
                     {
@@ -353,6 +360,27 @@ namespace RhythmCodex.Gui.Forms
                             .Concat(_controlFactory
                                 .CreateBigButton(Ids.SsqDecodeStart, "Go",
                                     SsqDecode))
+                        , false)
+                }
+            };
+        }
+
+        private FluentControl CreateMainFormDanceDanceRevolutionXboxPage()
+        {
+            return new FluentPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = false,
+                AutoScroll = true,
+                Controls = new List<FluentControl>
+                {
+                    _controlFactory.CreateStandardTable(null,
+                        _controlFactory.CreateSpacer("Extract files from HBN+BIN blobs")
+                            .Concat(_controlFactory
+                                .CreateFileSelect(Ids.HbnExtractPath, "HBN file", false))
+                            .Concat(_controlFactory
+                                .CreateBigButton(Ids.HbnExtractStart, "Go",
+                                    HbnExtract))
                         , false)
                 }
             };
@@ -494,6 +522,14 @@ namespace RhythmCodex.Gui.Forms
             ShowLogTab(context);
             _guiTasks.ArcExtract(
                 context.GetControl<TextBox>(Ids.ArcExtractPath).Text,
+                context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
+        }
+
+        private void HbnExtract(FluentContext context)
+        {
+            ShowLogTab(context);
+            _guiTasks.HbnExtract(
+                context.GetControl<TextBox>(Ids.HbnExtractPath).Text,
                 context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
         }
 

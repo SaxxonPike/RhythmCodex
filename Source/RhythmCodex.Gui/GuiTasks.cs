@@ -141,5 +141,13 @@ namespace RhythmCodex.Gui
             AddOutPath(args, outPath);
             Run(args);
         }
+
+        public void HbnExtract(string files, string outPath)
+        {
+            var args = new List<string> {"xbox", "extract-hbn"};
+            AddFiles(args, files);
+            AddOutPath(args, outPath);
+            Run(args);
+        }
     }
 }
