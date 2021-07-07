@@ -16,8 +16,8 @@ public class SsqDecoderTests : BaseUnitTestFixture<SsqDecoder, ISsqDecoder>
         // Arrange.
         var chunks = new[]
         {
-            new SsqChunk {Data = Create<byte[]>(), Parameter0 = Parameter0.Timings},
-            new SsqChunk {Data = Create<byte[]>(), Parameter0 = Parameter0.Steps}
+            new SsqChunk {Data = Create<byte[]>(), Parameter0 = SsqConstants.Parameter0.Timings},
+            new SsqChunk {Data = Create<byte[]>(), Parameter0 = SsqConstants.Parameter0.Steps}
         };
 
         var timings = CreateMany<Timing>().ToList();

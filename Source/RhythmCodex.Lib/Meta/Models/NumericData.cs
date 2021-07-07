@@ -42,5 +42,6 @@ public enum NumericData
     Meter,
     NoteCount,
     SourceRate,
-    SourceOffset
+    SourceOffset,
+    ColumnCount
 }

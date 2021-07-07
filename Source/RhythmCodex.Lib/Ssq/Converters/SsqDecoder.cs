@@ -40,7 +40,10 @@ public class SsqDecoder(
                     panelMapperSelector.Select(sc.Steps, info)),
                 [NumericData.Id] = sc.Id,
                 [StringData.Difficulty] = info.Difficulty,
-                [StringData.Type] = $"{SmGameTypes.Dance}-{info.Type}".ToLowerInvariant()
+                [StringData.Type] = $"{SmGameTypes.Dance}-{info.Type}".ToLowerInvariant(),
+                [NumericData.ColumnCount] = info.PanelCount,
+                [NumericData.SourceRate] = timings.Rate,
+                [NumericData.Rate] = timings.Rate
             };
 
             var firstTiming = timings.Timings.OrderBy(t => t.LinearOffset).First();

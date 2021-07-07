@@ -9,12 +9,12 @@ public abstract class DdrPanelMapperBase : IPanelMapper
 {
     public abstract int PanelCount { get; }
     public abstract int PlayerCount { get; }
-    protected abstract Dictionary<int, IPanelMapping> PanelMap { get; }
+    protected abstract Dictionary<int, PanelMapping> PanelMap { get; }
 
-    public IPanelMapping? Map(int panel) =>
+    public PanelMapping? Map(int panel) =>
         PanelMap.GetValueOrDefault(panel);
 
-    public int? Map(IPanelMapping mapping)
+    public int? Map(PanelMapping mapping)
     {
         var mapped = PanelMap
             .SingleOrDefault(kv => kv.Value.Panel == mapping.Panel &&
@@ -33,7 +33,7 @@ public abstract class DdrPanelMapperBase : IPanelMapper
             .Count() == requiredPanels.Count;
     }
 
-    public bool ShouldMap(IEnumerable<IPanelMapping> panels)
+    public bool ShouldMap(IEnumerable<PanelMapping> panels)
     {
         var requiredPanelMappings = PanelMap.Values;
         var inPanels = panels.AsCollection();
@@ -41,10 +41,10 @@ public abstract class DdrPanelMapperBase : IPanelMapper
         return requiredPanelMappings.All(InputMatchesMapping) &&
                inPanels.All(MappingMatchesInput);
 
-        bool MappingMatchesInput(IPanelMapping p) =>
+        bool MappingMatchesInput(PanelMapping p) =>
             requiredPanelMappings.Any(pm => p.Panel == pm.Panel && p.Player == pm.Player);
 
-        bool InputMatchesMapping(IPanelMapping pm) =>
+        bool InputMatchesMapping(PanelMapping pm) =>
             inPanels.Any(p => p.Panel == pm.Panel && p.Player == pm.Player);
     }
 }

@@ -193,9 +193,27 @@ public static class ChartExtensions
             throw new RhythmCodexException(
                 $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
             
-        referenceMetric = referenceMetric ?? BigRational.Zero;
-        referenceLinear = referenceLinear ?? BigRational.Zero;
+        referenceMetric ??= BigRational.Zero;
+        referenceLinear ??= BigRational.Zero;
         var linearRate = GetLinearRate(bpm.Value);
         return ((BigRational.Zero - referenceMetric) * linearRate + referenceLinear).Value;
+    }
+    
+    public static BigRational GetMetricLength(this Chart chart)
+    {
+        if (chart.Events == null)
+            return BigRational.Zero;
+
+        var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.MetricOffset] != null);
+        return eventsWithOffset.Max(ev => ev[NumericData.MetricOffset]) ?? BigRational.Zero;
+    }
+
+    public static BigRational GetLinearLength(this Chart chart)
+    {
+        if (chart.Events == null)
+            return BigRational.Zero;
+
+        var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.LinearOffset] != null);
+        return eventsWithOffset.Max(ev => ev[NumericData.LinearOffset]) ?? BigRational.Zero;
     }
 }

@@ -20,7 +20,7 @@ public class SsqChunkFilter(
         int? rate = null;
         var result = new TimingChunk
         {
-            Timings = chunks.Where(c => c.Parameter0 == Parameter0.Timings)
+            Timings = chunks.Where(c => c.Parameter0 == SsqConstants.Parameter0.Timings)
                 .SelectMany(tc =>
                 {
                     rate = rate ?? tc.Parameter1;
@@ -36,7 +36,7 @@ public class SsqChunkFilter(
     public List<Trigger> GetTriggers(IEnumerable<SsqChunk> chunks)
     {
         var result = chunks
-            .Where(c => c.Parameter0 == Parameter0.Triggers)
+            .Where(c => c.Parameter0 == SsqConstants.Parameter0.Triggers)
             .SelectMany(tc => triggerChunkDecoder.Convert(tc.Data.Span))
             .ToList();
 
@@ -45,7 +45,7 @@ public class SsqChunkFilter(
 
     public List<StepChunk> GetSteps(IEnumerable<SsqChunk> chunks)
     {
-        var result = chunks.Where(c => c.Parameter0 == Parameter0.Steps)
+        var result = chunks.Where(c => c.Parameter0 == SsqConstants.Parameter0.Steps)
             .Select(c => new StepChunk
             {
                 Steps = stepChunkDecoder.Convert(c.Data),
@@ -63,8 +63,8 @@ public class SsqChunkFilter(
 
     public List<SsqInfoChunk> GetInfos(IEnumerable<SsqChunk> chunks)
     {
-        var result = chunks.Where(c => c.Parameter0 == Parameter0.Meta)
-            .Select(c => ssqInfoChunkDecoder.Decode(c))
+        var result = chunks.Where(c => c.Parameter0 == SsqConstants.Parameter0.Meta)
+            .Select(ssqInfoChunkDecoder.Decode)
             .ToList();
 
         return result;

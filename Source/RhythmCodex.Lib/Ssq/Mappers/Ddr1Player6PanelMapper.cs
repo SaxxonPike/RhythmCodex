@@ -10,7 +10,7 @@ public class Ddr1Player6PanelMapper : DdrPanelMapperBase
     public sealed override int PanelCount => 6;
     public sealed override int PlayerCount => 1;
 
-    protected override Dictionary<int, IPanelMapping> PanelMap => new()
+    protected override Dictionary<int, PanelMapping> PanelMap => new()
     {
         {0, new PanelMapping {Player = 0, Panel = 0}},
         {1, new PanelMapping {Player = 0, Panel = 2}},

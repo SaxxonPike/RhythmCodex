@@ -126,7 +126,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         // Assert.
         output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[FlagData.End].Value.ShouldBeTrue();
+        ev[FlagData.End]!.Value.ShouldBeTrue();
     }
 
     [Test]
