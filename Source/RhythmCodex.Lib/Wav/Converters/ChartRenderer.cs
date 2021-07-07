@@ -44,7 +44,7 @@ namespace RhythmCodex.Wav.Converters
             public BigRational? SoundIndex { get; set; }
         }
 
-        public ISound Render(IEnumerable<IEvent> inEvents, IEnumerable<ISound> inSounds, ChartRendererOptions options)
+        public ISound Render(IEnumerable<Event> inEvents, IEnumerable<ISound> inSounds, ChartRendererOptions options)
         {
             var state = new List<ChannelState>();
             var sampleMap = new List<SampleMapping>();

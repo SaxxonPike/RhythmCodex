@@ -6,9 +6,9 @@ namespace RhythmCodex.Djmain.Converters
 {
     public class DjmainSampleMapConsolidator : IDjmainSampleMapConsolidator
     {
-        public (IDictionary<int, ISound> sounds, IDictionary<int, IChart> charts) Consolidate(
+        public (IDictionary<int, ISound> sounds, IDictionary<int, Chart> charts) Consolidate(
             IEnumerable<KeyValuePair<int, IEnumerable<KeyValuePair<int, ISound>>>> sounds,
-            IEnumerable<KeyValuePair<int, IChart>> charts, 
+            IEnumerable<KeyValuePair<int, Chart>> charts, 
             IEnumerable<KeyValuePair<int, int>> chartMap)
         {
             throw new System.NotImplementedException();
@@ -17,9 +17,9 @@ namespace RhythmCodex.Djmain.Converters
 
     public interface IDjmainSampleMapConsolidator
     {
-        (IDictionary<int, ISound> sounds, IDictionary<int, IChart> charts) Consolidate(
+        (IDictionary<int, ISound> sounds, IDictionary<int, Chart> charts) Consolidate(
             IEnumerable<KeyValuePair<int, IEnumerable<KeyValuePair<int, ISound>>>> sounds, 
-            IEnumerable<KeyValuePair<int, IChart>> charts,
+            IEnumerable<KeyValuePair<int, Chart>> charts,
             IEnumerable<KeyValuePair<int, int>> chartMap);
     }
 }

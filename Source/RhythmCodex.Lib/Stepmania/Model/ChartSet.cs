@@ -9,6 +9,6 @@ namespace RhythmCodex.Stepmania.Model
     public class ChartSet
     {
         public IMetadata Metadata { get; set; }
-        public IList<IChart> Charts { get; set; }
+        public IList<Chart> Charts { get; set; }
     }
 }

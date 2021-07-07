@@ -7,6 +7,7 @@ using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Step2.Mappers;
 using RhythmCodex.Step2.Models;
+using RhythmCodex.Stepmania.Model;
 
 namespace RhythmCodex.Step2.Converters
 {
@@ -20,7 +21,7 @@ namespace RhythmCodex.Step2.Converters
             _step2EventMapper = step2EventMapper;
         }
         
-        public IChart Decode(Step2Chunk chunk)
+        public Chart Decode(Step2Chunk chunk)
         {
             var stepBlocks = DecodeStepBlocks(chunk);
 
@@ -33,7 +34,7 @@ namespace RhythmCodex.Step2.Converters
             var events = steps
                 .SelectMany(step =>
                 {
-                    var result = new List<IEvent>();
+                    var result = new List<Event>();
                     var panels = _step2EventMapper.Map(step.Panels).ToList();
                     foreach (var panel in panels)
                     {
@@ -54,13 +55,12 @@ namespace RhythmCodex.Step2.Converters
                 .ToList();
 
             var description = $"step2 - {events.Count(ev => ev[FlagData.Note] == true)} panels - {steps.Count(s => s.Panels != 0)} steps";
-            var difficulty = "Medium";
-            var type = $"dance-{(isSingleChart ? "single" : "double")}"; 
+            var type = $"{SmGameTypes.Dance}-{(isSingleChart ? SmGameTypes.Single : SmGameTypes.Double)}"; 
 
             return new Chart
             {
                 Events = events,
-                [StringData.Difficulty] = difficulty,
+                [StringData.Difficulty] = SmNotesDifficulties.Medium,
                 [StringData.Type] = type,
                 [StringData.Description] = description
             };

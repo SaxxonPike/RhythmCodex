@@ -116,7 +116,7 @@ namespace RhythmCodex.Bms.Converters
             }
         }
 
-        private IEnumerable<IEvent> GetEvents(IEnumerable<BmsCommand> commands)
+        private IEnumerable<Event> GetEvents(IEnumerable<BmsCommand> commands)
         {
             // Excluded tags (they are processed separately)
 
@@ -140,7 +140,7 @@ namespace RhythmCodex.Bms.Converters
             }
         }
 
-        private IEnumerable<IEvent> GetMeasureEvents(BmsCommand command, IDictionary<int, BigRational> bpmMap)
+        private IEnumerable<Event> GetMeasureEvents(BmsCommand command, IDictionary<int, BigRational> bpmMap)
         {
             var measure = Alphabet.DecodeNumeric(command.Name.AsSpan(0, 3));
             var lane = Alphabet.DecodeHex(command.Name.AsSpan(3, 2));

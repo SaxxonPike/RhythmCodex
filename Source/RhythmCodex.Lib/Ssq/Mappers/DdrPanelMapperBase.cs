@@ -9,16 +9,16 @@ namespace RhythmCodex.Ssq.Mappers
     {
         public abstract int PanelCount { get; }
         public abstract int PlayerCount { get; }
-        protected abstract IDictionary<int, IPanelMapping> PanelMap { get; }
+        protected abstract IDictionary<int, PanelMapping> PanelMap { get; }
 
-        public IPanelMapping Map(int panel)
+        public PanelMapping Map(int panel)
         {
-            if (!PanelMap.ContainsKey(panel))
-                return null;
-            return PanelMap[panel];
+            return !PanelMap.ContainsKey(panel) 
+                ? null 
+                : PanelMap[panel];
         }
 
-        public int? Map(IPanelMapping mapping)
+        public int? Map(PanelMapping mapping)
         {
             var mapped = PanelMap
                 .SingleOrDefault(kv => kv.Value.Panel == mapping.Panel && kv.Value.Player == mapping.Player);
@@ -34,7 +34,7 @@ namespace RhythmCodex.Ssq.Mappers
                        .Count() == requiredPanels.Count;
         }
 
-        public bool ShouldMap(IEnumerable<IPanelMapping> panels)
+        public bool ShouldMap(IEnumerable<PanelMapping> panels)
         {
             var requiredPanelMappings = PanelMap.Values;
             var inPanels = panels.AsList();

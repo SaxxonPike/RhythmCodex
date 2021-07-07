@@ -80,7 +80,7 @@ namespace RhythmCodex
             {
                 typeof(ServiceAttribute).Assembly,
                 typeof(TSubject).Assembly
-            };
+            }.Distinct();
 
             foreach (var assembly in assemblies)
                 builder.RegisterAssemblyTypes(assembly)

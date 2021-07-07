@@ -31,7 +31,7 @@ namespace RhythmCodex.Ssq.Converters
             _ssqChunkFilter = ssqChunkFilter;
         }
 
-        public IList<IChart> Decode(IEnumerable<SsqChunk> data)
+        public IList<Chart> Decode(IEnumerable<SsqChunk> data)
         {
             var chunks = data.AsList();
 
@@ -53,7 +53,10 @@ namespace RhythmCodex.Ssq.Converters
                         .AsList(),
                     [NumericData.Id] = sc.Id,
                     [StringData.Difficulty] = info.Difficulty,
-                    [StringData.Type] = $"{SmGameTypes.Dance}-{info.Type}".ToLowerInvariant()
+                    [StringData.Type] = $"{SmGameTypes.Dance}-{info.Type}".ToLowerInvariant(),
+                    [NumericData.ColumnCount] = info.PanelCount,
+                    [NumericData.SourceRate] = timings.Rate,
+                    [NumericData.Rate] = timings.Rate
                 };
 
                 var firstTiming = timings.Timings.OrderBy(t => t.LinearOffset).First();
@@ -115,7 +118,7 @@ namespace RhythmCodex.Ssq.Converters
                 return chart;
             });
 
-            return charts.Cast<IChart>().AsList();
+            return charts.AsList();
         }
     }
 }

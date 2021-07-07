@@ -117,7 +117,7 @@ namespace RhythmCodex.Stepmania.Converters
                 .ToList();
         }
 
-        private IEnumerable<TimedEvent> GetBpmEvents(IEnumerable<IChart> charts)
+        private IEnumerable<TimedEvent> GetBpmEvents(IEnumerable<Chart> charts)
         {
             var bpms = charts
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
@@ -161,7 +161,7 @@ namespace RhythmCodex.Stepmania.Converters
                     new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value});
         }
 
-        private IEnumerable<TimedEvent> GetStopEvents(IEnumerable<IChart> charts)
+        private IEnumerable<TimedEvent> GetStopEvents(IEnumerable<Chart> charts)
         {
             return charts
                 .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Stop] != null))
@@ -171,7 +171,7 @@ namespace RhythmCodex.Stepmania.Converters
                     new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Stop].Value});
         }
 
-        private IEnumerable<Command> GetTimingCommands(IList<IChart> charts)
+        private IEnumerable<Command> GetTimingCommands(IList<Chart> charts)
         {
             yield return new Command
             {

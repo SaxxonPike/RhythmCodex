@@ -7,6 +7,6 @@ namespace RhythmCodex.Beatmania.Converters
 {
     public interface IBeatmaniaPc1ChartDecoder
     {
-        IChart Decode(IEnumerable<BeatmaniaPc1Event> events, BigRational rate);
+        Chart Decode(IEnumerable<BeatmaniaPc1Event> events, BigRational rate);
     }
 }

@@ -19,7 +19,7 @@ namespace RhythmCodex.Stepmania.Converters
             _logger = logger;
         }
 
-        public IList<Note> Encode(IEnumerable<IEvent> events)
+        public IList<Note> Encode(IEnumerable<Event> events)
         {
             IEnumerable<Note> Do()
             {

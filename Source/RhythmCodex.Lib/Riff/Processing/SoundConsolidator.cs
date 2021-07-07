@@ -25,7 +25,7 @@ namespace RhythmCodex.Riff.Processing
             public int B { get; set; }
         }
         
-        public void Consolidate(IEnumerable<ISound> sounds, IEnumerable<IEvent> events)
+        public void Consolidate(IEnumerable<ISound> sounds, IEnumerable<Event> events)
         {
             // Evaluate if two samples should be combined based on panning and play time.
             bool Compare(IList<PlayedEvent> a, IList<PlayedEvent> b)

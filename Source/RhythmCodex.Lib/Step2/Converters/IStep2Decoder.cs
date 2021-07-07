@@ -5,6 +5,6 @@ namespace RhythmCodex.Step2.Converters
 {
     public interface IStep2Decoder
     {
-        IChart Decode(Step2Chunk chunk);
+        Chart Decode(Step2Chunk chunk);
     }
 }

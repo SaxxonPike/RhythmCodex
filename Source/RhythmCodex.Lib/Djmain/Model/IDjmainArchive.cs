@@ -7,7 +7,7 @@ namespace RhythmCodex.Djmain.Model
     public interface IDjmainArchive
     {
         int Id { get; }
-        IList<IChart> Charts { get; }
+        IList<Chart> Charts { get; }
         IList<ISound> Samples { get; }
         IDictionary<int, IEnumerable<IDjmainChartEvent>> RawCharts { get; set; }
     }

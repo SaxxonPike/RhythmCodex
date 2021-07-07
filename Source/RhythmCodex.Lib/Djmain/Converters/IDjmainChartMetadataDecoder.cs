@@ -5,6 +5,6 @@ namespace RhythmCodex.Djmain.Converters
 {
     public interface IDjmainChartMetadataDecoder
     {
-        void AddMetadata(IChart chart, DjmainChunkFormat format, int index);
+        void AddMetadata(Chart chart, DjmainChunkFormat format, int index);
     }
 }

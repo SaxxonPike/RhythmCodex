@@ -10,7 +10,7 @@ namespace RhythmCodex.Ssq.Mappers
         public sealed override int PanelCount => 6;
         public sealed override int PlayerCount => 1;
 
-        protected override IDictionary<int, IPanelMapping> PanelMap => new Dictionary<int, IPanelMapping>
+        protected override IDictionary<int, PanelMapping> PanelMap => new Dictionary<int, PanelMapping>
         {
             {0, new PanelMapping {Player = 0, Panel = 0}},
             {1, new PanelMapping {Player = 0, Panel = 2}},

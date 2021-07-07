@@ -3,7 +3,6 @@ using System.Linq;
 using ClientCommon;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;

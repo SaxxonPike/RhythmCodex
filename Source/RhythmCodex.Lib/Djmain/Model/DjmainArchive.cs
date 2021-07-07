@@ -8,7 +8,7 @@ namespace RhythmCodex.Djmain.Model
     public class DjmainArchive : IDjmainArchive
     {
         public int Id { get; set; }
-        public IList<IChart> Charts { get; set; }
+        public IList<Chart> Charts { get; set; }
         public IList<ISound> Samples { get; set; }
         public IDictionary<int, IEnumerable<IDjmainChartEvent>> RawCharts { get; set; }
 

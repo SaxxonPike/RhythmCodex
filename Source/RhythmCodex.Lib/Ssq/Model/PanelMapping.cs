@@ -3,9 +3,9 @@
 namespace RhythmCodex.Ssq.Model
 {
     [Model]
-    public class PanelMapping : IPanelMapping
+    public class PanelMapping
     {
-        public int Player { get; set; }
-        public int Panel { get; set; }
+        public int Player { get; init; }
+        public int Panel { get; init; }
     }
 }

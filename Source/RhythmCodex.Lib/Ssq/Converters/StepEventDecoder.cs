@@ -20,9 +20,9 @@ namespace RhythmCodex.Ssq.Converters
             _stepPanelSplitter = stepPanelSplitter;
         }
 
-        public IList<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
+        public IList<Event> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
         {
-            IEnumerable<IEvent> Do()
+            IEnumerable<Event> Do()
             {
                 if (panelMapper == null)
                     throw new RhythmCodexException("Panel mapper cannot be null");

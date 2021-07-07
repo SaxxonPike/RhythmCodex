@@ -45,7 +45,7 @@ namespace RhythmCodex.Bms.Converters
             return builder.ToString();
         }
 
-        public IList<BmsEvent> TranslateNoteEvents(IEnumerable<IEvent> events)
+        public IList<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events)
         {
             IEnumerable<BmsEvent> Do()
             {
@@ -158,7 +158,7 @@ namespace RhythmCodex.Bms.Converters
             return Do().ToList();
         }
 
-        public IList<BmsEvent> TranslateBpmEvents(IEnumerable<IEvent> events)
+        public IList<BmsEvent> TranslateBpmEvents(IEnumerable<Event> events)
         {
             IEnumerable<BmsEvent> Do()
             {

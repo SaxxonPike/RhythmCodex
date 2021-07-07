@@ -9,7 +9,7 @@ namespace RhythmCodex.Statistics
     [Service]
     public class UsedSamplesCounter : IUsedSamplesCounter
     {
-        public ISet<int> GetUsedSamples(IEnumerable<IEvent> events)
+        public ISet<int> GetUsedSamples(IEnumerable<Event> events)
         {
             var result = new HashSet<int>();
             var sounds = new Dictionary<(int, int, bool), int>();

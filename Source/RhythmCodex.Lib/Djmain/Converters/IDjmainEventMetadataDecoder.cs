@@ -5,7 +5,7 @@ namespace RhythmCodex.Djmain.Converters
 {
     public interface IDjmainEventMetadataDecoder
     {
-        void AddBeatmaniaMetadata(IEvent ev, IDjmainChartEvent ce);
-        void AddPopnMetadata(IEvent ev, IDjmainChartEvent ce);
+        void AddBeatmaniaMetadata(Event ev, IDjmainChartEvent ce);
+        void AddPopnMetadata(Event ev, IDjmainChartEvent ce);
     }
 }

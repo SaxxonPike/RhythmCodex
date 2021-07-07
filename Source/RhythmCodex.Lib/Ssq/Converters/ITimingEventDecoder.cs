@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface ITimingEventDecoder
     {
-        IList<IEvent> Decode(TimingChunk timingChunk);
+        IList<Event> Decode(TimingChunk timingChunk);
     }
 }

@@ -17,7 +17,7 @@ namespace RhythmCodex.Ssq.Converters
         
         public ChartInfo Decode(int param1)
         {
-            return new ChartInfo
+            return new()
             {
                 Difficulty = GetDifficulty(param1),
                 PanelCount = GetPanelCount(param1) ?? 4,

@@ -7,10 +7,10 @@ namespace RhythmCodex.Ssq.Mappers
     {
         int PanelCount { get; }
         int PlayerCount { get; }
-        IPanelMapping Map(int panel);
-        int? Map(IPanelMapping mapping);
+        PanelMapping Map(int panel);
+        int? Map(PanelMapping mapping);
 
         bool ShouldMap(IEnumerable<int> panels);
-        bool ShouldMap(IEnumerable<IPanelMapping> panels);
+        bool ShouldMap(IEnumerable<PanelMapping> panels);
     }
 }

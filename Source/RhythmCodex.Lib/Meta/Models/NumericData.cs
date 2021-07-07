@@ -42,6 +42,7 @@
         Meter,
         NoteCount,
         SourceRate,
-        SourceOffset
+        SourceOffset,
+        ColumnCount
     }
 }

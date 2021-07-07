@@ -37,12 +37,12 @@ namespace RhythmCodex.Bms.Converters
             _bmsNoteCommandEncoder = bmsNoteCommandEncoder;
         }
 
-        public IList<BmsCommand> Encode(IChart chart)
+        public IList<BmsCommand> Encode(Chart chart)
         {
             return EncodeInternal(chart).ToList();
         }
 
-        private IEnumerable<BmsCommand> EncodeInternal(IChart inputChart)
+        private IEnumerable<BmsCommand> EncodeInternal(Chart inputChart)
         {
             if (inputChart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
                 throw new RhythmCodexException("Metric offsets must all be populated in order to export to BMS.");

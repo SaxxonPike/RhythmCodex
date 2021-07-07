@@ -7,6 +7,6 @@ namespace RhythmCodex.Ssq.Converters
 {
     public interface IStepEventDecoder
     {
-        IList<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper);
+        IList<Event> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper);
     }
 }

@@ -44,12 +44,12 @@ namespace RhythmCodex.Step1.Converters
             _chartInfoDecoder = chartInfoDecoder;
         }
 
-        public IList<IChart> Decode(IEnumerable<Step1Chunk> data)
+        public IList<Chart> Decode(IEnumerable<Step1Chunk> data)
         {
             return DecodeInternal(data).ToList();
         }
 
-        private IEnumerable<IChart> DecodeInternal(IEnumerable<Step1Chunk> data)
+        private IEnumerable<Chart> DecodeInternal(IEnumerable<Step1Chunk> data)
         {
             var chunks = data.AsList();
 
@@ -84,7 +84,7 @@ namespace RhythmCodex.Step1.Converters
                     playerCount = steps.Any(s => (s.Panels & 0xA0) != 0) ? 2 : 1;
                     panelCount = _stepPanelSplitter.Split(steps.Aggregate(0, (i, s) => i | s.Panels)).Count() / playerCount;
                 }
-                
+
                 // Determine what kind of chart this is based on the panels used.
                 var mapper = _panelMapperSelector.Select(steps, new ChartInfo {PanelCount = panelCount, PlayerCount = playerCount});
 

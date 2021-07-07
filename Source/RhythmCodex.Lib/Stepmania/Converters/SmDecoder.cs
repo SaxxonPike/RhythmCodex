@@ -31,9 +31,9 @@ namespace RhythmCodex.Stepmania.Converters
 
         public ChartSet Decode(IEnumerable<Command> commands)
         {
-            var charts = new List<IChart>();
+            var charts = new List<Chart>();
             var metadata = new Metadata();
-            var globalEvents = new List<IEvent>();
+            var globalEvents = new List<Event>();
 
             foreach (var command in commands)
                 if (command.Name.Equals(ChartTag.BpmsTag, StringComparison.OrdinalIgnoreCase))

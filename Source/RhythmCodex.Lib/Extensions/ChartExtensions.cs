@@ -14,7 +14,7 @@ namespace RhythmCodex.Extensions
         /// Running this will normalize all metric offsets so each measure line lands on an integer.
         /// Measure lengths are populated on measure lines.
         /// </summary>
-        private static void NormalizeMetricOffsets(IChart chart)
+        private static void NormalizeMetricOffsets(Chart chart)
         {
             if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
                 throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
@@ -74,7 +74,7 @@ namespace RhythmCodex.Extensions
             }
         }
 
-        public static void PopulateMetricOffsets(this IChart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
+        public static void PopulateMetricOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
         {
             if (chart.Events.Any(ev => ev[NumericData.LinearOffset] == null))
                 throw new RhythmCodexException($"All events must have a {nameof(NumericData.LinearOffset)}.");
@@ -115,7 +115,7 @@ namespace RhythmCodex.Extensions
             NormalizeMetricOffsets(chart);
         }
 
-        public static void PopulateLinearOffsets(this IChart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
+        public static void PopulateLinearOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
         {
             if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
                 throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
@@ -163,7 +163,7 @@ namespace RhythmCodex.Extensions
             }
         }
 
-        public static BigRational GetZeroLinearReference(this IChart chart, BigRational? referenceLinear = null,
+        public static BigRational GetZeroLinearReference(this Chart chart, BigRational? referenceLinear = null,
             BigRational? referenceMetric = null)
         {
             if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
@@ -184,6 +184,24 @@ namespace RhythmCodex.Extensions
             referenceLinear = referenceLinear ?? BigRational.Zero;
             var linearRate = GetLinearRate(bpm.Value);
             return ((BigRational.Zero - referenceMetric) * linearRate + referenceLinear).Value;
+        }
+
+        public static BigRational GetMetricLength(this Chart chart)
+        {
+            if (chart.Events == null)
+                return BigRational.Zero;
+
+            var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.MetricOffset] != null);
+            return eventsWithOffset.Max(ev => ev[NumericData.MetricOffset]) ?? BigRational.Zero;
+        }
+
+        public static BigRational GetLinearLength(this Chart chart)
+        {
+            if (chart.Events == null)
+                return BigRational.Zero;
+
+            var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.LinearOffset] != null);
+            return eventsWithOffset.Max(ev => ev[NumericData.LinearOffset]) ?? BigRational.Zero;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace RhythmCodex.Bms.Converters
         string Encode(IEnumerable<BmsEvent> events, Func<BigRational?, string> encodeValue,
             BigRational measureLength, int quantize);
 
-        IList<BmsEvent> TranslateNoteEvents(IEnumerable<IEvent> events);
-        IList<BmsEvent> TranslateBpmEvents(IEnumerable<IEvent> chartEvents);
+        IList<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events);
+        IList<BmsEvent> TranslateBpmEvents(IEnumerable<Event> chartEvents);
     }
 }

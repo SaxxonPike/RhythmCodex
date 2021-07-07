@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using ClientCommon;
-using RhythmCodex.Cli.Helpers;
 
 namespace RhythmCodex.Cli.Orchestration.Infrastructure
 {

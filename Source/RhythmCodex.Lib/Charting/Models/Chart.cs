@@ -5,8 +5,8 @@ using RhythmCodex.Meta.Models;
 namespace RhythmCodex.Charting.Models
 {
     [Model]
-    public class Chart : Metadata, IChart
+    public class Chart : Metadata
     {
-        public IList<IEvent> Events { get; set; }
+        public IList<Event> Events { get; set; }
     }
 }

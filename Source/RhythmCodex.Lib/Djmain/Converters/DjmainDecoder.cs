@@ -123,7 +123,7 @@ namespace RhythmCodex.Djmain.Converters
                 });
         }
 
-        private IDictionary<int, IChart> DecodeCharts(
+        private IDictionary<int, Chart> DecodeCharts(
             IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> events,
             IReadOnlyDictionary<int, int> chartSoundMap, DjmainChunkFormat chunkFormat)
         {
@@ -144,7 +144,7 @@ namespace RhythmCodex.Djmain.Converters
             DjmainChunkFormat format,
             IReadOnlyDictionary<int, int> chartSoundMap,
             IEnumerable<KeyValuePair<int, IEnumerable<IDjmainChartEvent>>> charts,
-            IEnumerable<KeyValuePair<int, IChart>> decodedCharts, 
+            IEnumerable<KeyValuePair<int, Chart>> decodedCharts, 
             DjmainDecodeOptions options)
         {
             return _offsetProvider.GetSampleMapOffsets(format)
@@ -159,7 +159,7 @@ namespace RhythmCodex.Djmain.Converters
                     var decodedSamples = _soundDecoder.Decode(samples);
                     if (!options.DoNotConsolidateSamples)
                         _soundConsolidator.Consolidate(decodedSamples.Values,
-                            decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<IEvent>()));
+                            decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<Event>()));
 
                     foreach (var sample in decodedSamples.Where(s => s.Value.Samples.Any()))
                     {

@@ -11,7 +11,7 @@ namespace RhythmCodex.Beatmania.Converters
     [Service]
     public class BeatmaniaPc1ChartDecoder : IBeatmaniaPc1ChartDecoder
     {
-        public IChart Decode(IEnumerable<BeatmaniaPc1Event> events, BigRational rate)
+        public Chart Decode(IEnumerable<BeatmaniaPc1Event> events, BigRational rate)
         {
             var result = new Chart
             {
@@ -22,7 +22,7 @@ namespace RhythmCodex.Beatmania.Converters
             return result;
         }
 
-        private IEnumerable<IEvent> DecodeInternal(IEnumerable<BeatmaniaPc1Event> events, BigRational rate)
+        private IEnumerable<Event> DecodeInternal(IEnumerable<BeatmaniaPc1Event> events, BigRational rate)
         {
             Event GetNewEvent(BeatmaniaPc1Event input)
             {

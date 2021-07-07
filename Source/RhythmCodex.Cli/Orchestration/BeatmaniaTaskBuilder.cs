@@ -8,7 +8,6 @@ using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
 using RhythmCodex.Charting.Models;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Djmain;
 using RhythmCodex.Djmain.Converters;
@@ -329,7 +328,7 @@ namespace RhythmCodex.Cli.Orchestration
         }
 
         protected void ExportKeysoundedChart(BuiltTask task, InputFile file, string path, string id,
-            ICollection<IChart> charts, ICollection<ISound> sounds)
+            ICollection<Chart> charts, ICollection<ISound> sounds)
         {
             var usedSamples = charts
                 .SelectMany(chart => _usedSamplesCounter.GetUsedSamples(chart.Events))

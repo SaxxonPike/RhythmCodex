@@ -5,8 +5,8 @@ namespace RhythmCodex.Statistics
 {
     public interface IEventCounter
     {
-        int CountCombos(IEnumerable<IEvent> events);
-        int CountComboFreezes(IEnumerable<IEvent> events);
-        int CountComboShocks(IEnumerable<IEvent> events);
+        int CountCombos(IEnumerable<Event> events);
+        int CountComboFreezes(IEnumerable<Event> events);
+        int CountComboShocks(IEnumerable<Event> events);
     }
 }

@@ -2,9 +2,9 @@
 {
     public class ChartInfo
     {
-        public string Difficulty { get; set; }
-        public string Type { get; set; }
-        public int? PanelCount { get; set; }
-        public int? PlayerCount { get; set; }
+        public string Difficulty { get; init; }
+        public string Type { get; init; }
+        public int? PanelCount { get; init; }
+        public int? PlayerCount { get; init; }
     }
 }

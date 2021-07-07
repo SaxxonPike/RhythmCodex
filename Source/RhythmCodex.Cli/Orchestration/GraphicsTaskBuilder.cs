@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Linq;
 using ClientCommon;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Dds.Converters;
 using RhythmCodex.Dds.Streamers;

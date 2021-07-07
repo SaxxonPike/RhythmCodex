@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace RhythmCodex.Compression
+﻿namespace RhythmCodex.Compression
 {
     public interface IArcLzDecoder
     {
