@@ -100,7 +100,7 @@ namespace RhythmCodex.Ssq.Mappers
             var panelCount = metadata[NumericData.ColumnCount] ??
                              panelsUsed.Select(p => p.Panel).Distinct().Count();
 
-            return SelectInternal(panelsUsed, playerCount, panelCount == null ? null : (int) panelCount);
+            return SelectInternal(panelsUsed, playerCount, (int) panelCount);
         }
 
         public IPanelMapper Select(int id)
