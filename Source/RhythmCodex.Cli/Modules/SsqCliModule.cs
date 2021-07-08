@@ -42,6 +42,16 @@ namespace RhythmCodex.Cli.Modules
                     {
                         Name = "-offset",
                         Description = "Global offset to add to output #OFFSET tag."
+                    },
+                    new CommandParameter
+                    {
+                        Name = "-se",
+                        Description = "Sets the extension for sounds defined in the output. Default OGG."
+                    },
+                    new CommandParameter
+                    {
+                        Name = "-ge",
+                        Description = "Sets the extension for graphics defined in the output. Default PNG."
                     }
                 }
             }

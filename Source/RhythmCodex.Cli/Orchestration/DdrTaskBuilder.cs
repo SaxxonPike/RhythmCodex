@@ -102,6 +102,12 @@ namespace RhythmCodex.Cli.Orchestration
         {
             return Build("Decode SSQ", task =>
             {
+                Args.Options.TryGetValue("se", out var soundExtensions);
+                Args.Options.TryGetValue("ge", out var graphicsExtensions);
+
+                var soundExtension = soundExtensions?.FirstOrDefault() ?? "ogg";
+                var graphicsExtension = graphicsExtensions?.FirstOrDefault() ?? "png";
+                
                 var files = GetInputFiles(task);
                 if (!files.Any())
                 {
@@ -133,8 +139,8 @@ namespace RhythmCodex.Cli.Orchestration
                                 [StringData.Title] = aggregatedInfo[StringData.Title] ?? title,
                                 [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
                                 [StringData.Artist] = aggregatedInfo[StringData.Artist],
-                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
-                                [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
+                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.{soundExtension}",
+                                [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.{soundExtension}",
                                 [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
                             },
                             Charts = charts
