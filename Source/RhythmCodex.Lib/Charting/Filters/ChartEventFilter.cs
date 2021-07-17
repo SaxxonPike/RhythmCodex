@@ -12,10 +12,10 @@ namespace RhythmCodex.Charting.Filters
     [Service]
     public class ChartEventFilter : IChartEventFilter
     {
-        public IList<Event> GetBpms(IEnumerable<Event> events)
+        public IList<Event> GetTempos(IEnumerable<Event> events)
         {
             return events
-                .Where(e => e[NumericData.Bpm] != null || e[NumericData.Stop] != null)
+                .Where(e => e[NumericData.Bpm] != null || e[NumericData.Stop] != null || e[FlagData.End] == true)
                 .ToList();
         }
 

@@ -94,7 +94,9 @@ namespace RhythmCodex.OneShots
 
         [Test]
         [Explicit("This is a tool, not a test")]
-        [TestCase(@"C:\StepMania\Songs\DDR 4TH MIX PLUS", -0.033)]
+        //[TestCase(@"C:\StepMania\Songs\DDR 4TH MIX PLUS", -0.033)]
+        [TestCase(@"C:\StepmaniaData\Songs\DDR Universe 1", 0.025)]
+        [TestCase(@"C:\StepmaniaData\Songs\DDR Universe 2", 0.047)]
         public void AdjustGapForFolder(string path, double amount)
         {
             var smReader = Resolve<ISmStreamReader>();

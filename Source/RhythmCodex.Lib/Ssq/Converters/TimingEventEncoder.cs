@@ -21,19 +21,23 @@ namespace RhythmCodex.Ssq.Converters
                 .OrderBy(ev => ev[NumericData.MetricOffset])
                 .ToList();
 
-            // bit of a hack to generate the last event
-            tempoEvents.Add(new Event
+            // bit of a hack to generate the last event (if we don't have an end)
+            if (tempoEvents.All(ev => ev[FlagData.End] != true))
             {
-                [NumericData.MetricOffset] = metricLength,
-                [FlagData.End] = true
-            });
+                tempoEvents.Add(new Event
+                {
+                    [NumericData.MetricOffset] = metricLength,
+                    [FlagData.End] = true
+                });
+            }
 
-            var currentBpm = startBpm ?? tempoEvents.Select(ev => ev[NumericData.Bpm]).First(ev => ev != null);
-            var linearReference = offset;
+            var currentBpm = startBpm ?? tempoEvents.Select(ev => ev[NumericData.Bpm]).First(ev => ev != null).Value;
+            var linearReference = BigRational.Zero;
             var metricReference = BigRational.Zero;
             var linearBase = 0;
 
-            // bit of a hack to generate the first event
+            // bit of a hack to generate the first event (I didn't come up with this, Konami does this)
+            
             result.Add(new Timing
             {
                 LinearOffset = (int) (linearReference * linearRate),
@@ -43,24 +47,45 @@ namespace RhythmCodex.Ssq.Converters
             foreach (var ev in tempoEvents)
             {
                 var metricOffset = ev[NumericData.MetricOffset].Value;
-                
-                if (ev[NumericData.MetricOffset] == metricReference && ev[NumericData.Bpm] == currentBpm)
-                    continue;
-
                 var metricDiff = metricOffset - metricReference;
-                var linearDiff = 4 / (currentBpm / 60) * metricDiff - linearReference;
+                var linearDiff = 4 / (currentBpm / 60) * metricDiff;
 
-                linearBase += (int) (linearDiff * linearRate);
-                var metricBase = (int) (metricOffset * SsqConstants.MeasureLength);
-                currentBpm = ev[NumericData.Bpm] ?? currentBpm;
-                metricReference += metricDiff;
-                linearReference += linearDiff;
-
-                result.Add(new Timing
+                void Mark()
                 {
-                    LinearOffset = linearBase,
-                    MetricOffset = metricBase
-                });
+                    if (linearDiff <= BigRational.Zero && metricDiff <= BigRational.Zero)
+                        return;
+                    
+                    linearBase += (int) (linearDiff * linearRate);
+                    metricReference += metricDiff;
+                    linearReference += linearDiff;
+                    metricDiff = BigRational.Zero;
+                    linearDiff = BigRational.Zero;
+
+                    result.Add(new Timing
+                    {
+                        LinearOffset = linearBase,
+                        MetricOffset = (int) (metricOffset * SsqConstants.MeasureLength)
+                    });
+                }
+
+                if (ev[NumericData.Bpm] != null && 
+                    !(metricDiff <= BigRational.Zero && ev[NumericData.Bpm] == currentBpm))
+                {
+                    currentBpm = ev[NumericData.Bpm].Value;
+                    Mark();
+                }
+
+                if (ev[NumericData.Stop] != null)
+                {
+                    Mark();
+                    linearDiff = ev[NumericData.Stop].Value;
+                    Mark();
+                }
+
+                if (ev[FlagData.End] == true)
+                {
+                    Mark();
+                }
             }
 
             return new TimingChunk

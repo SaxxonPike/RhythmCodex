@@ -131,8 +131,8 @@ namespace RhythmCodex.Extensions
                 throw new RhythmCodexException(
                     $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
 
-            referenceMetric = referenceMetric ?? BigRational.Zero;
-            referenceLinear = referenceLinear ?? BigRational.Zero;
+            referenceMetric ??= BigRational.Zero;
+            referenceLinear ??= BigRational.Zero;
             var linearRate = GetLinearRate(bpm.Value);
             var pendingStop = BigRational.Zero;
 
@@ -180,8 +180,8 @@ namespace RhythmCodex.Extensions
                 throw new RhythmCodexException(
                     $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
             
-            referenceMetric = referenceMetric ?? BigRational.Zero;
-            referenceLinear = referenceLinear ?? BigRational.Zero;
+            referenceMetric ??= BigRational.Zero;
+            referenceLinear ??= BigRational.Zero;
             var linearRate = GetLinearRate(bpm.Value);
             return ((BigRational.Zero - referenceMetric) * linearRate + referenceLinear).Value;
         }

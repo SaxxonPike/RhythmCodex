@@ -48,21 +48,21 @@ namespace RhythmCodex.Ssq.Converters
             var chartList = charts.AsList();
             var result = new List<SsqChunk>();
 
-            var maxLength = chartList
-                .Select(c => c.GetMetricLength())
-                .Max();
-            if (maxLength < 1)
-                maxLength = 1;
-
             var timingOffset = chartList
                                    .Select(c => c[NumericData.LinearOffset])
                                    .FirstOrDefault(x => x != null)
                                ?? 0;
 
             var bpms = chartList
-                .Select(c => _chartEventFilter.GetBpms(c.Events))
+                .Select(c => _chartEventFilter.GetTempos(c.Events))
                 .FirstOrDefault(x => x.Any(b => b[NumericData.Bpm] != null));
 
+            var maxLength = chartList
+                .Select(c => c.GetMetricLength())
+                .Max();
+            if (maxLength < 1)
+                maxLength = 1;
+            
             var initialBpm = chartList
                 .Select(c => c[NumericData.Bpm])
                 .FirstOrDefault(x => x != null);

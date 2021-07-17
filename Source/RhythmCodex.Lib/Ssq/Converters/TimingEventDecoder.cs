@@ -15,6 +15,8 @@ namespace RhythmCodex.Ssq.Converters
         {
             IEnumerable<Event> Do()
             {
+                var maxMetric = BigRational.Zero;
+                var maxLinear = BigRational.Zero;
                 var timings = timingChunk.Timings;
                 var ticksPerSecond = timingChunk.Rate;
 
@@ -33,10 +35,13 @@ namespace RhythmCodex.Ssq.Converters
 
                 foreach (var timing in orderedTimings.Skip(1))
                 {
+                    var newMetric = (BigRational) previous.MetricOffset / SsqConstants.MeasureLength;
+                    var newLinear = (BigRational) previous.LinearOffset / ticksPerSecond;
+                    
                     var ev = new Event
                     {
-                        [NumericData.MetricOffset] = (BigRational) previous.MetricOffset / SsqConstants.MeasureLength,
-                        [NumericData.LinearOffset] = (BigRational) previous.LinearOffset / ticksPerSecond
+                        [NumericData.MetricOffset] = newMetric,
+                        [NumericData.LinearOffset] = newLinear
                     };
 
                     BigRational deltaOffset = timing.MetricOffset - previous.MetricOffset;
@@ -50,6 +55,11 @@ namespace RhythmCodex.Ssq.Converters
                         ev[NumericData.Bpm] =
                             deltaOffset / SsqConstants.MeasureLength / (deltaTicks / ticksPerSecond / 240);
 
+                    if (newMetric > maxMetric)
+                        maxMetric = newMetric;
+                    if (newLinear > maxLinear)
+                        maxLinear = newLinear;
+                    
                     yield return ev;
 
                     previous = new
@@ -58,6 +68,13 @@ namespace RhythmCodex.Ssq.Converters
                         timing.LinearOffset
                     };
                 }
+
+                yield return new Event
+                {
+                    [NumericData.MetricOffset] = maxMetric,
+                    [NumericData.LinearOffset] = maxLinear,
+                    [FlagData.End] = true
+                };
             }
 
             return Do().ToList();

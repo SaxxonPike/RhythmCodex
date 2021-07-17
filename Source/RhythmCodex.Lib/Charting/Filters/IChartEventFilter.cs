@@ -5,7 +5,7 @@ namespace RhythmCodex.Charting.Filters
 {
     public interface IChartEventFilter
     {
-        IList<Event> GetBpms(IEnumerable<Event> events);
+        IList<Event> GetTempos(IEnumerable<Event> events);
         IList<Event> GetNotes(IEnumerable<Event> events);
         IList<Event> GetTriggers(IEnumerable<Event> events);
     }

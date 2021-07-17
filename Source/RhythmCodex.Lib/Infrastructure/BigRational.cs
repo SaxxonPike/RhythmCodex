@@ -31,6 +31,7 @@
 ============================================================*/
 
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -39,8 +40,8 @@ namespace RhythmCodex.Infrastructure
     /// <summary>
     ///     Represents an arbitrary precision rational number.
     /// </summary>
-    [ComVisible(false)]
-    public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<BigRational>
+    [DebuggerDisplay("{Numerator}{Solidus}{Denominator}")]
+    public readonly struct BigRational : IComparable, IComparable<BigRational>, IEquatable<BigRational>
     {
         // ---- SECTION:  members for internal support ---------*
 

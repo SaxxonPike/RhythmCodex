@@ -111,5 +111,25 @@ namespace RhythmCodex
         {
             return _fixture.Value.CreateMany<T>(count).ToArray();
         }
+
+        protected TextWriter Console => TestContext.Out;
+
+        protected void ConsoleWriteHexBlock(byte[] data)
+        {
+            Console.WriteLine($"Hex block - length {data.Length:X}h ({data.Length})");
+            var x = 0;
+            foreach (var b in data)
+            {
+                Console.Write($"{b:X2} ");
+
+                if (++x < 16) 
+                    continue;
+
+                x = 0;
+                Console.WriteLine();
+            }
+
+            Console.WriteLine();
+        }
     }
 }
