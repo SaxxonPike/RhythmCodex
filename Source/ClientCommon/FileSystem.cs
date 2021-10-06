@@ -42,7 +42,7 @@ namespace ClientCommon
         {
             _logger.Debug($"Open for write: {path}");
             BuildPathIfNotExists(path);
-            return File.OpenWrite(path);
+            return File.Open(path, FileMode.Create, FileAccess.ReadWrite);
         }
 
         private void BuildPathIfNotExists(string path)

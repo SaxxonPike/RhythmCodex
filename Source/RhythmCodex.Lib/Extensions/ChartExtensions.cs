@@ -74,6 +74,21 @@ namespace RhythmCodex.Extensions
             }
         }
 
+        public static void QuantizeMetricOffsets(this IChart chart, BigRational quantization)
+        {
+            if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
+                throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
+
+            foreach (var ev in chart.Events)
+            {
+                var temp = ev[NumericData.MetricOffset];
+                temp *= quantization;
+                temp = temp.Value.GetWholePart();
+                temp /= quantization;
+                ev[NumericData.MetricOffset] = temp;
+            }
+        }
+
         public static void PopulateMetricOffsets(this IChart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
         {
             if (chart.Events.Any(ev => ev[NumericData.LinearOffset] == null))

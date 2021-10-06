@@ -45,7 +45,7 @@ namespace RhythmCodex
         {
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
             CreateDirectory(resolver, Path.GetDirectoryName(outPath));
-            return File.OpenWrite(outPath);
+            return File.Open(outPath, FileMode.Create, FileAccess.ReadWrite);
         }
     }
 }
