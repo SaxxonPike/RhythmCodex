@@ -50,6 +50,7 @@ namespace RhythmCodex.Vtddd.Integration
         [TestCase(@"C:\Program Files (x86)\Digital Praise\Dance Praise\Dance Praise\Resources\Scripts\songs_4.xml", "2062", "Dance Praise")]
         [TestCase(@"C:\Program Files (x86)\Digital Praise\Dance Praise\Dance Praise\Resources\Scripts\songs_5.xml", "2062", "Dance Praise")]
         [TestCase(@"C:\Program Files (x86)\Digital Praise\Dance Praise\Dance Praise\Resources\Scripts\songs_6.xml", "2062", "Dance Praise")]
+        [TestCase(@"C:\Program Files (x86)\Digital Praise\Dance Praise\Dance Praise\Resources\Scripts\songs_7.xml", "2062", "Dance Praise")]
         [TestCase(@"C:\Program Files (x86)\Digital Praise\Dance Praise\Dance Praise\Resources\Scripts\songs_8.xml", "2062", "Dance Praise")]
         [TestCase(@"C:\Program Files (x86)\Digital Praise\Dance Praise\Dance Praise\Resources\Scripts\songs_9.xml", "2062", "Dance Praise")]
         public void DecodeDanceXml(string inPath, string chartPrefix, string outFolder)

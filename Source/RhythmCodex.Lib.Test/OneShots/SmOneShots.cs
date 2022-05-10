@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania;
 using RhythmCodex.Stepmania.Model;
@@ -131,6 +132,54 @@ namespace RhythmCodex.OneShots
                 {
                     smWriter.Write(stream, commands);
                     stream.Flush();
+                }
+            }
+        }
+
+        [Test]
+        [Explicit("This is a tool, not a test")]
+        [TestCase(@"C:\Project OutFox\Songs\Dance Praise")]
+        [TestCase(@"C:\Project OutFox\Songs\VeggieTales Dance Dance Dance!")]
+        public void RenameFolderToMatchTitle(string path)
+        {
+            var reader = Resolve<ISmStreamReader>();
+            var files = Directory.GetFiles(path, "*.sm", SearchOption.AllDirectories);
+            var meta = files.Select(f =>
+            {
+                using var stream = File.OpenRead(f);
+                var commands = reader.Read(stream).AsList();
+                var title = commands.FirstOrDefault(c => c.Name.Equals("title", StringComparison.OrdinalIgnoreCase));
+                var artist = commands.FirstOrDefault(c => c.Name.Equals("artist", StringComparison.OrdinalIgnoreCase));
+
+                var newTitle = title?.Values.FirstOrDefault() ?? string.Empty;
+                newTitle = Path.GetInvalidFileNameChars().Aggregate(newTitle, (current, c) => current.Replace(c, '_'))?.Trim();
+
+                if (string.IsNullOrWhiteSpace(newTitle))
+                    return null;
+
+                return new
+                {
+                    File = f,
+                    Title = newTitle,
+                    Artist = artist?.Values.FirstOrDefault() ?? string.Empty
+                };
+            }).Where(m => m != null).ToList();
+            
+            var groups = meta.GroupBy(m => m.Title);
+
+            foreach (var g in groups)
+            {
+                var items = g.AsList();
+                if (items.Count > 1)
+                    items = items.Select(item => item with { Title = $"{item.Title} ({item.Artist})" }).ToList();
+
+                foreach (var item in items)
+                {
+                    var oldDir = Path.GetDirectoryName(item.File);
+                    var frags = oldDir.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    var newDir = Path.Combine(string.Join(Path.DirectorySeparatorChar, frags.Take(frags.Length - 1)), item.Title);
+                    if (oldDir != newDir)
+                        Directory.Move(oldDir, newDir);
                 }
             }
         }
