@@ -27,9 +27,7 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
-            );
+            output.Should().BeEquivalentTo(new[] { new BmsCommand { Name = "PASS" } });
         }
 
         [Test]
@@ -53,9 +51,7 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
-            );
+            output.Should().BeEquivalentTo(new[] { new BmsCommand { Name = "PASS" } });
         }
 
         [Test]
@@ -81,9 +77,7 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
-            );
+            output.Should().BeEquivalentTo(new[] { new BmsCommand { Name = "PASS" } });
         }
 
         [Test]
@@ -109,9 +103,7 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
-            );
+            output.Should().BeEquivalentTo(new[] { new BmsCommand { Name = "PASS" } });
         }
 
         [Test]
@@ -141,9 +133,7 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
-            );
+            output.Should().BeEquivalentTo(new[] { new BmsCommand { Name = "PASS" } });
         }
         
         [Test]
@@ -170,9 +160,7 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
-            );
+            output.Should().BeEquivalentTo(new[] { new BmsCommand { Name = "PASS" } });
         }
         
         [Test]
@@ -201,10 +189,11 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
+            output.Should().BeEquivalentTo(new[]
+            {
                 new BmsCommand {Name = "PASS 1"},
                 new BmsCommand {Name = "PASS 2"}
-            );
+            });
         }
 
         [Test]
@@ -231,11 +220,13 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "PASS 2"},
-                new BmsCommand {Name = "PASS 3"}
-            );
+            output.Should().BeEquivalentTo(new[]
+            {
+                new BmsCommand { Name = "PASS 1" },
+                new BmsCommand { Name = "PASS 2" },
+                new BmsCommand { Name = "PASS 3" }
+
+            });
         }
         
         [Test]
@@ -261,11 +252,12 @@ namespace RhythmCodex.Bms.Integration
             var output = subject.Resolve(commands);
 
             // Assert.
-            output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "PASS 2"},
-                new BmsCommand {Name = "PASS 3"}
-            );
+            output.Should().BeEquivalentTo(new[]
+            {
+                new BmsCommand { Name = "PASS 1" },
+                new BmsCommand { Name = "PASS 2" },
+                new BmsCommand { Name = "PASS 3" }
+            });
         }
     }
 }
