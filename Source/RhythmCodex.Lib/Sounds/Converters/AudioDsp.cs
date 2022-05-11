@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -12,6 +13,34 @@ namespace RhythmCodex.Sounds.Converters
     [Service]
     public class AudioDsp : IAudioDsp
     {
+        public ISound Mix(IEnumerable<ISound> sounds)
+        {
+            var bounced = sounds.Select(ApplyEffects).ToList();
+            var length = bounced.Max(b => b.Samples.Count > 0 ? b.Samples.Max(s => s.Data?.Count ?? 0) : 0);
+            var channels = bounced.Max(b => b.Samples.Count);
+
+            var newSound = new Sound
+            {
+                Samples = Enumerable.Range(0, channels).Select(_ => (ISample)new Sample
+                {
+                    Data = new float[length]
+                }).ToList()
+            };
+
+            newSound.CloneMetadataFrom((Metadata)bounced.First());
+            newSound[NumericData.Panning] = null;
+            newSound[NumericData.Volume] = null;
+
+            foreach (var bounce in bounced)
+            {
+                for (var c = 0; c < channels; c++)
+                for (var i = 0; i < bounce.Samples[c].Data.Count; i++)
+                    newSound.Samples[c].Data[i] += bounce.Samples[c].Data[i];
+            }
+
+            return newSound;
+        }
+
         public ISound ApplyPanVolume(ISound sound, BigRational volume, BigRational panning)
         {
             var newSound = new Sound
@@ -19,7 +48,7 @@ namespace RhythmCodex.Sounds.Converters
                 Samples = new List<ISample>(sound.Samples)
             };
 
-            newSound.CloneMetadataFrom((Metadata) sound);
+            newSound.CloneMetadataFrom((Metadata)sound);
             newSound[NumericData.Volume] = volume;
             newSound[NumericData.Panning] = panning;
 
@@ -31,33 +60,33 @@ namespace RhythmCodex.Sounds.Converters
         {
             if (sound == null || !sound.Samples.Any())
                 return null;
-            
-            if (rate <= BigRational.Zero || 
-                sound[NumericData.Rate] == rate || 
+
+            if (rate <= BigRational.Zero ||
+                sound[NumericData.Rate] == rate ||
                 sound[NumericData.Rate] == 0 ||
                 sound.Samples == null ||
                 !sound.Samples.Any() ||
                 sound.Samples.Any(sa => sa[NumericData.Rate] != null && sa[NumericData.Rate] <= 0))
                 return sound;
 
-            var targetRate = (float) (double) rate;
+            var targetRate = (float)(double)rate;
             var samples = new List<ISample>(sound.Samples);
             var result = new Sound
             {
                 Samples = samples.Select(s =>
                 {
-                    var sourceRate = (float) (double) (s[NumericData.Rate] ?? sound[NumericData.Rate]);
+                    var sourceRate = (float)(double)(s[NumericData.Rate] ?? sound[NumericData.Rate]);
                     var sample = new Sample
                     {
                         Data = resampler.Resample(s.Data, sourceRate, targetRate)
                     };
-                    sample.CloneMetadataFrom((Metadata) s);
+                    sample.CloneMetadataFrom((Metadata)s);
                     sample[NumericData.Rate] = rate;
-                    return (ISample) sample;
+                    return (ISample)sample;
                 }).ToList()
             };
 
-            result.CloneMetadataFrom((Metadata) sound);
+            result.CloneMetadataFrom((Metadata)sound);
             result[NumericData.Rate] = rate;
             return result;
         }
@@ -69,18 +98,51 @@ namespace RhythmCodex.Sounds.Converters
                 Samples = new List<ISample>(sound.Samples)
             };
 
-            var level = sound.Samples.SelectMany(s => s.Data).Max(Math.Abs);
+            float level;
+
+            try
+            {
+                level = sound.Samples.SelectMany(s => s.Data).Max(Math.Abs);
+            }
+            catch (InvalidOperationException)
+            {
+                level = 0;
+            }
+
             if (level > 0 && level != 1 && (!cutOnly || level > 1))
             {
-                var amp = (float) (target / level);
-                foreach (var sample in newSound.Samples)
+                var amp = (float)(target / level);
+                foreach (var sample in newSound.Samples.Distinct().AsParallel())
                     ApplyGain(sample.Data, amp);
             }
 
-            newSound.CloneMetadataFrom((Metadata) sound);
+            newSound.CloneMetadataFrom((Metadata)sound);
             return newSound;
         }
 
+        public void Normalize(IEnumerable<ISound> sounds, BigRational target, bool cutOnly)
+        {
+            var soundList = sounds.AsList();
+            float level;
+
+            try
+            {
+                level = soundList.Max(sound => sound.Samples.SelectMany(s => s.Data).Max(Math.Abs));
+            }
+            catch (InvalidOperationException)
+            {
+                level = 0;
+            }
+
+            if (level > 0 && level != 1 && (!cutOnly || level > 1))
+            {
+                var amp = (float)(target / level);
+                
+                foreach (var sample in soundList.SelectMany(sound => sound.Samples).Distinct().AsParallel())
+                    ApplyGain(sample.Data, amp);
+            }
+        }
+        
         public ISound IntegerDownsample(ISound sound, int factor)
         {
             var newSound = new Sound
@@ -88,9 +150,9 @@ namespace RhythmCodex.Sounds.Converters
                 Samples = sound.Samples.Select(s =>
                 {
                     var rate = s[NumericData.Rate] ?? sound[NumericData.Rate] ??
-                               throw new RhythmCodexException("Can't downsample without a source rate.");
+                        throw new RhythmCodexException("Can't downsample without a source rate.");
                     var sample = new Sample();
-                    sample.CloneMetadataFrom((Metadata) s);
+                    sample.CloneMetadataFrom((Metadata)s);
                     if (s[NumericData.Rate] != null)
                         s[NumericData.Rate] /= factor;
                     var length = s.Data.Count / 2;
@@ -103,11 +165,12 @@ namespace RhythmCodex.Sounds.Converters
                             buffer += s.Data[offset++];
                         sample.Data[i] = buffer / factor;
                     }
+
                     return sample;
                 }).Cast<ISample>().ToList()
             };
 
-            newSound.CloneMetadataFrom((Metadata) sound);
+            newSound.CloneMetadataFrom((Metadata)sound);
             newSound[NumericData.Rate] /= factor;
             return newSound;
         }
@@ -129,18 +192,18 @@ namespace RhythmCodex.Sounds.Converters
                     {
                         Data = new List<float>(s.Data)
                     };
-                    sample.CloneMetadataFrom((Metadata) s);
+                    sample.CloneMetadataFrom((Metadata)s);
                     ApplyEffectsInternal(sample);
-                    return (ISample) sample;
+                    return (ISample)sample;
                 }).ToList()
             };
 
-            result.CloneMetadataFrom((Metadata) sound);
+            result.CloneMetadataFrom((Metadata)sound);
             ApplyEffectsInternal(result);
             return result;
         }
 
-        private void ApplyEffectsInternal(ISound sound)
+        private static void ApplyEffectsInternal(ISound sound)
         {
             if (sound[NumericData.Volume].HasValue)
             {
@@ -165,7 +228,7 @@ namespace RhythmCodex.Sounds.Converters
             }
         }
 
-        private void ApplyEffectsInternal(ISample sample)
+        private static void ApplyEffectsInternal(ISample sample)
         {
             if (sample[NumericData.Volume].HasValue)
             {
@@ -174,14 +237,14 @@ namespace RhythmCodex.Sounds.Converters
             }
         }
 
-        private void ApplyGain(IList<float> data, BigRational value)
+        private static void ApplyGain(IList<float> data, BigRational value)
         {
             if (value == BigRational.One)
                 return;
 
-            var amp = (float) value;
+            var amp = (float)value;
             for (var i = 0; i < data.Count; i++)
-                data[i] = data[i] * amp;
+                data[i] *= amp;
         }
     }
 }

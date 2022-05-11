@@ -135,6 +135,7 @@ namespace RhythmCodex.Djmain.Converters
                 var chart = _chartDecoder.Decode(x.Value, GetChartType(chunkFormat));
                 chart[NumericData.Id] = x.Key;
                 chart[NumericData.SampleMap] = chartSoundMap[x.Key];
+                chart[NumericData.ByteOffset] = x.Key;
                 _djmainChartMetadataDecoder.AddMetadata(chart, chunkFormat, x.Key);
                 return chart;
             });

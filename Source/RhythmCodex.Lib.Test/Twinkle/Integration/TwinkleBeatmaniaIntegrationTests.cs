@@ -14,6 +14,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Twinkle.Converters;
+using RhythmCodex.Twinkle.Model;
 using RhythmCodex.Twinkle.Streamers;
 using RhythmCodex.Wav.Converters;
 using RhythmCodex.Wav.Models;
@@ -80,7 +81,7 @@ namespace RhythmCodex.Twinkle.Integration
 
             // Act.
             var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
-            var archive = decoder.Decode(chunk);
+            var archive = decoder.Decode(chunk, new TwinkleDecodeOptions());
 
             // Assert.
             foreach (var sound in archive.Samples.Where(s => s.Samples.Any()))
@@ -116,7 +117,7 @@ namespace RhythmCodex.Twinkle.Integration
 
             // Act.
             var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
-            var archive = decoder.Decode(chunk);
+            var archive = decoder.Decode(chunk, new TwinkleDecodeOptions());
             var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, options), 1.0f, true);
 
             // Assert.
@@ -146,7 +147,7 @@ namespace RhythmCodex.Twinkle.Integration
 
             foreach (var chunk in chunks.AsParallel())
             {
-                var archive = decoder.Decode(chunk);
+                var archive = decoder.Decode(chunk, new TwinkleDecodeOptions());
                 if (archive == null)
                     continue;
 

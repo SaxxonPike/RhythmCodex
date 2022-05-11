@@ -3,10 +3,12 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
+using RhythmCodex.Riff.Processing;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Twinkle.Heuristics;
@@ -26,6 +28,7 @@ namespace RhythmCodex.Twinkle.Converters
         private readonly ITwinkleBeatmaniaChartHeuristic _twinkleBeatmaniaChartHeuristic;
         private readonly IRiffStreamWriter _riffStreamWriter;
         private readonly IRiffPcm16SoundEncoder _riffPcm16SoundEncoder;
+        private readonly ISoundConsolidator _soundConsolidator;
 
         public TwinkleBeatmaniaDecoder(
             ITwinkleBeatmaniaSoundDefinitionDecoder twinkleBeatmaniaSoundDefinitionDecoder,
@@ -36,7 +39,8 @@ namespace RhythmCodex.Twinkle.Converters
             ITwinkleBeatmaniaChartMetadataDecoder twinkleBeatmaniaChartMetadataDecoder,
             ITwinkleBeatmaniaChartHeuristic twinkleBeatmaniaChartHeuristic,
             IRiffStreamWriter riffStreamWriter,
-            IRiffPcm16SoundEncoder riffPcm16SoundEncoder
+            IRiffPcm16SoundEncoder riffPcm16SoundEncoder,
+            ISoundConsolidator soundConsolidator
         )
         {
             _twinkleBeatmaniaSoundDefinitionDecoder = twinkleBeatmaniaSoundDefinitionDecoder;
@@ -48,6 +52,7 @@ namespace RhythmCodex.Twinkle.Converters
             _twinkleBeatmaniaChartHeuristic = twinkleBeatmaniaChartHeuristic;
             _riffStreamWriter = riffStreamWriter;
             _riffPcm16SoundEncoder = riffPcm16SoundEncoder;
+            _soundConsolidator = soundConsolidator;
         }
 
         private static readonly int[] ChartOffsets = Enumerable
@@ -55,7 +60,7 @@ namespace RhythmCodex.Twinkle.Converters
             .Select(i => i * 0x4000 + 0x2000)
             .ToArray();
 
-        public TwinkleArchive Decode(TwinkleBeatmaniaChunk chunk)
+        public TwinkleArchive Decode(TwinkleBeatmaniaChunk chunk, TwinkleDecodeOptions options)
         {
             if (chunk?.Data == null || chunk.Data.Length < 0x1A00000)
                 return null;
@@ -73,7 +78,7 @@ namespace RhythmCodex.Twinkle.Converters
                     return sample;
                 })
                 .ToList();
-
+            
             var charts = ChartOffsets
                 .Select((offset, index) =>
                 {
@@ -100,6 +105,10 @@ namespace RhythmCodex.Twinkle.Converters
                 })
                 .Where(c => c != null)
                 .ToList();
+
+            if (!options.DoNotConsolidateSamples)
+                _soundConsolidator.Consolidate(sounds,
+                    charts.SelectMany(dc => dc.Events ?? Enumerable.Empty<IEvent>()));
 
             return new TwinkleArchive
             {

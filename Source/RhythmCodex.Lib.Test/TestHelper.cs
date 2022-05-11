@@ -1,10 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
+using RhythmCodex.Bms.Converters;
+using RhythmCodex.Bms.Streamers;
+using RhythmCodex.Charting.Models;
+using RhythmCodex.Extensions;
+using RhythmCodex.Infrastructure;
+using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Providers;
 
 namespace RhythmCodex
 {
@@ -27,11 +36,44 @@ namespace RhythmCodex
             CreateDirectory(resolver, Path.GetDirectoryName(outPath));
 
             var encoded = encoder.Encode(dsp.ApplyEffects(decoded));
-            using (var outStream = new MemoryStream())
+
+            using var outStream = new MemoryStream();
+            writer.Write(outStream, encoded);
+            outStream.Flush();
+            File.WriteAllBytes(outPath, outStream.ToArray());
+        }
+
+        public static void WriteSet(this IResolver resolver, 
+            IEnumerable<IChart> charts, IEnumerable<ISound> sounds, 
+            string outPath, string title)
+        {
+            var bmsWriter = resolver.Resolve<IBmsStreamWriter>();
+            var bmsEncoder = resolver.Resolve<IBmsEncoder>();
+            var resampler = resolver.Resolve<IResamplerProvider>().GetBest();
+
+            var soundList = sounds.AsList();
+
+            foreach (var sound in soundList.Where(s => s.Samples.Any()).AsParallel())
             {
-                writer.Write(outStream, encoded);
+                foreach (var sample in sound.Samples)
+                {
+                    var sourceRate = (float)(double)(sample[NumericData.Rate] ?? sound[NumericData.Rate]);
+                    var resampled = resampler.Resample(sample.Data, sourceRate, 44100);
+                    sample.Data = resampled;
+                    sample[NumericData.Rate] = 44100;
+                }
+
+                sound[NumericData.Rate] = 44100;
+                WriteSound(resolver, sound, Path.Combine(outPath, $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id], 4)}.wav"));
+            }
+
+            foreach (var chart in charts.AsParallel())
+            {
+                chart.PopulateMetricOffsets();
+                chart[StringData.Title] = title;
+                using var outStream = OpenWrite(resolver, Path.Combine(outPath, $"@{Alphabet.EncodeHex((int)chart[NumericData.ByteOffset], 7)}.bms"));
+                bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
                 outStream.Flush();
-                File.WriteAllBytes(outPath, outStream.ToArray());
             }
         }
 

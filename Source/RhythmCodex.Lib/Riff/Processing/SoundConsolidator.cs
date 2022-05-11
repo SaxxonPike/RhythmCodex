@@ -5,6 +5,7 @@ using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
+using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Riff.Processing
@@ -12,6 +13,8 @@ namespace RhythmCodex.Riff.Processing
     [Service]
     public class SoundConsolidator : ISoundConsolidator
     {
+        private readonly IAudioDsp _audioDsp;
+
         private struct PlayedEvent
         {
             public int Index { get; set; }
@@ -24,7 +27,12 @@ namespace RhythmCodex.Riff.Processing
             public int A { get; set; }
             public int B { get; set; }
         }
-        
+
+        public SoundConsolidator(IAudioDsp audioDsp)
+        {
+            _audioDsp = audioDsp;
+        }
+
         public void Consolidate(IEnumerable<ISound> sounds, IEnumerable<IEvent> events)
         {
             // Evaluate if two samples should be combined based on panning and play time.
@@ -32,7 +40,7 @@ namespace RhythmCodex.Riff.Processing
             {
                 if (a.Count != b.Count)
                     return false;
-                
+
                 for (var i = 0; i < a.Count; i++)
                 {
                     if (a[i].Offset != b[i].Offset ||
@@ -42,7 +50,7 @@ namespace RhythmCodex.Riff.Processing
 
                 return true;
             }
-            
+
             var soundList = sounds.AsList();
             var eventList = events.AsList();
             var matches = new List<MatchedSound>();
@@ -59,13 +67,14 @@ namespace RhythmCodex.Riff.Processing
                 .Where(e => e?[NumericData.PlaySound] != null && !loaded.Contains(e[NumericData.PlaySound]))
                 .Select(e =>
                 {
-                    var index = (int) e[NumericData.PlaySound];
+                    var index = (int)e[NumericData.PlaySound];
                     return new PlayedEvent
                     {
                         Index = index,
                         Offset = e[NumericData.LinearOffset] ?? 0,
-                        Panning = e[NumericData.Panning] ?? 
-                                  soundList.FirstOrDefault(s => index == (int)s[NumericData.Id].Value)[NumericData.Panning] ?? 
+                        Panning = e[NumericData.Panning] ??
+                                  soundList.FirstOrDefault(s => index == (int)s[NumericData.Id].Value)?[
+                                      NumericData.Panning] ??
                                   new BigRational(1, 2)
                     };
                 })
@@ -90,14 +99,14 @@ namespace RhythmCodex.Riff.Processing
                         });
                 }
             }
-            
+
             // Consolidate each match.
             var doneMatch = new List<int>();
             foreach (var match in matches)
             {
                 if (doneMatch.Contains(match.A) || doneMatch.Contains(match.B))
                     continue;
-                
+
                 var soundA = soundList.FirstOrDefault(s => s[NumericData.Id] == match.A);
                 var soundB = soundList.FirstOrDefault(s => s[NumericData.Id] == match.B);
 
@@ -106,14 +115,17 @@ namespace RhythmCodex.Riff.Processing
 
                 doneMatch.Add(match.A);
                 doneMatch.Add(match.B);
-                
-                foreach (var sample in soundB.Samples.ToList())
+
+                var mix = _audioDsp.Mix(new[] { soundA, soundB });
+
+                soundA.Samples.Clear();
+                foreach (var sample in mix.Samples)
                     soundA.Samples.Add(sample);
                 soundB.Samples.Clear();
 
-                soundA[NumericData.Panning] = soundB[NumericData.Panning] = new BigRational(1, 2);
+                soundA[NumericData.Panning] = soundB[NumericData.Panning] = mix[NumericData.Panning];
+                soundA[NumericData.Volume] = soundB[NumericData.Volume] = mix[NumericData.Volume];
             }
-            
         }
     }
 }
