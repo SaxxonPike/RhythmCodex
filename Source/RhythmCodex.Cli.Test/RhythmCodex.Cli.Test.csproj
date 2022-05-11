@@ -3,7 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>RhythmCodex.Cli.Test</AssemblyName>
     <RootNamespace>RhythmCodex.Cli</RootNamespace>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
