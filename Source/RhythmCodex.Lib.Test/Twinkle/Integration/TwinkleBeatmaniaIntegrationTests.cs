@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
@@ -20,19 +24,43 @@ namespace RhythmCodex.Twinkle.Integration
     {
         [Test]
         [Explicit("wip")]
+        public void Test0()
+        {
+            using (var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\iidx3rd.zip"))
+            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
+            {
+                var entry = zipStream.Entries.Single();
+                using (var entryStream = entry.Open())
+                {
+                    var chunk = new byte[0x8000000];
+                    var remaining = chunk.Length;
+                    var offset = 0;
+                    while (remaining > 0)
+                    {
+                        var bread = entryStream.Read(chunk.AsSpan(offset));
+                        remaining -= bread;
+                        offset += bread;
+                    }
+                    this.WriteFile(chunk, "twinkle.bin");
+                }
+            }
+        }
+        
+        [Test]
+        [Explicit("wip")]
         public void Test1()
         {
             var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
 
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx8th.zip"))
+            using (var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\iidx5th.zip"))
             using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
             {
                 var entry = zipStream.Entries.Single();
                 using (var entryStream = entry.Open())
                 {
                     var chunks = streamer.Read(entryStream, entry.Length);
-                    var chunk = chunks.Skip(1).First();
-                    File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data);
+                    var chunk = chunks.Skip(4).First();
+                    this.WriteFile(chunk.Data, "twinkle.bin");
                 }
             }
         }
@@ -105,26 +133,38 @@ namespace RhythmCodex.Twinkle.Integration
             var dsp = Resolve<IAudioDsp>();
             var options = new ChartRendererOptions();
 
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx7th.zip"))
-            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
+            using var sha = SHA1.Create();
+            var hashes = new ConcurrentBag<string>();
+
+            using var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\iidx5th.zip");
+            using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
+            
+            var entry = zipStream.Entries.Single();
+            using var entryStream = entry.Open();
+            
+            var chunks = streamer.Read(entryStream, entry.Length, true);
+
+            foreach (var chunk in chunks.AsParallel())
             {
-                var entry = zipStream.Entries.Single();
-                using (var entryStream = entry.Open())
+                var archive = decoder.Decode(chunk);
+                if (archive == null)
+                    continue;
+
+                foreach (var chart in archive.Charts.AsParallel())
                 {
-                    var chunks = streamer.Read(entryStream, entry.Length, true);
-
-                    foreach (var chunk in chunks.AsParallel())
+                    var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
+                    var path = Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int)chart[NumericData.Id]:D2}.wav");
+                    this.WriteSound(rendered, path);
+                    using var diskStream = this.OpenRead(path);
+                    var hash = sha.ComputeHash(diskStream);
+                    var hashString = Convert.ToHexString(hash);
+                    if (hashes.Contains(hashString))
                     {
-                        var archive = decoder.Decode(chunk);
-                        if (archive == null)
-                            continue;
-
-                        foreach (var chart in archive.Charts.AsParallel())
-                        {
-                            var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
-                            this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
-                        }
+                        diskStream.Close();
+                        this.Delete(path);
+                        continue;
                     }
+                    hashes.Add(hashString);
                 }
             }
         }

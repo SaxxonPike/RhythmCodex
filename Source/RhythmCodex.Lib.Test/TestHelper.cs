@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
@@ -14,7 +15,7 @@ namespace RhythmCodex
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
         }
-        
+
         public static void WriteSound(this IResolver resolver, ISound decoded, string outFileName)
         {
             var encoder = resolver.Resolve<IRiffPcm16SoundEncoder>();
@@ -41,11 +42,25 @@ namespace RhythmCodex
             File.WriteAllBytes(outPath, data);
         }
 
+        public static Stream OpenRead(this IResolver resolver, string inFileName)
+        {
+            var inPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), inFileName);
+            return File.Exists(inPath) 
+                ? File.Open(inPath, FileMode.Open, FileAccess.ReadWrite) 
+                : null;
+        }
+
         public static Stream OpenWrite(this IResolver resolver, string outFileName)
         {
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
             CreateDirectory(resolver, Path.GetDirectoryName(outPath));
             return File.Open(outPath, FileMode.Create, FileAccess.ReadWrite);
+        }
+
+        public static void Delete(this IResolver resolver, string fileName)
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
+            File.Delete(path);
         }
     }
 }
