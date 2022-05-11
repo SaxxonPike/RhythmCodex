@@ -111,6 +111,7 @@ public class DjmainDecoder(
             var chart = chartDecoder.Decode(x.Value, GetChartType(chunkFormat));
             chart[NumericData.Id] = x.Key;
             chart[NumericData.SampleMap] = chartSoundMap[x.Key];
+            chart[NumericData.ByteOffset] = x.Key;
             djmainChartMetadataDecoder.AddMetadata(chart, chunkFormat, x.Key);
             return chart;
         });

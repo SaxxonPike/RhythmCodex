@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Intrinsics;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -13,6 +14,41 @@ namespace RhythmCodex.Sounds.Converters;
 [Service]
 public class AudioDsp : IAudioDsp
 {
+    public Sound Mix(IEnumerable<Sound> sounds)
+    {
+        var bounced = sounds.Select(ApplyEffects).ToList();
+        var length = bounced.Max(b => b.Samples.Count > 0 ? b.Samples.Max(s => s.Data.Length) : 0);
+        var channels = bounced.Max(b => b.Samples.Count);
+
+        var newSound = new Sound
+        {
+            Samples = Enumerable.Range(0, channels).Select(_ => new Sample
+            {
+                Data = new float[length]
+            }).ToList()
+        };
+
+        newSound.CloneMetadataFrom(bounced.First());
+        newSound[NumericData.Panning] = null;
+        newSound[NumericData.Volume] = null;
+
+        foreach (var bounce in bounced)
+        {
+            for (var c = 0; c < channels; c++)
+            {
+                if (bounce == null)
+                    continue;
+
+                var srcSpan = bounce.Samples[c].Data.Span;
+                var dstSpan = newSound.Samples[c].Data.Span;
+                for (var i = 0; i < bounce.Samples[c].Data.Length; i++)
+                    dstSpan[i] += srcSpan[i];
+            }
+        }
+
+        return newSound;
+    }
+
     public Sound? ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)
     {
         var newSound = new Sound
@@ -89,6 +125,28 @@ public class AudioDsp : IAudioDsp
         return newSound;
     }
 
+    public void Normalize(IEnumerable<Sound> sounds, BigRational target, bool cutOnly)
+    {
+        var soundList = sounds.AsList();
+
+        var level = soundList.AsParallel().Select(sound =>
+            sound.Samples.DefaultIfEmpty().Max(s =>
+            {
+                var max = 0f;
+                foreach (var x in s.Data.Span)
+                    max = Math.Max(Math.Abs(x), max);
+                return max;
+            })).DefaultIfEmpty().Max();
+
+        if (level > 0 && level != 1 && (!cutOnly || level > 1))
+        {
+            var amp = (float)(target / level);
+                
+            foreach (var sample in soundList.SelectMany(sound => sound.Samples).Distinct().AsParallel())
+                ApplyGain(sample.Data.Span, amp);
+        }
+    }
+        
     public Sound IntegerDownsample(Sound sound, int factor)
     {
         var newSound = new Sound
@@ -99,7 +157,8 @@ public class AudioDsp : IAudioDsp
                     throw new RhythmCodexException("Can't downsample without a source rate.");
                 var sample = new Sample();
                 sample.CloneMetadataFrom(s);
-                s[NumericData.Rate] = rate / factor;
+                if (s[NumericData.Rate] != null)
+                    s[NumericData.Rate] /= factor;
                 var length = s.Data.Length / factor;
                 var data = new float[length];
                 sample.Data = data;

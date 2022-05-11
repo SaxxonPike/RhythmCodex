@@ -4,12 +4,14 @@ using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
+using RhythmCodex.Sounds.Converters;
+using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Riff.Processing;
 
 [Service]
-public class SoundConsolidator : ISoundConsolidator
+public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
 {
     private struct PlayedEvent
     {
@@ -106,11 +108,15 @@ public class SoundConsolidator : ISoundConsolidator
             doneMatch.Add(match.A);
             doneMatch.Add(match.B);
                 
-            foreach (var sample in soundB.Samples.ToList())
+            var mix = _audioDsp.Mix(new[] { soundA, soundB });
+            soundA.Samples.Clear();
+
+            foreach (var sample in soundB.Samples)
                 soundA.Samples.Add(sample);
             soundB.Samples.Clear();
 
-            soundA[NumericData.Panning] = soundB[NumericData.Panning] = new BigRational(1, 2);
+            soundA[NumericData.Panning] = soundB[NumericData.Panning] = mix[NumericData.Panning];
+            soundA[NumericData.Volume] = soundB[NumericData.Volume] = mix[NumericData.Volume];
         }
             
     }

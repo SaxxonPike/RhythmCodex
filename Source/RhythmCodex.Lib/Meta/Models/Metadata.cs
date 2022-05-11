@@ -90,8 +90,11 @@ public class Metadata : IMetadata
         return new Metadata(_stringDatas, _numericDatas, _flagDatas);
     }
 
-    public void CloneMetadataFrom(Metadata other)
+    public void CloneMetadataFrom(Metadata? other)
     {
+        if (other == null)
+            return;
+
         var metadata = other.CloneMetadata();
         _stringDatas = metadata._stringDatas;
         _numericDatas = metadata._numericDatas;

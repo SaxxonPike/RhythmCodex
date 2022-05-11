@@ -3,10 +3,13 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
+using RhythmCodex.Riff.Processing;
+using RhythmCodex.Riff.Processing;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Twinkle.Heuristics;
@@ -24,7 +27,8 @@ public class TwinkleBeatmaniaDecoder(
     ITwinkleBeatmaniaChartMetadataDecoder twinkleBeatmaniaChartMetadataDecoder,
     ITwinkleBeatmaniaChartHeuristic twinkleBeatmaniaChartHeuristic,
     IRiffStreamWriter riffStreamWriter,
-    IRiffPcm16SoundEncoder riffPcm16SoundEncoder)
+    IRiffPcm16SoundEncoder riffPcm16SoundEncoder,
+    ISoundConsolidator soundConsolidator)
     : ITwinkleBeatmaniaDecoder
 {
     private static readonly int[] ChartOffsets = Enumerable
@@ -32,7 +36,7 @@ public class TwinkleBeatmaniaDecoder(
         .Select(i => i * 0x4000 + 0x2000)
         .ToArray();
 
-    public TwinkleArchive? Decode(TwinkleBeatmaniaChunk chunk)
+    public TwinkleArchive? Decode(TwinkleBeatmaniaChunk chunk, TwinkleDecodeOptions options)
     {
         if (chunk?.Data == null || chunk.Data.Length < 0x1A00000)
             return null;
@@ -77,6 +81,10 @@ public class TwinkleBeatmaniaDecoder(
             })
             .Where(c => c != null)
             .ToList();
+
+        if (!options.DoNotConsolidateSamples)
+            soundConsolidator.Consolidate(sounds,
+                charts.SelectMany(dc => dc?.Events ?? Enumerable.Empty<Event>()));
 
         return new TwinkleArchive
         {
