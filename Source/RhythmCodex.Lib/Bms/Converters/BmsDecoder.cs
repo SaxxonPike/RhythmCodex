@@ -15,9 +15,9 @@ namespace RhythmCodex.Bms.Converters
     [Service]
     public class BmsDecoder : IBmsDecoder
     {
-        private static readonly Regex MeasureRegex = new Regex("^[0-9]{3}[0-9A-F]{2}$");
+        private static readonly Regex MeasureRegex = new("^[0-9]{3}[0-9A-F]{2}$");
 
-        private static readonly Dictionary<string, StringData> SingularStringTags = new Dictionary<string, StringData>
+        private static readonly Dictionary<string, StringData> SingularStringTags = new()
         {
             {"TITLE", StringData.Title},
             {"ARTIST", StringData.Artist},
@@ -27,7 +27,7 @@ namespace RhythmCodex.Bms.Converters
             {"BACKBMP", StringData.BackgroundFile}
         };
 
-        private static readonly Dictionary<string, StringData> MultiStringTags = new Dictionary<string, StringData>
+        private static readonly Dictionary<string, StringData> MultiStringTags = new()
         {
             {"SUBTITLE", StringData.Subtitle},
             {"SUBARTIST", StringData.Subartist},
@@ -35,7 +35,7 @@ namespace RhythmCodex.Bms.Converters
         };
 
         private static readonly Dictionary<string, NumericData> SingularNumericTags =
-            new Dictionary<string, NumericData>
+            new()
             {
                 {"DIFFICULTY", NumericData.Difficulty},
                 {"PLAYLEVEL", NumericData.PlayLevel},

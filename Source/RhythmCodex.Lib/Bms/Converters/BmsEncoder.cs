@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using RhythmCodex.Bms.Model;
 using RhythmCodex.Charting.Models;
@@ -13,6 +14,8 @@ namespace RhythmCodex.Bms.Converters
     [Service]
     public class BmsEncoder : IBmsEncoder
     {
+        private static CultureInfo BmsCulture => CultureInfo.InvariantCulture;
+
         private readonly ILogger _logger;
         private readonly IBmsNoteCommandEncoder _bmsNoteCommandEncoder;
 
@@ -72,7 +75,7 @@ namespace RhythmCodex.Bms.Converters
                     yield return new BmsCommand
                     {
                         Name = kv.Value,
-                        Value = $"{(decimal) inputChart[kv.Key]}"
+                        Value = string.Format(BmsCulture, "{0}", (decimal) inputChart[kv.Key])
                     };
             }
 
@@ -84,7 +87,7 @@ namespace RhythmCodex.Bms.Converters
                 .Concat(chartEvents
                     .Where(ev => ev[NumericData.PlaySound] != null)
                     .Select(ev => ev[NumericData.PlaySound]))
-                .Select(br => (int) br)
+                .Select(br => (int) br!)
                 .Distinct()
                 .ToList();
 
@@ -95,7 +98,7 @@ namespace RhythmCodex.Bms.Converters
 
             var sampleMap = usedSamples
                 .Select((e, i) => new KeyValuePair<int, int>(e, i + 1))
-                .Where(kv => kv.Value >= 0 && kv.Value <= 1295)
+                .Where(kv => kv.Value is >= 0 and <= 1295)
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
 
             foreach (var kv in sampleMap)
@@ -114,18 +117,21 @@ namespace RhythmCodex.Bms.Converters
 
             var bpms = chartEvents
                 .Where(ev => ev[NumericData.Bpm] != null)
-                .Select(ev => ev[NumericData.Bpm])
+                .Select(ev => ev[NumericData.Bpm]!.Value)
                 .ToList();
 
-            yield return new BmsCommand
+            if (bpms.Count > 0)
             {
-                Name = "BPM",
-                Value = $"{(decimal) bpms[0]}"
-            };
+                yield return new BmsCommand
+                {
+                    Name = "BPM",
+                    Value = $"{(decimal) bpms[0]!}"
+                };
+            }
 
             var bpmMap = bpms
                 .Distinct()
-                .Select((e, i) => new KeyValuePair<BigRational, int>(e.Value, i + 1))
+                .Select((e, i) => new KeyValuePair<BigRational, int>(e, i + 1))
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
 
             foreach (var kv in bpmMap)
@@ -140,7 +146,7 @@ namespace RhythmCodex.Bms.Converters
             var measureLengths = chartEvents
                 .Where(ev => (ev[FlagData.Measure] == true || ev[FlagData.End] == true)
                              && ev[NumericData.MeasureLength].HasValue)
-                .GroupBy(ev => (int) ev[NumericData.MetricOffset].Value.GetWholePart())
+                .GroupBy(ev => (int) ev[NumericData.MetricOffset]!.Value.GetWholePart())
                 .ToDictionary(
                     g => g.Key,
                     g => g.First()[NumericData.MeasureLength] ?? 1);
@@ -150,7 +156,7 @@ namespace RhythmCodex.Bms.Converters
                 yield return new BmsCommand
                 {
                     Name = $"{Alphabet.EncodeNumeric(kv.Key, 3)}02",
-                    Value = $"{(decimal) kv.Value}",
+                    Value = string.Format(BmsCulture, "{0}", (decimal) kv.Value),
                     UseColon = true
                 };
             }
@@ -216,7 +222,7 @@ namespace RhythmCodex.Bms.Converters
 
                             yield return new BmsCommand
                             {
-                                Name = $"{measure:D3}{laneGroup.Key}",
+                                Name = string.Format(BmsCulture, "{0:D3}{1}", measure, laneGroup.Key),
                                 UseColon = true,
                                 Value = exportedEvents
                             };

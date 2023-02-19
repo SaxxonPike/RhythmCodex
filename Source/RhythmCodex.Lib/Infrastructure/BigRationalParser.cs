@@ -6,14 +6,14 @@ namespace RhythmCodex.Infrastructure
     {
         public static BigRational? ParseString(string value)
         {
-            if (value.Contains("/"))
+            if (value.Contains('/'))
             {
                 var values = value.Split('/');
                 return ParseString(values[0]) / ParseString(values[1]);
             }
-            
-            BigInteger numerator = 0;
-            BigInteger denominator = 1;
+
+            var numerator = BigInteger.Zero;
+            var denominator = BigInteger.One;
             var isPastDecimalPoint = false;
             var canBeNegative = true;
             var canBeDecimalPoint = true;
@@ -21,26 +21,27 @@ namespace RhythmCodex.Infrastructure
 
             foreach (var c in value.Trim())
             {
-                if (c >= '0' && c <= '9')
+                switch (c)
                 {
-                    if (isPastDecimalPoint)
-                        denominator *= 10;
-                    numerator *= 10;
-                    numerator += c - '0';
+                    case >= '0' and <= '9':
+                    {
+                        if (isPastDecimalPoint)
+                            denominator *= 10;
+                        numerator *= 10;
+                        numerator += c - '0';
+                        break;
+                    }
+                    case '.' when canBeDecimalPoint:
+                        isPastDecimalPoint = true;
+                        canBeDecimalPoint = false;
+                        break;
+                    case '-' when canBeNegative:
+                        isNegative = true;
+                        break;
+                    default:
+                        return null;
                 }
-                else if (c == '.' && canBeDecimalPoint)
-                {
-                    isPastDecimalPoint = true;
-                    canBeDecimalPoint = false;
-                }
-                else if (c == '-' && canBeNegative)
-                {
-                    isNegative = true;
-                }
-                else
-                {
-                    return null;
-                }
+
                 canBeNegative = false;
             }
 
