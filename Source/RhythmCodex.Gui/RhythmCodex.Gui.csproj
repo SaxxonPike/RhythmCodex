@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<OutputType>exe</OutputType>
 		<TargetFramework>net7.0-windows</TargetFramework>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<ApplicationIcon />
 		<OutputTypeEx>winexe</OutputTypeEx>
 		<StartupObject />
