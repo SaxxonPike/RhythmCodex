@@ -9,6 +9,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Stepmania;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
+using SixLabors.ImageSharp;
 
 namespace RhythmCodex.OneShots
 {
@@ -31,7 +32,7 @@ namespace RhythmCodex.OneShots
                     commands = smReader.Read(stream).ToList();
 
                 var smPath = Path.GetDirectoryName(file);
-                var images = Directory.GetFiles(smPath, "*.png").ToDictionary(f => f, Image.FromFile);
+                var images = Directory.GetFiles(smPath, "*.png").ToDictionary(f => f, Image.Load);
                 var musics = Directory.GetFiles(smPath, "*.mp3").ToDictionary(f => f, f => new FileInfo(f));
 
                 // replace banner

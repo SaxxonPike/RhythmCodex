@@ -69,7 +69,7 @@ namespace RhythmCodex
         private static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
-
+            
             builder.RegisterInstance(new TestConsole())
                 .As<IConsole>();
             builder.Register(c => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})

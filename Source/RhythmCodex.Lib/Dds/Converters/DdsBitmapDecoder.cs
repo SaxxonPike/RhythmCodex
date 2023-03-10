@@ -17,42 +17,26 @@ namespace RhythmCodex.Dds.Converters
             _rawBitmapDecoder = rawBitmapDecoder;
         }
 
-        public RawBitmap Decode(DdsImage image)
+        public Bitmap Decode(DdsImage image)
         {
             switch (image.PixelFormat.FourCc)
             {
                 case 0x00000000: // uncompressed
-                    return new RawBitmap
-                    {
-                        Width = image.Width,
-                        Height = image.Height,
-                        Data = _rawBitmapDecoder.Decode32Bit(image.Data, image.Width, image.Height)
-                    };
+                    return new Bitmap(image.Width,
+                        _rawBitmapDecoder.Decode32Bit(image.Data, image.Width, image.Height));
 
                 case 0x31545844: // DXT1
-                    return new RawBitmap
-                    {
-                        Width = image.Width,
-                        Height = image.Height,
-                        Data = _dxtDecoder.DecodeDxt1(image.Data, image.Width, image.Height,
-                            image.PixelFormat.Flags.HasFlag(DdsPixelFormatFlags.DDPF_ALPHAPIXELS))
-                    };
+                    return new Bitmap(image.Width,
+                        _dxtDecoder.DecodeDxt1(image.Data, image.Width, image.Height,
+                            image.PixelFormat.Flags.HasFlag(DdsPixelFormatFlags.DDPF_ALPHAPIXELS)));
 
                 case 0x33545844: // DXT3
-                    return new RawBitmap
-                    {
-                        Width = image.Width,
-                        Height = image.Height,
-                        Data = _dxtDecoder.DecodeDxt3(image.Data, image.Width, image.Height)
-                    };
+                    return new Bitmap(image.Width,
+                        _dxtDecoder.DecodeDxt3(image.Data, image.Width, image.Height));
 
                 case 0x35545844: // DXT5
-                    return new RawBitmap
-                    {
-                        Width = image.Width,
-                        Height = image.Height,
-                        Data = _dxtDecoder.DecodeDxt5(image.Data, image.Width, image.Height)
-                    };
+                    return new Bitmap(image.Width,
+                        _dxtDecoder.DecodeDxt5(image.Data, image.Width, image.Height));
 
                 default:
                     throw new RhythmCodexException($"Unsupported FourCC: 0x{image.PixelFormat.FourCc:X8}");

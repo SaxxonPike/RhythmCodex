@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ClientCommon;
 using FluentAssertions;
 using NUnit.Framework;
@@ -12,7 +13,7 @@ namespace RhythmCodex.Cli.Helpers
         public void Parse_ParsesEmptyArgs()
         {
             // Arrange.
-            var data = new string[] { };
+            var data = Array.Empty<string>();
 
             // Act.
             var output = Subject.Parse(data);
@@ -34,7 +35,7 @@ namespace RhythmCodex.Cli.Helpers
 
             // Assert.
             output.Options.Should().HaveCount(1);
-            output.Options[$"{argKind}"].Should().BeEquivalentTo(new[] {argValue});
+            output.Options[$"{argKind}"].Should().BeEquivalentTo(argValue);
         }
 
         [Test]
@@ -66,8 +67,8 @@ namespace RhythmCodex.Cli.Helpers
 
             // Assert.
             output.Options.Should().HaveCount(2);
-            output.Options[$"{argKinds[0]}"].Should().BeEquivalentTo(new[] {argValues[0]});
-            output.Options[$"{argKinds[1]}"].Should().BeEquivalentTo(new[] {argValues[1]});
+            output.Options[$"{argKinds[0]}"].Should().BeEquivalentTo(argValues[0]);
+            output.Options[$"{argKinds[1]}"].Should().BeEquivalentTo(argValues[1]);
         }
 
         [Test]

@@ -52,7 +52,7 @@ namespace RhythmCodex.Cli.Orchestration
             _timStreamReader = timStreamReader;
         }
 
-        private RawBitmap CropImage(RawBitmap bitmap)
+        private IBitmap CropImage(IBitmap bitmap)
         {
             if (Args.Options.ContainsKey("+crop_ddr"))
             {

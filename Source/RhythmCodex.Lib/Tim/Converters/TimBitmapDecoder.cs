@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Graphics.Models;
@@ -19,23 +20,18 @@ namespace RhythmCodex.Tim.Converters
             _dataDecoder = dataDecoder;
         }
 
-        public IList<RawBitmap> Decode(TimImage image) =>
+        public IList<IBitmap> Decode(TimImage image) =>
             Enumerable.Range(0, image.Cluts.Count).Select(i => Decode(image, i)).ToList();
 
-        public RawBitmap Decode(TimImage image, int clutIndex)
+        public IBitmap Decode(TimImage image, int clutIndex)
         {
             var data = DecodeData(image);
             ConvertColors(data, image, clutIndex);
             
-            return new RawBitmap
-            {
-                Data = data,
-                Height = image.Height,
-                Width = data.Length / image.Height
-            };
+            return new Bitmap(data.Length / image.Height, data);
         }
 
-        private void ConvertColors(int[] data, TimImage image, int clutIndex)
+        private void ConvertColors(Span<int> data, TimImage image, int clutIndex)
         {
             switch (image.ImageType & 0x3)
             {

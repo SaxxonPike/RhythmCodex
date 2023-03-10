@@ -52,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XwbExtract", "XwbExtract\Xw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientCommon", "ClientCommon\ClientCommon.csproj", "{BE52B373-69ED-42BD-A153-E7A61EBD2277}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.ImageSharp", "RhythmCodex.Plugin.ImageSharp\RhythmCodex.Plugin.ImageSharp.csproj", "{D6BA6668-839A-4834-ABB2-35F06B08D4D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +116,10 @@ Global
 		{BE52B373-69ED-42BD-A153-E7A61EBD2277}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE52B373-69ED-42BD-A153-E7A61EBD2277}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE52B373-69ED-42BD-A153-E7A61EBD2277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6BA6668-839A-4834-ABB2-35F06B08D4D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6BA6668-839A-4834-ABB2-35F06B08D4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6BA6668-839A-4834-ABB2-35F06B08D4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6BA6668-839A-4834-ABB2-35F06B08D4D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -133,5 +139,6 @@ Global
 		{7A815285-3FAC-4021-B00D-EFE23AE4988C} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 		{3DC90D6E-B7DE-4D5B-AE32-43331C1819F3} = {C6204E35-6693-496E-95E0-E58D986E09E2}
 		{BE52B373-69ED-42BD-A153-E7A61EBD2277} = {C6204E35-6693-496E-95E0-E58D986E09E2}
+		{D6BA6668-839A-4834-ABB2-35F06B08D4D9} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 	EndGlobalSection
 EndGlobal

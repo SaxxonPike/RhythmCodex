@@ -15,37 +15,35 @@ namespace RhythmCodex.Plugin.NVorbis
     {
         public ISound Decode(Stream stream)
         {
-            using (var reader = new VorbisReader(stream, false))
+            using var reader = new VorbisReader(stream, false);
+            reader.ClipSamples = false;
+                
+            var channels = reader.Channels;
+            var rate = reader.SampleRate;
+            var rawData = new List<float>();
+            var rawDataBuffer = new float[4096];
+
+            while (true)
             {
-                reader.ClipSamples = false;
-                
-                var channels = reader.Channels;
-                var rate = reader.SampleRate;
-                var rawData = new List<float>();
-                var rawDataBuffer = new float[4096];
-
-                while (true)
-                {
-                    var samplesRead = reader.ReadSamples(rawDataBuffer, 0, rawDataBuffer.Length);
-                    if (samplesRead == 0)
-                        break;
-                    rawData.AddRange(rawDataBuffer.Take(samplesRead));
-                }
-                
-                var result = new Sound
-                {
-                    Samples = rawData.Deinterleave(1, channels)
-                        .Select(samples => new Sample
-                        {
-                            Data = samples.ToArray(),
-                            [NumericData.Rate] = rate
-                        })
-                        .Cast<ISample>()
-                        .ToList()
-                };
-
-                return result;                
+                var samplesRead = reader.ReadSamples(rawDataBuffer, 0, rawDataBuffer.Length);
+                if (samplesRead == 0)
+                    break;
+                rawData.AddRange(rawDataBuffer.Take(samplesRead));
             }
+                
+            var result = new Sound
+            {
+                Samples = rawData.Deinterleave(1, channels)
+                    .Select(samples => new Sample
+                    {
+                        Data = samples.ToArray(),
+                        [NumericData.Rate] = rate
+                    })
+                    .Cast<ISample>()
+                    .ToList()
+            };
+
+            return result;
         }
     }
 }
