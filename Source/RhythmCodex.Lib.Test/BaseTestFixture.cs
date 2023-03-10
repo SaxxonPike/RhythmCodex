@@ -45,16 +45,14 @@ namespace RhythmCodex
         /// </summary>
         protected byte[] GetEmbeddedResource(string name)
         {
-            using (var stream =
-                   typeof(TestDataBeacon).Assembly.GetManifestResourceStream($"RhythmCodex.Data.{name}"))
-            using (var mem = new MemoryStream())
-            {
-                if (stream == null)
-                    throw new IOException($"Embedded resource {name} was not found.");
+            using var stream =
+                typeof(TestDataBeacon).Assembly.GetManifestResourceStream($"RhythmCodex.Data.{name}");
+            using var mem = new MemoryStream();
+            if (stream == null)
+                throw new IOException($"Embedded resource {name} was not found.");
 
-                stream.CopyTo(mem);
-                return mem.ToArray();
-            }
+            stream.CopyTo(mem);
+            return mem.ToArray();
         }
 
         /// <summary>
@@ -68,13 +66,14 @@ namespace RhythmCodex
             using var archive = new ZipArchive(mem, ZipArchiveMode.Read, false);
 
             foreach (var entry in archive.Entries)
-                using (var entryStream = entry.Open())
-                using (var entryCopy = new MemoryStream())
-                {
-                    entryStream.CopyTo(entryCopy);
-                    entryCopy.Flush();
-                    output[entry.FullName] = entryCopy.ToArray();
-                }
+            {
+                using var entryStream = entry.Open();
+                using var entryCopy = new MemoryStream();
+
+                entryStream.CopyTo(entryCopy);
+                entryCopy.Flush();
+                output[entry.FullName] = entryCopy.ToArray();
+            }
 
             return output;
         }

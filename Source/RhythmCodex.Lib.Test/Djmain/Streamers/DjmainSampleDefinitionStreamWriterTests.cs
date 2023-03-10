@@ -51,15 +51,13 @@ namespace RhythmCodex.Djmain.Streamers
                 0x34, 0x78, 0x56, 0x90, 0x12, 0x34, 0x90, 0x78, 0x56, 0x12, 0x34
             };
 
-            using (var mem = new MemoryStream())
-            {
-                // Act.
-                Subject.Write(mem, pairs);
+            using var mem = new MemoryStream();
+            // Act.
+            Subject.Write(mem, pairs);
 
-                // Assert.
-                var output = mem.ToArray();
-                output.Should().BeEquivalentTo(expected);
-            }
+            // Assert.
+            var output = mem.ToArray();
+            output.Should().BeEquivalentTo(expected);
         }
     }
 }

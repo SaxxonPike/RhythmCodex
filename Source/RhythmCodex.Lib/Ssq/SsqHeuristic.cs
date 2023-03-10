@@ -28,8 +28,9 @@ namespace RhythmCodex.Ssq
         
         public HeuristicResult Match(IHeuristicReader reader)
         {
-            var data = reader.Read(12);
-            if (data.Length < 12)
+            Span<byte> data = stackalloc byte[12];
+
+            if (reader.Read(data) < 12)
                 return null;
 
             if (data[0] % 4 != 0)

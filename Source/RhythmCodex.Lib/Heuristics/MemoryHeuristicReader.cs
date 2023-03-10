@@ -23,9 +23,18 @@ namespace RhythmCodex.Heuristics
         public ReadOnlySpan<byte> Read(int count)
         {
             var actualLength = Math.Min(_bytes.Length - _offset, count);
-            var result = _bytes.Span.Slice(_offset, count);
+            var result = _bytes.Span.Slice(_offset, actualLength);
             _offset += actualLength;
             return result;
+        }
+
+        public int Read(Span<byte> buffer)
+        {
+            var actualLength = Math.Min(_bytes.Length - _offset, buffer.Length);
+            var result = _bytes.Span.Slice(_offset, actualLength);
+            _offset += actualLength;
+            result.CopyTo(buffer);
+            return actualLength;
         }
 
         public int Read(byte[] buffer, int offset, int length)

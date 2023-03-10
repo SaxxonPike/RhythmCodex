@@ -29,13 +29,11 @@ namespace RhythmCodex.Wav.Integration
             var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "wav");
             if (!Directory.Exists(outfolder))
                 Directory.CreateDirectory(outfolder);
-                    
-            using (var outStream = new MemoryStream())
-            {
-                writer.Write(outStream, encoded);
-                outStream.Flush();
-                File.WriteAllBytes(Path.Combine(outfolder, $"{name}.wav"), outStream.ToArray());
-            }
+
+            using var outStream = new MemoryStream();
+            writer.Write(outStream, encoded);
+            outStream.Flush();
+            File.WriteAllBytes(Path.Combine(outfolder, $"{name}.wav"), outStream.ToArray());
         }
     }
 }

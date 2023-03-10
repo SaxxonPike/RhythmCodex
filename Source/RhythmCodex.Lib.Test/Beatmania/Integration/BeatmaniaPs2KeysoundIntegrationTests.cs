@@ -31,20 +31,16 @@ namespace RhythmCodex.Beatmania.Integration
             if (!Directory.Exists(outFolder))
                 Directory.CreateDirectory(outFolder);
 
-            using (var dataStream = new MemoryStream(data))
-            {
-                var bgm = streamer.Read(dataStream);
+            using var dataStream = new MemoryStream(data);
+            var bgm = streamer.Read(dataStream);
 
-                var decoded = decoder.Decode(bgm);
-                var processed = dsp.ApplyEffects(decoded);
-                var encoded = encoder.Encode(processed);
-                using (var outStream = new MemoryStream())
-                {
-                    writer.Write(outStream, encoded);
-                    outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(outFolder, $"bgm.wav"), outStream.ToArray());
-                }
-            }
+            var decoded = decoder.Decode(bgm);
+            var processed = dsp.ApplyEffects(decoded);
+            var encoded = encoder.Encode(processed);
+            using var outStream = new MemoryStream();
+            writer.Write(outStream, encoded);
+            outStream.Flush();
+            File.WriteAllBytes(Path.Combine(outFolder, $"bgm.wav"), outStream.ToArray());
         }
 
         [Test]
@@ -65,23 +61,19 @@ namespace RhythmCodex.Beatmania.Integration
             if (!Directory.Exists(outFolder))
                 Directory.CreateDirectory(outFolder);
 
-            using (var dataStream = new MemoryStream(data))
-            {
-                var keysounds = streamer.Read(dataStream);
+            using var dataStream = new MemoryStream(data);
+            var keysounds = streamer.Read(dataStream);
 
-                foreach (var keysound in keysounds.Keysounds)
-                {
-                    var decoded = decoder.Decode(keysound);
-                    var processed = dsp.ApplyEffects(decoded);
-                    var encoded = encoder.Encode(processed);
-                    using (var outStream = new MemoryStream())
-                    {
-                        writer.Write(outStream, encoded);
-                        outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outFolder, $"{keysound.SampleNumber:D4}.wav"),
-                            outStream.ToArray());
-                    }
-                }
+            foreach (var keysound in keysounds.Keysounds)
+            {
+                var decoded = decoder.Decode(keysound);
+                var processed = dsp.ApplyEffects(decoded);
+                var encoded = encoder.Encode(processed);
+                using var outStream = new MemoryStream();
+                writer.Write(outStream, encoded);
+                outStream.Flush();
+                File.WriteAllBytes(Path.Combine(outFolder, $"{keysound.SampleNumber:D4}.wav"),
+                    outStream.ToArray());
             }
         }
 
@@ -103,20 +95,16 @@ namespace RhythmCodex.Beatmania.Integration
             if (!Directory.Exists(outFolder))
                 Directory.CreateDirectory(outFolder);
 
-            using (var dataStream = new MemoryStream(data))
-            {
-                var bgm = streamer.Read(dataStream);
+            using var dataStream = new MemoryStream(data);
+            var bgm = streamer.Read(dataStream);
 
-                var decoded = decoder.Decode(bgm);
-                var processed = dsp.ApplyEffects(decoded);
-                var encoded = encoder.Encode(processed);
-                using (var outStream = new MemoryStream())
-                {
-                    writer.Write(outStream, encoded);
-                    outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(outFolder, $"bgm.wav"), outStream.ToArray());
-                }
-            }
+            var decoded = decoder.Decode(bgm);
+            var processed = dsp.ApplyEffects(decoded);
+            var encoded = encoder.Encode(processed);
+            using var outStream = new MemoryStream();
+            writer.Write(outStream, encoded);
+            outStream.Flush();
+            File.WriteAllBytes(Path.Combine(outFolder, $"bgm.wav"), outStream.ToArray());
         }
 
         [Test]
@@ -137,23 +125,19 @@ namespace RhythmCodex.Beatmania.Integration
             if (!Directory.Exists(outFolder))
                 Directory.CreateDirectory(outFolder);
 
-            using (var dataStream = new MemoryStream(data))
-            {
-                var keysounds = streamer.Read(dataStream);
+            using var dataStream = new MemoryStream(data);
+            var keysounds = streamer.Read(dataStream);
 
-                foreach (var keysound in keysounds.Keysounds)
-                {
-                    var decoded = decoder.Decode(keysound);
-                    var processed = dsp.ApplyEffects(decoded);
-                    var encoded = encoder.Encode(processed);
-                    using (var outStream = new MemoryStream())
-                    {
-                        writer.Write(outStream, encoded);
-                        outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outFolder, $"{keysound.SampleNumber:D4}.wav"),
-                            outStream.ToArray());
-                    }
-                }
+            foreach (var keysound in keysounds.Keysounds)
+            {
+                var decoded = decoder.Decode(keysound);
+                var processed = dsp.ApplyEffects(decoded);
+                var encoded = encoder.Encode(processed);
+                using var outStream = new MemoryStream();
+                writer.Write(outStream, encoded);
+                outStream.Flush();
+                File.WriteAllBytes(Path.Combine(outFolder, $"{keysound.SampleNumber:D4}.wav"),
+                    outStream.ToArray());
             }
         }
     }

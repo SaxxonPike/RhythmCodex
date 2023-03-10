@@ -39,23 +39,21 @@ namespace RhythmCodex.Djmain.Streamers
             });
 
             // Act.
-            using (var mem = new MemoryStream(input))
-            {
-                var output = Subject.Read(mem).ToArray();
-                output.Should().HaveCount(1, "only whole chunks should be returned");
+            using var mem = new MemoryStream(input);
+            var output = Subject.Read(mem).ToArray();
+            output.Should().HaveCount(1, "only whole chunks should be returned");
 
-                // Assert.
-                foreach (var chunk in output)
+            // Assert.
+            foreach (var chunk in output)
+            {
+                var data = chunk.Data;
+                var offset = chunk.Id * chunkSize;
+                for (var i = 0; i < chunkSize; i++, offset++)
                 {
-                    var data = chunk.Data;
-                    var offset = chunk.Id * chunkSize;
-                    for (var i = 0; i < chunkSize; i++, offset++)
-                    {
-                        int d0 = data[i];
-                        int d1 = input[offset];
-                        if (d0 != d1)
-                            throw new Exception($"Expected {d1} but got {d0} at chunk {chunk.Id} index {i:X6}");
-                    }
+                    int d0 = data[i];
+                    int d1 = input[offset];
+                    if (d0 != d1)
+                        throw new Exception($"Expected {d1} but got {d0} at chunk {chunk.Id} index {i:X6}");
                 }
             }
         }
@@ -75,22 +73,20 @@ namespace RhythmCodex.Djmain.Streamers
             });
 
             // Act.
-            using (var mem = new MemoryStream(input))
-            {
-                var output = Subject.Read(mem);
+            using var mem = new MemoryStream(input);
+            var output = Subject.Read(mem);
 
-                // Assert.
-                foreach (var chunk in output)
+            // Assert.
+            foreach (var chunk in output)
+            {
+                var data = chunk.Data;
+                var offset = chunk.Id * chunkSize;
+                for (var i = 0; i < chunkSize; i++, offset++)
                 {
-                    var data = chunk.Data;
-                    var offset = chunk.Id * chunkSize;
-                    for (var i = 0; i < chunkSize; i++, offset++)
-                    {
-                        int d0 = data[i];
-                        int d1 = input[offset];
-                        if (d0 != d1)
-                            throw new Exception($"Expected {d1} but got {d0} at chunk {chunk.Id} index {i:X6}");
-                    }
+                    int d0 = data[i];
+                    int d1 = input[offset];
+                    if (d0 != d1)
+                        throw new Exception($"Expected {d1} but got {d0} at chunk {chunk.Id} index {i:X6}");
                 }
             }
         }

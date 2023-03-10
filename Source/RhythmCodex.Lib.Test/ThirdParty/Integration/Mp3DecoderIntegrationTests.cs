@@ -24,12 +24,10 @@ namespace RhythmCodex.ThirdParty.Integration
             
             var decoded = decoder.Decode(new MemoryStream(data));
             var encoded = encoder.Encode(decoded);
-            using (var outStream = new MemoryStream())
-            {
-                writer.Write(outStream, encoded);
-                outStream.Flush();
-                File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "mp3.wav"), outStream.ToArray());
-            }            
+            using var outStream = new MemoryStream();
+            writer.Write(outStream, encoded);
+            outStream.Flush();
+            File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "mp3.wav"), outStream.ToArray());
         }
     }
 }

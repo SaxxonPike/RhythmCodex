@@ -24,17 +24,13 @@ namespace RhythmCodex.Twinkle.Integration
         {
             var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
 
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx8th.zip"))
-            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
-            {
-                var entry = zipStream.Entries.Single();
-                using (var entryStream = entry.Open())
-                {
-                    var chunks = streamer.Read(entryStream, entry.Length);
-                    var chunk = chunks.Skip(1).First();
-                    File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data);
-                }
-            }
+            using var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx8th.zip");
+            using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
+            var entry = zipStream.Entries.Single();
+            using var entryStream = entry.Open();
+            var chunks = streamer.Read(entryStream, entry.Length);
+            var chunk = chunks.Skip(1).First();
+            File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data);
         }
 
         [Test]
@@ -63,12 +59,10 @@ namespace RhythmCodex.Twinkle.Integration
             foreach (var chart in archive.Charts)
             {
                 chart.PopulateMetricOffsets();
-                using (var outStream =
-                    this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]}.bms")))
-                {
-                    bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
-                    outStream.Flush();
-                }
+                using var outStream =
+                    this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]}.bms"));
+                bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
+                outStream.Flush();
             }
         }
         
@@ -105,26 +99,22 @@ namespace RhythmCodex.Twinkle.Integration
             var dsp = Resolve<IAudioDsp>();
             var options = new ChartRendererOptions();
 
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx7th.zip"))
-            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
+            using var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx7th.zip");
+            using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
+            var entry = zipStream.Entries.Single();
+            using var entryStream = entry.Open();
+            var chunks = streamer.Read(entryStream, entry.Length, true);
+
+            foreach (var chunk in chunks.AsParallel())
             {
-                var entry = zipStream.Entries.Single();
-                using (var entryStream = entry.Open())
+                var archive = decoder.Decode(chunk);
+                if (archive == null)
+                    continue;
+
+                foreach (var chart in archive.Charts.AsParallel())
                 {
-                    var chunks = streamer.Read(entryStream, entry.Length, true);
-
-                    foreach (var chunk in chunks.AsParallel())
-                    {
-                        var archive = decoder.Decode(chunk);
-                        if (archive == null)
-                            continue;
-
-                        foreach (var chart in archive.Charts.AsParallel())
-                        {
-                            var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
-                            this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
-                        }
-                    }
+                    var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
+                    this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
                 }
             }
         }
@@ -134,18 +124,14 @@ namespace RhythmCodex.Twinkle.Integration
         public void Test5()
         {
             var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip"))
-            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
-            {
-                var entry = zipStream.Entries.Single();
-                using (var entryStream = entry.Open())
-                {
-                    var chunks = streamer.Read(entryStream, entry.Length, true);
+            using var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip");
+            using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
+            var entry = zipStream.Entries.Single();
+            using var entryStream = entry.Open();
+            var chunks = streamer.Read(entryStream, entry.Length, true);
 
-                    foreach (var chunk in chunks.AsParallel())
-                        this.WriteFile(chunk.Data, Path.Combine("twinkle1st", $"{chunk.Index:D4}.twinkle"));
-                }
-            }
+            foreach (var chunk in chunks.AsParallel())
+                this.WriteFile(chunk.Data, Path.Combine("twinkle1st", $"{chunk.Index:D4}.twinkle"));
         }
 
         [Test]
@@ -155,25 +141,19 @@ namespace RhythmCodex.Twinkle.Integration
             var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
             var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
             var chartWriter = Resolve<IBeatmaniaPc1StreamWriter>();
-            using (var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip"))
-            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
-            {
-                var entry = zipStream.Entries.Single();
-                using (var entryStream = entry.Open())
-                {
-                    var chunks = streamer.Read(entryStream, entry.Length, true);
+            using var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip");
+            using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
+            var entry = zipStream.Entries.Single();
+            using var entryStream = entry.Open();
+            var chunks = streamer.Read(entryStream, entry.Length, true);
 
-                    foreach (var chunk in chunks.Take(1))
-                    {
-                        var bpc = decoder.MigrateToBemaniPc(chunk);
-                        using (var mem = new MemoryStream())
-                        {
-                            chartWriter.Write(mem, bpc.Charts);
-                            mem.Flush();
-                            this.WriteFile(mem.ToArray(), $"{chunk.Index:D4}.1");
-                        }
-                    }
-                }
+            foreach (var chunk in chunks.Take(1))
+            {
+                var bpc = decoder.MigrateToBemaniPc(chunk);
+                using var mem = new MemoryStream();
+                chartWriter.Write(mem, bpc.Charts);
+                mem.Flush();
+                this.WriteFile(mem.ToArray(), $"{chunk.Index:D4}.1");
             }
         }
     }

@@ -24,35 +24,33 @@ namespace RhythmCodex.Djmain.Streamers
             };
 
             // Act.
-            using (var mem = new MemoryStream(data))
-            {
-                var output = Subject.Read(mem).ToArray();
+            using var mem = new MemoryStream(data);
+            var output = Subject.Read(mem).ToArray();
 
-                // Assert.
-                output.Should().HaveCount(2);
-                output[0].Should().BeEquivalentTo(new KeyValuePair<int, IDjmainSampleInfo>(0, new DjmainSampleInfo
-                {
-                    Channel = 0x12,
-                    Frequency = 0x5634,
-                    ReverbVolume = 0x78,
-                    Volume = 0x90,
-                    Panning = 0x12,
-                    Offset = 0x785634,
-                    SampleType = 0x90,
-                    Flags = 0x12
-                }));
-                output[1].Should().BeEquivalentTo(new KeyValuePair<int, IDjmainSampleInfo>(1, new DjmainSampleInfo
-                {
-                    Channel = 0x34,
-                    Frequency = 0x7856,
-                    ReverbVolume = 0x90,
-                    Volume = 0x12,
-                    Panning = 0x34,
-                    Offset = 0x907856,
-                    SampleType = 0x12,
-                    Flags = 0x34
-                }));
-            }
+            // Assert.
+            output.Should().HaveCount(2);
+            output[0].Should().BeEquivalentTo(new KeyValuePair<int, IDjmainSampleInfo>(0, new DjmainSampleInfo
+            {
+                Channel = 0x12,
+                Frequency = 0x5634,
+                ReverbVolume = 0x78,
+                Volume = 0x90,
+                Panning = 0x12,
+                Offset = 0x785634,
+                SampleType = 0x90,
+                Flags = 0x12
+            }));
+            output[1].Should().BeEquivalentTo(new KeyValuePair<int, IDjmainSampleInfo>(1, new DjmainSampleInfo
+            {
+                Channel = 0x34,
+                Frequency = 0x7856,
+                ReverbVolume = 0x90,
+                Volume = 0x12,
+                Panning = 0x34,
+                Offset = 0x907856,
+                SampleType = 0x12,
+                Flags = 0x34
+            }));
         }
     }
 }

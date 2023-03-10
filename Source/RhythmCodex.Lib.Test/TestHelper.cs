@@ -26,12 +26,10 @@ namespace RhythmCodex
             CreateDirectory(resolver, Path.GetDirectoryName(outPath));
 
             var encoded = encoder.Encode(dsp.ApplyEffects(decoded));
-            using (var outStream = new MemoryStream())
-            {
-                writer.Write(outStream, encoded);
-                outStream.Flush();
-                File.WriteAllBytes(outPath, outStream.ToArray());
-            }
+            using var outStream = new MemoryStream();
+            writer.Write(outStream, encoded);
+            outStream.Flush();
+            File.WriteAllBytes(outPath, outStream.ToArray());
         }
 
         public static void WriteFile(this IResolver resolver, byte[] data, string outFileName)

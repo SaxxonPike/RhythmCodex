@@ -29,13 +29,11 @@ namespace RhythmCodex.Dds.Integration
             var inputImage = reader.Read(mem, (int) mem.Length);
             var decodedImage = decoder.Decode(inputImage);
 
-            using (var outStream =
+            using var outStream =
                 new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    $"{resource}.png"), FileMode.Create))
-            {
-                writer.Write(outStream, decodedImage);
-                outStream.Flush();
-            }
+                    $"{resource}.png"), FileMode.Create);
+            writer.Write(outStream, decodedImage);
+            outStream.Flush();
         }
     }
 }

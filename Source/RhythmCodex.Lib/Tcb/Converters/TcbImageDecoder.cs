@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using RhythmCodex.Graphics.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Tcb.Models;
 
@@ -19,7 +20,7 @@ namespace RhythmCodex.Tcb.Converters
 
             //if (image.Palette.Length > 0x50)
             {
-                var palSpan = MemoryMarshal.Cast<byte, int>(image.Palette.AsSpan());
+                var palSpan = Bitter.ToInt32Values(image.Palette);
                 palette = FilterPalette(palSpan);
             }
 

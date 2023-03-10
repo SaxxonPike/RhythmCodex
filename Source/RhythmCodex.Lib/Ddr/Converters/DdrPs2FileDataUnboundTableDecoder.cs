@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Converters
@@ -23,7 +24,7 @@ namespace RhythmCodex.Ddr.Converters
             var data = chunk.Data;
             var result = new List<DdrPs2FileDataTableEntry>();
             var stream = new MemoryStream(data);
-            var offsets = MemoryMarshal.Cast<byte, int>(data.AsSpan(0, data.Length / 4 * 4));
+            var offsets = Bitter.ToInt32Values(data);
             var offsetCount = offsets.Length;
             for (var i = 0; i < offsetCount; i++)
             {

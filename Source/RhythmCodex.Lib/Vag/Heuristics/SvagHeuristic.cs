@@ -45,9 +45,14 @@ namespace RhythmCodex.Vag.Heuristics
         
         public HeuristicResult Match(IHeuristicReader reader)
         {
-            var data = reader.Read(0x1C);
-            var words = MemoryMarshal.Cast<byte, int>(data);
+            Span<int> words = stackalloc int[7];
+            Span<byte> data = stackalloc byte[0x1C];
 
+            if (reader.Read(data) < 0x1C)
+                return null;
+
+            Bitter.ToInt32Values(data, words);
+            
             // "Svag"
             if (words[0] != 0x67617653)
                 return null;

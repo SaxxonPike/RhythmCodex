@@ -30,6 +30,11 @@ namespace RhythmCodex.Heuristics
             return buffer.AsSpan(0, actualRead);
         }
 
+        public int Read(Span<byte> buffer)
+        {
+            return _stream.ReadAtLeast(buffer, buffer.Length, false);
+        }
+
         public int Read(byte[] buffer, int offset, int length) =>
             _stream.Read(buffer, offset, length);
 

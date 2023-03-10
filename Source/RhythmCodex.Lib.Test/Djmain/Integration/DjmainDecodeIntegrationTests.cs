@@ -45,13 +45,11 @@ namespace RhythmCodex.Djmain.Integration
             
             foreach (var kv in sounds)
             {
-                using (var stream =
+                using var stream =
                     new FileStream(Path.Combine(outPath, kv.Key),
-                        FileMode.Create))
-                {
-                    var sound = kv.Value;
-                    Resolve<IRiffStreamWriter>().Write(stream, sound);
-                }
+                        FileMode.Create);
+                var sound = kv.Value;
+                Resolve<IRiffStreamWriter>().Write(stream, sound);
             }
         }
         
@@ -60,19 +58,14 @@ namespace RhythmCodex.Djmain.Integration
         public void Test2()
         {
             var streamer = Resolve<IDjmainChunkStreamReader>();
-            using (var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\bm1stmix.zip"))
-            using (var zipStream = new ZipArchive(stream, ZipArchiveMode.Read))
-            {
-                var entry = zipStream.Entries.Single();
-                using (var entryStream = entry.Open())
-                {
-                    var chunks = streamer.Read(entryStream);
+            using var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\bm1stmix.zip");
+            using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
+            var entry = zipStream.Entries.Single();
+            using var entryStream = entry.Open();
+            var chunks = streamer.Read(entryStream);
 
-                    foreach (var chunk in chunks.AsParallel())
-                        this.WriteFile(chunk.Data, Path.Combine("djmain1st", $"{chunk.Id:D4}.djmain"));
-                }
-            }
-
+            foreach (var chunk in chunks.AsParallel())
+                this.WriteFile(chunk.Data, Path.Combine("djmain1st", $"{chunk.Id:D4}.djmain"));
         }
         
         [Test]

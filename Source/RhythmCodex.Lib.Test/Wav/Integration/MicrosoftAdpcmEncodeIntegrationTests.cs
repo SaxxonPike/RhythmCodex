@@ -27,13 +27,11 @@ namespace RhythmCodex.Wav.Integration
             var sound = wavDecoder.Decode(new ReadOnlyMemoryStream(data));
             var encoded = adpcmEncoder.Encode(sound, 500);
 
-            using (var stream =
+            using var stream =
                 File.OpenWrite(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "out-ms.wav")))
-            {
-                writer.Write(stream, encoded);
-                stream.Flush();
-            }
+                    "out-ms.wav"));
+            writer.Write(stream, encoded);
+            stream.Flush();
         }
     }
 }

@@ -72,25 +72,22 @@ namespace RhythmCodex.Xact.Integration
             var writer = Resolve<IRiffStreamWriter>();
 
             // Act.
-            using (var observed = new MemoryStream(data))
-            {
-                // Assert.
-                foreach (var sound in reader.Read(observed))
-                {
-                    var decoded = decoder.Decode(sound);
-                    var encoded = encoder.Encode(decoded);
-                    var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xwb");
-                    if (!Directory.Exists(outfolder))
-                        Directory.CreateDirectory(outfolder);
+            using var observed = new MemoryStream(data);
 
-                    using (var outStream = new MemoryStream())
-                    {
-                        writer.Write(outStream, encoded);
-                        outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outfolder, $"{decoded[StringData.Name]}.wav"),
-                            outStream.ToArray());
-                    }
-                }
+            // Assert.
+            foreach (var sound in reader.Read(observed))
+            {
+                var decoded = decoder.Decode(sound);
+                var encoded = encoder.Encode(decoded);
+                var outFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xwb");
+                if (!Directory.Exists(outFolder))
+                    Directory.CreateDirectory(outFolder);
+
+                using var outStream = new MemoryStream();
+                writer.Write(outStream, encoded);
+                outStream.Flush();
+                File.WriteAllBytes(Path.Combine(outFolder, $"{decoded[StringData.Name]}.wav"),
+                    outStream.ToArray());
             }
         }
 
@@ -122,18 +119,16 @@ namespace RhythmCodex.Xact.Integration
                 {
                     var decoded = decoder.Decode(sound);
                     var encoded = encoder.Encode(decoded);
-                    var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xwb",
+                    var outFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xwb",
                         outPath);
-                    if (!Directory.Exists(outfolder))
-                        Directory.CreateDirectory(outfolder);
+                    if (!Directory.Exists(outFolder))
+                        Directory.CreateDirectory(outFolder);
 
-                    using (var outStream = new MemoryStream())
-                    {
-                        writer.Write(outStream, encoded);
-                        outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outfolder, $"{decoded[StringData.Name]}.wav"),
-                            outStream.ToArray());
-                    }
+                    using var outStream = new MemoryStream();
+                    writer.Write(outStream, encoded);
+                    outStream.Flush();
+                    File.WriteAllBytes(Path.Combine(outFolder, $"{decoded[StringData.Name]}.wav"),
+                        outStream.ToArray());
                 }
             }
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
@@ -53,23 +54,23 @@ namespace RhythmCodex.Ddr.Converters
                     Unknown01E = Bitter.ToInt16(raw, 0x1E),
                     Unknown022 = Bitter.ToInt16(raw, 0x22),
                     Flags = Bitter.ToInt32(raw, 0x24),
-                    Radar0 = Bitter.ToInt16Array(raw, 0x28, 8),
-                    Radar1 = Bitter.ToInt16Array(raw, 0x38, 8),
-                    Radar2 = Bitter.ToInt16Array(raw, 0x48, 8),
-                    Radar3 = Bitter.ToInt16Array(raw, 0x58, 8),
-                    Radar4 = Bitter.ToInt16Array(raw, 0x68, 8)
+                    Radar0 = Bitter.ToInt16Values(raw, 0x28, 8),
+                    Radar1 = Bitter.ToInt16Values(raw, 0x38, 8),
+                    Radar2 = Bitter.ToInt16Values(raw, 0x48, 8),
+                    Radar3 = Bitter.ToInt16Values(raw, 0x58, 8),
+                    Radar4 = Bitter.ToInt16Values(raw, 0x68, 8)
                 };
-                
+
                 longNameOffsets[index] = Bitter.ToInt32(raw, 0x78);
                 shortNameOffsets[index] = Bitter.ToInt32(raw, 0x7C);
-                
+
                 result.Add(entry);
                 offset += 0x80;
                 index++;
             }
 
             offset += 0x80;
-            
+
             // Read string table
             var strings = database.Slice(offset);
             foreach (var kv in longNameOffsets)
@@ -94,26 +95,31 @@ namespace RhythmCodex.Ddr.Converters
                         fail = true;
                         break;
                     }
+
                     if (!test[1].IsLetter())
                     {
                         fail = true;
                         break;
                     }
+
                     if (!test[2].IsLetter())
                     {
                         fail = true;
                         break;
                     }
+
                     if (!test[3].IsLetterOrDigit())
                     {
                         fail = true;
                         break;
                     }
+
                     if (!test[4].IsLetterOrDigit() && test[4] != 0)
                     {
                         fail = true;
                         break;
                     }
+
                     if (test[5] != 0)
                     {
                         fail = true;
@@ -126,7 +132,7 @@ namespace RhythmCodex.Ddr.Converters
 
                 return size;
             }
-            
+
             throw new RhythmCodexException("Can't seem to find record size for MDB");
         }
     }
