@@ -14,21 +14,19 @@ namespace RhythmCodex.Ssq.Converters
             var timingList = timings.ToArray();
             var count = timingList.Length;
 
-            using (var mem = new MemoryStream())
-            using (var writer = new BinaryWriter(mem))
-            {
-                writer.Write(count);
+            using var mem = new MemoryStream();
+            using var writer = new BinaryWriter(mem);
+            writer.Write(count);
 
-                foreach (var offset in timingList.Select(t => t.MetricOffset))
-                    writer.Write(offset);
+            foreach (var offset in timingList.Select(t => t.MetricOffset))
+                writer.Write(offset);
 
-                foreach (var offset in timingList.Select(t => t.LinearOffset))
-                    writer.Write(offset);
+            foreach (var offset in timingList.Select(t => t.LinearOffset))
+                writer.Write(offset);
 
-                writer.Flush();
+            writer.Flush();
 
-                return mem.ToArray();
-            }
+            return mem.ToArray();
         }
     }
 }

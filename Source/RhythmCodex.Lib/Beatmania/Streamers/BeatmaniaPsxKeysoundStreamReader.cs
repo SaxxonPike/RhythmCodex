@@ -48,13 +48,11 @@ namespace RhythmCodex.Beatmania.Streamers
             reader.ReadInt32S();
 
             var data = reader.ReadBytes(dataLength);
-            using (var dataStream = new ReadOnlyMemoryStream(data))
+            using var dataStream = new ReadOnlyMemoryStream(data);
+            foreach (var keysound in keysounds)
             {
-                foreach (var keysound in keysounds)
-                {
-                    dataStream.Position = keysound.DirectoryEntry.Offset - dataOffset;
-                    keysound.Data = _vagStreamReader.Read(dataStream, 1, 16);
-                }
+                dataStream.Position = keysound.DirectoryEntry.Offset - dataOffset;
+                keysound.Data = _vagStreamReader.Read(dataStream, 1, 16);
             }
 
             return keysounds;

@@ -233,10 +233,8 @@ namespace RhythmCodex.Chd.Streamers
         private byte[] DecompressZlib(uint decompressedLength)
         {
             var buffer = new byte[decompressedLength];
-            using (var ds = new DeflateStream(_baseStream, CompressionMode.Decompress, true))
-            {
-                ds.Read(buffer, 0, (int) decompressedLength);
-            }
+            using var ds = new DeflateStream(_baseStream, CompressionMode.Decompress, true);
+            ds.Read(buffer, 0, (int) decompressedLength);
 
             return buffer;
         }

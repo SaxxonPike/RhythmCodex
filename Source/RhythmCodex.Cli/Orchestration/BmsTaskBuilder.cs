@@ -70,24 +70,20 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
-                    using (var stream = OpenRead(task, file))
-                    {
-                        var accessor = new FileAccessor(Path.GetDirectoryName(file.Name));
-                        var commands = _bmsStreamReader.Read(stream);
-                        var resolved = _bmsRandomResolver.Resolve(commands);
-                        var decoded = _bmsDecoder.Decode(resolved);
-                        decoded.Chart.PopulateLinearOffsets();
-                        var sounds = _bmsSoundLoader.Load(decoded.SoundMap, accessor);
-                        var rendered = _chartRenderer.Render(decoded.Chart.Events, sounds, options);
-                        var normalized = _audioDsp.Normalize(rendered, 1.0f, true);
-                        
-                        using (var outFile = OpenWriteSingle(task, file, i => $"{i}.render.wav"))
-                        {
-                            var riff = _riffPcm16SoundEncoder.Encode(normalized);
-                            _riffStreamWriter.Write(outFile, riff);
-                            outFile.Flush();
-                        }
-                    }
+                    using var stream = OpenRead(task, file);
+                    var accessor = new FileAccessor(Path.GetDirectoryName(file.Name));
+                    var commands = _bmsStreamReader.Read(stream);
+                    var resolved = _bmsRandomResolver.Resolve(commands);
+                    var decoded = _bmsDecoder.Decode(resolved);
+                    decoded.Chart.PopulateLinearOffsets();
+                    var sounds = _bmsSoundLoader.Load(decoded.SoundMap, accessor);
+                    var rendered = _chartRenderer.Render(decoded.Chart.Events, sounds, options);
+                    var normalized = _audioDsp.Normalize(rendered, 1.0f, true);
+
+                    using var outFile = OpenWriteSingle(task, file, i => $"{i}.render.wav");
+                    var riff = _riffPcm16SoundEncoder.Encode(normalized);
+                    _riffStreamWriter.Write(outFile, riff);
+                    outFile.Flush();
                 });
 
                 return true;

@@ -60,31 +60,29 @@ namespace RhythmCodex.Riff.Converters
 
             var totalSamples = sound.Samples.Max(s => s.Data.Count);
 
-            using (var stream = new MemoryStream())
-            using (var writer = new BinaryWriter(stream))
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            for (var i = 0; i < totalSamples; i++)
             {
-                for (var i = 0; i < totalSamples; i++)
+                for (var j = 0; j < sound.Samples.Count; j++)
                 {
-                    for (var j = 0; j < sound.Samples.Count; j++)
-                    {
-                        var sample = sound.Samples[j];
-                        var source = sample.Data;
-                        var sourceValue = i < source.Count ? source[i] : 0f;
-                        var value = Math.Round(sourceValue * 32767f);
-                        if (value > 32767f)
-                            value = 32767f;
-                        else if (value < -32767f)
-                            value = -32767f;
-                        writer.Write((short) value);
-                    }
+                    var sample = sound.Samples[j];
+                    var source = sample.Data;
+                    var sourceValue = i < source.Count ? source[i] : 0f;
+                    var value = Math.Round(sourceValue * 32767f);
+                    if (value > 32767f)
+                        value = 32767f;
+                    else if (value < -32767f)
+                        value = -32767f;
+                    writer.Write((short) value);
                 }
-
-                container.Chunks.Add(new RiffChunk
-                {
-                    Id = "data",
-                    Data = stream.ToArray()
-                });
             }
+
+            container.Chunks.Add(new RiffChunk
+            {
+                Id = "data",
+                Data = stream.ToArray()
+            });
 
             return container;
         }

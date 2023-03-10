@@ -74,16 +74,14 @@ namespace RhythmCodex.Ddr.Converters
                         {
                             case 1:
                             {
-                                using (var compressedStream = new ReadOnlyMemoryStream(data))
+                                using var compressedStream = new ReadOnlyMemoryStream(data);
+                                try
                                 {
-                                    try
-                                    {
-                                        data = _bemaniLzDecoder.Decode(compressedStream);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        _logger.Warning($"Entry Id={entry.Id:X8} Module={entry.Module:X4} Offset={entry.Offset:X7} could not be decompressed. It will be extracted as-is.");
-                                    }
+                                    data = _bemaniLzDecoder.Decode(compressedStream);
+                                }
+                                catch (Exception)
+                                {
+                                    _logger.Warning($"Entry Id={entry.Id:X8} Module={entry.Module:X4} Offset={entry.Offset:X7} could not be decompressed. It will be extracted as-is.");
                                 }
 
                                 break;

@@ -19,7 +19,7 @@ namespace RhythmCodex.Ddr.Streamers
             var cache = new CachedStream(stream);
             var buffer = new byte[BufferCheckInterval];
 
-            static bool IsName(byte[] buff, int offs)
+            static bool IsName(ReadOnlySpan<byte> buff, int offs)
             {
                 return buff[offs].IsLetterOrDigit() &&
                        buff[offs + 1].IsLetterOrDigit() &&
@@ -29,9 +29,9 @@ namespace RhythmCodex.Ddr.Streamers
                        buff[offs + 5] == 0;
             }
 
-            static string GetName(byte[] buff, int offs)
+            static string GetName(ReadOnlySpan<byte> buff, int offs)
             {
-                var name = buff.AsSpan(offs, 6).ToArray().TakeWhile(c => c != 0).ToArray().GetString();
+                var name = buff.Slice(offs, 6).ToArray().TakeWhile(c => c != 0).ToArray().GetString();
                 return name;
             }
 

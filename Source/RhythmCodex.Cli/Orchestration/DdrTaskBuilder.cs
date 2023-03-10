@@ -111,41 +111,37 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
-                    using (var inFile = OpenRead(task, file))
+                    using var inFile = OpenRead(task, file);
+                    var chunks = _ssqStreamReader.Read(inFile);
+                    var charts = _ssqDecoder.Decode(chunks);
+                    var aggregatedInfo = _metadataAggregator.Aggregate(charts);
+                    var title = Path.GetFileNameWithoutExtension(file.Name);
+                    var globalOffset = Args.Options.ContainsKey("-offset")
+                        ? BigRationalParser.ParseString(Args.Options["-offset"].FirstOrDefault() ?? "0")
+                        : BigRational.Zero;
+
+                    // This is a temporary hack to make building sets easier for right now
+                    // TODO: make this optional via command line switch
+                    if (title.EndsWith("_all", StringComparison.InvariantCultureIgnoreCase))
+                        title = title.Substring(0, title.Length - 4);
+
+                    var encoded = _smEncoder.Encode(new ChartSet
                     {
-                        var chunks = _ssqStreamReader.Read(inFile);
-                        var charts = _ssqDecoder.Decode(chunks);
-                        var aggregatedInfo = _metadataAggregator.Aggregate(charts);
-                        var title = Path.GetFileNameWithoutExtension(file.Name);
-                        var globalOffset = Args.Options.ContainsKey("-offset")
-                            ? BigRationalParser.ParseString(Args.Options["-offset"].FirstOrDefault() ?? "0")
-                            : BigRational.Zero;
-
-                        // This is a temporary hack to make building sets easier for right now
-                        // TODO: make this optional via command line switch
-                        if (title.EndsWith("_all", StringComparison.InvariantCultureIgnoreCase))
-                            title = title.Substring(0, title.Length - 4);
-
-                        var encoded = _smEncoder.Encode(new ChartSet
+                        Metadata = new Metadata
                         {
-                            Metadata = new Metadata
-                            {
-                                [StringData.Title] = aggregatedInfo[StringData.Title] ?? title,
-                                [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
-                                [StringData.Artist] = aggregatedInfo[StringData.Artist],
-                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
-                                [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
-                                [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
-                            },
-                            Charts = charts
-                        });
+                            [StringData.Title] = aggregatedInfo[StringData.Title] ?? title,
+                            [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
+                            [StringData.Artist] = aggregatedInfo[StringData.Artist],
+                            [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
+                            [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
+                            [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
+                        },
+                        Charts = charts
+                    });
 
-                        using (var outFile = OpenWriteSingle(task, file, i => $"{i}.sm"))
-                        {
-                            _smStreamWriter.Write(outFile, encoded);
-                            outFile.Flush();
-                        }
-                    }
+                    using var outFile = OpenWriteSingle(task, file, i => $"{i}.sm");
+                    _smStreamWriter.Write(outFile, encoded);
+                    outFile.Flush();
                 });
 
                 return true;
@@ -165,27 +161,23 @@ namespace RhythmCodex.Cli.Orchestration
 
                 foreach (var inputFile in inputFiles)
                 {
-                    using (var inFile = OpenRead(task, inputFile))
+                    using var inFile = OpenRead(task, inputFile);
+                    var encoded = inFile.ReadAllBytes();
+                    var key = _digital573AudioKeyProvider.Get(encoded);
+                    if (key == null)
                     {
-                        var encoded = inFile.ReadAllBytes();
-                        var key = _digital573AudioKeyProvider.Get(encoded);
-                        if (key == null)
-                        {
-                            task.Message = $"Can't find key for {inputFile.Name}";
-                            continue;
-                        }
-                        var decoded = (key.Length == 1)
-                            ? _digital573AudioDecrypter.DecryptOld(encoded, key[0])
-                            : _digital573AudioDecrypter.DecryptNew(encoded, key);
-
-                        using (var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
-                            ? _ddr573AudioNameFinder.GetPath(i)
-                            : $"{i}.mp3"))
-                        {
-                            decoded.WriteAllBytes(outFile);
-                            outFile.Flush();
-                        }
+                        task.Message = $"Can't find key for {inputFile.Name}";
+                        continue;
                     }
+                    var decoded = (key.Length == 1)
+                        ? _digital573AudioDecrypter.DecryptOld(encoded, key[0])
+                        : _digital573AudioDecrypter.DecryptNew(encoded, key);
+
+                    using var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
+                        ? _ddr573AudioNameFinder.GetPath(i)
+                        : $"{i}.mp3");
+                    decoded.WriteAllBytes(outFile);
+                    outFile.Flush();
                 }
 
                 return true;
@@ -205,35 +197,31 @@ namespace RhythmCodex.Cli.Orchestration
 
                 foreach (var inputFile in inputFiles)
                 {
-                    using (var inFile = OpenRead(task, inputFile))
+                    using var inFile = OpenRead(task, inputFile);
+                    var chunks = _step1StreamReader.Read(inFile);
+                    var charts = _step1Decoder.Decode(chunks);
+                    var aggregatedInfo = _metadataAggregator.Aggregate(charts);
+                    var title = aggregatedInfo[StringData.Title] ?? Path.GetFileNameWithoutExtension(inputFile.Name);
+                    var globalOffset = Args.Options.ContainsKey("-offset")
+                        ? BigRationalParser.ParseString(Args.Options["-offset"].FirstOrDefault() ?? "0")
+                        : BigRational.Zero;
+                    var encoded = _smEncoder.Encode(new ChartSet
                     {
-                        var chunks = _step1StreamReader.Read(inFile);
-                        var charts = _step1Decoder.Decode(chunks);
-                        var aggregatedInfo = _metadataAggregator.Aggregate(charts);
-                        var title = aggregatedInfo[StringData.Title] ?? Path.GetFileNameWithoutExtension(inputFile.Name);
-                        var globalOffset = Args.Options.ContainsKey("-offset")
-                            ? BigRationalParser.ParseString(Args.Options["-offset"].FirstOrDefault() ?? "0")
-                            : BigRational.Zero;
-                        var encoded = _smEncoder.Encode(new ChartSet
+                        Metadata = new Metadata
                         {
-                            Metadata = new Metadata
-                            {
-                                [StringData.Title] = title,
-                                [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
-                                [StringData.Artist] = aggregatedInfo[StringData.Artist],
-                                [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
-                                [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
-                                [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
-                            },
-                            Charts = charts
-                        });
+                            [StringData.Title] = title,
+                            [StringData.Subtitle] = aggregatedInfo[StringData.Subtitle],
+                            [StringData.Artist] = aggregatedInfo[StringData.Artist],
+                            [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
+                            [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
+                            [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
+                        },
+                        Charts = charts
+                    });
 
-                        using (var outFile = OpenWriteSingle(task, inputFile, i => $"{i}.sm"))
-                        {
-                            _smStreamWriter.Write(outFile, encoded);
-                            outFile.Flush();
-                        }
-                    }
+                    using var outFile = OpenWriteSingle(task, inputFile, i => $"{i}.sm");
+                    _smStreamWriter.Write(outFile, encoded);
+                    outFile.Flush();
                 }
 
                 return true;
@@ -253,19 +241,15 @@ namespace RhythmCodex.Cli.Orchestration
 
                 foreach (var inputFile in inputFiles)
                 {
-                    using (var inFile = OpenRead(task, inputFile))
-                    {
-                        var chunks = _step2StreamReader.Read(inFile, (int) inFile.Length);
-                        var chart = _step2Decoder.Decode(chunks);
-                        var encoded = _smEncoder.Encode(new ChartSet
-                            {Metadata = new Metadata(), Charts = new[] {chart}});
+                    using var inFile = OpenRead(task, inputFile);
+                    var chunks = _step2StreamReader.Read(inFile, (int) inFile.Length);
+                    var chart = _step2Decoder.Decode(chunks);
+                    var encoded = _smEncoder.Encode(new ChartSet
+                        {Metadata = new Metadata(), Charts = new[] {chart}});
 
-                        using (var outFile = OpenWriteSingle(task, inputFile, i => $"{i}.sm"))
-                        {
-                            _smStreamWriter.Write(outFile, encoded);
-                            outFile.Flush();
-                        }
-                    }
+                    using var outFile = OpenWriteSingle(task, inputFile, i => $"{i}.sm");
+                    _smStreamWriter.Write(outFile, encoded);
+                    outFile.Flush();
                 }
 
                 return true;
@@ -285,24 +269,20 @@ namespace RhythmCodex.Cli.Orchestration
 
                 foreach (var inputFile in inputFiles)
                 {
-                    using (var inFile = OpenRead(task, inputFile))
-                    using (var smFile = OpenRelatedRead(inputFile, i => $"{i}_all.sm"))
-                    {
-                        var sm = _smStreamReader.Read(smFile).ToList();
-                        var sif = _sifStreamReader.Read(inFile, inFile.Length);
-                        var name = Path.GetFileNameWithoutExtension(inputFile.Name);
+                    using var inFile = OpenRead(task, inputFile);
+                    using var smFile = OpenRelatedRead(inputFile, i => $"{i}_all.sm");
+                    var sm = _smStreamReader.Read(smFile).ToList();
+                    var sif = _sifStreamReader.Read(inFile, inFile.Length);
+                    var name = Path.GetFileNameWithoutExtension(inputFile.Name);
 
-                        if (!sif.KeyValues.ContainsKey("dir"))
-                            sif.KeyValues["dir"] = name;
-                        _sifSmMetadataChanger.Apply(sm, sif);
+                    if (!sif.KeyValues.ContainsKey("dir"))
+                        sif.KeyValues["dir"] = name;
+                    _sifSmMetadataChanger.Apply(sm, sif);
 
-                        smFile.Dispose();
-                        using (var outStream = OpenWriteSingle(task, inputFile, i => $"{name}_all.sm"))
-                        {
-                            _smStreamWriter.Write(outStream, sm);
-                            outStream.Flush();
-                        }
-                    }
+                    smFile.Dispose();
+                    using var outStream = OpenWriteSingle(task, inputFile, i => $"{name}_all.sm");
+                    _smStreamWriter.Write(outStream, sm);
+                    outStream.Flush();
                 }
 
                 return true;

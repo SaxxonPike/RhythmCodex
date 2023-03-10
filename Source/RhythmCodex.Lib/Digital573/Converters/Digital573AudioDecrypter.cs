@@ -149,11 +149,7 @@ namespace RhythmCodex.Digital573.Converters
                     var isScrambleBitSet = (curScramble & (1 << curBit)) != 0;
 
                     if (isScrambleBitSet)
-                    {
-                        var temp = isEvenBitSet;
-                        isEvenBitSet = isOddBitSet;
-                        isOddBitSet = temp;
-                    }
+                        (isEvenBitSet, isOddBitSet) = (isOddBitSet, isEvenBitSet);
 
                     if (isEvenBitSet ^ isKeyBitSet)
                         outputWord |= 1 << evenBitShift;

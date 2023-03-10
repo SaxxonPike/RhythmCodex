@@ -13,13 +13,11 @@ namespace RhythmCodex.Plugin.SevenZip
             
             if (decoderProperties != null)
                 lzma.SetDecoderProperties(decoderProperties);
-            
-            using (var outStream = new MemoryStream())
-            {
-                lzma.Code(baseStream, outStream, compressedLength, decompressedLength, null);
-                outStream.Flush();
-                return outStream.ToArray();
-            }
+
+            using var outStream = new MemoryStream();
+            lzma.Code(baseStream, outStream, compressedLength, decompressedLength, null);
+            outStream.Flush();
+            return outStream.ToArray();
         }
     }
 }

@@ -26,31 +26,29 @@ namespace RhythmCodex.Djmain.Streamers
         {
             var buffer = new byte[11];
 
-            using (var mem = new ReadOnlyMemoryStream(buffer))
+            using var mem = new ReadOnlyMemoryStream(buffer);
+            var reader = new BinaryReader(mem);
+
+            for (var i = 0; i < _djmainConfiguration.MaxSampleDefinitions; i++)
             {
-                var reader = new BinaryReader(mem);
+                reader.BaseStream.Position = 0;
 
-                for (var i = 0; i < _djmainConfiguration.MaxSampleDefinitions; i++)
+                var bytesRead = stream.Read(buffer, 0, 11);
+                if (bytesRead < 11)
+                    yield break;
+
+                var result = new DjmainSampleInfo
                 {
-                    reader.BaseStream.Position = 0;
-
-                    var bytesRead = stream.Read(buffer, 0, 11);
-                    if (bytesRead < 11)
-                        yield break;
-
-                    var result = new DjmainSampleInfo
-                    {
-                        Channel = reader.ReadByte(),
-                        Frequency = reader.ReadUInt16(),
-                        ReverbVolume = reader.ReadByte(),
-                        Volume = reader.ReadByte(),
-                        Panning = reader.ReadByte(),
-                        Offset = reader.ReadUInt16() | ((uint) reader.ReadByte() << 16),
-                        SampleType = reader.ReadByte(),
-                        Flags = reader.ReadByte()
-                    };
-                    yield return new KeyValuePair<int, IDjmainSampleInfo>(i, result);
-                }
+                    Channel = reader.ReadByte(),
+                    Frequency = reader.ReadUInt16(),
+                    ReverbVolume = reader.ReadByte(),
+                    Volume = reader.ReadByte(),
+                    Panning = reader.ReadByte(),
+                    Offset = reader.ReadUInt16() | ((uint) reader.ReadByte() << 16),
+                    SampleType = reader.ReadByte(),
+                    Flags = reader.ReadByte()
+                };
+                yield return new KeyValuePair<int, IDjmainSampleInfo>(i, result);
             }
         }
     }

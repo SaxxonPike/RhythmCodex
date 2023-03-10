@@ -26,13 +26,11 @@ namespace RhythmCodex.Digital573.Providers
 
         public int[] Get(byte[] source)
         {
-            using (var sha = SHA1.Create())
-            {
-                var hash = string.Join(string.Empty, sha.ComputeHash(source).Select(h => $"{h:X2}"));
-                return _keys.Value.ContainsKey(hash)
-                    ? _keys.Value[hash]
-                    : null;
-            }
+            using var sha = SHA1.Create();
+            var hash = string.Join(string.Empty, sha.ComputeHash(source).Select(h => $"{h:X2}"));
+            return _keys.Value.ContainsKey(hash)
+                ? _keys.Value[hash]
+                : null;
         }
     }
 }

@@ -30,8 +30,8 @@ namespace RhythmCodex.Sif.Streamers
 
         private SifInfo ReadTextSif(byte[] data)
         {
-            using (var dataStream = new ReadOnlyMemoryStream(data))
-                return _textSifDecoder.Decode(dataStream.ReadAllLines());
+            using var dataStream = new ReadOnlyMemoryStream(data);
+            return _textSifDecoder.Decode(dataStream.ReadAllLines());
         }
     }
 }

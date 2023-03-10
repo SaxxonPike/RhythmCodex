@@ -20,28 +20,26 @@ namespace RhythmCodex.Beatmania.Converters
 
         public ISound Decode(BeatmaniaPcAudioEntry entry)
         {
-            using (var wavDataMem = new ReadOnlyMemoryStream(entry.Data))
-            {
-                var result = _wavDecoder.Decode(wavDataMem);
+            using var wavDataMem = new ReadOnlyMemoryStream(entry.Data);
+            var result = _wavDecoder.Decode(wavDataMem);
 
-                var panning = entry.Panning;
-                if (panning > 0x7F || panning < 0x01)
-                    panning = 0x40;
+            var panning = entry.Panning;
+            if (panning is > 0x7F or < 0x01)
+                panning = 0x40;
 
-                var volume = entry.Volume;
-                if (volume < 0x01)
-                    volume = 0x01;
-                else if (volume > 0xFF)
-                    volume = 0xFF;
+            var volume = entry.Volume;
+            if (volume < 0x01)
+                volume = 0x01;
+            else if (volume > 0xFF)
+                volume = 0xFF;
 
-                result[NumericData.Panning] = (panning - 1.0d) / 126.0d;
-                result[NumericData.Volume] = BeatmaniaPcConstants.VolumeTable.Span[volume];
-                result[NumericData.Channel] = entry.Channel;
-                result[NumericData.SourceVolume] = entry.Volume;
-                result[NumericData.SourcePanning] = entry.Panning;
+            result[NumericData.Panning] = (panning - 1.0d) / 126.0d;
+            result[NumericData.Volume] = BeatmaniaPcConstants.VolumeTable.Span[volume];
+            result[NumericData.Channel] = entry.Channel;
+            result[NumericData.SourceVolume] = entry.Volume;
+            result[NumericData.SourcePanning] = entry.Panning;
 
-                return result;
-            }
+            return result;
         }
     }
 }

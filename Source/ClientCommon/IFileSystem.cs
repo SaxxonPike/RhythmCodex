@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -38,7 +39,7 @@ namespace ClientCommon
         /// <summary>
         ///     Write all bytes to the specified file path.
         /// </summary>
-        void WriteAllBytes(string path, byte[] data);
+        void WriteAllBytes(string path, ReadOnlySpan<byte> data);
 
         /// <summary>
         ///     Create a directory at the specified path.

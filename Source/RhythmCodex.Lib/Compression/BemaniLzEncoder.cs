@@ -37,13 +37,13 @@ namespace RhythmCodex.Compression
         /// <summary>
         /// Read the source data and determine how to compress it.
         /// </summary>
-        private static IEnumerable<Token> GetTokens(byte[] source)
+        private static IEnumerable<Token> GetTokens(ReadOnlySpan<byte> source)
         {
             // Long:  0LLLLLDD DDDDDDDD (length 3-34, distance 0-1023)
             // Short: 10LLDDDD (length 2-5, distance 1-16)
             // Block: 11LLLLLL (length 8-70, 1:1)
 
-            Match FindMatch(int lowIndex, int cursorIndex, int length,
+            Match FindMatch(ReadOnlySpan<byte> src, int lowIndex, int cursorIndex, int length,
                 int matchMinLength, int matchMaxLength)
             {
                 var bestOffset = -1;
@@ -58,7 +58,7 @@ namespace RhythmCodex.Compression
                          matchIdx < matchMaxLength && matchIdx + idx < length && cursorIndex + matchIdx < length;
                          matchIdx++)
                     {
-                        if (source[idx + matchIdx] != source[cursorIndex + matchIdx])
+                        if (src[idx + matchIdx] != src[cursorIndex + matchIdx])
                         {
                             match = false;
                             break;
@@ -88,8 +88,8 @@ namespace RhythmCodex.Compression
             var token = new Token();
             while (inputOffset < inputLength)
             {
-                var shortMatch = FindMatch(inputOffset - 0x10, inputOffset, inputLength, 2, 4);
-                var longMatch = FindMatch(inputOffset - 0x3FF, inputOffset, inputLength, 3, 33);
+                var shortMatch = FindMatch(source, inputOffset - 0x10, inputOffset, inputLength, 2, 4);
+                var longMatch = FindMatch(source, inputOffset - 0x3FF, inputOffset, inputLength, 3, 33);
 
                 var useShortMatch = shortMatch is { Offset: >= 0, Length: > 0 } &&
                                     shortMatch.Length > longMatch.Length;
@@ -254,7 +254,7 @@ namespace RhythmCodex.Compression
             return result;
         }
 
-        public byte[] Encode(byte[] source)
+        public byte[] Encode(ReadOnlySpan<byte> source)
         {
             var tokens = GetTokens(source);
             return EncodeTokens(tokens);

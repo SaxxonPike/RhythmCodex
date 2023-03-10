@@ -13,26 +13,24 @@ namespace RhythmCodex.Ssq.Converters
     {
         public IList<Trigger> Convert(byte[] data)
         {
-            using (var mem = new ReadOnlyMemoryStream(data))
-            using (var reader = new BinaryReader(mem))
-            {
-                var count = reader.ReadInt32();
+            using var mem = new ReadOnlyMemoryStream(data);
+            using var reader = new BinaryReader(mem);
+            var count = reader.ReadInt32();
 
-                var metricOffsets = Enumerable
-                    .Range(0, count)
-                    .Select(i => reader.ReadInt32())
-                    .ToArray();
+            var metricOffsets = Enumerable
+                .Range(0, count)
+                .Select(i => reader.ReadInt32())
+                .ToArray();
 
-                return Enumerable
-                    .Range(0, count)
-                    .Select(i => new Trigger
-                    {
-                        // ReSharper disable once AccessToDisposedClosure
-                        Id = reader.ReadInt16(),
-                        MetricOffset = metricOffsets[i]
-                    })
-                    .AsList();
-            }
+            return Enumerable
+                .Range(0, count)
+                .Select(i => new Trigger
+                {
+                    // ReSharper disable once AccessToDisposedClosure
+                    Id = reader.ReadInt16(),
+                    MetricOffset = metricOffsets[i]
+                })
+                .AsList();
         }
     }
 }

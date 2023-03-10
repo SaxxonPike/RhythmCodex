@@ -124,19 +124,17 @@ namespace RhythmCodex.Twinkle.Converters
                         ? _twinkleBeatmaniaSoundDecoder.Decode(def.Value, chunk.Data.AsSpan(0x100000))
                         : new Sound {Samples = new[] {new Sample {Data = new float[0]}}, [NumericData.Rate] = 44100};
 
-                    using (var mem = new MemoryStream())
+                    using var mem = new MemoryStream();
+                    _riffStreamWriter.Write(mem, _riffPcm16SoundEncoder.Encode(source));
+                    mem.Flush();
+                    return new BeatmaniaPcAudioEntry
                     {
-                        _riffStreamWriter.Write(mem, _riffPcm16SoundEncoder.Encode(source));
-                        mem.Flush();
-                        return new BeatmaniaPcAudioEntry
-                        {
-                            Channel = def.Value?.Channel ?? 255,
-                            Data = mem.ToArray(),
-                            ExtraInfo = new byte[0],
-                            Panning = def.Value?.Panning ?? 0x40,
-                            Volume = def.Value?.Volume ?? 0x01
-                        };
-                    }
+                        Channel = def.Value?.Channel ?? 255,
+                        Data = mem.ToArray(),
+                        ExtraInfo = new byte[0],
+                        Panning = def.Value?.Panning ?? 0x40,
+                        Volume = def.Value?.Volume ?? 0x01
+                    };
                 })
                 .ToList();
 
