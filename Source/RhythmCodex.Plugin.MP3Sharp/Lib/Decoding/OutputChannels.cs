@@ -47,10 +47,10 @@ namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
         /// </summary>
         public static int DOWNMIX_CHANNELS = 3;
 
-        public static readonly OutputChannels LEFT = new OutputChannels(LEFT_CHANNEL);
-        public static readonly OutputChannels RIGHT = new OutputChannels(RIGHT_CHANNEL);
-        public static readonly OutputChannels BOTH = new OutputChannels(BOTH_CHANNELS);
-        public static readonly OutputChannels DOWNMIX = new OutputChannels(DOWNMIX_CHANNELS);
+        public static readonly OutputChannels LEFT = new(LEFT_CHANNEL);
+        public static readonly OutputChannels RIGHT = new(RIGHT_CHANNEL);
+        public static readonly OutputChannels BOTH = new(BOTH_CHANNELS);
+        public static readonly OutputChannels DOWNMIX = new(DOWNMIX_CHANNELS);
 
         private OutputChannels(int channels)
         {

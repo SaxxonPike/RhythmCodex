@@ -39,7 +39,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib
         /// <summary>
         /// The Major Type for <c>Audio</c> media types.
         /// </summary>
-        public static readonly Guid MediaTypeAudio = new Guid("73647561-0000-0010-8000-00AA00389B71");
+        public static readonly Guid MediaTypeAudio = new("73647561-0000-0010-8000-00AA00389B71");
 
         ///// <summary>
         ///// FLAC

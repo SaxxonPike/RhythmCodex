@@ -9,11 +9,11 @@ namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 	{
 		class LenDecoder
 		{
-			BitDecoder m_Choice = new BitDecoder();
-			BitDecoder m_Choice2 = new BitDecoder();
+			BitDecoder m_Choice = new();
+			BitDecoder m_Choice2 = new();
 			BitTreeDecoder[] m_LowCoder = new BitTreeDecoder[LzmaBase.kNumPosStatesMax];
 			BitTreeDecoder[] m_MidCoder = new BitTreeDecoder[LzmaBase.kNumPosStatesMax];
-			BitTreeDecoder m_HighCoder = new BitTreeDecoder(LzmaBase.kNumHighLenBits);
+			BitTreeDecoder m_HighCoder = new(LzmaBase.kNumHighLenBits);
 			uint m_NumPosStates = 0;
 
 			public void Create(uint numPosStates)
@@ -131,8 +131,8 @@ namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 			{ return m_Coders[GetState(pos, prevByte)].DecodeWithMatchByte(rangeDecoder, matchByte); }
 		};
 
-		LZ.OutWindow m_OutWindow = new LZ.OutWindow();
-		RangeCoder.Decoder m_RangeDecoder = new RangeCoder.Decoder();
+		LZ.OutWindow m_OutWindow = new();
+		RangeCoder.Decoder m_RangeDecoder = new();
 
 		BitDecoder[] m_IsMatchDecoders = new BitDecoder[LzmaBase.kNumStates << LzmaBase.kNumPosStatesBitsMax];
 		BitDecoder[] m_IsRepDecoders = new BitDecoder[LzmaBase.kNumStates];
@@ -144,12 +144,12 @@ namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 		BitTreeDecoder[] m_PosSlotDecoder = new BitTreeDecoder[LzmaBase.kNumLenToPosStates];
 		BitDecoder[] m_PosDecoders = new BitDecoder[LzmaBase.kNumFullDistances - LzmaBase.kEndPosModelIndex];
 
-		BitTreeDecoder m_PosAlignDecoder = new BitTreeDecoder(LzmaBase.kNumAlignBits);
+		BitTreeDecoder m_PosAlignDecoder = new(LzmaBase.kNumAlignBits);
 
-		LenDecoder m_LenDecoder = new LenDecoder();
-		LenDecoder m_RepLenDecoder = new LenDecoder();
+		LenDecoder m_LenDecoder = new();
+		LenDecoder m_RepLenDecoder = new();
 
-		LiteralDecoder m_LiteralDecoder = new LiteralDecoder();
+		LiteralDecoder m_LiteralDecoder = new();
 
 		uint m_DictionarySize;
 		uint m_DictionarySizeCheck;

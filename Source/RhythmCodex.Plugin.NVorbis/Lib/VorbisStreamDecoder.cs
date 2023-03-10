@@ -58,7 +58,7 @@ namespace RhythmCodex.Plugin.NVorbis.Lib
 
         internal int _packetCount;
 
-        internal System.Diagnostics.Stopwatch _sw = new System.Diagnostics.Stopwatch();
+        internal System.Diagnostics.Stopwatch _sw = new();
 
         #endregion
 
@@ -70,7 +70,7 @@ namespace RhythmCodex.Plugin.NVorbis.Lib
 
         private bool _eosFound;
 
-        private object _seekLock = new object();
+        private object _seekLock = new();
 
         internal VorbisStreamDecoder(IPacketProvider packetProvider)
         {

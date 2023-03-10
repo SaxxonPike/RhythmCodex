@@ -47,7 +47,7 @@ namespace RhythmCodex.Plugin.SevenZip.Common
 	{
 		public bool ThereIs;
 		public bool WithMinus;
-		public ArrayList PostStrings = new ArrayList();
+		public ArrayList PostStrings = new();
 		public int PostCharIndex;
 		public SwitchResult()
 		{
@@ -57,7 +57,7 @@ namespace RhythmCodex.Plugin.SevenZip.Common
 
 	public class Parser
 	{
-		public ArrayList NonSwitchStrings = new ArrayList();
+		public ArrayList NonSwitchStrings = new();
 		SwitchResult[] _switches;
 
 		public Parser(int numSwitches)

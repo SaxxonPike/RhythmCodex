@@ -56,7 +56,7 @@ namespace RhythmCodex.Cli
         }
 
         /// <inheritdoc />
-        public string CurrentPath => new string(Path.DirectorySeparatorChar, 1);
+        public string CurrentPath => new(Path.DirectorySeparatorChar, 1);
 
         /// <inheritdoc />
         public byte[] ReadAllBytes(string path)

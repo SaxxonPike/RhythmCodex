@@ -12,7 +12,7 @@ namespace RhythmCodex.Digital573.Providers
     [Service]
     public class Digital573AudioKeyProvider : IDigital573AudioKeyProvider
     {
-        private readonly Lazy<Dictionary<string, int[]>> _keys = new Lazy<Dictionary<string, int[]>>(() =>
+        private readonly Lazy<Dictionary<string, int[]>> _keys = new(() =>
         {
             var archive = EmbeddedResources.GetArchive("RhythmCodex.Digital573.Providers.Digital573AudioKeyDatabase.zip");
             var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, int[]>), new DataContractJsonSerializerSettings

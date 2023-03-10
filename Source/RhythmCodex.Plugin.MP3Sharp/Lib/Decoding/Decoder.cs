@@ -24,7 +24,7 @@ namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
     /// </summary>
     internal sealed class Decoder
     {
-        private static readonly Params DEFAULT_PARAMS = new Params();
+        private static readonly Params DEFAULT_PARAMS = new();
         private readonly Params params_Renamed;
         //private Equalizer m_Equalizer;
 

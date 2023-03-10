@@ -88,7 +88,7 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib
 
         private int bsBuff;
         private int bsLive;
-        private CRC mCrc = new CRC();
+        private CRC mCrc = new();
 
         private bool[] inUse = new bool[256];
         private int nInUse;

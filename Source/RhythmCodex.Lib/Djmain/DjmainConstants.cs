@@ -8,6 +8,6 @@ namespace RhythmCodex.Djmain
         public const int DpcmEndMarker = 0x44444444 << 1;
         public const long Pcm8EndMarker = 0x4040404040404040 << 1;
         public const long Pcm16EndMarker = 0x4000400040004000 << 1;
-        public static BigRational SampleRateMultiplier => new BigRational(44100, 60216);
+        public static BigRational SampleRateMultiplier => new(44100, 60216);
     }
 }

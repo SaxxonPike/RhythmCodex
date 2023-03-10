@@ -73,7 +73,7 @@ namespace RhythmCodex.Plugin.NVorbis.Lib.Ogg
 
         private Packet _first, _current, _last;
 
-        private object _packetLock = new object();
+        private object _packetLock = new();
 
         internal PacketReader(ContainerReader container, int streamSerial)
         {

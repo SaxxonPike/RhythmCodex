@@ -367,14 +367,9 @@ namespace RhythmCodex.Cli.Orchestration
                         }
                         task.Message = $"Writing {outFileName}";
 
-
-                        using (var stream =
-                            OpenWriteMulti(task, gameImage, _ => outFileName))
-                        {
-                            var writer = new BinaryWriter(stream);
-                            writer.Write(file.Data.ToArray());
-                            stream.Flush();
-                        }
+                        using var stream = OpenWriteMulti(task, gameImage, _ => outFileName);
+                        stream.Write(file.Data.Span);
+                        stream.Flush();
                     });
 
                     task.Message = "Finished.";

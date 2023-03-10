@@ -83,22 +83,22 @@ namespace RhythmCodex.Infrastructure
         /// <summary>
         ///     A pre-initialized BigRational with the value of zero.
         /// </summary>
-        public static BigRational Zero { get; } = new BigRational(BigInteger.Zero);
+        public static BigRational Zero { get; } = new(BigInteger.Zero);
 
         /// <summary>
         ///     A pre-initialized BigRational with the value of one.
         /// </summary>
-        public static BigRational One { get; } = new BigRational(BigInteger.One);
+        public static BigRational One { get; } = new(BigInteger.One);
 
         /// <summary>
         ///     A pre-initialized BigRational with the value of negative one.
         /// </summary>
-        public static BigRational MinusOne { get; } = new BigRational(BigInteger.MinusOne);
+        public static BigRational MinusOne { get; } = new(BigInteger.MinusOne);
         
         /// <summary>
         ///     A pre-initialized BigRational with the value of one half.
         /// </summary>
-        public static BigRational OneHalf { get; } = new BigRational(BigInteger.One, 2);
+        public static BigRational OneHalf { get; } = new(BigInteger.One, 2);
 
         /// <summary>
         ///     Gets a number that indicates the sign (negative, positive, or zero) of the current BigRational object.
@@ -702,7 +702,7 @@ namespace RhythmCodex.Infrastructure
                 r1.Denominator * r2.Denominator);
         }
         
-        public static BigRational PositiveInfinity => new BigRational(BigInteger.One, BigInteger.Zero, true);
+        public static BigRational PositiveInfinity => new(BigInteger.One, BigInteger.Zero, true);
 
         #endregion Operator Overloads
 

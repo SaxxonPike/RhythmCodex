@@ -15,7 +15,7 @@ namespace RhythmCodex.Plugin.NVorbis.Lib
     {
         private const float M_PI = 3.14159265358979323846264f;
 
-        private static Dictionary<int, Mdct> _setupCache = new Dictionary<int, Mdct>(2);
+        private static Dictionary<int, Mdct> _setupCache = new(2);
 
         public static void Reverse(float[] samples, int sampleCount)
         {
@@ -82,7 +82,7 @@ namespace RhythmCodex.Plugin.NVorbis.Lib
         //  2) Mdct must be thread-safe
         // To handle these constraints, we use a "thread-local" dictionary
 
-        private Dictionary<int, float[]> _threadLocalBuffers = new Dictionary<int, float[]>(1);
+        private Dictionary<int, float[]> _threadLocalBuffers = new(1);
 
         private float[] GetBuffer()
         {

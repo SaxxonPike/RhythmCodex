@@ -78,7 +78,7 @@ namespace RhythmCodex.Chd.Streamers
         private const int HunkCacheMaxSize = 256;
 
         private CachedHunk _currentHunk;
-        private readonly List<CachedHunk> _hunkCache = new List<CachedHunk>();
+        private readonly List<CachedHunk> _hunkCache = new();
         private readonly BinaryReader _reader;
         private readonly Func<int, byte[]> _readHunk;
 
@@ -293,8 +293,7 @@ namespace RhythmCodex.Chd.Streamers
 
             var frame = _flacDecoder
                 .DecodeFrame(_baseStream, (int) flacBlockSize)
-                .Span
-                .Slice(0, (int) _header.hunkBytes)
+                .Span[..(int) _header.hunkBytes]
                 .ToArray();
 
             postProcess(frame);

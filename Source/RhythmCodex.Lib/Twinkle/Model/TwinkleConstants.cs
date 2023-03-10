@@ -7,9 +7,9 @@ namespace RhythmCodex.Twinkle.Model
     {
         // orig: 598248
         // test1: 598186
-        public static BigRational BeatmaniaRate => new BigRational(598186, 10000);
+        public static BigRational BeatmaniaRate => new(598186, 10000);
 
-        private static readonly Lazy<BigRational[]> VolumeTableLazy = new Lazy<BigRational[]>(() =>
+        private static readonly Lazy<BigRational[]> VolumeTableLazy = new(() =>
         {
             var result = new BigRational[256];
             var max = BigRational.One;

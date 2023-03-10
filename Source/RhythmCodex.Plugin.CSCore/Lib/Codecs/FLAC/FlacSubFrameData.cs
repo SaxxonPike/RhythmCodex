@@ -6,6 +6,6 @@ namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
     {
         public Memory<int> DestinationBuffer;
         public Memory<int> ResidualBuffer;
-        public readonly FlacPartitionedRiceContent Content = new FlacPartitionedRiceContent();
+        public readonly FlacPartitionedRiceContent Content = new();
     }
 }

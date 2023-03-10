@@ -17,12 +17,12 @@ namespace RhythmCodex.Plugin.NVorbis.Lib
         private class StreamWrapper
         {
             internal Stream Source;
-            internal object LockObject = new object();
+            internal object LockObject = new();
             internal long EofOffset = long.MaxValue;
             internal int RefCount = 1;
         }
 
-        private static Dictionary<Stream, StreamWrapper> _lockObjects = new Dictionary<Stream, StreamWrapper>();
+        private static Dictionary<Stream, StreamWrapper> _lockObjects = new();
 
         internal StreamReadBuffer(Stream source, int initialSize, int maxSize, bool minimalRead)
         {

@@ -35,7 +35,7 @@ namespace RhythmCodex.Beatmania.Converters
                     volume = 0xFF;
 
                 result[NumericData.Panning] = (panning - 1.0d) / 126.0d;
-                result[NumericData.Volume] = BeatmaniaPcConstants.VolumeTable[volume];
+                result[NumericData.Volume] = BeatmaniaPcConstants.VolumeTable.Span[volume];
                 result[NumericData.Channel] = entry.Channel;
                 result[NumericData.SourceVolume] = entry.Volume;
                 result[NumericData.SourcePanning] = entry.Panning;

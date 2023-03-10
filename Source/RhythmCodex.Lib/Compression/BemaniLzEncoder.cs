@@ -1,5 +1,7 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -28,13 +30,14 @@ namespace RhythmCodex.Compression
             public int Offset { get; set; }
             public int Length { get; set; }
             public TokenType Type { get; set; }
-            public List<byte> Data { get; set; }
+            public IMemoryOwner<byte> Data { get; set; }
+            public int DataLength { get; set; }
         }
 
         /// <summary>
         /// Read the source data and determine how to compress it.
         /// </summary>
-        private static IEnumerable<Token> GetTokens(IReadOnlyList<byte> source)
+        private static IEnumerable<Token> GetTokens(byte[] source)
         {
             // Long:  0LLLLLDD DDDDDDDD (length 3-34, distance 0-1023)
             // Short: 10LLDDDD (length 2-5, distance 1-16)
@@ -52,8 +55,8 @@ namespace RhythmCodex.Compression
                     var matchLength = 0;
 
                     for (var matchIdx = 0;
-                        matchIdx < matchMaxLength && matchIdx + idx < length && cursorIndex + matchIdx < length;
-                        matchIdx++)
+                         matchIdx < matchMaxLength && matchIdx + idx < length && cursorIndex + matchIdx < length;
+                         matchIdx++)
                     {
                         if (source[idx + matchIdx] != source[cursorIndex + matchIdx])
                         {
@@ -78,7 +81,7 @@ namespace RhythmCodex.Compression
                 };
             }
 
-            var inputLength = source.Count;
+            var inputLength = source.Length;
             var inputOffset = 0;
 
             var tokens = new List<Token>();
@@ -88,11 +91,9 @@ namespace RhythmCodex.Compression
                 var shortMatch = FindMatch(inputOffset - 0x10, inputOffset, inputLength, 2, 4);
                 var longMatch = FindMatch(inputOffset - 0x3FF, inputOffset, inputLength, 3, 33);
 
-                var useShortMatch = shortMatch.Offset >= 0 &&
-                                    shortMatch.Length > 0 &&
+                var useShortMatch = shortMatch is { Offset: >= 0, Length: > 0 } &&
                                     shortMatch.Length > longMatch.Length;
-                var useLongMatch = longMatch.Offset >= 0 &&
-                                   longMatch.Length > 0 &&
+                var useLongMatch = longMatch is { Offset: >= 0, Length: > 0 } &&
                                    longMatch.Length >= shortMatch.Length;
 
                 if (useShortMatch)
@@ -130,13 +131,14 @@ namespace RhythmCodex.Compression
                     if (token.Type == TokenType.Unassigned)
                     {
                         token.Type = TokenType.Raw;
-                        token.Data = new List<byte>();
+                        token.Data = MemoryPool<byte>.Shared.Rent(70);
+                        token.DataLength = 0;
                     }
 
-                    token.Data.Add(source[inputOffset++]);
+                    token.Data.Memory.Span[token.DataLength++] = source[inputOffset++];
 
                     // Maximum block length
-                    if (token.Data.Count == 70)
+                    if (token.DataLength >= 70)
                     {
                         tokens.Add(token);
                         token = new Token();
@@ -155,26 +157,38 @@ namespace RhythmCodex.Compression
         /// </summary>
         private static byte[] EncodeTokens(IEnumerable<Token> tokens)
         {
-            var output = new List<byte>();
+            var output = new MemoryStream();
             var control = 0;
             var bits = 8;
-            var buffer = new List<byte>();
+            // Theoretical maximum of a command byte + all commands (70 * 8 + 1)
+            var buffer = MemoryPool<byte>.Shared.Rent(561);
+            var bufferLen = 0;
 
-            void AppendCommand(bool flag, IEnumerable<byte> bytes)
+            void AppendBufferByte(byte value)
+            {
+                buffer.Memory.Span[bufferLen] = value;
+                bufferLen++;
+            }
+
+            void AppendBufferBytes(ReadOnlySpan<byte> values)
+            {
+                values.CopyTo(buffer.Memory.Span[bufferLen..]);
+                bufferLen += values.Length;
+            }
+
+            void CommitBuffer(bool flag)
             {
                 control >>= 1;
                 if (flag)
                     control |= 0x80;
 
-                buffer.AddRange(bytes);
-
-                if (--bits != 0) 
+                if (--bits != 0)
                     return;
 
                 bits = 8;
-                output.Add(unchecked((byte) control));
-                output.AddRange(buffer);
-                buffer.Clear();
+                output.WriteByte(unchecked((byte)control));
+                output.Write(buffer.Memory.Span[..bufferLen]);
+                bufferLen = 0;
                 control = 0;
             }
 
@@ -186,10 +200,8 @@ namespace RhythmCodex.Compression
                     {
                         var lengthComponent = (token.Length - 2) << 4;
                         var distanceComponent = token.Offset - 1;
-                        AppendCommand(true, new[]
-                        {
-                            unchecked((byte) (0x80 | lengthComponent | distanceComponent))
-                        });
+                        AppendBufferByte(unchecked((byte)(0x80 | lengthComponent | distanceComponent)));
+                        CommitBuffer(true);
                         break;
                     }
                     case TokenType.Long:
@@ -197,23 +209,27 @@ namespace RhythmCodex.Compression
                         var lengthComponent = (token.Length - 3) << 10;
                         var distanceComponent = token.Offset;
                         var compositeComponent = lengthComponent | distanceComponent;
-                        AppendCommand(true, new[]
-                        {
-                            unchecked((byte) (compositeComponent >> 8)),
-                            unchecked((byte) compositeComponent)
-                        });
+                        AppendBufferByte(unchecked((byte)(compositeComponent >> 8)));
+                        AppendBufferByte(unchecked((byte)compositeComponent));
+                        CommitBuffer(true);
                         break;
                     }
                     case TokenType.Raw:
                     {
-                        if (token.Data.Count < 8)
+                        if (token.DataLength < 8)
                         {
-                            foreach (var datum in token.Data)
-                                AppendCommand(false, new[] {datum});
+                            var tokData = token.Data.Memory.Span;
+                            for (var i = 0; i < token.DataLength; i++)
+                            {
+                                AppendBufferByte(tokData[i]);
+                                CommitBuffer(false);
+                            }
                         }
                         else
                         {
-                            AppendCommand(true, new[] {(byte) (0xB8 + token.Data.Count)}.Concat(token.Data));
+                            AppendBufferByte(unchecked((byte)(0xB8 + token.DataLength)));
+                            AppendBufferBytes(token.Data.Memory.Span[..token.DataLength]);
+                            CommitBuffer(true);
                         }
 
                         break;
@@ -223,14 +239,19 @@ namespace RhythmCodex.Compression
                         throw new RhythmCodexException($"Something went wrong with the tokenizer. Report this.");
                     }
                 }
+
+                if (token.Data is { } tokHandle)
+                    tokHandle.Dispose();
             }
 
-            AppendCommand(true, new byte[] {0xFF});
+            AppendBufferByte(0xFF);
+            CommitBuffer(true);
 
             while (bits != 8)
-                AppendCommand(true, Enumerable.Empty<byte>());
+                CommitBuffer(true);
 
-            return output.ToArray();            
+            var result = output.ToArray();
+            return result;
         }
 
         public byte[] Encode(byte[] source)
