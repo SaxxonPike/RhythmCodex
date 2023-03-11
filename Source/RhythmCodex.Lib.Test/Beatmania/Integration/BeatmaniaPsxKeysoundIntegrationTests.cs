@@ -30,23 +30,19 @@ namespace RhythmCodex.Beatmania.Integration
             if (!Directory.Exists(outFolder))
                 Directory.CreateDirectory(outFolder);
 
-            using (var dataStream = new MemoryStream(data))
-            {
-                var keysounds = streamer.Read(dataStream);
+            using var dataStream = new MemoryStream(data);
+            var keysounds = streamer.Read(dataStream);
                 
-                foreach (var keysound in keysounds)
-                {
+            foreach (var keysound in keysounds)
+            {
                     
-                    var decoded = decoder.Decode(keysound.Data);
-                    decoded[NumericData.Rate] = 32000;
-                    var encoded = encoder.Encode(decoded);
-                    using (var outStream = new MemoryStream())
-                    {
-                        writer.Write(outStream, encoded);
-                        outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outFolder, $"{keysound.DirectoryEntry.Offset:X6}.wav"), outStream.ToArray());
-                    }
-                }
+                var decoded = decoder.Decode(keysound.Data);
+                decoded[NumericData.Rate] = 32000;
+                var encoded = encoder.Encode(decoded);
+                using var outStream = new MemoryStream();
+                writer.Write(outStream, encoded);
+                outStream.Flush();
+                File.WriteAllBytes(Path.Combine(outFolder, $"{keysound.DirectoryEntry.Offset:X6}.wav"), outStream.ToArray());
             }
         }
     }

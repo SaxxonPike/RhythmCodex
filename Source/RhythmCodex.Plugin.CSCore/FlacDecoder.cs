@@ -17,23 +17,21 @@ namespace RhythmCodex.Plugin.CSCore
     {
         public ISound Decode(Stream stream)
         {
-            using (var inputStream = new FlacFile(stream))
-            {
-                var samples = StreamExtensions.ReadAllBytes(inputStream.Read)
-                    .Deinterleave(2, inputStream.WaveFormat.Channels)
-                    .Select(bytes => new Sample
-                    {
-                        Data = bytes.AsArray().Fuse().Select(s => s / 32768f).AsArray()
-                    })
-                    .Cast<ISample>()
-                    .ToList();
-                
-                return new Sound
+            using var inputStream = new FlacFile(stream);
+            var samples = StreamExtensions.ReadAllBytes(inputStream.Read)
+                .Deinterleave(2, inputStream.WaveFormat.Channels)
+                .Select(bytes => new Sample
                 {
-                    Samples = samples,
-                    [NumericData.Rate] = inputStream.WaveFormat.SampleRate
-                };
-            }
+                    Data = bytes.AsArray().Fuse().Select(s => s / 32768f).AsArray()
+                })
+                .Cast<ISample>()
+                .ToList();
+                
+            return new Sound
+            {
+                Samples = samples,
+                [NumericData.Rate] = inputStream.WaveFormat.SampleRate
+            };
         }
 
         public Memory<byte> DecodeFrame(Stream stream, int blockSize)

@@ -32,24 +32,20 @@ namespace RhythmCodex.Beatmania.Integration
 
             var decrypted = decrypter.Decrypt(new MemoryStream(data), data.Length);
             File.WriteAllBytes(Path.Combine(outFolder, $"decrypted.2dx"), decrypted);
-            
-            using (var dataStream = new MemoryStream(decrypted))
-            {
-                var keysounds = streamer.Read(dataStream, dataStream.Length);
-                var index = 1;
+
+            using var dataStream = new MemoryStream(decrypted);
+            var keysounds = streamer.Read(dataStream, dataStream.Length);
+            var index = 1;
                 
-                foreach (var keysound in keysounds)
-                {
-                    var decoded = decoder.Decode(keysound);
-                    var encoded = encoder.Encode(decoded);
-                    using (var outStream = new MemoryStream())
-                    {
-                        writer.Write(outStream, encoded);
-                        outStream.Flush();
-                        File.WriteAllBytes(Path.Combine(outFolder, $"{index:D4}.wav"), outStream.ToArray());
-                        index++;
-                    }
-                }
+            foreach (var keysound in keysounds)
+            {
+                var decoded = decoder.Decode(keysound);
+                var encoded = encoder.Encode(decoded);
+                using var outStream = new MemoryStream();
+                writer.Write(outStream, encoded);
+                outStream.Flush();
+                File.WriteAllBytes(Path.Combine(outFolder, $"{index:D4}.wav"), outStream.ToArray());
+                index++;
             }
         }
     }

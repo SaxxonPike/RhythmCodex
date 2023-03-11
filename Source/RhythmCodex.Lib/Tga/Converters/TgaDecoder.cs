@@ -1,4 +1,5 @@
 using System;
+using RhythmCodex.Graphics.Converters;
 using RhythmCodex.Graphics.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -9,6 +10,13 @@ namespace RhythmCodex.Tga.Converters
     [Service]
     public class TgaDecoder : ITgaDecoder
     {
+        private readonly IGraphicDsp _graphicDsp;
+
+        public TgaDecoder(IGraphicDsp graphicDsp)
+        {
+            _graphicDsp = graphicDsp;
+        }
+
         public bool IsIndexedPalette(TgaImage tgaImage)
         {
             switch (tgaImage.DataTypeCode)
@@ -23,13 +31,13 @@ namespace RhythmCodex.Tga.Converters
             }
         }
 
-        public RawBitmap Decode(TgaImage tgaImage)
+        public IBitmap Decode(TgaImage tgaImage)
         {
             if (tgaImage.Interleave != TgaInterleave.None)
                 throw new RhythmCodexException("Only non-interleaved images are supported for now.");
 
             if (IsIndexedPalette(tgaImage))
-                return DecodeIndexed(tgaImage).ToRawBitmap();
+                return _graphicDsp.DeIndex(DecodeIndexed(tgaImage));
 
             switch (tgaImage.DataTypeCode)
             {
@@ -65,12 +73,7 @@ namespace RhythmCodex.Tga.Converters
                                 outputIndex += scanIncrement;
                             }
 
-                            return new RawBitmap
-                            {
-                                Width = tgaImage.Width,
-                                Height = tgaImage.Height,
-                                Data = pixels
-                            };
+                            return new Bitmap(tgaImage.Width, pixels);
                         }
                         case 32:
                         {
@@ -88,12 +91,7 @@ namespace RhythmCodex.Tga.Converters
                                 outputIndex += scanIncrement;
                             }
 
-                            return new RawBitmap
-                            {
-                                Width = tgaImage.Width,
-                                Height = tgaImage.Height,
-                                Data = pixels
-                            };
+                            return new Bitmap(tgaImage.Width, pixels);
                         }
                         default:
                         {
@@ -108,7 +106,7 @@ namespace RhythmCodex.Tga.Converters
             }
         }
 
-        public PaletteBitmap DecodeIndexed(TgaImage tgaImage)
+        public IPaletteBitmap DecodeIndexed(TgaImage tgaImage)
         {
             if (!IsIndexedPalette(tgaImage))
                 throw new RhythmCodexException(
@@ -116,7 +114,7 @@ namespace RhythmCodex.Tga.Converters
 
             var palette = new int[tgaImage.ColorMapLength];
             var paletteSize = tgaImage.ColorMapLength * tgaImage.ColorMapBitsPerEntry / 8;
-            var paltteData = tgaImage.ImageData.AsSpan(0, paletteSize);
+            var paletteData = tgaImage.ImageData.AsSpan(0, paletteSize);
 
             switch (tgaImage.ColorMapBitsPerEntry)
             {
@@ -125,8 +123,8 @@ namespace RhythmCodex.Tga.Converters
                     for (var i = 0; i < tgaImage.ColorMapLength; i++)
                     {
                         var sourceIndex = i << 1;
-                        var entry = paltteData[sourceIndex] |
-                                    (paltteData[sourceIndex + 1] << 8);
+                        var entry = paletteData[sourceIndex] |
+                                    (paletteData[sourceIndex + 1] << 8);
                         var blue = (entry & 0x1F) << 3;
                         var green = (entry >> 2) & 0xF8;
                         var red = (entry >> 7) & 0xF8;
@@ -142,9 +140,9 @@ namespace RhythmCodex.Tga.Converters
                     for (var i = 0; i < tgaImage.ColorMapLength; i++)
                     {
                         palette[i] = ~0x00FFFFFF |
-                                     paltteData[inputIndex++] |
-                                     (paltteData[inputIndex++] << 8) |
-                                     (paltteData[inputIndex++] << 16);
+                                     paletteData[inputIndex++] |
+                                     (paletteData[inputIndex++] << 8) |
+                                     (paletteData[inputIndex++] << 16);
                     }
 
                     break;
@@ -154,10 +152,10 @@ namespace RhythmCodex.Tga.Converters
                     var inputIndex = 0;
                     for (var i = 0; i < tgaImage.ColorMapLength; i++)
                     {
-                        palette[i] = paltteData[inputIndex++] |
-                                     (paltteData[inputIndex++] << 8) |
-                                     (paltteData[inputIndex++] << 16) |
-                                     (paltteData[inputIndex++] << 24);
+                        palette[i] = paletteData[inputIndex++] |
+                                     (paletteData[inputIndex++] << 8) |
+                                     (paletteData[inputIndex++] << 16) |
+                                     (paletteData[inputIndex++] << 24);
                     }
 
                     break;
@@ -186,7 +184,7 @@ namespace RhythmCodex.Tga.Converters
                         : tgaImage.Width * -2;
 
                     var data = tgaImage.ImageData.AsSpan(paletteSize);
-                    
+
                     for (var y = 0; y < tgaImage.Height; y++)
                     {
                         for (var x = 0; x < tgaImage.Width; x++)

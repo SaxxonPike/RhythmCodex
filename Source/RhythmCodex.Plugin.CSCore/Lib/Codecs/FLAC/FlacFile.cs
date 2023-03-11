@@ -15,7 +15,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
         private readonly FlacMetadataStreamInfo _streamInfo;
         private readonly FlacPreScan _scan;
 
-        private readonly object _bufferLock = new object();
+        private readonly object _bufferLock = new();
         private readonly bool _closeStream;
         
         private Memory<byte> _overflowBuffer;

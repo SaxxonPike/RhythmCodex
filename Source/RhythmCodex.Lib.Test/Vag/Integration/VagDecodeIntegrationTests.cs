@@ -24,13 +24,11 @@ namespace RhythmCodex.Vag.Integration
             var decoder = Resolve<IVagDecoder>();
             var streamer = Resolve<IXa2StreamReader>();
 
-            using (var stream = new MemoryStream(data))
-            {
-                var vag = streamer.Read(stream);
-                var decoded = decoder.Decode(vag.VagChunk);
-                decoded[NumericData.Rate] = 44100;
-                this.WriteSound(decoded, "xa2.wav");
-            }
+            using var stream = new MemoryStream(data);
+            var vag = streamer.Read(stream);
+            var decoded = decoder.Decode(vag.VagChunk);
+            decoded[NumericData.Rate] = 44100;
+            this.WriteSound(decoded, "xa2.wav");
         }
 
         [Test]
@@ -46,21 +44,17 @@ namespace RhythmCodex.Vag.Integration
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
-            using (var stream = new MemoryStream(data))
-            {
-                var vag = streamer.Read(stream);
-                var decoded = decoder.Decode(vag.VagChunk);
-                decoded[NumericData.Rate] = vag.SampleRate;
-                var encoded = encoder.Encode(decoded);
-                using (var outStream = new MemoryStream())
-                {
-                    writer.Write(outStream, encoded);
-                    outStream.Flush();
-                    File.WriteAllBytes(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "svag.wav"),
-                        outStream.ToArray());
-                }
-            }
+            using var stream = new MemoryStream(data);
+            var vag = streamer.Read(stream);
+            var decoded = decoder.Decode(vag.VagChunk);
+            decoded[NumericData.Rate] = vag.SampleRate;
+            var encoded = encoder.Encode(decoded);
+            using var outStream = new MemoryStream();
+            writer.Write(outStream, encoded);
+            outStream.Flush();
+            File.WriteAllBytes(
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "svag.wav"),
+                outStream.ToArray());
         }
     }
 }

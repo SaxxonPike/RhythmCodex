@@ -21,17 +21,15 @@ namespace RhythmCodex.Step1.Converters
 
         private IEnumerable<Timing> ConvertInternal(byte[] data)
         {
-            using (var mem = new ReadOnlyMemoryStream(data))
-            using (var reader = new BinaryReader(mem))
+            using var mem = new ReadOnlyMemoryStream(data);
+            using var reader = new BinaryReader(mem);
+            while (mem.Position < mem.Length - 7)
             {
-                while (mem.Position < mem.Length - 7)
+                yield return new Timing
                 {
-                    yield return new Timing
-                    {
-                        MetricOffset = reader.ReadInt32(),
-                        LinearOffset = reader.ReadInt32()
-                    };
-                }
+                    MetricOffset = reader.ReadInt32(),
+                    LinearOffset = reader.ReadInt32()
+                };
             }
         }
     }

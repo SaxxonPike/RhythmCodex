@@ -13,12 +13,9 @@ namespace RhythmCodex.Xbox.Integration
         public void Test1(string inputPath)
         {
             var reader = Resolve<IXboxIsoStreamReader>();
-            
-            using (var stream = File.OpenRead(inputPath))
-            {
-                var filesystem = reader.Read(stream, stream.Length);
-                
-            }
+
+            using var stream = File.OpenRead(inputPath);
+            var filesystem = reader.Read(stream, stream.Length);
         }
     }
 }

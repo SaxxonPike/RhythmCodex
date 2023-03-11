@@ -22,38 +22,36 @@ namespace RhythmCodex.Wav.Converters
             var channels = sound.Samples.Select(s => s.Data.AsArray()).ToArray();
             var deltas = new int[channelCount];
 
-            using (var encoded = new MemoryStream())
+            using var encoded = new MemoryStream();
+            while (remaining > 0)
             {
-                while (remaining > 0)
+                for (var channel = 0; channel < channelCount; channel++)
                 {
-                    for (var channel = 0; channel < channelCount; channel++)
+                    ReadOnlySpan<float> bufferSpan;
+                    var source = channels[channel];
+                    var length = Math.Min(samplesPerBlock, source.Length - offset);
+                    if (length < samplesPerBlock)
                     {
-                        ReadOnlySpan<float> bufferSpan;
-                        var source = channels[channel];
-                        var length = Math.Min(samplesPerBlock, source.Length - offset);
-                        if (length < samplesPerBlock)
-                        {
-                            buffer.AsSpan().Slice(length).Fill(0);
-                            source.AsSpan().Slice(offset, length).CopyTo(buffer);
-                            bufferSpan = buffer;
-                        }
-                        else
-                        {
-                            bufferSpan = source.AsSpan().Slice(offset, samplesPerBlock);
-                        }
-
-                        deltas[channel] = EncodeFrame(output, bufferSpan, channel, channelCount,
-                            MicrosoftAdpcmConstants.DefaultCoefficients, deltas[channel]);
+                        buffer.AsSpan().Slice(length).Fill(0);
+                        source.AsSpan().Slice(offset, length).CopyTo(buffer);
+                        bufferSpan = buffer;
+                    }
+                    else
+                    {
+                        bufferSpan = source.AsSpan().Slice(offset, samplesPerBlock);
                     }
 
-                    encoded.Write(output, 0, output.Length);
-                    offset += samplesPerBlock;
-                    remaining -= samplesPerBlock;
-                    output.AsSpan().Fill(0x00);
+                    deltas[channel] = EncodeFrame(output, bufferSpan, channel, channelCount,
+                        MicrosoftAdpcmConstants.DefaultCoefficients, deltas[channel]);
                 }
 
-                return encoded.ToArray();
+                encoded.Write(output, 0, output.Length);
+                offset += samplesPerBlock;
+                remaining -= samplesPerBlock;
+                output.AsSpan().Fill(0x00);
             }
+
+            return encoded.ToArray();
         }
 
         public int GetBlockSize(int samplesPerBlock, int channels) => 

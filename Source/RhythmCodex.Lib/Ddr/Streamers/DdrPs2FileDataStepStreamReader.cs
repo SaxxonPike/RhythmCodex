@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Heuristics;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq;
 
@@ -92,13 +93,13 @@ namespace RhythmCodex.Ddr.Streamers
 
                 var maxTable = block.Length / 4;
                 success = true;
-                var offsetBlock = MemoryMarshal.Cast<byte, int>(block);
+                var offsetBlock = Bitter.ToInt32Values(block);
                 offsets.Clear();
 
                 for (var i = 0; i < maxTable; i++)
                 {
                     var offset = offsetBlock[i];
-                    if (offset >= 4 && offset < 0x1000000 && !offsets.Contains(offset))
+                    if (offset is >= 4 and < 0x1000000 && !offsets.Contains(offset))
                     {
                         offsets.Add(offset);
                     }

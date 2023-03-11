@@ -28,7 +28,7 @@ namespace RhythmCodex.Plugin.MP3Sharp.Lib
     {
         // Used to interface with JavaZoom code.
         private readonly Bitstream m_BitStream;
-        private readonly Decoder m_Decoder = new Decoder(Decoder.DefaultParams);
+        private readonly Decoder m_Decoder = new(Decoder.DefaultParams);
         // local variables.
         private readonly Buffer16BitStereo m_Buffer;
         private readonly Stream m_SourceStream;

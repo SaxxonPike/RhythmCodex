@@ -56,7 +56,7 @@ namespace RhythmCodex.Cli
         }
 
         /// <inheritdoc />
-        public string CurrentPath => new string(Path.DirectorySeparatorChar, 1);
+        public string CurrentPath => new(Path.DirectorySeparatorChar, 1);
 
         /// <inheritdoc />
         public byte[] ReadAllBytes(string path)
@@ -68,9 +68,9 @@ namespace RhythmCodex.Cli
         }
 
         /// <inheritdoc />
-        public void WriteAllBytes(string path, byte[] data)
+        public void WriteAllBytes(string path, ReadOnlySpan<byte> data)
         {
-            _files[path] = new MemoryStream(data);
+            _files[path] = new MemoryStream(data.ToArray());
         }
 
         /// <inheritdoc />

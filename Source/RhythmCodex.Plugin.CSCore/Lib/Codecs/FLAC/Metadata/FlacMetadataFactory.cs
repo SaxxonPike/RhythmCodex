@@ -11,12 +11,12 @@ namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC.Metadata
     /// </summary>
     public sealed class FlacMetadataFactory
     {
-        private readonly Dictionary<int, Type> _registeredmetadataTypes = new Dictionary<int, Type>();
+        private readonly Dictionary<int, Type> _registeredmetadataTypes = new();
 
         /// <summary>
         /// Gets the default factory instance.
         /// </summary>
-        public static FlacMetadataFactory Instance { get; } = new FlacMetadataFactory();
+        public static FlacMetadataFactory Instance { get; } = new();
 
         private FlacMetadataFactory()
         {

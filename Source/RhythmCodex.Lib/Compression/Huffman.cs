@@ -13,7 +13,7 @@ namespace RhythmCodex.Compression
         // https://github.com/mamedev/mame/blob/master/src/lib/util/huffman.c
         // https://github.com/mamedev/mame/blob/master/src/lib/util/huffman.h
 
-        private readonly List<uint> _dataHisto = new List<uint>();
+        private readonly List<uint> _dataHisto = new();
         private readonly HuffmanNode[] _huffNode;
         private readonly ushort[] _lookup;
         private readonly byte _maxBits;

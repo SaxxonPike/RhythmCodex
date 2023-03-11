@@ -29,7 +29,7 @@ namespace RhythmCodex.Bms.Integration
             var resolved = resolver.Resolve(commands);
             var decoded = decoder.Decode(resolved);
         }
-        
+
         [Test]
         [Explicit]
         public void Test_ReadingSampleMap()
@@ -87,10 +87,13 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             observed.Should().BeEquivalentTo(
-                new BmsCommand {Name = "WAV04", Value = "test.wav"},
-                new BmsCommand {Name = "WAV05", Value = "test2.wav"},
-                new BmsCommand {Name = "TITLE", Value = "and a"},
-                new BmsCommand {Name = "ARTIST", Value = "fourth"}
+                new[]
+                {
+                    new BmsCommand { Name = "WAV04", Value = "test.wav" },
+                    new BmsCommand { Name = "WAV05", Value = "test2.wav" },
+                    new BmsCommand { Name = "TITLE", Value = "and a" },
+                    new BmsCommand { Name = "ARTIST", Value = "fourth" }
+                }
             );
         }
     }

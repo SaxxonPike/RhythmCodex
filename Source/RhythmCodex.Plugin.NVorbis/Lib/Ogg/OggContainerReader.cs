@@ -17,7 +17,7 @@ namespace RhythmCodex.Plugin.NVorbis.Lib.Ogg
     /// </summary>
     public class ContainerReader : IContainerReader
     {
-        private Crc _crc = new Crc();
+        private Crc _crc = new();
         private BufferedReadStream _stream;
         private Dictionary<int, PacketReader> _packetReaders;
         private List<int> _disposedStreamSerials;

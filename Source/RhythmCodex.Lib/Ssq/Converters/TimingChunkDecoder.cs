@@ -14,30 +14,28 @@ namespace RhythmCodex.Ssq.Converters
     {
         public IList<Timing> Convert(ReadOnlyMemory<byte> data)
         {
-            using (var mem = new ReadOnlyMemoryStream(data))
-            using (var reader = new BinaryReader(mem))
-            {
-                var count = reader.ReadInt32();
+            using var mem = new ReadOnlyMemoryStream(data);
+            using var reader = new BinaryReader(mem);
+            var count = reader.ReadInt32();
 
-                var metricOffsets = Enumerable
-                    .Range(0, count)
-                    .Select(i => reader.ReadInt32())
-                    .ToArray();
+            var metricOffsets = Enumerable
+                .Range(0, count)
+                .Select(i => reader.ReadInt32())
+                .ToArray();
 
-                var linearOffsets = Enumerable
-                    .Range(0, count)
-                    .Select(i => reader.ReadInt32())
-                    .ToArray();
+            var linearOffsets = Enumerable
+                .Range(0, count)
+                .Select(i => reader.ReadInt32())
+                .ToArray();
 
-                return Enumerable
-                    .Range(0, count)
-                    .Select(i => new Timing
-                    {
-                        LinearOffset = linearOffsets[i],
-                        MetricOffset = metricOffsets[i]
-                    })
-                    .AsList();
-            }
+            return Enumerable
+                .Range(0, count)
+                .Select(i => new Timing
+                {
+                    LinearOffset = linearOffsets[i],
+                    MetricOffset = metricOffsets[i]
+                })
+                .AsList();
         }
     }
 }

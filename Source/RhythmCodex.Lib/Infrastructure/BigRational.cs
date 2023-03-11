@@ -83,22 +83,22 @@ namespace RhythmCodex.Infrastructure
         /// <summary>
         ///     A pre-initialized BigRational with the value of zero.
         /// </summary>
-        public static BigRational Zero { get; } = new BigRational(BigInteger.Zero);
+        public static BigRational Zero { get; } = new(BigInteger.Zero);
 
         /// <summary>
         ///     A pre-initialized BigRational with the value of one.
         /// </summary>
-        public static BigRational One { get; } = new BigRational(BigInteger.One);
+        public static BigRational One { get; } = new(BigInteger.One);
 
         /// <summary>
         ///     A pre-initialized BigRational with the value of negative one.
         /// </summary>
-        public static BigRational MinusOne { get; } = new BigRational(BigInteger.MinusOne);
+        public static BigRational MinusOne { get; } = new(BigInteger.MinusOne);
         
         /// <summary>
         ///     A pre-initialized BigRational with the value of one half.
         /// </summary>
-        public static BigRational OneHalf { get; } = new BigRational(BigInteger.One, 2);
+        public static BigRational OneHalf { get; } = new(BigInteger.One, 2);
 
         /// <summary>
         ///     Gets a number that indicates the sign (negative, positive, or zero) of the current BigRational object.
@@ -151,10 +151,7 @@ namespace RhythmCodex.Infrastructure
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is BigRational))
-                return false;
-
-            return Equals((BigRational) obj);
+            return obj is BigRational br && Equals(br);
         }
 
         /// <inheritdoc />
@@ -169,10 +166,10 @@ namespace RhythmCodex.Infrastructure
             if (obj == null)
                 return 1;
 
-            if (!(obj is BigRational))
+            if (obj is not BigRational br)
                 throw new ArgumentException("Argument must be of type BigRational", nameof(obj));
 
-            return Compare(this, (BigRational) obj);
+            return Compare(this, br);
         }
 
         /// <inheritdoc />
@@ -252,9 +249,6 @@ namespace RhythmCodex.Infrastructure
 
         private (BigInteger, BigInteger) Init(decimal value)
         {
-            BigInteger numerator;
-            BigInteger denominator;
-
             var bits = decimal.GetBits(value);
             if (bits == null || bits.Length != 4 || (bits[3] & ~(DecimalSignMask | DecimalScaleMask)) != 0 ||
                 (bits[3] & DecimalScaleMask) > 28 << 16)
@@ -267,7 +261,7 @@ namespace RhythmCodex.Infrastructure
 
             // build up the numerator
             var ul = ((ulong) (uint) bits[2] << 32) | (uint) bits[1]; // (hi    << 32) | (mid)
-            numerator = (new BigInteger(ul) << 32) | (uint) bits[0]; // (hiMid << 32) | (low)
+            var numerator = (new BigInteger(ul) << 32) | (uint) bits[0]; // (hiMid << 32) | (low)
 
             var isNegative = (bits[3] & DecimalSignMask) != 0;
             if (isNegative)
@@ -275,7 +269,7 @@ namespace RhythmCodex.Infrastructure
 
             // build up the denominator
             var scale = (bits[3] & DecimalScaleMask) >> 16; // 0-28, power of 10 to divide numerator by
-            denominator = BigInteger.Pow(10, scale);
+            var denominator = BigInteger.Pow(10, scale);
 
             var simplified = Simplify(numerator, denominator);
             (numerator, denominator) = simplified;
@@ -536,8 +530,8 @@ namespace RhythmCodex.Infrastructure
         private static BigInteger Isqrt(BigInteger x)
         {
             var b = 15; // this is the next bit we try 
-            BigInteger r = 0; // r will contain the result
-            BigInteger r2 = 0; // here we maintain r squared
+            var r = BigInteger.Zero; // r will contain the result
+            var r2 = BigInteger.Zero; // here we maintain r squared
 
             while (b >= 0)
             {
@@ -578,7 +572,7 @@ namespace RhythmCodex.Infrastructure
             var result = baseValue;
             while (exponent > BigInteger.One)
             {
-                result = result * baseValue;
+                result *= baseValue;
                 exponent--;
             }
 
@@ -702,7 +696,7 @@ namespace RhythmCodex.Infrastructure
                 r1.Denominator * r2.Denominator);
         }
         
-        public static BigRational PositiveInfinity => new BigRational(BigInteger.One, BigInteger.Zero, true);
+        public static BigRational PositiveInfinity => new(BigInteger.One, BigInteger.Zero, true);
 
         #endregion Operator Overloads
 
@@ -774,7 +768,7 @@ namespace RhythmCodex.Infrastructure
             if (SafeCastToDouble(value.Numerator) && SafeCastToDouble(value.Denominator))
                 return (double) value.Numerator / (double) value.Denominator;
 
-            // scale the numerator to preseve the fraction part through the integer division
+            // scale the numerator to preserve the fraction part through the integer division
             var denormalized = value.Numerator * DoublePrecision / value.Denominator;
             if (denormalized.IsZero)
                 return value.Sign < 0
@@ -795,9 +789,9 @@ namespace RhythmCodex.Infrastructure
                     }
                     else
                     {
-                        denormalized = denormalized / 10;
+                        denormalized /= 10;
                     }
-                result = result / 10;
+                result /= 10;
                 scale--;
             }
 
@@ -814,7 +808,7 @@ namespace RhythmCodex.Infrastructure
             if (SafeCastToDecimal(value.Numerator) && SafeCastToDecimal(value.Denominator))
                 return (decimal) value.Numerator / (decimal) value.Denominator;
 
-            // scale the numerator to preseve the fraction part through the integer division
+            // scale the numerator to preserve the fraction part through the integer division
             var denormalized = value.Numerator * DecimalPrecision / value.Denominator;
             if (denormalized.IsZero)
                 return decimal.Zero; // underflow - fraction is too small to fit in a decimal
@@ -822,7 +816,7 @@ namespace RhythmCodex.Infrastructure
             for (var scale = DecimalMaxScale; scale >= 0; scale--)
                 if (!SafeCastToDecimal(denormalized))
                 {
-                    denormalized = denormalized / 10;
+                    denormalized /= 10;
                 }
                 else
                 {
@@ -971,5 +965,5 @@ namespace RhythmCodex.Infrastructure
         }
 
         #endregion static helper methods
-    } // BigRational
-} // namespace Numerics
+    }
+}

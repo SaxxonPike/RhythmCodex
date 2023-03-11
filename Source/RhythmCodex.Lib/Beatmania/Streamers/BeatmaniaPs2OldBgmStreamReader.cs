@@ -29,16 +29,14 @@ namespace RhythmCodex.Beatmania.Streamers
             reader.ReadBytes(0x800 - 9);
 
             var source = reader.ReadBytes(length);
-            using (var mem = new MemoryStream(source))
+            using var mem = new MemoryStream(source);
+            var data = _vagStreamReader.Read(mem, channels, 0x800);
+            return new BeatmaniaPs2Bgm
             {
-                var data = _vagStreamReader.Read(mem, channels, 0x800);
-                return new BeatmaniaPs2Bgm
-                {
-                    Data = data,
-                    Volume = volume,
-                    Rate = rate,
-                };
-            }
+                Data = data,
+                Volume = volume,
+                Rate = rate,
+            };
         }
     }
 }

@@ -5,6 +5,6 @@ namespace RhythmCodex.Dds.Converters
 {
     public interface IDdsBitmapDecoder
     {
-        RawBitmap Decode(DdsImage image);
+        Bitmap Decode(DdsImage image);
     }
 }

@@ -5,6 +5,6 @@ namespace RhythmCodex.Tcb.Converters
 {
     public interface ITcbImageDecoder
     {
-        IRawBitmap Decode(TcbImage image);
+        IBitmap Decode(TcbImage image);
     }
 }

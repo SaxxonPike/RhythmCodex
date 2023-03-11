@@ -22,7 +22,7 @@ namespace RhythmCodex.Plugin.NVorbis.Lib
         private Stream _baseStream;
         private StreamReadBuffer _buffer;
         private long _readPosition;
-        private object _localLock = new object();
+        private object _localLock = new();
         private System.Threading.Thread _owningThread;
         private int _lockCount;
 

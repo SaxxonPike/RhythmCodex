@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
@@ -71,10 +72,12 @@ namespace ClientCommon
         }
 
         /// <inheritdoc />
-        public void WriteAllBytes(string path, byte[] data)
+        public void WriteAllBytes(string path, ReadOnlySpan<byte> data)
         {
             _logger.Debug($"Writing all bytes: {path}");
-            File.WriteAllBytes(path, data);
+            using var stream = File.Open(path, FileMode.Create);
+            stream.Write(data);
+            stream.Flush();
         }
 
         /// <inheritdoc />

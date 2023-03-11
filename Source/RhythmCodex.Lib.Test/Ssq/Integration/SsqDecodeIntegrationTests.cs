@@ -18,10 +18,8 @@ namespace RhythmCodex.Ssq.Integration
         {
             var ssqStreamer = Resolve<SsqStreamReader>();
 
-            using (var mem = new MemoryStream(data))
-            {
-                return Subject.Decode(ssqStreamer.Read(mem)).ToArray();
-            }
+            using var mem = new MemoryStream(data);
+            return Subject.Decode(ssqStreamer.Read(mem)).ToArray();
         }
 
         [Test]

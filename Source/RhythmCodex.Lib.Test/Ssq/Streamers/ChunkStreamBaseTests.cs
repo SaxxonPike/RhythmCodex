@@ -20,16 +20,14 @@ namespace RhythmCodex.Ssq.Streamers
 
         protected static byte[] PrepareChunk(int totalLength, short param0, short param1, byte[] data)
         {
-            using (var mem = new MemoryStream())
-            using (var writer = new BinaryWriter(mem))
-            {
-                writer.Write(totalLength);
-                writer.Write(param0);
-                writer.Write(param1);
-                writer.Write(data);
-                writer.Flush();
-                return mem.ToArray();
-            }
+            using var mem = new MemoryStream();
+            using var writer = new BinaryWriter(mem);
+            writer.Write(totalLength);
+            writer.Write(param0);
+            writer.Write(param1);
+            writer.Write(data);
+            writer.Flush();
+            return mem.ToArray();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace RhythmCodex.Heuristics
         long? Position { get; set; }
         long? Length { get; }
         ReadOnlySpan<byte> Read(int count);
+        int Read(Span<byte> buffer);
         int Read(byte[] buffer, int offset, int length);
         byte ReadByte();
         int ReadInt();

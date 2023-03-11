@@ -52,7 +52,7 @@ namespace RhythmCodex.Cli.Orchestration
             _timStreamReader = timStreamReader;
         }
 
-        private RawBitmap CropImage(RawBitmap bitmap)
+        private IBitmap CropImage(IBitmap bitmap)
         {
             if (Args.Options.ContainsKey("+crop_ddr"))
             {
@@ -80,28 +80,26 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
-                    using (var stream = OpenRead(task, file))
-                    {
-                        var images = _timDecoder.Decode(stream);
-                        task.Message = "Decoding TIM.";
+                    using var stream = OpenRead(task, file);
+                    var images = _timDecoder.Decode(stream);
+                    task.Message = "Decoding TIM.";
 
-                        if (images.Count > 1)
+                    if (images.Count > 1)
+                    {
+                        var idx = 0;
+                        foreach (var image in images)
                         {
-                            var idx = 0;
-                            foreach (var image in images)
-                            {
-                                var bitmap = CropImage(image);
-                                using (var outStream = OpenWriteSingle(task, file, i => $"{i}.{idx}.png"))
-                                    _pngStreamWriter.Write(outStream, bitmap);
-                                idx++;
-                            }
+                            var bitmap = CropImage(image);
+                            using (var outStream = OpenWriteSingle(task, file, i => $"{i}.{idx}.png"))
+                                _pngStreamWriter.Write(outStream, bitmap);
+                            idx++;
                         }
-                        else if (images.Count == 1)
-                        {
-                            var bitmap = CropImage(images.Single());
-                            using (var outStream = OpenWriteSingle(task, file, i => $"{i}.png"))
-                                _pngStreamWriter.Write(outStream, bitmap);                            
-                        }
+                    }
+                    else if (images.Count == 1)
+                    {
+                        var bitmap = CropImage(images.Single());
+                        using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
+                        _pngStreamWriter.Write(outStream, bitmap);                            
                     }
                 });
 
@@ -122,14 +120,12 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
-                    using (var stream = OpenRead(task, file))
-                    {
-                        var image = _ddsStreamReader.Read(stream, (int) stream.Length);
-                        task.Message = "Decoding DDS.";
-                        var bitmap = CropImage(_ddsBitmapDecoder.Decode(image));
-                        using (var outStream = OpenWriteSingle(task, file, i => $"{i}.png"))
-                            _pngStreamWriter.Write(outStream, bitmap);
-                    }
+                    using var stream = OpenRead(task, file);
+                    var image = _ddsStreamReader.Read(stream, (int) stream.Length);
+                    task.Message = "Decoding DDS.";
+                    var bitmap = CropImage(_ddsBitmapDecoder.Decode(image));
+                    using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
+                    _pngStreamWriter.Write(outStream, bitmap);
                 });
 
                 return true;
@@ -149,15 +145,13 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
-                    using (var stream = OpenRead(task, file))
-                    {
-                        var image = _tgaStreamReader.Read(stream, (int) stream.Length);
-                        task.Message = "Decoding TGA.";
-                        var bitmap = CropImage(_tgaDecoder.Decode(image));
+                    using var stream = OpenRead(task, file);
+                    var image = _tgaStreamReader.Read(stream, (int) stream.Length);
+                    task.Message = "Decoding TGA.";
+                    var bitmap = CropImage(_tgaDecoder.Decode(image));
 
-                        using (var outStream = OpenWriteSingle(task, file, i => $"{i}.png"))
-                            _pngStreamWriter.Write(outStream, bitmap);
-                    }
+                    using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
+                    _pngStreamWriter.Write(outStream, bitmap);
                 });
 
                 return true;

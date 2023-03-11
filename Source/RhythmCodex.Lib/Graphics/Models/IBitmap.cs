@@ -1,6 +1,6 @@
 namespace RhythmCodex.Graphics.Models
 {
-    public interface IRawBitmap
+    public interface IBitmap
     {
         int Width { get; }
         int Height { get; }

@@ -1,5 +1,7 @@
 using System;
+using System.Buffers.Binary;
 using System.Runtime.InteropServices;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Wav.Converters
@@ -19,7 +21,7 @@ namespace RhythmCodex.Wav.Converters
         {
             var result = new float[bytes.Length / 2];
             for (int i = 0, j = 0; i < bytes.Length - 1; i += 2)
-                result[j++] = (((bytes[i] << 16) | (bytes[i + 1] << 24)) >> 16) / 32768f;
+                result[j++] = Bitter.ToInt16(bytes[i..]) / 32768f;
             return result;
         }
 
@@ -27,7 +29,7 @@ namespace RhythmCodex.Wav.Converters
         {
             var result = new float[bytes.Length / 3];
             for (int i = 0, j = 0; i < bytes.Length - 2; i += 3)
-                result[j++] = (((bytes[i] << 8) | (bytes[i + 1] << 16) | (bytes[i + 2] << 24)) >> 8) / 8388608f;
+                result[j++] = Bitter.ToInt24(bytes[i..]) / 8388608f;
             return result;
         }
 
@@ -35,13 +37,16 @@ namespace RhythmCodex.Wav.Converters
         {
             var result = new float[bytes.Length / 4];
             for (int i = 0, j = 0; i < bytes.Length - 3; i += 4)
-                result[j++] = (bytes[i] | (bytes[i + 1] << 8) | (bytes[i + 2] << 16) | (bytes[i + 3] << 24)) / 2147483648f;
+                result[j++] = Bitter.ToInt32(bytes[i..]) / 2147483648f;
             return result;
         }
 
         public float[] DecodeFloat(ReadOnlySpan<byte> bytes)
         {
-            return MemoryMarshal.Cast<byte, float>(bytes).ToArray();
+            var result = new float[bytes.Length / 4];
+            for (int i = 0, j = 0; i < bytes.Length - 3; i += 4)
+                result[j++] = Bitter.ToFloat(bytes[i..]);
+            return result;
         }
     }
 }

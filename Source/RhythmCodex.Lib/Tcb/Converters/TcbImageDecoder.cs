@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using RhythmCodex.Graphics.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Tcb.Models;
 
@@ -9,9 +10,9 @@ namespace RhythmCodex.Tcb.Converters
     [Service]
     public class TcbImageDecoder : ITcbImageDecoder
     {
-        public IRawBitmap Decode(TcbImage image)
+        public IBitmap Decode(TcbImage image)
         {
-            var result = new RawBitmap(image.Width, image.Height);
+            var result = new Bitmap(image.Width, image.Height);
             var resultData = result.Data;
             var imageData = image.Image;
             var pixelCount = image.Width * image.Height;
@@ -19,7 +20,7 @@ namespace RhythmCodex.Tcb.Converters
 
             //if (image.Palette.Length > 0x50)
             {
-                var palSpan = MemoryMarshal.Cast<byte, int>(image.Palette.AsSpan());
+                var palSpan = Bitter.ToInt32Values(image.Palette);
                 palette = FilterPalette(palSpan);
             }
 

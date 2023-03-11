@@ -49,7 +49,7 @@ namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 			return (UInt32)(g_FastPos[pos >> 26] + 52);
 		}
 
-		LzmaBase.State _state = new LzmaBase.State();
+		LzmaBase.State _state = new();
 		Byte _previousByte;
 		UInt32[] _repDistances = new UInt32[LzmaBase.kNumRepDistances];
 
@@ -165,11 +165,11 @@ namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 
 		class LenEncoder
 		{
-			RangeCoder.BitEncoder _choice = new RangeCoder.BitEncoder();
-			RangeCoder.BitEncoder _choice2 = new RangeCoder.BitEncoder();
+			RangeCoder.BitEncoder _choice = new();
+			RangeCoder.BitEncoder _choice2 = new();
 			RangeCoder.BitTreeEncoder[] _lowCoder = new RangeCoder.BitTreeEncoder[LzmaBase.kNumPosStatesEncodingMax];
 			RangeCoder.BitTreeEncoder[] _midCoder = new RangeCoder.BitTreeEncoder[LzmaBase.kNumPosStatesEncodingMax];
-			RangeCoder.BitTreeEncoder _highCoder = new RangeCoder.BitTreeEncoder(LzmaBase.kNumHighLenBits);
+			RangeCoder.BitTreeEncoder _highCoder = new(LzmaBase.kNumHighLenBits);
 
 			public LenEncoder()
 			{
@@ -301,7 +301,7 @@ namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 		};
 		Optimal[] _optimum = new Optimal[kNumOpts];
 		LZ.IMatchFinder _matchFinder = null;
-		RangeCoder.Encoder _rangeEncoder = new RangeCoder.Encoder();
+		RangeCoder.Encoder _rangeEncoder = new();
 
 		RangeCoder.BitEncoder[] _isMatch = new RangeCoder.BitEncoder[LzmaBase.kNumStates << LzmaBase.kNumPosStatesBitsMax];
 		RangeCoder.BitEncoder[] _isRep = new RangeCoder.BitEncoder[LzmaBase.kNumStates];
@@ -313,12 +313,12 @@ namespace RhythmCodex.Plugin.SevenZip.Compress.LZMA
 		RangeCoder.BitTreeEncoder[] _posSlotEncoder = new RangeCoder.BitTreeEncoder[LzmaBase.kNumLenToPosStates];
 		
 		RangeCoder.BitEncoder[] _posEncoders = new RangeCoder.BitEncoder[LzmaBase.kNumFullDistances - LzmaBase.kEndPosModelIndex];
-		RangeCoder.BitTreeEncoder _posAlignEncoder = new RangeCoder.BitTreeEncoder(LzmaBase.kNumAlignBits);
+		RangeCoder.BitTreeEncoder _posAlignEncoder = new(LzmaBase.kNumAlignBits);
 
-		LenPriceTableEncoder _lenEncoder = new LenPriceTableEncoder();
-		LenPriceTableEncoder _repMatchLenEncoder = new LenPriceTableEncoder();
+		LenPriceTableEncoder _lenEncoder = new();
+		LenPriceTableEncoder _repMatchLenEncoder = new();
 
-		LiteralEncoder _literalEncoder = new LiteralEncoder();
+		LiteralEncoder _literalEncoder = new();
 
 		UInt32[] _matchDistances = new UInt32[LzmaBase.kMatchMaxLen * 2 + 2];
 		

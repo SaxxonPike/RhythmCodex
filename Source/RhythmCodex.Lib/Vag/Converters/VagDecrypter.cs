@@ -1,4 +1,6 @@
 using System;
+using System.Numerics;
+using System.Runtime.Intrinsics;
 using RhythmCodex.IoC;
 using RhythmCodex.Vag.Models;
 
@@ -9,6 +11,8 @@ namespace RhythmCodex.Vag.Converters
     {
         public int Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagState state)
         {
+            var table0 = VagCoefficients.Coeff0;
+            var table1 = VagCoefficients.Coeff1;
             var inOffset = 0;
             var outOffset = 0;
             var last0 = state.Prev0;
@@ -50,27 +54,21 @@ namespace RhythmCodex.Vag.Converters
                         var deltas = input[inOffset + i];
                         var delta0 = (deltas & 0x0F) << 28;
                         var delta1 = (deltas & 0xF0) << 24;
-                        var coeff0 = VagCoefficients.Coeff0[filter];
-                        var coeff1 = VagCoefficients.Coeff1[filter];
+                        var coeff0 = table0[filter];
+                        var coeff1 = table1[filter];
 
                         var filter0 = coeff0 * last0;
                         var filter1 = coeff1 * last1;
-                        var sample = (delta0 >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
-                        if (sample > short.MaxValue)
-                            sample = short.MaxValue;
-                        else if (sample < short.MinValue)
-                            sample = short.MinValue;
+                        var sample = int.Clamp((delta0 >> (magnitude + 16)) + ((filter0 + filter1) >> 6), 
+                            short.MinValue, short.MaxValue);
                         last1 = last0;
                         last0 = sample;
                         output[outOffset++] = sample / 32768f;
 
                         filter0 = coeff0 * last0;
                         filter1 = coeff1 * last1;
-                        sample = (delta1 >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
-                        if (sample > short.MaxValue)
-                            sample = short.MaxValue;
-                        else if (sample < short.MinValue)
-                            sample = short.MinValue;
+                        sample = int.Clamp((delta1 >> (magnitude + 16)) + ((filter0 + filter1) >> 6),
+                            short.MinValue, short.MaxValue);
                         last1 = last0;
                         last0 = sample;
                         output[outOffset++] = sample / 32768f;

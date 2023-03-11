@@ -16,10 +16,10 @@ namespace RhythmCodex.Bms.Integration
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "SETRANDOM", Value = "3"},
-                new BmsCommand {Name = "IF", Value = "3"},
-                new BmsCommand {Name = "PASS"},
-                new BmsCommand {Name = "ENDIF"},
+                new BmsCommand { Name = "SETRANDOM", Value = "3" },
+                new BmsCommand { Name = "IF", Value = "3" },
+                new BmsCommand { Name = "PASS" },
+                new BmsCommand { Name = "ENDIF" },
             };
 
             // Act.
@@ -28,7 +28,10 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS" }
+                }
             );
         }
 
@@ -38,10 +41,10 @@ namespace RhythmCodex.Bms.Integration
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "RANDOM", Value = "3"},
-                new BmsCommand {Name = "IF", Value = "3"},
-                new BmsCommand {Name = "PASS"},
-                new BmsCommand {Name = "ENDIF"},
+                new BmsCommand { Name = "RANDOM", Value = "3" },
+                new BmsCommand { Name = "IF", Value = "3" },
+                new BmsCommand { Name = "PASS" },
+                new BmsCommand { Name = "ENDIF" },
             };
 
             var randomizer = new Mock<IRandomizer>();
@@ -54,7 +57,10 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS" }
+                }
             );
         }
 
@@ -64,12 +70,12 @@ namespace RhythmCodex.Bms.Integration
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "RANDOM", Value = "3"},
-                new BmsCommand {Name = "IF", Value = "1"},
-                new BmsCommand {Name = "FAIL"},
-                new BmsCommand {Name = "ELSEIF", Value = "3"},
-                new BmsCommand {Name = "PASS"},
-                new BmsCommand {Name = "ENDIF"},
+                new BmsCommand { Name = "RANDOM", Value = "3" },
+                new BmsCommand { Name = "IF", Value = "1" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "ELSEIF", Value = "3" },
+                new BmsCommand { Name = "PASS" },
+                new BmsCommand { Name = "ENDIF" },
             };
 
             var randomizer = new Mock<IRandomizer>();
@@ -82,7 +88,10 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS" }
+                }
             );
         }
 
@@ -92,12 +101,12 @@ namespace RhythmCodex.Bms.Integration
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "RANDOM", Value = "3"},
-                new BmsCommand {Name = "IF", Value = "1"},
-                new BmsCommand {Name = "FAIL"},
-                new BmsCommand {Name = "ELSE"},
-                new BmsCommand {Name = "PASS"},
-                new BmsCommand {Name = "ENDIF"},
+                new BmsCommand { Name = "RANDOM", Value = "3" },
+                new BmsCommand { Name = "IF", Value = "1" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "ELSE" },
+                new BmsCommand { Name = "PASS" },
+                new BmsCommand { Name = "ENDIF" },
             };
 
             var randomizer = new Mock<IRandomizer>();
@@ -110,7 +119,10 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS" }
+                }
             );
         }
 
@@ -120,16 +132,16 @@ namespace RhythmCodex.Bms.Integration
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "SWITCH", Value = "3"},
-                new BmsCommand {Name = "CASE", Value = "1"},
-                new BmsCommand {Name = "FAIL"},
-                new BmsCommand {Name = "SKIP"},
-                new BmsCommand {Name = "CASE", Value = "3"},
-                new BmsCommand {Name = "PASS"},
-                new BmsCommand {Name = "SKIP"},
-                new BmsCommand {Name = "DEF"},
-                new BmsCommand {Name = "FAIL"},
-                new BmsCommand {Name = "ENDSW"},
+                new BmsCommand { Name = "SWITCH", Value = "3" },
+                new BmsCommand { Name = "CASE", Value = "1" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "SKIP" },
+                new BmsCommand { Name = "CASE", Value = "3" },
+                new BmsCommand { Name = "PASS" },
+                new BmsCommand { Name = "SKIP" },
+                new BmsCommand { Name = "DEF" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "ENDSW" },
             };
 
             var randomizer = new Mock<IRandomizer>();
@@ -142,23 +154,26 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS" }
+                }
             );
         }
-        
+
         [Test]
         public void Test_Switch_Def()
         {
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "SWITCH", Value = "3"},
-                new BmsCommand {Name = "CASE", Value = "1"},
-                new BmsCommand {Name = "FAIL"},
-                new BmsCommand {Name = "SKIP"},
-                new BmsCommand {Name = "DEF"},
-                new BmsCommand {Name = "PASS"},
-                new BmsCommand {Name = "ENDSW"},
+                new BmsCommand { Name = "SWITCH", Value = "3" },
+                new BmsCommand { Name = "CASE", Value = "1" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "SKIP" },
+                new BmsCommand { Name = "DEF" },
+                new BmsCommand { Name = "PASS" },
+                new BmsCommand { Name = "ENDSW" },
             };
 
             var randomizer = new Mock<IRandomizer>();
@@ -171,25 +186,28 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS" }
+                }
             );
         }
-        
+
         [Test]
         public void Test_Switch_Case_Fallthrough()
         {
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "SWITCH", Value = "3"},
-                new BmsCommand {Name = "CASE", Value = "1"},
-                new BmsCommand {Name = "FAIL"},
-                new BmsCommand {Name = "SKIP"},
-                new BmsCommand {Name = "CASE", Value = "3"},
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "DEF"},
-                new BmsCommand {Name = "PASS 2"},
-                new BmsCommand {Name = "ENDSW"},
+                new BmsCommand { Name = "SWITCH", Value = "3" },
+                new BmsCommand { Name = "CASE", Value = "1" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "SKIP" },
+                new BmsCommand { Name = "CASE", Value = "3" },
+                new BmsCommand { Name = "PASS 1" },
+                new BmsCommand { Name = "DEF" },
+                new BmsCommand { Name = "PASS 2" },
+                new BmsCommand { Name = "ENDSW" },
             };
 
             var randomizer = new Mock<IRandomizer>();
@@ -202,8 +220,11 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "PASS 2"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS 1" },
+                    new BmsCommand { Name = "PASS 2" }
+                }
             );
         }
 
@@ -213,17 +234,17 @@ namespace RhythmCodex.Bms.Integration
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "SETRANDOM", Value = "3"},
-                new BmsCommand {Name = "IF", Value = "3"},
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "SETRANDOM", Value = "2"},
-                new BmsCommand {Name = "IF", Value = "2"},
-                new BmsCommand {Name = "PASS 2"},
-                new BmsCommand {Name = "ELSE"},
-                new BmsCommand {Name = "FAIL"}, 
-                new BmsCommand {Name = "ENDIF"},
-                new BmsCommand {Name = "PASS 3"},
-                new BmsCommand {Name = "ENDIF"},
+                new BmsCommand { Name = "SETRANDOM", Value = "3" },
+                new BmsCommand { Name = "IF", Value = "3" },
+                new BmsCommand { Name = "PASS 1" },
+                new BmsCommand { Name = "SETRANDOM", Value = "2" },
+                new BmsCommand { Name = "IF", Value = "2" },
+                new BmsCommand { Name = "PASS 2" },
+                new BmsCommand { Name = "ELSE" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "ENDIF" },
+                new BmsCommand { Name = "PASS 3" },
+                new BmsCommand { Name = "ENDIF" },
             };
 
             // Act.
@@ -232,28 +253,31 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "PASS 2"},
-                new BmsCommand {Name = "PASS 3"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS 1" },
+                    new BmsCommand { Name = "PASS 2" },
+                    new BmsCommand { Name = "PASS 3" }
+                }
             );
         }
-        
+
         [Test]
         public void Test_Nested_Inherited_Random()
         {
             // Arrange.
             var commands = new[]
             {
-                new BmsCommand {Name = "SETRANDOM", Value = "3"},
-                new BmsCommand {Name = "IF", Value = "3"},
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "IF", Value = "2"},
-                new BmsCommand {Name = "FAIL"},
-                new BmsCommand {Name = "ELSE"},
-                new BmsCommand {Name = "PASS 2"}, 
-                new BmsCommand {Name = "ENDIF"},
-                new BmsCommand {Name = "PASS 3"},
-                new BmsCommand {Name = "ENDIF"},
+                new BmsCommand { Name = "SETRANDOM", Value = "3" },
+                new BmsCommand { Name = "IF", Value = "3" },
+                new BmsCommand { Name = "PASS 1" },
+                new BmsCommand { Name = "IF", Value = "2" },
+                new BmsCommand { Name = "FAIL" },
+                new BmsCommand { Name = "ELSE" },
+                new BmsCommand { Name = "PASS 2" },
+                new BmsCommand { Name = "ENDIF" },
+                new BmsCommand { Name = "PASS 3" },
+                new BmsCommand { Name = "ENDIF" },
             };
 
             // Act.
@@ -262,9 +286,12 @@ namespace RhythmCodex.Bms.Integration
 
             // Assert.
             output.Should().BeEquivalentTo(
-                new BmsCommand {Name = "PASS 1"},
-                new BmsCommand {Name = "PASS 2"},
-                new BmsCommand {Name = "PASS 3"}
+                new[]
+                {
+                    new BmsCommand { Name = "PASS 1" },
+                    new BmsCommand { Name = "PASS 2" },
+                    new BmsCommand { Name = "PASS 3" }
+                }
             );
         }
     }

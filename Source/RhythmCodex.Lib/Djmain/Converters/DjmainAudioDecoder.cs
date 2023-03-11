@@ -32,18 +32,16 @@ namespace RhythmCodex.Djmain.Converters
 
         private static IEnumerable<float> DecodePcm16Data(IEnumerable<byte> data)
         {
-            using (var e = data.GetEnumerator())
+            using var e = data.GetEnumerator();
+            while (true)
             {
-                while (true)
-                {
-                    if (!e.MoveNext())
-                        yield break;
+                if (!e.MoveNext())
+                    yield break;
 
-                    var low = e.Current;
-                    var high = e.MoveNext() ? e.Current : 0;
+                var low = e.Current;
+                var high = e.MoveNext() ? e.Current : 0;
 
-                    yield return (((low | (high << 8)) << 16) >> 16) / 32768f;
-                }
+                yield return (((low | (high << 8)) << 16) >> 16) / 32768f;
             }
         }
 

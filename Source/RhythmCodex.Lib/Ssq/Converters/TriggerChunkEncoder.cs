@@ -14,19 +14,17 @@ namespace RhythmCodex.Ssq.Converters
             var triggerList = triggers.AsList();
             var count = triggerList.Count;
 
-            using (var mem = new MemoryStream())
-            using (var writer = new BinaryWriter(mem))
-            {
-                writer.Write(count);
+            using var mem = new MemoryStream();
+            using var writer = new BinaryWriter(mem);
+            writer.Write(count);
 
-                foreach (var trigger in triggerList)
-                    writer.Write(trigger.MetricOffset);
+            foreach (var trigger in triggerList)
+                writer.Write(trigger.MetricOffset);
 
-                foreach (var trigger in triggerList)
-                    writer.Write(trigger.Id);
+            foreach (var trigger in triggerList)
+                writer.Write(trigger.Id);
 
-                return mem.ToArray();
-            }
+            return mem.ToArray();
         }
     }
 }

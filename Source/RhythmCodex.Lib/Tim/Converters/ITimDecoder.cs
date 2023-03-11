@@ -6,6 +6,6 @@ namespace RhythmCodex.Tim.Converters
 {
     public interface ITimDecoder
     {
-        IList<RawBitmap> Decode(Stream stream);
+        IList<IBitmap> Decode(Stream stream);
     }
 }

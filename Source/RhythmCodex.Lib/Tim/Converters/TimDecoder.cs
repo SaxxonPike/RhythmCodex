@@ -20,7 +20,7 @@ namespace RhythmCodex.Tim.Converters
             _streamReader = streamReader;
         }
         
-        public IList<RawBitmap> Decode(Stream stream)
+        public IList<IBitmap> Decode(Stream stream)
         {
             var image = _streamReader.Read(stream);
             return _bitmapDecoder.Decode(image);

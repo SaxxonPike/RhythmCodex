@@ -26,16 +26,14 @@ namespace RhythmCodex.Iso.Converters
 
         private IEnumerable<IsoDirectoryRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
         {
-            using (var stream = _isoSectorStreamFactory.Open(sectors))
+            using var stream = _isoSectorStreamFactory.Open(sectors);
+            while (true)
             {
-                while (true)
-                {
-                    var record = _isoDirectoryRecordDecoder.Decode(stream, false);
-                    if (record != null)
-                        yield return record;
-                    else
-                        yield break;
-                }
+                var record = _isoDirectoryRecordDecoder.Decode(stream, false);
+                if (record != null)
+                    yield return record;
+                else
+                    yield break;
             }
         }
     }

@@ -9,7 +9,7 @@ namespace RhythmCodex.Ddr.Processors
     [Service]
     public class Ddr573AudioNameFinder : IDdr573AudioNameFinder
     {
-        private static readonly Dictionary<char, char> NameMap = new Dictionary<char, char>
+        private static readonly Dictionary<char, char> NameMap = new()
         {
             {'A', '0'},
             {'B', 'A'},

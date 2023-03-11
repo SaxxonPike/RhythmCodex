@@ -39,20 +39,16 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
-                    using (var stream = OpenRead(task, file))
-                    {
-                        var reader = new BinaryReader(stream);
-                        var data = reader.ReadBytes((int) stream.Length);
-                        var encoded = _bemaniLzEncoder.Encode(data);
-                        task.Message = $"Compressed {data.Length} -> {encoded.Length} bytes.";
-                            
-                        using (var output = OpenWriteSingle(task, file, i => $"{i}.bemanilz"))
-                        {
-                            var writer = new BinaryWriter(output);
-                            writer.Write(encoded);
-                            output.Flush();
-                        }
-                    }
+                    using var stream = OpenRead(task, file);
+                    var reader = new BinaryReader(stream);
+                    var data = reader.ReadBytes((int) stream.Length);
+                    var encoded = _bemaniLzEncoder.Encode(data);
+                    task.Message = $"Compressed {data.Length} -> {encoded.Length} bytes.";
+
+                    using var output = OpenWriteSingle(task, file, i => $"{i}.bemanilz");
+                    var writer = new BinaryWriter(output);
+                    writer.Write(encoded);
+                    output.Flush();
                 });
 
                 return true;
@@ -72,17 +68,13 @@ namespace RhythmCodex.Cli.Orchestration
 
                 ParallelProgress(task, files, file =>
                 {
-                    using (var stream = OpenRead(task, file))
-                    {
-                        var decoded = _bemaniLzDecoder.Decode(stream);
-                        task.Message = $"Deompressed {stream.Length} -> {decoded.Length} bytes.";
-                        using (var output = OpenWriteSingle(task, file, i => $"{i}.decoded"))
-                        {
-                            var writer = new BinaryWriter(output);
-                            writer.Write(decoded);
-                            output.Flush();
-                        }
-                    }
+                    using var stream = OpenRead(task, file);
+                    var decoded = _bemaniLzDecoder.Decode(stream);
+                    task.Message = $"Deompressed {stream.Length} -> {decoded.Length} bytes.";
+                    using var output = OpenWriteSingle(task, file, i => $"{i}.decoded");
+                    var writer = new BinaryWriter(output);
+                    writer.Write(decoded);
+                    output.Flush();
                 });
 
                 return true;

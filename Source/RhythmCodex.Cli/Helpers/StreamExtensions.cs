@@ -1,6 +1,5 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Linq;
 
 namespace RhythmCodex.Cli.Helpers
 {
@@ -8,9 +7,14 @@ namespace RhythmCodex.Cli.Helpers
     {
         private const int BufferSize = 4096;
 
+        public static void WriteAllBytes(this ReadOnlySpan<byte> data, Stream stream)
+        {
+            stream.Write(data);
+        }
+        
         public static void WriteAllBytes(this byte[] data, Stream stream)
         {
-            stream.Write(data, 0, data.Length);
+            stream.Write(data);
         }
     }
 }

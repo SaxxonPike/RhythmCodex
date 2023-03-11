@@ -47,7 +47,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.Utils
 
         public byte* Buffer { get; }
 
-        public IntPtr BufferPtr => new IntPtr(Buffer);
+        public IntPtr BufferPtr => new(Buffer);
 
         public int Position { get; private set; }
 

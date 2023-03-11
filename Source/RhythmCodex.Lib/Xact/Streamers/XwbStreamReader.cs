@@ -44,34 +44,32 @@ namespace RhythmCodex.Xact.Streamers
 
                 source.Position = region.Offset;
                 var buffer = reader.ReadBytes(region.Length);
-                using (var mem = new ReadOnlyMemoryStream(buffer))
+                using var mem = new ReadOnlyMemoryStream(buffer);
+                var memReader = new BinaryReader(mem);
+                switch (i)
                 {
-                    var memReader = new BinaryReader(mem);
-                    switch (i)
-                    {
-                        case (int) XwbSegIdx.BankData:
-                            var bank = _xwbDataStreamReader.Read(mem);
-                            sampleCount = bank.EntryCount;
-                            entries = new XwbEntry[sampleCount];
-                            names = new string[sampleCount];
-                            break;
-                        case (int) XwbSegIdx.EntryMetaData:
-                            for (var j = 0; j < sampleCount; j++)
-                                entries[j] = _xwbEntryStreamReader.Read(mem);
-                            break;
-                        case (int) XwbSegIdx.EntryNames:
-                            for (var j = 0; j < sampleCount; j++)
-                                names[j] = memReader.ReadBytes(XwbConstants.WavebankEntrynameLength)
-                                    .TakeWhile(c => c != 0).ToArray().GetString();
-                            break;
-                        case (int) XwbSegIdx.EntryWaveData:
-                            dataChunk = buffer;
-                            break;
-                        case (int) XwbSegIdx.SeekTables:
-                            break;
-                        default:
-                            break;
-                    }                    
+                    case (int) XwbSegIdx.BankData:
+                        var bank = _xwbDataStreamReader.Read(mem);
+                        sampleCount = bank.EntryCount;
+                        entries = new XwbEntry[sampleCount];
+                        names = new string[sampleCount];
+                        break;
+                    case (int) XwbSegIdx.EntryMetaData:
+                        for (var j = 0; j < sampleCount; j++)
+                            entries[j] = _xwbEntryStreamReader.Read(mem);
+                        break;
+                    case (int) XwbSegIdx.EntryNames:
+                        for (var j = 0; j < sampleCount; j++)
+                            names[j] = memReader.ReadBytes(XwbConstants.WavebankEntrynameLength)
+                                .TakeWhile(c => c != 0).ToArray().GetString();
+                        break;
+                    case (int) XwbSegIdx.EntryWaveData:
+                        dataChunk = buffer;
+                        break;
+                    case (int) XwbSegIdx.SeekTables:
+                        break;
+                    default:
+                        break;
                 }
             }
 

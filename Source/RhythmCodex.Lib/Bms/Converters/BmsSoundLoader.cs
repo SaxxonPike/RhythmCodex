@@ -54,23 +54,21 @@ namespace RhythmCodex.Bms.Converters
                 if (decoder.Decoder == null)
                     continue;
 
-                using (var stream = accessor.OpenRead(decoder.Filename))
+                using var stream = accessor.OpenRead(decoder.Filename);
+                ISound decoded;
+
+                try
                 {
-                    ISound decoded;
-
-                    try
-                    {
-                        decoded = decoder.Decoder(stream);
-                        decoded[NumericData.Id] = kv.Key;
-                    }
-                    catch
-                    {
-                        decoded = null;
-                    }
-
-                    if (decoded != null)
-                        yield return decoded;
+                    decoded = decoder.Decoder(stream);
+                    decoded[NumericData.Id] = kv.Key;
                 }
+                catch
+                {
+                    decoded = null;
+                }
+
+                if (decoded != null)
+                    yield return decoded;
             }
         }
 

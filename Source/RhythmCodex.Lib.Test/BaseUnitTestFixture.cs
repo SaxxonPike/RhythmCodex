@@ -9,7 +9,7 @@ namespace RhythmCodex
     /// </summary>
     public abstract class BaseUnitTestFixture : BaseTestFixture
     {
-        private readonly Lazy<Mocker> _mocker = new Lazy<Mocker>(() => new Mocker());
+        private readonly Lazy<Mocker> _mocker = new(() => new Mocker());
 
         protected Mocker Mocker => _mocker.Value;
 

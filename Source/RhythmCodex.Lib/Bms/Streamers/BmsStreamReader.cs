@@ -10,7 +10,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Bms.Streamers
 {
     [Service]
-    public class BmsStreamReader : IBmsStreamReader
+    public partial class BmsStreamReader : IBmsStreamReader
     {
         private static readonly char[] Delimiters = {' ', '\t', ':'};
         
@@ -19,8 +19,8 @@ namespace RhythmCodex.Bms.Streamers
             var text = stream.ReadAllText();
             
             // Remove all comments.
-            text = Regex.Replace(text, @"\/\*(\*(?!\/)|[^*])*\*\/", string.Empty); // remove /* */
-            text = Regex.Replace(text, @"(\/\/|\;).*$", string.Empty, RegexOptions.Multiline); // remove // and ;
+            text = StarCommentRegex().Replace(text, string.Empty); 
+            text = SlashSemiColonRegex().Replace(text, string.Empty);
             
             // Parse remaining lines.
             return ConvertLines(text.SplitLines()).ToArray();
@@ -71,5 +71,17 @@ namespace RhythmCodex.Bms.Streamers
                 yield return cmd;
             }
         }
+
+        /// <summary>
+        /// Remove /* and */ comments.
+        /// </summary>
+        [GeneratedRegex("\\/\\*(\\*(?!\\/)|[^*])*\\*\\/")]
+        private static partial Regex StarCommentRegex();
+        
+        /// <summary>
+        /// Remove // and ; comments.
+        /// </summary>
+        [GeneratedRegex("(\\/\\/|\\;).*$", RegexOptions.Multiline)]
+        private static partial Regex SlashSemiColonRegex();
     }
 }

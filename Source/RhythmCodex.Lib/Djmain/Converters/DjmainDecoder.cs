@@ -59,27 +59,25 @@ namespace RhythmCodex.Djmain.Converters
                 !Enum.IsDefined(typeof(DjmainChunkFormat), chunk.Format))
                 throw new RhythmCodexException($"{nameof(chunk.Format)} is not recognized");
 
-            using (var stream = new ReadOnlyMemoryStream(chunk.Data))
+            using var stream = new ReadOnlyMemoryStream(chunk.Data);
+            var swappedStream = new ByteSwappedReadStream(stream);
+
+            var chartSoundMap = _offsetProvider.GetSampleChartMap(chunk.Format)
+                .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+            var rawCharts = ExtractCharts(stream, chunk.Format).Where(c => c.Value != null).ToList();
+            var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format);
+            var sounds = options.DisableAudio
+                ? null
+                : DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts, options)
+                    .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
+
+            return new DjmainArchive
             {
-                var swappedStream = new ByteSwappedReadStream(stream);
-
-                var chartSoundMap = _offsetProvider.GetSampleChartMap(chunk.Format)
-                    .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
-                    .ToDictionary(kv => kv.Key, kv => kv.Value);
-                var rawCharts = ExtractCharts(stream, chunk.Format).Where(c => c.Value != null).ToList();
-                var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format);
-                var sounds = options.DisableAudio
-                    ? null
-                    : DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts, options)
-                        .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
-
-                return new DjmainArchive
-                {
-                    RawCharts = rawCharts.ToDictionary(kv => kv.Key, kv => kv.Value),
-                    Charts = decodedCharts?.Select(c => c.Value).ToList(),
-                    Samples = sounds?.SelectMany(s => s.Value).Select(s => s.Value).ToList()
-                };
-            }
+                RawCharts = rawCharts.ToDictionary(kv => kv.Key, kv => kv.Value),
+                Charts = decodedCharts?.Select(c => c.Value).ToList(),
+                Samples = sounds?.SelectMany(s => s.Value).Select(s => s.Value).ToList()
+            };
         }
 
         private DjmainChartType GetChartType(DjmainChunkFormat format)

@@ -7,8 +7,7 @@ namespace RhythmCodex.Extensions
 {
     public static class ChartExtensions
     {
-        private static BigRational GetLinearRate(BigRational bpm)
-            => new BigRational(bpm.Denominator * 240, bpm.Numerator);
+        private static BigRational GetLinearRate(BigRational bpm) => new(bpm.Denominator * 240, bpm.Numerator);
 
         /// <summary>
         /// Running this will normalize all metric offsets so each measure line lands on an integer.

@@ -16,10 +16,8 @@ namespace RhythmCodex.Chd.Streamers
             _lzmaDecoder = lzmaDecoder;
         }
         
-        public ChdStream Create(Stream source) => 
-            new ChdStream(_flacDecoder, _lzmaDecoder, source);
+        public ChdStream Create(Stream source) => new(_flacDecoder, _lzmaDecoder, source);
         
-        public ChdStream Create(Stream source, ChdStream parent) =>
-            new ChdStream(_flacDecoder, _lzmaDecoder, source, parent);
+        public ChdStream Create(Stream source, ChdStream parent) => new(_flacDecoder, _lzmaDecoder, source, parent);
     }
 }
