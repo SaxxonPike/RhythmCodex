@@ -30,8 +30,8 @@ namespace RhythmCodex.Ssq.Converters
 
             foreach (var extraPanel in stepList.Where(s => s.ExtraPanels != null || s.ExtraPanelInfo != null))
             {
-                writer.Write((int)(extraPanel.ExtraPanels ?? 0));
-                writer.Write((int)(extraPanel.ExtraPanelInfo ?? 0));
+                writer.Write(extraPanel.ExtraPanels ?? 0);
+                writer.Write(extraPanel.ExtraPanelInfo ?? 0);
             }
 
             return mem.ToArray();
