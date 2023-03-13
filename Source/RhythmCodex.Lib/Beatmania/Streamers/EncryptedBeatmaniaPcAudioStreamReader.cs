@@ -83,14 +83,14 @@ namespace RhythmCodex.Beatmania.Streamers
                     encType = BeatmaniaPcAudioEncryptionType.Standard;
                     break;
                 default:
-                    return source.TryRead(4, (int) (length - 4));
+                    return source.TryRead(4, (int)(length - 4));
             }
 
             {
                 var filelength = reader.ReadInt32();
                 var fileExtraBytes = (8 - (filelength % 8)) % 8;
                 var data = reader.ReadBytes(filelength + fileExtraBytes);
-                reader.ReadBytes((int) (length - data.Length - 8));
+                reader.ReadBytes((int)(length - data.Length - 8));
                 using var encodedDataMem = new ReadOnlyMemoryStream(data);
                 return DecryptInternal(encodedDataMem, key, encType, data.Length);
             }
@@ -101,15 +101,14 @@ namespace RhythmCodex.Beatmania.Streamers
         {
             var output = new byte[length];
             var outputIndex = 0;
-            var block = new byte[8];
-
-            Span<byte> lastBlock = new byte[] {0, 0, 0, 0, 0, 0, 0, 0};
-            Span<byte> currentBlock = new byte[] {0, 0, 0, 0, 0, 0, 0, 0};
+            Span<byte> block = stackalloc byte[8];
+            Span<byte> lastBlock = stackalloc byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+            Span<byte> currentBlock = stackalloc byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 
             while (source.Position < source.Length)
             {
-                source.TryRead(block, 0, 8);
-                block.AsSpan().CopyTo(currentBlock);
+                source.ReadAtLeast(block, 8);
+                block.CopyTo(currentBlock);
 
                 // xor with key 0
                 for (var i = 0; i < 8; i++)
@@ -121,9 +120,7 @@ namespace RhythmCodex.Beatmania.Streamers
                 // swap first half with second half
                 for (var i = 0; i < 4; i++)
                 {
-                    var swap = block[i];
-                    block[i] = block[i + 4];
-                    block[i + 4] = swap;
+                    (block[i], block[i + 4]) = (block[i + 4], block[i]);
                 }
 
                 if (type == BeatmaniaPcAudioEncryptionType.Standard)
@@ -145,7 +142,7 @@ namespace RhythmCodex.Beatmania.Streamers
                     block[i] ^= lastBlock[i];
 
                 // output
-                block.AsSpan().CopyTo(output.AsSpan(outputIndex));
+                block.CopyTo(output.AsSpan(outputIndex));
                 outputIndex += 8;
                 currentBlock.CopyTo(lastBlock);
             }
@@ -167,10 +164,10 @@ namespace RhythmCodex.Beatmania.Streamers
                 var h = (b ^ d) & 0xFF;
                 var i = (g ^ e) & 0xFF;
 
-                block[4] ^= (byte) h;
-                block[5] ^= (byte) d;
-                block[6] ^= (byte) i;
-                block[7] ^= (byte) g;
+                block[4] ^= (byte)h;
+                block[5] ^= (byte)d;
+                block[6] ^= (byte)i;
+                block[7] ^= (byte)g;
             }
         }
     }

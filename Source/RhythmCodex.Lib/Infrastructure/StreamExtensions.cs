@@ -84,7 +84,7 @@ namespace RhythmCodex.Infrastructure
             return reader.ReadToEnd();
         }
 
-        public static byte[] TryRead(this Stream stream, int offset, long count)
+        public static byte[] TryRead(this Stream stream, int offset, int count)
         {
             var result = new byte[count];
             var read = TryRead(stream, result, offset, count);
@@ -93,23 +93,29 @@ namespace RhythmCodex.Infrastructure
             return result;
         }
 
-        public static int TryRead(this Stream stream, byte[] buffer, int offset, long count)
-        {
-            var result = 0;
-            
-            while (true)
-            {
-                var actualBytesRead = stream.Read(buffer, offset, (int) Math.Min(int.MaxValue, count));
-                offset += actualBytesRead;
-                result += actualBytesRead;
-                if (actualBytesRead >= count || actualBytesRead <= 0)
-                    break;
-                count -= actualBytesRead;
-            }
+        public static int TryRead(this Stream stream, Span<byte> buffer, int length) => 
+            stream.ReadAtLeast(buffer, length);
 
-            return result;
-        }
+        public static int TryRead(this Stream stream, Span<byte> buffer, int offset, int length) => 
+            stream.ReadAtLeast(buffer.Slice(offset, length), length);
 
+        // public static int TryRead(this Stream stream, byte[] buffer, int offset, long count)
+        // {
+        //     var result = 0;
+        //     
+        //     while (true)
+        //     {
+        //         var actualBytesRead = stream.Read(buffer, offset, (int) Math.Min(int.MaxValue, count));
+        //         offset += actualBytesRead;
+        //         result += actualBytesRead;
+        //         if (actualBytesRead >= count || actualBytesRead <= 0)
+        //             break;
+        //         count -= actualBytesRead;
+        //     }
+        //
+        //     return result;
+        // }
+        //
         private static void PipeAllBytes(Func<byte[], int, int, int> read, Action<byte[], int, int> write)
         {
             var buffer = new byte[BufferSize];

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Heuristics;
@@ -32,7 +31,7 @@ namespace RhythmCodex.Ddr.Streamers
             var reader = new BinaryReader(fileDataBinStream);
             var skip = false;
             var append = false;
-            var empty = new byte[16];
+            Span<byte> empty = stackalloc byte[16];
             var success = false;
             var offsets = new List<int>();
 
@@ -49,7 +48,7 @@ namespace RhythmCodex.Ddr.Streamers
                 
                 if (skip)
                 {
-                    skip = !block.AsSpan(0x7F0).ToArray().SequenceEqual(empty);
+                    skip = !block.AsSpan(0x7F0).SequenceEqual(empty);
                     append &= skip;
                     if (!skip && success)
                     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Arc.Model;
@@ -38,7 +39,10 @@ namespace RhythmCodex.Arc.Streamers
 
             void Pad0X20()
             {
-                var padding = new byte[(0x20 - (buffer.Position & 0x1F)) & 0x1F];
+                var paddingLength = (int)(0x20 - (buffer.Position & 0x1F)) & 0x1F;
+                if (paddingLength < 1)
+                    return;
+                Span<byte> padding = stackalloc byte[paddingLength];
                 if (padding.Length > 0)
                     writer.Write(padding);
             }

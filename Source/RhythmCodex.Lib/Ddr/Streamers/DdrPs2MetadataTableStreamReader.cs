@@ -17,7 +17,7 @@ namespace RhythmCodex.Ddr.Streamers
         public IList<DdrPs2MetadataTableEntry> Get(Stream stream, long length)
         {
             var cache = new CachedStream(stream);
-            var buffer = new byte[BufferCheckInterval];
+            Span<byte> buffer = stackalloc byte[BufferCheckInterval];
 
             static bool IsName(ReadOnlySpan<byte> buff, int offs)
             {

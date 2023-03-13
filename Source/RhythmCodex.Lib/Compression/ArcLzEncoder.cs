@@ -5,16 +5,16 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Compression
 {
     // source: arcunpack (gergc)
-    
+
     [Service]
     public class ArcLzEncoder : IArcLzEncoder
     {
-        public byte[] Encode(byte[] source)
+        public byte[] Encode(ReadOnlySpan<byte> source)
         {
             var context = new LzCompress();
             context.Write(source);
             context.Close();
-            return context.Outputdata().ToArray();
+            return context.OutputData.ToArray();
         }
 
         private sealed class LzCompress
@@ -27,11 +27,11 @@ namespace RhythmCodex.Compression
             private readonly short[] _heads = new short[0x100];
             private readonly short[] _tails = new short[0x100];
             private readonly short[] _cursors = new short[0x1000];
-            private readonly byte[] _match = new byte[MaxMatch];
+            private readonly byte[] _matches = new byte[MaxMatch];
             private readonly byte[] _packet = new byte[0x20];
             private int _ringPos;
-            private int _ncursors;
-            private int _nmatched;
+            private int _cursorCount;
+            private int _matchCount;
             private int _pktPos;
             private int _flags = 0x10000;
             private readonly MemoryStream _output;
@@ -46,10 +46,7 @@ namespace RhythmCodex.Compression
                 }
             }
 
-            public MemoryStream Outputdata()
-            {
-                return _output;
-            }
+            public MemoryStream OutputData => _output;
 
             public void Close()
             {
@@ -63,35 +60,38 @@ namespace RhythmCodex.Compression
                         Console.WriteLine("Error!");
                 }
 
-                _output.WriteByte((byte) (_flags & byte.MaxValue));
+                _output.WriteByte((byte)(_flags & byte.MaxValue));
                 _output.Write(_packet, 0, _pktPos);
                 _output.Flush();
             }
 
-            private void Write(byte[] b, int off, int len)
+            private void Write(ReadOnlySpan<byte> b, int off, int len)
             {
                 for (var index = 0; index < len; ++index)
                     Write(b[off + index] & byte.MaxValue);
             }
 
-            public void Write(byte[] b)
-            {
+            public void Write(ReadOnlySpan<byte> b) =>
                 Write(b, 0, b.Length);
-            }
 
             private void Write(int b)
             {
-                if (b < 0 || b > byte.MaxValue)
+                if (b is < 0 or > byte.MaxValue)
                     return;
-                if (_nmatched == 0)
-                    InitCursors(b);
-                else if (_nmatched == MaxMatch)
+
+                switch (_matchCount)
                 {
-                    EmitMatch();
-                    InitCursors(b);
+                    case 0:
+                        InitCursors(b);
+                        break;
+                    case MaxMatch:
+                        EmitMatch();
+                        InitCursors(b);
+                        break;
+                    default:
+                        UpdateCursors(b);
+                        break;
                 }
-                else
-                    UpdateCursors(b);
 
                 Advance(b);
             }
@@ -109,42 +109,42 @@ namespace RhythmCodex.Compression
                 }
 
                 var tail = _tails[newValue];
-                var currentRingPos = (short) _ringPos;
+                var currentRingPos = (short)_ringPos;
                 if (tail == Null)
                     _heads[newValue] = currentRingPos;
                 else
                     _links[tail] = currentRingPos;
                 _tails[newValue] = currentRingPos;
                 _links[currentRingPos] = Null;
-                _ring[_ringPos] = (byte) newValue;
+                _ring[_ringPos] = (byte)newValue;
                 _ringPos = _ringPos + 1 & 0xFFF;
             }
 
             private void InitCursors(int b)
             {
-                _ncursors = 0;
-                for (var index = _heads[b]; (int) index != (int) Null; index = _links[index])
+                _cursorCount = 0;
+                for (var index = _heads[b]; index != Null; index = _links[index])
                 {
                     if (index != (_ringPos & 0xFFF))
-                        _cursors[_ncursors++] = index;
+                        _cursors[_cursorCount++] = index;
                 }
 
-                if (_ncursors > 0)
-                    _match[_nmatched++] = (byte) b;
+                if (_cursorCount > 0)
+                    _matches[_matchCount++] = (byte)b;
                 else
-                    PushVerbatim((byte) b);
+                    PushVerbatim((byte)b);
             }
 
             private void UpdateCursors(int b)
             {
                 var index = 0;
-                while (index < _ncursors)
+                while (index < _cursorCount)
                 {
-                    if ((_ring[_cursors[index] + _nmatched & 0xFFF] & byte.MaxValue) != b)
+                    if ((_ring[_cursors[index] + _matchCount & 0xFFF] & byte.MaxValue) != b)
                     {
-                        if (_ncursors > 1)
+                        if (_cursorCount > 1)
                         {
-                            _cursors[index] = _cursors[--_ncursors];
+                            _cursors[index] = _cursors[--_cursorCount];
                         }
                         else
                         {
@@ -157,7 +157,7 @@ namespace RhythmCodex.Compression
                         ++index;
                 }
 
-                _match[_nmatched++] = (byte) b;
+                _matches[_matchCount++] = (byte)b;
             }
 
             private void PushVerbatim(byte b)
@@ -171,27 +171,27 @@ namespace RhythmCodex.Compression
 
             private void EmitMatch()
             {
-                if (_nmatched < MinMatch)
+                if (_matchCount < MinMatch)
                 {
-                    for (var index = 0; index < _nmatched; ++index)
-                        PushVerbatim(_match[index]);
+                    for (var index = 0; index < _matchCount; ++index)
+                        PushVerbatim(_matches[index]);
                 }
                 else
                 {
                     _flags >>= 1;
-                    var num = (_ringPos - _nmatched & 0xFFF) - _cursors[0] & 0xFFF;
-                    _packet[_pktPos++] = (byte) (num >> 4);
-                    _packet[_pktPos++] = (byte) ((num & 15) << 4 | _nmatched - MinMatch);
-                    if ((uint) (_flags & 0x100) > 0)
+                    var num = (_ringPos - _matchCount & 0xFFF) - _cursors[0] & 0xFFF;
+                    _packet[_pktPos++] = (byte)(num >> 4);
+                    _packet[_pktPos++] = (byte)((num & 15) << 4 | _matchCount - MinMatch);
+                    if ((uint)(_flags & 0x100) > 0)
                         WritePacket();
                 }
 
-                _nmatched = 0;
+                _matchCount = 0;
             }
 
             private void WritePacket()
             {
-                _output.WriteByte((byte) (_flags & byte.MaxValue));
+                _output.WriteByte((byte)(_flags & byte.MaxValue));
                 _output.Write(_packet, 0, _pktPos);
                 _pktPos = 0;
                 _flags = 0x10000;

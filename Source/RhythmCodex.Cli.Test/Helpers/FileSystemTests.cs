@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using ClientCommon;
 using FluentAssertions;
@@ -156,7 +157,7 @@ namespace RhythmCodex.Cli.Helpers
             
             var files = CreateMany<string>();
             foreach (var file in files)
-                File.WriteAllBytes(Path.Combine(basePath, file), new byte[0]);
+                File.WriteAllBytes(Path.Combine(basePath, file), Array.Empty<byte>());
             
             try
             {
@@ -183,7 +184,7 @@ namespace RhythmCodex.Cli.Helpers
             
             var files = CreateMany<string>();
             foreach (var file in files)
-                File.WriteAllBytes(Path.Combine(basePath, file), new byte[0]);
+                File.WriteAllBytes(Path.Combine(basePath, file), Array.Empty<byte>());
             
             try
             {

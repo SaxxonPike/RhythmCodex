@@ -1,7 +1,9 @@
-﻿namespace RhythmCodex.Compression
+﻿using System;
+
+namespace RhythmCodex.Compression
 {
     public interface IArcLzEncoder
     {
-        byte[] Encode(byte[] source);
+        byte[] Encode(ReadOnlySpan<byte> source);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RhythmCodex.Infrastructure;
@@ -66,7 +67,7 @@ namespace RhythmCodex.Extensions
                 b0 = b1;
             }
 
-            if (!skip && (b1 == '\xa' || b1 == '\xd'))
+            if (!skip && b1 is '\xa' or '\xd')
             {
                 yield return buffer.ToString();
                 buffer.Clear();
@@ -88,7 +89,7 @@ namespace RhythmCodex.Extensions
         /// <summary>
         /// Convert a string from bytes using Codepage 932.
         /// </summary>
-        public static string GetShiftJisString(this byte[] b) 
+        public static string GetShiftJisString(this ReadOnlySpan<byte> b) 
             => Encodings.CP932.GetString(b);
         
         /// <summary>
@@ -100,7 +101,31 @@ namespace RhythmCodex.Extensions
         /// <summary>
         /// Convert a string from bytes using Codepage 437.
         /// </summary>
+        public static string GetString(this ReadOnlySpan<byte> b) 
+            => Encodings.CP437.GetString(b);
+
+        /// <summary>
+        /// Convert a string from bytes using Codepage 437.
+        /// </summary>
+        public static string GetString(this Span<byte> b) 
+            => Encodings.CP437.GetString(b);
+
+        /// <summary>
+        /// Convert a string from bytes using Codepage 437.
+        /// </summary>
         public static string GetString(this byte[] b) 
             => Encodings.CP437.GetString(b);
+
+        public static ReadOnlySpan<byte> NullTerminated(this ReadOnlySpan<byte> b)
+        {
+            var idx = b.IndexOf((byte)0);
+            return b[..(idx >= 0 ? idx : b.Length)];
+        }
+        
+        public static Span<byte> NullTerminated(this Span<byte> b)
+        {
+            var idx = b.IndexOf((byte)0);
+            return b[..(idx >= 0 ? idx : b.Length)];
+        }
     }
 }

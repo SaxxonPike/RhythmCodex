@@ -38,7 +38,7 @@ namespace RhythmCodex.Xact.Streamers
 
         public XsbFile Read(Stream stream, long length)
         {
-            var block = stream.TryRead(0, length);
+            var block = stream.TryRead(0, (int)length);
             var mem = new MemoryStream(block);
             var reader = new BinaryReader(mem);
             var result = new XsbFile();

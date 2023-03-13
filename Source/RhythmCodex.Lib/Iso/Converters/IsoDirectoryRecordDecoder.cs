@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -38,7 +39,7 @@ namespace RhythmCodex.Iso.Converters
             
             if (recordOnly)
             {
-                extra = new byte[0];
+                extra = Array.Empty<byte>();
             }
             else
             {
