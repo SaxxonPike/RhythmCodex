@@ -1,5 +1,4 @@
 ﻿using System;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Gui

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ClientCommon;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 
 namespace RhythmCodex.Cli

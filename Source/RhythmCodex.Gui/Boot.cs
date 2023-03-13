@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using Autofac;
 using ClientCommon;
 using RhythmCodex.Cli;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Gui.Forms;
 using RhythmCodex.Infrastructure;
 

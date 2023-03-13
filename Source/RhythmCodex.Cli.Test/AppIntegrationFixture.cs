@@ -1,10 +1,8 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using Autofac;
 using ClientCommon;
 using NUnit.Framework;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 

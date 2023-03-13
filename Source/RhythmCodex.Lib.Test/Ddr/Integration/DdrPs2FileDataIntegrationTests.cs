@@ -11,7 +11,6 @@ using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
-using RhythmCodex.Ssq;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Stepmania;

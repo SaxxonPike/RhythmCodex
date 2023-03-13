@@ -10,7 +10,6 @@ using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Dds.Converters;
 using RhythmCodex.Dds.Streamers;
-using RhythmCodex.Digital573.Converters;
 using RhythmCodex.Extensions;
 using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Meta.Models;

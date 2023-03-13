@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using ClientCommon;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Gui

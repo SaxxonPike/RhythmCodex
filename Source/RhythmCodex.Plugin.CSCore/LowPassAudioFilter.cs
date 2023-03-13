@@ -1,5 +1,4 @@
-﻿using System;
-using RhythmCodex.IoC;
+﻿using RhythmCodex.IoC;
 using RhythmCodex.Plugin.CSCore.Lib.DSP;
 using RhythmCodex.Sounds.Providers;
 

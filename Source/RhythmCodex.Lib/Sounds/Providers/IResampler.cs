@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Sounds.Providers
 {

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Drawing;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Tcb.Models

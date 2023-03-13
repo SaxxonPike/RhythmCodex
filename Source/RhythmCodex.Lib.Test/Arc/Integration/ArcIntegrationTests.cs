@@ -4,7 +4,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Arc.Converters;
 using RhythmCodex.Arc.Streamers;
-using RhythmCodex.Compression;
 
 namespace RhythmCodex.Arc.Integration
 {

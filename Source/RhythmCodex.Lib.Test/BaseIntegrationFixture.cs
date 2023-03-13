@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
-using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 

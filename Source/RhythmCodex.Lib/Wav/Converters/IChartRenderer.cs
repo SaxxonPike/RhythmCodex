@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using RhythmCodex.Charting.Models;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Models;
 
