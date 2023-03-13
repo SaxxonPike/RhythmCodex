@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Xbox.Model;
 
-namespace RhythmCodex.Xbox.Streamers
+namespace RhythmCodex.Xbox.Streamers;
+
+public interface IXboxHbnStreamReader
 {
-    public interface IXboxHbnStreamReader
-    {
-        IEnumerable<XboxHbnEntry> Read(Stream hbnStream, Stream binStream);
-    }
+    IEnumerable<XboxHbnEntry> Read(Stream hbnStream, Stream binStream);
 }

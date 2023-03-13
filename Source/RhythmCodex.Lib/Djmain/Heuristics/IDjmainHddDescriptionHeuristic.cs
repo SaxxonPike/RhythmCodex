@@ -1,9 +1,8 @@
 using RhythmCodex.Djmain.Model;
 
-namespace RhythmCodex.Djmain.Heuristics
+namespace RhythmCodex.Djmain.Heuristics;
+
+public interface IDjmainHddDescriptionHeuristic
 {
-    public interface IDjmainHddDescriptionHeuristic
-    {
-        DjmainHddDescription Get(byte[] chunk);
-    }
+    DjmainHddDescription Get(byte[] chunk);
 }

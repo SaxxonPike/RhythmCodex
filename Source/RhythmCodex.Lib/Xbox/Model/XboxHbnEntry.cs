@@ -1,11 +1,10 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Xbox.Model
+namespace RhythmCodex.Xbox.Model;
+
+[Model]
+public class XboxHbnEntry
 {
-    [Model]
-    public class XboxHbnEntry
-    {
-        public string Name { get; set; }
-        public byte[] Data { get; set; }
-    }
+    public string Name { get; set; }
+    public byte[] Data { get; set; }
 }

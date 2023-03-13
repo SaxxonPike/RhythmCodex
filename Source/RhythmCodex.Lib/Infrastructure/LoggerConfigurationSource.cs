@@ -1,24 +1,23 @@
 ﻿using System.Diagnostics;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+/// <summary>
+/// An in-memory logger configuration source.
+/// </summary>
+public class LoggerConfigurationSource : ILoggerConfigurationSource
 {
     /// <summary>
-    /// An in-memory logger configuration source.
+    /// Create an in-memory logger configuration source.
     /// </summary>
-    public class LoggerConfigurationSource : ILoggerConfigurationSource
+    public LoggerConfigurationSource()
     {
-        /// <summary>
-        /// Create an in-memory logger configuration source.
-        /// </summary>
-        public LoggerConfigurationSource()
-        {
-            // Default to debug while debugger is running.
-            VerbosityLevel = Debugger.IsAttached 
-                ? LoggerVerbosityLevel.Debug 
-                : LoggerVerbosityLevel.Info;
-        }
-        
-        /// <inheritdoc/>
-        public LoggerVerbosityLevel VerbosityLevel { get; set; }
+        // Default to debug while debugger is running.
+        VerbosityLevel = Debugger.IsAttached 
+            ? LoggerVerbosityLevel.Debug 
+            : LoggerVerbosityLevel.Info;
     }
+        
+    /// <inheritdoc/>
+    public LoggerVerbosityLevel VerbosityLevel { get; set; }
 }

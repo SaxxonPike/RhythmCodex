@@ -3,14 +3,13 @@ using RhythmCodex.Charting.Models;
 using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface ISsqEventDecoder
 {
-    public interface ISsqEventDecoder
-    {
-        IList<IEvent> Decode(
-            TimingChunk timings,
-            IEnumerable<Step> steps,
-            IEnumerable<Trigger> triggers,
-            IPanelMapper panelMapper);
-    }
+    IList<IEvent> Decode(
+        TimingChunk timings,
+        IEnumerable<Step> steps,
+        IEnumerable<Trigger> triggers,
+        IPanelMapper panelMapper);
 }

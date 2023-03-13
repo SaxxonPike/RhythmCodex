@@ -3,23 +3,22 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Riff.Models;
 
-namespace RhythmCodex.Riff.Streamers
+namespace RhythmCodex.Riff.Streamers;
+
+[Service]
+public class RiffChunkStreamReader : IRiffChunkStreamReader
 {
-    [Service]
-    public class RiffChunkStreamReader : IRiffChunkStreamReader
+    public IRiffChunk Read(Stream stream)
     {
-        public IRiffChunk Read(Stream stream)
-        {
-            var reader = new BinaryReader(stream, Encodings.CP437);
-            var type = new string(reader.ReadChars(4));
-            var length = reader.ReadInt32();
-            var data = reader.ReadBytes(length);
+        var reader = new BinaryReader(stream, Encodings.CP437);
+        var type = new string(reader.ReadChars(4));
+        var length = reader.ReadInt32();
+        var data = reader.ReadBytes(length);
             
-            return new RiffChunk
-            {
-                Id = type,
-                Data = data
-            };
-        }
+        return new RiffChunk
+        {
+            Id = type,
+            Data = data
+        };
     }
 }

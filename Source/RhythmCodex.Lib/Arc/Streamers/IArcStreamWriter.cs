@@ -2,10 +2,9 @@
 using System.IO;
 using RhythmCodex.Arc.Model;
 
-namespace RhythmCodex.Arc.Streamers
+namespace RhythmCodex.Arc.Streamers;
+
+public interface IArcStreamWriter
 {
-    public interface IArcStreamWriter
-    {
-        void Write(Stream target, IEnumerable<ArcFile> files);
-    }
+    void Write(Stream target, IEnumerable<ArcFile> files);
 }

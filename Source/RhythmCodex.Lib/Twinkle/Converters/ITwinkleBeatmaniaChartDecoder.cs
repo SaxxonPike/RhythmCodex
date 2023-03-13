@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using RhythmCodex.Twinkle.Model;
 
-namespace RhythmCodex.Twinkle.Converters
+namespace RhythmCodex.Twinkle.Converters;
+
+public interface ITwinkleBeatmaniaChartDecoder
 {
-    public interface ITwinkleBeatmaniaChartDecoder
-    {
-        IList<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data, int length);
-        int[] GetNoteCounts(ReadOnlySpan<byte> data, int length);
-    }
+    IList<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data, int length);
+    int[] GetNoteCounts(ReadOnlySpan<byte> data, int length);
 }

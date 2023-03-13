@@ -1,9 +1,8 @@
 using RhythmCodex.Charting.Models;
 
-namespace RhythmCodex.Twinkle.Converters
+namespace RhythmCodex.Twinkle.Converters;
+
+public interface ITwinkleBeatmaniaChartMetadataDecoder
 {
-    public interface ITwinkleBeatmaniaChartMetadataDecoder
-    {
-        void AddMetadata(IChart chart, int index);
-    }
+    void AddMetadata(IChart chart, int index);
 }

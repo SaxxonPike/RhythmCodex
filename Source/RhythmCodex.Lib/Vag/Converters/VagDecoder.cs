@@ -2,24 +2,23 @@ using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Models;
 
-namespace RhythmCodex.Vag.Converters
-{
-    [Service]
-    public class VagDecoder : IVagDecoder
-    {
-        private readonly IVagSplitter _vagSplitter;
+namespace RhythmCodex.Vag.Converters;
 
-        public VagDecoder(IVagSplitter vagSplitter)
-        {
-            _vagSplitter = vagSplitter;
-        }
+[Service]
+public class VagDecoder : IVagDecoder
+{
+    private readonly IVagSplitter _vagSplitter;
+
+    public VagDecoder(IVagSplitter vagSplitter)
+    {
+        _vagSplitter = vagSplitter;
+    }
         
-        public ISound Decode(VagChunk chunk)
+    public ISound Decode(VagChunk chunk)
+    {
+        return new Sound
         {
-            return new Sound
-            {
-                Samples = _vagSplitter.Split(chunk)
-            };
-        }
+            Samples = _vagSplitter.Split(chunk)
+        };
     }
 }

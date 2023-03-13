@@ -1,8 +1,7 @@
-namespace RhythmCodex.Tim.Converters
+namespace RhythmCodex.Tim.Converters;
+
+public interface ITimColorDecoder
 {
-    public interface ITimColorDecoder
-    {
-        int Decode16Bit(int color);
-        int Decode24Bit(int color);
-    }
+    int Decode16Bit(int color);
+    int Decode24Bit(int color);
 }

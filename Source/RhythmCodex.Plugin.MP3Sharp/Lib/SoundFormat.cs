@@ -13,21 +13,20 @@
 //  * Lesser General Public License for more details.
 //  *
 //  ***************************************************************************/
-namespace RhythmCodex.Plugin.MP3Sharp.Lib
+namespace RhythmCodex.Plugin.MP3Sharp.Lib;
+
+/// <summary>
+///     Describes sound formats that can be produced by the Mp3Stream class.
+/// </summary>
+public enum SoundFormat
 {
     /// <summary>
-    ///     Describes sound formats that can be produced by the Mp3Stream class.
+    ///     PCM encoded, 16-bit Mono sound format.
     /// </summary>
-    public enum SoundFormat
-    {
-        /// <summary>
-        ///     PCM encoded, 16-bit Mono sound format.
-        /// </summary>
-        Pcm16BitMono,
+    Pcm16BitMono,
 
-        /// <summary>
-        ///     PCM encoded, 16-bit Stereo sound format.
-        /// </summary>
-        Pcm16BitStereo
-    }
+    /// <summary>
+    ///     PCM encoded, 16-bit Stereo sound format.
+    /// </summary>
+    Pcm16BitStereo
 }

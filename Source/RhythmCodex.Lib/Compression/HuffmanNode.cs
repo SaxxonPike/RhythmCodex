@@ -1,11 +1,10 @@
-namespace RhythmCodex.Compression
+namespace RhythmCodex.Compression;
+
+public class HuffmanNode
 {
-    public class HuffmanNode
-    {
-        public uint Bits;
-        public uint Count;
-        public byte NumBits;
-        public HuffmanNode Parent;
-        public uint Weight;
-    }
+    public uint Bits;
+    public uint Count;
+    public byte NumBits;
+    public HuffmanNode Parent;
+    public uint Weight;
 }

@@ -1,10 +1,9 @@
 using RhythmCodex.Arc.Model;
 
-namespace RhythmCodex.Arc.Converters
+namespace RhythmCodex.Arc.Converters;
+
+public interface IArcFileConverter
 {
-    public interface IArcFileConverter
-    {
-        ArcFile Compress(ArcFile file);
-        ArcFile Decompress(ArcFile file);
-    }
+    ArcFile Compress(ArcFile file);
+    ArcFile Decompress(ArcFile file);
 }

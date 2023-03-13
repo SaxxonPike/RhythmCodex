@@ -4,36 +4,35 @@ using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Djmain.Streamers
+namespace RhythmCodex.Djmain.Streamers;
+
+[Service]
+public class DjmainChartEventStreamReader : IDjmainChartEventStreamReader
 {
-    [Service]
-    public class DjmainChartEventStreamReader : IDjmainChartEventStreamReader
+    private const int MaxEventCount = 0x1000;
+
+    public IList<DjmainChartEvent> Read(Stream stream)
     {
-        private const int MaxEventCount = 0x1000;
+        return ReadInternal(stream).ToArray();
+    }
 
-        public IList<DjmainChartEvent> Read(Stream stream)
+    private static IEnumerable<DjmainChartEvent> ReadInternal(Stream stream)
+    {
+        var reader = new BinaryReader(stream);
+
+        for (var i = 0; i < MaxEventCount; i++)
         {
-            return ReadInternal(stream).ToArray();
-        }
-
-        private static IEnumerable<DjmainChartEvent> ReadInternal(Stream stream)
-        {
-            var reader = new BinaryReader(stream);
-
-            for (var i = 0; i < MaxEventCount; i++)
+            var result = new DjmainChartEvent
             {
-                var result = new DjmainChartEvent
-                {
-                    Offset = reader.ReadUInt16(),
-                    Param0 = reader.ReadByte(),
-                    Param1 = reader.ReadByte()
-                };
+                Offset = reader.ReadUInt16(),
+                Param0 = reader.ReadByte(),
+                Param1 = reader.ReadByte()
+            };
 
-                if (result.Offset == 0x7FFF)
-                    yield break;
+            if (result.Offset == 0x7FFF)
+                yield break;
 
-                yield return result;
-            }
+            yield return result;
         }
     }
 }

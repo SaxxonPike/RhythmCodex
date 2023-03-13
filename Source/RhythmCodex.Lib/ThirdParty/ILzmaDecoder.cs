@@ -1,9 +1,8 @@
 ﻿using System.IO;
 
-namespace RhythmCodex.ThirdParty
+namespace RhythmCodex.ThirdParty;
+
+public interface ILzmaDecoder
 {
-    public interface ILzmaDecoder
-    {
-        byte[] Decode(Stream baseStream, int compressedLength, int decompressedLength, byte[] decoderProperties = null);
-    }
+    byte[] Decode(Stream baseStream, int compressedLength, int decompressedLength, byte[] decoderProperties = null);
 }

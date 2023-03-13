@@ -8,14 +8,13 @@
 
 using System;
 
-namespace RhythmCodex.Plugin.NVorbis.Lib.Ogg
+namespace RhythmCodex.Plugin.NVorbis.Lib.Ogg;
+
+[Flags]
+internal enum PageFlags
 {
-    [Flags]
-    internal enum PageFlags
-    {
-        None = 0,
-        ContinuesPacket = 1,
-        BeginningOfStream = 2,
-        EndOfStream = 4,
-    }
+    None = 0,
+    ContinuesPacket = 1,
+    BeginningOfStream = 2,
+    EndOfStream = 4,
 }

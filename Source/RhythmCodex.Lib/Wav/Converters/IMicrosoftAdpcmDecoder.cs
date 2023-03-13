@@ -2,10 +2,9 @@ using System;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Models;
 
-namespace RhythmCodex.Wav.Converters
+namespace RhythmCodex.Wav.Converters;
+
+public interface IMicrosoftAdpcmDecoder
 {
-    public interface IMicrosoftAdpcmDecoder
-    {
-        ISound Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat);
-    }
+    ISound Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat);
 }

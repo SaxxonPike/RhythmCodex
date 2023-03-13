@@ -1,10 +1,9 @@
 using System.IO;
 
-namespace RhythmCodex.Chd.Streamers
+namespace RhythmCodex.Chd.Streamers;
+
+public interface IChdStreamFactory
 {
-    public interface IChdStreamFactory
-    {
-        ChdStream Create(Stream source);
-        ChdStream Create(Stream source, ChdStream parent);
-    }
+    ChdStream Create(Stream source);
+    ChdStream Create(Stream source, ChdStream parent);
 }

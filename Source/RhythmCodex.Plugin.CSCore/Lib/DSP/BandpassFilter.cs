@@ -4,35 +4,34 @@
 
 using System;
 
-namespace RhythmCodex.Plugin.CSCore.Lib.DSP
+namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
+
+/// <summary>
+/// Used to apply a bandpass-filter to a signal.
+/// </summary>
+public class BandpassFilter : BiQuad
 {
     /// <summary>
-    /// Used to apply a bandpass-filter to a signal.
+    /// Initializes a new instance of the <see cref="BandpassFilter"/> class.
     /// </summary>
-    public class BandpassFilter : BiQuad
+    /// <param name="sampleRate">The sample rate.</param>
+    /// <param name="frequency">The filter's corner frequency.</param>
+    public BandpassFilter(double sampleRate, double frequency) 
+        : base(sampleRate, frequency)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BandpassFilter"/> class.
-        /// </summary>
-        /// <param name="sampleRate">The sample rate.</param>
-        /// <param name="frequency">The filter's corner frequency.</param>
-        public BandpassFilter(double sampleRate, double frequency) 
-            : base(sampleRate, frequency)
-        {
-        }
+    }
 
-        /// <summary>
-        /// Calculates all coefficients.
-        /// </summary>
-        protected override void CalculateBiQuadCoefficients()
-        {
-            var k = Math.Tan(Math.PI * Frequency / SampleRate);
-            var norm = 1 / (1 + k / Q + k * k);
-            A0 = k / Q * norm;
-            A1 = 0;
-            A2 = -A0;
-            B1 = 2 * (k * k - 1) * norm;
-            B2 = (1 - k / Q + k * k) * norm;
-        }
+    /// <summary>
+    /// Calculates all coefficients.
+    /// </summary>
+    protected override void CalculateBiQuadCoefficients()
+    {
+        var k = Math.Tan(Math.PI * Frequency / SampleRate);
+        var norm = 1 / (1 + k / Q + k * k);
+        A0 = k / Q * norm;
+        A1 = 0;
+        A2 = -A0;
+        B1 = 2 * (k * k - 1) * norm;
+        B2 = (1 - k / Q + k * k) * norm;
     }
 }

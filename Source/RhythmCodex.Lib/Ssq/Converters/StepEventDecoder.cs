@@ -8,80 +8,79 @@ using RhythmCodex.Meta.Models;
 using RhythmCodex.Ssq.Mappers;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+[Service]
+public class StepEventDecoder : IStepEventDecoder
 {
-    [Service]
-    public class StepEventDecoder : IStepEventDecoder
+    private readonly IStepPanelSplitter _stepPanelSplitter;
+
+    public StepEventDecoder(IStepPanelSplitter stepPanelSplitter)
     {
-        private readonly IStepPanelSplitter _stepPanelSplitter;
+        _stepPanelSplitter = stepPanelSplitter;
+    }
 
-        public StepEventDecoder(IStepPanelSplitter stepPanelSplitter)
+    public IList<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
+    {
+        IEnumerable<IEvent> Do()
         {
-            _stepPanelSplitter = stepPanelSplitter;
-        }
+            if (panelMapper == null)
+                throw new RhythmCodexException("Panel mapper cannot be null");
 
-        public IList<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
-        {
-            IEnumerable<IEvent> Do()
+            var stepList = steps.AsList();
+
+            foreach (var step in stepList)
             {
-                if (panelMapper == null)
-                    throw new RhythmCodexException("Panel mapper cannot be null");
+                var panels = step.Panels;
+                var freeze = false;
+                var metricOffset = (BigRational) step.MetricOffset / SsqConstants.MeasureLength;
 
-                var stepList = steps.AsList();
-
-                foreach (var step in stepList)
+                if (panels == 0x00)
                 {
-                    var panels = step.Panels;
-                    var freeze = false;
-                    var metricOffset = (BigRational) step.MetricOffset / SsqConstants.MeasureLength;
+                    freeze = true;
+                    panels = step.ExtraPanels ?? 0;
+                }
 
-                    if (panels == 0x00)
+                if ((panels & 0x0F) == 0x0F)
+                {
+                    yield return new Event
                     {
-                        freeze = true;
-                        panels = step.ExtraPanels ?? 0;
-                    }
+                        [NumericData.MetricOffset] = metricOffset,
+                        [NumericData.Player] = 0,
+                        [FlagData.Shock] = true
+                    };
+                    panels &= 0xF0;
+                }
 
-                    if ((panels & 0x0F) == 0x0F)
+                if ((panels & 0xF0) == 0xF0)
+                {
+                    yield return new Event
                     {
-                        yield return new Event
-                        {
-                            [NumericData.MetricOffset] = metricOffset,
-                            [NumericData.Player] = 0,
-                            [FlagData.Shock] = true
-                        };
-                        panels &= 0xF0;
-                    }
+                        [NumericData.MetricOffset] = metricOffset,
+                        [NumericData.Player] = 1,
+                        [FlagData.Shock] = true
+                    };
+                    panels &= 0x0F;
+                }
 
-                    if ((panels & 0xF0) == 0xF0)
+                foreach (var panelNumber in _stepPanelSplitter.Split(panels))
+                {
+                    var mappedPanel = panelMapper.Map(panelNumber);
+                    var isMapped = mappedPanel != null;
+
+                    yield return new Event
                     {
-                        yield return new Event
-                        {
-                            [NumericData.MetricOffset] = metricOffset,
-                            [NumericData.Player] = 1,
-                            [FlagData.Shock] = true
-                        };
-                        panels &= 0x0F;
-                    }
-
-                    foreach (var panelNumber in _stepPanelSplitter.Split(panels))
-                    {
-                        var mappedPanel = panelMapper.Map(panelNumber);
-                        var isMapped = mappedPanel != null;
-
-                        yield return new Event
-                        {
-                            [NumericData.MetricOffset] = metricOffset,
-                            [NumericData.SourceColumn] = panelNumber,
-                            [NumericData.Column] = isMapped ? mappedPanel.Panel : (BigRational?) null,
-                            [NumericData.Player] = isMapped ? mappedPanel.Player : (BigRational?) null,
-                            [FlagData.Freeze] = freeze ? true : (bool?) null,
-                            [FlagData.Note] = freeze ? (bool?) null : true
-                        };
-                    }
+                        [NumericData.MetricOffset] = metricOffset,
+                        [NumericData.SourceColumn] = panelNumber,
+                        [NumericData.Column] = isMapped ? mappedPanel.Panel : null,
+                        [NumericData.Player] = isMapped ? mappedPanel.Player : null,
+                        [FlagData.Freeze] = freeze ? true : null,
+                        [FlagData.Note] = freeze ? null : true
+                    };
                 }
             }
-
-            return Do().ToList();
         }
+
+        return Do().ToList();
     }
 }

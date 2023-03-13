@@ -1,10 +1,9 @@
 ﻿using RhythmCodex.IoC;
 
-namespace RhythmCodex.Djmain
+namespace RhythmCodex.Djmain;
+
+[Service]
+public class DjmainConfiguration : IDjmainConfiguration
 {
-    [Service]
-    public class DjmainConfiguration : IDjmainConfiguration
-    {
-        public int MaxSampleDefinitions { get; } = 256;
-    }
+    public int MaxSampleDefinitions { get; } = 256;
 }

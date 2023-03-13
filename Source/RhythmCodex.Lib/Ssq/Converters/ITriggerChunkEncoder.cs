@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface ITriggerChunkEncoder
 {
-    public interface ITriggerChunkEncoder
-    {
-        byte[] Convert(IEnumerable<Trigger> triggers);
-    }
+    byte[] Convert(IEnumerable<Trigger> triggers);
 }

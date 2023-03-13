@@ -8,42 +8,41 @@
 
 using System.IO;
 
-namespace RhythmCodex.Plugin.NVorbis.Lib
+namespace RhythmCodex.Plugin.NVorbis.Lib;
+
+internal abstract class VorbisTime
 {
-    internal abstract class VorbisTime
+    internal static VorbisTime Init(VorbisStreamDecoder vorbis, DataPacket packet)
     {
-        internal static VorbisTime Init(VorbisStreamDecoder vorbis, DataPacket packet)
+        var type = (int)packet.ReadBits(16);
+
+        VorbisTime time = null;
+        switch (type)
         {
-            var type = (int)packet.ReadBits(16);
-
-            VorbisTime time = null;
-            switch (type)
-            {
-                case 0: time = new Time0(vorbis); break;
-            }
-            if (time == null) throw new InvalidDataException();
-
-            time.Init(packet);
-            return time;
+            case 0: time = new Time0(vorbis); break;
         }
+        if (time == null) throw new InvalidDataException();
 
-        private VorbisStreamDecoder _vorbis;
+        time.Init(packet);
+        return time;
+    }
 
-        protected VorbisTime(VorbisStreamDecoder vorbis)
+    private VorbisStreamDecoder _vorbis;
+
+    protected VorbisTime(VorbisStreamDecoder vorbis)
+    {
+        _vorbis = vorbis;
+    }
+
+    protected abstract void Init(DataPacket packet);
+
+    private class Time0 : VorbisTime
+    {
+        internal Time0(VorbisStreamDecoder vorbis) : base(vorbis) { }
+
+        protected override void Init(DataPacket packet)
         {
-            _vorbis = vorbis;
-        }
-
-        protected abstract void Init(DataPacket packet);
-
-        private class Time0 : VorbisTime
-        {
-            internal Time0(VorbisStreamDecoder vorbis) : base(vorbis) { }
-
-            protected override void Init(DataPacket packet)
-            {
                 
-            }
         }
     }
 }

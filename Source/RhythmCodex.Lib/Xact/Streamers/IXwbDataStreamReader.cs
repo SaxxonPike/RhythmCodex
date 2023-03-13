@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Xact.Model;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+public interface IXwbDataStreamReader
 {
-    public interface IXwbDataStreamReader
-    {
-        XwbData Read(Stream source);
-    }
+    XwbData Read(Stream source);
 }

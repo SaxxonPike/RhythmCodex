@@ -1,9 +1,8 @@
-﻿namespace RhythmCodex.Djmain.Model
+﻿namespace RhythmCodex.Djmain.Model;
+
+public interface IDjmainChartEvent
 {
-    public interface IDjmainChartEvent
-    {
-        ushort Offset { get; set; }
-        byte Param0 { get; set; }
-        byte Param1 { get; set; }
-    }
+    ushort Offset { get; set; }
+    byte Param0 { get; set; }
+    byte Param1 { get; set; }
 }

@@ -1,13 +1,12 @@
-﻿namespace RhythmCodex.Infrastructure
+﻿namespace RhythmCodex.Infrastructure;
+
+/// <summary>
+/// A configuration source for the logger.
+/// </summary>
+public interface ILoggerConfigurationSource
 {
     /// <summary>
-    /// A configuration source for the logger.
+    /// Filter level of the log output.
     /// </summary>
-    public interface ILoggerConfigurationSource
-    {
-        /// <summary>
-        /// Filter level of the log output.
-        /// </summary>
-        LoggerVerbosityLevel VerbosityLevel { get; set; }
-    }
+    LoggerVerbosityLevel VerbosityLevel { get; set; }
 }

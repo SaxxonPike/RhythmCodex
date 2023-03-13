@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Sif.Models;
 
-namespace RhythmCodex.Sif.Streamers
+namespace RhythmCodex.Sif.Streamers;
+
+public interface ISifStreamReader
 {
-    public interface ISifStreamReader
-    {
-        SifInfo Read(Stream stream, long length);
-    }
+    SifInfo Read(Stream stream, long length);
 }

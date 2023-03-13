@@ -3,50 +3,49 @@ using System.Linq;
 using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+[Service]
+public class IsoStorageMediumDecoder : IIsoStorageMediumDecoder
 {
-    [Service]
-    public class IsoStorageMediumDecoder : IIsoStorageMediumDecoder
+    private readonly IIsoPrimaryVolumeDescriptorDecoder _isoPrimaryVolumeDescriptorDecoder;
+    private readonly IIsoBootRecordDecoder _isoBootRecordDecoder;
+    private readonly IIsoDescriptorSectorFinder _isoDescriptorSectorFinder;
+
+    public IsoStorageMediumDecoder(
+        IIsoPrimaryVolumeDescriptorDecoder isoPrimaryVolumeDescriptorDecoder,
+        IIsoBootRecordDecoder isoBootRecordDecoder,
+        IIsoDescriptorSectorFinder isoDescriptorSectorFinder)
     {
-        private readonly IIsoPrimaryVolumeDescriptorDecoder _isoPrimaryVolumeDescriptorDecoder;
-        private readonly IIsoBootRecordDecoder _isoBootRecordDecoder;
-        private readonly IIsoDescriptorSectorFinder _isoDescriptorSectorFinder;
-
-        public IsoStorageMediumDecoder(
-            IIsoPrimaryVolumeDescriptorDecoder isoPrimaryVolumeDescriptorDecoder,
-            IIsoBootRecordDecoder isoBootRecordDecoder,
-            IIsoDescriptorSectorFinder isoDescriptorSectorFinder)
-        {
-            _isoPrimaryVolumeDescriptorDecoder = isoPrimaryVolumeDescriptorDecoder;
-            _isoBootRecordDecoder = isoBootRecordDecoder;
-            _isoDescriptorSectorFinder = isoDescriptorSectorFinder;
-        }
+        _isoPrimaryVolumeDescriptorDecoder = isoPrimaryVolumeDescriptorDecoder;
+        _isoBootRecordDecoder = isoBootRecordDecoder;
+        _isoDescriptorSectorFinder = isoDescriptorSectorFinder;
+    }
         
-        public IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors)
+    public IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors)
+    {
+        var result = new IsoStorageMedium
         {
-            var result = new IsoStorageMedium
-            {
-                BootRecords = new List<IsoBootRecord>(),
-                Volumes = new List<IsoVolume>()
-            };
+            BootRecords = new List<IsoBootRecord>(),
+            Volumes = new List<IsoVolume>()
+        };
 
-            var descriptorSectors = _isoDescriptorSectorFinder.Find(sectors).ToList();
+        var descriptorSectors = _isoDescriptorSectorFinder.Find(sectors).ToList();
             
-            var bootDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x00).ToList();
-            var primaryVolumeDescriptor = descriptorSectors.Single(s => s.UserData[0] == 0x01);
+        var bootDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x00).ToList();
+        var primaryVolumeDescriptor = descriptorSectors.Single(s => s.UserData[0] == 0x01);
 //            var supplementaryVolumeDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x02).ToList();
 //            var partitionDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x03).ToList();
 
-            foreach (var bootDescriptor in bootDescriptors)
-                result.BootRecords.Add(_isoBootRecordDecoder.Decode(bootDescriptor.UserData));
+        foreach (var bootDescriptor in bootDescriptors)
+            result.BootRecords.Add(_isoBootRecordDecoder.Decode(bootDescriptor.UserData));
 
-            var primaryVolume = _isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData);
+        var primaryVolume = _isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData);
             
-            result.Volumes.Add(primaryVolume);
+        result.Volumes.Add(primaryVolume);
 
-            return result;
-        }
-        
-        
+        return result;
     }
+        
+        
 }

@@ -1,6 +1,5 @@
-﻿namespace RhythmCodex.Xact.Streamers
+﻿namespace RhythmCodex.Xact.Streamers;
+
+public interface IXwbHeaderStreamWriter
 {
-    public interface IXwbHeaderStreamWriter
-    {
-    }
 }

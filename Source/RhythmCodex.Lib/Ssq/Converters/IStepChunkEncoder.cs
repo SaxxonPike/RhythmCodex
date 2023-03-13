@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface IStepChunkEncoder
 {
-    public interface IStepChunkEncoder
-    {
-        byte[] Convert(IEnumerable<Step> steps);
-    }
+    byte[] Convert(IEnumerable<Step> steps);
 }

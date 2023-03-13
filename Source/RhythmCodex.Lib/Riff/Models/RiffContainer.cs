@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 
-namespace RhythmCodex.Riff.Models
+namespace RhythmCodex.Riff.Models;
+
+public class RiffContainer : IRiffContainer
 {
-    public class RiffContainer : IRiffContainer
-    {
-        public IList<IRiffChunk> Chunks { get; set; }
-        public string Format { get; set; }
-    }
+    public IList<IRiffChunk> Chunks { get; set; }
+    public string Format { get; set; }
 }

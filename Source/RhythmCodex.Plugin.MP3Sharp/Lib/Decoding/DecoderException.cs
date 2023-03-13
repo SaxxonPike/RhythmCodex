@@ -17,55 +17,54 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding;
+
+/// <summary>
+///     The DecoderException represents the class of
+///     errors that can occur when decoding MPEG audio.
+/// </summary>
+[Serializable]
+internal sealed class DecoderException : MP3SharpException
 {
-    /// <summary>
-    ///     The DecoderException represents the class of
-    ///     errors that can occur when decoding MPEG audio.
-    /// </summary>
-    [Serializable]
-    internal sealed class DecoderException : MP3SharpException
+    public DecoderException(string message, Exception inner) : base(message, inner)
     {
-        public DecoderException(string message, Exception inner) : base(message, inner)
+        InitBlock();
+    }
+
+    public DecoderException(int errorcode, Exception inner) : this(GetErrorString(errorcode), inner)
+    {
+        InitBlock();
+        ErrorCode = errorcode;
+    }
+
+    private DecoderException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        ErrorCode = info.GetInt32("ErrorCode");
+    }
+
+    public int ErrorCode { get; private set; }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        if (info == null)
         {
-            InitBlock();
+            throw new ArgumentNullException(nameof(info));
         }
 
-        public DecoderException(int errorcode, Exception inner) : this(GetErrorString(errorcode), inner)
-        {
-            InitBlock();
-            ErrorCode = errorcode;
-        }
+        info.AddValue("ErrorCode", ErrorCode);
+        base.GetObjectData(info, context);
+    }
 
-        private DecoderException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            ErrorCode = info.GetInt32("ErrorCode");
-        }
+    private void InitBlock()
+    {
+        ErrorCode = DecoderErrors.UNKNOWN_ERROR;
+    }
 
-        public int ErrorCode { get; private set; }
+    public static string GetErrorString(int errorcode)
+    {
+        // REVIEW: use resource file to map error codes
+        // to locale-sensitive strings. 
 
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            info.AddValue("ErrorCode", ErrorCode);
-            base.GetObjectData(info, context);
-        }
-
-        private void InitBlock()
-        {
-            ErrorCode = DecoderErrors.UNKNOWN_ERROR;
-        }
-
-        public static string GetErrorString(int errorcode)
-        {
-            // REVIEW: use resource file to map error codes
-            // to locale-sensitive strings. 
-
-            return "Decoder errorcode " + Convert.ToString(errorcode, 16);
-        }
+        return "Decoder errorcode " + Convert.ToString(errorcode, 16);
     }
 }

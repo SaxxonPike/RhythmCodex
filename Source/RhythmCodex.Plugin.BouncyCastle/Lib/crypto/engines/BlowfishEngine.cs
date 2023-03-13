@@ -3,18 +3,18 @@ using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.parameters;
 using RhythmCodex.Plugin.BouncyCastle.Lib.crypto.util;
 using RhythmCodex.Plugin.BouncyCastle.Lib.util;
 
-namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.engines
-{
-    /**
+namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.engines;
+
+/**
     * A class that provides Blowfish key encryption operations,
     * such as encoding data and generating keys.
     * All the algorithms herein are from Applied Cryptography
     * and implement a simplified cryptography interface.
     */
-    public sealed class BlowfishEngine
-		: IBlockCipher
-    {
-        private readonly static uint[] KP =
+public sealed class BlowfishEngine
+	: IBlockCipher
+{
+	private readonly static uint[] KP =
 		{
 			0x243F6A88, 0x85A308D3, 0x13198A2E, 0x03707344,
 			0xA4093822, 0x299F31D0, 0x082EFA98, 0xEC4E6C89,
@@ -291,32 +291,32 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.engines
 			0xB74E6132, 0xCE77E25B, 0x578FDFE3, 0x3AC372E6
 		};
 
-        //====================================
-        // Useful constants
-        //====================================
+	//====================================
+	// Useful constants
+	//====================================
 
-        private static readonly int    ROUNDS = 16;
-        private const int              BLOCK_SIZE = 8;  // bytes = 64 bits
-        private static readonly int    SBOX_SK = 256;
-        private static readonly int    P_SZ = ROUNDS+2;
+	private static readonly int    ROUNDS = 16;
+	private const int              BLOCK_SIZE = 8;  // bytes = 64 bits
+	private static readonly int    SBOX_SK = 256;
+	private static readonly int    P_SZ = ROUNDS+2;
 
-        private readonly uint[] S0, S1, S2, S3;     // the s-boxes
-        private readonly uint[] P;                  // the p-array
+	private readonly uint[] S0, S1, S2, S3;     // the s-boxes
+	private readonly uint[] P;                  // the p-array
 
-        private bool encrypting;
+	private bool encrypting;
 
-        private byte[] workingKey;
+	private byte[] workingKey;
 
-        public BlowfishEngine()
-        {
-            S0 = new uint[SBOX_SK];
-            S1 = new uint[SBOX_SK];
-            S2 = new uint[SBOX_SK];
-            S3 = new uint[SBOX_SK];
-            P = new uint[P_SZ];
-        }
+	public BlowfishEngine()
+	{
+		S0 = new uint[SBOX_SK];
+		S1 = new uint[SBOX_SK];
+		S2 = new uint[SBOX_SK];
+		S3 = new uint[SBOX_SK];
+		P = new uint[P_SZ];
+	}
 
-        /**
+	/**
         * initialise a Blowfish cipher.
         *
         * @param forEncryption whether or not we are for encryption.
@@ -324,229 +324,228 @@ namespace RhythmCodex.Plugin.BouncyCastle.Lib.crypto.engines
         * @exception ArgumentException if the parameters argument is
         * inappropriate.
         */
-        public void Init(
-            bool               forEncryption,
-            ICipherParameters  parameters)
-        {
-            if (!(parameters is KeyParameter))
-				throw new ArgumentException("invalid parameter passed to Blowfish init - " + Platform.GetTypeName(parameters));
+	public void Init(
+		bool               forEncryption,
+		ICipherParameters  parameters)
+	{
+		if (!(parameters is KeyParameter))
+			throw new ArgumentException("invalid parameter passed to Blowfish init - " + Platform.GetTypeName(parameters));
 
-			encrypting = forEncryption;
-			workingKey = ((KeyParameter)parameters).GetKey();
-			SetKey(workingKey);
-        }
+		encrypting = forEncryption;
+		workingKey = ((KeyParameter)parameters).GetKey();
+		SetKey(workingKey);
+	}
 
-		public string AlgorithmName
-        {
-            get { return "Blowfish"; }
-        }
+	public string AlgorithmName
+	{
+		get { return "Blowfish"; }
+	}
 
-		public bool IsPartialBlockOkay
+	public bool IsPartialBlockOkay
+	{
+		get { return false; }
+	}
+
+	public  int ProcessBlock(
+		byte[]	input,
+		int		inOff,
+		byte[]	output,
+		int		outOff)
+	{
+		if (workingKey == null)
+			throw new InvalidOperationException("Blowfish not initialised");
+
+		Check.DataLength(input, inOff, BLOCK_SIZE, "input buffer too short");
+		Check.OutputLength(output, outOff, BLOCK_SIZE, "output buffer too short");
+
+		if (encrypting)
 		{
-			get { return false; }
+			EncryptBlock(input, inOff, output, outOff);
+		}
+		else
+		{
+			DecryptBlock(input, inOff, output, outOff);
 		}
 
-		public  int ProcessBlock(
-            byte[]	input,
-            int		inOff,
-            byte[]	output,
-            int		outOff)
-        {
-            if (workingKey == null)
-                throw new InvalidOperationException("Blowfish not initialised");
+		return BLOCK_SIZE;
+	}
 
-            Check.DataLength(input, inOff, BLOCK_SIZE, "input buffer too short");
-            Check.OutputLength(output, outOff, BLOCK_SIZE, "output buffer too short");
+	public void Reset()
+	{
+	}
 
-            if (encrypting)
-            {
-                EncryptBlock(input, inOff, output, outOff);
-            }
-            else
-            {
-                DecryptBlock(input, inOff, output, outOff);
-            }
+	public int GetBlockSize()
+	{
+		return BLOCK_SIZE;
+	}
 
-            return BLOCK_SIZE;
-        }
+	//==================================
+	// Private Implementation
+	//==================================
 
-        public void Reset()
-        {
-        }
+	private uint F(uint x)
+	{
+		return (((S0[x >> 24] + S1[(x >> 16) & 0xff]) ^ S2[(x >> 8) & 0xff]) + S3[x & 0xff]);
+	}
 
-        public int GetBlockSize()
-        {
-            return BLOCK_SIZE;
-        }
-
-        //==================================
-        // Private Implementation
-        //==================================
-
-        private uint F(uint x)
-        {
-            return (((S0[x >> 24] + S1[(x >> 16) & 0xff]) ^ S2[(x >> 8) & 0xff]) + S3[x & 0xff]);
-        }
-
-        /**
+	/**
         * apply the encryption cycle to each value pair in the table.
         */
-        private void ProcessTable(
-            uint	xl,
-            uint	xr,
-            uint[]	table)
-        {
-            int size = table.Length;
+	private void ProcessTable(
+		uint	xl,
+		uint	xr,
+		uint[]	table)
+	{
+		int size = table.Length;
 
-            for (int s = 0; s < size; s += 2)
-            {
-                xl ^= P[0];
+		for (int s = 0; s < size; s += 2)
+		{
+			xl ^= P[0];
 
-                for (int i = 1; i < ROUNDS; i += 2)
-                {
-                    xr ^= F(xl) ^ P[i];
-                    xl ^= F(xr) ^ P[i + 1];
-                }
+			for (int i = 1; i < ROUNDS; i += 2)
+			{
+				xr ^= F(xl) ^ P[i];
+				xl ^= F(xr) ^ P[i + 1];
+			}
 
-                xr ^= P[ROUNDS + 1];
+			xr ^= P[ROUNDS + 1];
 
-                table[s] = xr;
-                table[s + 1] = xl;
+			table[s] = xr;
+			table[s + 1] = xl;
 
-                xr = xl;            // end of cycle swap
-                xl = table[s];
-            }
-        }
+			xr = xl;            // end of cycle swap
+			xl = table[s];
+		}
+	}
 
-        private void SetKey(byte[] key)
-        {
-            /*
-            * - comments are from _Applied Crypto_, Schneier, p338
-            * please be careful comparing the two, AC numbers the
-            * arrays from 1, the enclosed code from 0.
-            *
-            * (1)
-            * Initialise the S-boxes and the P-array, with a fixed string
-            * This string contains the hexadecimal digits of pi (3.141...)
-            */
-            Array.Copy(KS0, 0, S0, 0, SBOX_SK);
-            Array.Copy(KS1, 0, S1, 0, SBOX_SK);
-            Array.Copy(KS2, 0, S2, 0, SBOX_SK);
-            Array.Copy(KS3, 0, S3, 0, SBOX_SK);
+	private void SetKey(byte[] key)
+	{
+		/*
+		* - comments are from _Applied Crypto_, Schneier, p338
+		* please be careful comparing the two, AC numbers the
+		* arrays from 1, the enclosed code from 0.
+		*
+		* (1)
+		* Initialise the S-boxes and the P-array, with a fixed string
+		* This string contains the hexadecimal digits of pi (3.141...)
+		*/
+		Array.Copy(KS0, 0, S0, 0, SBOX_SK);
+		Array.Copy(KS1, 0, S1, 0, SBOX_SK);
+		Array.Copy(KS2, 0, S2, 0, SBOX_SK);
+		Array.Copy(KS3, 0, S3, 0, SBOX_SK);
 
-            Array.Copy(KP, 0, P, 0, P_SZ);
+		Array.Copy(KP, 0, P, 0, P_SZ);
 
-            /*
-            * (2)
-            * Now, XOR P[0] with the first 32 bits of the key, XOR P[1] with the
-            * second 32-bits of the key, and so on for all bits of the key
-            * (up to P[17]).  Repeatedly cycle through the key bits until the
-            * entire P-array has been XOR-ed with the key bits
-            */
-            int keyLength = key.Length;
-            int keyIndex = 0;
+		/*
+		* (2)
+		* Now, XOR P[0] with the first 32 bits of the key, XOR P[1] with the
+		* second 32-bits of the key, and so on for all bits of the key
+		* (up to P[17]).  Repeatedly cycle through the key bits until the
+		* entire P-array has been XOR-ed with the key bits
+		*/
+		int keyLength = key.Length;
+		int keyIndex = 0;
 
-            for (int i=0; i < P_SZ; i++)
-            {
-                // Get the 32 bits of the key, in 4 * 8 bit chunks
-                uint data = 0x0000000;
-                for (int j=0; j < 4; j++)
-                {
-                    // create a 32 bit block
-                    data = (data << 8) | (uint)key[keyIndex++];
+		for (int i=0; i < P_SZ; i++)
+		{
+			// Get the 32 bits of the key, in 4 * 8 bit chunks
+			uint data = 0x0000000;
+			for (int j=0; j < 4; j++)
+			{
+				// create a 32 bit block
+				data = (data << 8) | key[keyIndex++];
 
-                    // wrap when we get to the end of the key
-                    if (keyIndex >= keyLength)
-                    {
-                        keyIndex = 0;
-                    }
-                }
-                // XOR the newly created 32 bit chunk onto the P-array
-                P[i] ^= data;
-            }
+				// wrap when we get to the end of the key
+				if (keyIndex >= keyLength)
+				{
+					keyIndex = 0;
+				}
+			}
+			// XOR the newly created 32 bit chunk onto the P-array
+			P[i] ^= data;
+		}
 
-            /*
-            * (3)
-            * Encrypt the all-zero string with the Blowfish algorithm, using
-            * the subkeys described in (1) and (2)
-            *
-            * (4)
-            * Replace P1 and P2 with the output of step (3)
-            *
-            * (5)
-            * Encrypt the output of step(3) using the Blowfish algorithm,
-            * with the modified subkeys.
-            *
-            * (6)
-            * Replace P3 and P4 with the output of step (5)
-            *
-            * (7)
-            * Continue the process, replacing all elements of the P-array
-            * and then all four S-boxes in order, with the output of the
-            * continuously changing Blowfish algorithm
-            */
+		/*
+		* (3)
+		* Encrypt the all-zero string with the Blowfish algorithm, using
+		* the subkeys described in (1) and (2)
+		*
+		* (4)
+		* Replace P1 and P2 with the output of step (3)
+		*
+		* (5)
+		* Encrypt the output of step(3) using the Blowfish algorithm,
+		* with the modified subkeys.
+		*
+		* (6)
+		* Replace P3 and P4 with the output of step (5)
+		*
+		* (7)
+		* Continue the process, replacing all elements of the P-array
+		* and then all four S-boxes in order, with the output of the
+		* continuously changing Blowfish algorithm
+		*/
 
-            ProcessTable(0, 0, P);
-            ProcessTable(P[P_SZ - 2], P[P_SZ - 1], S0);
-            ProcessTable(S0[SBOX_SK - 2], S0[SBOX_SK - 1], S1);
-            ProcessTable(S1[SBOX_SK - 2], S1[SBOX_SK - 1], S2);
-            ProcessTable(S2[SBOX_SK - 2], S2[SBOX_SK - 1], S3);
-        }
+		ProcessTable(0, 0, P);
+		ProcessTable(P[P_SZ - 2], P[P_SZ - 1], S0);
+		ProcessTable(S0[SBOX_SK - 2], S0[SBOX_SK - 1], S1);
+		ProcessTable(S1[SBOX_SK - 2], S1[SBOX_SK - 1], S2);
+		ProcessTable(S2[SBOX_SK - 2], S2[SBOX_SK - 1], S3);
+	}
 
-        /**
+	/**
         * Encrypt the given input starting at the given offset and place
         * the result in the provided buffer starting at the given offset.
         * The input will be an exact multiple of our blocksize.
         */
-        private void EncryptBlock(
-            byte[]  src,
-            int     srcIndex,
-            byte[]  dst,
-            int     dstIndex)
-        {
-            uint xl = Pack.BE_To_UInt32(src, srcIndex);
-            uint xr = Pack.BE_To_UInt32(src, srcIndex+4);
+	private void EncryptBlock(
+		byte[]  src,
+		int     srcIndex,
+		byte[]  dst,
+		int     dstIndex)
+	{
+		uint xl = Pack.BE_To_UInt32(src, srcIndex);
+		uint xr = Pack.BE_To_UInt32(src, srcIndex+4);
 
-            xl ^= P[0];
+		xl ^= P[0];
 
-            for (int i = 1; i < ROUNDS; i += 2)
-            {
-                xr ^= F(xl) ^ P[i];
-                xl ^= F(xr) ^ P[i + 1];
-            }
+		for (int i = 1; i < ROUNDS; i += 2)
+		{
+			xr ^= F(xl) ^ P[i];
+			xl ^= F(xr) ^ P[i + 1];
+		}
 
-            xr ^= P[ROUNDS + 1];
+		xr ^= P[ROUNDS + 1];
 
-            Pack.UInt32_To_BE(xr, dst, dstIndex);
-            Pack.UInt32_To_BE(xl, dst, dstIndex + 4);
-        }
+		Pack.UInt32_To_BE(xr, dst, dstIndex);
+		Pack.UInt32_To_BE(xl, dst, dstIndex + 4);
+	}
 
-        /**
+	/**
         * Decrypt the given input starting at the given offset and place
         * the result in the provided buffer starting at the given offset.
         * The input will be an exact multiple of our blocksize.
         */
-        private void DecryptBlock(
-            byte[] src,
-            int srcIndex,
-            byte[] dst,
-            int dstIndex)
-        {
-            uint xl = Pack.BE_To_UInt32(src, srcIndex);
-            uint xr = Pack.BE_To_UInt32(src, srcIndex + 4);
+	private void DecryptBlock(
+		byte[] src,
+		int srcIndex,
+		byte[] dst,
+		int dstIndex)
+	{
+		uint xl = Pack.BE_To_UInt32(src, srcIndex);
+		uint xr = Pack.BE_To_UInt32(src, srcIndex + 4);
 
-            xl ^= P[ROUNDS + 1];
+		xl ^= P[ROUNDS + 1];
 
-            for (int i = ROUNDS; i > 0 ; i -= 2)
-            {
-                xr ^= F(xl) ^ P[i];
-                xl ^= F(xr) ^ P[i - 1];
-            }
+		for (int i = ROUNDS; i > 0 ; i -= 2)
+		{
+			xr ^= F(xl) ^ P[i];
+			xl ^= F(xr) ^ P[i - 1];
+		}
 
-            xr ^= P[0];
+		xr ^= P[0];
 
-            Pack.UInt32_To_BE(xr, dst, dstIndex);
-            Pack.UInt32_To_BE(xl, dst, dstIndex + 4);
-        }
-    }
+		Pack.UInt32_To_BE(xr, dst, dstIndex);
+		Pack.UInt32_To_BE(xl, dst, dstIndex + 4);
+	}
 }

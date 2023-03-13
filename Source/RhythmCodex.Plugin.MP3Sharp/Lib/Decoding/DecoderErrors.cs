@@ -13,15 +13,14 @@
 //  * Lesser General Public License for more details.
 //  *
 //  ***************************************************************************/
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding;
+
+/// <summary>
+///     This interface provides constants describing the error
+///     codes used by the Decoder to indicate errors.
+/// </summary>
+internal struct DecoderErrors
 {
-    /// <summary>
-    ///     This interface provides constants describing the error
-    ///     codes used by the Decoder to indicate errors.
-    /// </summary>
-    internal struct DecoderErrors
-    {
-        public static readonly int UNKNOWN_ERROR = BitstreamErrors.DECODER_ERROR + 0;
-        public static readonly int UNSUPPORTED_LAYER = BitstreamErrors.DECODER_ERROR + 1;
-    }
+    public static readonly int UNKNOWN_ERROR = BitstreamErrors.DECODER_ERROR + 0;
+    public static readonly int UNSUPPORTED_LAYER = BitstreamErrors.DECODER_ERROR + 1;
 }

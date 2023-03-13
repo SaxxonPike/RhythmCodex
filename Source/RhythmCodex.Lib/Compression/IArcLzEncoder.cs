@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RhythmCodex.Compression
+namespace RhythmCodex.Compression;
+
+public interface IArcLzEncoder
 {
-    public interface IArcLzEncoder
-    {
-        byte[] Encode(ReadOnlySpan<byte> source);
-    }
+    byte[] Encode(ReadOnlySpan<byte> source);
 }

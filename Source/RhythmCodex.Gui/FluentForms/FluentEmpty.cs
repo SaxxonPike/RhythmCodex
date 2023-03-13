@@ -1,23 +1,22 @@
 ﻿using System.Windows.Forms;
 
-namespace RhythmCodex.Gui.FluentForms
+namespace RhythmCodex.Gui.FluentForms;
+
+public class FluentEmpty : FluentControl<Control>
 {
-    public class FluentEmpty : FluentControl<Control>
+    public FluentEmpty()
     {
-        public FluentEmpty()
-        {
-            Anchor = AnchorStyles.Bottom | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        }
+        Anchor = AnchorStyles.Bottom | AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+    }
         
-        protected override Control OnBuild(FluentState state)
-        {
-            var result = new Control();
-            SetDefault(result);
+    protected override Control OnBuild(FluentState state)
+    {
+        var result = new Control();
+        SetDefault(result);
 
-            result.TabStop = false;
+        result.TabStop = false;
 
-            UpdateMap(state, result);
-            return result;
-        }
+        UpdateMap(state, result);
+        return result;
     }
 }

@@ -4,38 +4,31 @@ using System.IO;
 using System.IO.Compression;
 using ClientCommon;
 
-namespace RhythmCodex.Cli.Orchestration.Infrastructure
+namespace RhythmCodex.Cli.Orchestration.Infrastructure;
+
+public class TaskFileFactory : ITaskFileFactory
 {
-    public class TaskFileFactory : ITaskFileFactory
+    private readonly IFileSystem _fileSystem;
+    private ISet<IDisposable> _disposables = new HashSet<IDisposable>();
+
+    public TaskFileFactory(IFileSystem fileSystem)
     {
-        private readonly IFileSystem _fileSystem;
-        private ISet<IDisposable> _disposables = new HashSet<IDisposable>();
-
-        public TaskFileFactory(IFileSystem fileSystem)
-        {
-            _fileSystem = fileSystem;
-        }
+        _fileSystem = fileSystem;
+    }
         
-        public TaskFile CreateFromFile(string path)
+    public TaskFile CreateFromFile(string path)
+    {
+        return new TaskFile
         {
-            return new TaskFile
-            {
-                FileName = Path.GetFileName(path),
-                Path = Path.GetDirectoryName(path),
-                Open = () => _fileSystem.OpenRead(path)
-            };
-        }
-
-        public IReadOnlyList<TaskFile> CreateFromArchive(string path)
-        {
-            var archive = new ZipArchive(_fileSystem.OpenRead(path), ZipArchiveMode.Read, false);
-            throw new System.NotImplementedException();
-        }
+            FileName = Path.GetFileName(path),
+            Path = Path.GetDirectoryName(path),
+            Open = () => _fileSystem.OpenRead(path)
+        };
     }
 
-    public interface ITaskFileFactory
+    public IReadOnlyList<TaskFile> CreateFromArchive(string path)
     {
-        TaskFile CreateFromFile(string path);
-        IReadOnlyList<TaskFile> CreateFromArchive(string path);
+        var archive = new ZipArchive(_fileSystem.OpenRead(path), ZipArchiveMode.Read, false);
+        throw new System.NotImplementedException();
     }
 }

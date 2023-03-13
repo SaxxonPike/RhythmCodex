@@ -1,8 +1,7 @@
-namespace RhythmCodex.Tga.Models
+namespace RhythmCodex.Tga.Models;
+
+public enum TgaOriginType
 {
-    public enum TgaOriginType
-    {
-        LowerLeft = 0,
-        UpperLeft = 1
-    }
+    LowerLeft = 0,
+    UpperLeft = 1
 }

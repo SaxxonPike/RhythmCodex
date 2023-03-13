@@ -1,20 +1,19 @@
-namespace RhythmCodex.Meta.Models
+namespace RhythmCodex.Meta.Models;
+
+public enum StringData
 {
-    public enum StringData
-    {
-        Name,
-        Description,
-        Difficulty,
-        Type,
-        Title,
-        Artist,
-        Genre,
-        StageFile,
-        BannerFile,
-        BackgroundFile,
-        Subtitle,
-        Subartist,
-        Comment,
-        Music
-    }
+    Name,
+    Description,
+    Difficulty,
+    Type,
+    Title,
+    Artist,
+    Genre,
+    StageFile,
+    BannerFile,
+    BackgroundFile,
+    Subtitle,
+    Subartist,
+    Comment,
+    Music
 }

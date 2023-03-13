@@ -1,9 +1,8 @@
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Step1.Converters
+namespace RhythmCodex.Step1.Converters;
+
+public interface IStep1TimingChunkDecoder
 {
-    public interface IStep1TimingChunkDecoder
-    {
-        TimingChunk Convert(byte[] data);
-    }
+    TimingChunk Convert(byte[] data);
 }

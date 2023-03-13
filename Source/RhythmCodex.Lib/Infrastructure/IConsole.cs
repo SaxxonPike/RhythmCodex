@@ -1,8 +1,7 @@
-﻿namespace RhythmCodex.Infrastructure
+﻿namespace RhythmCodex.Infrastructure;
+
+public interface IConsole
 {
-    public interface IConsole
-    {
-        void Write(string text);
-        void WriteLine(params string[] text);
-    }
+    void Write(string text);
+    void WriteLine(params string[] text);
 }

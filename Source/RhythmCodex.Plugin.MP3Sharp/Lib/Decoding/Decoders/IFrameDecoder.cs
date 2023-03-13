@@ -13,20 +13,19 @@
 //  * Lesser General Public License for more details.
 //  *
 //  ***************************************************************************/
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders;
+
+/// <summary>
+///     Implementations of FrameDecoder are responsible for decoding
+///     an MPEG audio frame.
+/// </summary>
+//REVIEW: the interface currently is too thin. There should be
+// methods to specify the output buffer, the synthesis filters and
+// possibly other objects used by the decoder. 
+internal interface IFrameDecoder
 {
     /// <summary>
-    ///     Implementations of FrameDecoder are responsible for decoding
-    ///     an MPEG audio frame.
+    ///     Decodes one frame of MPEG audio.
     /// </summary>
-    //REVIEW: the interface currently is too thin. There should be
-    // methods to specify the output buffer, the synthesis filters and
-    // possibly other objects used by the decoder. 
-    internal interface IFrameDecoder
-    {
-        /// <summary>
-        ///     Decodes one frame of MPEG audio.
-        /// </summary>
-        void DecodeFrame();
-    }
+    void DecodeFrame();
 }

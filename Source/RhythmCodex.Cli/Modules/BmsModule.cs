@@ -3,37 +3,36 @@ using ClientCommon;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Cli.Modules
+namespace RhythmCodex.Cli.Modules;
+
+[Service]
+public class BmsModule : ICliModule
 {
-    [Service]
-    public class BmsModule : ICliModule
+    private readonly ITaskFactory _taskFactory;
+
+    public BmsModule(ITaskFactory taskFactory)
     {
-        private readonly ITaskFactory _taskFactory;
+        _taskFactory = taskFactory;
+    }
 
-        public BmsModule(ITaskFactory taskFactory)
+    public string Name => "bms";
+    public string Description => "Manipulates BMS data.";
+
+    public IEnumerable<ICommand> Commands => new ICommand[]
+    {
+        new Command()
         {
-            _taskFactory = taskFactory;
+            Name = "render",
+            Description = "Render a BMS to WAV.",
+            TaskFactory = BmsRenderTask
         }
+    };
 
-        public string Name => "bms";
-        public string Description => "Manipulates BMS data.";
-
-        public IEnumerable<ICommand> Commands => new ICommand[]
-        {
-            new Command()
-            {
-                Name = "render",
-                Description = "Render a BMS to WAV.",
-                TaskFactory = BmsRenderTask
-            }
-        };
-
-        private ITask BmsRenderTask(Args args)
-        {
-            return _taskFactory
-                .BuildBmsTask()
-                .WithArgs(args)
-                .CreateRenderBms();
-        }
+    private ITask BmsRenderTask(Args args)
+    {
+        return _taskFactory
+            .BuildBmsTask()
+            .WithArgs(args)
+            .CreateRenderBms();
     }
 }

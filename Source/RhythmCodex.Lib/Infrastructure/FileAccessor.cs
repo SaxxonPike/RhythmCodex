@@ -4,53 +4,52 @@ using System.IO;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure.Models;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+public class FileAccessor : IFileAccessor
 {
-    public class FileAccessor : IFileAccessor
+    private readonly string _basePath;
+
+    public FileAccessor(string basePath)
     {
-        private readonly string _basePath;
+        _basePath = basePath;
+    }
 
-        public FileAccessor(string basePath)
+    public bool FileExists(string name) =>
+        File.Exists(Path.Combine(_basePath, name));
+
+    public Stream OpenRead(string name) =>
+        File.OpenRead(Path.Combine(_basePath, name));
+
+    public ExtensionMatchedFile GetFileNameByExtension(string name, IEnumerable<string> extensions)
+    {
+        if (name == null)
+            throw new RhythmCodexException("File name cannot be null.");
+
+        var path = Path.Combine(_basePath, name);
+        var extensionsList = extensions.AsList();
+        foreach (var e in extensionsList)
         {
-            _basePath = basePath;
+            if (path.EndsWith($".{e}", StringComparison.InvariantCultureIgnoreCase))
+                return new ExtensionMatchedFile
+                {
+                    Filename = name,
+                    Extension = e
+                };
         }
 
-        public bool FileExists(string name) =>
-            File.Exists(Path.Combine(_basePath, name));
-
-        public Stream OpenRead(string name) =>
-            File.OpenRead(Path.Combine(_basePath, name));
-
-        public ExtensionMatchedFile GetFileNameByExtension(string name, IEnumerable<string> extensions)
+        foreach (var e in extensionsList)
         {
-            if (name == null)
-                throw new RhythmCodexException("File name cannot be null.");
-
-            var path = Path.Combine(_basePath, name);
-            var extensionsList = extensions.AsList();
-            foreach (var e in extensionsList)
-            {
-                if (path.EndsWith($".{e}", StringComparison.InvariantCultureIgnoreCase))
-                    return new ExtensionMatchedFile
-                    {
-                        Filename = name,
-                        Extension = e
-                    };
-            }
-
-            foreach (var e in extensionsList)
-            {
-                var newPath = $"{Path.Combine(_basePath, Path.GetDirectoryName(path) ?? ".", Path.GetFileNameWithoutExtension(path))}.{e}";
-                var newName = $"{Path.Combine(Path.GetDirectoryName(name) ?? "", Path.GetFileNameWithoutExtension(path))}.{e}";
-                if (File.Exists(newPath))
-                    return new ExtensionMatchedFile
-                    {
-                        Filename = newName,
-                        Extension = e
-                    };
-            }
-
-            return null;
+            var newPath = $"{Path.Combine(_basePath, Path.GetDirectoryName(path) ?? ".", Path.GetFileNameWithoutExtension(path))}.{e}";
+            var newName = $"{Path.Combine(Path.GetDirectoryName(name) ?? "", Path.GetFileNameWithoutExtension(path))}.{e}";
+            if (File.Exists(newPath))
+                return new ExtensionMatchedFile
+                {
+                    Filename = newName,
+                    Extension = e
+                };
         }
+
+        return null;
     }
 }

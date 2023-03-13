@@ -1,8 +1,7 @@
-﻿namespace RhythmCodex.Vtddd.Models
+﻿namespace RhythmCodex.Vtddd.Models;
+
+public class VtdddDpoFile
 {
-    public class VtdddDpoFile
-    {
-        public byte[] Key { get; set; }
-        public byte[] Data { get; set; }
-    }
+    public byte[] Key { get; set; }
+    public byte[] Data { get; set; }
 }

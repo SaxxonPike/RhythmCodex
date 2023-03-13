@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Xa.Models;
 
-namespace RhythmCodex.Xa.Streamers
+namespace RhythmCodex.Xa.Streamers;
+
+public interface IXaStreamReader
 {
-    public interface IXaStreamReader
-    {
-        XaChunk Read(Stream stream, int channels, int interleave);
-    }
+    XaChunk Read(Stream stream, int channels, int interleave);
 }

@@ -3,38 +3,37 @@ using ClientCommon;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Cli.Modules
+namespace RhythmCodex.Cli.Modules;
+
+[Service]
+public class ArcModule : ICliModule
 {
-    [Service]
-    public class ArcModule : ICliModule
+    private readonly ITaskFactory _taskFactory;
+
+    public ArcModule(
+        ITaskFactory taskFactory)
     {
-        private readonly ITaskFactory _taskFactory;
-
-        public ArcModule(
-            ITaskFactory taskFactory)
-        {
-            _taskFactory = taskFactory;
-        }
+        _taskFactory = taskFactory;
+    }
         
-        public string Name => "arc";
-        public string Description => "Manipulates ARC archive files.";
+    public string Name => "arc";
+    public string Description => "Manipulates ARC archive files.";
 
-        public IEnumerable<ICommand> Commands => new Command[]
+    public IEnumerable<ICommand> Commands => new Command[]
+    {
+        new()
         {
-            new()
-            {
-                Name = "extract",
-                Description = "Extracts files from an ARC archive.",
-                TaskFactory = Extract
-            }
-        };
-
-        private ITask Extract(Args args)
-        {
-            return _taskFactory
-                .BuildArcTask()
-                .WithArgs(args)
-                .CreateExtract();
+            Name = "extract",
+            Description = "Extracts files from an ARC archive.",
+            TaskFactory = Extract
         }
+    };
+
+    private ITask Extract(Args args)
+    {
+        return _taskFactory
+            .BuildArcTask()
+            .WithArgs(args)
+            .CreateExtract();
     }
 }

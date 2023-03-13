@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace RhythmCodex.Gui
+namespace RhythmCodex.Gui;
+
+public class FormConsoleEventArgs : EventArgs
 {
-    public class FormConsoleEventArgs : EventArgs
-    {
-        public FormConsoleEventArgs(string text) =>
-            Text = text;
+    public FormConsoleEventArgs(string text) =>
+        Text = text;
         
-        public string Text { get; }
-    }
+    public string Text { get; }
 }

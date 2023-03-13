@@ -8,31 +8,30 @@
 
 using System;
 
-namespace RhythmCodex.Plugin.NVorbis.Lib
+namespace RhythmCodex.Plugin.NVorbis.Lib;
+
+/// <summary>
+/// Event data for when a new logical stream is found in a container.
+/// </summary>
+[Serializable]
+public class NewStreamEventArgs : EventArgs
 {
     /// <summary>
-    /// Event data for when a new logical stream is found in a container.
+    /// Creates a new instance of <see cref="NewStreamEventArgs"/> with the specified <see cref="IPacketProvider"/>.
     /// </summary>
-    [Serializable]
-    public class NewStreamEventArgs : EventArgs
+    /// <param name="packetProvider">An <see cref="IPacketProvider"/> instance.</param>
+    public NewStreamEventArgs(IPacketProvider packetProvider)
     {
-        /// <summary>
-        /// Creates a new instance of <see cref="NewStreamEventArgs"/> with the specified <see cref="IPacketProvider"/>.
-        /// </summary>
-        /// <param name="packetProvider">An <see cref="IPacketProvider"/> instance.</param>
-        public NewStreamEventArgs(IPacketProvider packetProvider)
-        {
-            PacketProvider = packetProvider ?? throw new ArgumentNullException(nameof(packetProvider));
-        }
-
-        /// <summary>
-        /// Gets new the <see cref="IPacketProvider"/> instance.
-        /// </summary>
-        public IPacketProvider PacketProvider { get; }
-
-        /// <summary>
-        /// Gets or sets whether to ignore the logical stream associated with the packet provider.
-        /// </summary>
-        public bool IgnoreStream { get; set; }
+        PacketProvider = packetProvider ?? throw new ArgumentNullException(nameof(packetProvider));
     }
+
+    /// <summary>
+    /// Gets new the <see cref="IPacketProvider"/> instance.
+    /// </summary>
+    public IPacketProvider PacketProvider { get; }
+
+    /// <summary>
+    /// Gets or sets whether to ignore the logical stream associated with the packet provider.
+    /// </summary>
+    public bool IgnoreStream { get; set; }
 }

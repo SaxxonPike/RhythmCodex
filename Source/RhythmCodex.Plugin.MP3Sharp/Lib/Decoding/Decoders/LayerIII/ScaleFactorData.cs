@@ -14,24 +14,23 @@
 //  *
 //  ***************************************************************************/
 
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII
-{
-    internal sealed class ScaleFactorData
-    {
-        public int[] l; /* [cb] */
-        public int[][] s; /* [window][cb] */
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII;
 
-        /// <summary>
-        ///     Dummy Constructor
-        /// </summary>
-        public ScaleFactorData()
+internal sealed class ScaleFactorData
+{
+    public int[] l; /* [cb] */
+    public int[][] s; /* [window][cb] */
+
+    /// <summary>
+    ///     Dummy Constructor
+    /// </summary>
+    public ScaleFactorData()
+    {
+        l = new int[23];
+        s = new int[3][];
+        for (var i = 0; i < 3; i++)
         {
-            l = new int[23];
-            s = new int[3][];
-            for (var i = 0; i < 3; i++)
-            {
-                s[i] = new int[13];
-            }
+            s[i] = new int[13];
         }
     }
 }

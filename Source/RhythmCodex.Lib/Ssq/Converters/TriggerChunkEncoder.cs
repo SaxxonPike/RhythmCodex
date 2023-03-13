@@ -4,27 +4,26 @@ using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+[Service]
+public class TriggerChunkEncoder : ITriggerChunkEncoder
 {
-    [Service]
-    public class TriggerChunkEncoder : ITriggerChunkEncoder
+    public byte[] Convert(IEnumerable<Trigger> triggers)
     {
-        public byte[] Convert(IEnumerable<Trigger> triggers)
-        {
-            var triggerList = triggers.AsList();
-            var count = triggerList.Count;
+        var triggerList = triggers.AsList();
+        var count = triggerList.Count;
 
-            using var mem = new MemoryStream();
-            using var writer = new BinaryWriter(mem);
-            writer.Write(count);
+        using var mem = new MemoryStream();
+        using var writer = new BinaryWriter(mem);
+        writer.Write(count);
 
-            foreach (var trigger in triggerList)
-                writer.Write(trigger.MetricOffset);
+        foreach (var trigger in triggerList)
+            writer.Write(trigger.MetricOffset);
 
-            foreach (var trigger in triggerList)
-                writer.Write(trigger.Id);
+        foreach (var trigger in triggerList)
+            writer.Write(trigger.Id);
 
-            return mem.ToArray();
-        }
+        return mem.ToArray();
     }
 }

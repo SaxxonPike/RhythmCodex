@@ -1,11 +1,10 @@
 using System.IO;
 
-namespace RhythmCodex.Cd.Model
+namespace RhythmCodex.Cd.Model;
+
+public interface ICdFile
 {
-    public interface ICdFile
-    {
-        string Name { get; }
-        long Length { get; }
-        Stream Open();
-    }
+    string Name { get; }
+    long Length { get; }
+    Stream Open();
 }

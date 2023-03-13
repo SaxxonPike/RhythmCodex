@@ -1,10 +1,9 @@
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Beatmania.Converters
+namespace RhythmCodex.Beatmania.Converters;
+
+public interface IBeatmaniaPcAudioDecoder
 {
-    public interface IBeatmaniaPcAudioDecoder
-    {
-        ISound Decode(BeatmaniaPcAudioEntry entry);
-    }
+    ISound Decode(BeatmaniaPcAudioEntry entry);
 }

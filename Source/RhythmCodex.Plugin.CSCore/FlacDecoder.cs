@@ -10,42 +10,41 @@ using RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.ThirdParty;
 
-namespace RhythmCodex.Plugin.CSCore
-{
-    [Service]
-    public class FlacDecoder : IFlacDecoder
-    {
-        public ISound Decode(Stream stream)
-        {
-            using var inputStream = new FlacFile(stream);
-            var samples = StreamExtensions.ReadAllBytes(inputStream.Read)
-                .Deinterleave(2, inputStream.WaveFormat.Channels)
-                .Select(bytes => new Sample
-                {
-                    Data = bytes.AsArray().Fuse().Select(s => s / 32768f).AsArray()
-                })
-                .Cast<ISample>()
-                .ToList();
-                
-            return new Sound
-            {
-                Samples = samples,
-                [NumericData.Rate] = inputStream.WaveFormat.SampleRate
-            };
-        }
+namespace RhythmCodex.Plugin.CSCore;
 
-        public Memory<byte> DecodeFrame(Stream stream, int blockSize)
-        {
-            var frame = FlacFrame.FromStream(stream, new FlacMetadataStreamInfo
+[Service]
+public class FlacDecoder : IFlacDecoder
+{
+    public ISound Decode(Stream stream)
+    {
+        using var inputStream = new FlacFile(stream);
+        var samples = StreamExtensions.ReadAllBytes(inputStream.Read)
+            .Deinterleave(2, inputStream.WaveFormat.Channels)
+            .Select(bytes => new Sample
             {
-                SampleRate = 44100,
-                Channels = 2,
-                BitsPerSample = 16
-            });
-            Memory<byte> buffer = null;
-            frame.NextFrame();
-            frame.GetBuffer(ref buffer);
-            return buffer;
-        }
+                Data = bytes.AsArray().Fuse().Select(s => s / 32768f).AsArray()
+            })
+            .Cast<ISample>()
+            .ToList();
+                
+        return new Sound
+        {
+            Samples = samples,
+            [NumericData.Rate] = inputStream.WaveFormat.SampleRate
+        };
+    }
+
+    public Memory<byte> DecodeFrame(Stream stream, int blockSize)
+    {
+        var frame = FlacFrame.FromStream(stream, new FlacMetadataStreamInfo
+        {
+            SampleRate = 44100,
+            Channels = 2,
+            BitsPerSample = 16
+        });
+        Memory<byte> buffer = null;
+        frame.NextFrame();
+        frame.GetBuffer(ref buffer);
+        return buffer;
     }
 }

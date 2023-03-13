@@ -10,11 +10,11 @@ using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Xa.Converters;
 using RhythmCodex.Xa.Heuristics;
 
-namespace RhythmCodex.Xa.Integration
+namespace RhythmCodex.Xa.Integration;
+
+[TestFixture]
+public class XaDecodeIntegrationTests : BaseIntegrationFixture
 {
-    [TestFixture]
-    public class XaDecodeIntegrationTests : BaseIntegrationFixture
-    {
 //        [Test]
 //        [Explicit]
 //        public void Test_Xa()
@@ -50,45 +50,44 @@ namespace RhythmCodex.Xa.Integration
 //            }
 //        }
         
-        [Test]
-        [Explicit]
-        public void Test_Xa_Via_Bin()
+    [Test]
+    [Explicit]
+    public void Test_Xa_Via_Bin()
+    {
+        var data = File.ReadAllBytes(@"\\tamarat\Games\PS1\Beatmania Gotta Mix 2 Append.img");
+
+        var isoReader = Resolve<ICdSectorStreamReader>();
+        var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
+        var decoder = Resolve<IXaDecoder>();
+        var encoder = Resolve<IRiffPcm16SoundEncoder>();
+        var writer = Resolve<IRiffStreamWriter>();
+        var streamFinder = Resolve<IXaIsoStreamFinder>();
+            
+        var streams = streamFinder.Find(isoReader
+            .Read(new MemoryStream(data), data.Length, true)
+            .Select(s => isoInfoDecoder.Decode(s)));
+
+        var index = 0;
+            
+        foreach (var xa in streams)
         {
-            var data = File.ReadAllBytes(@"\\tamarat\Games\PS1\Beatmania Gotta Mix 2 Append.img");
+            var decoded = decoder.Decode(xa);
 
-            var isoReader = Resolve<ICdSectorStreamReader>();
-            var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
-            var decoder = Resolve<IXaDecoder>();
-            var encoder = Resolve<IRiffPcm16SoundEncoder>();
-            var writer = Resolve<IRiffStreamWriter>();
-            var streamFinder = Resolve<IXaIsoStreamFinder>();
-            
-            var streams = streamFinder.Find(isoReader
-                .Read(new MemoryStream(data), data.Length, true)
-                .Select(s => isoInfoDecoder.Decode(s)));
-
-            var index = 0;
-            
-            foreach (var xa in streams)
+            foreach (var sound in decoded)
             {
-                var decoded = decoder.Decode(xa);
+                sound[NumericData.Rate] = xa.Rate;
+                var encoded = encoder.Encode(sound);
+                var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa");
+                if (!Directory.Exists(outfolder))
+                    Directory.CreateDirectory(outfolder);
 
-                foreach (var sound in decoded)
-                {
-                    sound[NumericData.Rate] = xa.Rate;
-                    var encoded = encoder.Encode(sound);
-                    var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa");
-                    if (!Directory.Exists(outfolder))
-                        Directory.CreateDirectory(outfolder);
-
-                    using var outStream = new MemoryStream();
-                    writer.Write(outStream, encoded);
-                    outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(outfolder, $"{index:000}.wav"), outStream.ToArray());
-                    index++;
-                }
+                using var outStream = new MemoryStream();
+                writer.Write(outStream, encoded);
+                outStream.Flush();
+                File.WriteAllBytes(Path.Combine(outfolder, $"{index:000}.wav"), outStream.ToArray());
+                index++;
             }
         }
-        
     }
+        
 }

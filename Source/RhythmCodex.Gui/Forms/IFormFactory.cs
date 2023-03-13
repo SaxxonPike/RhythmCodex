@@ -1,9 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace RhythmCodex.Gui.Forms
+namespace RhythmCodex.Gui.Forms;
+
+public interface IFormFactory
 {
-    public interface IFormFactory
-    {
-        Form CreateMainForm();
-    }
+    Form CreateMainForm();
 }

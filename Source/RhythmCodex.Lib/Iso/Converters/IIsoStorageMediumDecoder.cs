@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoStorageMediumDecoder
 {
-    public interface IIsoStorageMediumDecoder
-    {
-        IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors);
-    }
+    IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors);
 }

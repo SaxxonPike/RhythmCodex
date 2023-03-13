@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
+namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC;
+
+internal class FlacSubFrameData
 {
-    internal class FlacSubFrameData
-    {
-        public Memory<int> DestinationBuffer;
-        public Memory<int> ResidualBuffer;
-        public readonly FlacPartitionedRiceContent Content = new();
-    }
+    public Memory<int> DestinationBuffer;
+    public Memory<int> ResidualBuffer;
+    public readonly FlacPartitionedRiceContent Content = new();
 }

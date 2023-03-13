@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using RhythmCodex.Xact.Model;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+public interface IXsbStreamWriter
 {
-    public interface IXsbStreamWriter
-    {
-        long Write(Stream stream, XsbFile file);
-    }
+    long Write(Stream stream, XsbFile file);
 }

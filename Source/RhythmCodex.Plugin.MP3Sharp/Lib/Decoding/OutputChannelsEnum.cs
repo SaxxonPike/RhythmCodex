@@ -13,13 +13,12 @@
 //  * Lesser General Public License for more details.
 //  *
 //  ***************************************************************************/
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding;
+
+internal enum OutputChannelsEnum
 {
-    internal enum OutputChannelsEnum
-    {
-        BOTH_CHANNELS = 0,
-        LEFT_CHANNEL = 1,
-        RIGHT_CHANNEL = 2,
-        DOWNMIX_CHANNELS = 3
-    }
+    BOTH_CHANNELS = 0,
+    LEFT_CHANNEL = 1,
+    RIGHT_CHANNEL = 2,
+    DOWNMIX_CHANNELS = 3
 }

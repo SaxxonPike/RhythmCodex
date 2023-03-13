@@ -2,10 +2,9 @@
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Djmain.Converters
+namespace RhythmCodex.Djmain.Converters;
+
+public interface IDjmainSoundDecoder
 {
-    public interface IDjmainSoundDecoder
-    {
-        IDictionary<int, ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples);
-    }
+    IDictionary<int, ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples);
 }

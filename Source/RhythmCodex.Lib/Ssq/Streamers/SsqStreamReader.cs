@@ -4,33 +4,32 @@ using System.Linq;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Streamers
+namespace RhythmCodex.Ssq.Streamers;
+
+[Service]
+public class SsqStreamReader : ISsqStreamReader
 {
-    [Service]
-    public class SsqStreamReader : ISsqStreamReader
+    private readonly IChunkStreamReader _chunkStreamReader;
+
+    public SsqStreamReader(IChunkStreamReader chunkStreamReader)
     {
-        private readonly IChunkStreamReader _chunkStreamReader;
+        _chunkStreamReader = chunkStreamReader;
+    }
 
-        public SsqStreamReader(IChunkStreamReader chunkStreamReader)
+    public IList<SsqChunk> Read(Stream stream)
+    {
+        return ReadInternal(stream).ToArray();
+    }
+
+    private IEnumerable<SsqChunk> ReadInternal(Stream stream)
+    {
+        while (true)
         {
-            _chunkStreamReader = chunkStreamReader;
-        }
+            var chunk = _chunkStreamReader.Read(stream);
+            if (chunk == null)
+                yield break;
 
-        public IList<SsqChunk> Read(Stream stream)
-        {
-            return ReadInternal(stream).ToArray();
-        }
-
-        private IEnumerable<SsqChunk> ReadInternal(Stream stream)
-        {
-            while (true)
-            {
-                var chunk = _chunkStreamReader.Read(stream);
-                if (chunk == null)
-                    yield break;
-
-                yield return chunk;
-            }
+            yield return chunk;
         }
     }
 }

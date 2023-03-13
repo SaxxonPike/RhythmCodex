@@ -1,8 +1,7 @@
-namespace RhythmCodex.Riff.Models
+namespace RhythmCodex.Riff.Models;
+
+public interface IRiffChunk
 {
-    public interface IRiffChunk
-    {
-        string Id { get; }
-        byte[] Data { get; }
-    }
+    string Id { get; }
+    byte[] Data { get; }
 }

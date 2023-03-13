@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+/// <summary>
+///     Marks a class or struct as a data model.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+public class ModelAttribute : Attribute
 {
-    /// <summary>
-    ///     Marks a class or struct as a data model.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public class ModelAttribute : Attribute
-    {
-    }
 }

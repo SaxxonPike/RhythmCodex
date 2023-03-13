@@ -6,69 +6,68 @@ using System.Reflection;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Heuristics
+namespace RhythmCodex.Heuristics;
+
+[Service]
+public class HeuristicTester : IHeuristicTester
 {
-    [Service]
-    public class HeuristicTester : IHeuristicTester
+    private readonly IEnumerable<IHeuristic> _heuristics;
+    private readonly ILogger _logger;
+
+    public HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger)
     {
-        private readonly IEnumerable<IHeuristic> _heuristics;
-        private readonly ILogger _logger;
+        _heuristics = heuristics;
+        _logger = logger;
+    }
 
-        public HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger)
+    public IList<HeuristicResult> Match(Stream stream, long length, params Context[] contexts)
+    {
+        var cache = new CachedStream(stream);
+        var result = new List<HeuristicResult>();
+        foreach (var heuristic in GetHeuristics(contexts))
         {
-            _heuristics = heuristics;
-            _logger = logger;
-        }
-
-        public IList<HeuristicResult> Match(Stream stream, long length, params Context[] contexts)
-        {
-            var cache = new CachedStream(stream);
-            var result = new List<HeuristicResult>();
-            foreach (var heuristic in GetHeuristics(contexts))
+            cache.Rewind();
+            try
             {
-                cache.Rewind();
-                try
-                {
-                    var match = heuristic.Match(new StreamHeuristicReader(cache));
-                    if (match != null)
-                        result.Add(match);
-                }
-                catch (Exception e)
-                {
-                    _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
-                }
+                var match = heuristic.Match(new StreamHeuristicReader(cache));
+                if (match != null)
+                    result.Add(match);
             }
-
-            return result;
-        }
-
-        public IList<HeuristicResult> Match(Memory<byte> data, params Context[] contexts)
-        {
-            var result = new List<HeuristicResult>();
-            foreach (var heuristic in GetHeuristics(contexts))
+            catch (Exception e)
             {
-                try
-                {
-                    var match = heuristic.Match(new MemoryHeuristicReader(data));
-                    if (match != null)
-                        result.Add(match);
-                }
-                catch (Exception e)
-                {
-                    _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
-                }
+                _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
             }
-
-            return result;
         }
 
-        private IEnumerable<IHeuristic> GetHeuristics(Context[] contexts)
+        return result;
+    }
+
+    public IList<HeuristicResult> Match(Memory<byte> data, params Context[] contexts)
+    {
+        var result = new List<HeuristicResult>();
+        foreach (var heuristic in GetHeuristics(contexts))
         {
-            return _heuristics
-                .Where(h => !contexts.Any() ||
-                            h.GetType().GetCustomAttributes<ContextAttribute>()
-                                .SelectMany(a => a.Contexts)
-                                .Intersect(contexts).Any());
+            try
+            {
+                var match = heuristic.Match(new MemoryHeuristicReader(data));
+                if (match != null)
+                    result.Add(match);
+            }
+            catch (Exception e)
+            {
+                _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
+            }
         }
+
+        return result;
+    }
+
+    private IEnumerable<IHeuristic> GetHeuristics(Context[] contexts)
+    {
+        return _heuristics
+            .Where(h => !contexts.Any() ||
+                        h.GetType().GetCustomAttributes<ContextAttribute>()
+                            .SelectMany(a => a.Contexts)
+                            .Intersect(contexts).Any());
     }
 }

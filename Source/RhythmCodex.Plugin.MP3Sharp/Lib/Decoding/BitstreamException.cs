@@ -17,66 +17,65 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding;
+
+/// <summary>
+///     Instances of BitstreamException are thrown
+///     when operations on a Bitstream fail.
+///     <p>
+///     The exception provides details of the exception condition
+///     in two ways:
+///     <ol>
+///         <li>
+///             as an error-code describing the nature of the error
+///         </li>
+///         <br></br>
+///         <li>
+///             as the Throwable instance, if any, that was thrown
+///             indicating that an exceptional condition has occurred.
+///         </li>
+///     </ol>
+///     </p>
+/// </summary>
+[Serializable]
+public sealed class BitstreamException : MP3SharpException
 {
-    /// <summary>
-    ///     Instances of BitstreamException are thrown
-    ///     when operations on a Bitstream fail.
-    ///     <p>
-    ///     The exception provides details of the exception condition
-    ///     in two ways:
-    ///     <ol>
-    ///         <li>
-    ///             as an error-code describing the nature of the error
-    ///         </li>
-    ///         <br></br>
-    ///         <li>
-    ///             as the Throwable instance, if any, that was thrown
-    ///             indicating that an exceptional condition has occurred.
-    ///         </li>
-    ///     </ol>
-    ///     </p>
-    /// </summary>
-    [Serializable]
-    public sealed class BitstreamException : MP3SharpException
+    public BitstreamException(string message, Exception inner) : base(message, inner)
     {
-        public BitstreamException(string message, Exception inner) : base(message, inner)
+        InitBlock();
+    }
+
+    public BitstreamException(int errorcode, Exception inner) : this(GetErrorString(errorcode), inner)
+    {
+        InitBlock();
+        ErrorCode = errorcode;
+    }
+
+    private BitstreamException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        ErrorCode = info.GetInt32("ErrorCode");
+    }
+
+    public int ErrorCode { get; private set; }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        if (info == null)
         {
-            InitBlock();
+            throw new ArgumentNullException(nameof(info));
         }
 
-        public BitstreamException(int errorcode, Exception inner) : this(GetErrorString(errorcode), inner)
-        {
-            InitBlock();
-            ErrorCode = errorcode;
-        }
+        info.AddValue("ErrorCode", ErrorCode);
+        base.GetObjectData(info, context);
+    }
 
-        private BitstreamException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            ErrorCode = info.GetInt32("ErrorCode");
-        }
+    private void InitBlock()
+    {
+        ErrorCode = BitstreamErrors.UNKNOWN_ERROR;
+    }
 
-        public int ErrorCode { get; private set; }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            info.AddValue("ErrorCode", ErrorCode);
-            base.GetObjectData(info, context);
-        }
-
-        private void InitBlock()
-        {
-            ErrorCode = BitstreamErrors.UNKNOWN_ERROR;
-        }
-
-        public static string GetErrorString(int errorcode)
-        {
-            return "Bitstream errorcode " + Convert.ToString(errorcode, 16);
-        }
+    public static string GetErrorString(int errorcode)
+    {
+        return "Bitstream errorcode " + Convert.ToString(errorcode, 16);
     }
 }

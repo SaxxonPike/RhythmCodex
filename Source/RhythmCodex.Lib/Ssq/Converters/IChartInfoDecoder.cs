@@ -1,9 +1,8 @@
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface IChartInfoDecoder
 {
-    public interface IChartInfoDecoder
-    {
-        ChartInfo Decode(int param1);
-    }
+    ChartInfo Decode(int param1);
 }

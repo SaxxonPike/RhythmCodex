@@ -14,22 +14,21 @@
 //  *
 //  ***************************************************************************/
 
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII
-{
-    internal sealed class Layer3SideInfo
-    {
-        public ChannelData[] Channels;
-        public int MainDataBegin;
-        public int PrivateBits;
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII;
 
-        /// <summary>
-        ///     Dummy Constructor
-        /// </summary>
-        public Layer3SideInfo()
-        {
-            Channels = new ChannelData[2];
-            Channels[0] = new ChannelData();
-            Channels[1] = new ChannelData();
-        }
+internal sealed class Layer3SideInfo
+{
+    public ChannelData[] Channels;
+    public int MainDataBegin;
+    public int PrivateBits;
+
+    /// <summary>
+    ///     Dummy Constructor
+    /// </summary>
+    public Layer3SideInfo()
+    {
+        Channels = new ChannelData[2];
+        Channels[0] = new ChannelData();
+        Channels[1] = new ChannelData();
     }
 }

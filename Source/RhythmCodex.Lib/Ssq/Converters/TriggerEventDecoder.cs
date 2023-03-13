@@ -6,18 +6,17 @@ using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+[Service]
+public class TriggerEventDecoder : ITriggerEventDecoder
 {
-    [Service]
-    public class TriggerEventDecoder : ITriggerEventDecoder
+    public IList<IEvent> Decode(IEnumerable<Trigger> triggers)
     {
-        public IList<IEvent> Decode(IEnumerable<Trigger> triggers)
+        return triggers.Select(trigger => new Event
         {
-            return triggers.Select(trigger => new Event
-            {
-                [NumericData.MetricOffset] = (BigRational) trigger.MetricOffset / SsqConstants.MeasureLength,
-                [NumericData.Trigger] = trigger.Id
-            }).Cast<IEvent>().ToList();
-        }
+            [NumericData.MetricOffset] = (BigRational) trigger.MetricOffset / SsqConstants.MeasureLength,
+            [NumericData.Trigger] = trigger.Id
+        }).Cast<IEvent>().ToList();
     }
 }

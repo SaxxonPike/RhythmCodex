@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Psf.Models;
 
-namespace RhythmCodex.Psf.Streamers
+namespace RhythmCodex.Psf.Streamers;
+
+public interface IPsfStreamReader
 {
-    public interface IPsfStreamReader
-    {
-        PsfChunk Read(Stream source);
-    }
+    PsfChunk Read(Stream source);
 }

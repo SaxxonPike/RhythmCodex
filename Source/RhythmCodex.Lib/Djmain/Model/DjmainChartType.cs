@@ -1,8 +1,7 @@
-namespace RhythmCodex.Djmain.Model
+namespace RhythmCodex.Djmain.Model;
+
+public enum DjmainChartType
 {
-    public enum DjmainChartType
-    {
-        Beatmania,
-        Popn
-    }
+    Beatmania,
+    Popn
 }

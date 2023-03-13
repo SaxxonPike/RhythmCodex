@@ -1,7 +1,6 @@
-namespace RhythmCodex.ThirdParty
+namespace RhythmCodex.ThirdParty;
+
+public interface ICryptoProvider
 {
-    public interface ICryptoProvider
-    {
-        byte[] DecryptCtsCbcBlowfish(byte[] data, string cipher);
-    }
+    byte[] DecryptCtsCbcBlowfish(byte[] data, string cipher);
 }

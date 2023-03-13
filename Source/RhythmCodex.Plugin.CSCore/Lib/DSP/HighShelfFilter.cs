@@ -4,52 +4,51 @@
 
 using System;
 
-namespace RhythmCodex.Plugin.CSCore.Lib.DSP
+namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
+
+/// <summary>
+/// Used to apply a highshelf-filter to a signal.
+/// </summary>
+public class HighShelfFilter : BiQuad
 {
     /// <summary>
-    /// Used to apply a highshelf-filter to a signal.
+    /// Initializes a new instance of the <see cref="HighShelfFilter"/> class.
     /// </summary>
-    public class HighShelfFilter : BiQuad
+    /// <param name="sampleRate">The sample rate.</param>
+    /// <param name="frequency">The filter's corner frequency.</param>
+    /// <param name="gainDB">Gain value in dB.</param>
+    public HighShelfFilter(double sampleRate, double frequency, double gainDB)
+        : base(sampleRate, frequency)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HighShelfFilter"/> class.
-        /// </summary>
-        /// <param name="sampleRate">The sample rate.</param>
-        /// <param name="frequency">The filter's corner frequency.</param>
-        /// <param name="gainDB">Gain value in dB.</param>
-        public HighShelfFilter(double sampleRate, double frequency, double gainDB)
-            : base(sampleRate, frequency)
-        {
-            GainDB = gainDB;
-        }
+        GainDB = gainDB;
+    }
 
-        /// <summary>
-        /// Calculates all coefficients.
-        /// </summary>
-        protected override void CalculateBiQuadCoefficients()
-        {
-            const double sqrt2 = 1.4142135623730951;
-            var k = Math.Tan(Math.PI * Frequency / SampleRate);
-            var v = Math.Pow(10, Math.Abs(GainDB) / 20.0);
-            double norm;
-            if (GainDB >= 0)
-            {    // boost
-                norm = 1 / (1 + sqrt2 * k + k * k);
-                A0 = (v + Math.Sqrt(2 * v) * k + k * k) * norm;
-                A1 = 2 * (k * k - v) * norm;
-                A2 = (v - Math.Sqrt(2 * v) * k + k * k) * norm;
-                B1 = 2 * (k * k - 1) * norm;
-                B2 = (1 - sqrt2 * k + k * k) * norm;
-            }
-            else
-            {    // cut
-                norm = 1 / (v + Math.Sqrt(2 * v) * k + k * k);
-                A0 = (1 + sqrt2 * k + k * k) * norm;
-                A1 = 2 * (k * k - 1) * norm;
-                A2 = (1 - sqrt2 * k + k * k) * norm;
-                B1 = 2 * (k * k - v) * norm;
-                B2 = (v - Math.Sqrt(2 * v) * k + k * k) * norm;
-            }
+    /// <summary>
+    /// Calculates all coefficients.
+    /// </summary>
+    protected override void CalculateBiQuadCoefficients()
+    {
+        const double sqrt2 = 1.4142135623730951;
+        var k = Math.Tan(Math.PI * Frequency / SampleRate);
+        var v = Math.Pow(10, Math.Abs(GainDB) / 20.0);
+        double norm;
+        if (GainDB >= 0)
+        {    // boost
+            norm = 1 / (1 + sqrt2 * k + k * k);
+            A0 = (v + Math.Sqrt(2 * v) * k + k * k) * norm;
+            A1 = 2 * (k * k - v) * norm;
+            A2 = (v - Math.Sqrt(2 * v) * k + k * k) * norm;
+            B1 = 2 * (k * k - 1) * norm;
+            B2 = (1 - sqrt2 * k + k * k) * norm;
+        }
+        else
+        {    // cut
+            norm = 1 / (v + Math.Sqrt(2 * v) * k + k * k);
+            A0 = (1 + sqrt2 * k + k * k) * norm;
+            A1 = 2 * (k * k - 1) * norm;
+            A2 = (1 - sqrt2 * k + k * k) * norm;
+            B1 = 2 * (k * k - v) * norm;
+            B2 = (v - Math.Sqrt(2 * v) * k + k * k) * norm;
         }
     }
 }

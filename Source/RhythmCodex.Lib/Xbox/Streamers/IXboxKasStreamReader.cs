@@ -2,10 +2,9 @@
 using System.IO;
 using RhythmCodex.Xbox.Model;
 
-namespace RhythmCodex.Xbox.Streamers
+namespace RhythmCodex.Xbox.Streamers;
+
+public interface IXboxKasStreamReader
 {
-    public interface IXboxKasStreamReader
-    {
-        IEnumerable<XboxKasEntry> Read(Stream kasStream);
-    }
+    IEnumerable<XboxKasEntry> Read(Stream kasStream);
 }

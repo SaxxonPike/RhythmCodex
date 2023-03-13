@@ -2,10 +2,9 @@
 using System.IO;
 using RhythmCodex.Djmain.Model;
 
-namespace RhythmCodex.Djmain.Streamers
+namespace RhythmCodex.Djmain.Streamers;
+
+public interface IDjmainSampleInfoStreamWriter
 {
-    public interface IDjmainSampleInfoStreamWriter
-    {
-        void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions);
-    }
+    void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions);
 }

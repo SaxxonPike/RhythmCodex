@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Meta.Models
+namespace RhythmCodex.Meta.Models;
+
+[Service]
+public class MetadataAggregator : IMetadataAggregator
 {
-    [Service]
-    public class MetadataAggregator : IMetadataAggregator
+    public IMetadata Aggregate(IEnumerable<IMetadata> metadatas)
     {
-        public IMetadata Aggregate(IEnumerable<IMetadata> metadatas)
-        {
-            var result = new Metadata();
-            foreach (var metadata in metadatas)
-                metadata.CopyTo(result);
-            return result;
-        }
+        var result = new Metadata();
+        foreach (var metadata in metadatas)
+            metadata.CopyTo(result);
+        return result;
     }
 }

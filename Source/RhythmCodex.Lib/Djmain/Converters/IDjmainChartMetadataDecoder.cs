@@ -1,10 +1,9 @@
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Djmain.Model;
 
-namespace RhythmCodex.Djmain.Converters
+namespace RhythmCodex.Djmain.Converters;
+
+public interface IDjmainChartMetadataDecoder
 {
-    public interface IDjmainChartMetadataDecoder
-    {
-        void AddMetadata(IChart chart, DjmainChunkFormat format, int index);
-    }
+    void AddMetadata(IChart chart, DjmainChunkFormat format, int index);
 }

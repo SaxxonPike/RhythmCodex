@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Vag.Models;
 
-namespace RhythmCodex.Vag.Streamers
+namespace RhythmCodex.Vag.Streamers;
+
+public interface IVagStreamReader
 {
-    public interface IVagStreamReader
-    {
-        VagChunk Read(Stream stream, int channels, int interleave);
-    }
+    VagChunk Read(Stream stream, int channels, int interleave);
 }

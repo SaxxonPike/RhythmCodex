@@ -14,23 +14,22 @@
 //  *
 //  ***************************************************************************/
 
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII;
+
+internal sealed class SBI
 {
-    internal sealed class SBI
+    public int[] l;
+    public int[] s;
+
+    public SBI()
     {
-        public int[] l;
-        public int[] s;
+        l = new int[23];
+        s = new int[14];
+    }
 
-        public SBI()
-        {
-            l = new int[23];
-            s = new int[14];
-        }
-
-        public SBI(int[] thel, int[] thes)
-        {
-            l = thel;
-            s = thes;
-        }
+    public SBI(int[] thel, int[] thes)
+    {
+        l = thel;
+        s = thes;
     }
 }

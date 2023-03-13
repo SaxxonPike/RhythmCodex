@@ -1,9 +1,8 @@
-namespace RhythmCodex.Infrastructure.Models
+namespace RhythmCodex.Infrastructure.Models;
+
+[Model]
+public class ExtensionMatchedFile
 {
-    [Model]
-    public class ExtensionMatchedFile
-    {
-        public string Extension { get; set; }
-        public string Filename { get; set; }
-    }
+    public string Extension { get; set; }
+    public string Filename { get; set; }
 }

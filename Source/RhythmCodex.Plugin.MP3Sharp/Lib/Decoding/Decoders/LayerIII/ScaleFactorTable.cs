@@ -14,32 +14,31 @@
 //  *
 //  ***************************************************************************/
 
-namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII
+namespace RhythmCodex.Plugin.MP3Sharp.Lib.Decoding.Decoders.LayerIII;
+
+internal sealed class ScaleFactorTable
 {
-    internal sealed class ScaleFactorTable
+    public int[] l;
+    public int[] s;
+
+    public ScaleFactorTable(LayerIIIDecoder enclosingInstance)
     {
-        public int[] l;
-        public int[] s;
+        InitBlock(enclosingInstance);
+        l = new int[5];
+        s = new int[3];
+    }
 
-        public ScaleFactorTable(LayerIIIDecoder enclosingInstance)
-        {
-            InitBlock(enclosingInstance);
-            l = new int[5];
-            s = new int[3];
-        }
+    public ScaleFactorTable(LayerIIIDecoder enclosingInstance, int[] thel, int[] thes)
+    {
+        InitBlock(enclosingInstance);
+        l = thel;
+        s = thes;
+    }
 
-        public ScaleFactorTable(LayerIIIDecoder enclosingInstance, int[] thel, int[] thes)
-        {
-            InitBlock(enclosingInstance);
-            l = thel;
-            s = thes;
-        }
+    public LayerIIIDecoder Enclosing_Instance { get; private set; }
 
-        public LayerIIIDecoder Enclosing_Instance { get; private set; }
-
-        private void InitBlock(LayerIIIDecoder enclosingInstance)
-        {
-            this.Enclosing_Instance = enclosingInstance;
-        }
+    private void InitBlock(LayerIIIDecoder enclosingInstance)
+    {
+        this.Enclosing_Instance = enclosingInstance;
     }
 }

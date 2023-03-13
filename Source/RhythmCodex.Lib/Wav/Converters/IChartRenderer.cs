@@ -3,10 +3,9 @@ using RhythmCodex.Charting.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Models;
 
-namespace RhythmCodex.Wav.Converters
+namespace RhythmCodex.Wav.Converters;
+
+public interface IChartRenderer
 {
-    public interface IChartRenderer
-    {
-        ISound Render(IEnumerable<IEvent> events, IEnumerable<ISound> sounds, ChartRendererOptions options);
-    }
+    ISound Render(IEnumerable<IEvent> events, IEnumerable<ISound> sounds, ChartRendererOptions options);
 }
