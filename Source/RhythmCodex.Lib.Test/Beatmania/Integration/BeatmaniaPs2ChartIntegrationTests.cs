@@ -17,8 +17,8 @@ public class BeatmaniaPs2ChartIntegrationTests : BaseIntegrationFixture
         var expected = archive["01U ZERO.raw"];
 
         var key = Resolve<IBeatmaniaPs2KeyProvider>().GetKeyFor14thStyle();
-        var blowfish = Resolve<ICryptoProvider>();
-        var observed = blowfish.DecryptCtsCbcBlowfish(input, key);
+        var blowfish = Resolve<IBlowfishDecrypter>();
+        var observed = blowfish.Decrypt(input, key);
 
         observed.Should().BeEquivalentTo(expected);
     }

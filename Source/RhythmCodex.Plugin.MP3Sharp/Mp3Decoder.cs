@@ -1,10 +1,10 @@
 using System.IO;
 using System.Linq;
+using MP3Sharp;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
-using RhythmCodex.Plugin.MP3Sharp.Lib;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.ThirdParty;
 

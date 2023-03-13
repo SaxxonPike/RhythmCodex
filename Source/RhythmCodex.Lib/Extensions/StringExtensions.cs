@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using RhythmCodex.Infrastructure;
@@ -9,7 +10,8 @@ namespace RhythmCodex.Extensions;
 /// <summary>
 ///     Extensions to the .NET string class.
 /// </summary>
-public static class StringExtensions
+[DebuggerStepThrough]
+internal static class StringExtensions
 {
     /// <summary>
     ///     Split a string based on a delimiter, enumerating output as opposed to the standard .Split which will

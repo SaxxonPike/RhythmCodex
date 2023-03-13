@@ -7,10 +7,11 @@ namespace RhythmCodex.Plugin.SevenZip;
 [Service]
 public class LzmaDecoder : ILzmaDecoder
 {
-    public byte[] Decode(Stream baseStream, int compressedLength, int decompressedLength, byte[] decoderProperties = null)
+    public byte[] Decode(Stream baseStream, int compressedLength, int decompressedLength,
+        byte[] decoderProperties = null)
     {
-        var lzma = new Compress.LZMA.LzmaDecoder();
-            
+        var lzma = new global::SevenZip.Compression.LZMA.Decoder();
+
         if (decoderProperties != null)
             lzma.SetDecoderProperties(decoderProperties);
 

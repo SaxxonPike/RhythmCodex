@@ -47,8 +47,7 @@ public static class ChartExtensions
         var latestEvent = chart
             .Events
             .Select(ev => ev[NumericData.MetricOffset])
-            .OrderBy(o => o)
-            .Last();
+            .MaxBy(o => o);
         while (latestEvent >= measures.Last())
             measures.Add(measures.Last() + BigRational.One);
 

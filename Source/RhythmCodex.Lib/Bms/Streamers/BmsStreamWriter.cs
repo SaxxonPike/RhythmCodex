@@ -11,7 +11,7 @@ public class BmsStreamWriter : IBmsStreamWriter
 {
     public void Write(Stream stream, IEnumerable<BmsCommand> commands)
     {
-        var writer = new StreamWriter(stream) {AutoFlush = false};
+        var writer = new StreamWriter(stream) { AutoFlush = false };
         foreach (var command in commands)
         {
             var line = new StringBuilder();

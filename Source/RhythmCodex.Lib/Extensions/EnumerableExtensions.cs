@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Extensions;
 
-public static class EnumerableExtensions
+[DebuggerStepThrough]
+internal static class EnumerableExtensions
 {
     /// <summary>
     /// Interprets the object as a list, and creates one if it isn't already a list.

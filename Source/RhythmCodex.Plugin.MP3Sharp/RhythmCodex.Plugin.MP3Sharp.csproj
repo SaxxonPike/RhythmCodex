@@ -6,4 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MP3Sharp" Version="1.0.5" />
+  </ItemGroup>
 </Project>

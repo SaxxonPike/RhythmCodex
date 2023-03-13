@@ -4,7 +4,7 @@ using System.IO;
 namespace RhythmCodex.Extensions;
 
 [DebuggerStepThrough]
-public static class BinaryWriterExtensions
+internal static class BinaryWriterExtensions
 {
     public static void Write24(this BinaryWriter writer, int value)
     {
