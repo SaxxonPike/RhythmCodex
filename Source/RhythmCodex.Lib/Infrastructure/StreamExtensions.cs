@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,10 +19,10 @@ public static class StreamExtensions
             var b = stream.ReadByte();
             if (b <= 0)
                 return buffer.ToArray();
-            buffer.Add(unchecked((byte) b));
+            buffer.Add(unchecked((byte)b));
         }
     }
-        
+
     public static void SkipBytes(this Stream stream, long length)
     {
         var buffer = new byte[BufferSize];
@@ -30,14 +31,14 @@ public static class StreamExtensions
         {
             var count = (length - offset >= BufferSize)
                 ? stream.Read(buffer, 0, BufferSize)
-                : stream.Read(buffer, 0, (int) (length - offset));
+                : stream.Read(buffer, 0, (int)(length - offset));
 
             if (count == 0)
                 break;
             offset += count;
         }
     }
-        
+
     public static byte[] ReadAllBytes(Func<byte[], int, int, int> readFunc)
     {
         var buffer = new byte[BufferSize];
@@ -58,6 +59,7 @@ public static class StreamExtensions
                 break;
             }
         }
+
         return result.ToArray();
     }
 
@@ -65,7 +67,7 @@ public static class StreamExtensions
     {
         return ReadAllBytes(stream.Read);
     }
-        
+
     public static IEnumerable<string> ReadAllLines(this Stream source)
     {
         var reader = new StreamReader(source);
@@ -93,10 +95,10 @@ public static class StreamExtensions
         return result;
     }
 
-    public static int TryRead(this Stream stream, Span<byte> buffer, int length) => 
+    public static int TryRead(this Stream stream, Span<byte> buffer, int length) =>
         stream.ReadAtLeast(buffer, length);
 
-    public static int TryRead(this Stream stream, Span<byte> buffer, int offset, int length) => 
+    public static int TryRead(this Stream stream, Span<byte> buffer, int offset, int length) =>
         stream.ReadAtLeast(buffer.Slice(offset, length), length);
 
     // public static int TryRead(this Stream stream, byte[] buffer, int offset, long count)
@@ -132,10 +134,15 @@ public static class StreamExtensions
     {
         PipeAllBytes(stream.Read, target.Write);
     }
-        
+
     public static long Skip(this Stream stream, long length)
     {
-        var buffer = new byte[Math.Min(length, 65536)];
+        // This will be faster in all cases.
+        if (stream.CanSeek)
+            return stream.Seek(length, SeekOrigin.Current);
+
+        using var bufferOwner = MemoryPool<byte>.Shared.Rent((int)Math.Min(length, 65536));
+        var buffer = bufferOwner.Memory.Span;
         var bufferLength = buffer.Length;
         var result = 0;
 
@@ -153,11 +160,11 @@ public static class StreamExtensions
 
     public static Span<byte> AsSpan(this MemoryStream mem)
     {
-        return mem.GetBuffer().AsSpan(0, (int) mem.Length);
+        return mem.GetBuffer().AsSpan(0, (int)mem.Length);
     }
 
     public static Memory<byte> AsMemory(this MemoryStream mem)
     {
-        return mem.GetBuffer().AsMemory(0, (int) mem.Length);
+        return mem.GetBuffer().AsMemory(0, (int)mem.Length);
     }
 }

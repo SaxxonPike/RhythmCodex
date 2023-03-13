@@ -5,8 +5,9 @@ using System.IO.Compression;
 using RhythmCodex.Chd.Model;
 using RhythmCodex.Compression;
 using RhythmCodex.Extensions;
+using RhythmCodex.Flac.Converters;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.ThirdParty;
+using RhythmCodex.Lzma.Converters;
 
 namespace RhythmCodex.Chd.Streamers;
 

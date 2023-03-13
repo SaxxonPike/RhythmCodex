@@ -1,11 +1,15 @@
 using System.Diagnostics;
 using System.IO;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Extensions;
 
 [DebuggerStepThrough]
 internal static class BinaryWriterExtensions
 {
+    public static void Skip(this BinaryWriter writer, long offset) => 
+        writer.BaseStream.Skip(offset);
+
     public static void Write24(this BinaryWriter writer, int value)
     {
         writer.Write((byte)(value & 0xFF));

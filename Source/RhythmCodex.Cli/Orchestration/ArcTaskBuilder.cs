@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using ClientCommon;
 using RhythmCodex.Arc.Streamers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
@@ -46,7 +47,8 @@ public class ArcTaskBuilder : TaskBuilderBase<ArcTaskBuilder>
                     task.Progress = index / (float) entries.Length;
                     task.Message = $"Extracting {entry.Name}";
                     using var outFile = OpenWriteSingle(task, file, _ => entry.Name);
-                    outFile.Write(_arcLzDecoder.Decode(entry.Data));
+                    using var str = new MemoryStream(entry.Data);
+                    outFile.Write(_arcLzDecoder.Decode(str));
                     outFile.Flush();
                 }
             });

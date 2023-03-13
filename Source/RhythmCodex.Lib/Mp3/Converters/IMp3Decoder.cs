@@ -1,9 +1,9 @@
 using System.IO;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.ThirdParty;
+namespace RhythmCodex.Mp3.Converters;
 
-public interface IOggDecoder
+public interface IMp3Decoder
 {
     ISound Decode(Stream stream);
 }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Flac.Converters;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 

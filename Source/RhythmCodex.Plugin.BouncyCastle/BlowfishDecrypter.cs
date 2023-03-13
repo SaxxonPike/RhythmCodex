@@ -1,9 +1,9 @@
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
+using RhythmCodex.Blowfish.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.ThirdParty;
 
 namespace RhythmCodex.Plugin.BouncyCastle;
 

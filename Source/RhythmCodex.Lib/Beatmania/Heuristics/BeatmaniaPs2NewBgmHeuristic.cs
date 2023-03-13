@@ -1,4 +1,5 @@
 using System.IO;
+using RhythmCodex.Beatmania.Streams;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;

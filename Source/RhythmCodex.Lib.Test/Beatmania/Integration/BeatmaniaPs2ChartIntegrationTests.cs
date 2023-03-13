@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Converters;
-using RhythmCodex.ThirdParty;
+using RhythmCodex.Blowfish.Converters;
 
 namespace RhythmCodex.Beatmania.Integration;
 

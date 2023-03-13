@@ -26,7 +26,7 @@ public class BeatmaniaPs2OldBgmStreamReader : IBeatmaniaPs2OldBgmStreamReader
         var channels = reader.ReadByte();
             
         // skip the rest of the header
-        reader.ReadBytes(0x800 - 9);
+        reader.Skip(0x800 - 9);
 
         var source = reader.ReadBytes(length);
         using var mem = new MemoryStream(source);

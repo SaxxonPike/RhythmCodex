@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.ThirdParty;
+namespace RhythmCodex.Flac.Converters;
 
 public interface IFlacDecoder
 {

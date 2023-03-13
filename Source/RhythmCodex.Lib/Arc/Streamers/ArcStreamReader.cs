@@ -9,6 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Arc.Streamers;
 // source: arcunpack (gergc)
 
+/// <inheritdoc />
 [Service]
 public class ArcStreamReader : IArcStreamReader
 {

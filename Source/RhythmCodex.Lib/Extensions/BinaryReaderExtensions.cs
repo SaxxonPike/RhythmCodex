@@ -1,11 +1,15 @@
 using System.Diagnostics;
 using System.IO;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Extensions;
 
 [DebuggerStepThrough]
 internal static class BinaryReaderExtensions
 {
+    public static void Skip(this BinaryReader reader, long offset) => 
+        reader.BaseStream.Skip(offset);
+
     public static byte[] ReadBytesS(this BinaryReader reader, int count)
     {
         var input = reader.ReadBytes(count);

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace RhythmCodex.ThirdParty;
+namespace RhythmCodex.Lzma.Converters;
 
 public interface ILzmaDecoder
 {

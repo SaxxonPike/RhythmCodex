@@ -6,5 +6,5 @@ namespace RhythmCodex.Beatmania.Streamers;
 
 public interface IBeatmaniaPs2OldChartEventStreamReader
 {
-    IList<BeatmaniaPs2Event> Read(Stream stream, int length);
+    IList<BeatmaniaPs2Event> Read(Stream stream, long length);
 }

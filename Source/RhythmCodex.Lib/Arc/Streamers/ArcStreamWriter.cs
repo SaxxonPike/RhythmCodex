@@ -9,6 +9,7 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Arc.Streamers;
 
+/// <inheritdoc />
 [Service]
 public class ArcStreamWriter : IArcStreamWriter
 {

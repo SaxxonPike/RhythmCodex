@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Flac.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
+using RhythmCodex.Mp3.Converters;
+using RhythmCodex.Ogg.Converters;
 using RhythmCodex.Sounds.Models;
-using RhythmCodex.ThirdParty;
 using RhythmCodex.Wav.Converters;
 
 namespace RhythmCodex.Bms.Converters;

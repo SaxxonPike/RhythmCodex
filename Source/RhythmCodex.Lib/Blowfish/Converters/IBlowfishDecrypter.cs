@@ -1,4 +1,4 @@
-namespace RhythmCodex.ThirdParty;
+namespace RhythmCodex.Blowfish.Converters;
 
 public interface IBlowfishDecrypter
 {

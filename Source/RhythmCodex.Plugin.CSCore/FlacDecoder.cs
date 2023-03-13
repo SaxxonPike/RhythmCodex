@@ -3,12 +3,12 @@ using System.IO;
 using System.Linq;
 using CSCore.Codecs.FLAC;
 using RhythmCodex.Extensions;
+using RhythmCodex.Flac.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC;
 using RhythmCodex.Sounds.Models;
-using RhythmCodex.ThirdParty;
 
 namespace RhythmCodex.Plugin.CSCore;
 

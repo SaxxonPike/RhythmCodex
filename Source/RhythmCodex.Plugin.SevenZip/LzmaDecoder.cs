@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using RhythmCodex.IoC;
-using RhythmCodex.ThirdParty;
+using RhythmCodex.Lzma.Converters;
 
 namespace RhythmCodex.Plugin.SevenZip;
 

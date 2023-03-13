@@ -8,7 +8,7 @@ namespace RhythmCodex.Beatmania.Streamers;
 [Service]
 public class BeatmaniaPs2OldChartEventStreamReader : IBeatmaniaPs2OldChartEventStreamReader
 {
-    public IList<BeatmaniaPs2Event> Read(Stream stream, int length)
+    public IList<BeatmaniaPs2Event> Read(Stream stream, long length)
     {
         throw new System.NotImplementedException();
     }

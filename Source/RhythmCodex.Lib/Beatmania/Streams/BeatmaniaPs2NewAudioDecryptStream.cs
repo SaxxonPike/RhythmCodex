@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using RhythmCodex.Streamers;
 
-namespace RhythmCodex.Beatmania;
+namespace RhythmCodex.Beatmania.Streams;
 
 public class BeatmaniaPs2NewAudioDecryptStream : PassthroughStream
 {
