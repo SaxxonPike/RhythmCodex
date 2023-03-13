@@ -18,7 +18,7 @@ namespace RhythmCodex.Gui.FluentForms
             var result = new TabControl();
             SetDefault(result);
 
-            result.TabIndexChanged += (s, e) => OnChange?.Invoke(result, result.TabIndex);
+            result.TabIndexChanged += (_, _) => OnChange?.Invoke(result, result.TabIndex);
             if (Items != null)
                 result.TabPages.AddRange(Items.Select(tab => (TabPage) tab.Build(state)).ToArray());
             

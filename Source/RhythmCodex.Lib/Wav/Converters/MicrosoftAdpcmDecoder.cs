@@ -19,7 +19,7 @@ namespace RhythmCodex.Wav.Converters
             var buffer = new float[channelSamplesPerFrame];
             var frameSize = fmtChunk.BlockAlign;
             var max = data.Length / frameSize * frameSize;
-            var output = Enumerable.Range(0, channels).Select(i => new List<float>()).ToArray();
+            var output = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToArray();
 
             // Apply coefficients
             var coefficients =

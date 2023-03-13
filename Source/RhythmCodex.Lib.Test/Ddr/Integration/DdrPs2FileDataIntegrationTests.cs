@@ -201,8 +201,8 @@ namespace RhythmCodex.Ddr.Integration
             using var tableSource = new FileStream(StepDataPath, FileMode.Open, FileAccess.Read) {Position = offset};
             var reader = new BinaryReader(tableSource);
             var count = reader.ReadInt32();
-            var offsets = Enumerable.Range(0, count).Select(x => reader.ReadInt32()).ToArray();
-            var lengths = Enumerable.Range(0, count).Select(x => reader.ReadInt32()).ToArray();
+            var offsets = Enumerable.Range(0, count).Select(_ => reader.ReadInt32()).ToArray();
+            var lengths = Enumerable.Range(0, count).Select(_ => reader.ReadInt32()).ToArray();
 
             var decomp = Resolve<IBemaniLzDecoder>();
             var imageReader = Resolve<ITcbStreamReader>();

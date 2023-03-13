@@ -18,7 +18,7 @@ namespace RhythmCodex.Gui.FluentForms
             SetDefault(result);
 
             if (OnClick != null)
-                result.Click += (o, e) => OnClick?.Invoke();
+                result.Click += (_, _) => OnClick?.Invoke();
             if (Items != null)
                 result.DropDownItems.AddRange(Items.Select(i => i.Build(state)).ToArray());
 

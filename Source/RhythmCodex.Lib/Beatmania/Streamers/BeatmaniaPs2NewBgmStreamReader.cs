@@ -19,7 +19,7 @@ namespace RhythmCodex.Beatmania.Streamers
         public BeatmaniaPs2Bgm Read(Stream stream)
         {
             var reader = new BinaryReader(stream);
-            var header = Enumerable.Range(0, 12).Select(i => reader.ReadInt32()).ToArray();
+            var header = Enumerable.Range(0, 12).Select(_ => reader.ReadInt32()).ToArray();
 
             var headerLength = header[2];
             var dataLength = header[3];

@@ -20,7 +20,7 @@ namespace RhythmCodex.Xa.Heuristics
             var currentStreams = mode2Sectors
                 .Where(s => s.Channel != null)
                 .GroupBy(s => s.Channel)
-                .ToDictionary(g => g.Key, g => new List<IsoSectorInfo>());
+                .ToDictionary(g => g.Key, _ => new List<IsoSectorInfo>());
             var streamCount = currentStreams.Max(s => s.Key).Value + 1;
             var currentStream = 0;
 

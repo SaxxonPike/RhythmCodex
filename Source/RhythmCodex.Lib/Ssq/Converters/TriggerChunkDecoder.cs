@@ -19,7 +19,7 @@ namespace RhythmCodex.Ssq.Converters
 
             var metricOffsets = Enumerable
                 .Range(0, count)
-                .Select(i => reader.ReadInt32())
+                .Select(_ => reader.ReadInt32())
                 .ToArray();
 
             return Enumerable

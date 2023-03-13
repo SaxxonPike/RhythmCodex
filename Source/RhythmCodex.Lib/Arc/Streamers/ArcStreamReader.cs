@@ -30,7 +30,7 @@ namespace RhythmCodex.Arc.Streamers
             if (header.Id != 0x19751120)
                 throw new RhythmCodexException("Unrecognized arc ID");
             
-            var directory = Enumerable.Range(0, header.FileCount).Select(i => ReadEntry(reader)).ToList();
+            var directory = Enumerable.Range(0, header.FileCount).Select(_ => ReadEntry(reader)).ToList();
 
             foreach (var entry in directory)
             {

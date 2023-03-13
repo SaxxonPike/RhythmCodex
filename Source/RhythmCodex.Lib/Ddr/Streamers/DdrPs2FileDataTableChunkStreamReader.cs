@@ -82,8 +82,8 @@ namespace RhythmCodex.Ddr.Streamers
             var cacheReader = new BinaryReader(cache);
 
             var entryCount = cacheReader.ReadInt32();
-            var offsets = Enumerable.Range(0, entryCount).Select(x => cacheReader.ReadInt32()).ToArray();
-            var lengths = Enumerable.Range(0, entryCount).Select(x => cacheReader.ReadInt32()).ToArray();
+            var offsets = Enumerable.Range(0, entryCount).Select(_ => cacheReader.ReadInt32()).ToArray();
+            var lengths = Enumerable.Range(0, entryCount).Select(_ => cacheReader.ReadInt32()).ToArray();
             var entries = offsets.Select((e, i) => (Offset: e, Length: lengths[i])).OrderBy(x => x.Offset).ToArray();
             var max = entries.Last().Use(x => x.Length + x.Offset);
 

@@ -90,7 +90,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
             if (scanFlag != FlacPreScanMode.None)
             {
                 var scan = new FlacPreScan(stream);
-                scan.ScanFinished += (s, e) =>
+                scan.ScanFinished += (_, e) =>
                 {
                     onscanFinished?.Invoke(e);
                 };

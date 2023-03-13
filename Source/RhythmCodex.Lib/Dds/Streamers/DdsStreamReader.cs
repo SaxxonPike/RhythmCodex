@@ -31,7 +31,7 @@ namespace RhythmCodex.Dds.Streamers
                 PitchOrLinearSize = reader.ReadInt32(),
                 Depth = reader.ReadInt32(),
                 MipMapCount = reader.ReadInt32(),
-                Reserved1 = Enumerable.Range(0, 11).Select(i => reader.ReadInt32()).ToArray(),
+                Reserved1 = Enumerable.Range(0, 11).Select(_ => reader.ReadInt32()).ToArray(),
                 PixelFormat = ReadPixelFormat(reader),
                 Caps1 = (DdsCaps1) reader.ReadInt32(),
                 Caps2 = reader.ReadInt32(),

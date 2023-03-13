@@ -20,7 +20,7 @@ namespace RhythmCodex.Ssq.Streamers
             var stream = new MemoryStream();
             var result = new List<SsqChunk>();
             chunkStreamer.Setup(x => x.Write(It.IsAny<Stream>(), It.IsAny<SsqChunk>()))
-                .Callback<Stream, SsqChunk>((s, c) => result.Add(c));
+                .Callback<Stream, SsqChunk>((_, c) => result.Add(c));
 
             // Act.
             Subject.Write(stream, chunks);

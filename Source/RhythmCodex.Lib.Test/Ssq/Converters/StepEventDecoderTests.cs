@@ -25,10 +25,10 @@ namespace RhythmCodex.Ssq.Converters
 
             var panelMapper = Mock<IPanelMapper>(mock =>
             {
-                mock.Setup(x => x.Map(0)).Returns<int>(i => new PanelMapping {Panel = 11, Player = 1});
-                mock.Setup(x => x.Map(1)).Returns<int>(i => new PanelMapping {Panel = 22, Player = 2});
-                mock.Setup(x => x.Map(2)).Returns<int>(i => new PanelMapping {Panel = 33, Player = 3});
-                mock.Setup(x => x.Map(3)).Returns<int>(i => new PanelMapping {Panel = 44, Player = 4});
+                mock.Setup(x => x.Map(0)).Returns<int>(_ => new PanelMapping {Panel = 11, Player = 1});
+                mock.Setup(x => x.Map(1)).Returns<int>(_ => new PanelMapping {Panel = 22, Player = 2});
+                mock.Setup(x => x.Map(2)).Returns<int>(_ => new PanelMapping {Panel = 33, Player = 3});
+                mock.Setup(x => x.Map(3)).Returns<int>(_ => new PanelMapping {Panel = 44, Player = 4});
             });
 
             var steps = new[]

@@ -18,7 +18,7 @@ namespace RhythmCodex.Twinkle.Converters
             var length = (definition.SampleEnd - definition.SampleStart);
             var channels = Enumerable
                 .Range(0, stereo ? 2 : 1)
-                .Select(i => new List<float>(length >> (stereo ? 2 : 1)))
+                .Select(_ => new List<float>(length >> (stereo ? 2 : 1)))
                 .ToArray();
             var channelIndex = 0;
             var channelCount = channels.Length;

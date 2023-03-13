@@ -30,8 +30,8 @@ namespace RhythmCodex.Xa.Converters
             var buffer = new float[28];
             var channels = 2;
 
-            var states = Enumerable.Range(0, channels).Select(i => new XaState()).ToList();
-            var samples = Enumerable.Range(0, channels).Select(i => new List<float>()).ToList();
+            var states = Enumerable.Range(0, channels).Select(_ => new XaState()).ToList();
+            var samples = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToList();
 
             using (var mem = new ReadOnlyMemoryStream(chunk.Data))
             using (var reader = new BinaryReader(mem))

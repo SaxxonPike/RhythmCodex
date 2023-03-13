@@ -50,7 +50,7 @@ namespace RhythmCodex.Beatmania.Streamers
 
                 var directoryEntries = Enumerable
                     .Range(0, directoryEntryCount)
-                    .Select(i => new BeatmaniaPsxDirectoryEntry
+                    .Select(_ => new BeatmaniaPsxDirectoryEntry
                     {
                         Offset = reader.ReadInt32() - directorySize,
                         Length = reader.ReadInt32()

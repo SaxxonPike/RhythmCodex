@@ -15,6 +15,6 @@ namespace RhythmCodex.Cli
         /// <inheritdoc />
         public string Description { get; set; }
         /// <inheritdoc />
-        public Func<Args, ITask> TaskFactory { get; set; } = args => throw new Exception("Execute is not defined.");
+        public Func<Args, ITask> TaskFactory { get; set; } = _ => throw new Exception("Execute is not defined.");
     }
 }

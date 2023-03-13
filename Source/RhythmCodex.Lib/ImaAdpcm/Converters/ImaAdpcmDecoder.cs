@@ -19,7 +19,7 @@ namespace RhythmCodex.ImaAdpcm.Converters
             var channels = chunk.Channels;
             var frameSize = (chunk.ChannelSamplesPerFrame * chunk.Channels / 2) + (chunk.Channels * 4);
             var max = (chunk.Data.Length / frameSize) * frameSize;
-            var output = Enumerable.Range(0, channels).Select(i => new List<float>()).ToArray();
+            var output = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToArray();
 
             for (var offset = 0; offset < max; offset += frameSize)
             {

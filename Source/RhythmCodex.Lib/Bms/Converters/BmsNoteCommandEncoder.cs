@@ -31,7 +31,7 @@ namespace RhythmCodex.Bms.Converters
             var maxQ = Math.Max(quantize, (int) ((measureLength + BigRational.OneHalf).GetWholePart() * quantize));
             var q = _quantizer.GetQuantization(eventList.Select(e => e.Offset), BigInteger.One, maxQ);
 
-            var buffer = Enumerable.Range(0, q).Select(i => (BigRational?) null).ToArray();
+            var buffer = Enumerable.Range(0, q).Select(_ => (BigRational?) null).ToArray();
             foreach (var ev in eventList)
             {
                 var i = (int) (ev.Offset * q);

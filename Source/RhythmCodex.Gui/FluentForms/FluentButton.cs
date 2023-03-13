@@ -8,7 +8,7 @@ namespace RhythmCodex.Gui.FluentForms
         {
             var result = new Button();
             SetDefault(result);
-            result.Click += (o, e) => OnClick?.Invoke();
+            result.Click += (_, _) => OnClick?.Invoke();
             UpdateMap(state, result);
             return result;
         }

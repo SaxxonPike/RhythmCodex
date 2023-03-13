@@ -277,7 +277,7 @@ namespace RhythmCodex.Chd.Streamers
                     };
                     break;
                 case 0x4C: // L
-                    postProcess = buffer => { };
+                    postProcess = _ => { };
                     break;
                 default:
                     throw new Exception($"Unknown FLAC endian type {endian:X2}");

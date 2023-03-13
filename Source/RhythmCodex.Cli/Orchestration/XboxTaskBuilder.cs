@@ -74,7 +74,7 @@ namespace RhythmCodex.Cli.Orchestration
                     foreach (var entry in _xboxHbnStreamReader.Read(stream, OpenRead(task, GetInputFileDirect(binFile))))
                     {
                         using var outStream =
-                            OpenWriteMulti(task, file, i => entry.Name);
+                            OpenWriteMulti(task, file, _ => entry.Name);
                         var writer = new BinaryWriter(outStream);
                         writer.Write(entry.Data);
                         outStream.Flush();
@@ -103,7 +103,7 @@ namespace RhythmCodex.Cli.Orchestration
                     foreach (var entry in _xboxIsoStreamReader.Read(stream, stream.Length))
                     {
                         using (var outStream =
-                               OpenWriteMulti(task, file, i => entry.FileName))
+                               OpenWriteMulti(task, file, _ => entry.FileName))
                         {
                             var writer = new BinaryWriter(outStream);
                             writer.Write(_xboxIsoStreamReader.Extract(stream, entry));
@@ -180,7 +180,7 @@ namespace RhythmCodex.Cli.Orchestration
                             }).Single();
 
                             var encoded = _riffPcm16SoundEncoder.Encode(sound);
-                            using var outStream = OpenWriteMulti(task, file, i => $"{entry.Name}.wav");
+                            using var outStream = OpenWriteMulti(task, file, _ => $"{entry.Name}.wav");
                             _riffStreamWriter.Write(outStream, encoded);
                             outStream.Flush();
                         }
@@ -196,7 +196,7 @@ namespace RhythmCodex.Cli.Orchestration
                             }).Single();
 
                             var encoded = _riffPcm16SoundEncoder.Encode(sound);
-                            using var outStream = OpenWriteMulti(task, file, i => $"{entry.Name}-preview.wav");
+                            using var outStream = OpenWriteMulti(task, file, _ => $"{entry.Name}-preview.wav");
                             _riffStreamWriter.Write(outStream, encoded);
                             outStream.Flush();
                         }

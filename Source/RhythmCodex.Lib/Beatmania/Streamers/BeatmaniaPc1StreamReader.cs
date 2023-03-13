@@ -17,7 +17,7 @@ namespace RhythmCodex.Beatmania.Streamers
             var reader = new BinaryReader(new ReadOnlyMemoryStream(buffer));
             
             var offsets = Enumerable.Range(0, 12)
-                .ToDictionary(i => i, i =>
+                .ToDictionary(i => i, _ =>
                 {
                     var result = reader.ReadInt32();
                     reader.ReadInt32(); // length

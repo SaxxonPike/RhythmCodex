@@ -37,7 +37,7 @@ namespace RhythmCodex.Cli.Orchestration.Infrastructure
         {
             BuiltTask result = null;
             result = new BuiltTask(name, () => task(result));
-            result.MessageUpdated += (sender, message) => Logger.Info(message);
+            result.MessageUpdated += (_, message) => Logger.Info(message);
             return result;
         }
 

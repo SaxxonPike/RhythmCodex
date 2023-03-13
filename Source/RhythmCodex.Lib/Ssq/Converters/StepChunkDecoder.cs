@@ -18,7 +18,7 @@ namespace RhythmCodex.Ssq.Converters
             var metricOffsets = Enumerable
                 .Range(0, count)
                 // ReSharper disable once AccessToDisposedClosure
-                .Select(i => reader.ReadInt32())
+                .Select(_ => reader.ReadInt32())
                 .AsList();
 
             var panels = reader.ReadBytes(count);

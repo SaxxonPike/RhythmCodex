@@ -99,18 +99,18 @@ namespace RhythmCodex.Gui.FluentForms
             base.SetDefault(control);
 
             if (OnClick != null)
-                control.Click += (o, e) => OnClick?.Invoke();
+                control.Click += (_, _) => OnClick?.Invoke();
             if (OnEnter != null)
-                control.Enter += (o, e) => OnEnter?.Invoke();
+                control.Enter += (_, _) => OnEnter?.Invoke();
             if (OnLeave != null)
-                control.Leave += (o, e) => OnLeave?.Invoke();
+                control.Leave += (_, _) => OnLeave?.Invoke();
         }
 
         protected override void SetDefault(ToolStripItem toolStripItem)
         {
             base.SetDefault(toolStripItem);
             if (OnClick != null)
-                toolStripItem.Click += (o, e) => OnClick?.Invoke();
+                toolStripItem.Click += (_, _) => OnClick?.Invoke();
         }
     }
 

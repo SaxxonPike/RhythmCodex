@@ -27,7 +27,7 @@ namespace RhythmCodex.Extensions
             if (streamCount == 1)
                 return new List<IList<T>> {data.ToList()};
             
-            var result = Enumerable.Range(0, streamCount).Select(i => new List<T>()).Cast<IList<T>>().ToList();
+            var result = Enumerable.Range(0, streamCount).Select(_ => new List<T>()).Cast<IList<T>>().ToList();
             var index = 0;
             var channel = 0;
             

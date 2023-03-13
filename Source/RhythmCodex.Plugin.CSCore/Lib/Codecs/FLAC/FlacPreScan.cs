@@ -53,7 +53,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC
 
             if (mode == FlacPreScanMode.Async)
             {
-                ThreadPool.QueueUserWorkItem(o =>
+                ThreadPool.QueueUserWorkItem(_ =>
                 {
                     Frames = RunScan(streamInfo);
                     _isRunning = false;

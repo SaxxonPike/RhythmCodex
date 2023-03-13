@@ -24,7 +24,7 @@ namespace RhythmCodex.Xbox.Streamers
             var count = int.Parse(hbnReader.ReadLine());
             var entries = Enumerable
                 .Range(0, count)
-                .Select(i =>
+                .Select(_ =>
                 {
                     var definition = hbnReader.ReadLine().Split(',');
                     return new XboxHbnDefinition

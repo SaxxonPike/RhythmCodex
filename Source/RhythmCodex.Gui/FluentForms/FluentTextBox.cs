@@ -12,17 +12,17 @@ namespace RhythmCodex.Gui.FluentForms
             result.ScrollBars = ScrollBars;
             result.WordWrap = WordWrap;
             if (OnChange != null)
-                result.TextChanged += (o, e) => OnChange?.Invoke(result, result.Text);
+                result.TextChanged += (_, _) => OnChange?.Invoke(result, result.Text);
 
             result.AllowDrop = AllowDrop;
 
-            result.DragEnter += (o, e) =>
+            result.DragEnter += (_, e) =>
             {
                 if (result.AllowDrop && e.Data.GetDataPresent(DataFormats.FileDrop))
                     e.Effect = DragDropEffects.Link;
             };
 
-            result.DragDrop += (o, e) =>
+            result.DragDrop += (_, e) =>
             {
                 if (result.AllowDrop && e.Data.GetDataPresent(DataFormats.FileDrop))
                     result.Text = string.Join('|', (string[]) e.Data.GetData(DataFormats.FileDrop));

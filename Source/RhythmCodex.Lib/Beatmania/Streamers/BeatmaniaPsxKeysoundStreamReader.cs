@@ -30,7 +30,7 @@ namespace RhythmCodex.Beatmania.Streamers
 
             var keysounds = Enumerable
                 .Range(0, directoryLength / 0x10)
-                .Select(i => new BeatmaniaPsxKeysound
+                .Select(_ => new BeatmaniaPsxKeysound
                 {
                     DirectoryEntry = new BeatmaniaPsxKeysoundDirectoryEntry
                     {

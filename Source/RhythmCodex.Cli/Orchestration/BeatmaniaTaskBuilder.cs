@@ -195,7 +195,7 @@ namespace RhythmCodex.Cli.Orchestration
                             var decoded = _beatmaniaPcAudioDecoder.Decode(sound);
                             var outSound = _audioDsp.ApplyEffects(decoded);
                             using (var outStream =
-                                   OpenWriteMulti(task, file, i => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
+                                   OpenWriteMulti(task, file, _ => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
                             {
                                 var encoded = _riffPcm16SoundEncoder.Encode(outSound);
                                 _riffStreamWriter.Write(outStream, encoded);
@@ -292,7 +292,7 @@ namespace RhythmCodex.Cli.Orchestration
                         foreach (var chart in decoded.Charts)
                         {
                             using var outStream = OpenWriteMulti(task, file,
-                                i => Path.Combine(chunkPath,
+                                _ => Path.Combine(chunkPath,
                                     $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.render.wav"));
                             var rendered = _chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
                             var normalized = _audioDsp.Normalize(rendered, 1.0f, true);
@@ -328,7 +328,7 @@ namespace RhythmCodex.Cli.Orchestration
                     var outSound = _audioDsp.ApplyEffects(_audioDsp.ApplyResampling(sound, _resamplerProvider.GetBest(), 44100));
                     using var outStream =
                         OpenWriteMulti(task, file,
-                            i => Path.Combine(path,
+                            _ => Path.Combine(path,
                                 $"{Alphabet.EncodeAlphanumeric((int) sound[NumericData.Id], 4)}.wav"));
                     var encoded = _riffPcm16SoundEncoder.Encode(outSound);
                     _riffStreamWriter.Write(outStream, encoded);
@@ -344,7 +344,7 @@ namespace RhythmCodex.Cli.Orchestration
                     var encoded = _bmsEncoder.Encode(chart);
                     using var outStream =
                         OpenWriteMulti(task, file,
-                            i => Path.Combine(path,
+                            _ => Path.Combine(path,
                                 $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme"));
                     _bmsStreamWriter.Write(outStream, encoded);
                 }

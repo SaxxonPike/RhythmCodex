@@ -32,7 +32,7 @@ namespace RhythmCodex.Compression
             if (newNodes != null)
                 _huffNode = newNodes;
             else
-                _huffNode = Enumerable.Range(0, newNumCodes).Select(i => new HuffmanNode()).ToArray();
+                _huffNode = Enumerable.Range(0, newNumCodes).Select(_ => new HuffmanNode()).ToArray();
         }
 
         private void AssignCanonicalCodes()

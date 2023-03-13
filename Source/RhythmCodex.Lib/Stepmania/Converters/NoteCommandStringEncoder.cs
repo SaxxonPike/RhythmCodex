@@ -65,7 +65,7 @@ namespace RhythmCodex.Stepmania.Converters
                 var half = new BigRational(1, quantization * 2);
 
                 var grid = Enumerable.Range(0, quantization)
-                    .Select(i => Enumerable.Repeat(NoteType.None, columns).ToArray()).ToArray();
+                    .Select(_ => Enumerable.Repeat(NoteType.None, columns).ToArray()).ToArray();
 
                 foreach (var note in measureNotes)
                 {

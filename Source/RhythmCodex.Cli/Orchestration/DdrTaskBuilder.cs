@@ -280,7 +280,7 @@ namespace RhythmCodex.Cli.Orchestration
                     _sifSmMetadataChanger.Apply(sm, sif);
 
                     smFile.Dispose();
-                    using var outStream = OpenWriteSingle(task, inputFile, i => $"{name}_all.sm");
+                    using var outStream = OpenWriteSingle(task, inputFile, _ => $"{name}_all.sm");
                     _smStreamWriter.Write(outStream, sm);
                     outStream.Flush();
                 }

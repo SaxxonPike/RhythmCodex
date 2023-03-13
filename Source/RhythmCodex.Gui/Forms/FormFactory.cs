@@ -89,14 +89,14 @@ namespace RhythmCodex.Gui.Forms
                 AfterBuild = x =>
                 {
                     x.Control.MainMenuStrip = x.GetControl<MenuStrip>(Ids.MainFormMenu);
-                    progressTimer.Tick += (s, e) => UpdateProgress(x.GetControl<TableLayoutPanel>(Ids.ProgressTable));
+                    progressTimer.Tick += (_, _) => UpdateProgress(x.GetControl<TableLayoutPanel>(Ids.ProgressTable));
                 },
                 MinimumSize = new Size(640, 480),
                 MaximumSize = new Size(640, int.MaxValue)
             };
 
             var builtForm = (Form) form.Build();
-            builtForm.Closing += (s, e) => progressTimer.Dispose();
+            builtForm.Closing += (_, _) => progressTimer.Dispose();
 
             progressTimer.Start();
 
