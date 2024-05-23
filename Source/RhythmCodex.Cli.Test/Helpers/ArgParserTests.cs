@@ -26,7 +26,7 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
     public void Parse_ParsesSingleKeySingleValue()
     {
         // Arrange.
-        var argKind = Create<char>();
+        var argKind = OneOf(CharacterSets.AsciiLetters);
         var argValue = Create<string>();
         var data = new[] {$"-{argKind}", argValue};
 
@@ -42,7 +42,7 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
     public void Parse_ParsesSingleKeyMultiValue()
     {
         // Arrange.
-        var argKind = Create<char>();
+        var argKind = OneOf(CharacterSets.AsciiLetters);
         var argValues = CreateMany<string>(2);
         var data = new[] {$"-{argKind}", argValues[0], $"-{argKind}", argValues[1]};
 
@@ -58,7 +58,7 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
     public void Parse_ParsesMultiKeyMultiValue()
     {
         // Arrange.
-        var argKinds = CreateMany<char>(2);
+        var argKinds = ManyOf(CharacterSets.AsciiLetters, 2);
         var argValues = CreateMany<string>(2);
         var data = new[] {$"-{argKinds[0]}", argValues[0], $"-{argKinds[1]}", argValues[1]};
 

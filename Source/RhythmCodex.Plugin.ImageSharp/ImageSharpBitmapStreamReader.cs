@@ -1,6 +1,8 @@
 ﻿using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Graphics.Models;
 using RhythmCodex.IoC;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace RhythmCodex.Plugin.ImageSharp;
 

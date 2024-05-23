@@ -109,4 +109,39 @@ public abstract class BaseTestFixture
     {
         return _fixture.Value.CreateMany<T>(count).ToArray();
     }
+
+    /// <summary>
+    ///     Chooses one item at random from the specified set.
+    /// </summary>
+    protected T OneOf<T>(IReadOnlyList<T> items)
+    {
+        return items[TestContext.CurrentContext.Random.Next(items.Count)];
+    }
+
+    /// <summary>
+    ///     Chooses one item at random from the specified set.
+    /// </summary>
+    protected T OneOf<T>(IEnumerable<T> items)
+    {
+        return OneOf(items.ToArray());
+    }
+    
+    /// <summary>
+    ///     Chooses one item at random from the specified set.
+    /// </summary>
+    protected T[] ManyOf<T>(IReadOnlyList<T> items, int count)
+    {
+        var result = new T[count];
+        for (var i = 0; i < count; i++)
+            result[i] = items[TestContext.CurrentContext.Random.Next(items.Count)];
+        return result;
+    }
+    
+    /// <summary>
+    ///     Chooses one item at random from the specified set.
+    /// </summary>
+    protected T[] ManyOf<T>(IEnumerable<T> items, int count)
+    {
+        return ManyOf(items.ToArray(), count);
+    }
 }
