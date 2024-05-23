@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using RhythmCodex.Dds.Models;
 
-namespace RhythmCodex.Dds.Streamers
+namespace RhythmCodex.Dds.Streamers;
+
+public interface IDdsStreamReader
 {
-    public interface IDdsStreamReader
-    {
-        DdsImage Read(Stream source, int length);
-    }
+    DdsImage Read(Stream source, int length);
 }

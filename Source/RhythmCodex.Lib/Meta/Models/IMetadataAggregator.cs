@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
-namespace RhythmCodex.Meta.Models
+namespace RhythmCodex.Meta.Models;
+
+public interface IMetadataAggregator
 {
-    public interface IMetadataAggregator
-    {
-        IMetadata Aggregate(IEnumerable<IMetadata> metadatas);
-    }
+    IMetadata Aggregate(IEnumerable<IMetadata> metadatas);
 }

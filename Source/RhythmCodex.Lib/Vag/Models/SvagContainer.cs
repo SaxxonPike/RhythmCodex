@@ -1,11 +1,10 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Vag.Models
+namespace RhythmCodex.Vag.Models;
+
+[Model]
+public class SvagContainer
 {
-    [Model]
-    public class SvagContainer
-    {
-        public BigRational SampleRate { get; set; }
-        public VagChunk VagChunk { get; set; }
-    }
+    public BigRational SampleRate { get; set; }
+    public VagChunk VagChunk { get; set; }
 }

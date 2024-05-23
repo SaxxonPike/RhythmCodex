@@ -1,9 +1,8 @@
-namespace RhythmCodex.Tga.Models
+namespace RhythmCodex.Tga.Models;
+
+public enum TgaInterleave
 {
-    public enum TgaInterleave
-    {
-        None = 0,
-        TwoWay = 1,
-        FourWay = 2
-    }
+    None = 0,
+    TwoWay = 1,
+    FourWay = 2
 }

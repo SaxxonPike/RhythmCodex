@@ -1,9 +1,8 @@
 using System.IO;
 
-namespace RhythmCodex.Compression
+namespace RhythmCodex.Compression;
+
+public interface IBemaniLzDecoder
 {
-    public interface IBemaniLzDecoder
-    {
-        byte[] Decode(Stream source);
-    }
+    byte[] Decode(Stream source);
 }

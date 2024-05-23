@@ -2,37 +2,36 @@
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace RhythmCodex.Extensions
+namespace RhythmCodex.Extensions;
+
+[TestFixture]
+public class EnumerableExtensionsTests : BaseTestFixture
 {
-    [TestFixture]
-    public class EnumerableExtensionsTests : BaseTestFixture
+    [Test]
+    public void AsList_ConvertsNonListsToList()
     {
-        [Test]
-        public void AsList_ConvertsNonListsToList()
-        {
-            // Arrange.
-            var data = CreateMany<int>().Select(i => i).ToArray();
+        // Arrange.
+        var data = CreateMany<int>().Select(i => i).ToArray();
 
-            // Act.
-            var output = data.Select(d => d).AsList();
+        // Act.
+        var output = data.Select(d => d).AsList();
 
-            // Assert.
-            output.Should().BeEquivalentTo(data);
-            output.Should().NotBeSameAs(data);
-        }
+        // Assert.
+        output.Should().BeEquivalentTo(data);
+        output.Should().NotBeSameAs(data);
+    }
 
-        [Test]
-        public void AsList_DoesNotConvertLists()
-        {
-            // Arrange.
-            var data = CreateMany<int>().ToArray();
+    [Test]
+    public void AsList_DoesNotConvertLists()
+    {
+        // Arrange.
+        var data = CreateMany<int>().ToArray();
 
-            // Act.
-            var output = data.AsList();
+        // Act.
+        var output = data.AsList();
 
-            // Assert.
-            output.Should().BeEquivalentTo(data);
-            output.Should().BeSameAs(data);
-        }
+        // Assert.
+        output.Should().BeEquivalentTo(data);
+        output.Should().BeSameAs(data);
     }
 }

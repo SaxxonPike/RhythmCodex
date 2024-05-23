@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface ITimingChunkDecoder
 {
-    public interface ITimingChunkDecoder
-    {
-        IList<Timing> Convert(ReadOnlyMemory<byte> data);
-    }
+    IList<Timing> Convert(ReadOnlyMemory<byte> data);
 }

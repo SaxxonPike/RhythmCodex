@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface ITimingChunkEncoder
 {
-    public interface ITimingChunkEncoder
-    {
-        byte[] Convert(IEnumerable<Timing> timings);
-    }
+    byte[] Convert(IEnumerable<Timing> timings);
 }

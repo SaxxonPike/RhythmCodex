@@ -1,9 +1,8 @@
 using System.IO;
 
-namespace RhythmCodex.Beatmania.Streamers
+namespace RhythmCodex.Beatmania.Streamers;
+
+public interface IEncryptedBeatmaniaPcAudioStreamReader
 {
-    public interface IEncryptedBeatmaniaPcAudioStreamReader
-    {
-        byte[] Decrypt(Stream source, long length);
-    }
+    byte[] Decrypt(Stream source, long length);
 }

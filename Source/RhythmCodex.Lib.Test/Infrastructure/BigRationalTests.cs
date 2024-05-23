@@ -1,7 +1,6 @@
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+public class BigRationalTests
 {
-    public class BigRationalTests
-    {
         
-    }
 }

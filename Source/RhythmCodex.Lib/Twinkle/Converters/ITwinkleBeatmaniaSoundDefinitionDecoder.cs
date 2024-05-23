@@ -1,10 +1,9 @@
 using System;
 using RhythmCodex.Twinkle.Model;
 
-namespace RhythmCodex.Twinkle.Converters
+namespace RhythmCodex.Twinkle.Converters;
+
+public interface ITwinkleBeatmaniaSoundDefinitionDecoder
 {
-    public interface ITwinkleBeatmaniaSoundDefinitionDecoder
-    {
-        TwinkleBeatmaniaSoundDefinition Decode(ReadOnlySpan<byte> data);
-    }
+    TwinkleBeatmaniaSoundDefinition Decode(ReadOnlySpan<byte> data);
 }

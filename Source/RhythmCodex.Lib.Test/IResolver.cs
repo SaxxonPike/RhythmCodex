@@ -1,7 +1,6 @@
-namespace RhythmCodex
+namespace RhythmCodex;
+
+public interface IResolver
 {
-    public interface IResolver
-    {
-        T Resolve<T>();
-    }
+    T Resolve<T>();
 }

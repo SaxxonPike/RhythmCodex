@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Riff.Processing
+namespace RhythmCodex.Riff.Processing;
+
+public interface ISoundConsolidator
 {
-    public interface ISoundConsolidator
-    {
-        void Consolidate(IEnumerable<ISound> sounds, IEnumerable<IEvent> events);
-    }
+    void Consolidate(IEnumerable<ISound> sounds, IEnumerable<IEvent> events);
 }

@@ -1,10 +1,9 @@
 using System;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoBootRecordDecoder
 {
-    public interface IIsoBootRecordDecoder
-    {
-        IsoBootRecord Decode(ReadOnlySpan<byte> data);
-    }
+    IsoBootRecord Decode(ReadOnlySpan<byte> data);
 }

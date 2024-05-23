@@ -1,12 +1,11 @@
-namespace RhythmCodex.Xact.Model
+namespace RhythmCodex.Xact.Model;
+
+public enum XwbSegIdx
 {
-    public enum XwbSegIdx
-    {
-        BankData = 0,
-        EntryMetaData,
-        SeekTables,
-        EntryNames,
-        EntryWaveData,
-        Count
-    }
+    BankData = 0,
+    EntryMetaData,
+    SeekTables,
+    EntryNames,
+    EntryWaveData,
+    Count
 }

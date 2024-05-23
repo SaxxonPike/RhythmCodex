@@ -1,10 +1,9 @@
 using RhythmCodex.Riff.Models;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Riff.Converters
+namespace RhythmCodex.Riff.Converters;
+
+public interface IRiffPcm16SoundEncoder
 {
-    public interface IRiffPcm16SoundEncoder
-    {
-        IRiffContainer Encode(ISound sound);
-    }
+    IRiffContainer Encode(ISound sound);
 }

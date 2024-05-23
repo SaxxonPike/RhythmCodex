@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace RhythmCodex.Djmain.Model
+namespace RhythmCodex.Djmain.Model;
+
+public interface IDjmainSample
 {
-    public interface IDjmainSample
-    {
-        IList<byte> Data { get; }
-        IDjmainSampleInfo Info { get; }
-    }
+    IList<byte> Data { get; }
+    IDjmainSampleInfo Info { get; }
 }

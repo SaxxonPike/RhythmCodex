@@ -2,10 +2,9 @@
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface ISsqDecoder
 {
-    public interface ISsqDecoder
-    {
-        IList<IChart> Decode(IEnumerable<SsqChunk> data);
-    }
+    IList<IChart> Decode(IEnumerable<SsqChunk> data);
 }

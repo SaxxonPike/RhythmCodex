@@ -4,35 +4,34 @@
 
 using System;
 
-namespace RhythmCodex.Plugin.CSCore.Lib.DSP
+namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
+
+/// <summary>
+/// Used to apply a notch-filter to a signal.
+/// </summary>
+public class NotchFilter : BiQuad
 {
     /// <summary>
-    /// Used to apply a notch-filter to a signal.
+    /// Initializes a new instance of the <see cref="NotchFilter"/> class.
     /// </summary>
-    public class NotchFilter : BiQuad
+    /// <param name="sampleRate">The sample rate.</param>
+    /// <param name="frequency">The filter's corner frequency.</param>
+    public NotchFilter(double sampleRate, double frequency) 
+        : base(sampleRate, frequency)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NotchFilter"/> class.
-        /// </summary>
-        /// <param name="sampleRate">The sample rate.</param>
-        /// <param name="frequency">The filter's corner frequency.</param>
-        public NotchFilter(double sampleRate, double frequency) 
-            : base(sampleRate, frequency)
-        {
-        }
+    }
 
-        /// <summary>
-        /// Calculates all coefficients.
-        /// </summary>
-        protected override void CalculateBiQuadCoefficients()
-        {
-            var k = Math.Tan(Math.PI * Frequency / SampleRate);
-            var norm = 1 / (1 + k / Q + k * k);
-            A0 = (1 + k * k) * norm;
-            A1 = 2 * (k * k - 1) * norm;
-            A2 = A0;
-            B1 = A1;
-            B2 = (1 - k / Q + k * k) * norm;
-        }
+    /// <summary>
+    /// Calculates all coefficients.
+    /// </summary>
+    protected override void CalculateBiQuadCoefficients()
+    {
+        var k = Math.Tan(Math.PI * Frequency / SampleRate);
+        var norm = 1 / (1 + k / Q + k * k);
+        A0 = (1 + k * k) * norm;
+        A1 = 2 * (k * k - 1) * norm;
+        A2 = A0;
+        B1 = A1;
+        B2 = (1 - k / Q + k * k) * norm;
     }
 }

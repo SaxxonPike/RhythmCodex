@@ -1,14 +1,13 @@
-﻿namespace RhythmCodex.Sounds.Providers
+﻿namespace RhythmCodex.Sounds.Providers;
+
+public enum FilterType
 {
-    public enum FilterType
-    {
-        Invalid,
-        LowPass,
-        BandPass,
-        HighPass,
-        Notch,
-        Peak,
-        LowShelf,
-        HighShelf
-    }
+    Invalid,
+    LowPass,
+    BandPass,
+    HighPass,
+    Notch,
+    Peak,
+    LowShelf,
+    HighShelf
 }

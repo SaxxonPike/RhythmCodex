@@ -2,10 +2,9 @@
 using System.IO;
 using RhythmCodex.Djmain.Model;
 
-namespace RhythmCodex.Djmain.Streamers
+namespace RhythmCodex.Djmain.Streamers;
+
+public interface IDjmainChunkStreamReader
 {
-    public interface IDjmainChunkStreamReader
-    {
-        IEnumerable<DjmainChunk> Read(Stream stream);
-    }
+    IEnumerable<DjmainChunk> Read(Stream stream);
 }

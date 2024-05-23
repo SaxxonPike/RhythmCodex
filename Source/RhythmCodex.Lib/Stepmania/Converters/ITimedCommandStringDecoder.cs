@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+/// <summary>
+///     Decodes key=value pairs for tags such as BPMs and Stops.
+/// </summary>
+public interface ITimedCommandStringDecoder
 {
     /// <summary>
-    ///     Decodes key=value pairs for tags such as BPMs and Stops.
+    ///     Decode key=value pairs for the specified event string.
     /// </summary>
-    public interface ITimedCommandStringDecoder
-    {
-        /// <summary>
-        ///     Decode key=value pairs for the specified event string.
-        /// </summary>
-        IList<TimedEvent> Decode(string events);
-    }
+    IList<TimedEvent> Decode(string events);
 }

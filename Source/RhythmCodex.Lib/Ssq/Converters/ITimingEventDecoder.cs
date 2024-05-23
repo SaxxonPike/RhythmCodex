@@ -2,10 +2,9 @@
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+public interface ITimingEventDecoder
 {
-    public interface ITimingEventDecoder
-    {
-        IList<IEvent> Decode(TimingChunk timingChunk);
-    }
+    IList<IEvent> Decode(TimingChunk timingChunk);
 }

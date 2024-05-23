@@ -1,11 +1,10 @@
 ﻿using System.Drawing;
 
-namespace RhythmCodex.Gui.Forms
+namespace RhythmCodex.Gui.Forms;
+
+public interface IFontFactory
 {
-    public interface IFontFactory
-    {
-        Font GetNormal();
-        Font GetNormalDark();
-        Font GetLarge();
-    }
+    Font GetNormal();
+    Font GetNormalDark();
+    Font GetLarge();
 }

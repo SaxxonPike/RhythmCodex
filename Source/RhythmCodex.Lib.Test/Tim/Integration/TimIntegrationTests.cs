@@ -1,7 +1,6 @@
-namespace RhythmCodex.Tim.Integration
+namespace RhythmCodex.Tim.Integration;
+
+public class TimIntegrationTests : BaseIntegrationFixture
 {
-    public class TimIntegrationTests : BaseIntegrationFixture
-    {
-        // TODO: this whole ass fixture
-    }
+    // TODO: this whole ass fixture
 }

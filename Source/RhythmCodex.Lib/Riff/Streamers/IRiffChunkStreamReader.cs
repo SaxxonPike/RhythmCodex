@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Riff.Models;
 
-namespace RhythmCodex.Riff.Streamers
+namespace RhythmCodex.Riff.Streamers;
+
+public interface IRiffChunkStreamReader
 {
-    public interface IRiffChunkStreamReader
-    {
-        IRiffChunk Read(Stream stream);
-    }
+    IRiffChunk Read(Stream stream);
 }

@@ -1,10 +1,9 @@
 using RhythmCodex.Ddr.Models;
 
-namespace RhythmCodex.Ddr.Processors
+namespace RhythmCodex.Ddr.Processors;
+
+public interface IDdrMetadataDatabase
 {
-    public interface IDdrMetadataDatabase
-    {
-        DdrMetadataDatabaseEntry GetByCode(string code);
-        DdrMetadataDatabaseEntry GetById(int id);
-    }
+    DdrMetadataDatabaseEntry GetByCode(string code);
+    DdrMetadataDatabaseEntry GetById(int id);
 }

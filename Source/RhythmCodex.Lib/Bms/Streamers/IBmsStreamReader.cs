@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Bms.Model;
 
-namespace RhythmCodex.Bms.Streamers
+namespace RhythmCodex.Bms.Streamers;
+
+public interface IBmsStreamReader
 {
-    public interface IBmsStreamReader
-    {
-        IEnumerable<BmsCommand> Read(Stream stream);
-    }
+    IEnumerable<BmsCommand> Read(Stream stream);
 }

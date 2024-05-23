@@ -1,10 +1,9 @@
 using RhythmCodex.Cd.Model;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoSectorInfoDecoder
 {
-    public interface IIsoSectorInfoDecoder
-    {
-        IsoSectorInfo Decode(ICdSector sector);
-    }
+    IsoSectorInfo Decode(ICdSector sector);
 }

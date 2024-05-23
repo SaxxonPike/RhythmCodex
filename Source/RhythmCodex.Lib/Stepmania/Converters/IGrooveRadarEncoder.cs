@@ -1,9 +1,8 @@
 ﻿using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+public interface IGrooveRadarEncoder
 {
-    public interface IGrooveRadarEncoder
-    {
-        string Encode(IMetadata metadata);
-    }
+    string Encode(IMetadata metadata);
 }

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+public interface IXsbCueNameTableStreamReader
 {
-    public interface IXsbCueNameTableStreamReader
-    {
-        IEnumerable<string> Read(Stream stream, int length);
-    }
+    IEnumerable<string> Read(Stream stream, int length);
 }

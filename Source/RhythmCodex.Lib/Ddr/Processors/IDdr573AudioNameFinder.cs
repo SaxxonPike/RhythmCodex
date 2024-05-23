@@ -1,8 +1,7 @@
-namespace RhythmCodex.Ddr.Processors
+namespace RhythmCodex.Ddr.Processors;
+
+public interface IDdr573AudioNameFinder
 {
-    public interface IDdr573AudioNameFinder
-    {
-        string GetName(string sourceName);
-        string GetPath(string sourceName);
-    }
+    string GetName(string sourceName);
+    string GetPath(string sourceName);
 }

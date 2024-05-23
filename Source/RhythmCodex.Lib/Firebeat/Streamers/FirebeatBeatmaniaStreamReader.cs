@@ -1,10 +1,9 @@
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Firebeat.Streamers
+namespace RhythmCodex.Firebeat.Streamers;
+
+[Service]
+public class FirebeatBeatmaniaStreamReader : IFirebeatBeatmaniaStreamReader
 {
-    [Service]
-    public class FirebeatBeatmaniaStreamReader : IFirebeatBeatmaniaStreamReader
-    {
         
-    }
 }

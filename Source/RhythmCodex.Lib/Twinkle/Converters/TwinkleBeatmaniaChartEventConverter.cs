@@ -4,42 +4,41 @@ using RhythmCodex.Beatmania.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Twinkle.Model;
 
-namespace RhythmCodex.Twinkle.Converters
+namespace RhythmCodex.Twinkle.Converters;
+
+[Service]
+public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventConverter
 {
-    [Service]
-    public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventConverter
+    public IList<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts)
     {
-        public IList<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts)
+        IEnumerable<BeatmaniaPc1Event> Do()
         {
-            IEnumerable<BeatmaniaPc1Event> Do()
+            for (var i = 0; i < 2; i++)
             {
-                for (var i = 0; i < 2; i++)
+                if (noteCounts[i] > 0)
                 {
-                    if (noteCounts[i] > 0)
+                    yield return new BeatmaniaPc1Event
                     {
-                        yield return new BeatmaniaPc1Event
-                        {
-                            LinearOffset = 0,
-                            Parameter0 = 0x10,
-                            Parameter1 = (byte) i,
-                            Value = (short) noteCounts[i]
-                        };
-                    }
+                        LinearOffset = 0,
+                        Parameter0 = 0x10,
+                        Parameter1 = (byte) i,
+                        Value = (short) noteCounts[i]
+                    };
                 }
             }
-
-            return Do().ToList();
         }
 
-        public BeatmaniaPc1Event ConvertToBeatmaniaPc1(TwinkleBeatmaniaChartEvent chartEvent)
+        return Do().ToList();
+    }
+
+    public BeatmaniaPc1Event ConvertToBeatmaniaPc1(TwinkleBeatmaniaChartEvent chartEvent)
+    {
+        return new BeatmaniaPc1Event
         {
-            return new BeatmaniaPc1Event
-            {
-                LinearOffset = chartEvent.Offset,
-                Parameter0 = (byte) (chartEvent.Param & 0xF),
-                Parameter1 = (byte) (chartEvent.Param >> 4),
-                Value = chartEvent.Value
-            };
-        }
+            LinearOffset = chartEvent.Offset,
+            Parameter0 = (byte) (chartEvent.Param & 0xF),
+            Parameter1 = (byte) (chartEvent.Param >> 4),
+            Value = chartEvent.Value
+        };
     }
 }

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace RhythmCodex.Text.Streamers
+namespace RhythmCodex.Text.Streamers;
+
+public interface ITextStreamReader
 {
-    public interface ITextStreamReader
-    {
-        IList<string> Read(Stream stream);
-    }
+    IList<string> Read(Stream stream);
 }

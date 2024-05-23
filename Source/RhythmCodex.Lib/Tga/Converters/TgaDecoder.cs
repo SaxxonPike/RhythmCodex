@@ -5,205 +5,204 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Tga.Models;
 
-namespace RhythmCodex.Tga.Converters
+namespace RhythmCodex.Tga.Converters;
+
+[Service]
+public class TgaDecoder : ITgaDecoder
 {
-    [Service]
-    public class TgaDecoder : ITgaDecoder
+    private readonly IGraphicDsp _graphicDsp;
+
+    public TgaDecoder(IGraphicDsp graphicDsp)
     {
-        private readonly IGraphicDsp _graphicDsp;
+        _graphicDsp = graphicDsp;
+    }
 
-        public TgaDecoder(IGraphicDsp graphicDsp)
+    public bool IsIndexedPalette(TgaImage tgaImage)
+    {
+        switch (tgaImage.DataTypeCode)
         {
-            _graphicDsp = graphicDsp;
+            case TgaDataType.RleIndexed:
+            case TgaDataType.HuffmanIndexed:
+            case TgaDataType.UncompressedIndexed:
+            case TgaDataType.HuffmanQuadtreeIndexed:
+                return true;
+            default:
+                return false;
         }
+    }
 
-        public bool IsIndexedPalette(TgaImage tgaImage)
+    public IBitmap Decode(TgaImage tgaImage)
+    {
+        if (tgaImage.Interleave != TgaInterleave.None)
+            throw new RhythmCodexException("Only non-interleaved images are supported for now.");
+
+        if (IsIndexedPalette(tgaImage))
+            return _graphicDsp.DeIndex(DecodeIndexed(tgaImage));
+
+        switch (tgaImage.DataTypeCode)
         {
-            switch (tgaImage.DataTypeCode)
+            case TgaDataType.UncompressedRgb:
             {
-                case TgaDataType.RleIndexed:
-                case TgaDataType.HuffmanIndexed:
-                case TgaDataType.UncompressedIndexed:
-                case TgaDataType.HuffmanQuadtreeIndexed:
-                    return true;
-                default:
-                    return false;
-            }
-        }
+                var count = tgaImage.Width * tgaImage.Height;
+                var pixels = new int[count];
+                var inputIndex = 0;
+                var outputIndex = tgaImage.OriginType == TgaOriginType.UpperLeft
+                    ? 0
+                    : tgaImage.Width * (tgaImage.Height - 1);
+                var scanIncrement = tgaImage.OriginType == TgaOriginType.UpperLeft
+                    ? 0
+                    : tgaImage.Width * -2;
 
-        public IBitmap Decode(TgaImage tgaImage)
-        {
-            if (tgaImage.Interleave != TgaInterleave.None)
-                throw new RhythmCodexException("Only non-interleaved images are supported for now.");
+                var data = tgaImage.ImageData;
 
-            if (IsIndexedPalette(tgaImage))
-                return _graphicDsp.DeIndex(DecodeIndexed(tgaImage));
-
-            switch (tgaImage.DataTypeCode)
-            {
-                case TgaDataType.UncompressedRgb:
+                switch (tgaImage.BitsPerPixel)
                 {
-                    var count = tgaImage.Width * tgaImage.Height;
-                    var pixels = new int[count];
-                    var inputIndex = 0;
-                    var outputIndex = tgaImage.OriginType == TgaOriginType.UpperLeft
-                        ? 0
-                        : tgaImage.Width * (tgaImage.Height - 1);
-                    var scanIncrement = tgaImage.OriginType == TgaOriginType.UpperLeft
-                        ? 0
-                        : tgaImage.Width * -2;
-
-                    var data = tgaImage.ImageData;
-
-                    switch (tgaImage.BitsPerPixel)
+                    case 24:
                     {
-                        case 24:
+                        for (var y = 0; y < tgaImage.Height; y++)
                         {
-                            for (var y = 0; y < tgaImage.Height; y++)
+                            for (var x = 0; x < tgaImage.Width; x++)
                             {
-                                for (var x = 0; x < tgaImage.Width; x++)
-                                {
-                                    pixels[outputIndex++] = ~0x00FFFFFF |
-                                                            data[inputIndex] |
-                                                            (data[inputIndex + 1] << 8) |
-                                                            (data[inputIndex + 2] << 16);
-                                    inputIndex += 3;
-                                }
-
-                                outputIndex += scanIncrement;
+                                pixels[outputIndex++] = ~0x00FFFFFF |
+                                                        data[inputIndex] |
+                                                        (data[inputIndex + 1] << 8) |
+                                                        (data[inputIndex + 2] << 16);
+                                inputIndex += 3;
                             }
 
-                            return new Bitmap(tgaImage.Width, pixels);
+                            outputIndex += scanIncrement;
                         }
-                        case 32:
-                        {
-                            for (var y = 0; y < tgaImage.Height; y++)
-                            {
-                                for (var x = 0; x < tgaImage.Width; x++)
-                                {
-                                    pixels[outputIndex++] = data[inputIndex] |
-                                                            (data[inputIndex + 1] << 8) |
-                                                            (data[inputIndex + 2] << 16) |
-                                                            (data[inputIndex + 3] << 24);
-                                    inputIndex += 4;
-                                }
 
-                                outputIndex += scanIncrement;
+                        return new Bitmap(tgaImage.Width, pixels);
+                    }
+                    case 32:
+                    {
+                        for (var y = 0; y < tgaImage.Height; y++)
+                        {
+                            for (var x = 0; x < tgaImage.Width; x++)
+                            {
+                                pixels[outputIndex++] = data[inputIndex] |
+                                                        (data[inputIndex + 1] << 8) |
+                                                        (data[inputIndex + 2] << 16) |
+                                                        (data[inputIndex + 3] << 24);
+                                inputIndex += 4;
                             }
 
-                            return new Bitmap(tgaImage.Width, pixels);
+                            outputIndex += scanIncrement;
                         }
-                        default:
-                        {
-                            throw new RhythmCodexException($"Bit depth is not supported: {tgaImage.BitsPerPixel}");
-                        }
+
+                        return new Bitmap(tgaImage.Width, pixels);
+                    }
+                    default:
+                    {
+                        throw new RhythmCodexException($"Bit depth is not supported: {tgaImage.BitsPerPixel}");
                     }
                 }
-                default:
+            }
+            default:
+            {
+                throw new RhythmCodexException($"This TGA image type is not supported: {tgaImage.DataTypeCode}");
+            }
+        }
+    }
+
+    public IPaletteBitmap DecodeIndexed(TgaImage tgaImage)
+    {
+        if (!IsIndexedPalette(tgaImage))
+            throw new RhythmCodexException(
+                $"{nameof(DecodeIndexed)} can only be used with images that contain a palette.");
+
+        var palette = new int[tgaImage.ColorMapLength];
+        var paletteSize = tgaImage.ColorMapLength * tgaImage.ColorMapBitsPerEntry / 8;
+        var paletteData = tgaImage.ImageData.AsSpan(0, paletteSize);
+
+        switch (tgaImage.ColorMapBitsPerEntry)
+        {
+            case 16:
+            {
+                for (var i = 0; i < tgaImage.ColorMapLength; i++)
                 {
-                    throw new RhythmCodexException($"This TGA image type is not supported: {tgaImage.DataTypeCode}");
+                    var sourceIndex = i << 1;
+                    var entry = paletteData[sourceIndex] |
+                                (paletteData[sourceIndex + 1] << 8);
+                    var blue = (entry & 0x1F) << 3;
+                    var green = (entry >> 2) & 0xF8;
+                    var red = (entry >> 7) & 0xF8;
+                    var alpha = (entry >> 15) * 0xFF;
+                    palette[i] = blue | (green << 8) | (red << 16) | (alpha << 24);
                 }
+
+                break;
+            }
+            case 24:
+            {
+                var inputIndex = 0;
+                for (var i = 0; i < tgaImage.ColorMapLength; i++)
+                {
+                    palette[i] = ~0x00FFFFFF |
+                                 paletteData[inputIndex++] |
+                                 (paletteData[inputIndex++] << 8) |
+                                 (paletteData[inputIndex++] << 16);
+                }
+
+                break;
+            }
+            case 32:
+            {
+                var inputIndex = 0;
+                for (var i = 0; i < tgaImage.ColorMapLength; i++)
+                {
+                    palette[i] = paletteData[inputIndex++] |
+                                 (paletteData[inputIndex++] << 8) |
+                                 (paletteData[inputIndex++] << 16) |
+                                 (paletteData[inputIndex++] << 24);
+                }
+
+                break;
+            }
+            default:
+            {
+                throw new RhythmCodexException("Only palettes with color index sizes 2-4 are supported.");
             }
         }
 
-        public IPaletteBitmap DecodeIndexed(TgaImage tgaImage)
+        switch (tgaImage.DataTypeCode)
         {
-            if (!IsIndexedPalette(tgaImage))
-                throw new RhythmCodexException(
-                    $"{nameof(DecodeIndexed)} can only be used with images that contain a palette.");
-
-            var palette = new int[tgaImage.ColorMapLength];
-            var paletteSize = tgaImage.ColorMapLength * tgaImage.ColorMapBitsPerEntry / 8;
-            var paletteData = tgaImage.ImageData.AsSpan(0, paletteSize);
-
-            switch (tgaImage.ColorMapBitsPerEntry)
+            case TgaDataType.UncompressedIndexed:
             {
-                case 16:
-                {
-                    for (var i = 0; i < tgaImage.ColorMapLength; i++)
-                    {
-                        var sourceIndex = i << 1;
-                        var entry = paletteData[sourceIndex] |
-                                    (paletteData[sourceIndex + 1] << 8);
-                        var blue = (entry & 0x1F) << 3;
-                        var green = (entry >> 2) & 0xF8;
-                        var red = (entry >> 7) & 0xF8;
-                        var alpha = (entry >> 15) * 0xFF;
-                        palette[i] = blue | (green << 8) | (red << 16) | (alpha << 24);
-                    }
+                if (tgaImage.BitsPerPixel != 8)
+                    throw new RhythmCodexException("Only 8bpp is supported for indexed images for now.");
 
-                    break;
-                }
-                case 24:
-                {
-                    var inputIndex = 0;
-                    for (var i = 0; i < tgaImage.ColorMapLength; i++)
-                    {
-                        palette[i] = ~0x00FFFFFF |
-                                     paletteData[inputIndex++] |
-                                     (paletteData[inputIndex++] << 8) |
-                                     (paletteData[inputIndex++] << 16);
-                    }
+                var count = tgaImage.Width * tgaImage.Height;
+                var pixels = new int[count];
+                var inputIndex = 0;
+                var outputIndex = tgaImage.OriginType == TgaOriginType.UpperLeft
+                    ? 0
+                    : tgaImage.Width * (tgaImage.Height - 1);
+                var scanIncrement = tgaImage.OriginType == TgaOriginType.UpperLeft
+                    ? 0
+                    : tgaImage.Width * -2;
 
-                    break;
-                }
-                case 32:
-                {
-                    var inputIndex = 0;
-                    for (var i = 0; i < tgaImage.ColorMapLength; i++)
-                    {
-                        palette[i] = paletteData[inputIndex++] |
-                                     (paletteData[inputIndex++] << 8) |
-                                     (paletteData[inputIndex++] << 16) |
-                                     (paletteData[inputIndex++] << 24);
-                    }
+                var data = tgaImage.ImageData.AsSpan(paletteSize);
 
-                    break;
-                }
-                default:
+                for (var y = 0; y < tgaImage.Height; y++)
                 {
-                    throw new RhythmCodexException("Only palettes with color index sizes 2-4 are supported.");
+                    for (var x = 0; x < tgaImage.Width; x++)
+                        pixels[outputIndex++] = data[inputIndex++];
+                    outputIndex += scanIncrement;
                 }
+
+                return new PaletteBitmap
+                {
+                    Width = tgaImage.Width,
+                    Height = tgaImage.Height,
+                    Data = pixels,
+                    Palette = palette
+                };
             }
-
-            switch (tgaImage.DataTypeCode)
+            default:
             {
-                case TgaDataType.UncompressedIndexed:
-                {
-                    if (tgaImage.BitsPerPixel != 8)
-                        throw new RhythmCodexException("Only 8bpp is supported for indexed images for now.");
-
-                    var count = tgaImage.Width * tgaImage.Height;
-                    var pixels = new int[count];
-                    var inputIndex = 0;
-                    var outputIndex = tgaImage.OriginType == TgaOriginType.UpperLeft
-                        ? 0
-                        : tgaImage.Width * (tgaImage.Height - 1);
-                    var scanIncrement = tgaImage.OriginType == TgaOriginType.UpperLeft
-                        ? 0
-                        : tgaImage.Width * -2;
-
-                    var data = tgaImage.ImageData.AsSpan(paletteSize);
-
-                    for (var y = 0; y < tgaImage.Height; y++)
-                    {
-                        for (var x = 0; x < tgaImage.Width; x++)
-                            pixels[outputIndex++] = data[inputIndex++];
-                        outputIndex += scanIncrement;
-                    }
-
-                    return new PaletteBitmap
-                    {
-                        Width = tgaImage.Width,
-                        Height = tgaImage.Height,
-                        Data = pixels,
-                        Palette = palette
-                    };
-                }
-                default:
-                {
-                    throw new RhythmCodexException($"This TGA image type is not supported: {tgaImage.DataTypeCode}");
-                }
+                throw new RhythmCodexException($"This TGA image type is not supported: {tgaImage.DataTypeCode}");
             }
         }
     }

@@ -1,11 +1,10 @@
-namespace RhythmCodex.Wav.Models
+namespace RhythmCodex.Wav.Models;
+
+public interface IWaveFormat
 {
-    public interface IWaveFormat
-    {
-        int Channels { get; }
-        int SampleRate { get; }
-        int ByteRate { get; }
-        int BlockAlign { get; }
-        int BitsPerSample { get; }
-    }
+    int Channels { get; }
+    int SampleRate { get; }
+    int ByteRate { get; }
+    int BlockAlign { get; }
+    int BitsPerSample { get; }
 }

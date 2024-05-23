@@ -1,9 +1,8 @@
 using RhythmCodex.Riff.Models;
 
-namespace RhythmCodex.Riff.Converters
+namespace RhythmCodex.Riff.Converters;
+
+public interface IRiffFormatDecoder
 {
-    public interface IRiffFormatDecoder
-    {
-        IRiffFormat Decode(IRiffChunk chunk);
-    }
+    IRiffFormat Decode(IRiffChunk chunk);
 }

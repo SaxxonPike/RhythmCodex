@@ -1,15 +1,14 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Heuristics
+namespace RhythmCodex.Heuristics;
+
+[Model]
+public class HeuristicResult
 {
-    [Model]
-    public class HeuristicResult
+    public HeuristicResult(IHeuristic heuristic)
     {
-        public HeuristicResult(IHeuristic heuristic)
-        {
-            Heuristic = heuristic;
-        }
-        
-        public IHeuristic Heuristic { get; }
+        Heuristic = heuristic;
     }
+        
+    public IHeuristic Heuristic { get; }
 }

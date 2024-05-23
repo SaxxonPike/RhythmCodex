@@ -1,7 +1,6 @@
-﻿namespace RhythmCodex.Stepmania
+﻿namespace RhythmCodex.Stepmania;
+
+public static class StepmaniaConstants
 {
-    public static class StepmaniaConstants
-    {
-        public static int DecimalPlaces => 3;
-    }
+    public static int DecimalPlaces => 3;
 }

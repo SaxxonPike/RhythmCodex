@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Cd.Model;
 
-namespace RhythmCodex.Cd.Streamers
+namespace RhythmCodex.Cd.Streamers;
+
+public interface ICdSectorStreamReader
 {
-    public interface ICdSectorStreamReader
-    {
-        IEnumerable<ICdSector> Read(Stream stream, long length, bool keepOnDisk, int sectorLength = 2352);
-    }
+    IEnumerable<ICdSector> Read(Stream stream, long length, bool keepOnDisk, int sectorLength = 2352);
 }

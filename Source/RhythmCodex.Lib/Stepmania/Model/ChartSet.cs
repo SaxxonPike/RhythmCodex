@@ -3,12 +3,11 @@ using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Stepmania.Model
+namespace RhythmCodex.Stepmania.Model;
+
+[Model]
+public class ChartSet
 {
-    [Model]
-    public class ChartSet
-    {
-        public IMetadata Metadata { get; set; }
-        public IList<IChart> Charts { get; set; }
-    }
+    public IMetadata Metadata { get; set; }
+    public IList<IChart> Charts { get; set; }
 }

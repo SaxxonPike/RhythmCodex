@@ -2,10 +2,9 @@
 using System.IO;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Streamers
+namespace RhythmCodex.Ssq.Streamers;
+
+public interface ISsqStreamReader
 {
-    public interface ISsqStreamReader
-    {
-        IList<SsqChunk> Read(Stream stream);
-    }
+    IList<SsqChunk> Read(Stream stream);
 }

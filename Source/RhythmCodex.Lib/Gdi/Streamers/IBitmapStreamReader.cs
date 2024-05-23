@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Graphics.Models;
 
-namespace RhythmCodex.Gdi.Streamers
+namespace RhythmCodex.Gdi.Streamers;
+
+public interface IBitmapStreamReader
 {
-    public interface IBitmapStreamReader
-    {
-        IBitmap Read(Stream stream);
-    }
+    IBitmap Read(Stream stream);
 }

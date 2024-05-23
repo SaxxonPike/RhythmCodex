@@ -2,10 +2,15 @@
 using System.IO;
 using RhythmCodex.Arc.Model;
 
-namespace RhythmCodex.Arc.Streamers
+namespace RhythmCodex.Arc.Streamers;
+
+/// <summary>
+/// Reads files from an ARC archive.
+/// </summary>
+public interface IArcStreamReader
 {
-    public interface IArcStreamReader
-    {
-        IEnumerable<ArcFile> Read(Stream source);
-    }
+    /// <summary>
+    /// Read files from an ARC archive.
+    /// </summary>
+    IEnumerable<ArcFile> Read(Stream source);
 }

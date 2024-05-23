@@ -1,9 +1,8 @@
 using RhythmCodex.Xbox.Model;
 
-namespace RhythmCodex.Xbox.Converters
+namespace RhythmCodex.Xbox.Converters;
+
+public interface IXboxIsoInfoDecoder
 {
-    public interface IXboxIsoInfoDecoder
-    {
-        XboxIsoInfo Decode(byte[] sector);
-    }
+    XboxIsoInfo Decode(byte[] sector);
 }

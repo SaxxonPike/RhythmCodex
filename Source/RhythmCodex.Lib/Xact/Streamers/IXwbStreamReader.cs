@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Xact.Model;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+public interface IXwbStreamReader
 {
-    public interface IXwbStreamReader
-    {
-        IEnumerable<XwbSound> Read(Stream source);
-    }
+    IEnumerable<XwbSound> Read(Stream source);
 }

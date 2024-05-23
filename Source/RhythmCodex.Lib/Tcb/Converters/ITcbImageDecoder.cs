@@ -1,10 +1,9 @@
 using RhythmCodex.Graphics.Models;
 using RhythmCodex.Tcb.Models;
 
-namespace RhythmCodex.Tcb.Converters
+namespace RhythmCodex.Tcb.Converters;
+
+public interface ITcbImageDecoder
 {
-    public interface ITcbImageDecoder
-    {
-        IBitmap Decode(TcbImage image);
-    }
+    IBitmap Decode(TcbImage image);
 }

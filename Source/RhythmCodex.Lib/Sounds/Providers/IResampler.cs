@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Sounds.Providers
+namespace RhythmCodex.Sounds.Providers;
+
+public interface IResampler
 {
-    public interface IResampler
-    {
-        string Name { get; }
-        int Priority { get; }
-        IList<float> Resample(IList<float> data, float sourceRate, float targetRate);
-    }
+    string Name { get; }
+    int Priority { get; }
+    IList<float> Resample(IList<float> data, float sourceRate, float targetRate);
 }

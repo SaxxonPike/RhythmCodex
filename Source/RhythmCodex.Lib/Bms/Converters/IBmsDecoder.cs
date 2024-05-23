@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using RhythmCodex.Bms.Model;
 
-namespace RhythmCodex.Bms.Converters
+namespace RhythmCodex.Bms.Converters;
+
+public interface IBmsDecoder
 {
-    public interface IBmsDecoder
-    {
-        BmsChart Decode(IEnumerable<BmsCommand> commands);
-    }
+    BmsChart Decode(IEnumerable<BmsCommand> commands);
 }

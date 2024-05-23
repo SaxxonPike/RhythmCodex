@@ -1,11 +1,10 @@
 ﻿using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Stepmania.Model
+namespace RhythmCodex.Stepmania.Model;
+
+public interface INote
 {
-    public interface INote
-    {
-        int Column { get; }
-        BigRational MetricOffset { get; }
-        char Type { get; }
-    }
+    int Column { get; }
+    BigRational MetricOffset { get; }
+    char Type { get; }
 }

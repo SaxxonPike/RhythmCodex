@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using RhythmCodex.Cd.Model;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoPathTableDecoder
 {
-    public interface IIsoPathTableDecoder
-    {
-        IList<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors);
-    }
+    IList<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors);
 }

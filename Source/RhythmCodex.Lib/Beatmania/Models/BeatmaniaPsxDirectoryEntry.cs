@@ -1,8 +1,7 @@
-namespace RhythmCodex.Beatmania.Models
+namespace RhythmCodex.Beatmania.Models;
+
+public class BeatmaniaPsxDirectoryEntry
 {
-    public class BeatmaniaPsxDirectoryEntry
-    {
-        public int Offset { get; set; }
-        public int Length { get; set; }
-    }
+    public int Offset { get; set; }
+    public int Length { get; set; }
 }

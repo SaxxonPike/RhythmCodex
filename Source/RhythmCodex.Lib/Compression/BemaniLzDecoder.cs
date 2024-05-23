@@ -1,114 +1,112 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Compression
+namespace RhythmCodex.Compression;
+
+[Service]
+public class BemaniLzDecoder : IBemaniLzDecoder
 {
-    [Service]
-    public class BemaniLzDecoder : IBemaniLzDecoder
+    private readonly ILogger _logger;
+    private const int BufferMask = 0x3FF; // 10 bits window
+    private const int BufferSize = 0x400;
+
+    public BemaniLzDecoder(ILogger logger)
     {
-        private readonly ILogger _logger;
-        private const int BufferMask = 0x3FF; // 10 bits window
-        private const int BufferSize = 0x400;
+        _logger = logger;
+    }
 
-        public BemaniLzDecoder(ILogger logger)
+    public byte[] Decode(Stream source)
+    {
+        var mem = new MemoryStream();
+        var writer = new BinaryWriter(mem);
+
+        try
         {
-            _logger = logger;
-        }
+            var reader = new BinaryReader(source);
 
-        public byte[] Decode(Stream source)
-        {
-            var mem = new MemoryStream();
-            var writer = new BinaryWriter(mem);
+            var buffer = new byte[BufferSize];
+            var bufferOffset = 0;
+            var control = 0; // used as flags
+            var distance = 0; // used as a byte-distance
+            var length = 0; // used as a counter
 
-            try
+            while (true)
             {
-                var reader = new BinaryReader(source);
+                var loop = false;
 
-                var buffer = new byte[BufferSize];
-                var bufferOffset = 0;
-                var control = 0; // used as flags
-                var distance = 0; // used as a byte-distance
-                var length = 0; // used as a counter
+                control >>= 1;
+                if (control < 0x100)
+                    control = reader.ReadByte() | 0xFF00;
 
-                while (true)
+                var data = reader.ReadByte();
+
+                // direct copy
+                if ((control & 1) == 0)
                 {
-                    var loop = false;
+                    writer.Write(data);
+                    buffer[bufferOffset] = data;
+                    bufferOffset = (bufferOffset + 1) & BufferMask;
+                    continue;
+                }
 
-                    control >>= 1;
-                    if (control < 0x100)
-                        control = reader.ReadByte() | 0xFF00;
+                // long distance
+                if ((data & 0x80) == 0)
+                {
+                    distance = reader.ReadByte() | ((data & 0x3) << 8);
+                    length = (data >> 2) + 2;
+                    loop = true;
+                }
 
-                    var data = reader.ReadByte();
+                // short distance
+                else if ((data & 0x40) == 0)
+                {
+                    distance = (data & 0xF) + 1;
+                    length = (data >> 4) - 7;
+                    loop = true;
+                }
 
-                    // direct copy
-                    if ((control & 1) == 0)
+                // loop for jumps
+                if (loop)
+                {
+                    while (length-- >= 0)
                     {
+                        data = buffer[(bufferOffset - distance) & BufferMask];
                         writer.Write(data);
                         buffer[bufferOffset] = data;
                         bufferOffset = (bufferOffset + 1) & BufferMask;
-                        continue;
                     }
 
-                    // long distance
-                    if ((data & 0x80) == 0)
-                    {
-                        distance = reader.ReadByte() | ((data & 0x3) << 8);
-                        length = (data >> 2) + 2;
-                        loop = true;
-                    }
+                    continue;
+                }
 
-                    // short distance
-                    else if ((data & 0x40) == 0)
-                    {
-                        distance = (data & 0xF) + 1;
-                        length = (data >> 4) - 7;
-                        loop = true;
-                    }
+                // end of stream
+                if (data == 0xFF)
+                    break;
 
-                    // loop for jumps
-                    if (loop)
-                    {
-                        while (length-- >= 0)
-                        {
-                            data = buffer[(bufferOffset - distance) & BufferMask];
-                            writer.Write(data);
-                            buffer[bufferOffset] = data;
-                            bufferOffset = (bufferOffset + 1) & BufferMask;
-                        }
-
-                        continue;
-                    }
-
-                    // end of stream
-                    if (data == 0xFF)
-                        break;
-
-                    // block copy
-                    length = data - 0xB9;
-                    while (length >= 0)
-                    {
-                        data = reader.ReadByte();
-                        writer.Write(data);
-                        buffer[bufferOffset] = data;
-                        bufferOffset = (bufferOffset + 1) & BufferMask;
-                        length--;
-                    }
+                // block copy
+                length = data - 0xB9;
+                while (length >= 0)
+                {
+                    data = reader.ReadByte();
+                    writer.Write(data);
+                    buffer[bufferOffset] = data;
+                    bufferOffset = (bufferOffset + 1) & BufferMask;
+                    length--;
                 }
             }
-            catch (Exception e)
-            {
-                _logger.Debug($"BemaniLZdecoder failed{Environment.NewLine}{e}");
-            }
-            finally
-            {
-                writer.Flush();
-            }
-
-            using (mem)
-                return mem.ToArray();
         }
+        catch (Exception e)
+        {
+            _logger.Debug($"BemaniLZdecoder failed{Environment.NewLine}{e}");
+        }
+        finally
+        {
+            writer.Flush();
+        }
+
+        using (mem)
+            return mem.ToArray();
     }
 }

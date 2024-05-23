@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Djmain.Model
+namespace RhythmCodex.Djmain.Model;
+
+[Model]
+public class DjmainSample : IDjmainSample
 {
-    [Model]
-    public class DjmainSample : IDjmainSample
-    {
-        public IDjmainSampleInfo Info { get; set; }
-        public IList<byte> Data { get; set; }
+    public IDjmainSampleInfo Info { get; set; }
+    public IList<byte> Data { get; set; }
         
-        public override string ToString() => Json.Serialize(this);
-    }
+    public override string ToString() => Json.Serialize(this);
 }

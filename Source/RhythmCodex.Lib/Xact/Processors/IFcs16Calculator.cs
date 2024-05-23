@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RhythmCodex.Xact.Processors
+namespace RhythmCodex.Xact.Processors;
+
+public interface IFcs16Calculator
 {
-    public interface IFcs16Calculator
-    {
-        short Calculate(ReadOnlySpan<byte> data);
-    }
+    short Calculate(ReadOnlySpan<byte> data);
 }

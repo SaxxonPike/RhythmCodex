@@ -1,9 +1,8 @@
-namespace RhythmCodex.Graphics.Models
+namespace RhythmCodex.Graphics.Models;
+
+public interface IBitmap
 {
-    public interface IBitmap
-    {
-        int Width { get; }
-        int Height { get; }
-        int[] Data { get; }
-    }
+    int Width { get; }
+    int Height { get; }
+    int[] Data { get; }
 }

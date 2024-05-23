@@ -5,32 +5,31 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Step1.Converters
-{
-    [Service]
-    public class Step1TimingChunkDecoder : IStep1TimingChunkDecoder
-    {
-        public TimingChunk Convert(byte[] data)
-        {
-            return new TimingChunk
-            {
-                Timings = ConvertInternal(data).ToList(), 
-                Rate = 75
-            };
-        }
+namespace RhythmCodex.Step1.Converters;
 
-        private IEnumerable<Timing> ConvertInternal(byte[] data)
+[Service]
+public class Step1TimingChunkDecoder : IStep1TimingChunkDecoder
+{
+    public TimingChunk Convert(byte[] data)
+    {
+        return new TimingChunk
         {
-            using var mem = new ReadOnlyMemoryStream(data);
-            using var reader = new BinaryReader(mem);
-            while (mem.Position < mem.Length - 7)
+            Timings = ConvertInternal(data).ToList(), 
+            Rate = 75
+        };
+    }
+
+    private IEnumerable<Timing> ConvertInternal(byte[] data)
+    {
+        using var mem = new ReadOnlyMemoryStream(data);
+        using var reader = new BinaryReader(mem);
+        while (mem.Position < mem.Length - 7)
+        {
+            yield return new Timing
             {
-                yield return new Timing
-                {
-                    MetricOffset = reader.ReadInt32(),
-                    LinearOffset = reader.ReadInt32()
-                };
-            }
+                MetricOffset = reader.ReadInt32(),
+                LinearOffset = reader.ReadInt32()
+            };
         }
     }
 }

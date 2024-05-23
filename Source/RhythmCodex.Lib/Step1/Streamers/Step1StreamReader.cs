@@ -4,32 +4,31 @@ using System.Linq;
 using RhythmCodex.IoC;
 using RhythmCodex.Step1.Models;
 
-namespace RhythmCodex.Step1.Streamers
+namespace RhythmCodex.Step1.Streamers;
+
+[Service]
+public class Step1StreamReader : IStep1StreamReader
 {
-    [Service]
-    public class Step1StreamReader : IStep1StreamReader
+    public IList<Step1Chunk> Read(Stream stream)
     {
-        public IList<Step1Chunk> Read(Stream stream)
-        {
-            return ReadInternal(stream).ToList();
-        }
+        return ReadInternal(stream).ToList();
+    }
 
-        private IEnumerable<Step1Chunk> ReadInternal(Stream stream)
-        {
-            var reader = new BinaryReader(stream);
+    private IEnumerable<Step1Chunk> ReadInternal(Stream stream)
+    {
+        var reader = new BinaryReader(stream);
             
-            while (true)
+        while (true)
+        {
+            var length = reader.ReadInt32();
+
+            if (length < 4)
+                yield break;
+
+            yield return new Step1Chunk
             {
-                var length = reader.ReadInt32();
-
-                if (length < 4)
-                    yield break;
-
-                yield return new Step1Chunk
-                {
-                    Data = reader.ReadBytes(length - 4)
-                };                            
-            }
+                Data = reader.ReadBytes(length - 4)
+            };                            
         }
     }
 }

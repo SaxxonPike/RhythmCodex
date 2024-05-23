@@ -1,11 +1,10 @@
 ﻿using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Ssq.Model
+namespace RhythmCodex.Ssq.Model;
+
+[Model]
+public class PanelMapping : IPanelMapping
 {
-    [Model]
-    public class PanelMapping : IPanelMapping
-    {
-        public int Player { get; set; }
-        public int Panel { get; set; }
-    }
+    public int Player { get; set; }
+    public int Panel { get; set; }
 }

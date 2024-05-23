@@ -2,35 +2,34 @@
 using NUnit.Framework;
 using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+[TestFixture]
+public class GrooveRadarEncoderTests : BaseUnitTestFixture<GrooveRadarEncoder, IGrooveRadarEncoder>
 {
-    [TestFixture]
-    public class GrooveRadarEncoderTests : BaseUnitTestFixture<GrooveRadarEncoder, IGrooveRadarEncoder>
+    [Test]
+    public void Encode_EncodesValuesInCorrectOrder()
     {
-        [Test]
-        public void Encode_EncodesValuesInCorrectOrder()
+        // Arrange.
+        var air = $"{Create<float>()}";
+        var chaos = $"{Create<float>()}";
+        var freeze = $"{Create<float>()}";
+        var stream = $"{Create<float>()}";
+        var voltage = $"{Create<float>()}";
+
+        var data = new Metadata
         {
-            // Arrange.
-            var air = $"{Create<float>()}";
-            var chaos = $"{Create<float>()}";
-            var freeze = $"{Create<float>()}";
-            var stream = $"{Create<float>()}";
-            var voltage = $"{Create<float>()}";
+            [NotesCommandTag.AirTag] = air,
+            [NotesCommandTag.ChaosTag] = chaos,
+            [NotesCommandTag.FreezeTag] = freeze,
+            [NotesCommandTag.StreamTag] = stream,
+            [NotesCommandTag.VoltageTag] = voltage
+        };
 
-            var data = new Metadata
-            {
-                [NotesCommandTag.AirTag] = air,
-                [NotesCommandTag.ChaosTag] = chaos,
-                [NotesCommandTag.FreezeTag] = freeze,
-                [NotesCommandTag.StreamTag] = stream,
-                [NotesCommandTag.VoltageTag] = voltage
-            };
+        // Act.
+        var output = Subject.Encode(data);
 
-            // Act.
-            var output = Subject.Encode(data);
-
-            // Assert.
-            output.Should().BeEquivalentTo($"{stream},{voltage},{air},{freeze},{chaos}");
-        }
+        // Assert.
+        output.Should().BeEquivalentTo($"{stream},{voltage},{air},{freeze},{chaos}");
     }
 }

@@ -1,10 +1,9 @@
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Ddr.Processors
+namespace RhythmCodex.Ddr.Processors;
+
+public interface IDdrMetadataDecorator
 {
-    public interface IDdrMetadataDecorator
-    {
-        void Decorate(ChartSet chartSet, DdrDatabaseEntry meta, MetadataDecoratorFileExtensions extensions);
-    }
+    void Decorate(ChartSet chartSet, DdrDatabaseEntry meta, MetadataDecoratorFileExtensions extensions);
 }

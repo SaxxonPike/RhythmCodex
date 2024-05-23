@@ -1,7 +1,6 @@
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+public interface IFileAccessorFactory
 {
-    public interface IFileAccessorFactory
-    {
-        IFileAccessor Create(string basePath);
-    }
+    IFileAccessor Create(string basePath);
 }

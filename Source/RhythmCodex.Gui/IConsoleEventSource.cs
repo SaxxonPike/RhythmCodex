@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace RhythmCodex.Gui
+namespace RhythmCodex.Gui;
+
+public interface IConsoleEventSource
 {
-    public interface IConsoleEventSource
-    {
-        event EventHandler<FormConsoleEventArgs> Logged;
-    }
+    event EventHandler<FormConsoleEventArgs> Logged;
 }

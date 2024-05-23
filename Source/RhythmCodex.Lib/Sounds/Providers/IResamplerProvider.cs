@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace RhythmCodex.Sounds.Providers
+namespace RhythmCodex.Sounds.Providers;
+
+public interface IResamplerProvider
 {
-    public interface IResamplerProvider
-    {
-        IEnumerable<IResampler> Get();
-        IResampler Get(string name);
-        IResampler GetBest();
-        IResampler GetFastest();
-    }
+    IEnumerable<IResampler> Get();
+    IResampler Get(string name);
+    IResampler GetBest();
+    IResampler GetFastest();
 }

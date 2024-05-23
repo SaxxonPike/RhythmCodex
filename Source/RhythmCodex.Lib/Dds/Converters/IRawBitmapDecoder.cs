@@ -1,9 +1,8 @@
 using System;
 
-namespace RhythmCodex.Dds.Converters
+namespace RhythmCodex.Dds.Converters;
+
+public interface IRawBitmapDecoder
 {
-    public interface IRawBitmapDecoder
-    {
-        int[] Decode32Bit(ReadOnlySpan<byte> src, int width, int height);
-    }
+    int[] Decode32Bit(ReadOnlySpan<byte> src, int width, int height);
 }

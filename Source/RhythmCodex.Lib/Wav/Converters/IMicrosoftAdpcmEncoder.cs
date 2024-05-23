@@ -1,10 +1,9 @@
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Wav.Converters
+namespace RhythmCodex.Wav.Converters;
+
+public interface IMicrosoftAdpcmEncoder
 {
-    public interface IMicrosoftAdpcmEncoder
-    {
-        byte[] Encode(ISound sound, int samplesPerBlock);
-        int GetBlockSize(int samplesPerBlock, int channels);
-    }
+    byte[] Encode(ISound sound, int samplesPerBlock);
+    int GetBlockSize(int samplesPerBlock, int channels);
 }

@@ -6,82 +6,81 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Tim.Models;
 
-namespace RhythmCodex.Tim.Converters
+namespace RhythmCodex.Tim.Converters;
+
+[Service]
+public class TimBitmapDecoder : ITimBitmapDecoder
 {
-    [Service]
-    public class TimBitmapDecoder : ITimBitmapDecoder
+    private readonly ITimColorDecoder _colorDecoder;
+    private readonly ITimDataDecoder _dataDecoder;
+
+    public TimBitmapDecoder(ITimColorDecoder colorDecoder, ITimDataDecoder dataDecoder)
     {
-        private readonly ITimColorDecoder _colorDecoder;
-        private readonly ITimDataDecoder _dataDecoder;
+        _colorDecoder = colorDecoder;
+        _dataDecoder = dataDecoder;
+    }
 
-        public TimBitmapDecoder(ITimColorDecoder colorDecoder, ITimDataDecoder dataDecoder)
-        {
-            _colorDecoder = colorDecoder;
-            _dataDecoder = dataDecoder;
-        }
+    public IList<IBitmap> Decode(TimImage image) =>
+        Enumerable.Range(0, image.Cluts.Count).Select(i => Decode(image, i)).ToList();
 
-        public IList<IBitmap> Decode(TimImage image) =>
-            Enumerable.Range(0, image.Cluts.Count).Select(i => Decode(image, i)).ToList();
-
-        public IBitmap Decode(TimImage image, int clutIndex)
-        {
-            var data = DecodeData(image);
-            ConvertColors(data, image, clutIndex);
+    public IBitmap Decode(TimImage image, int clutIndex)
+    {
+        var data = DecodeData(image);
+        ConvertColors(data, image, clutIndex);
             
-            return new Bitmap(data.Length / image.Height, data);
-        }
+        return new Bitmap(data.Length / image.Height, data);
+    }
 
-        private void ConvertColors(Span<int> data, TimImage image, int clutIndex)
+    private void ConvertColors(Span<int> data, TimImage image, int clutIndex)
+    {
+        switch (image.ImageType & 0x3)
         {
-            switch (image.ImageType & 0x3)
-            {
-                case 0x00000000:
-                case 0x00000001:
-                    var clut = GetClut(image, clutIndex);
-                    for (var i = 0; i < data.Length; i++)
-                        data[i] = clut[data[i]];
-                    break;
-                case 0x00000002:
-                    for (var i = 0; i < data.Length; i++)
-                        data[i] = _colorDecoder.Decode16Bit(data[i]);
-                    break;
-                case 0x00000003:
-                    for (var i = 0; i < data.Length; i++)
-                        data[i] = _colorDecoder.Decode24Bit(data[i]);
-                    break;
-            }
+            case 0x00000000:
+            case 0x00000001:
+                var clut = GetClut(image, clutIndex);
+                for (var i = 0; i < data.Length; i++)
+                    data[i] = clut[data[i]];
+                break;
+            case 0x00000002:
+                for (var i = 0; i < data.Length; i++)
+                    data[i] = _colorDecoder.Decode16Bit(data[i]);
+                break;
+            case 0x00000003:
+                for (var i = 0; i < data.Length; i++)
+                    data[i] = _colorDecoder.Decode24Bit(data[i]);
+                break;
         }
+    }
 
-        private int[] GetClut(TimImage image, int clutIndex)
+    private int[] GetClut(TimImage image, int clutIndex)
+    {
+        switch (image.ImageType & 0x3)
         {
-            switch (image.ImageType & 0x3)
-            {
-                case 0x00000000:
-                case 0x00000001:
-                    return DecodeClut(image.Cluts[clutIndex]);
-                default:
-                    return null;
-            }            
-        }
+            case 0x00000000:
+            case 0x00000001:
+                return DecodeClut(image.Cluts[clutIndex]);
+            default:
+                return null;
+        }            
+    }
 
-        private int[] DecodeClut(TimPalette clut) => 
-            clut.Entries.Select(i => _colorDecoder.Decode16Bit(i)).ToArray();
+    private int[] DecodeClut(TimPalette clut) => 
+        clut.Entries.Select(i => _colorDecoder.Decode16Bit(i)).ToArray();
 
-        private int[] DecodeData(TimImage image)
+    private int[] DecodeData(TimImage image)
+    {
+        switch (image.ImageType & 0x3)
         {
-            switch (image.ImageType & 0x3)
-            {
-                case 0x00000000:
-                    return _dataDecoder.Decode4Bit(image.Data, image.Stride * 2, image.Height);
-                case 0x00000001:
-                    return _dataDecoder.Decode8Bit(image.Data, image.Stride * 2, image.Height);
-                case 0x00000002:
-                    return _dataDecoder.Decode16Bit(image.Data, image.Stride * 2, image.Height);
-                case 0x00000003:
-                    return _dataDecoder.Decode24Bit(image.Data, image.Stride * 2, image.Height);
-                default:
-                    throw new RhythmCodexException($"Unrecognized TIM image type {image.ImageType:X8}.");
-            }
+            case 0x00000000:
+                return _dataDecoder.Decode4Bit(image.Data, image.Stride * 2, image.Height);
+            case 0x00000001:
+                return _dataDecoder.Decode8Bit(image.Data, image.Stride * 2, image.Height);
+            case 0x00000002:
+                return _dataDecoder.Decode16Bit(image.Data, image.Stride * 2, image.Height);
+            case 0x00000003:
+                return _dataDecoder.Decode24Bit(image.Data, image.Stride * 2, image.Height);
+            default:
+                throw new RhythmCodexException($"Unrecognized TIM image type {image.ImageType:X8}.");
         }
     }
 }

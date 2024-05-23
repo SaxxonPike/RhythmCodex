@@ -1,13 +1,12 @@
-namespace RhythmCodex.Heuristics
+namespace RhythmCodex.Heuristics;
+
+public enum Context
 {
-    public enum Context
-    {
-        None,
-        DdrCs,
-        Ddr573,
-        BeatmaniaCs,
-        BeatmaniaAc,
-        BeatmaniaIidxCs,
-        BeatmaniaIidxAc
-    }
+    None,
+    DdrCs,
+    Ddr573,
+    BeatmaniaCs,
+    BeatmaniaAc,
+    BeatmaniaIidxCs,
+    BeatmaniaIidxAc
 }

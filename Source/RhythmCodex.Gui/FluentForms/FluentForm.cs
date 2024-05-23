@@ -1,20 +1,19 @@
 ﻿using System.Windows.Forms;
 
-namespace RhythmCodex.Gui.FluentForms
+namespace RhythmCodex.Gui.FluentForms;
+
+public class FluentForm : FluentControl<Form>
 {
-    public class FluentForm : FluentControl<Form>
+    protected override Control OnBuild(FluentState state)
     {
-        protected override Control OnBuild(FluentState state)
-        {
-            var form = new Form();
-            SetDefault(form);
+        var form = new Form();
+        SetDefault(form);
 
-            var children = BuildChildren(state);
-            if (children != null)
-                form.Controls.AddRange(children);
+        var children = BuildChildren(state);
+        if (children != null)
+            form.Controls.AddRange(children);
 
-            UpdateMap(state, form);
-            return form;
-        }
+        UpdateMap(state, form);
+        return form;
     }
 }

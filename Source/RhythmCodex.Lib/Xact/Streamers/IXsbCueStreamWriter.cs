@@ -1,7 +1,6 @@
-﻿namespace RhythmCodex.Xact.Streamers
+﻿namespace RhythmCodex.Xact.Streamers;
+
+public interface IXsbCueStreamWriter
 {
-    public interface IXsbCueStreamWriter
-    {
         
-    }
 }

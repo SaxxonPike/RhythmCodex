@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Charting.Models
+namespace RhythmCodex.Charting.Models;
+
+public interface IChart : IMetadata
 {
-    public interface IChart : IMetadata
-    {
-        IList<IEvent> Events { get; }
-    }
+    IList<IEvent> Events { get; }
 }
