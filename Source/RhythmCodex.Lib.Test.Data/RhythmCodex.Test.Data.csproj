@@ -5,9 +5,12 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-        <EmbeddedResource Include="**\*.zip" />
+        <EmbeddedResource Include="**\*.zip"/>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="*.DotSettings"/>
     </ItemGroup>
 </Project>

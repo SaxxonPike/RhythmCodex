@@ -1,18 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Digital573\Providers\Digital573AudioKeyDatabase.zip" />
-    <None Remove="Ddr\Processors\DdrMetadata.json" />
-    <None Remove="Ddr\Processors\DdrMetadata.zip" />
-    <EmbeddedResource Include="Ddr\Processors\DdrMetadata.zip" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Digital573\Providers\Digital573AudioKeyDatabase.zip"/>
+        <None Remove="Ddr\Processors\DdrMetadata.json"/>
+        <None Remove="Ddr\Processors\DdrMetadata.zip"/>
+        <EmbeddedResource Include="Ddr\Processors\DdrMetadata.zip"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="*.DotSettings" />
+    </ItemGroup>
 </Project>

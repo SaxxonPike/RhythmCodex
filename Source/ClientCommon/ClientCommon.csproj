@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
-
     <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
     </ItemGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+        <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="*.DotSettings"/>
     </ItemGroup>
 
 </Project>

@@ -1,26 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType>exe</OutputType>
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-		<ApplicationIcon />
-		<OutputTypeEx>winexe</OutputTypeEx>
-		<StartupObject />
-		<VersionPrefix>0.0.1</VersionPrefix>
-		<UseWindowsForms>true</UseWindowsForms>
-		<LangVersion>latest</LangVersion>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Autofac" Version="8.0.0" />
-		<PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\RhythmCodex.Cli\RhythmCodex.Cli.csproj" />
-		<ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
-		<ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj" />
-		<ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj" />
-		<ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj" />
-		<ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj" />
-		<ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj" />
-	</ItemGroup>
+    <PropertyGroup>
+        <OutputType>exe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <ApplicationIcon/>
+        <OutputTypeEx>winexe</OutputTypeEx>
+        <StartupObject/>
+        <VersionPrefix>0.0.1</VersionPrefix>
+        <UseWindowsForms>true</UseWindowsForms>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="8.0.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\RhythmCodex.Cli\RhythmCodex.Cli.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="*.DotSettings"/>
+    </ItemGroup>
 </Project>
