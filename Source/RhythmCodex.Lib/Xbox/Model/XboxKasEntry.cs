@@ -7,5 +7,5 @@ public class XboxKasEntry
 {
     public int Block { get; set; }
     public int Offset { get; set; }
-    public byte[] Data { get; set; }
+    public byte[]? Data { get; set; }
 }

@@ -11,44 +11,31 @@ using RhythmCodex.Xact.Processors;
 namespace RhythmCodex.Xact.Streamers;
 
 [Service]
-public class XsbStreamReader : IXsbStreamReader
+public class XsbStreamReader(
+    IXsbHeaderStreamReader xsbHeaderStreamReader,
+    IXsbCueNameTableStreamReader xsbCueNameTableStreamReader,
+    IXsbCueStreamReader xsbCueStreamReader,
+    IXsbSoundStreamReader xsbSoundStreamReader,
+    IFcs16Calculator fcs16Calculator,
+    ILogger logger)
+    : IXsbStreamReader
 {
-    private readonly IXsbHeaderStreamReader _xsbHeaderStreamReader;
-    private readonly IXsbCueNameTableStreamReader _xsbCueNameTableStreamReader;
-    private readonly IXsbCueStreamReader _xsbCueStreamReader;
-    private readonly IXsbSoundStreamReader _xsbSoundStreamReader;
-    private readonly IFcs16Calculator _fcs16Calculator;
-    private readonly ILogger _logger;
-
-    public XsbStreamReader(
-        IXsbHeaderStreamReader xsbHeaderStreamReader,
-        IXsbCueNameTableStreamReader xsbCueNameTableStreamReader,
-        IXsbCueStreamReader xsbCueStreamReader,
-        IXsbSoundStreamReader xsbSoundStreamReader,
-        IFcs16Calculator fcs16Calculator,
-        ILogger logger)
-    {
-        _xsbHeaderStreamReader = xsbHeaderStreamReader;
-        _xsbCueNameTableStreamReader = xsbCueNameTableStreamReader;
-        _xsbCueStreamReader = xsbCueStreamReader;
-        _xsbSoundStreamReader = xsbSoundStreamReader;
-        _fcs16Calculator = fcs16Calculator;
-        _logger = logger;
-    }
-
     public XsbFile Read(Stream stream, long length)
     {
         var block = stream.TryRead(0, (int)length);
         var mem = new MemoryStream(block);
         var reader = new BinaryReader(mem);
-        var result = new XsbFile();
+        
+        var header = xsbHeaderStreamReader.Read(mem);
+        var result = new XsbFile
+        {
+            Header = header,
+            Cues = []
+        };
 
-        var header = _xsbHeaderStreamReader.Read(mem);
-        result.Header = header;
-
-        var crc = _fcs16Calculator.Calculate(block.AsSpan(18));
+        var crc = fcs16Calculator.Calculate(block.AsSpan(18));
         if (crc != header.Crc)
-            _logger.Debug($"CRC FCS-16 does not match. Expected:{crc:X4} Found:{header.Crc:X4}");
+            logger.Debug($"CRC FCS-16 does not match. Expected:{crc:X4} Found:{header.Crc:X4}");
 
         var waveBankNames = new string[result.Header.WaveBankCount];
         mem.Position = result.Header.WaveBankNameTableOffset;
@@ -58,21 +45,21 @@ public class XsbStreamReader : IXsbStreamReader
                 .TakeWhile(b => b != 0x00).ToArray().GetString();
         }
 
-        var cues = new List<XsbCue>();
-        if (result.Header.SimpleCueCount > 0 && result.Header.SimpleCuesOffset > 0)
+        var cues = result.Cues;
+        if (result.Header is { SimpleCueCount: > 0, SimpleCuesOffset: > 0 })
         {
             mem.Position = result.Header.SimpleCuesOffset;
-            cues.AddRange(_xsbCueStreamReader.ReadSimple(mem, result.Header.SimpleCueCount));
+            cues.AddRange(xsbCueStreamReader.ReadSimple(mem, result.Header.SimpleCueCount));
         }
 
-        if (result.Header.ComplexCueCount > 0 && result.Header.ComplexCuesOffset > 0)
+        if (result.Header is { ComplexCueCount: > 0, ComplexCuesOffset: > 0 })
         {
             mem.Position = result.Header.ComplexCuesOffset;
-            cues.AddRange(_xsbCueStreamReader.ReadComplex(mem, result.Header.ComplexCueCount));
+            cues.AddRange(xsbCueStreamReader.ReadComplex(mem, result.Header.ComplexCueCount));
         }
 
         var cueNames = Array.Empty<string>();
-        if (result.Header.CueNameHashTableOffset > 0 && result.Header.CueNameHashValuesOffset > 0)
+        if (result.Header is { CueNameHashTableOffset: > 0, CueNameHashValuesOffset: > 0 })
         {
             var cueHashIds = new short[result.Header.TotalCueCount];
             mem.Position = result.Header.CueNameHashTableOffset;
@@ -104,10 +91,10 @@ public class XsbStreamReader : IXsbStreamReader
                 cueNames[i] = hashName.ToArray().GetString();
             }
         }
-        else if (result.Header.CueNamesOffset > 0 && result.Header.CueNameTableLength > 0)
+        else if (result.Header is { CueNamesOffset: > 0, CueNameTableLength: > 0 })
         {
             mem.Position = result.Header.CueNamesOffset;
-            cueNames = _xsbCueNameTableStreamReader.Read(mem, result.Header.CueNameTableLength).ToArray();
+            cueNames = xsbCueNameTableStreamReader.Read(mem, result.Header.CueNameTableLength).ToArray();
         }
 
         for (var i = 0; i < cueNames.Length; i++)
@@ -115,11 +102,9 @@ public class XsbStreamReader : IXsbStreamReader
             var cue = cues[i];
             cue.Name = cueNames[i];
             mem.Position = cue.Offset;
-            cue.Sound = _xsbSoundStreamReader.Read(mem);
+            cue.Sound = xsbSoundStreamReader.Read(mem);
             cues[i] = cue;
         }
-
-        result.Cues = cues.ToArray();
 
         return result;
     }

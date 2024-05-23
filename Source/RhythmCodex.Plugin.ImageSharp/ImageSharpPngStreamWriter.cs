@@ -6,18 +6,11 @@ using SixLabors.ImageSharp;
 namespace RhythmCodex.Plugin.ImageSharp;
 
 [Service]
-public class ImageSharpPngStreamWriter : IPngStreamWriter
+public class ImageSharpPngStreamWriter(IImageSharpBitmapConverter imageSharpBitmapConverter) : IPngStreamWriter
 {
-    private readonly IImageSharpBitmapConverter _imageSharpBitmapConverter;
-
-    public ImageSharpPngStreamWriter(IImageSharpBitmapConverter imageSharpBitmapConverter)
-    {
-        _imageSharpBitmapConverter = imageSharpBitmapConverter;
-    }
-    
     public void Write(Stream stream, IBitmap bitmap)
     {
-        using var image = _imageSharpBitmapConverter.ConvertBitmap(bitmap);
+        using var image = imageSharpBitmapConverter.ConvertBitmap(bitmap);
         image.SaveAsPng(stream);
     }
 }

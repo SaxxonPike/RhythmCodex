@@ -9,9 +9,9 @@ namespace RhythmCodex.Beatmania.Streamers;
 [Service]
 public class BeatmaniaPsxChartEventStreamReader : IBeatmaniaPsxChartEventStreamReader
 {
-    public IList<DjmainChartEvent> Read(Stream stream, int length)
+    public List<DjmainChartEvent> Read(Stream stream, int length)
     {
-        return ReadInternal(stream, length).ToArray();
+        return ReadInternal(stream, length).ToList();
     }
 
     private static IEnumerable<DjmainChartEvent> ReadInternal(Stream stream, int length)

@@ -12,7 +12,7 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class TimingChunkDecoder : ITimingChunkDecoder
 {
-    public IList<Timing> Convert(ReadOnlyMemory<byte> data)
+    public List<Timing> Convert(ReadOnlyMemory<byte> data)
     {
         using var mem = new ReadOnlyMemoryStream(data);
         using var reader = new BinaryReader(mem);
@@ -35,6 +35,6 @@ public class TimingChunkDecoder : ITimingChunkDecoder
                 LinearOffset = linearOffsets[i],
                 MetricOffset = metricOffsets[i]
             })
-            .AsList();
+            .ToList();
     }
 }

@@ -7,15 +7,8 @@ using RhythmCodex.Psf.Models;
 namespace RhythmCodex.Psf.Streamers;
 
 [Service]
-public class PsfStreamReader : IPsfStreamReader
+public class PsfStreamReader(IZlibStreamFactory zlibStreamFactory) : IPsfStreamReader
 {
-    private readonly IZlibStreamFactory _zlibStreamFactory;
-
-    public PsfStreamReader(IZlibStreamFactory zlibStreamFactory)
-    {
-        _zlibStreamFactory = zlibStreamFactory;
-    }
-        
     public PsfChunk Read(Stream source)
     {
         var reader = new BinaryReader(source);
@@ -33,7 +26,7 @@ public class PsfStreamReader : IPsfStreamReader
         var dataCompressed = reader.ReadBytes(dataSize);
         byte[] data;
             
-        using (var inputMemory = _zlibStreamFactory.Create(new MemoryStream(dataCompressed)))
+        using (var inputMemory = zlibStreamFactory.Create(new MemoryStream(dataCompressed)))
         using (var outputMemory = new MemoryStream())
         {
             inputMemory.CopyTo(outputMemory);

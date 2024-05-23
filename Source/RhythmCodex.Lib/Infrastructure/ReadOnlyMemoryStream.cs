@@ -3,15 +3,9 @@ using System.IO;
 
 namespace RhythmCodex.Infrastructure;
 
-public sealed class ReadOnlyMemoryStream : Stream
+public sealed class ReadOnlyMemoryStream(ReadOnlyMemory<byte> data) : Stream
 {
-    private readonly ReadOnlyMemory<byte> _data;
     private int _position;
-
-    public ReadOnlyMemoryStream(ReadOnlyMemory<byte> data)
-    {
-        _data = data;
-    }
 
     public override void Flush()
     {
@@ -22,16 +16,16 @@ public sealed class ReadOnlyMemoryStream : Stream
         switch (count)
         {
             case 1:
-                if (_position >= _data.Length)
+                if (_position >= data.Length)
                     return 0;
-                buffer[offset] = _data.Span[_position];
+                buffer[offset] = data.Span[_position];
                 _position++;
                 return 1;
             case 0:
                 return 0;
             default:
-                var length = Math.Min(count, _data.Length - _position);
-                _data.Span.Slice(_position, length).CopyTo(buffer);
+                var length = Math.Min(count, data.Length - _position);
+                data.Span.Slice(_position, length).CopyTo(buffer);
                 _position += length;
                 return length;
         }
@@ -71,7 +65,7 @@ public sealed class ReadOnlyMemoryStream : Stream
 
     public override bool CanWrite => false;
 
-    public override long Length => _data.Length;
+    public override long Length => data.Length;
 
     public override long Position
     {

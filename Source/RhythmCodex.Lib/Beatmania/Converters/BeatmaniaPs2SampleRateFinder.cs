@@ -32,8 +32,8 @@ public class BeatmaniaPs2SampleRateFinder : IBeatmaniaPs2SampleRateFinder
 
     public BigRational GetRate(int encodedRate)
     {
-        if (KnownFrequencies.ContainsKey(encodedRate))
-            return KnownFrequencies[encodedRate];
+        if (KnownFrequencies.TryGetValue(encodedRate, out var rate))
+            return rate;
             
         // TODO: actually figure out this algo for once
         throw new NotImplementedException();

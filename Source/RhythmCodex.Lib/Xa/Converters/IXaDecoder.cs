@@ -6,5 +6,5 @@ namespace RhythmCodex.Xa.Converters;
 
 public interface IXaDecoder
 {
-    IList<ISound> Decode(XaChunk chunk);
+    IList<Sound?> Decode(XaChunk chunk);
 }

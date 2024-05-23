@@ -6,5 +6,5 @@ namespace RhythmCodex.Djmain.Streamers;
 
 public interface IDjmainChartEventStreamReader
 {
-    IList<DjmainChartEvent> Read(Stream stream);
+    List<DjmainChartEvent> Read(Stream stream);
 }

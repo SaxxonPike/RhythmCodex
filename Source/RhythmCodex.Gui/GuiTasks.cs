@@ -9,17 +9,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Gui;
 
 [Service]
-public class GuiTasks : IGuiTasks
+public class GuiTasks(IApp app, ILogger logger) : IGuiTasks
 {
-    private readonly IApp _app;
-    private readonly ILogger _logger;
-
-    public GuiTasks(IApp app, ILogger logger)
-    {
-        _app = app;
-        _logger = logger;
-    }
-
     private void Run(IEnumerable<string> args)
     {
         var argsCopy = args.ToList();
@@ -32,7 +23,7 @@ public class GuiTasks : IGuiTasks
         {
             try
             {
-                _app.Run(CleanArgs(argsCopy));
+                app.Run(CleanArgs(argsCopy));
             }
             catch
             {
@@ -42,12 +33,12 @@ public class GuiTasks : IGuiTasks
 
         task.ContinueWith(t =>
         {
-            _logger.Info("---end---");
+            logger.Info("---end---");
             if (!t.IsFaulted)
                 return;
 
-            _logger.Warning("The task failed.");
-            _logger.Warning(t.Exception?.ToString() ?? "(no exception)");
+            logger.Warning("The task failed.");
+            logger.Warning(t.Exception?.ToString() ?? "(no exception)");
         });
             
         task.Start();

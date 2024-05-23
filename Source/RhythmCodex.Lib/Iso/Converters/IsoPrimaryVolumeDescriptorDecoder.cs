@@ -7,15 +7,9 @@ using RhythmCodex.Iso.Model;
 namespace RhythmCodex.Iso.Converters;
 
 [Service]
-public class IsoPrimaryVolumeDescriptorDecoder : IIsoPrimaryVolumeDescriptorDecoder
+public class IsoPrimaryVolumeDescriptorDecoder(IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
+    : IIsoPrimaryVolumeDescriptorDecoder
 {
-    private readonly IIsoDirectoryRecordDecoder _isoDirectoryRecordDecoder;
-
-    public IsoPrimaryVolumeDescriptorDecoder(IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
-    {
-        _isoDirectoryRecordDecoder = isoDirectoryRecordDecoder;
-    }
-
     public IsoVolume Decode(ReadOnlySpan<byte> data)
     {
         return new IsoVolume
@@ -32,7 +26,7 @@ public class IsoPrimaryVolumeDescriptorDecoder : IIsoPrimaryVolumeDescriptorDeco
             TypeMPathTableLocation = Bitter.ToInt32(data.Slice(148, 4)),
             OptionalTypeMPathTableLocation = Bitter.ToInt32(data.Slice(152, 4)),
             RootDirectoryRecord =
-                _isoDirectoryRecordDecoder.Decode(new MemoryStream(data.Slice(156, 34).ToArray()), true),
+                isoDirectoryRecordDecoder.Decode(new MemoryStream(data.Slice(156, 34).ToArray()), true),
             VolumeSetIdentifier = Encodings.CP437.GetString(data.Slice(190, 128)),
             PublisherIdentifier = Encodings.CP437.GetString(data.Slice(318, 128)),
             DataPreparerIdentifier = Encodings.CP437.GetString(data.Slice(446, 128)),

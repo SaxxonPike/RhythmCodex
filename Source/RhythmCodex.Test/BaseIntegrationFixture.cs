@@ -10,12 +10,7 @@ namespace RhythmCodex;
 [PublicAPI]
 public class BaseIntegrationFixture : BaseTestFixture, IResolver
 {
-    private readonly Lazy<IContainer> _container;
-
-    public BaseIntegrationFixture()
-    {
-        _container = new Lazy<IContainer>(BuildContainer);
-    }
+    private readonly Lazy<IContainer> _container = new(BuildContainer);
 
     private IContainer Container => _container.Value;
 

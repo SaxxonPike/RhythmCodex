@@ -8,7 +8,7 @@ namespace RhythmCodex.Beatmania.Converters;
 [Service]
 public class BeatmaniaPs2EventDecoder : IBeatmaniaPs2EventDecoder
 {
-    public IList<IEvent> Decode(BeatmaniaPs2Event ev)
+    public List<Event> Decode(BeatmaniaPs2Event ev)
     {
         throw new System.NotImplementedException();
     }

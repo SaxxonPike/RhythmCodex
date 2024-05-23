@@ -8,16 +8,9 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Bms.Converters;
 
 [Service]
-public class BmsRandomResolver : IBmsRandomResolver
+public class BmsRandomResolver(IRandomizer randomizer) : IBmsRandomResolver
 {
-    private readonly IRandomizer _randomizer;
-
-    public BmsRandomResolver(IRandomizer randomizer)
-    {
-        _randomizer = randomizer;
-    }
-
-    public IList<BmsCommand> Resolve(IEnumerable<BmsCommand> commands)
+    public List<BmsCommand> Resolve(IEnumerable<BmsCommand> commands)
     {
         var scope = new BmsResolverScope();
         return ResolveScope(commands, scope, true).ToList();
@@ -33,7 +26,7 @@ public class BmsRandomResolver : IBmsRandomResolver
         foreach (var command in commands)
         {
             // Ending any block will evaluate it when the scope level returns to zero.
-                
+
             if ("endif".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
                 "endsw".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
                 "elseif".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
@@ -45,14 +38,15 @@ public class BmsRandomResolver : IBmsRandomResolver
                     if (scopeLevel == 0)
                     {
                         var topCommand = pendingScopeCommands.First();
-                        if ("switch".Equals(topCommand.Name, StringComparison.OrdinalIgnoreCase) || 
-                            (topCommand.Value == null && !scope.Satisfied) || 
+                        if ("switch".Equals(topCommand.Name, StringComparison.OrdinalIgnoreCase) ||
+                            (topCommand.Value == null && !scope.Satisfied) ||
                             (topCommand.Value != null && scope.CompareValue == topCommand.Value))
                         {
                             scope.Satisfied = true;
                             var innerScopeCommands = pendingScopeCommands.Skip(1).ToArray();
                             Console.WriteLine("Processing inner scope:");
-                            Console.WriteLine(string.Join(Environment.NewLine, innerScopeCommands.Select(isc => $"{isc}")));
+                            Console.WriteLine(string.Join(Environment.NewLine,
+                                innerScopeCommands.Select(isc => $"{isc}")));
                             var innerScopeOutput =
                                 ResolveScope(innerScopeCommands, pendingScope, false).ToArray();
                             foreach (var innerCommand in innerScopeOutput)
@@ -72,7 +66,7 @@ public class BmsRandomResolver : IBmsRandomResolver
                     }
                 }
             }
-                
+
             // Starting a block will prepare a scope.
 
             if ("if".Equals(command.Name, StringComparison.OrdinalIgnoreCase) ||
@@ -81,9 +75,10 @@ public class BmsRandomResolver : IBmsRandomResolver
             {
                 if (scopeLevel == 0)
                 {
-                    pendingScope.CompareValue = scope.CompareValue;
+                    pendingScope.CompareValue = scope.CompareValue ?? string.Empty;
                     pendingScope.Matched = true;
                 }
+
                 scopeLevel++;
             }
 
@@ -91,12 +86,16 @@ public class BmsRandomResolver : IBmsRandomResolver
             {
                 if (scopeLevel == 0)
                 {
-                    pendingScope.CompareValue = $"{_randomizer.GetInt(int.Parse(command.Value)) + 1}";
+                    pendingScope.CompareValue = command.Value is { } commandValue &&
+                                                int.TryParse(commandValue, out var commandValueNumber)
+                        ? $"{randomizer.GetInt(commandValueNumber) + 1}"
+                        : string.Empty;
                     pendingScope.Matched = false;
                 }
+
                 scopeLevel++;
             }
-                
+
             // Skip scope processing if we are figuring out an inner scope.
 
             if (scopeLevel > 0)
@@ -125,16 +124,19 @@ public class BmsRandomResolver : IBmsRandomResolver
                 if (scope.Matched && "skip".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
                     yield break;
             }
-                
+
             if ("random".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
             {
-                scope.CompareValue = $"{_randomizer.GetInt(int.Parse(command.Value)) + 1}";
+                scope.CompareValue = command.Value is { } commandValue &&
+                                     int.TryParse(commandValue, out var commandValueNumber)
+                    ? $"{randomizer.GetInt(commandValueNumber) + 1}"
+                    : string.Empty;
                 continue;
             }
 
             if ("setrandom".Equals(command.Name, StringComparison.OrdinalIgnoreCase))
             {
-                scope.CompareValue = command.Value;
+                scope.CompareValue = command.Value ?? string.Empty;
                 continue;
             }
 

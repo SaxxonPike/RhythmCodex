@@ -5,5 +5,5 @@ namespace RhythmCodex.Bms.Converters;
 
 public interface IBmsDecoder
 {
-    BmsChart Decode(IEnumerable<BmsCommand> commands);
+    BmsChart Decode(IReadOnlyCollection<BmsCommand> commands);
 }

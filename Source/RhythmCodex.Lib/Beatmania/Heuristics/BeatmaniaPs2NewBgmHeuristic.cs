@@ -10,19 +10,13 @@ using RhythmCodex.Vag.Streamers;
 namespace RhythmCodex.Beatmania.Heuristics;
 
 [Service]
-public class BeatmaniaPs2NewBgmHeuristic : IReadableHeuristic<VagChunk>
+public class BeatmaniaPs2NewBgmHeuristic(IVagStreamReader vagStreamReader)
+    : IReadableHeuristic<VagChunk>
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public BeatmaniaPs2NewBgmHeuristic(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-
     public string Description => "BeatmaniaIIDX CS BGM (new)";
     public string FileExtension => "bmcsbgm2";
 
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         if (reader.Length < 0x804)
             return null;
@@ -57,9 +51,9 @@ public class BeatmaniaPs2NewBgmHeuristic : IReadableHeuristic<VagChunk>
         return result;
     }
 
-    public VagChunk Read(HeuristicResult result, Stream stream)
+    public VagChunk? Read(HeuristicResult result, Stream stream)
     {
-        if (!(result is VagHeuristicResult info))
+        if (result is not VagHeuristicResult info)
             return null;
             
         var decryptStream = info.Key != null
@@ -69,7 +63,11 @@ public class BeatmaniaPs2NewBgmHeuristic : IReadableHeuristic<VagChunk>
         if (info.Start != null)
             stream.TryRead(0, (int) info.Start);
 
-        var output = _vagStreamReader.Read(decryptStream, info.Channels ?? 1, info.Interleave ?? 0);
+        var output = vagStreamReader.Read(decryptStream, info.Channels ?? 1, info.Interleave ?? 0);
+
+        if (output == null) 
+            return output;
+
         output.Volume = info.Volume;
         output.SampleRate = info.SampleRate;
         output.Length = info.Length;

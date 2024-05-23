@@ -7,6 +7,6 @@ namespace RhythmCodex.Twinkle.Model;
 public class TwinkleArchive
 {
     public int Id { get; set; }
-    public IList<IChart> Charts { get; set; }
-    public IList<ISound> Samples { get; set; }
+    public List<Chart> Charts { get; set; }
+    public IList<Sound?> Samples { get; set; }
 }

@@ -6,16 +6,9 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Beatmania.Streamers;
 
 [Service]
-public class BeatmaniaPcAudioStreamReader : IBeatmaniaPcAudioStreamReader
+public class BeatmaniaPcAudioStreamReader(IBeatmaniaPcAudioEntryStreamReader beatmaniaPcAudioEntryStreamReader)
+    : IBeatmaniaPcAudioStreamReader
 {
-    private readonly IBeatmaniaPcAudioEntryStreamReader _beatmaniaPcAudioEntryStreamReader;
-
-    public BeatmaniaPcAudioStreamReader(
-        IBeatmaniaPcAudioEntryStreamReader beatmaniaPcAudioEntryStreamReader)
-    {
-        _beatmaniaPcAudioEntryStreamReader = beatmaniaPcAudioEntryStreamReader;
-    }
-
     public IEnumerable<BeatmaniaPcAudioEntry> Read(Stream source, long length)
     {
         var baseOffset = source.Position;
@@ -35,7 +28,7 @@ public class BeatmaniaPcAudioStreamReader : IBeatmaniaPcAudioStreamReader
         for (var i = 0; i < sampleCount; i++)
         {
             reader.BaseStream.Position = sampleOffset[i] + baseOffset;
-            yield return _beatmaniaPcAudioEntryStreamReader.Read(source);
+            yield return beatmaniaPcAudioEntryStreamReader.Read(source);
         }
     }
 }

@@ -9,10 +9,8 @@ using RhythmCodex.Iso.Model;
 namespace RhythmCodex.Iso.Streamers;
 
 [Service]
-public class IsoSectorStreamFactory : IIsoSectorStreamFactory
+public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) : IIsoSectorStreamFactory
 {
-    private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
-
     private sealed class IsoSectorStream : Stream
     {
         private readonly int _sectorSize;
@@ -89,19 +87,14 @@ public class IsoSectorStreamFactory : IIsoSectorStreamFactory
             base.Dispose(disposing);
         }
     }
-        
-    public IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder)
-    {
-        _isoSectorInfoDecoder = isoSectorInfoDecoder;
-    }
 
     public Stream Open(IEnumerable<ICdSector> sectors)
     {
-        return new IsoSectorStream(2048, sectors, _isoSectorInfoDecoder, null);
+        return new IsoSectorStream(2048, sectors, isoSectorInfoDecoder, null);
     }
 
     public Stream Open(IEnumerable<ICdSector> sectors, long length)
     {
-        return new IsoSectorStream(2048, sectors, _isoSectorInfoDecoder, length);
+        return new IsoSectorStream(2048, sectors, isoSectorInfoDecoder, length);
     }
 }

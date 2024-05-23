@@ -9,19 +9,12 @@ using RhythmCodex.Wav.Converters;
 namespace RhythmCodex.Beatmania.Converters;
 
 [Service]
-public class BeatmaniaPcAudioDecoder : IBeatmaniaPcAudioDecoder
+public class BeatmaniaPcAudioDecoder(IWavDecoder wavDecoder) : IBeatmaniaPcAudioDecoder
 {
-    private readonly IWavDecoder _wavDecoder;
-
-    public BeatmaniaPcAudioDecoder(IWavDecoder wavDecoder)
-    {
-        _wavDecoder = wavDecoder;
-    }
-
-    public ISound Decode(BeatmaniaPcAudioEntry entry)
+    public Sound? Decode(BeatmaniaPcAudioEntry entry)
     {
         using var wavDataMem = new ReadOnlyMemoryStream(entry.Data);
-        var result = _wavDecoder.Decode(wavDataMem);
+        var result = wavDecoder.Decode(wavDataMem);
 
         var panning = entry.Panning;
         if (panning is > 0x7F or < 0x01)

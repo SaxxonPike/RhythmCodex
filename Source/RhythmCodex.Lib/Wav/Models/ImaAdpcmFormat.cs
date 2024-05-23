@@ -1,14 +1,11 @@
+using System;
+using System.Runtime.InteropServices.Marshalling;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Wav.Models;
 
 [Model]
-public class ImaAdpcmFormat
+public class ImaAdpcmFormat(ReadOnlySpan<byte> data)
 {
-    public ImaAdpcmFormat(byte[] data)
-    {
-        SamplesPerBlock = Bitter.ToInt16(data, 2);
-    }
-        
-    public int SamplesPerBlock { get; set; }
+    public int SamplesPerBlock { get; set; } = Bitter.ToInt16(data, 2);
 }

@@ -6,16 +6,10 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Compression;
 
 [Service]
-public class BemaniLzDecoder : IBemaniLzDecoder
+public class BemaniLzDecoder(ILogger logger) : IBemaniLzDecoder
 {
-    private readonly ILogger _logger;
     private const int BufferMask = 0x3FF; // 10 bits window
     private const int BufferSize = 0x400;
-
-    public BemaniLzDecoder(ILogger logger)
-    {
-        _logger = logger;
-    }
 
     public byte[] Decode(Stream source)
     {
@@ -99,7 +93,7 @@ public class BemaniLzDecoder : IBemaniLzDecoder
         }
         catch (Exception e)
         {
-            _logger.Debug($"BemaniLZdecoder failed{Environment.NewLine}{e}");
+            logger.Debug($"BemaniLZdecoder failed{Environment.NewLine}{e}");
         }
         finally
         {

@@ -5,5 +5,5 @@ namespace RhythmCodex.Vag.Streamers;
 
 public interface IVagStreamReader
 {
-    VagChunk Read(Stream stream, int channels, int interleave);
+    VagChunk? Read(Stream stream, int channels, int interleave);
 }

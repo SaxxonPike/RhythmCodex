@@ -149,7 +149,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     }
 
     /// <inheritdoc />
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is BigRational br && Equals(br);
     }
@@ -161,7 +161,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     }
 
     /// <inheritdoc />
-    int IComparable.CompareTo(object obj)
+    int IComparable.CompareTo(object? obj)
     {
         if (obj == null)
             return 1;

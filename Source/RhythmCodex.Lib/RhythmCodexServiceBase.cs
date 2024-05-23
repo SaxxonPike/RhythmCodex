@@ -3,13 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace RhythmCodex;
 
-public abstract class RhythmCodexServiceBase
+public abstract class RhythmCodexServiceBase(IServiceProvider services)
 {
-    private readonly IServiceProvider _services;
-
-    protected RhythmCodexServiceBase(IServiceProvider services) => 
-        _services = services;
-
     protected T Svc<T>() =>
-        _services.GetRequiredService<T>();
+        services.GetRequiredService<T>();
 }

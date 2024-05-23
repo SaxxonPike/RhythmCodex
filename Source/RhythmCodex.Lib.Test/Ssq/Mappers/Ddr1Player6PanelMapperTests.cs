@@ -26,7 +26,7 @@ public class Ddr1Player6PanelMapperTests : BaseUnitTestFixture<Ddr1Player6PanelM
         };
 
         // Act.
-        var result = Enumerable.Range(0, expected.Length).Select(Subject.Map).AsList();
+        var result = Enumerable.Range(0, expected.Length).Select(Subject.Map);
 
         // Assert.
         result.Should().BeEquivalentTo(expected);
@@ -50,7 +50,7 @@ public class Ddr1Player6PanelMapperTests : BaseUnitTestFixture<Ddr1Player6PanelM
         };
 
         // Act.
-        var result = data.Select(Subject.Map).AsList();
+        var result = data.Select(Subject.Map);
 
         // Assert.
         result.Should().BeEquivalentTo(expected);

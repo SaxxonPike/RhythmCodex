@@ -5,5 +5,5 @@ namespace RhythmCodex.Mp3.Converters;
 
 public interface IMp3Decoder
 {
-    ISound Decode(Stream stream);
+    Sound? Decode(Stream stream);
 }

@@ -8,34 +8,17 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Cd.Streamers;
 
 [NotService]
-public class CdSectorOnDiskCollection : IReadOnlyList<ICdSector>
+public class CdSectorOnDiskCollection(int total, Func<int, byte[]> read) : IReadOnlyList<ICdSector>
 {
-    private readonly int _total;
-    private readonly Func<int, byte[]> _read;
-
-    private class OnDiskCdSector : ICdSector
+    private class OnDiskCdSector(int number, Func<int, byte[]> read) : ICdSector
     {
-        private readonly Func<int, byte[]> _read;
-
-        public OnDiskCdSector(int number, Func<int, byte[]> read)
-        {
-            _read = read;
-            Number = number;
-        }
-
-        public int Number { get; }
-        public byte[] Data => _read(Number);
+        public int Number { get; } = number;
+        public byte[] Data => read(Number);
     }
 
-    public CdSectorOnDiskCollection(int total, Func<int, byte[]> read)
-    {
-        _total = total;
-        _read = read;
-    }
-        
     public IEnumerator<ICdSector> GetEnumerator() => 
-        Enumerable.Range(0, _total).Select(i => new OnDiskCdSector(i, _read)).GetEnumerator();
+        Enumerable.Range(0, total).Select(i => new OnDiskCdSector(i, read)).GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    public int Count => _total;
-    public ICdSector this[int index] => new OnDiskCdSector(index, _read);
+    public int Count => total;
+    public ICdSector this[int index] => new OnDiskCdSector(index, read);
 }

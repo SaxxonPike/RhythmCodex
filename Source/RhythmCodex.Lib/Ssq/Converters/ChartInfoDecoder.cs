@@ -6,15 +6,8 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Ssq.Converters;
 
 [Service]
-public class ChartInfoDecoder : IChartInfoDecoder
+public class ChartInfoDecoder(ILogger logger) : IChartInfoDecoder
 {
-    private readonly ILogger _logger;
-
-    public ChartInfoDecoder(ILogger logger)
-    {
-        _logger = logger;
-    }
-        
     public ChartInfo Decode(int param1)
     {
         return new ChartInfo
@@ -39,7 +32,7 @@ public class ChartInfoDecoder : IChartInfoDecoder
             case 0x24:
                 return SmGameTypes.Couple;
             default:
-                _logger.Warning($"Unrecognized chart type {param1 & 0xFF:X2}");
+                logger.Warning($"Unrecognized chart type {param1 & 0xFF:X2}");
                 return null;
         }
     }
@@ -62,7 +55,7 @@ public class ChartInfoDecoder : IChartInfoDecoder
                 // TODO: Couple charts use this value. This doesn't seem right.
                 return SmNotesDifficulties.Medium;
             default:
-                _logger.Warning($"Unrecognized chart difficulty {(param1 >> 8) & 0xFF:X2}");
+                logger.Warning($"Unrecognized chart difficulty {(param1 >> 8) & 0xFF:X2}");
                 return SmNotesDifficulties.Edit;
         }
     }
@@ -80,7 +73,7 @@ public class ChartInfoDecoder : IChartInfoDecoder
             case 0x24:
                 return 4;
             default:
-                _logger.Warning($"Unrecognized panel type {param1 & 0xFF:X2}");
+                logger.Warning($"Unrecognized panel type {param1 & 0xFF:X2}");
                 return null;
         }
     }
@@ -98,7 +91,7 @@ public class ChartInfoDecoder : IChartInfoDecoder
             case 0x24:
                 return 2;
             default:
-                _logger.Warning($"Unrecognized player count {param1 & 0xFF:X2}");
+                logger.Warning($"Unrecognized player count {param1 & 0xFF:X2}");
                 return null;
         }
     }

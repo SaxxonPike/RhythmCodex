@@ -17,7 +17,7 @@ namespace RhythmCodex.Djmain.Integration;
 [TestFixture]
 public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
 {
-    private IDjmainArchive DecodeChunk(byte[] data, DjmainChunkFormat format)
+    private DjmainArchive DecodeChunk(byte[] data, DjmainChunkFormat format)
     {
         return Resolve<IDjmainDecoder>().Decode(new DjmainChunk
         {

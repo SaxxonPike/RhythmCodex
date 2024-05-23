@@ -6,15 +6,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Cli.Modules;
 
 [Service]
-public class BmsModule : ICliModule
+public class BmsModule(ITaskFactory taskFactory) : ICliModule
 {
-    private readonly ITaskFactory _taskFactory;
-
-    public BmsModule(ITaskFactory taskFactory)
-    {
-        _taskFactory = taskFactory;
-    }
-
     public string Name => "bms";
     public string Description => "Manipulates BMS data.";
 
@@ -30,7 +23,7 @@ public class BmsModule : ICliModule
 
     private ITask BmsRenderTask(Args args)
     {
-        return _taskFactory
+        return taskFactory
             .BuildBmsTask()
             .WithArgs(args)
             .CreateRenderBms();

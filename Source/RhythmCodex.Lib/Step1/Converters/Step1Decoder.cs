@@ -16,54 +16,36 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Step1.Converters;
 
 [Service]
-public class Step1Decoder : IStep1Decoder
+public class Step1Decoder(
+    ITimingEventDecoder timingEventDecoder,
+    IStepEventDecoder stepEventDecoder,
+    IStep1TimingChunkDecoder timingChunkDecoder,
+    IStep1StepChunkDecoder stepChunkDecoder,
+    IPanelMapperSelector panelMapperSelector,
+    IStepPanelSplitter stepPanelSplitter,
+    IStep1ChartInfoDecoder chartInfoDecoder)
+    : IStep1Decoder
 {
-    private readonly ITimingEventDecoder _timingEventDecoder;
-    private readonly IStepEventDecoder _stepEventDecoder;
-    private readonly IStep1TimingChunkDecoder _timingChunkDecoder;
-    private readonly IStep1StepChunkDecoder _stepChunkDecoder;
-    private readonly IPanelMapperSelector _panelMapperSelector;
-    private readonly IStepPanelSplitter _stepPanelSplitter;
-    private readonly IStep1ChartInfoDecoder _chartInfoDecoder;
-
-    public Step1Decoder(
-        ITimingEventDecoder timingEventDecoder,
-        IStepEventDecoder stepEventDecoder,
-        IStep1TimingChunkDecoder timingChunkDecoder,
-        IStep1StepChunkDecoder stepChunkDecoder,
-        IPanelMapperSelector panelMapperSelector,
-        IStepPanelSplitter stepPanelSplitter,
-        IStep1ChartInfoDecoder chartInfoDecoder)
-    {
-        _timingEventDecoder = timingEventDecoder;
-        _stepEventDecoder = stepEventDecoder;
-        _timingChunkDecoder = timingChunkDecoder;
-        _stepChunkDecoder = stepChunkDecoder;
-        _panelMapperSelector = panelMapperSelector;
-        _stepPanelSplitter = stepPanelSplitter;
-        _chartInfoDecoder = chartInfoDecoder;
-    }
-
-    public IList<IChart> Decode(IEnumerable<Step1Chunk> data)
+    public List<Chart> Decode(IReadOnlyCollection<Step1Chunk> data)
     {
         return DecodeInternal(data).ToList();
     }
 
-    private IEnumerable<IChart> DecodeInternal(IEnumerable<Step1Chunk> data)
+    private IEnumerable<Chart> DecodeInternal(IReadOnlyCollection<Step1Chunk> data)
     {
-        var chunks = data.AsList();
+        var chunks = data;
 
         if (!chunks.Any())
             throw new RhythmCodexException("No chunks to decode.");
 
-        var timings = _timingChunkDecoder.Convert(chunks[0].Data);
+        var timings = timingChunkDecoder.Convert(chunks.First().Data);
 
         foreach (var chunk in chunks.Skip(1))
         {
-            var timingEvents = _timingEventDecoder.Decode(timings);
+            var timingEvents = timingEventDecoder.Decode(timings);
                 
             // Decode the raw steps.
-            var steps = _stepChunkDecoder.Convert(chunk.Data);
+            var steps = stepChunkDecoder.Convert(chunk.Data);
 
             // Old charts store singles charts twice, as if it was a couples chart. So, check for that.
             int? panelCount = null;
@@ -82,16 +64,16 @@ public class Step1Decoder : IStep1Decoder
             {
                 // Bit of a hack to make solo charts work.
                 playerCount = steps.Any(s => (s.Panels & 0xA0) != 0) ? 2 : 1;
-                panelCount = _stepPanelSplitter.Split(steps.Aggregate(0, (i, s) => i | s.Panels)).Count() / playerCount;
+                panelCount = stepPanelSplitter.Split(steps.Aggregate(0, (i, s) => i | s.Panels)).Count() / playerCount;
             }
                 
             // Determine what kind of chart this is based on the panels used.
-            var mapper = _panelMapperSelector.Select(steps, new ChartInfo {PanelCount = panelCount, PlayerCount = playerCount});
+            var mapper = panelMapperSelector.Select(steps, new ChartInfo {PanelCount = panelCount, PlayerCount = playerCount});
 
             // Convert the steps.
-            var stepEvents = _stepEventDecoder.Decode(steps, mapper);
+            var stepEvents = stepEventDecoder.Decode(steps, mapper);
             var events = timingEvents.Concat(stepEvents).ToList();
-            var info = _chartInfoDecoder.Decode(Bitter.ToInt32(chunk.Data.AsSpan(0)), mapper.PlayerCount, mapper.PanelCount);
+            var info = chartInfoDecoder.Decode(Bitter.ToInt32(chunk.Data.AsSpan(0)), mapper.PlayerCount, mapper.PanelCount);
                 
             // Output metadata.
             var difficulty = info.Difficulty;

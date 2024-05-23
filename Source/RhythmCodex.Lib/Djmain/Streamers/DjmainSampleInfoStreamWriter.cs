@@ -9,26 +9,19 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Djmain.Streamers;
 
 [Service]
-public class DjmainSampleInfoStreamWriter : IDjmainSampleInfoStreamWriter
+public class DjmainSampleInfoStreamWriter(IDjmainConfiguration djmainConfiguration)
+    : IDjmainSampleInfoStreamWriter
 {
-    private readonly IDjmainConfiguration _djmainConfiguration;
-
-    public DjmainSampleInfoStreamWriter(IDjmainConfiguration djmainConfiguration)
+    public void Write(Stream stream, IReadOnlyCollection<KeyValuePair<int, DjmainSampleInfo>> definitions)
     {
-        _djmainConfiguration = djmainConfiguration;
-    }
-
-    public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions)
-    {
-        var defs = definitions.AsList();
         var count = Math.Max(0,
-            Math.Min(defs.Any() ? defs.Max(d => d.Key) + 1 : 0, _djmainConfiguration.MaxSampleDefinitions));
+            Math.Min(definitions.Any() ? definitions.Max(d => d.Key) + 1 : 0, djmainConfiguration.MaxSampleDefinitions));
 
         var writer = new BinaryWriter(stream);
 
         for (var i = 0; i < count; i++)
         {
-            var definition = defs.SingleOrDefault(d => d.Key == i).Value;
+            var definition = definitions.SingleOrDefault(d => d.Key == i).Value;
             writer.Write(definition.Channel);
             writer.Write(definition.Frequency);
             writer.Write(definition.ReverbVolume);

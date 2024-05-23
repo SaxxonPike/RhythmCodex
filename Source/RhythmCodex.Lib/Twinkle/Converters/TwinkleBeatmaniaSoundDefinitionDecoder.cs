@@ -8,7 +8,7 @@ namespace RhythmCodex.Twinkle.Converters;
 [Service]
 public class TwinkleBeatmaniaSoundDefinitionDecoder : ITwinkleBeatmaniaSoundDefinitionDecoder
 {
-    public TwinkleBeatmaniaSoundDefinition Decode(ReadOnlySpan<byte> data)
+    public TwinkleBeatmaniaSoundDefinition? Decode(ReadOnlySpan<byte> data)
     {
         if (data.Length < 0x12)
             return null;

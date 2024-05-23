@@ -24,7 +24,7 @@ public class Ddr573ImageFileNameHasher : IDdr573ImageFileNameHasher
         return v1;
     }
 
-    public IDictionary<int, string> Reverse(params int[] hashes)
+    public Dictionary<int, string> Reverse(params int[] hashes)
     {
         var knownValues = new[]
         {

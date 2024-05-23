@@ -25,7 +25,7 @@ public class SoundConsolidator : ISoundConsolidator
         public int B { get; set; }
     }
         
-    public void Consolidate(IEnumerable<ISound> sounds, IEnumerable<IEvent> events)
+    public void Consolidate(IEnumerable<Sound> sounds, IEnumerable<Event> events)
     {
         // Evaluate if two samples should be combined based on panning and play time.
         bool Compare(IList<PlayedEvent> a, IList<PlayedEvent> b)
@@ -43,8 +43,8 @@ public class SoundConsolidator : ISoundConsolidator
             return true;
         }
             
-        var soundList = sounds.AsList();
-        var eventList = events.AsList();
+        var soundList = sounds;
+        var eventList = events;
         var matches = new List<MatchedSound>();
 
         // Loaded samples are excluded because they can be played by the player.

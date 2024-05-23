@@ -9,17 +9,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Heuristics;
 
 [Service]
-public class HeuristicTester : IHeuristicTester
+public class HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger) : IHeuristicTester
 {
-    private readonly IEnumerable<IHeuristic> _heuristics;
-    private readonly ILogger _logger;
-
-    public HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger)
-    {
-        _heuristics = heuristics;
-        _logger = logger;
-    }
-
     public IList<HeuristicResult> Match(Stream stream, long length, params Context[] contexts)
     {
         var cache = new CachedStream(stream);
@@ -35,7 +26,7 @@ public class HeuristicTester : IHeuristicTester
             }
             catch (Exception e)
             {
-                _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
+                logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
             }
         }
 
@@ -55,7 +46,7 @@ public class HeuristicTester : IHeuristicTester
             }
             catch (Exception e)
             {
-                _logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
+                logger.Debug($"Exception in heuristic {heuristic.GetType().Name}{Environment.NewLine}{e}");
             }
         }
 
@@ -64,7 +55,7 @@ public class HeuristicTester : IHeuristicTester
 
     private IEnumerable<IHeuristic> GetHeuristics(Context[] contexts)
     {
-        return _heuristics
+        return heuristics
             .Where(h => !contexts.Any() ||
                         h.GetType().GetCustomAttributes<ContextAttribute>()
                             .SelectMany(a => a.Contexts)

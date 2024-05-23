@@ -10,7 +10,7 @@ namespace RhythmCodex.Djmain.Converters;
 [Service]
 public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 {
-    private void SetCommon(IEvent ev, DjmainEventType command, int param0, int param1)
+    private void SetCommon(Event ev, DjmainEventType command, int param0, int param1)
     {
         switch (command)
         {
@@ -67,7 +67,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
         }
     }
 
-    public void AddBeatmaniaMetadata(IEvent ev, IDjmainChartEvent ce)
+    public void AddBeatmaniaMetadata(Event ev, DjmainChartEvent ce)
     {
         var command = (DjmainEventType) (ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;
@@ -136,7 +136,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
         }
     }
 
-    public void AddPopnMetadata(IEvent ev, IDjmainChartEvent ce)
+    public void AddPopnMetadata(Event ev, DjmainChartEvent ce)
     {
         var command = (DjmainEventType) (ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;

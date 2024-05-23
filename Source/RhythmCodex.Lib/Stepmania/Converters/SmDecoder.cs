@@ -10,35 +10,23 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Stepmania.Converters;
 
 [Service]
-public class SmDecoder : ISmDecoder
+public class SmDecoder(
+    ITimedCommandStringDecoder timedCommandStringDecoder,
+    INoteCommandStringDecoder noteCommandStringDecoder,
+    INoteDecoder noteDecoder,
+    ILogger logger)
+    : ISmDecoder
 {
-    private readonly ILogger _logger;
-    private readonly INoteCommandStringDecoder _noteCommandStringDecoder;
-    private readonly INoteDecoder _noteDecoder;
-    private readonly ITimedCommandStringDecoder _timedCommandStringDecoder;
-
-    public SmDecoder(
-        ITimedCommandStringDecoder timedCommandStringDecoder,
-        INoteCommandStringDecoder noteCommandStringDecoder,
-        INoteDecoder noteDecoder,
-        ILogger logger)
-    {
-        _timedCommandStringDecoder = timedCommandStringDecoder;
-        _noteCommandStringDecoder = noteCommandStringDecoder;
-        _noteDecoder = noteDecoder;
-        _logger = logger;
-    }
-
     public ChartSet Decode(IEnumerable<Command> commands)
     {
-        var charts = new List<IChart>();
+        var charts = new List<Chart>();
         var metadata = new Metadata();
-        var globalEvents = new List<IEvent>();
+        var globalEvents = new List<Event>();
 
         foreach (var command in commands)
             if (command.Name.Equals(ChartTag.BpmsTag, StringComparison.OrdinalIgnoreCase))
             {
-                globalEvents.AddRange(_timedCommandStringDecoder
+                globalEvents.AddRange(timedCommandStringDecoder
                     .Decode(string.Join(",", command.Values))
                     .Select(ev => new Event
                     {
@@ -48,7 +36,7 @@ public class SmDecoder : ISmDecoder
             }
             else if (command.Name.Equals(ChartTag.StopsTag, StringComparison.OrdinalIgnoreCase))
             {
-                globalEvents.AddRange(_timedCommandStringDecoder
+                globalEvents.AddRange(timedCommandStringDecoder
                     .Decode(string.Join(",", command.Values))
                     .Select(ev => new Event
                     {
@@ -60,7 +48,7 @@ public class SmDecoder : ISmDecoder
             {
                 if (command.Values.Count < 6)
                 {
-                    _logger.Warning(
+                    logger.Warning(
                         $"Not enough sections in {ChartTag.NotesTag}. Need 6, found {command.Values.Count}");
                     continue;
                 }
@@ -70,14 +58,14 @@ public class SmDecoder : ISmDecoder
                     continue;
 
                 var hasPlayLevel = int.TryParse(command.Values[3], out var playLevel);
-                var events = _noteCommandStringDecoder.Decode(columns, command.Values[5]);
+                var events = noteCommandStringDecoder.Decode(columns, command.Values[5]);
 
                 charts.Add(new Chart
                 {
                     [StringData.Description] = command.Values[1],
                     [StringData.Difficulty] = command.Values[2],
                     [NumericData.PlayLevel] = hasPlayLevel ? playLevel : null,
-                    Events = _noteDecoder.Decode(events, columns).ToList()
+                    Events = noteDecoder.Decode(events, columns).ToList()
                 });
             }
             else
@@ -114,7 +102,7 @@ public class SmDecoder : ISmDecoder
             case SmGameTypes.Ez2Real:
                 return 7;
             default:
-                _logger.Warning($"Unknown game type {type}.");
+                logger.Warning($"Unknown game type {type}.");
                 return 0;
         }
     }

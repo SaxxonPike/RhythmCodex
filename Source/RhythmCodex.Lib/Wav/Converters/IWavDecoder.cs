@@ -5,5 +5,5 @@ namespace RhythmCodex.Wav.Converters;
 
 public interface IWavDecoder
 {
-    ISound Decode(Stream stream);
+    Sound? Decode(Stream stream);
 }

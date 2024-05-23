@@ -11,13 +11,13 @@ public class BeatmaniaPcAudioEntryStreamWriter : IBeatmaniaPcAudioEntryStreamWri
     {
         var writer = new BinaryWriter(target);
         writer.Write(0x39584432); // 2DX9
-        writer.Write(0x14 + entry.ExtraInfo.Length);
-        writer.Write(entry.Data.Length);
+        writer.Write(0x14 + entry.ExtraInfo?.Length ?? 0);
+        writer.Write(entry.Data?.Length ?? 0);
         writer.Write((short) 0);
         writer.Write((short) entry.Channel);
         writer.Write((short) entry.Panning);
         writer.Write((short) entry.Volume);
-        writer.Write(entry.ExtraInfo);
-        writer.Write(entry.Data);
+        writer.Write(entry.ExtraInfo ?? []);
+        writer.Write(entry.Data ?? []);
     }
 }

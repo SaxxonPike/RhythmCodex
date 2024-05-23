@@ -7,24 +7,17 @@ using RhythmCodex.Tim.Streamers;
 namespace RhythmCodex.Tim;
 
 [Service]
-public class TimHeuristic : IReadableHeuristic<TimImage>
+public class TimHeuristic(ITimStreamReader timStreamReader) : IReadableHeuristic<TimImage>
 {
-    private readonly ITimStreamReader _timStreamReader;
-
-    public TimHeuristic(ITimStreamReader timStreamReader)
-    {
-        _timStreamReader = timStreamReader;
-    }
-        
     public TimImage Read(HeuristicResult heuristicResult, Stream stream)
     {
-        return _timStreamReader.Read(stream);
+        return timStreamReader.Read(stream);
     }
 
     public string Description => "Playstation TIM image";
     public string FileExtension => "TIM";
 
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         var data = reader.Read(8);
         if (data.Length < 8)

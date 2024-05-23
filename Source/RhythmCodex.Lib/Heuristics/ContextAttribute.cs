@@ -5,12 +5,7 @@ using System.Linq;
 namespace RhythmCodex.Heuristics;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public class ContextAttribute : Attribute
+public class ContextAttribute(params Context[] contexts) : Attribute
 {
-    public ContextAttribute(params Context[] contexts)
-    {
-        Contexts = contexts.ToList();
-    }
-
-    public IList<Context> Contexts { get; }
+    public IList<Context> Contexts { get; } = contexts.ToList();
 }

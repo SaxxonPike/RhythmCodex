@@ -12,14 +12,14 @@ namespace RhythmCodex.Sounds.Converters;
 [Service]
 public class AudioDsp : IAudioDsp
 {
-    public ISound ApplyPanVolume(ISound sound, BigRational volume, BigRational panning)
+    public Sound? ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)
     {
         var newSound = new Sound
         {
-            Samples = new List<ISample>(sound.Samples)
+            Samples = [..sound.Samples]
         };
 
-        newSound.CloneMetadataFrom((Metadata) sound);
+        newSound.CloneMetadataFrom(sound);
         newSound[NumericData.Volume] = volume;
         newSound[NumericData.Panning] = panning;
 
@@ -27,61 +27,68 @@ public class AudioDsp : IAudioDsp
         return newSound;
     }
 
-    public ISound ApplyResampling(ISound sound, IResampler resampler, BigRational rate)
+    public Sound? ApplyResampling(Sound? sound, IResampler resampler, BigRational rate)
     {
         if (sound == null || !sound.Samples.Any())
             return null;
-            
-        if (rate <= BigRational.Zero || 
-            sound[NumericData.Rate] == rate || 
+
+        if (rate <= BigRational.Zero ||
+            sound[NumericData.Rate] == rate ||
             sound[NumericData.Rate] == 0 ||
             sound.Samples == null ||
             !sound.Samples.Any() ||
             sound.Samples.Any(sa => sa[NumericData.Rate] != null && sa[NumericData.Rate] <= 0))
             return sound;
 
-        var targetRate = (float) (double) rate;
-        var samples = new List<ISample>(sound.Samples);
+        var targetRate = (float)(double)rate;
+        var samples = new List<Sample>(sound.Samples);
         var result = new Sound
         {
             Samples = samples.Select(s =>
             {
-                var sourceRate = (float) (double) (s[NumericData.Rate] ?? sound[NumericData.Rate]);
+                var sourceRate = (float)(double)(s[NumericData.Rate] ?? sound[NumericData.Rate]);
                 var sample = new Sample
                 {
-                    Data = resampler.Resample(s.Data, sourceRate, targetRate)
+                    Data = resampler.Resample(s.Data.Span, sourceRate, targetRate)
                 };
-                sample.CloneMetadataFrom((Metadata) s);
+                sample.CloneMetadataFrom(s);
                 sample[NumericData.Rate] = rate;
-                return (ISample) sample;
+                return sample;
             }).ToList()
         };
 
-        result.CloneMetadataFrom((Metadata) sound);
+        result.CloneMetadataFrom(sound);
         result[NumericData.Rate] = rate;
         return result;
     }
 
-    public ISound Normalize(ISound sound, BigRational target, bool cutOnly)
+    public Sound? Normalize(Sound sound, BigRational target, bool cutOnly)
     {
         var newSound = new Sound
         {
-            Samples = new List<ISample>(sound.Samples)
+            Samples = [..sound.Samples]
         };
 
-        var level = sound.Samples.SelectMany(s => s.Data).Max(Math.Abs);
-        if (level > 0 && level != 1 && (!cutOnly || level > 1))
+        var level = sound.Samples.Max(s =>
         {
-            var amp = (float) (target / level);
+            var max = 0f;
+            foreach (var x in s.Data.Span)
+                max = Math.Max(Math.Abs(x), max);
+            return max;
+        });
+
+        if (level is > 0 and (< 1 or > 1) && (!cutOnly || level > 1))
+        {
+            var amp = (float)(target / level);
             foreach (var sample in newSound.Samples)
-                ApplyGain(sample.Data, amp);
+                ApplyGain(sample.Data.Span, amp);
         }
 
-        newSound.CloneMetadataFrom((Metadata) sound);
+        newSound.CloneMetadataFrom(sound);
         return newSound;
     }
 
-    public ISound IntegerDownsample(ISound sound, int factor)
+    public Sound IntegerDownsample(Sound sound, int factor)
     {
         var newSound = new Sound
         {
@@ -90,34 +97,38 @@ public class AudioDsp : IAudioDsp
                 var rate = s[NumericData.Rate] ?? sound[NumericData.Rate] ??
                     throw new RhythmCodexException("Can't downsample without a source rate.");
                 var sample = new Sample();
-                sample.CloneMetadataFrom((Metadata) s);
+                sample.CloneMetadataFrom(s);
                 if (s[NumericData.Rate] != null)
                     s[NumericData.Rate] /= factor;
-                var length = s.Data.Count / 2;
-                sample.Data = new float[length];
+                var length = s.Data.Length / factor;
+                var data = new float[length];
+                sample.Data = data;
+                var cursor = data.AsSpan();
                 var offset = 0;
                 for (var i = 0; i < length; i++)
                 {
-                    var buffer = s.Data[offset++];
+                    var buffer = data[offset++];
                     for (var j = 1; j < factor; j++)
-                        buffer += s.Data[offset++];
-                    sample.Data[i] = buffer / factor;
+                        buffer += data[offset++];
+                    cursor[0] = buffer / factor;
+                    cursor = cursor[1..];
                 }
+
                 return sample;
-            }).Cast<ISample>().ToList()
+            }).ToList()
         };
 
-        newSound.CloneMetadataFrom((Metadata) sound);
+        newSound.CloneMetadataFrom(sound);
         newSound[NumericData.Rate] /= factor;
         return newSound;
     }
 
-    public ISound ApplyEffects(ISound sound)
+    public Sound? ApplyEffects(Sound? sound)
     {
         if (!sound.Samples.Any())
             return null;
 
-        var samples = new List<ISample>(sound.Samples);
+        var samples = new List<Sample>(sound.Samples);
         if (samples.Count == 1)
             samples.Add(samples[0]);
 
@@ -127,25 +138,25 @@ public class AudioDsp : IAudioDsp
             {
                 var sample = new Sample
                 {
-                    Data = new List<float>(s.Data)
+                    Data = s.Data.ToArray()
                 };
-                sample.CloneMetadataFrom((Metadata) s);
+                sample.CloneMetadataFrom(s);
                 ApplyEffectsInternal(sample);
-                return (ISample) sample;
+                return sample;
             }).ToList()
         };
 
-        result.CloneMetadataFrom((Metadata) sound);
+        result.CloneMetadataFrom(sound);
         ApplyEffectsInternal(result);
         return result;
     }
 
-    private void ApplyEffectsInternal(ISound sound)
+    private void ApplyEffectsInternal(Sound? sound)
     {
         if (sound[NumericData.Volume].HasValue)
         {
             foreach (var sample in sound.Samples)
-                ApplyGain(sample.Data, sound[NumericData.Volume].Value);
+                ApplyGain(sample.Data.Span, sound[NumericData.Volume].Value);
             sound[NumericData.Volume] = null;
         }
 
@@ -156,7 +167,7 @@ public class AudioDsp : IAudioDsp
             var right = BigRational.Sqrt(sound[NumericData.Panning].Value);
             foreach (var sample in sound.Samples)
             {
-                ApplyGain(sample.Data,
+                ApplyGain(sample.Data.Span,
                     isLeftPanning ? left : right);
                 isLeftPanning = !isLeftPanning;
             }
@@ -165,22 +176,22 @@ public class AudioDsp : IAudioDsp
         }
     }
 
-    private void ApplyEffectsInternal(ISample sample)
+    private void ApplyEffectsInternal(Sample sample)
     {
         if (sample[NumericData.Volume].HasValue)
         {
-            ApplyGain(sample.Data, sample[NumericData.Volume].Value);
+            ApplyGain(sample.Data.Span, sample[NumericData.Volume]!.Value);
             sample[NumericData.Volume] = null;
         }
     }
 
-    private void ApplyGain(IList<float> data, BigRational value)
+    private static void ApplyGain(Span<float> data, BigRational value)
     {
         if (value == BigRational.One)
             return;
 
-        var amp = (float) value;
-        for (var i = 0; i < data.Count; i++)
-            data[i] = data[i] * amp;
+        var amp = (float)value;
+        for (var i = 0; i < data.Length; i++)
+            data[i] *= amp;
     }
 }

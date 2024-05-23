@@ -7,27 +7,17 @@ using RhythmCodex.Xact.Processors;
 namespace RhythmCodex.Xact.Streamers;
 
 [Service]
-public class XsbStreamWriter : IXsbStreamWriter
+public class XsbStreamWriter(
+    IXsbHeaderStreamWriter xsbHeaderStreamWriter,
+    IXsbCueStreamWriter xsbCueStreamWriter,
+    IXsbSoundStreamWriter xsbSoundStreamWriter,
+    IFcs16Calculator fcs16Calculator,
+    ILogger logger)
+    : IXsbStreamWriter
 {
-    private readonly IXsbHeaderStreamWriter _xsbHeaderStreamWriter;
-    private readonly IXsbCueStreamWriter _xsbCueStreamWriter;
-    private readonly IXsbSoundStreamWriter _xsbSoundStreamWriter;
-    private readonly IFcs16Calculator _fcs16Calculator;
-    private readonly ILogger _logger;
-
-    public XsbStreamWriter(
-        IXsbHeaderStreamWriter xsbHeaderStreamWriter,
-        IXsbCueStreamWriter xsbCueStreamWriter,
-        IXsbSoundStreamWriter xsbSoundStreamWriter,
-        IFcs16Calculator fcs16Calculator,
-        ILogger logger)
-    {
-        _xsbHeaderStreamWriter = xsbHeaderStreamWriter;
-        _xsbCueStreamWriter = xsbCueStreamWriter;
-        _xsbSoundStreamWriter = xsbSoundStreamWriter;
-        _fcs16Calculator = fcs16Calculator;
-        _logger = logger;
-    }
+    private readonly IXsbCueStreamWriter _xsbCueStreamWriter = xsbCueStreamWriter;
+    private readonly IXsbSoundStreamWriter _xsbSoundStreamWriter = xsbSoundStreamWriter;
+    private readonly ILogger _logger = logger;
 
     public long Write(Stream stream, XsbFile file)
     {
@@ -35,10 +25,10 @@ public class XsbStreamWriter : IXsbStreamWriter
         var writer = new BinaryWriter(mem);
 
         var header = file.Header;
-        _xsbHeaderStreamWriter.Write(mem, header);
+        xsbHeaderStreamWriter.Write(mem, header);
 
         // write crc
-        var crc = _fcs16Calculator.Calculate(mem.AsMemory().Span.Slice(18));
+        var crc = fcs16Calculator.Calculate(mem.AsMemory().Span.Slice(18));
         mem.Position = 8;
         writer.Write(crc);
 

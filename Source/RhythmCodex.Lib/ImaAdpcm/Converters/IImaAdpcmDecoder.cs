@@ -6,5 +6,5 @@ namespace RhythmCodex.ImaAdpcm.Converters;
 
 public interface IImaAdpcmDecoder
 {
-    IList<ISound> Decode(ImaAdpcmChunk chunk);
+    IList<Sound?> Decode(ImaAdpcmChunk chunk);
 }

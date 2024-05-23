@@ -3,7 +3,7 @@
 namespace RhythmCodex.Djmain.Model;
 
 [Model]
-public class DjmainChartEvent : IDjmainChartEvent
+public class DjmainChartEvent
 {
     public ushort Offset { get; set; }
     public byte Param0 { get; set; }

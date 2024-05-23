@@ -9,7 +9,7 @@ namespace RhythmCodex.Step1.Streamers;
 [Service]
 public class Step1StreamReader : IStep1StreamReader
 {
-    public IList<Step1Chunk> Read(Stream stream)
+    public List<Step1Chunk> Read(Stream stream)
     {
         return ReadInternal(stream).ToList();
     }

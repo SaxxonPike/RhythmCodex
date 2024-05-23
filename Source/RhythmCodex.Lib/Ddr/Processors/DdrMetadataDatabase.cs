@@ -11,12 +11,7 @@ namespace RhythmCodex.Ddr.Processors;
 [Service]
 public class DdrMetadataDatabase : IDdrMetadataDatabase
 {
-    private readonly Lazy<DdrMetadataDatabaseEntry[]> _entries;
-        
-    public DdrMetadataDatabase()
-    {
-        _entries = new Lazy<DdrMetadataDatabaseEntry[]>(Load);
-    }
+    private readonly Lazy<DdrMetadataDatabaseEntry[]> _entries = new(Load);
 
     private static DdrMetadataDatabaseEntry[] Load()
     {
@@ -28,11 +23,15 @@ public class DdrMetadataDatabase : IDdrMetadataDatabase
         using var mem = new MemoryStream(db); 
         var doc = XDocument.Load(mem);
         var root = doc.Root;
+
+        if (root == null)
+            return [];
+        
         var songs = root.Elements("Song").ToArray();
 
         return songs.Select(xml => new DdrMetadataDatabaseEntry
         {
-            Id = xml.GetInt("Id").Value,
+            Id = xml.GetInt("Id"),
             Code = xml.GetString("Code"),
             Title = xml.GetString("Title"),
             Subtitle = xml.GetString("Subtitle"),
@@ -46,9 +45,9 @@ public class DdrMetadataDatabase : IDdrMetadataDatabase
         }).ToArray();
     }
 
-    public DdrMetadataDatabaseEntry GetByCode(string code) => 
+    public DdrMetadataDatabaseEntry? GetByCode(string code) => 
         _entries.Value.SingleOrDefault(x => x.Code == code);
         
-    public DdrMetadataDatabaseEntry GetById(int id) => 
+    public DdrMetadataDatabaseEntry? GetById(int id) => 
         _entries.Value.SingleOrDefault(x => x.Id == id);
 }

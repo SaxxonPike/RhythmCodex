@@ -4,5 +4,5 @@ namespace RhythmCodex.Lzma.Converters;
 
 public interface ILzmaDecoder
 {
-    byte[] Decode(Stream baseStream, int compressedLength, int decompressedLength, byte[] decoderProperties = null);
+    byte[] Decode(Stream baseStream, int compressedLength, int decompressedLength, byte[]? decoderProperties = null);
 }

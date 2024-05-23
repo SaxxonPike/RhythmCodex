@@ -4,6 +4,6 @@ using RhythmCodex.Meta.Models;
 namespace RhythmCodex.Charting.Models;
 
 [Model]
-public class Event : Metadata, IEvent
+public class Event : Metadata
 {
 }

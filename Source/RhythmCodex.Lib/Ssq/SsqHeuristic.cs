@@ -9,24 +9,17 @@ using RhythmCodex.Ssq.Streamers;
 namespace RhythmCodex.Ssq;
 
 [Service]
-public class SsqHeuristic : IReadableHeuristic<IEnumerable<SsqChunk>>
+public class SsqHeuristic(ISsqStreamReader ssqStreamReader) : IReadableHeuristic<IEnumerable<SsqChunk>>
 {
-    private readonly ISsqStreamReader _ssqStreamReader;
-
-    public SsqHeuristic(ISsqStreamReader ssqStreamReader)
-    {
-        _ssqStreamReader = ssqStreamReader;
-    }
-
     public IEnumerable<SsqChunk> Read(HeuristicResult heuristicResult, Stream stream)
     {
-        return _ssqStreamReader.Read(stream);
+        return ssqStreamReader.Read(stream);
     }
 
     public string Description => "DDR Step Sequence";
     public string FileExtension => "SSQ";
         
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         Span<byte> data = stackalloc byte[12];
 

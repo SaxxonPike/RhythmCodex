@@ -9,12 +9,12 @@ namespace RhythmCodex.Infrastructure;
 
 internal static class EmbeddedResources
 {
-    public static Stream Open(string name, Assembly assembly = null)
+    public static Stream? Open(string name, Assembly? assembly = null)
     {
         return (assembly ?? typeof(EmbeddedResources).Assembly).GetManifestResourceStream(name);
     }
 
-    public static byte[] Get(string name, Assembly assembly = null)
+    public static byte[] Get(string name, Assembly? assembly = null)
     {
         using var stream = Open(name, assembly);
 
@@ -27,7 +27,7 @@ internal static class EmbeddedResources
         return mem.ToArray();
     }
 
-    public static IDictionary<string, byte[]> GetArchive(string name)
+    public static Dictionary<string, byte[]> GetArchive(string name)
     {
         var output = new Dictionary<string, byte[]>();
 

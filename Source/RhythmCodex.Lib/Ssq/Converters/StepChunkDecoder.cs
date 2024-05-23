@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
@@ -10,16 +11,15 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class StepChunkDecoder : IStepChunkDecoder
 {
-    public IList<Step> Convert(byte[] data)
+    public List<Step> Convert(ReadOnlyMemory<byte> data)
     {
         var reader = new MemoryReader(data);
         var count = reader.ReadInt32();
 
         var metricOffsets = Enumerable
             .Range(0, count)
-            // ReSharper disable once AccessToDisposedClosure
             .Select(_ => reader.ReadInt32())
-            .AsList();
+            .ToList();
 
         var panels = reader.ReadBytes(count);
         var padding = count & 1;
@@ -40,6 +40,6 @@ public class StepChunkDecoder : IStepChunkDecoder
                     ? reader.ReadByte()
                     : null
             })
-            .AsList();
+            .ToList();
     }
 }

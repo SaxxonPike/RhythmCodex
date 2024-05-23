@@ -11,14 +11,14 @@ namespace RhythmCodex.Twinkle.Converters;
 [Service]
 public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
 {
-    public ISound Decode(TwinkleBeatmaniaSoundDefinition definition, ReadOnlySpan<byte> data)
+    public Sound Decode(TwinkleBeatmaniaSoundDefinition definition, ReadOnlySpan<byte> data)
     {
         var offset = definition.SampleStart << 1;
         var stereo = (definition.Flags0F & 0x80) != 0;
         var length = (definition.SampleEnd - definition.SampleStart);
         var channels = Enumerable
             .Range(0, stereo ? 2 : 1)
-            .Select(_ => new List<float>(length >> (stereo ? 2 : 1)))
+            .Select(_ => new float[length >> (stereo ? 2 : 1)])
             .ToArray();
         var channelIndex = 0;
         var channelCount = channels.Length;
@@ -29,7 +29,7 @@ public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
             if (sample >= 0x8000)
                 sample = -(sample & 0x7FFF);
 
-            channels[channelIndex].Add((float)sample / 0x7FFF);
+            channels[channelIndex][i] = (float)sample / 0x7FFF;
             channelIndex++;
             while (channelIndex >= channelCount)
                 channelIndex -= channelCount;
@@ -54,7 +54,7 @@ public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
             Samples = channels.Select(c => new Sample
             {
                 Data = c
-            }).Cast<ISample>().ToList()
+            }).ToList()
         };
     }
 }

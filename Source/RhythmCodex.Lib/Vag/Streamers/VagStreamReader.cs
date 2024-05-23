@@ -10,7 +10,7 @@ namespace RhythmCodex.Vag.Streamers;
 [Service]
 public class VagStreamReader : IVagStreamReader
 {
-    public VagChunk Read(Stream stream, int channels, int interleave)
+    public VagChunk? Read(Stream stream, int channels, int interleave)
     {
         if (channels < 1)
             throw new RhythmCodexException($"Channel count must be at least 1.");

@@ -11,28 +11,28 @@ namespace RhythmCodex.Statistics;
 [Service]
 public class EventCounter : IEventCounter
 {
-    public int CountCombos(IEnumerable<IEvent> events)
+    public int CountCombos(ICollection<Event> events)
     {
-        return GroupEventsByTime(events.AsList())
+        return GroupEventsByTime(events)
             .Select(g => g.FirstOrDefault(ev => ev[FlagData.Note] == true))
             .Count(ev => ev != null);
     }
 
-    public int CountComboFreezes(IEnumerable<IEvent> events)
+    public int CountComboFreezes(ICollection<Event> events)
     {
-        return GroupEventsByTime(events.AsList())
+        return GroupEventsByTime(events)
             .Select(g => g.FirstOrDefault(ev => ev[FlagData.Freeze] == true))
             .Count(ev => ev != null);
     }
 
-    public int CountComboShocks(IEnumerable<IEvent> events)
+    public int CountComboShocks(ICollection<Event> events)
     {
-        return GroupEventsByTime(events.AsList())
+        return GroupEventsByTime(events)
             .Select(g => g.FirstOrDefault(ev => ev[FlagData.Shock] == true))
             .Count(ev => ev != null);
     }
 
-    private static IEnumerable<IGrouping<BigRational?, IEvent>> GroupEventsByTime(IList<IEvent> eventList)
+    private static IEnumerable<IGrouping<BigRational?, Event>> GroupEventsByTime(ICollection<Event> eventList)
     {
         return eventList.All(ev => ev[NumericData.MetricOffset] != null)
             ? eventList.GroupBy(ev => ev[NumericData.MetricOffset])

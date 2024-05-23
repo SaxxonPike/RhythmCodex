@@ -46,7 +46,7 @@ public class ChunkStreamReaderTests : BaseUnitTestFixture<DjmainChunkStreamReade
         // Assert.
         foreach (var chunk in output)
         {
-            var data = chunk.Data;
+            var data = chunk.Data.Span;
             var offset = chunk.Id * chunkSize;
             for (var i = 0; i < chunkSize; i++, offset++)
             {
@@ -79,7 +79,7 @@ public class ChunkStreamReaderTests : BaseUnitTestFixture<DjmainChunkStreamReade
         // Assert.
         foreach (var chunk in output)
         {
-            var data = chunk.Data;
+            var data = chunk.Data.Span;
             var offset = chunk.Id * chunkSize;
             for (var i = 0; i < chunkSize; i++, offset++)
             {

@@ -6,18 +6,11 @@ using RhythmCodex.Vag.Models;
 namespace RhythmCodex.Vag.Converters;
 
 [Service]
-public class SvagDecoder : ISvagDecoder
+public class SvagDecoder(IVagDecoder vagDecoder) : ISvagDecoder
 {
-    private readonly IVagDecoder _vagDecoder;
-
-    public SvagDecoder(IVagDecoder vagDecoder)
+    public Sound? Decode(SvagContainer container)
     {
-        _vagDecoder = vagDecoder;
-    }
-        
-    public ISound Decode(SvagContainer container)
-    {
-        var decoded = _vagDecoder.Decode(container.VagChunk);
+        var decoded = vagDecoder.Decode(container.VagChunk);
         decoded[NumericData.Rate] = container.SampleRate;
         return decoded;
     }

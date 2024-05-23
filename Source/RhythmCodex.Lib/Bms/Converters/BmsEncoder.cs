@@ -12,12 +12,10 @@ using RhythmCodex.Meta.Models;
 namespace RhythmCodex.Bms.Converters;
 
 [Service]
-public class BmsEncoder : IBmsEncoder
+public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEncoder)
+    : IBmsEncoder
 {
     private static CultureInfo BmsCulture => CultureInfo.InvariantCulture;
-
-    private readonly ILogger _logger;
-    private readonly IBmsNoteCommandEncoder _bmsNoteCommandEncoder;
 
     private static readonly IReadOnlyDictionary<StringData, string> StringTagMap =
         new Dictionary<StringData, string>
@@ -34,18 +32,12 @@ public class BmsEncoder : IBmsEncoder
             {NumericData.PlayLevel, "PLAYLEVEL"}
         };
 
-    public BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEncoder)
-    {
-        _logger = logger;
-        _bmsNoteCommandEncoder = bmsNoteCommandEncoder;
-    }
-
-    public IList<BmsCommand> Encode(IChart chart)
+    public IList<BmsCommand> Encode(Chart chart)
     {
         return EncodeInternal(chart).ToList();
     }
 
-    private IEnumerable<BmsCommand> EncodeInternal(IChart inputChart)
+    private IEnumerable<BmsCommand> EncodeInternal(Chart inputChart)
     {
         if (inputChart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException("Metric offsets must all be populated in order to export to BMS.");
@@ -75,7 +67,7 @@ public class BmsEncoder : IBmsEncoder
                 yield return new BmsCommand
                 {
                     Name = kv.Value,
-                    Value = string.Format(BmsCulture, "{0}", (decimal) inputChart[kv.Key])
+                    Value = string.Format(BmsCulture, "{0}", (decimal) inputChart[kv.Key]!)
                 };
         }
 
@@ -92,7 +84,7 @@ public class BmsEncoder : IBmsEncoder
             .ToList();
 
         if (usedSamples.Count > 1295)
-            _logger.Warning(
+            logger.Warning(
                 $"{nameof(BmsEncoder)}: there are more than 1295 samples - WAV list will be truncated. " +
                 $"{usedSamples.Count - 1295} samples will not be mapped.");
 
@@ -163,23 +155,23 @@ public class BmsEncoder : IBmsEncoder
 
         // BPM changes
 
-        var bpmEvents = _bmsNoteCommandEncoder
+        var bpmEvents = bmsNoteCommandEncoder
             .TranslateBpmEvents(chartEvents);
 
         foreach (var ev in GetCommands(bpmEvents, 1920,
                      i => Alphabet.EncodeNumeric(
                          i == null
                              ? 0
-                             : bpmMap.ContainsKey(i.Value)
-                                 ? bpmMap[i.Value]
+                             : bpmMap.TryGetValue(i.Value, out var value)
+                                 ? value
                                  : 0, 2)))
             yield return ev;
 
         // Notes
 
-        var noteEvents = _bmsNoteCommandEncoder
+        var noteEvents = bmsNoteCommandEncoder
             .TranslateNoteEvents(chartEvents)
-            .AsList();
+            ;
 
         foreach (var ev in GetCommands(noteEvents, 960, i => Alphabet.EncodeAlphanumeric(
                      i == null
@@ -211,10 +203,10 @@ public class BmsEncoder : IBmsEncoder
                             .Select(g => g.First())
                             .ToList();
 
-                        var exportedEvents = _bmsNoteCommandEncoder.Encode(
+                        var exportedEvents = bmsNoteCommandEncoder.Encode(
                             exportableEvents,
                             encode,
-                            measureLengths.ContainsKey(measure) ? measureLengths[measure] : 1,
+                            measureLengths.TryGetValue(measure, out var length) ? length : 1,
                             quantize);
 
                         foreach (var exportableEvent in exportableEvents)

@@ -19,5 +19,5 @@ public class BeatmaniaPs2Keysound
     public int OffsetRight { get; set; }
     public int PseudoLeft { get; set; }
     public int PseudoRight { get; set; }
-    public List<VagChunk> Data { get; set; }
+    public List<VagChunk> Data { get; set; } = [];
 }

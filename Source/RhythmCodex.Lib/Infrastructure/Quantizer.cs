@@ -22,7 +22,7 @@ public class Quantizer : IQuantizer
         if (maximum < minimum)
             maximum = minimum;
             
-        var data = rationals.AsList();
+        var data = rationals;
         var multiplier = GetQuantizationInternal(data, minimum, maximum);
 
         if (multiplier > maximum)

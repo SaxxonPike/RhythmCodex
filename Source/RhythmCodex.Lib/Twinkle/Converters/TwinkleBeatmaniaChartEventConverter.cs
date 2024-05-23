@@ -9,7 +9,7 @@ namespace RhythmCodex.Twinkle.Converters;
 [Service]
 public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventConverter
 {
-    public IList<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts)
+    public List<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts)
     {
         IEnumerable<BeatmaniaPc1Event> Do()
         {

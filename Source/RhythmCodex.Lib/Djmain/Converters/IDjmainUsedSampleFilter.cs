@@ -5,6 +5,6 @@ namespace RhythmCodex.Djmain.Converters;
 
 public interface IDjmainUsedSampleFilter
 {
-    IDictionary<int, IDjmainSampleInfo> Filter(IDictionary<int, IDjmainSampleInfo> samples,
-        IEnumerable<IDjmainChartEvent> events);
+    Dictionary<int, DjmainSampleInfo> Filter(IDictionary<int, DjmainSampleInfo> samples,
+        IEnumerable<DjmainChartEvent> events);
 }

@@ -32,7 +32,7 @@ public class DjmainUserSampleFilterTests : BaseUnitTestFixture<DjmainUsedSampleF
         var expectedSample = Create<DjmainSampleInfo>();
         command |= Create<int>() & 0xF0;
 
-        var inputSamples = new Dictionary<int, IDjmainSampleInfo>
+        var inputSamples = new Dictionary<int, DjmainSampleInfo>
         {
             {allIds[0], expectedSample},
             {allIds[1], Create<DjmainSampleInfo>()}
@@ -53,7 +53,7 @@ public class DjmainUserSampleFilterTests : BaseUnitTestFixture<DjmainUsedSampleF
         if (expectedInclusion)
             result.Should()
                 .HaveCount(1)
-                .And.Contain(new KeyValuePair<int, IDjmainSampleInfo>(allIds[0], expectedSample));
+                .And.Contain(new KeyValuePair<int, DjmainSampleInfo>(allIds[0], expectedSample));
         else
             result.Should()
                 .BeEmpty();

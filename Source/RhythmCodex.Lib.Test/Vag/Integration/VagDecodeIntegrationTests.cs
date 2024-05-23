@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Converters;
 using RhythmCodex.Vag.Streamers;
 

@@ -9,11 +9,11 @@ public class ArcLzDecoder : IArcLzDecoder
 {
     public byte[] Decode(Stream source)
     {
-        var context = new LzDecompress();
-        return context.Decompress(source);
+        var context = new LzDecompress(source);
+        return context.Decompress();
     }
 
-    private sealed class LzDecompress
+    private sealed class LzDecompress(Stream bin)
     {
         private bool _eof;
         private readonly byte[] _ring = new byte[0x1000];
@@ -21,11 +21,10 @@ public class ArcLzDecoder : IArcLzDecoder
         private int _copyPos;
         private int _copyLen;
         private int _flags = 1;
-        private Stream _bin;
 
         private int InRead()
         {
-            var num = _bin.ReadByte();
+            var num = bin.ReadByte();
             return num;
         }
 
@@ -100,9 +99,8 @@ public class ArcLzDecoder : IArcLzDecoder
             return num;
         }
 
-        public byte[] Decompress(Stream stream)
+        public byte[] Decompress()
         {
-            _bin = stream;
             var output = new MemoryStream();
             while (true)
             {

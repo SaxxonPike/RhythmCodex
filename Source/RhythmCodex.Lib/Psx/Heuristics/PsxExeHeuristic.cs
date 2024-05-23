@@ -9,7 +9,7 @@ public class PsxExeHeuristic : IHeuristic
 {
     public string Description => "Playstation Executable (PS-X EXE)";
     public string FileExtension => "exe";
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         var data = reader.Read(8);
         if (data.Length < 8)

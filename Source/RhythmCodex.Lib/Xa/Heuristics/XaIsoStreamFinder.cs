@@ -20,8 +20,8 @@ public class XaIsoStreamFinder : IXaIsoStreamFinder
         var currentStreams = mode2Sectors
             .Where(s => s.Channel != null)
             .GroupBy(s => s.Channel)
-            .ToDictionary(g => g.Key, _ => new List<IsoSectorInfo>());
-        var streamCount = currentStreams.Max(s => s.Key).Value + 1;
+            .ToDictionary(g => (int)g.Key!, _ => new List<IsoSectorInfo>());
+        var streamCount = currentStreams.Max(s => s.Key) + 1;
         var currentStream = 0;
 
         void AddCurrentStream()

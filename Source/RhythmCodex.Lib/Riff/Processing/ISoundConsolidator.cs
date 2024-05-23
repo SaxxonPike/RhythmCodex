@@ -6,5 +6,5 @@ namespace RhythmCodex.Riff.Processing;
 
 public interface ISoundConsolidator
 {
-    void Consolidate(IEnumerable<ISound> sounds, IEnumerable<IEvent> events);
+    void Consolidate(IEnumerable<Sound> sounds, IEnumerable<Event> events);
 }

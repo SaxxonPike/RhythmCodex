@@ -19,20 +19,19 @@ public class Huffman
     private readonly byte _maxBits;
     private readonly uint _numCodes;
 
-    public Huffman(int newNumCodes, int newMaxBits, ushort[] newLookup, uint[] newHisto, HuffmanNode[] newNodes)
+    public Huffman(int newNumCodes, int newMaxBits, ushort[]? newLookup, uint[]? newHisto, HuffmanNode[]? newNodes)
     {
         _numCodes = (uint) newNumCodes;
         _maxBits = (byte) newMaxBits;
-        if (newLookup != null)
-            _lookup = newLookup;
-        else
-            _lookup = new ushort[1 << _maxBits];
+        _lookup = newLookup ?? new ushort[1 << _maxBits];
+        
         if (newHisto != null)
             _dataHisto.AddRange(newHisto);
-        if (newNodes != null)
-            _huffNode = newNodes;
-        else
-            _huffNode = Enumerable.Range(0, newNumCodes).Select(_ => new HuffmanNode()).ToArray();
+
+        _huffNode = newNodes ?? Enumerable
+            .Range(0, newNumCodes)
+            .Select(_ => new HuffmanNode())
+            .ToArray();
     }
 
     private void AssignCanonicalCodes()

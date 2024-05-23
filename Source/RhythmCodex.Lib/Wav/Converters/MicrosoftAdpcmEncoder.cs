@@ -11,15 +11,15 @@ namespace RhythmCodex.Wav.Converters;
 [Service]
 public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
 {
-    public byte[] Encode(ISound sound, int samplesPerBlock)
+    public byte[] Encode(Sound? sound, int samplesPerBlock)
     {
         var channelCount = sound.Samples.Count;
         var buffer = new float[samplesPerBlock];
-        var max = sound.Samples.Select(s => s.Data.Count).Max();
+        var max = sound.Samples.Select(s => s.Data.Length).Max();
         var remaining = max + 1;
         var output = new byte[GetBlockSize(samplesPerBlock, channelCount)];
         var offset = 0;
-        var channels = sound.Samples.Select(s => s.Data.AsArray()).ToArray();
+        var channels = sound.Samples.Select(s => s.Data).ToArray();
         var deltas = new int[channelCount];
 
         using var encoded = new MemoryStream();
@@ -28,17 +28,17 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
             for (var channel = 0; channel < channelCount; channel++)
             {
                 ReadOnlySpan<float> bufferSpan;
-                var source = channels[channel];
+                var source = channels[channel].Span;
                 var length = Math.Min(samplesPerBlock, source.Length - offset);
                 if (length < samplesPerBlock)
                 {
-                    buffer.AsSpan().Slice(length).Fill(0);
-                    source.AsSpan().Slice(offset, length).CopyTo(buffer);
+                    buffer.AsSpan(0, length).Fill(0);
+                    source.Slice(offset, length).CopyTo(buffer);
                     bufferSpan = buffer;
                 }
                 else
                 {
-                    bufferSpan = source.AsSpan().Slice(offset, samplesPerBlock);
+                    bufferSpan = source.Slice(offset, samplesPerBlock);
                 }
 
                 deltas[channel] = EncodeFrame(output, bufferSpan, channel, channelCount,

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,38 +15,24 @@ using RhythmCodex.Wav.Models;
 namespace RhythmCodex.Wav.Converters;
 
 [Service]
-public class WavDecoder : IWavDecoder
+public class WavDecoder(
+    IRiffStreamReader riffStreamReader,
+    IPcmDecoder pcmDecoder,
+    IWaveFmtDecoder waveFmtDecoder,
+    IImaAdpcmDecoder imaAdpcmDecoder,
+    IMicrosoftAdpcmDecoder microsoftAdpcmDecoder)
+    : IWavDecoder
 {
-    private readonly IRiffStreamReader _riffStreamReader;
-    private readonly IPcmDecoder _pcmDecoder;
-    private readonly IWaveFmtDecoder _waveFmtDecoder;
-    private readonly IImaAdpcmDecoder _imaAdpcmDecoder;
-    private readonly IMicrosoftAdpcmDecoder _microsoftAdpcmDecoder;
-
-    public WavDecoder(
-        IRiffStreamReader riffStreamReader, 
-        IPcmDecoder pcmDecoder, 
-        IWaveFmtDecoder waveFmtDecoder,
-        IImaAdpcmDecoder imaAdpcmDecoder,
-        IMicrosoftAdpcmDecoder microsoftAdpcmDecoder)
+    public Sound? Decode(Stream stream)
     {
-        _riffStreamReader = riffStreamReader;
-        _pcmDecoder = pcmDecoder;
-        _waveFmtDecoder = waveFmtDecoder;
-        _imaAdpcmDecoder = imaAdpcmDecoder;
-        _microsoftAdpcmDecoder = microsoftAdpcmDecoder;
-    }
-
-    public ISound Decode(Stream stream)
-    {
-        var riff = _riffStreamReader.Read(stream);
+        var riff = riffStreamReader.Read(stream);
         if (riff.Format != "WAVE")
             throw new RhythmCodexException("RIFF type must be WAVE.");
 
         var fmt = riff.Chunks.FirstOrDefault(c => c.Id == "fmt ");
         if (fmt == null)
             throw new RhythmCodexException("RIFF must contain the fmt chunk.");
-        var format = _waveFmtDecoder.Decode(fmt);
+        var format = waveFmtDecoder.Decode(fmt);
 
         var data = riff.Chunks.FirstOrDefault(c => c.Id == "data");
         if (data == null)
@@ -54,7 +41,7 @@ public class WavDecoder : IWavDecoder
         var result = new Sound
         {
             [NumericData.Rate] = format.SampleRate,
-            Samples = new List<ISample>()
+            Samples = new List<Sample>()
         };
 
         switch (format.Format)
@@ -65,22 +52,22 @@ public class WavDecoder : IWavDecoder
                 switch (format.BitsPerSample)
                 {
                     case 8:
-                        decoded = _pcmDecoder.Decode8Bit(data.Data);
+                        decoded = pcmDecoder.Decode8Bit(data.Data);
                         break;
                     case 16:
-                        decoded = _pcmDecoder.Decode16Bit(data.Data);
+                        decoded = pcmDecoder.Decode16Bit(data.Data);
                         break;
                     case 24:
-                        decoded = _pcmDecoder.Decode24Bit(data.Data);
+                        decoded = pcmDecoder.Decode24Bit(data.Data);
                         break;
                     case 32:
-                        decoded = _pcmDecoder.Decode32Bit(data.Data);
+                        decoded = pcmDecoder.Decode32Bit(data.Data);
                         break;
                     default:
                         throw new RhythmCodexException("Invalid bits per sample.");
                 }
 
-                foreach (var channel in decoded.Deinterleave(1, format.Channels))
+                foreach (var channel in decoded.AsSpan().Deinterleave(1, format.Channels))
                 {
                     result.Samples.Add(new Sample
                     {
@@ -93,8 +80,8 @@ public class WavDecoder : IWavDecoder
             }
             case 0x0002: // Microsoft ADPCM
             {
-                var exFormat = new MicrosoftAdpcmFormat(format.ExtraData);
-                var decoded = _microsoftAdpcmDecoder.Decode(data.Data, format, exFormat);
+                var exFormat = new MicrosoftAdpcmFormat(format.ExtraData.Span);
+                var decoded = microsoftAdpcmDecoder.Decode(data.Data, format, exFormat);
 
                 foreach (var sample in decoded.Samples)
                     result.Samples.Add(sample);
@@ -103,9 +90,9 @@ public class WavDecoder : IWavDecoder
             }
             case 0x0003: // 32-bit float
             {
-                var decoded = _pcmDecoder.DecodeFloat(data.Data);
+                var decoded = pcmDecoder.DecodeFloat(data.Data);
 
-                foreach (var channel in decoded.Deinterleave(1, format.Channels))
+                foreach (var channel in decoded.AsSpan().Deinterleave(1, format.Channels))
                 {
                     result.Samples.Add(new Sample
                     {
@@ -118,8 +105,8 @@ public class WavDecoder : IWavDecoder
             }
             case 0x0011: // IMA ADPCM
             {
-                var exFormat = new ImaAdpcmFormat(format.ExtraData);
-                var decoded = _imaAdpcmDecoder.Decode(new ImaAdpcmChunk
+                var exFormat = new ImaAdpcmFormat(format.ExtraData.Span);
+                var decoded = imaAdpcmDecoder.Decode(new ImaAdpcmChunk
                 {
                     Channels = format.Channels,
                     Rate = format.SampleRate,

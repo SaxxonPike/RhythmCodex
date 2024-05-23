@@ -9,16 +9,9 @@ using RhythmCodex.Meta.Models;
 namespace RhythmCodex.Djmain.Converters;
 
 [Service]
-public class DjmainChartDecoder : IDjmainChartDecoder
+public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataDecoder) : IDjmainChartDecoder
 {
-    private readonly IDjmainEventMetadataDecoder _djmainEventMetadataDecoder;
-
-    public DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataDecoder)
-    {
-        _djmainEventMetadataDecoder = djmainEventMetadataDecoder;
-    }
-
-    public IChart Decode(IEnumerable<IDjmainChartEvent> events, DjmainChartType chartType)
+    public Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType)
     {
         return new Chart
         {
@@ -26,7 +19,7 @@ public class DjmainChartDecoder : IDjmainChartDecoder
         };
     }
 
-    private IEnumerable<IEvent> DecodeEvents(IEnumerable<IDjmainChartEvent> events, DjmainChartType chartType)
+    private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType)
     {
         var noteCount = true;
 
@@ -52,10 +45,10 @@ public class DjmainChartDecoder : IDjmainChartDecoder
             switch (chartType)
             {
                 case DjmainChartType.Beatmania:
-                    _djmainEventMetadataDecoder.AddBeatmaniaMetadata(newEv, ev);
+                    djmainEventMetadataDecoder.AddBeatmaniaMetadata(newEv, ev);
                     break;
                 case DjmainChartType.Popn:
-                    _djmainEventMetadataDecoder.AddPopnMetadata(newEv, ev);
+                    djmainEventMetadataDecoder.AddPopnMetadata(newEv, ev);
                     break;
             }
 

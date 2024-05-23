@@ -12,18 +12,10 @@ using RhythmCodex.Ssq;
 namespace RhythmCodex.Ddr.Streamers;
 
 [Service]
-public class DdrPs2FileDataStepStreamReader : IDdrPs2FileDataStepStreamReader
+public class DdrPs2FileDataStepStreamReader(IBemaniLzDecoder bemaniLzDecoder, IHeuristicTester heuristicTester)
+    : IDdrPs2FileDataStepStreamReader
 {
-    private readonly IBemaniLzDecoder _bemaniLzDecoder;
-    private readonly IHeuristicTester _heuristicTester;
-
-    public DdrPs2FileDataStepStreamReader(IBemaniLzDecoder bemaniLzDecoder, IHeuristicTester heuristicTester)
-    {
-        _bemaniLzDecoder = bemaniLzDecoder;
-        _heuristicTester = heuristicTester;
-    }
-        
-    public DdrPs2FileDataTableChunk Read(Stream fileDataBinStream, long length)
+    public DdrPs2FileDataTableChunk? Read(Stream fileDataBinStream, long length)
     {
         var position = -0x800L;
         var max = length / 0x800 * 0x800;
@@ -56,8 +48,8 @@ public class DdrPs2FileDataStepStreamReader : IDdrPs2FileDataStepStreamReader
                     buffer.Position = offsets[0];
                     try
                     {
-                        var lzBuffer = _bemaniLzDecoder.Decode(buffer);
-                        var matches = _heuristicTester.Match(lzBuffer).Where(t => t.Heuristic is SsqHeuristic);
+                        var lzBuffer = bemaniLzDecoder.Decode(buffer);
+                        var matches = heuristicTester.Match(lzBuffer).Where(t => t.Heuristic is SsqHeuristic);
                         if (!matches.Any())
                             success = false;
                     }

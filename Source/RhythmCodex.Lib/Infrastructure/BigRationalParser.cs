@@ -4,8 +4,11 @@ namespace RhythmCodex.Infrastructure;
 
 public static class BigRationalParser
 {
-    public static BigRational? ParseString(string value)
+    public static BigRational? ParseString(string? value)
     {
+        if (value == null)
+            return null;
+        
         if (value.Contains('/'))
         {
             var values = value.Split('/');

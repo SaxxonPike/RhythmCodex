@@ -67,7 +67,7 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
         var scriptPath = Path.GetDirectoryName(inPath);
         foreach (var song in db.Tracks)
         {
-            var charts = new List<IChart>();
+            var charts = new List<Chart>();
             var bpm = 145;
             var chartConfig = new[]
             {

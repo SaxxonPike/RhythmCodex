@@ -9,19 +9,12 @@ using RhythmCodex.Step1.Streamers;
 namespace RhythmCodex.Step1.Heuristics;
 
 [Service]
-public class Step1Heuristic : IReadableHeuristic<IEnumerable<Step1Chunk>>
+public class Step1Heuristic(IStep1StreamReader step1StreamReader) : IReadableHeuristic<IEnumerable<Step1Chunk>>
 {
-    private readonly IStep1StreamReader _step1StreamReader;
-
-    public Step1Heuristic(IStep1StreamReader step1StreamReader)
-    {
-        _step1StreamReader = step1StreamReader;
-    }
-        
     public string Description => "DDR Step Sequence (older)";
     public string FileExtension => "step";
 
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         // Must have at least 4 bytes
         if (reader.Length == null || reader.Length < 4)
@@ -83,6 +76,6 @@ public class Step1Heuristic : IReadableHeuristic<IEnumerable<Step1Chunk>>
 
     public IEnumerable<Step1Chunk> Read(HeuristicResult heuristicResult, Stream stream)
     {
-        return _step1StreamReader.Read(stream);
+        return step1StreamReader.Read(stream);
     }
 }

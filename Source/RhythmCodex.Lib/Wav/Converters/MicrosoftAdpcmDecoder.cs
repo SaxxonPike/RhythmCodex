@@ -12,7 +12,7 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
 {
     // Reference: https://wiki.multimedia.cx/index.php/Microsoft_ADPCM
 
-    public ISound Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat)
+    public Sound? Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat)
     {
         var channels = fmtChunk.Channels;
         var channelSamplesPerFrame = microsoftAdpcmFormat.SamplesPerBlock;
@@ -39,7 +39,7 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
 
         return new Sound
         {
-            Samples = output.Select(s => new Sample {Data = s}).Cast<ISample>().ToList()
+            Samples = output.Select(s => new Sample {Data = s.ToArray()}).ToList()
         };
     }
 

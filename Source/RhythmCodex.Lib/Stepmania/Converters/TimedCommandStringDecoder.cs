@@ -8,17 +8,10 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Stepmania.Converters;
 
 [Service]
-public class TimedCommandStringDecoder : ITimedCommandStringDecoder
+public class TimedCommandStringDecoder(ILogger logger) : ITimedCommandStringDecoder
 {
-    private readonly ILogger _logger;
-
-    public TimedCommandStringDecoder(ILogger logger)
-    {
-        _logger = logger;
-    }
-
     /// <inheritdoc />
-    public IList<TimedEvent> Decode(string events)
+    public List<TimedEvent> Decode(string events)
     {
         IEnumerable<TimedEvent> Do()
         {
@@ -27,19 +20,19 @@ public class TimedCommandStringDecoder : ITimedCommandStringDecoder
                 var kv = ev.Split('=');
                 if (kv.Length != 2)
                 {
-                    _logger.Warning($"Invalid timed command key/value pair: {ev}");
+                    logger.Warning($"Invalid timed command key/value pair: {ev}");
                     continue;
                 }
 
                 if (!double.TryParse(kv[0], out var beat))
                 {
-                    _logger.Warning($"Invalid offset in timed command: {ev}");
+                    logger.Warning($"Invalid offset in timed command: {ev}");
                     continue;
                 }
 
                 if (!double.TryParse(kv[1], out var value))
                 {
-                    _logger.Warning($"Invalid value in timed command: {ev}");
+                    logger.Warning($"Invalid value in timed command: {ev}");
                     continue;
                 }
 

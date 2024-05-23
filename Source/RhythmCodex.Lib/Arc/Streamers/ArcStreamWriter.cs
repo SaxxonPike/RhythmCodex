@@ -13,19 +13,18 @@ namespace RhythmCodex.Arc.Streamers;
 [Service]
 public class ArcStreamWriter : IArcStreamWriter
 {
-    public void Write(Stream target, IEnumerable<ArcFile> files)
+    public void Write(Stream target, IReadOnlyCollection<ArcFile> files)
     {
-        var fileList = files.AsList();
         using var buffer = new MemoryStream();
         var writer = new BinaryWriter(buffer);
 
         writer.Write(0x19751120);
         writer.Write(0x00000001);
-        writer.Write(fileList.Count);
+        writer.Write(files.Count);
         writer.Write(0x00000002);
-        buffer.Position += fileList.Count * 0x10;
+        buffer.Position += files.Count * 0x10;
 
-        var entries = fileList.Select(file =>
+        var entries = files.Select(file =>
         {
             var entry = new ArcEntry
             {
@@ -33,9 +32,12 @@ public class ArcStreamWriter : IArcStreamWriter
                 DecompressedSize = file.DecompressedSize,
                 NameOffset = (int) buffer.Position
             };
-            writer.Write(Encodings.CP437.GetBytes(file.Name));
+            
+            if (file.Name != null)
+                writer.Write(Encodings.CP437.GetBytes(file.Name));
+
             writer.Write((byte) 0x00);
-            return entry;
+            return (File: file, Entry: entry);
         }).ToList();
 
         void Pad0X20()
@@ -48,11 +50,13 @@ public class ArcStreamWriter : IArcStreamWriter
                 writer.Write(padding);
         }
 
-        for (var i = 0; i < fileList.Count; i++)
+        for (var i = 0; i < files.Count; i++)
         {
             Pad0X20();
-            entries[i].Offset = (int) buffer.Position;
-            writer.Write(fileList[i].Data);
+            entries[i].Entry.Offset = (int) buffer.Position;
+            
+            if (entries[i].File.Data is {} data)
+                writer.Write(data);
         }
 
         Pad0X20();
@@ -61,10 +65,10 @@ public class ArcStreamWriter : IArcStreamWriter
 
         foreach (var entry in entries)
         {
-            writer.Write(entry.NameOffset);
-            writer.Write(entry.Offset);
-            writer.Write(entry.DecompressedSize);
-            writer.Write(entry.CompressedSize);
+            writer.Write(entry.Entry.NameOffset);
+            writer.Write(entry.Entry.Offset);
+            writer.Write(entry.Entry.DecompressedSize);
+            writer.Write(entry.Entry.CompressedSize);
         }
             
         writer.Flush();

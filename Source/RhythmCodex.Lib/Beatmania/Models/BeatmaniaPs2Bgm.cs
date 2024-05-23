@@ -9,5 +9,5 @@ public class BeatmaniaPs2Bgm
     public int Volume { get; set; }
     public int Channels { get; set; }
     public int Rate { get; set; }
-    public VagChunk Data { get; set; }
+    public VagChunk? Data { get; set; }
 }

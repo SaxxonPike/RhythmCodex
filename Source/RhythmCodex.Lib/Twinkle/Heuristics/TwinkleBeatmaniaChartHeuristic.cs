@@ -11,7 +11,7 @@ public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
 
     public string FileExtension { get; }
         
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         var noteCountMode = true;
         var hasBpm = false;

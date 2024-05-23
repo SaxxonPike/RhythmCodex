@@ -8,22 +8,13 @@ namespace RhythmCodex.Arc.Converters;
 
 /// <inheritdoc />
 [Service]
-public class ArcFileConverter : IArcFileConverter
+public class ArcFileConverter(IArcLzDecoder arcLzDecoder, IArcLzEncoder arcLzEncoder) : IArcFileConverter
 {
-    private readonly IArcLzDecoder _arcLzDecoder;
-    private readonly IArcLzEncoder _arcLzEncoder;
-
-    public ArcFileConverter(IArcLzDecoder arcLzDecoder, IArcLzEncoder arcLzEncoder)
-    {
-        _arcLzDecoder = arcLzDecoder;
-        _arcLzEncoder = arcLzEncoder;
-    }
-
     public ArcFile Compress(ArcFile file)
     {
         var data = file.CompressedSize != file.DecompressedSize
-            ? file.Data.ToArray()
-            : _arcLzEncoder.Encode(file.Data);
+            ? file.Data?.ToArray() ?? []
+            : arcLzEncoder.Encode(file.Data);
 
         return new ArcFile
         {
@@ -40,12 +31,12 @@ public class ArcFileConverter : IArcFileConverter
 
         if (file.CompressedSize == file.DecompressedSize)
         {
-            data = file.Data.ToArray();
+            data = file.Data?.ToArray() ?? [];
         }
         else
         {
-            using var stream = new MemoryStream(file.Data);
-            data = _arcLzDecoder.Decode(stream);
+            using var stream = new MemoryStream(file.Data ?? []);
+            data = arcLzDecoder.Decode(stream);
         }
 
         return new ArcFile

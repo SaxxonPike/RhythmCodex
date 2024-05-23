@@ -6,6 +6,6 @@ namespace RhythmCodex.Beatmania.Models;
 [Model]
 public class BeatmaniaPsxKeysound
 {
-    public BeatmaniaPsxKeysoundDirectoryEntry DirectoryEntry { get; set; }
-    public VagChunk Data { get; set; }
+    public required BeatmaniaPsxKeysoundDirectoryEntry DirectoryEntry { get; set; }
+    public VagChunk? Data { get; set; }
 }

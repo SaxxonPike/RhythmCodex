@@ -96,7 +96,7 @@ public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder, IStep
         };
 
         // Act.
-        var result = Subject.Decode(steps, panelMapper.Object).AsList();
+        var result = Subject.Decode(steps, panelMapper.Object);
 
         // Assert.
         result.Should().HaveCount(expected.Length);

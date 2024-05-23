@@ -7,25 +7,18 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Streamers;
 
 [Service]
-public class SsqStreamReader : ISsqStreamReader
+public class SsqStreamReader(IChunkStreamReader chunkStreamReader) : ISsqStreamReader
 {
-    private readonly IChunkStreamReader _chunkStreamReader;
-
-    public SsqStreamReader(IChunkStreamReader chunkStreamReader)
+    public List<SsqChunk> Read(Stream stream)
     {
-        _chunkStreamReader = chunkStreamReader;
-    }
-
-    public IList<SsqChunk> Read(Stream stream)
-    {
-        return ReadInternal(stream).ToArray();
+        return ReadInternal(stream).ToList();
     }
 
     private IEnumerable<SsqChunk> ReadInternal(Stream stream)
     {
         while (true)
         {
-            var chunk = _chunkStreamReader.Read(stream);
+            var chunk = chunkStreamReader.Read(stream);
             if (chunk == null)
                 yield break;
 

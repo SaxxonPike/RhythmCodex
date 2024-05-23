@@ -5,6 +5,6 @@ namespace RhythmCodex.Ddr.Models;
 [Model]
 public class DdrPs2MetadataTableEntry
 {
-    public int Index { get; set; }
-    public byte[] Data { get; set; }
+    public required int Index { get; set; }
+    public required byte[] Data { get; set; }
 }

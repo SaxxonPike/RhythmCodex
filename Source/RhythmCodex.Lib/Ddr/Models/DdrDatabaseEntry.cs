@@ -8,7 +8,7 @@ namespace RhythmCodex.Ddr.Models;
 public class DdrDatabaseEntry
 {
     public int Index { get; set; }
-    public string Id { get; set; }
+    public string? Id { get; set; }
     public int Type { get; set; }
     public int CdTitle { get; set; }
     public int InternalId { get; set; }
@@ -17,17 +17,17 @@ public class DdrDatabaseEntry
     public int Unknown014 { get; set; }
     public int SonglistOrder { get; set; }
     public int UnlockNumber { get; set; }
-    public int[] Difficulties { get; set; }
+    public int[] Difficulties { get; set; } = [];
     public int Unknown01E { get; set; }
     public int Unknown022 { get; set; }
     public int Flags { get; set; }
-    public int[] Radar0 { get; set; }
-    public int[] Radar1 { get; set; }
-    public int[] Radar2 { get; set; }
-    public int[] Radar3 { get; set; }
-    public int[] Radar4 { get; set; }
-    public string LongName { get; set; }
-    public string ShortName { get; set; }
+    public int[] Radar0 { get; set; } = [];
+    public int[] Radar1 { get; set; } = [];
+    public int[] Radar2 { get; set; } = [];
+    public int[] Radar3 { get; set; } = [];
+    public int[] Radar4 { get; set; } = [];
+    public string? LongName { get; set; }
+    public string? ShortName { get; set; }
     public int AudioTrack { get; set; }
 
     public override string ToString()

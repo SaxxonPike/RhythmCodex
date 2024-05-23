@@ -15,7 +15,7 @@ public static class TestHelper
             Directory.CreateDirectory(path);
     }
         
-    public static void WriteSound(this IResolver resolver, ISound decoded, string outFileName)
+    public static void WriteSound(this IResolver resolver, Sound? decoded, string outFileName)
     {
         var encoder = resolver.Resolve<IRiffPcm16SoundEncoder>();
         var writer = resolver.Resolve<IRiffStreamWriter>();
@@ -34,9 +34,21 @@ public static class TestHelper
 
     public static void WriteFile(this IResolver resolver, byte[] data, string outFileName)
     {
+        WriteFile(resolver, data.AsSpan(), outFileName);
+    }
+
+    public static void WriteFile(this IResolver resolver, ReadOnlyMemory<byte> data, string outFileName)
+    {
+        WriteFile(resolver, data.Span, outFileName);
+    }
+
+    public static void WriteFile(this IResolver resolver, ReadOnlySpan<byte> data, string outFileName)
+    {
         var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
         CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
-        File.WriteAllBytes(outPath, data);
+        using var stream = File.OpenWrite(outPath);
+        stream.Write(data);
+        stream.Flush();
     }
 
     public static Stream OpenWrite(this IResolver resolver, string outFileName)

@@ -5,5 +5,5 @@ namespace RhythmCodex.Riff.Converters;
 
 public interface IRiffPcm16SoundEncoder
 {
-    IRiffContainer Encode(ISound sound);
+    IRiffContainer Encode(Sound? sound);
 }

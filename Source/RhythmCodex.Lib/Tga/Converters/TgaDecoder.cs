@@ -8,15 +8,8 @@ using RhythmCodex.Tga.Models;
 namespace RhythmCodex.Tga.Converters;
 
 [Service]
-public class TgaDecoder : ITgaDecoder
+public class TgaDecoder(IGraphicDsp graphicDsp) : ITgaDecoder
 {
-    private readonly IGraphicDsp _graphicDsp;
-
-    public TgaDecoder(IGraphicDsp graphicDsp)
-    {
-        _graphicDsp = graphicDsp;
-    }
-
     public bool IsIndexedPalette(TgaImage tgaImage)
     {
         switch (tgaImage.DataTypeCode)
@@ -37,7 +30,7 @@ public class TgaDecoder : ITgaDecoder
             throw new RhythmCodexException("Only non-interleaved images are supported for now.");
 
         if (IsIndexedPalette(tgaImage))
-            return _graphicDsp.DeIndex(DecodeIndexed(tgaImage));
+            return graphicDsp.DeIndex(DecodeIndexed(tgaImage));
 
         switch (tgaImage.DataTypeCode)
         {

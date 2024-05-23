@@ -7,15 +7,8 @@ using RhythmCodex.Riff.Models;
 namespace RhythmCodex.Riff.Streamers;
 
 [Service]
-public class RiffStreamReader : IRiffStreamReader
+public class RiffStreamReader(IRiffChunkStreamReader chunkStreamReader) : IRiffStreamReader
 {
-    private readonly IRiffChunkStreamReader _chunkStreamReader;
-
-    public RiffStreamReader(IRiffChunkStreamReader chunkStreamReader)
-    {
-        _chunkStreamReader = chunkStreamReader;
-    }
-        
     public IRiffContainer Read(Stream stream)
     {
         var reader = new BinaryReader(stream, Encodings.CP437);
@@ -28,7 +21,7 @@ public class RiffStreamReader : IRiffStreamReader
 
         while (length > 0)
         {
-            var chunk = _chunkStreamReader.Read(stream);
+            var chunk = chunkStreamReader.Read(stream);
             length -= chunk.Data.Length + 8;
             chunks.Add(chunk);
         }

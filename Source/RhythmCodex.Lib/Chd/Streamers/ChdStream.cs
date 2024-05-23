@@ -16,7 +16,7 @@ public class ChdStream : Stream
     private readonly IFlacDecoder _flacDecoder;
     private readonly ILzmaDecoder _lzmaDecoder;
     private readonly Stream _baseStream;
-    private readonly ChdStream _parent;
+    private readonly ChdStream? _parent;
 
     internal ChdStream(IFlacDecoder flacDecoder, ILzmaDecoder lzmaDecoder, Stream baseStream)
     {
@@ -73,7 +73,7 @@ public class ChdStream : Stream
     private struct CachedHunk
     {
         public int Index;
-        public byte[] Data;
+        public byte[]? Data;
     }
 
     private const int HunkCacheMaxSize = 256;
@@ -81,11 +81,11 @@ public class ChdStream : Stream
     private CachedHunk _currentHunk;
     private readonly List<CachedHunk> _hunkCache = new();
     private readonly BinaryReader _reader;
-    private readonly Func<int, byte[]> _readHunk;
+    private readonly Func<int, byte[]?> _readHunk;
 
     private long _hunkOffset;
     private long _hunkSize;
-    private ulong _dataLength = 0;
+    private ulong _dataLength;
     private long _position;
     private readonly ChdHeaderInfo _header;
     private readonly List<ChdMapInfo> _map;
@@ -147,6 +147,9 @@ public class ChdStream : Stream
 
         if (_currentHunk.Data == null)
             GetHunk((int) (_position / _hunkSize));
+
+        if (_currentHunk.Data == null)
+            return 0;
 
         var hunkPosition = _position - _hunkOffset;
         while (count > 0)
@@ -221,12 +224,12 @@ public class ChdStream : Stream
         return result;
     }
 
-    private byte[] DecompressParentHunk(ulong offs)
+    private byte[]? DecompressParentHunk(ulong offs)
     {
-        return _parent._readHunk((int) (offs & 0x7FFFFFFFul));
+        return _parent?._readHunk((int) (offs & 0x7FFFFFFFul));
     }
 
-    private byte[] DecompressSelfHunk(ulong offs)
+    private byte[]? DecompressSelfHunk(ulong offs)
     {
         return _readHunk((int) (offs & 0x7FFFFFFFul));
     }
@@ -235,7 +238,7 @@ public class ChdStream : Stream
     {
         var buffer = new byte[decompressedLength];
         using var ds = new DeflateStream(_baseStream, CompressionMode.Decompress, true);
-        ds.Read(buffer, 0, (int) decompressedLength);
+        ds.ReadAtLeast(buffer, (int)decompressedLength);
 
         return buffer;
     }
@@ -262,27 +265,16 @@ public class ChdStream : Stream
 
     private byte[] DecompressFlac()
     {
-        Action<byte[]> postProcess;
         var endian = _baseStream.ReadByte();
-        switch (endian)
+
+        Action<byte[]> postProcess = endian switch
         {
-            case 0x42: // B
-                postProcess = buffer =>
-                {
-                    for (var i = 0; i < buffer.Length; i += 2)
-                    {
-                        var temp = buffer[i];
-                        buffer[i] = buffer[i + 1];
-                        buffer[i + 1] = temp;
-                    }
-                };
-                break;
-            case 0x4C: // L
-                postProcess = _ => { };
-                break;
-            default:
-                throw new Exception($"Unknown FLAC endian type {endian:X2}");
-        }
+            0x42 => // B
+                BigEndianPostProcess,
+            0x4C => // L
+                LittleEndianPostProcess,
+            _ => throw new Exception($"Unknown FLAC endian type {endian:X2}")
+        };
 
         // determine FLAC block size, which must be 16-65535
         // clamp to 2k since that's supposed to be the sweet spot
@@ -296,7 +288,18 @@ public class ChdStream : Stream
             .ToArray();
 
         postProcess(frame);
+
         return frame;
+
+        void LittleEndianPostProcess(byte[] _)
+        {
+        }
+
+        void BigEndianPostProcess(byte[] buffer)
+        {
+            for (var i = 0; i < buffer.Length; i += 2)
+                (buffer[i], buffer[i + 1]) = (buffer[i + 1], buffer[i]);
+        }
     }
 
     private byte[] DecompressCustom(ChdMapInfo map)
@@ -439,7 +442,7 @@ public class ChdStream : Stream
         if (entry.length == _header.hunkSize)
         {
             result = new byte[_header.hunkSize];
-            _baseStream.Read(result, 0, (int) (_header.hunkSize * _header.seclen));
+            _baseStream.ReadAtLeast(result, (int)(_header.hunkSize * _header.seclen));
         }
         else
         {
@@ -449,10 +452,10 @@ public class ChdStream : Stream
         return result;
     }
 
-    private byte[] ReadHunkV3(int index)
+    private byte[]? ReadHunkV3(int index)
     {
         var entry = _map[index];
-        byte[] result;
+        byte[]? result;
 
         switch (entry.flags & 0xF)
         {
@@ -483,7 +486,7 @@ public class ChdStream : Stream
         return result;
     }
 
-    private byte[] ReadHunkV5(int index)
+    private byte[]? ReadHunkV5(int index)
     {
         var entry = _map[index];
 

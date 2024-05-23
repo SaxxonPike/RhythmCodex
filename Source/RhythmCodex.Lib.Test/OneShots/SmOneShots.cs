@@ -147,7 +147,7 @@ public class SmOneShots : BaseIntegrationFixture
         var meta = files.Select(f =>
         {
             using var stream = File.OpenRead(f);
-            var commands = reader.Read(stream).AsList();
+            var commands = reader.Read(stream);
             var title = commands.FirstOrDefault(c => c.Name.Equals("title", StringComparison.OrdinalIgnoreCase));
             var artist = commands.FirstOrDefault(c => c.Name.Equals("artist", StringComparison.OrdinalIgnoreCase));
 
@@ -163,15 +163,17 @@ public class SmOneShots : BaseIntegrationFixture
                 Title = newTitle,
                 Artist = artist?.Values.FirstOrDefault() ?? string.Empty
             };
-        }).Where(m => m != null).ToList();
+        }).Where(m => m != null).Select(m => m!).ToList();
             
         var groups = meta.GroupBy(m => m.Title);
 
         foreach (var g in groups)
         {
-            var items = g.AsList();
+            var items = g.ToList();
             if (items.Count > 1)
-                items = items.Select(item => item with { Title = $"{item.Title} ({item.Artist})" }).ToList();
+                items = items
+                    .Select(item => item with { Title = $"{item.Title} ({item.Artist})" })
+                    .ToList();
 
             foreach (var item in items)
             {

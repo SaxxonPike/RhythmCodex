@@ -8,20 +8,13 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli.Orchestration.Infrastructure;
 
-public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask>
+public abstract class TaskBuilderBase<TTask>(
+    IFileSystem fileSystem,
+    ILogger logger)
+    where TTask : TaskBuilderBase<TTask>
 {
-    private readonly IFileSystem _fileSystem;
-
-    protected TaskBuilderBase(
-        IFileSystem fileSystem,
-        ILogger logger)
-    {
-        _fileSystem = fileSystem;
-        Logger = logger;
-    }
-
     protected Args Args { get; private set; }
-    private ILogger Logger { get; }
+    private ILogger Logger { get; } = logger;
 
     protected void ParallelProgress<T>(BuiltTask task, ICollection<T> items, Action<T> action)
     {
@@ -54,7 +47,7 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
     {
         task.Message = "Resolving input files.";
         var sourceFiles = Args.InputFiles
-            .SelectMany(a => _fileSystem.GetFileNames(a, Args.RecursiveInputFiles));
+            .SelectMany(a => fileSystem.GetFileNames(a, Args.RecursiveInputFiles));
 
         if (Args.FilesAreZipArchives)
             return GetArchivedFiles(sourceFiles);
@@ -68,8 +61,8 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
                 {
                     return new InputFile(
                             sf,
-                            () => _fileSystem.OpenRead(sf),
-                            f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                            () => fileSystem.OpenRead(sf),
+                            f => fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
                             s => s.Dispose())
                         { Length = info.Length };
                 }
@@ -86,18 +79,18 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
         return sourceFiles
             .SelectMany(sf =>
             {
-                using var parentArc = new ZipArchive(_fileSystem.OpenRead(sf));
+                using var parentArc = new ZipArchive(fileSystem.OpenRead(sf));
                 return parentArc.Entries.Select(e => new InputFile(
                     Path.Combine(Path.GetDirectoryName(sf), Path.GetFileNameWithoutExtension(sf), e.FullName),
                     () =>
                     {
-                        var archive = new ZipArchive(_fileSystem.OpenRead(sf));
+                        var archive = new ZipArchive(fileSystem.OpenRead(sf));
                         var entry = archive.GetEntry(e.Name);
                         return entry.Open();
                     },
                     f =>
                     {
-                        var archive = new ZipArchive(_fileSystem.OpenRead(sf));
+                        var archive = new ZipArchive(fileSystem.OpenRead(sf));
                         var entry = archive.GetEntry(Path.Combine(Path.GetDirectoryName(sf), f));
                         return entry.Open();
                     },
@@ -111,7 +104,7 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
 
     protected InputFile GetInputFileDirect(string name)
     {
-        var sourceFiles = _fileSystem.GetFileNames(name, Args.RecursiveInputFiles);
+        var sourceFiles = fileSystem.GetFileNames(name, Args.RecursiveInputFiles);
 
         if (Args.FilesAreZipArchives)
             return GetArchivedFiles(sourceFiles).Single();
@@ -124,8 +117,8 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
                 {
                     return new InputFile(
                         sf,
-                        () => _fileSystem.OpenRead(sf),
-                        f => _fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                        () => fileSystem.OpenRead(sf),
+                        f => fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
                         s => s.Dispose())
                     {
                         Length = info.Length
@@ -155,20 +148,20 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
 
     protected Stream OpenWriteSingle(BuiltTask task, InputFile inputFile, Func<string, string> generateName)
     {
-        if (_fileSystem == null)
+        if (fileSystem == null)
             throw new RhythmCodexException("Filesystem is not defined.");
         var path = GetOutputFolder(inputFile.Name);
         var newName = generateName(Path.GetFileNameWithoutExtension(inputFile.Name));
         var newPath = Path.Combine(path, newName);
         var newDirectory = Path.GetDirectoryName(newPath);
         task.Message = $"Writing {newPath}";
-        _fileSystem.CreateDirectory(newDirectory);
-        return _fileSystem.OpenWrite(newPath);
+        fileSystem.CreateDirectory(newDirectory);
+        return fileSystem.OpenWrite(newPath);
     }
 
     protected Stream OpenWriteMulti(BuiltTask task, InputFile inputFile, Func<string, string> generateName)
     {
-        if (_fileSystem == null)
+        if (fileSystem == null)
             throw new RhythmCodexException("Filesystem is not defined.");
         var baseName = Path.GetFileNameWithoutExtension(inputFile.Name);
         var path = Path.Combine(GetOutputFolder(inputFile.Name), baseName);
@@ -176,8 +169,8 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
         var newPath = Path.Combine(path, newName);
         var newDirectory = Path.GetDirectoryName(newPath);
         task.Message = $"Writing {newPath}";
-        _fileSystem.CreateDirectory(newDirectory);
-        return _fileSystem.OpenWrite(newPath);
+        fileSystem.CreateDirectory(newDirectory);
+        return fileSystem.OpenWrite(newPath);
     }
 
     public TTask WithArgs(Args args)
@@ -186,22 +179,15 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
         return (TTask) this;
     }
 
-    protected sealed class BuiltTask : ITask
+    protected sealed class BuiltTask(string name, Func<bool> run) : ITask
     {
         public event EventHandler<string> MessageUpdated;
         public event EventHandler<float> ProgressUpdated;
         private string _message = string.Empty;
         private float _progress = 0;
 
-        public BuiltTask(string name, Func<bool> run)
-        {
-            Id = Guid.NewGuid().ToString();
-            Name = name;
-            Run = run;
-        }
-
-        public string Id { get; }
-        public string Name { get; }
+        public string Id { get; } = Guid.NewGuid().ToString();
+        public string Name { get; } = name;
 
         public float Progress
         {
@@ -213,7 +199,7 @@ public abstract class TaskBuilderBase<TTask> where TTask : TaskBuilderBase<TTask
             }
         }
 
-        public Func<bool> Run { get; set; }
+        public Func<bool> Run { get; set; } = run;
 
         public string Message
         {

@@ -11,9 +11,9 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class TimingEventDecoder : ITimingEventDecoder
 {
-    public IList<IEvent> Decode(TimingChunk timingChunk)
+    public List<Event> Decode(TimingChunk timingChunk)
     {
-        IEnumerable<IEvent> Do()
+        IEnumerable<Event> Do()
         {
             var timings = timingChunk.Timings;
             var ticksPerSecond = timingChunk.Rate;

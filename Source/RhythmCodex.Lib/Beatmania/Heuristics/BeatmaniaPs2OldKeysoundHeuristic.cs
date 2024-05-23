@@ -11,7 +11,7 @@ public class BeatmaniaPs2OldKeysoundHeuristic : IHeuristic
     public string Description => "BeatmaniaIIDX CS Keysounds (old)";
     public string FileExtension => "bmcskey";
         
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         var data = reader.Read(0x10);
         if (data.Length < 0x10)

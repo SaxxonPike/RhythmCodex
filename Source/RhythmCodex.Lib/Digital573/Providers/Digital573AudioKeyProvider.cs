@@ -21,15 +21,12 @@ public class Digital573AudioKeyProvider : IDigital573AudioKeyProvider
         });
         var obj = serializer.ReadObject(new MemoryStream(archive.Single(e =>
             e.Key.Equals("db.json", StringComparison.OrdinalIgnoreCase)).Value));
-        return (Dictionary<string, int[]>) obj;
+        return (Dictionary<string, int[]>) obj!;
     });
 
-    public int[] Get(byte[] source)
+    public int[]? Get(byte[] source)
     {
-        using var sha = SHA1.Create();
-        var hash = string.Join(string.Empty, sha.ComputeHash(source).Select(h => $"{h:X2}"));
-        return _keys.Value.ContainsKey(hash)
-            ? _keys.Value[hash]
-            : null;
+        var hash = string.Join(string.Empty, SHA1.HashData(source).Select(h => $"{h:X2}"));
+        return _keys.Value.GetValueOrDefault(hash);
     }
 }

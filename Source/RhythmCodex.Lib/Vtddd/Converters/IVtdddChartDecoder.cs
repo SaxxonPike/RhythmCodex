@@ -6,5 +6,5 @@ namespace RhythmCodex.Vtddd.Converters;
 
 public interface IVtdddChartDecoder
 {
-    IChart Decode(IEnumerable<VtdddStep> steps);
+    Chart Decode(IEnumerable<VtdddStep> steps);
 }

@@ -10,7 +10,7 @@ public class XwbHeuristic : IHeuristic
     public string Description => "Xbox Wave Bank";
     public string FileExtension => "xwb";
 
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         var data = reader.Read(4);
         if (data.Length < 4)

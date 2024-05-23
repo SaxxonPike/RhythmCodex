@@ -52,23 +52,19 @@ public class Ddr573AudioNameFinder : IDdr573AudioNameFinder
 
     public string GetPath(string sourceName)
     {
-        var name = GetName(sourceName).ToLowerInvariant();
+        var name = GetName(sourceName)?.ToLowerInvariant();
         var prunedSourceName = Path.GetFileNameWithoutExtension(sourceName.ToUpperInvariant());
-        switch (prunedSourceName[0])
+        return prunedSourceName[0] switch
         {
-            case 'E':
-                return string.Join("/", "data", "mp3", "enc", $"{name}.mp3");
-            case 'S':
-                return string.Join("/", "data", "mp3", "enc", name, $"{name}-preview.mp3");
-            default:
-                return string.Join("/", "data", "mp3", "enc", name, $"{name}.mp3");
-        }
+            'E' => string.Join("/", "data", "mp3", "enc", $"{name}.mp3"),
+            'S' => string.Join("/", "data", "mp3", "enc", name, $"{name}-preview.mp3"),
+            _ => string.Join("/", "data", "mp3", "enc", name, $"{name}.mp3")
+        };
     }
 
-    public string GetName(string sourceName)
+    public string? GetName(string sourceName)
     {
-        if (sourceName == null)
-            throw new ArgumentNullException(nameof(sourceName));
+        ArgumentNullException.ThrowIfNull(sourceName, nameof(sourceName));
         var prunedSourceName = Path.GetFileNameWithoutExtension(sourceName.ToUpperInvariant());
         if (prunedSourceName.Length != 8)
             return prunedSourceName;

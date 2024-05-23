@@ -6,5 +6,5 @@ namespace RhythmCodex.Djmain.Streamers;
 
 public interface IDjmainChartEventStreamWriter
 {
-    int Write(Stream stream, IEnumerable<IDjmainChartEvent> events);
+    int Write(Stream stream, IEnumerable<DjmainChartEvent> events);
 }

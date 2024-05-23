@@ -6,7 +6,7 @@ namespace RhythmCodex.Infrastructure;
 
 public static class XElementExtensions
 {
-    public static string GetString(this XElement parent, string key)
+    public static string? GetString(this XElement parent, string key)
     {
         var element = parent.Elements(key).FirstOrDefault();
         return element?.Value;
@@ -23,7 +23,7 @@ public static class XElementExtensions
     public static int[] GetInts(this XElement parent, string key)
     {
         var values = parent.GetString(key)?
-            .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .Select(int.Parse)
             .ToArray();
         return values ?? [];

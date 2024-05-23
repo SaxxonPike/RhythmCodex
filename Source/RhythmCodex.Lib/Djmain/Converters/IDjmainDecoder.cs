@@ -4,5 +4,5 @@ namespace RhythmCodex.Djmain.Converters;
 
 public interface IDjmainDecoder
 {
-    IDjmainArchive Decode(IDjmainChunk chunk, DjmainDecodeOptions options);
+    DjmainArchive Decode(DjmainChunk chunk, DjmainDecodeOptions options);
 }

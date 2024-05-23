@@ -11,23 +11,16 @@ using RhythmCodex.Ssq.Model;
 namespace RhythmCodex.Ssq.Converters;
 
 [Service]
-public class StepEventDecoder : IStepEventDecoder
+public class StepEventDecoder(IStepPanelSplitter stepPanelSplitter) : IStepEventDecoder
 {
-    private readonly IStepPanelSplitter _stepPanelSplitter;
-
-    public StepEventDecoder(IStepPanelSplitter stepPanelSplitter)
+    public List<Event> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
     {
-        _stepPanelSplitter = stepPanelSplitter;
-    }
-
-    public IList<IEvent> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
-    {
-        IEnumerable<IEvent> Do()
+        IEnumerable<Event> Do()
         {
             if (panelMapper == null)
                 throw new RhythmCodexException("Panel mapper cannot be null");
 
-            var stepList = steps.AsList();
+            var stepList = steps;
 
             foreach (var step in stepList)
             {
@@ -63,7 +56,7 @@ public class StepEventDecoder : IStepEventDecoder
                     panels &= 0x0F;
                 }
 
-                foreach (var panelNumber in _stepPanelSplitter.Split(panels))
+                foreach (var panelNumber in stepPanelSplitter.Split(panels))
                 {
                     var mappedPanel = panelMapper.Map(panelNumber);
                     var isMapped = mappedPanel != null;

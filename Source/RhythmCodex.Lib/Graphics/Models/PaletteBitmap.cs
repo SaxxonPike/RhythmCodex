@@ -8,6 +8,6 @@ public class PaletteBitmap : Metadata, IPaletteBitmap
 {
     public int Width { get; set; }
     public int Height { get; set; }
-    public int[] Data { get; set; }
-    public int[] Palette { get; set; }
+    public int[] Data { get; set; } = [];
+    public int[] Palette { get; set; } = [];
 }

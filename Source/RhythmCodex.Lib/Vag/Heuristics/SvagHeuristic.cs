@@ -9,15 +9,8 @@ using RhythmCodex.Vag.Streamers;
 namespace RhythmCodex.Vag.Heuristics;
 
 [Service]
-public class SvagHeuristic : IReadableHeuristic<SvagContainer>
+public class SvagHeuristic(IVagStreamReader vagStreamReader) : IReadableHeuristic<SvagContainer>
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public SvagHeuristic(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-        
     public SvagContainer Read(HeuristicResult result, Stream stream)
     {
         if (!(result is VagHeuristicResult info))
@@ -26,7 +19,7 @@ public class SvagHeuristic : IReadableHeuristic<SvagContainer>
         if (info.Start != null)
             stream.TryRead(0, (int) info.Start);
 
-        var output = _vagStreamReader.Read(stream, info.Channels ?? 1, info.Interleave ?? 0);
+        var output = vagStreamReader.Read(stream, info.Channels ?? 1, info.Interleave ?? 0);
         output.Volume = info.Volume;
         output.SampleRate = info.SampleRate;
         output.Length = info.Length;
@@ -42,7 +35,7 @@ public class SvagHeuristic : IReadableHeuristic<SvagContainer>
 
     public string FileExtension => "svag";
         
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         Span<int> words = stackalloc int[7];
         Span<byte> data = stackalloc byte[0x1C];

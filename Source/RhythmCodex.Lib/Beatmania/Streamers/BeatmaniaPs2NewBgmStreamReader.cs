@@ -7,15 +7,8 @@ using RhythmCodex.Vag.Streamers;
 namespace RhythmCodex.Beatmania.Streamers;
 
 [Service]
-public class BeatmaniaPs2NewBgmStreamReader : IBeatmaniaPs2NewBgmStreamReader
+public class BeatmaniaPs2NewBgmStreamReader(IVagStreamReader vagStreamReader) : IBeatmaniaPs2NewBgmStreamReader
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public BeatmaniaPs2NewBgmStreamReader(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-        
     public BeatmaniaPs2Bgm Read(Stream stream)
     {
         const int fieldCount = 12;
@@ -44,7 +37,7 @@ public class BeatmaniaPs2NewBgmStreamReader : IBeatmaniaPs2NewBgmStreamReader
             Channels = channels,
             Rate = rate,
             Volume = volume,
-            Data = _vagStreamReader.Read(mem, channels, interleave)
+            Data = vagStreamReader.Read(mem, channels, interleave)
         };
     }
 }

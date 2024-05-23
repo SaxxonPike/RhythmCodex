@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RhythmCodex.Ogg.Converters;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.ThirdParty.Integration;
 

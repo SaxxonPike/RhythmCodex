@@ -2,10 +2,7 @@
 
 namespace RhythmCodex.Gui;
 
-public class FormConsoleEventArgs : EventArgs
+public class FormConsoleEventArgs(string text) : EventArgs
 {
-    public FormConsoleEventArgs(string text) =>
-        Text = text;
-        
-    public string Text { get; }
+    public string Text { get; } = text;
 }

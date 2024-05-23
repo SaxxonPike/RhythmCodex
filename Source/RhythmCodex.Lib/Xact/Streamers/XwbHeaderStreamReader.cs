@@ -5,15 +5,8 @@ using RhythmCodex.Xact.Model;
 namespace RhythmCodex.Xact.Streamers;
 
 [Service]
-public class XwbHeaderStreamReader : IXwbHeaderStreamReader
+public class XwbHeaderStreamReader(IXwbRegionStreamReader xwbRegionStreamReader) : IXwbHeaderStreamReader
 {
-    private readonly IXwbRegionStreamReader _xwbRegionStreamReader;
-
-    public XwbHeaderStreamReader(IXwbRegionStreamReader xwbRegionStreamReader)
-    {
-        _xwbRegionStreamReader = xwbRegionStreamReader;
-    }
-        
     public XwbHeader Read(Stream source)
     {
         var reader = new BinaryReader(source);
@@ -26,7 +19,7 @@ public class XwbHeaderStreamReader : IXwbHeaderStreamReader
         };
 
         for (var i = 0; i < result.Segments.Length; i++)
-            result.Segments[i] = _xwbRegionStreamReader.Read(source);
+            result.Segments[i] = xwbRegionStreamReader.Read(source);
 
         return result;
     }

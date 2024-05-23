@@ -10,15 +10,8 @@ using RhythmCodex.Vag.Streamers;
 namespace RhythmCodex.Beatmania.Streamers;
 
 [Service]
-public class BeatmaniaPsxKeysoundStreamReader : IBeatmaniaPsxKeysoundStreamReader
+public class BeatmaniaPsxKeysoundStreamReader(IVagStreamReader vagStreamReader) : IBeatmaniaPsxKeysoundStreamReader
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public BeatmaniaPsxKeysoundStreamReader(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-        
     public IList<BeatmaniaPsxKeysound> Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
@@ -52,7 +45,7 @@ public class BeatmaniaPsxKeysoundStreamReader : IBeatmaniaPsxKeysoundStreamReade
         foreach (var keysound in keysounds)
         {
             dataStream.Position = keysound.DirectoryEntry.Offset - dataOffset;
-            keysound.Data = _vagStreamReader.Read(dataStream, 1, 16);
+            keysound.Data = vagStreamReader.Read(dataStream, 1, 16);
         }
 
         return keysounds;

@@ -9,9 +9,9 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class TriggerChunkEncoder : ITriggerChunkEncoder
 {
-    public byte[] Convert(IEnumerable<Trigger> triggers)
+    public byte[] Convert(ICollection<Trigger> triggers)
     {
-        var triggerList = triggers.AsList();
+        var triggerList = triggers;
         var count = triggerList.Count;
 
         using var mem = new MemoryStream();

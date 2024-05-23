@@ -6,22 +6,12 @@ using RhythmCodex.Iso.Model;
 namespace RhythmCodex.Iso.Converters;
 
 [Service]
-public class IsoStorageMediumDecoder : IIsoStorageMediumDecoder
+public class IsoStorageMediumDecoder(
+    IIsoPrimaryVolumeDescriptorDecoder isoPrimaryVolumeDescriptorDecoder,
+    IIsoBootRecordDecoder isoBootRecordDecoder,
+    IIsoDescriptorSectorFinder isoDescriptorSectorFinder)
+    : IIsoStorageMediumDecoder
 {
-    private readonly IIsoPrimaryVolumeDescriptorDecoder _isoPrimaryVolumeDescriptorDecoder;
-    private readonly IIsoBootRecordDecoder _isoBootRecordDecoder;
-    private readonly IIsoDescriptorSectorFinder _isoDescriptorSectorFinder;
-
-    public IsoStorageMediumDecoder(
-        IIsoPrimaryVolumeDescriptorDecoder isoPrimaryVolumeDescriptorDecoder,
-        IIsoBootRecordDecoder isoBootRecordDecoder,
-        IIsoDescriptorSectorFinder isoDescriptorSectorFinder)
-    {
-        _isoPrimaryVolumeDescriptorDecoder = isoPrimaryVolumeDescriptorDecoder;
-        _isoBootRecordDecoder = isoBootRecordDecoder;
-        _isoDescriptorSectorFinder = isoDescriptorSectorFinder;
-    }
-        
     public IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors)
     {
         var result = new IsoStorageMedium
@@ -30,7 +20,7 @@ public class IsoStorageMediumDecoder : IIsoStorageMediumDecoder
             Volumes = new List<IsoVolume>()
         };
 
-        var descriptorSectors = _isoDescriptorSectorFinder.Find(sectors).ToList();
+        var descriptorSectors = isoDescriptorSectorFinder.Find(sectors).ToList();
             
         var bootDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x00).ToList();
         var primaryVolumeDescriptor = descriptorSectors.Single(s => s.UserData[0] == 0x01);
@@ -38,9 +28,9 @@ public class IsoStorageMediumDecoder : IIsoStorageMediumDecoder
 //            var partitionDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x03).ToList();
 
         foreach (var bootDescriptor in bootDescriptors)
-            result.BootRecords.Add(_isoBootRecordDecoder.Decode(bootDescriptor.UserData));
+            result.BootRecords.Add(isoBootRecordDecoder.Decode(bootDescriptor.UserData));
 
-        var primaryVolume = _isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData);
+        var primaryVolume = isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData);
             
         result.Volumes.Add(primaryVolume);
 

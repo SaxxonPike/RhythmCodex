@@ -5,5 +5,5 @@ namespace RhythmCodex.Xact.Converters;
 
 public interface IXwbDecoder
 {
-    ISound Decode(XwbSound sound);
+    Sound? Decode(XwbSound sound);
 }

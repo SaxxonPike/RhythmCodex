@@ -6,5 +6,5 @@ namespace RhythmCodex.Vag.Models;
 public class SvagContainer
 {
     public BigRational SampleRate { get; set; }
-    public VagChunk VagChunk { get; set; }
+    public VagChunk? VagChunk { get; set; }
 }

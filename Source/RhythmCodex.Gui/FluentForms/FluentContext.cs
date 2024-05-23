@@ -3,35 +3,22 @@ using System.Windows.Forms;
 
 namespace RhythmCodex.Gui.FluentForms;
 
-public class FluentContext
+public class FluentContext(FluentState state)
 {
-    private readonly FluentState _state;
-
-    public FluentContext(FluentState state)
-    {
-        _state = state;
-    }
-        
     public TControl GetControl<TControl>(string id) 
         where TControl : class
     {
-        if (!_state.Map.TryGetValue(id, out var obj))
+        if (!state.Map.TryGetValue(id, out var obj))
             return null;
         return obj as TControl;
     }
 }
     
-public class FluentContext<TFluent, TSelf> : FluentContext
+public class FluentContext<TFluent, TSelf>(TFluent blueprint, TSelf control, FluentState state) : FluentContext(state)
 {
-    public FluentContext(TFluent blueprint, TSelf control, FluentState state) : base(state)
-    {
-        Blueprint = blueprint;
-        Control = control;
-    }
+    public TSelf Control { get; } = control;
+    public TFluent Blueprint { get; } = blueprint;
 
-    public TSelf Control { get; }
-    public TFluent Blueprint { get; }
-        
     public void Invoke(Action del)
     {
         if (Control is Control control)

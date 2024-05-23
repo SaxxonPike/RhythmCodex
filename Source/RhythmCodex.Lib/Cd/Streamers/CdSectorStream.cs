@@ -7,16 +7,10 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Cd.Streamers;
 
 [NotService]
-public class CdSectorStream : Stream
+public class CdSectorStream(IReadOnlyList<ICdSector> sectors) : Stream
 {
-    private readonly IReadOnlyList<ICdSector> _sectors;
     private int _sectorOffset;
     private int _sectorIndex;
-
-    public CdSectorStream(IReadOnlyList<ICdSector> sectors)
-    {
-        _sectors = sectors;
-    }
 
     public override void Flush()
     {
@@ -28,7 +22,7 @@ public class CdSectorStream : Stream
         var result = 0;
         while (remaining > 0)
         {
-            var data = _sectors[_sectorIndex].Data;
+            var data = sectors[_sectorIndex].Data;
             if (remaining > data.Length - _sectorIndex)
             {
                 data.AsSpan().Slice(_sectorIndex).CopyTo(buffer.AsSpan().Slice(offset));
@@ -86,7 +80,7 @@ public class CdSectorStream : Stream
     public override bool CanRead => true;
     public override bool CanSeek => true;
     public override bool CanWrite => false;
-    public override long Length => _sectors.Count * 0x800L;
+    public override long Length => sectors.Count * 0x800L;
 
     public override long Position
     {

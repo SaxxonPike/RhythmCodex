@@ -9,6 +9,6 @@ public class BeatmaniaPcAudioEntry
     public int Channel { get; set; }
     public int Panning { get; set; }
     public int Volume { get; set; }
-    public byte[] ExtraInfo { get; set; }
-    public byte[] Data { get; set; }
+    public byte[]? ExtraInfo { get; set; }
+    public byte[]? Data { get; set; }
 }

@@ -9,21 +9,15 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Djmain.Streamers;
 
 [Service]
-public class DjmainChunkStreamReader : IDjmainChunkStreamReader
+public class DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDescriptionHeuristic)
+    : IDjmainChunkStreamReader
 {
-    private readonly IDjmainHddDescriptionHeuristic _djmainHddDescriptionHeuristic;
-
-    public DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDescriptionHeuristic)
-    {
-        _djmainHddDescriptionHeuristic = djmainHddDescriptionHeuristic;
-    }
-        
     public IEnumerable<DjmainChunk> Read(Stream stream)
     {
         const int length = DjmainConstants.ChunkSize;
         var buffer = new byte[length];
         var id = 0;
-        DjmainHddDescription format = null;
+        DjmainHddDescription? format = null;
 
         while (true)
         {
@@ -42,8 +36,7 @@ public class DjmainChunkStreamReader : IDjmainChunkStreamReader
 
             buffer.AsSpan(0, length).CopyTo(output);
 
-            if (format == null)
-                format = _djmainHddDescriptionHeuristic.Get(output);
+            format ??= djmainHddDescriptionHeuristic.Get(output);
 
             if (format.BytesAreSwapped)
                 output.AsSpan().Swap16();

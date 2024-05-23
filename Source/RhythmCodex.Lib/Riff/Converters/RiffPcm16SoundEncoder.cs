@@ -10,16 +10,9 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Riff.Converters;
 
 [Service]
-public class RiffPcm16SoundEncoder : IRiffPcm16SoundEncoder
+public class RiffPcm16SoundEncoder(IRiffFormatEncoder formatEncoder) : IRiffPcm16SoundEncoder
 {
-    private readonly IRiffFormatEncoder _formatEncoder;
-
-    public RiffPcm16SoundEncoder(IRiffFormatEncoder formatEncoder)
-    {
-        _formatEncoder = formatEncoder;
-    }
-
-    public IRiffContainer Encode(ISound sound)
+    public IRiffContainer Encode(Sound? sound)
     {
         var sampleRate = sound[NumericData.Rate];
 
@@ -56,9 +49,9 @@ public class RiffPcm16SoundEncoder : IRiffPcm16SoundEncoder
             ExtraData = []
         };
 
-        container.Chunks.Add(_formatEncoder.Encode(format));
+        container.Chunks.Add(formatEncoder.Encode(format));
 
-        var totalSamples = sound.Samples.Max(s => s.Data.Count);
+        var totalSamples = sound.Samples.Max(s => s.Data.Length);
 
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);
@@ -68,7 +61,7 @@ public class RiffPcm16SoundEncoder : IRiffPcm16SoundEncoder
             {
                 var sample = sound.Samples[j];
                 var source = sample.Data;
-                var sourceValue = i < source.Count ? source[i] : 0f;
+                var sourceValue = i < source.Length ? source.Span[i] : 0f;
                 var value = Math.Round(sourceValue * 32767f);
                 if (value > 32767f)
                     value = 32767f;

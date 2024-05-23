@@ -10,16 +10,10 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Streamers;
 
 [Service]
-public class DdrPs2FileDataTableChunkStreamReader : IDdrPs2FileDataTableChunkStreamReader
+public class DdrPs2FileDataTableChunkStreamReader(IBemaniLzDecoder bemaniLzDecoder)
+    : IDdrPs2FileDataTableChunkStreamReader
 {
-    private readonly IBemaniLzDecoder _bemaniLzDecoder;
-
-    public DdrPs2FileDataTableChunkStreamReader(IBemaniLzDecoder bemaniLzDecoder)
-    {
-        _bemaniLzDecoder = bemaniLzDecoder;
-    }
-
-    public DdrPs2FileDataTableChunk GetUnbound(Stream stream)
+    public DdrPs2FileDataTableChunk? GetUnbound(Stream stream)
     {
         var cache = new CachedStream(stream);
         var cacheReader = new BinaryReader(cache);
@@ -62,7 +56,7 @@ public class DdrPs2FileDataTableChunkStreamReader : IDdrPs2FileDataTableChunkStr
             
         try
         {
-            _bemaniLzDecoder.Decode(snapshot);
+            bemaniLzDecoder.Decode(snapshot);
         }
         catch (Exception)
         {

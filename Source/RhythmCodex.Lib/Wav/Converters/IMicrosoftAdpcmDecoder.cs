@@ -6,5 +6,5 @@ namespace RhythmCodex.Wav.Converters;
 
 public interface IMicrosoftAdpcmDecoder
 {
-    ISound Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat);
+    Sound? Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat);
 }

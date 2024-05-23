@@ -10,18 +10,12 @@ using RhythmCodex.Wav.Models;
 namespace RhythmCodex.Riff.Converters;
 
 [Service]
-public class RiffMicrosoftAdpcmSoundEncoder : IRiffMicrosoftAdpcmSoundEncoder
+public class RiffMicrosoftAdpcmSoundEncoder(
+    IRiffFormatEncoder riffFormatEncoder,
+    IMicrosoftAdpcmEncoder microsoftAdpcmEncoder)
+    : IRiffMicrosoftAdpcmSoundEncoder
 {
-    private readonly IRiffFormatEncoder _formatEncoder;
-    private readonly IMicrosoftAdpcmEncoder _microsoftAdpcmEncoder;
-
-    public RiffMicrosoftAdpcmSoundEncoder(IRiffFormatEncoder riffFormatEncoder, IMicrosoftAdpcmEncoder microsoftAdpcmEncoder)
-    {
-        _formatEncoder = riffFormatEncoder;
-        _microsoftAdpcmEncoder = microsoftAdpcmEncoder;
-    }
-        
-    public IRiffContainer Encode(ISound sound, int samplesPerBlock)
+    public IRiffContainer Encode(Sound? sound, int samplesPerBlock)
     {
         var sampleRate = sound[NumericData.Rate];
 
@@ -61,15 +55,15 @@ public class RiffMicrosoftAdpcmSoundEncoder : IRiffMicrosoftAdpcmSoundEncoder
             Channels = channels,
             ByteRate = (int) byteRate,
             BitsPerSample = 4,
-            BlockAlign = _microsoftAdpcmEncoder.GetBlockSize(samplesPerBlock, channels),
+            BlockAlign = microsoftAdpcmEncoder.GetBlockSize(samplesPerBlock, channels),
             ExtraData = extraFormat.ToBytes()
         };
 
-        container.Chunks.Add(_formatEncoder.Encode(format));
+        container.Chunks.Add(riffFormatEncoder.Encode(format));
         container.Chunks.Add(new RiffChunk
         {
             Id = "data",
-            Data = _microsoftAdpcmEncoder.Encode(sound, samplesPerBlock)
+            Data = microsoftAdpcmEncoder.Encode(sound, samplesPerBlock)
         });
             
         return container;

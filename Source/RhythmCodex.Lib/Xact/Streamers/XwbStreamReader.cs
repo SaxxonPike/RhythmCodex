@@ -10,22 +10,12 @@ using RhythmCodex.Xact.Model;
 namespace RhythmCodex.Xact.Streamers;
 
 [Service]
-public class XwbStreamReader : IXwbStreamReader
+public class XwbStreamReader(
+    IXwbHeaderStreamReader xwbHeaderStreamReader,
+    IXwbDataStreamReader xwbDataStreamReader,
+    IXwbEntryStreamReader xwbEntryStreamReader)
+    : IXwbStreamReader
 {
-    private readonly IXwbDataStreamReader _xwbDataStreamReader;
-    private readonly IXwbEntryStreamReader _xwbEntryStreamReader;
-    private readonly IXwbHeaderStreamReader _xwbHeaderStreamReader;
-
-    public XwbStreamReader(
-        IXwbHeaderStreamReader xwbHeaderStreamReader,
-        IXwbDataStreamReader xwbDataStreamReader,
-        IXwbEntryStreamReader xwbEntryStreamReader)
-    {
-        _xwbDataStreamReader = xwbDataStreamReader;
-        _xwbEntryStreamReader = xwbEntryStreamReader;
-        _xwbHeaderStreamReader = xwbHeaderStreamReader;
-    }
-
     public IEnumerable<XwbSound> Read(Stream source)
     {
         var reader = new BinaryReader(source);
@@ -34,7 +24,7 @@ public class XwbStreamReader : IXwbStreamReader
         var names = Array.Empty<string>();
         var dataChunk = Array.Empty<byte>();
 
-        var header = _xwbHeaderStreamReader.Read(source);
+        var header = xwbHeaderStreamReader.Read(source);
 
         for (var i = 0; i < (int) XwbSegIdx.Count; i++)
         {
@@ -49,14 +39,14 @@ public class XwbStreamReader : IXwbStreamReader
             switch (i)
             {
                 case (int) XwbSegIdx.BankData:
-                    var bank = _xwbDataStreamReader.Read(mem);
+                    var bank = xwbDataStreamReader.Read(mem);
                     sampleCount = bank.EntryCount;
                     entries = new XwbEntry[sampleCount];
                     names = new string[sampleCount];
                     break;
                 case (int) XwbSegIdx.EntryMetaData:
                     for (var j = 0; j < sampleCount; j++)
-                        entries[j] = _xwbEntryStreamReader.Read(mem);
+                        entries[j] = xwbEntryStreamReader.Read(mem);
                     break;
                 case (int) XwbSegIdx.EntryNames:
                     for (var j = 0; j < sampleCount; j++)

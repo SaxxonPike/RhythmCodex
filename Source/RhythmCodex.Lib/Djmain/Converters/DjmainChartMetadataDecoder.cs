@@ -9,7 +9,7 @@ namespace RhythmCodex.Djmain.Converters;
 [Service]
 public class DjmainChartMetadataDecoder : IDjmainChartMetadataDecoder
 {
-    public void AddMetadata(IChart chart, DjmainChunkFormat format, int index)
+    public void AddMetadata(Chart chart, DjmainChunkFormat format, int index)
     {
         switch (format)
         {

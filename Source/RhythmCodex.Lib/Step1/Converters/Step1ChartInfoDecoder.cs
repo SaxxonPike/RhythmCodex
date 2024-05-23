@@ -6,15 +6,8 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Step1.Converters;
 
 [Service]
-public class Step1ChartInfoDecoder : IStep1ChartInfoDecoder
+public class Step1ChartInfoDecoder(ILogger logger) : IStep1ChartInfoDecoder
 {
-    private readonly ILogger _logger;
-
-    public Step1ChartInfoDecoder(ILogger logger)
-    {
-        _logger = logger;
-    }
-        
     public ChartInfo Decode(int metadata, int playerCount, int panelCount)
     {
         return new ChartInfo
@@ -48,7 +41,7 @@ public class Step1ChartInfoDecoder : IStep1ChartInfoDecoder
             }                
         }
             
-        _logger.Warning($"Unrecognized chart type {metadata & 0xFF:X2}");
+        logger.Warning($"Unrecognized chart type {metadata & 0xFF:X2}");
         return null;
     }
 
@@ -63,7 +56,7 @@ public class Step1ChartInfoDecoder : IStep1ChartInfoDecoder
             case 0x02:
                 return SmNotesDifficulties.Hard;
             default:
-                _logger.Warning($"Unrecognized chart difficulty {(metadata >> 8) & 0xFF:X2}");
+                logger.Warning($"Unrecognized chart difficulty {(metadata >> 8) & 0xFF:X2}");
                 return "Edit";
         }
     }

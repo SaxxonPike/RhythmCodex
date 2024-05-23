@@ -10,20 +10,13 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Cli.Orchestration;
 
 [Service(singleInstance: false)]
-public class ArcTaskBuilder : TaskBuilderBase<ArcTaskBuilder>
+public class ArcTaskBuilder(
+    IFileSystem fileSystem,
+    ILogger logger,
+    IArcStreamReader arcStreamReader,
+    IArcLzDecoder arcLzDecoder)
+    : TaskBuilderBase<ArcTaskBuilder>(fileSystem, logger)
 {
-    private readonly IArcStreamReader _arcStreamReader;
-    private readonly IArcLzDecoder _arcLzDecoder;
-
-    public ArcTaskBuilder(IFileSystem fileSystem, ILogger logger,
-        IArcStreamReader arcStreamReader,
-        IArcLzDecoder arcLzDecoder)
-        : base(fileSystem, logger)
-    {
-        _arcStreamReader = arcStreamReader;
-        _arcLzDecoder = arcLzDecoder;
-    }
-
     public ITask CreateExtract()
     {
         return Build("Extract ARC", task =>
@@ -39,7 +32,7 @@ public class ArcTaskBuilder : TaskBuilderBase<ArcTaskBuilder>
             {
                 using var stream = OpenRead(task, file);
 
-                var entries = _arcStreamReader.Read(stream).ToArray();
+                var entries = arcStreamReader.Read(stream).ToArray();
                 var index = 0;
 
                 foreach (var entry in entries)
@@ -48,7 +41,7 @@ public class ArcTaskBuilder : TaskBuilderBase<ArcTaskBuilder>
                     task.Message = $"Extracting {entry.Name}";
                     using var outFile = OpenWriteSingle(task, file, _ => entry.Name);
                     using var str = new MemoryStream(entry.Data);
-                    outFile.Write(_arcLzDecoder.Decode(str));
+                    outFile.Write(arcLzDecoder.Decode(str));
                     outFile.Flush();
                 }
             });

@@ -6,6 +6,6 @@ namespace RhythmCodex.Djmain.Converters;
 
 public interface IDjmainSampleDecoder
 {
-    IDictionary<int, IDjmainSample> Decode(Stream stream, IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
+    Dictionary<int, DjmainSample> Decode(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos,
         int sampleOffset);
 }

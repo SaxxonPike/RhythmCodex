@@ -10,7 +10,7 @@ namespace RhythmCodex.Ddr.Processors;
 [Service]
 public class DdrMetadataDecorator : IDdrMetadataDecorator
 {
-    public void Decorate(ChartSet chartSet, DdrDatabaseEntry meta, MetadataDecoratorFileExtensions extensions)
+    public void Decorate(ChartSet? chartSet, DdrDatabaseEntry? meta, MetadataDecoratorFileExtensions extensions)
     {
         if (meta == null || chartSet == null)
             return;
@@ -20,14 +20,14 @@ public class DdrMetadataDecorator : IDdrMetadataDecorator
 
         chartSet.Metadata[ChartTag.TitleTag] = meta.LongName ?? meta.ShortName ?? meta.Id;
         chartSet.Metadata[ChartTag.MusicTag] = $"{meta.Id}.{extensions.Audio}";
-        chartSet.Metadata[ChartTag.OffsetTag] = $"{(decimal) -chartSet.Charts.First()[NumericData.LinearOffset]}";
+        chartSet.Metadata[ChartTag.OffsetTag] = $"{(decimal)(-chartSet.Charts.First()[NumericData.LinearOffset] ?? 0)}";
         chartSet.Metadata[ChartTag.DisplayBpmTag] = $"{meta.MinBpm}:{meta.MaxBpm}";
         chartSet.Metadata[ChartTag.BannerTag] = $"{meta.Id}_th.{extensions.Graphics}";
         chartSet.Metadata[ChartTag.BackgroundTag] = $"{meta.Id}_bk.{extensions.Graphics}";
             
         foreach (var chart in chartSet.Charts.Where(c => c[NumericData.Id] != null))
         {
-            var id = (int) chart[NumericData.Id].Value;
+            var id = (int)(chart[NumericData.Id] ?? 0);
 
             if (meta.Difficulties == null || meta.Difficulties.Length == 0)
                 continue;

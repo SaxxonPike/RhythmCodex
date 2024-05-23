@@ -6,15 +6,8 @@ using RhythmCodex.Vag.Models;
 namespace RhythmCodex.Vag.Streamers;
 
 [Service]
-public class SvagStreamReader : ISvagStreamReader
+public class SvagStreamReader(IVagStreamReader vagStreamReader) : ISvagStreamReader
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public SvagStreamReader(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-        
     public SvagContainer Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
@@ -28,7 +21,7 @@ public class SvagStreamReader : ISvagStreamReader
         reader.ReadInt32(); // reserved 1
         reader.ReadBytes(0x800 - 0x1C); // discard the rest of the header
 
-        var chunk = _vagStreamReader.Read(stream, channels, interleave);
+        var chunk = vagStreamReader.Read(stream, channels, interleave);
         return new SvagContainer
         {
             VagChunk = chunk,

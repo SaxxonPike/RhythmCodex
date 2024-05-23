@@ -9,15 +9,14 @@ namespace RhythmCodex.Ddr.Converters;
 [Service]
 public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
 {
-    public DdrDatabaseEntry Decode(DdrPs2MetadataTableEntry item)
+    public DdrDatabaseEntry? Decode(DdrPs2MetadataTableEntry item)
     {
-        if (item.Data.Length < 120)
-            return GetOldRecord(item);
-        else
-            return GetNewRecord(item);
+        return item.Data.Length < 120
+            ? GetOldRecord(item)
+            : GetNewRecord(item);
     }
 
-    private static DdrDatabaseEntry GetOldRecord(DdrPs2MetadataTableEntry item)
+    private static DdrDatabaseEntry? GetOldRecord(DdrPs2MetadataTableEntry item)
     {
         var record = item.Data.AsSpan();
         var id = Encodings.CP437.GetStringWithoutNulls(record.Slice(0x00, 5));
@@ -46,7 +45,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
         };
     }
 
-    private static DdrDatabaseEntry GetNewRecord(DdrPs2MetadataTableEntry records)
+    private static DdrDatabaseEntry? GetNewRecord(DdrPs2MetadataTableEntry records)
     {
         var record = records.Data.AsSpan();
         var id = Encodings.CP437.GetStringWithoutNulls(record.Slice(0x00, 5));
@@ -58,7 +57,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
             return null;
 
         var bpmOffset = 0;
-        var isXDifficulties = Bitter.ToInt16(record, 0x06) == Bitter.ToInt16(record, 0x08) && 
+        var isXDifficulties = Bitter.ToInt16(record, 0x06) == Bitter.ToInt16(record, 0x08) &&
                               record.Slice(0x25, 10).ToArray().All(x => x <= 20) &&
                               record.Slice(0x25, 10).ToArray().Any(x => x != 0x00);
 
@@ -147,7 +146,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
                 record[0x2B + difficultyOffset] >> 4
             };
         }
-            
+
         return new DdrDatabaseEntry
         {
             Index = records.Index,

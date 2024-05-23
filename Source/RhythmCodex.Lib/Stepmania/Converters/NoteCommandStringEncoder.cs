@@ -10,17 +10,10 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Stepmania.Converters;
 
 [Service]
-public class NoteCommandStringEncoder : INoteCommandStringEncoder
+public class NoteCommandStringEncoder(IQuantizer quantizer) : INoteCommandStringEncoder
 {
     private static readonly BigInteger MinimumQuantization = 4;
     private static readonly BigInteger MaximumQuantization = 192;
-
-    private readonly IQuantizer _quantizer;
-
-    public NoteCommandStringEncoder(IQuantizer quantizer)
-    {
-        _quantizer = quantizer;
-    }
 
     public string Encode(IEnumerable<Note> notes)
     {
@@ -48,19 +41,19 @@ public class NoteCommandStringEncoder : INoteCommandStringEncoder
 
     private IEnumerable<char[][]> EncodeMeasures(IEnumerable<Note> notes)
     {
-        var notesList = notes.AsList();
+        var notesList = notes;
         if (!notesList.Any())
             yield break;
             
         var columns = notesList.Max(n => n.Column) + 1;
-        var measures = notesList.GroupBy(n => n.MetricOffset.GetWholePart()).AsList();
+        var measures = notesList.GroupBy(n => n.MetricOffset.GetWholePart());
         var maxMeasure = measures.Max(m => m.Key);
 
         for (var measureNumber = 0; measureNumber <= maxMeasure; measureNumber++)
         {
             var measure = measures.FirstOrDefault(m => m.Key == measureNumber) ?? Enumerable.Empty<Note>();
             var measureNotes = measure.ToArray();
-            var quantization = _quantizer.GetQuantization(measureNotes.Select(n => n.MetricOffset),
+            var quantization = quantizer.GetQuantization(measureNotes.Select(n => n.MetricOffset),
                 MinimumQuantization, MaximumQuantization);
             var half = new BigRational(1, quantization * 2);
 

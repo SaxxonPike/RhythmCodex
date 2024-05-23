@@ -7,5 +7,5 @@ namespace RhythmCodex.Twinkle.Converters;
 public interface ITwinkleBeatmaniaChartEventConverter
 {
     BeatmaniaPc1Event ConvertToBeatmaniaPc1(TwinkleBeatmaniaChartEvent chartEvent);
-    IList<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts);
+    List<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts);
 }

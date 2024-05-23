@@ -8,7 +8,7 @@ namespace RhythmCodex.Djmain.Streamers;
 [Service]
 public class DjmainChartEventStreamWriter : IDjmainChartEventStreamWriter
 {
-    public int Write(Stream stream, IEnumerable<IDjmainChartEvent> events)
+    public int Write(Stream stream, IEnumerable<DjmainChartEvent> events)
     {
         var writer = new BinaryWriter(stream);
         var size = 4;

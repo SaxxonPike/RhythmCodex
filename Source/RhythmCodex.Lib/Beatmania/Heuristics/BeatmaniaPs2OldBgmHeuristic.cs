@@ -10,19 +10,12 @@ namespace RhythmCodex.Beatmania.Heuristics;
 
 [Service]
 [Context(Context.BeatmaniaIidxCs)]
-public class BeatmaniaPs2OldBgmHeuristic : IReadableHeuristic<VagChunk>
+public class BeatmaniaPs2OldBgmHeuristic(IVagStreamReader vagStreamReader) : IReadableHeuristic<VagChunk>
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public BeatmaniaPs2OldBgmHeuristic(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-        
     public string Description => "BeatmaniaIIDX CS BGM (old)";
     public string FileExtension => "bmcsbgm";
         
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         var data = reader.Read(0x10);
 
@@ -60,9 +53,9 @@ public class BeatmaniaPs2OldBgmHeuristic : IReadableHeuristic<VagChunk>
         };
     }
 
-    public VagChunk Read(HeuristicResult result, Stream stream)
+    public VagChunk? Read(HeuristicResult result, Stream stream)
     {
         var info = result as VagHeuristicResult;
-        return _vagStreamReader.Read(stream, info?.Channels ?? 1, info?.Interleave ?? 0);
+        return vagStreamReader.Read(stream, info?.Channels ?? 1, info?.Interleave ?? 0);
     }
 }

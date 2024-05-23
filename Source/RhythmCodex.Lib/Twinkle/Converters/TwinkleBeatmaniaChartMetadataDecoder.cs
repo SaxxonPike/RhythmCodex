@@ -8,7 +8,7 @@ namespace RhythmCodex.Twinkle.Converters;
 [Service]
 public class TwinkleBeatmaniaChartMetadataDecoder : ITwinkleBeatmaniaChartMetadataDecoder
 {
-    public void AddMetadata(IChart chart, int index)
+    public void AddMetadata(Chart chart, int index)
     {
         switch (index)
         {

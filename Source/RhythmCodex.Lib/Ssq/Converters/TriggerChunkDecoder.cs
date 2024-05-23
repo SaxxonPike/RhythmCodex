@@ -11,7 +11,7 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class TriggerChunkDecoder : ITriggerChunkDecoder
 {
-    public IList<Trigger> Convert(byte[] data)
+    public List<Trigger> Convert(byte[] data)
     {
         using var mem = new ReadOnlyMemoryStream(data);
         using var reader = new BinaryReader(mem);
@@ -30,6 +30,6 @@ public class TriggerChunkDecoder : ITriggerChunkDecoder
                 Id = reader.ReadInt16(),
                 MetricOffset = metricOffsets[i]
             })
-            .AsList();
+            .ToList();
     }
 }

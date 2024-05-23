@@ -7,14 +7,9 @@ namespace RhythmCodex.Infrastructure;
 /// Wraps a stream that spies on reads, writing the data to an internal buffer.
 /// Handy for when you need to know how big something is, but can't know unless you read it all.
 /// </summary>
-public class SnapshotStream : StreamWrapper
+public class SnapshotStream(Stream baseStream) : StreamWrapper(baseStream)
 {
-    private readonly MemoryStream _buffer;
-
-    public SnapshotStream(Stream baseStream) : base(baseStream)
-    {
-        _buffer = new MemoryStream();
-    }
+    private readonly MemoryStream _buffer = new();
 
     public override int Read(byte[] buffer, int offset, int count)
     {

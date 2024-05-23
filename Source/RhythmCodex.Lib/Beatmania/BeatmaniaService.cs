@@ -13,29 +13,24 @@ namespace RhythmCodex.Beatmania;
 
 /// <inheritdoc cref="IBeatmaniaService"/>
 [Service]
-public class BeatmaniaService : RhythmCodexServiceBase, IBeatmaniaService
+public class BeatmaniaService(IServiceProvider services) : RhythmCodexServiceBase(services), IBeatmaniaService
 {
-    public BeatmaniaService(IServiceProvider services)
-        : base(services)
-    {
-    }
-
-    public List<IChart> ReadPcCharts(Stream stream, BigRational rate) =>
+    public List<Chart> ReadPcCharts(Stream stream, BigRational rate) =>
         Svc<IBeatmaniaPc1StreamReader>().Read(stream, stream.Length)
             .Select(chart => Svc<IBeatmaniaPc1ChartDecoder>().Decode(chart.Data, rate))
             .ToList();
 
-    public List<ISound> ReadPcSounds(Stream stream) =>
+    public List<Sound> ReadPcSounds(Stream stream) =>
         Svc<IBeatmaniaPcAudioStreamReader>().Read(stream, stream.Length)
             .Select(Svc<IBeatmaniaPcAudioDecoder>().Decode)
             .ToList();
 
-    public IChart ReadOldPs2Chart(Stream stream) =>
+    public Chart ReadOldPs2Chart(Stream stream) =>
         Svc<IBeatmaniaPs2ChartDecoder>()
             .Decode(Svc<IBeatmaniaPs2OldChartEventStreamReader>()
                 .Read(stream, stream.Length));
 
-    public IChart ReadNewPs2Chart(Stream stream) =>
+    public Chart ReadNewPs2Chart(Stream stream) =>
         Svc<IBeatmaniaPs2ChartDecoder>()
             .Decode(Svc<IBeatmaniaPs2NewChartEventStreamReader>()
                 .Read(stream, stream.Length));

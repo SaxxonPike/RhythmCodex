@@ -5,5 +5,5 @@ namespace RhythmCodex.Ogg.Converters;
 
 public interface IOggDecoder
 {
-    ISound Decode(Stream stream);
+    Sound? Decode(Stream stream);
 }

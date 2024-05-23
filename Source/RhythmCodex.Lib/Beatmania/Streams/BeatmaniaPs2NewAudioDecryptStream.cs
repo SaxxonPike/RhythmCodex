@@ -4,15 +4,9 @@ using RhythmCodex.Streamers;
 
 namespace RhythmCodex.Beatmania.Streams;
 
-public class BeatmaniaPs2NewAudioDecryptStream : PassthroughStream
+public class BeatmaniaPs2NewAudioDecryptStream(Stream baseStream, ReadOnlyMemory<byte> key)
+    : PassthroughStream(baseStream)
 {
-    private readonly ReadOnlyMemory<byte> _key;
-
-    public BeatmaniaPs2NewAudioDecryptStream(Stream baseStream, ReadOnlyMemory<byte> key) : base(baseStream)
-    {
-        _key = key;
-    }
-
     public override int Read(byte[] buffer, int offset, int count)
     {
         var location = BaseStream.Position;
@@ -25,11 +19,11 @@ public class BeatmaniaPs2NewAudioDecryptStream : PassthroughStream
             {
                 case 0x0:
                 case 0x1:
-                    buffer[bufferOffset] ^= _key.Span[lineLocation];
+                    buffer[bufferOffset] ^= key.Span[lineLocation];
                     break;
                 case 0x2:
                 case 0x3:
-                    buffer[bufferOffset] = unchecked((byte)(buffer[bufferOffset] - _key.Span[lineLocation]));
+                    buffer[bufferOffset] = unchecked((byte)(buffer[bufferOffset] - key.Span[lineLocation]));
                     break;
             }
         }

@@ -9,7 +9,7 @@ namespace RhythmCodex.Twinkle.Converters;
 [Service]
 public class TwinkleBeatmaniaChartDecoder : ITwinkleBeatmaniaChartDecoder
 {
-    public IList<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data, int length)
+    public List<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data, int length)
     {
         var result = new List<TwinkleBeatmaniaChartEvent>();
         var noteCountMode = true;

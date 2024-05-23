@@ -43,7 +43,9 @@ public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<Djmai
             }
         };
 
-        var pairs = input.Select((e, i) => new KeyValuePair<int, DjmainSampleInfo>(i, e));
+        var pairs = input
+            .Select((e, i) => new KeyValuePair<int, DjmainSampleInfo>(i, e))
+            .ToList();
 
         var expected = new byte[]
         {

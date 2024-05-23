@@ -6,5 +6,5 @@ namespace RhythmCodex.Beatmania.Converters;
 
 public interface IBeatmaniaPs2ChartDecoder
 {
-    IChart Decode(IEnumerable<BeatmaniaPs2Event> events);
+    Chart Decode(IEnumerable<BeatmaniaPs2Event> events);
 }

@@ -8,17 +8,11 @@ using RhythmCodex.Iso.Streamers;
 namespace RhythmCodex.Iso.Converters;
 
 [Service]
-public class IsoDirectoryTableDecoder : IIsoDirectoryTableDecoder
+public class IsoDirectoryTableDecoder(
+    IIsoSectorStreamFactory isoSectorStreamFactory,
+    IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
+    : IIsoDirectoryTableDecoder
 {
-    private readonly IIsoSectorStreamFactory _isoSectorStreamFactory;
-    private readonly IIsoDirectoryRecordDecoder _isoDirectoryRecordDecoder;
-
-    public IsoDirectoryTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory, IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
-    {
-        _isoSectorStreamFactory = isoSectorStreamFactory;
-        _isoDirectoryRecordDecoder = isoDirectoryRecordDecoder;
-    }
-        
     public IList<IsoDirectoryRecord> Decode(IEnumerable<ICdSector> sectors)
     {
         return DecodeInternal(sectors).ToList();
@@ -26,10 +20,10 @@ public class IsoDirectoryTableDecoder : IIsoDirectoryTableDecoder
 
     private IEnumerable<IsoDirectoryRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
     {
-        using var stream = _isoSectorStreamFactory.Open(sectors);
+        using var stream = isoSectorStreamFactory.Open(sectors);
         while (true)
         {
-            var record = _isoDirectoryRecordDecoder.Decode(stream, false);
+            var record = isoDirectoryRecordDecoder.Decode(stream, false);
             if (record != null)
                 yield return record;
             else

@@ -14,7 +14,7 @@ namespace RhythmCodex.Ssq.Integration;
 [TestFixture]
 public class SsqDecodeIntegrationTests : BaseIntegrationFixture<SsqDecoder>
 {
-    private IEnumerable<IChart> DecodeCharts(byte[] data)
+    private IEnumerable<Chart> DecodeCharts(byte[] data)
     {
         var ssqStreamer = Resolve<SsqStreamReader>();
 
@@ -31,7 +31,7 @@ public class SsqDecodeIntegrationTests : BaseIntegrationFixture<SsqDecoder>
             .Value;
 
         // Act.
-        var charts = DecodeCharts(data).AsList();
+        var charts = DecodeCharts(data);
 
         // Assert.
     }
@@ -49,7 +49,7 @@ public class SsqDecodeIntegrationTests : BaseIntegrationFixture<SsqDecoder>
             .Value;
 
         // Act.
-        var charts = DecodeCharts(data).AsList();
+        var charts = DecodeCharts(data);
 
         // Assert.
         charts.Select(c => eventCounter.CountCombos(c.Events)).Should().BeEquivalentTo(expectedCombos);
@@ -70,7 +70,7 @@ public class SsqDecodeIntegrationTests : BaseIntegrationFixture<SsqDecoder>
             .Value;
 
         // Act.
-        var charts = DecodeCharts(data).AsList();
+        var charts = DecodeCharts(data);
 
         // Assert.
         charts.Select(c => eventCounter.CountCombos(c.Events)).Should().BeEquivalentTo(expectedCombos);

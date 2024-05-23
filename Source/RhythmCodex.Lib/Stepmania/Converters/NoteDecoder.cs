@@ -10,12 +10,12 @@ namespace RhythmCodex.Stepmania.Converters;
 [Service]
 public class NoteDecoder : INoteDecoder
 {
-    public IList<IEvent> Decode(IEnumerable<Note> events, int columns)
+    public List<Event> Decode(IEnumerable<Note> events, int columns)
     {
         return DecodeInternal(events, columns).ToList();
     }
 
-    private IEnumerable<IEvent> DecodeInternal(IEnumerable<Note> events, int columns)
+    private IEnumerable<Event> DecodeInternal(IEnumerable<Note> events, int columns)
     {
         var holdHeadTypes = new Dictionary<int, FlagData>();
 

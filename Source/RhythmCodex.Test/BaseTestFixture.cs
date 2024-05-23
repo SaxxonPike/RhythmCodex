@@ -56,7 +56,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Retrieves an embedded resource by name as an archive and extracts the first file from it.
     /// </summary>
-    protected static IDictionary<string, byte[]> GetArchiveResource(string name)
+    protected static Dictionary<string, byte[]> GetArchiveResource(string name)
     {
         var output = new Dictionary<string, byte[]>();
 

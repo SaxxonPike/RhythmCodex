@@ -5,5 +5,5 @@ namespace RhythmCodex.Vag.Converters;
 
 public interface IVagDecoder
 {
-    ISound Decode(VagChunk chunk);
+    Sound? Decode(VagChunk? chunk);
 }

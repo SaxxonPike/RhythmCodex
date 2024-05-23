@@ -4,5 +4,5 @@ namespace RhythmCodex.Ddr.Converters;
 
 public interface IDdrPs2DatabaseDecoder
 {
-    DdrDatabaseEntry Decode(DdrPs2MetadataTableEntry item);
+    DdrDatabaseEntry? Decode(DdrPs2MetadataTableEntry item);
 }

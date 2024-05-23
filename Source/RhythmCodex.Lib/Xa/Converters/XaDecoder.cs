@@ -10,25 +10,18 @@ using RhythmCodex.Xa.Models;
 namespace RhythmCodex.Xa.Converters;
 
 [Service]
-public class XaDecoder : IXaDecoder
+public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
 {
-    private readonly IXaFrameSplitter _xaFrameSplitter;
-
     // Reference: https://github.com/kode54/vgmstream/blob/master/src/coding/xa_decoder.c
 
-    private static readonly int[] K0 = {0, 60, 115, 98, 122};
-    private static readonly int[] K1 = {0, 0, -52, -55, -60};
+    private static readonly int[] K0 = [0, 60, 115, 98, 122];
+    private static readonly int[] K1 = [0, 0, -52, -55, -60];
 
-    public XaDecoder(IXaFrameSplitter xaFrameSplitter)
+    public IList<Sound?> Decode(XaChunk chunk)
     {
-        _xaFrameSplitter = xaFrameSplitter;
-    }
-
-    public IList<ISound> Decode(XaChunk chunk)
-    {
-        var sounds = new List<ISound>();
+        var sounds = new List<Sound?>();
         var buffer = new float[28];
-        var channels = 2;
+        const int channels = 2;
 
         var states = Enumerable.Range(0, channels).Select(_ => new XaState()).ToList();
         var samples = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToList();
@@ -49,7 +42,7 @@ public class XaDecoder : IXaDecoder
 
         sounds.Add(new Sound
         {
-            Samples = samples.Select(s => new Sample {Data = s}).Cast<ISample>().ToList()
+            Samples = samples.Select(s => new Sample {Data = s.ToArray()}).ToList()
         });
 
         return sounds;
@@ -57,7 +50,7 @@ public class XaDecoder : IXaDecoder
 
     private void DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, XaState state)
     {
-        var status = _xaFrameSplitter.GetStatus(frame, channel);
+        var status = xaFrameSplitter.GetStatus(frame, channel);
         var magnitude = status & 0x0F;
         if (magnitude < 0)
             magnitude = 3;
@@ -68,7 +61,7 @@ public class XaDecoder : IXaDecoder
         var p1 = state.Prev1;
         var p2 = state.Prev2;
         var dataBuffer = new int[28];
-        _xaFrameSplitter.Get4BitData(frame, dataBuffer, channel);
+        xaFrameSplitter.Get4BitData(frame, dataBuffer, channel);
 
         for (var i = 0; i < 28; i++)
         {

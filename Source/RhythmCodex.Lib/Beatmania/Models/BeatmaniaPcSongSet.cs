@@ -6,6 +6,6 @@ namespace RhythmCodex.Beatmania.Models;
 [Model]
 public class BeatmaniaPcSongSet
 {
-    public IList<BeatmaniaPcAudioEntry> Sounds { get; set; }
-    public IList<BeatmaniaPc1Chart> Charts { get; set; }
+    public IList<BeatmaniaPcAudioEntry> Sounds { get; set; } = [];
+    public IList<BeatmaniaPc1Chart> Charts { get; set; } = [];
 }

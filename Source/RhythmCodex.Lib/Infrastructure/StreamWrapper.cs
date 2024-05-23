@@ -5,14 +5,9 @@ namespace RhythmCodex.Infrastructure;
 /// <summary>
 /// Base class for all stream wrappers. Passes through all required Stream functionality to a base stream.
 /// </summary>
-public abstract class StreamWrapper : Stream
+public abstract class StreamWrapper(Stream baseStream) : Stream
 {
-    protected readonly Stream BaseStream;
-
-    protected StreamWrapper(Stream baseStream)
-    {
-        BaseStream = baseStream;
-    }
+    protected readonly Stream BaseStream = baseStream;
 
     public override void Flush() => BaseStream.Flush();
     public override int Read(byte[] buffer, int offset, int count) => BaseStream.Read(buffer, offset, count);

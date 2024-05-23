@@ -17,50 +17,31 @@ using RhythmCodex.Tim.Streamers;
 namespace RhythmCodex.Cli.Orchestration;
 
 [Service(singleInstance: false)]
-public class GraphicsTaskBuilder : TaskBuilderBase<GraphicsTaskBuilder>
+public class GraphicsTaskBuilder(
+    IFileSystem fileSystem,
+    ILogger logger,
+    IPngStreamWriter pngStreamWriter,
+    ITgaStreamReader tgaStreamReader,
+    ITgaDecoder tgaDecoder,
+    IGraphicDsp graphicDsp,
+    IDdsStreamReader ddsStreamReader,
+    IDdsBitmapDecoder ddsBitmapDecoder,
+    ITimDecoder timDecoder,
+    ITimStreamReader timStreamReader)
+    : TaskBuilderBase<GraphicsTaskBuilder>(fileSystem, logger)
 {
-    private readonly IPngStreamWriter _pngStreamWriter;
-    private readonly ITgaStreamReader _tgaStreamReader;
-    private readonly ITgaDecoder _tgaDecoder;
-    private readonly IGraphicDsp _graphicDsp;
-    private readonly IDdsStreamReader _ddsStreamReader;
-    private readonly IDdsBitmapDecoder _ddsBitmapDecoder;
-    private readonly ITimDecoder _timDecoder;
-    private readonly ITimStreamReader _timStreamReader;
-
-    public GraphicsTaskBuilder(
-        IFileSystem fileSystem, 
-        ILogger logger,
-        IPngStreamWriter pngStreamWriter,
-        ITgaStreamReader tgaStreamReader,
-        ITgaDecoder tgaDecoder,
-        IGraphicDsp graphicDsp,
-        IDdsStreamReader ddsStreamReader,
-        IDdsBitmapDecoder ddsBitmapDecoder,
-        ITimDecoder timDecoder,
-        ITimStreamReader timStreamReader) 
-        : base(fileSystem, logger)
-    {
-        _pngStreamWriter = pngStreamWriter;
-        _tgaStreamReader = tgaStreamReader;
-        _tgaDecoder = tgaDecoder;
-        _graphicDsp = graphicDsp;
-        _ddsStreamReader = ddsStreamReader;
-        _ddsBitmapDecoder = ddsBitmapDecoder;
-        _timDecoder = timDecoder;
-        _timStreamReader = timStreamReader;
-    }
+    private readonly ITimStreamReader _timStreamReader = timStreamReader;
 
     private IBitmap CropImage(IBitmap bitmap)
     {
         if (Args.Options.ContainsKey("+crop_ddr"))
         {
             if (bitmap.Width == 512 && bitmap.Height == 256)
-                bitmap = _graphicDsp.Snip(bitmap, new Rectangle(0, 0, 320, 200));
+                bitmap = graphicDsp.Snip(bitmap, new Rectangle(0, 0, 320, 200));
             else if (bitmap.Width == 256 && bitmap.Height == 128)
-                bitmap = _graphicDsp.Snip(bitmap, new Rectangle(0, 0, 256, 80));
+                bitmap = graphicDsp.Snip(bitmap, new Rectangle(0, 0, 256, 80));
             else if (bitmap.Width == 1024 && bitmap.Height == 512)
-                bitmap = _graphicDsp.Snip(bitmap, new Rectangle(0, 0, 640, 480));
+                bitmap = graphicDsp.Snip(bitmap, new Rectangle(0, 0, 640, 480));
         }
 
         return bitmap;
@@ -80,7 +61,7 @@ public class GraphicsTaskBuilder : TaskBuilderBase<GraphicsTaskBuilder>
             ParallelProgress(task, files, file =>
             {
                 using var stream = OpenRead(task, file);
-                var images = _timDecoder.Decode(stream);
+                var images = timDecoder.Decode(stream);
                 task.Message = "Decoding TIM.";
 
                 if (images.Count > 1)
@@ -90,7 +71,7 @@ public class GraphicsTaskBuilder : TaskBuilderBase<GraphicsTaskBuilder>
                     {
                         var bitmap = CropImage(image);
                         using (var outStream = OpenWriteSingle(task, file, i => $"{i}.{idx}.png"))
-                            _pngStreamWriter.Write(outStream, bitmap);
+                            pngStreamWriter.Write(outStream, bitmap);
                         idx++;
                     }
                 }
@@ -98,7 +79,7 @@ public class GraphicsTaskBuilder : TaskBuilderBase<GraphicsTaskBuilder>
                 {
                     var bitmap = CropImage(images.Single());
                     using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
-                    _pngStreamWriter.Write(outStream, bitmap);                            
+                    pngStreamWriter.Write(outStream, bitmap);                            
                 }
             });
 
@@ -120,11 +101,11 @@ public class GraphicsTaskBuilder : TaskBuilderBase<GraphicsTaskBuilder>
             ParallelProgress(task, files, file =>
             {
                 using var stream = OpenRead(task, file);
-                var image = _ddsStreamReader.Read(stream, (int) stream.Length);
+                var image = ddsStreamReader.Read(stream, (int) stream.Length);
                 task.Message = "Decoding DDS.";
-                var bitmap = CropImage(_ddsBitmapDecoder.Decode(image));
+                var bitmap = CropImage(ddsBitmapDecoder.Decode(image));
                 using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
-                _pngStreamWriter.Write(outStream, bitmap);
+                pngStreamWriter.Write(outStream, bitmap);
             });
 
             return true;
@@ -145,12 +126,12 @@ public class GraphicsTaskBuilder : TaskBuilderBase<GraphicsTaskBuilder>
             ParallelProgress(task, files, file =>
             {
                 using var stream = OpenRead(task, file);
-                var image = _tgaStreamReader.Read(stream, (int) stream.Length);
+                var image = tgaStreamReader.Read(stream, (int) stream.Length);
                 task.Message = "Decoding TGA.";
-                var bitmap = CropImage(_tgaDecoder.Decode(image));
+                var bitmap = CropImage(tgaDecoder.Decode(image));
 
                 using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
-                _pngStreamWriter.Write(outStream, bitmap);
+                pngStreamWriter.Write(outStream, bitmap);
             });
 
             return true;

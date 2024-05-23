@@ -11,7 +11,7 @@ public class ArcFile
     /// <summary>
     /// File name of the file.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
     
     /// <summary>
     /// File size, compressed.
@@ -27,5 +27,5 @@ public class ArcFile
     /// Raw data. Can be compressed or uncompressed. If this data is compressed, there will be a difference
     /// between <see cref="CompressedSize"/> and <see cref="DecompressedSize"/>.
     /// </summary>
-    public byte[] Data { get; set; }
+    public byte[]? Data { get; set; }
 }

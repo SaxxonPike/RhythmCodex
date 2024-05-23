@@ -8,15 +8,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Converters;
 
 [Service]
-public class DdrPs2FileDataBoundTableDecoder : IDdrPs2FileDataBoundTableDecoder
+public class DdrPs2FileDataBoundTableDecoder(IBemaniLzDecoder bemaniLzDecoder) : IDdrPs2FileDataBoundTableDecoder
 {
-    private readonly IBemaniLzDecoder _bemaniLzDecoder;
-
-    public DdrPs2FileDataBoundTableDecoder(IBemaniLzDecoder bemaniLzDecoder)
-    {
-        _bemaniLzDecoder = bemaniLzDecoder;
-    }
-
     public IList<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk)
     {
         var data = chunk.Data;
@@ -33,7 +26,7 @@ public class DdrPs2FileDataBoundTableDecoder : IDdrPs2FileDataBoundTableDecoder
             result.Add(new DdrPs2FileDataTableEntry
             {
                 Index = i,
-                Data = _bemaniLzDecoder.Decode(stream)
+                Data = bemaniLzDecoder.Decode(stream)
             });
         }
 

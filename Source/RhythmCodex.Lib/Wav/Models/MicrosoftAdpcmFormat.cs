@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Wav.Models;
@@ -9,7 +10,7 @@ public class MicrosoftAdpcmFormat
     {
     }
         
-    public MicrosoftAdpcmFormat(byte[] data)
+    public MicrosoftAdpcmFormat(ReadOnlySpan<byte> data)
     {
         SamplesPerBlock = Bitter.ToInt16(data, 2);
         var coefficientCount = Bitter.ToInt16(data, 4);

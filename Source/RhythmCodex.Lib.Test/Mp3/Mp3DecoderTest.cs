@@ -3,6 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Plugin.MP3Sharp;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Mp3;
 

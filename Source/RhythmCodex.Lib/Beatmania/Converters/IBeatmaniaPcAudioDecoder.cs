@@ -5,5 +5,5 @@ namespace RhythmCodex.Beatmania.Converters;
 
 public interface IBeatmaniaPcAudioDecoder
 {
-    ISound Decode(BeatmaniaPcAudioEntry entry);
+    Sound? Decode(BeatmaniaPcAudioEntry entry);
 }

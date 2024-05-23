@@ -8,8 +8,8 @@ namespace RhythmCodex.Djmain.Converters;
 [Service]
 public class DjmainUsedSampleFilter : IDjmainUsedSampleFilter
 {
-    public IDictionary<int, IDjmainSampleInfo> Filter(IDictionary<int, IDjmainSampleInfo> samples,
-        IEnumerable<IDjmainChartEvent> events)
+    public Dictionary<int, DjmainSampleInfo> Filter(IDictionary<int, DjmainSampleInfo> samples,
+        IEnumerable<DjmainChartEvent> events)
     {
         return events
             .Where(IsNote)
@@ -19,15 +19,10 @@ public class DjmainUsedSampleFilter : IDjmainUsedSampleFilter
             .ToDictionary(i => i, i => samples[i]);
     }
 
-    private static bool IsNote(IDjmainChartEvent ev)
-    {
-        switch ((DjmainEventType)(ev.Param0 & 0xF))
+    private static bool IsNote(DjmainChartEvent ev) =>
+        (DjmainEventType)(ev.Param0 & 0xF) switch
         {
-            case DjmainEventType.SoundSelect:
-            case DjmainEventType.Bgm:
-                return true;
-            default:
-                return false;
-        }
-    }
+            DjmainEventType.SoundSelect or DjmainEventType.Bgm => true,
+            _ => false
+        };
 }

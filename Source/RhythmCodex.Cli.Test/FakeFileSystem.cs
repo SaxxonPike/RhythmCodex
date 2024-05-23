@@ -11,37 +11,31 @@ namespace RhythmCodex.Cli;
 ///     A file system that doesn't actually write to disk.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public class FakeFileSystem : IFileSystem
+public class FakeFileSystem(IFileSystem fileSystem) : IFileSystem
 {
-    private readonly IDictionary<string, MemoryStream> _files = new Dictionary<string, MemoryStream>();
-    private readonly IFileSystem _fileSystem;
-
-    public FakeFileSystem(IFileSystem fileSystem)
-    {
-        _fileSystem = fileSystem;
-    }
+    private readonly Dictionary<string, MemoryStream> _files = new();
 
     /// <inheritdoc />
     public string GetFileName(string path)
     {
-        return _fileSystem.GetFileName(path);
+        return fileSystem.GetFileName(path);
     }
 
     /// <inheritdoc />
     public Stream OpenRead(string path)
     {
-        if (!_files.ContainsKey(path))
+        if (!_files.TryGetValue(path, out var file))
             throw new IOException($"File not found: {path}");
 
-        var result = new MemoryStream(_files[path].ToArray());
+        var result = new MemoryStream(file.ToArray());
         return result;
     }
 
     /// <inheritdoc />
     public Stream OpenWrite(string path)
     {
-        if (_files.ContainsKey(path))
-            _files[path].Dispose();
+        if (_files.TryGetValue(path, out var file))
+            file.Dispose();
 
         var result = new MemoryStream();
         _files[path] = result;
@@ -51,7 +45,7 @@ public class FakeFileSystem : IFileSystem
     /// <inheritdoc />
     public string CombinePath(params string[] paths)
     {
-        return _fileSystem.CombinePath(paths);
+        return fileSystem.CombinePath(paths);
     }
 
     /// <inheritdoc />
@@ -60,10 +54,10 @@ public class FakeFileSystem : IFileSystem
     /// <inheritdoc />
     public byte[] ReadAllBytes(string path)
     {
-        if (!_files.ContainsKey(path))
+        if (!_files.TryGetValue(path, out var file))
             throw new IOException($"File not found: {path}");
 
-        return _files[path].ToArray();
+        return file.ToArray();
     }
 
     /// <inheritdoc />
@@ -92,12 +86,12 @@ public class FakeFileSystem : IFileSystem
     /// <inheritdoc />
     public string GetDirectory(string path)
     {
-        return _fileSystem.GetDirectory(path);
+        return fileSystem.GetDirectory(path);
     }
 
     /// <inheritdoc />
     public string GetSafeFileName(string fileName)
     {
-        return _fileSystem.GetSafeFileName(fileName);
+        return fileSystem.GetSafeFileName(fileName);
     }
 }

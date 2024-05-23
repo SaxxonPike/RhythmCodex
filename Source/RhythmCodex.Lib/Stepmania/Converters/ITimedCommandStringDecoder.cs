@@ -11,5 +11,5 @@ public interface ITimedCommandStringDecoder
     /// <summary>
     ///     Decode key=value pairs for the specified event string.
     /// </summary>
-    IList<TimedEvent> Decode(string events);
+    List<TimedEvent> Decode(string events);
 }

@@ -86,6 +86,6 @@ public class DdrPs2MetadataTableStreamReader : IDdrPs2MetadataTableStreamReader
             cache.Rewind();
         }
 
-        return null;
+        return [];
     }
 }

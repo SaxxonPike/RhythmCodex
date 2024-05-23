@@ -2,16 +2,10 @@ using System.IO;
 
 namespace RhythmCodex.Infrastructure;
 
-public class BitReader
+public class BitReader(Stream stream)
 {
-    private readonly Stream _stream;
     private uint _buffer;
     private int _bits;
-
-    public BitReader(Stream stream)
-    {
-        _stream = stream;
-    }
 
     public int Peek(int numBits)
     {
@@ -23,7 +17,7 @@ public class BitReader
         {
             while (_bits <= 24)
             {
-                var b = _stream.ReadByte();
+                var b = stream.ReadByte();
                 if (b >= 0)
                     _buffer |= (uint) b << (24 - _bits);
                 _bits += 8;

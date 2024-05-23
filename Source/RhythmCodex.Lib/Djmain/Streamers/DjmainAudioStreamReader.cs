@@ -8,17 +8,17 @@ namespace RhythmCodex.Djmain.Streamers;
 [Service]
 public class DjmainAudioStreamReader : IDjmainAudioStreamReader
 {
-    public IList<byte> ReadDpcm(Stream stream)
+    public byte[] ReadDpcm(Stream stream)
     {
         return ReadDpcmStream(stream).ToArray();
     }
 
-    public IList<byte> ReadPcm16(Stream stream)
+    public byte[] ReadPcm16(Stream stream)
     {
         return DecodePcm16Stream(stream).ToArray();
     }
 
-    public IList<byte> ReadPcm8(Stream stream)
+    public byte[] ReadPcm8(Stream stream)
     {
         return DecodePcm8Stream(stream).ToArray();
     }

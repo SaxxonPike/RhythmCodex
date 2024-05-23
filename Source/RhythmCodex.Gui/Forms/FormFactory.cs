@@ -10,13 +10,16 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Gui.Forms;
 
 [Service]
-public class FormFactory : IFormFactory
+public class FormFactory(
+    IConsoleEventSource consoleEventSource,
+    IFileDialog fileDialog,
+    IGuiTasks guiTasks,
+    IControlFactory controlFactory,
+    IAppProgressTracker appProgressTracker)
+    : IFormFactory
 {
-    private readonly IConsoleEventSource _consoleEventSource;
-    private readonly IFileDialog _fileDialog;
-    private readonly IGuiTasks _guiTasks;
-    private readonly IControlFactory _controlFactory;
-    private readonly IAppProgressTracker _appProgressTracker;
+    private readonly IConsoleEventSource _consoleEventSource = consoleEventSource;
+    private readonly IFileDialog _fileDialog = fileDialog;
 
     private static class Ids
     {
@@ -60,16 +63,6 @@ public class FormFactory : IFormFactory
         public static readonly string BeatmaniaRenderDjmainGstStart = Id(nameof(BeatmaniaRenderDjmainGstStart));
     }
 
-    public FormFactory(IConsoleEventSource consoleEventSource, IFileDialog fileDialog, IGuiTasks guiTasks,
-        IControlFactory controlFactory, IAppProgressTracker appProgressTracker)
-    {
-        _consoleEventSource = consoleEventSource;
-        _fileDialog = fileDialog;
-        _guiTasks = guiTasks;
-        _controlFactory = controlFactory;
-        _appProgressTracker = appProgressTracker;
-    }
-
     public Form CreateMainForm()
     {
         var progressTimer = new Timer
@@ -105,7 +98,7 @@ public class FormFactory : IFormFactory
 
     private void UpdateProgress(TableLayoutPanel tab)
     {
-        var statuses = _appProgressTracker.GetAll().ToList();
+        var statuses = appProgressTracker.GetAll().ToList();
 
         var existingStatuses = statuses
             .SelectMany(s => tab.Controls.OfType<Control>().Where(c => c.Name.StartsWith(s.Id)))
@@ -120,7 +113,7 @@ public class FormFactory : IFormFactory
         tab.SuspendLayout();
 
         var newControls = tasksToAdd
-            .SelectMany(p => _controlFactory.CreateProgress(p.Id, p.Name));
+            .SelectMany(p => controlFactory.CreateProgress(p.Id, p.Name));
 
         foreach (var control in controlsToRemove)
             tab.Controls.Remove(control);
@@ -149,7 +142,7 @@ public class FormFactory : IFormFactory
 
     private FluentControl CreateMainFormLog()
     {
-        var table = _controlFactory.CreateStandardTable(Ids.ProgressTable, new FluentControl[] { }, false);
+        var table = controlFactory.CreateStandardTable(Ids.ProgressTable, new FluentControl[] { }, false);
         return table;
     }
 
@@ -184,8 +177,8 @@ public class FormFactory : IFormFactory
             Padding = new Padding(8, 2, 8, 8),
             Controls = new List<FluentControl>
             {
-                _controlFactory.CreateStandardTable(null,
-                    _controlFactory.CreateFolderSelect(
+                controlFactory.CreateStandardTable(null,
+                    controlFactory.CreateFolderSelect(
                             Ids.MainFormOutputFolderSelect, "Output Path")
                         .Concat(new[] {CreateMainFormTabControl()}), true)
             }
@@ -247,11 +240,11 @@ public class FormFactory : IFormFactory
             AutoScroll = true,
             Controls = new List<FluentControl>
             {
-                _controlFactory.CreateStandardTable(null,
-                    _controlFactory.CreateSpacer("Render BMS to WAV")
-                        .Concat(_controlFactory
+                controlFactory.CreateStandardTable(null,
+                    controlFactory.CreateSpacer("Render BMS to WAV")
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.BmsRenderPath, "BMS file", true))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.BmsRenderStart, "Go",
                                 BmsRender))
                     , false)
@@ -330,11 +323,11 @@ public class FormFactory : IFormFactory
             AutoScroll = true,
             Controls = new List<FluentControl>
             {
-                _controlFactory.CreateStandardTable(null,
-                    _controlFactory.CreateSpacer("Extract ARC")
-                        .Concat(_controlFactory
+                controlFactory.CreateStandardTable(null,
+                    controlFactory.CreateSpacer("Extract ARC")
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.ArcExtractPath, "ARC file", true))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.ArcExtractStart, "Go",
                                 ArcExtract))
                     , false)
@@ -351,13 +344,13 @@ public class FormFactory : IFormFactory
             AutoScroll = true,
             Controls = new List<FluentControl>
             {
-                _controlFactory.CreateStandardTable(null,
-                    _controlFactory.CreateSpacer("Convert SSQ to SM/SSC")
-                        .Concat(_controlFactory
+                controlFactory.CreateStandardTable(null,
+                    controlFactory.CreateSpacer("Convert SSQ to SM/SSC")
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.SsqDecodePath, "SSQ file", true))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateTextEntry(Ids.SsqDecodeOffset, "#OFFSET adjust"))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.SsqDecodeStart, "Go",
                                 SsqDecode))
                     , false)
@@ -374,11 +367,11 @@ public class FormFactory : IFormFactory
             AutoScroll = true,
             Controls = new List<FluentControl>
             {
-                _controlFactory.CreateStandardTable(null,
-                    _controlFactory.CreateSpacer("Extract files from HBN+BIN blobs")
-                        .Concat(_controlFactory
+                controlFactory.CreateStandardTable(null,
+                    controlFactory.CreateSpacer("Extract files from HBN+BIN blobs")
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.HbnExtractPath, "HBN file", false))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.HbnExtractStart, "Go",
                                 HbnExtract))
                     , false)
@@ -395,21 +388,21 @@ public class FormFactory : IFormFactory
             AutoScroll = true,
             Controls = new List<FluentControl>
             {
-                _controlFactory.CreateStandardTable(null,
-                    _controlFactory.CreateSpacer("Extract files from flash card images")
-                        .Concat(_controlFactory
+                controlFactory.CreateStandardTable(null,
+                    controlFactory.CreateSpacer("Extract files from flash card images")
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.DdrExtract573GamePath, "GAME file", false))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.DdrExtract573CardPath, "CARD file (optional)", false))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.DdrExtract573Start, "Go",
                                 DdrExtract573Flash))
-                        .Concat(_controlFactory.CreateSpacer("Decrypt MP3 files from the disc"))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory.CreateSpacer("Decrypt MP3 files from the disc"))
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.DdrDecrypt573AudioPath, "Encrypted audio files", true))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateCheckbox(Ids.DdrDecrypt573AudioRename, "Decode song names"))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.DdrDecrypt573AudioStart, "Go",
                                 DdrDecrypt573Audio))
                     , false)
@@ -469,22 +462,22 @@ public class FormFactory : IFormFactory
             AutoScroll = true,
             Controls = new List<FluentControl>
             {
-                _controlFactory.CreateStandardTable(null,
-                    _controlFactory.CreateSpacer("Convert Djmain HDD to BMS")
-                        .Concat(_controlFactory
+                controlFactory.CreateStandardTable(null,
+                    controlFactory.CreateSpacer("Convert Djmain HDD to BMS")
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.BeatmaniaDecodeDjmainHddPath, "HDD image", false))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateDualCheckbox(Ids.BeatmaniaDecodeDjmainHddSkipAudio, "Disable audio",
                                 Ids.BeatmaniaDecodeDjmainHddSkipCharts, "Disable charts"))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateCheckbox(Ids.BeatmaniaDecodeDjmainHddRawCharts, "Enable raw charts"))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.BeatmaniaDecodeDjmainHddStart, "Go",
                                 BeatmaniaDecodeDjmainHdd))
-                        .Concat(_controlFactory.CreateSpacer("Render Djmain HDD to GST"))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory.CreateSpacer("Render Djmain HDD to GST"))
+                        .Concat(controlFactory
                             .CreateFileSelect(Ids.BeatmaniaRenderDjmainGstPath, "HDD image", false))
-                        .Concat(_controlFactory
+                        .Concat(controlFactory
                             .CreateBigButton(Ids.BeatmaniaRenderDjmainGstStart, "Go",
                                 BeatmaniaRenderDjmainGst))
                     , false)
@@ -502,7 +495,7 @@ public class FormFactory : IFormFactory
     private void DdrExtract573Flash(FluentContext context)
     {
         ShowLogTab(context);
-        _guiTasks.DdrExtract573Flash(
+        guiTasks.DdrExtract573Flash(
             context.GetControl<TextBox>(Ids.DdrExtract573GamePath).Text,
             context.GetControl<TextBox>(Ids.DdrExtract573CardPath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
@@ -511,7 +504,7 @@ public class FormFactory : IFormFactory
     private void DdrDecrypt573Audio(FluentContext context)
     {
         ShowLogTab(context);
-        _guiTasks.DdrDecrypt573Audio(
+        guiTasks.DdrDecrypt573Audio(
             context.GetControl<TextBox>(Ids.DdrDecrypt573AudioPath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text,
             context.GetControl<CheckBox>(Ids.DdrDecrypt573AudioRename).Checked);
@@ -520,7 +513,7 @@ public class FormFactory : IFormFactory
     private void ArcExtract(FluentContext context)
     {
         ShowLogTab(context);
-        _guiTasks.ArcExtract(
+        guiTasks.ArcExtract(
             context.GetControl<TextBox>(Ids.ArcExtractPath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
     }
@@ -528,7 +521,7 @@ public class FormFactory : IFormFactory
     private void HbnExtract(FluentContext context)
     {
         ShowLogTab(context);
-        _guiTasks.HbnExtract(
+        guiTasks.HbnExtract(
             context.GetControl<TextBox>(Ids.HbnExtractPath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
     }
@@ -539,7 +532,7 @@ public class FormFactory : IFormFactory
         var offsetArg = double.TryParse(context.GetControl<TextBox>(Ids.SsqDecodeOffset).Text, out var offset)
             ? offset
             : 0;
-        _guiTasks.SsqDecode(
+        guiTasks.SsqDecode(
             context.GetControl<TextBox>(Ids.SsqDecodePath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text,
             offsetArg);
@@ -548,7 +541,7 @@ public class FormFactory : IFormFactory
     private void BeatmaniaDecodeDjmainHdd(FluentContext context)
     {
         ShowLogTab(context);
-        _guiTasks.BeatmaniaDecodeDjmainHdd(
+        guiTasks.BeatmaniaDecodeDjmainHdd(
             context.GetControl<TextBox>(Ids.BeatmaniaDecodeDjmainHddPath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text,
             context.GetControl<CheckBox>(Ids.BeatmaniaDecodeDjmainHddSkipAudio).Checked,
@@ -559,7 +552,7 @@ public class FormFactory : IFormFactory
     private void BmsRender(FluentContext context)
     {
         ShowLogTab(context);
-        _guiTasks.BmsRender(
+        guiTasks.BmsRender(
             context.GetControl<TextBox>(Ids.BmsRenderPath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
     }
@@ -567,7 +560,7 @@ public class FormFactory : IFormFactory
     private void BeatmaniaRenderDjmainGst(FluentContext context)
     {
         ShowLogTab(context);
-        _guiTasks.BeatmaniaRenderDjmainGst(
+        guiTasks.BeatmaniaRenderDjmainGst(
             context.GetControl<TextBox>(Ids.BeatmaniaRenderDjmainGstPath).Text,
             context.GetControl<TextBox>(Ids.MainFormOutputFolderSelect).Text);
     }

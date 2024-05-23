@@ -6,5 +6,5 @@ namespace RhythmCodex.Djmain.Streamers;
 
 public interface IDjmainSampleInfoStreamWriter
 {
-    void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions);
+    void Write(Stream stream, IReadOnlyCollection<KeyValuePair<int, DjmainSampleInfo>> definitions);
 }

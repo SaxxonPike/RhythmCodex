@@ -1,7 +1,9 @@
 using System;
+using JetBrains.Annotations;
 
 namespace RhythmCodex.Infrastructure;
 
+[PublicAPI]
 public static class ArrayUtilities
 {
     /// <summary>

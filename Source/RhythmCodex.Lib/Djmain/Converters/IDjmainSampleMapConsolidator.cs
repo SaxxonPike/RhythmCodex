@@ -6,8 +6,8 @@ namespace RhythmCodex.Djmain.Converters;
 
 public interface IDjmainSampleMapConsolidator
 {
-    (IDictionary<int, ISound> sounds, IDictionary<int, IChart> charts) Consolidate(
-        IEnumerable<KeyValuePair<int, IEnumerable<KeyValuePair<int, ISound>>>> sounds, 
-        IEnumerable<KeyValuePair<int, IChart>> charts,
+    (Dictionary<int, Sound> sounds, Dictionary<int, Chart> charts) Consolidate(
+        IEnumerable<KeyValuePair<int, IEnumerable<KeyValuePair<int, Sound>>>> sounds, 
+        IEnumerable<KeyValuePair<int, Chart>> charts,
         IEnumerable<KeyValuePair<int, int>> chartMap);
 }

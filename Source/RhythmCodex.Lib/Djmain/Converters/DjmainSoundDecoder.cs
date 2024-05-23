@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Djmain.Model;
@@ -9,23 +10,16 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Djmain.Converters;
 
 [Service]
-public class DjmainSoundDecoder : IDjmainSoundDecoder
+public class DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
+    : IDjmainSoundDecoder
 {
-    private readonly IDjmainAudioDecoder _djmainAudioDecoder;
-    private readonly IBeatmaniaDspTranslator _beatmaniaDspTranslator;
-
-    public DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
+    public Dictionary<int, Sound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
     {
-        _djmainAudioDecoder = djmainAudioDecoder;
-        _beatmaniaDspTranslator = beatmaniaDspTranslator;
+        return DecodeInternal(samples)
+            .ToDictionary(s => (int)s[NumericData.Id]!.Value, s => s);
     }
 
-    public IDictionary<int, ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
-    {
-        return DecodeInternal(samples).ToDictionary(s => (int)s[NumericData.Id].Value, s => s);
-    }
-
-    private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
+    private IEnumerable<Sound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
     {
         foreach (var def in samples)
         {
@@ -37,28 +31,28 @@ public class DjmainSoundDecoder : IDjmainSoundDecoder
             switch (def.Value.Info.SampleType & 0xC)
             {
                 case 0x0:
-                    sample.Data = _djmainAudioDecoder.DecodePcm8(data);
+                    sample.Data = djmainAudioDecoder.DecodePcm8(data.Span);
                     break;
                 case 0x4:
-                    sample.Data = _djmainAudioDecoder.DecodePcm16(data);
+                    sample.Data = djmainAudioDecoder.DecodePcm16(data.Span);
                     break;
                 case 0x8:
-                    sample.Data = _djmainAudioDecoder.DecodeDpcm(data);
+                    sample.Data = djmainAudioDecoder.DecodeDpcm(data.Span);
                     break;
                 default:
-                    sample.Data = new List<float>();
+                    sample.Data = Memory<float>.Empty;
                     break;
             }
 
             yield return new Sound
             {
-                Samples = new List<ISample> {sample},
-                [NumericData.Volume] = _beatmaniaDspTranslator.GetDjmainVolume(info.Volume),
+                Samples = [sample],
+                [NumericData.Volume] = beatmaniaDspTranslator.GetDjmainVolume(info.Volume),
                 [NumericData.SourceVolume] = info.Volume,
-                [NumericData.Panning] = _beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
+                [NumericData.Panning] = beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
                 [NumericData.SourcePanning] = info.Panning,
                 [NumericData.Channel] = info.Channel,
-                [NumericData.Rate] = _beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
+                [NumericData.Rate] = beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
                 [NumericData.Id] = def.Key
             };
         }

@@ -6,5 +6,5 @@ namespace RhythmCodex.Step1.Streamers;
 
 public interface IStep1StreamReader
 {
-    IList<Step1Chunk> Read(Stream stream);
+    List<Step1Chunk> Read(Stream stream);
 }

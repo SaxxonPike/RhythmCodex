@@ -10,31 +10,15 @@ using RhythmCodex.Iso.Streamers;
 namespace RhythmCodex.Iso.Converters;
 
 [Service]
-public class IsoCdFileDecoder : IIsoCdFileDecoder
+public class IsoCdFileDecoder(
+    IIsoStorageMediumDecoder isoStorageMediumDecoder,
+    IIsoSectorInfoDecoder isoSectorInfoDecoder,
+    IIsoDescriptorSectorFinder isoDescriptorSectorFinder,
+    IIsoPathTableDecoder isoPathTableDecoder,
+    IIsoSectorStreamFactory isoSectorStreamFactory,
+    IIsoDirectoryTableDecoder isoDirectoryTableDecoder)
+    : IIsoCdFileDecoder
 {
-    private readonly IIsoStorageMediumDecoder _isoStorageMediumDecoder;
-    private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
-    private readonly IIsoDescriptorSectorFinder _isoDescriptorSectorFinder;
-    private readonly IIsoPathTableDecoder _isoPathTableDecoder;
-    private readonly IIsoSectorStreamFactory _isoSectorStreamFactory;
-    private readonly IIsoDirectoryTableDecoder _isoDirectoryTableDecoder;
-
-    public IsoCdFileDecoder(
-        IIsoStorageMediumDecoder isoStorageMediumDecoder,
-        IIsoSectorInfoDecoder isoSectorInfoDecoder,
-        IIsoDescriptorSectorFinder isoDescriptorSectorFinder,
-        IIsoPathTableDecoder isoPathTableDecoder,
-        IIsoSectorStreamFactory isoSectorStreamFactory,
-        IIsoDirectoryTableDecoder isoDirectoryTableDecoder)
-    {
-        _isoStorageMediumDecoder = isoStorageMediumDecoder;
-        _isoSectorInfoDecoder = isoSectorInfoDecoder;
-        _isoDescriptorSectorFinder = isoDescriptorSectorFinder;
-        _isoPathTableDecoder = isoPathTableDecoder;
-        _isoSectorStreamFactory = isoSectorStreamFactory;
-        _isoDirectoryTableDecoder = isoDirectoryTableDecoder;
-    }
-        
     public IList<ICdFile> Decode(IEnumerable<ICdSector> cdSectors)
     {
         return DecodeInternal(cdSectors).ToList();
@@ -42,19 +26,19 @@ public class IsoCdFileDecoder : IIsoCdFileDecoder
 
     private IEnumerable<ICdFile> DecodeInternal(IEnumerable<ICdSector> cdSectors)
     {
-        var sectorInfos = _isoDescriptorSectorFinder
-            .Find(cdSectors.Select(s => _isoSectorInfoDecoder.Decode(s)));
+        var sectorInfos = isoDescriptorSectorFinder
+            .Find(cdSectors.Select(s => isoSectorInfoDecoder.Decode(s)));
 
-        var storageMediums = _isoStorageMediumDecoder.Decode(sectorInfos);
+        var storageMediums = isoStorageMediumDecoder.Decode(sectorInfos);
         foreach (var volume in storageMediums.Volumes)
         {
             var pathLba = volume.TypeLPathTableLocation;
-            var pathTable = _isoPathTableDecoder.Decode(cdSectors.SkipWhile(cds => cds.Number != pathLba));
+            var pathTable = isoPathTableDecoder.Decode(cdSectors.SkipWhile(cds => cds.Number != pathLba));
                 
             foreach (var path in pathTable)
             {
                 var directory =
-                    _isoDirectoryTableDecoder.Decode(
+                    isoDirectoryTableDecoder.Decode(
                         cdSectors.SkipWhile(cds => cds.Number != path.LocationOfExtent));
                 foreach (var entry in directory)
                 {
@@ -62,7 +46,7 @@ public class IsoCdFileDecoder : IIsoCdFileDecoder
                         continue;
                         
                     yield return new CdFile(() =>
-                        _isoSectorStreamFactory.Open(
+                        isoSectorStreamFactory.Open(
                             cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent), entry.DataLength))
                     {
                         Name = GetPath(pathTable, entry, path),

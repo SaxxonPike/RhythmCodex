@@ -5,5 +5,5 @@ namespace RhythmCodex.Vag.Models;
 [Model]
 public class Xa2Container
 {
-    public VagChunk VagChunk { get; set; }
+    public VagChunk? VagChunk { get; set; }
 }

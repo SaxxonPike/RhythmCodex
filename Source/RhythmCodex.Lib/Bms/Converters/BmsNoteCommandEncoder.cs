@@ -13,23 +13,16 @@ using RhythmCodex.Meta.Models;
 namespace RhythmCodex.Bms.Converters;
 
 [Service]
-public class BmsNoteCommandEncoder : IBmsNoteCommandEncoder
+public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncoder
 {
-    private readonly IQuantizer _quantizer;
-
-    public BmsNoteCommandEncoder(IQuantizer quantizer)
-    {
-        _quantizer = quantizer;
-    }
-
     public string Encode(IEnumerable<BmsEvent> events, Func<BigRational?, string> encodeValue,
         BigRational measureLength, int quantize)
     {
-        var eventList = events.AsList();
+        var eventList = events;
 
         // round up and multiply for longer measures (100% minimoo-G would be a nightmare otherwise)
         var maxQ = Math.Max(quantize, (int) ((measureLength + BigRational.OneHalf).GetWholePart() * quantize));
-        var q = _quantizer.GetQuantization(eventList.Select(e => e.Offset), BigInteger.One, maxQ);
+        var q = quantizer.GetQuantization(eventList.Select(e => e.Offset), BigInteger.One, maxQ);
 
         var buffer = Enumerable.Range(0, q).Select(_ => (BigRational?) null).ToArray();
         foreach (var ev in eventList)
@@ -45,11 +38,77 @@ public class BmsNoteCommandEncoder : IBmsNoteCommandEncoder
         return builder.ToString();
     }
 
-    public IList<BmsEvent> TranslateNoteEvents(IEnumerable<IEvent> events)
+    public IList<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events)
     {
         IEnumerable<BmsEvent> Do()
         {
-            string GetLane(IMetadata ev, bool isFreeze)
+            var sounds = new Dictionary<(int player, int column, bool scratch), BigRational>();
+            var freezes = new HashSet<(int player, int column, bool scratch)>();
+
+            foreach (var ev in events.OrderBy(ev => ev[NumericData.MetricOffset]))
+            {
+                var offset = ev[NumericData.MetricOffset]?.GetFractionPart() ?? 0;
+                var measure = (int)(ev[NumericData.MetricOffset]?.GetWholePart() ?? 0);
+                var playerId = (int)(ev[NumericData.Player] ?? -1);
+                var columnId = (int)(ev[NumericData.Column] ?? -1);
+                var scratch = (ev[FlagData.Scratch] ?? false) || (ev[FlagData.FreeZone] ?? false);
+
+                // Non note:
+
+                if (ev[FlagData.Note] != true)
+                {
+                    if (ev[NumericData.LoadSound] != null)
+                        sounds[(playerId, columnId, scratch)] = ev[NumericData.LoadSound] ?? 0;
+
+                    if (ev[NumericData.PlaySound] != null)
+                    {
+                        yield return new BmsEvent
+                        {
+                            Lane = "01",
+                            Offset = offset,
+                            Measure = measure,
+                            Value = ev[NumericData.PlaySound] ?? 0
+                        };
+                    }
+                }
+
+                // Note only:
+
+                else
+                {
+                    var isFreeze = freezes.Contains((playerId, columnId, scratch));
+
+                    if (ev[FlagData.Freeze] == true)
+                    {
+                        freezes.Add((playerId, columnId, scratch));
+                        isFreeze = true;
+                    }
+
+                    var lane = GetLane(ev, isFreeze);
+
+                    if (lane != null)
+                    {
+                        yield return new BmsEvent
+                        {
+                            Lane = lane,
+                            Measure = measure,
+                            Offset = offset,
+                            Value = sounds.ContainsKey((playerId, columnId, scratch))
+                                ? sounds[(playerId, columnId, scratch)]
+                                : 1295 // TODO: ugly constant
+                        };
+                    }
+
+                    if (ev[FlagData.Freeze] != true)
+                    {
+                        freezes.Remove((playerId, columnId, scratch));
+                    }
+                }
+            }
+
+            yield break;
+
+            string? GetLane(IMetadata ev, bool isFreeze)
             {
                 if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 0)
                     return isFreeze ? "51" : "11";
@@ -89,76 +148,12 @@ public class BmsNoteCommandEncoder : IBmsNoteCommandEncoder
                     return "27";
                 return null;
             }
-
-            var sounds = new Dictionary<(int player, int column, bool scratch), BigRational>();
-            var freezes = new HashSet<(int player, int column, bool scratch)>();
-
-            foreach (var ev in events.OrderBy(ev => ev[NumericData.MetricOffset]))
-            {
-                var offset = ev[NumericData.MetricOffset].Value.GetFractionPart();
-                var measure = (int) ev[NumericData.MetricOffset].Value.GetWholePart();
-                var playerId = (int) (ev[NumericData.Player] ?? -1);
-                var columnId = (int) (ev[NumericData.Column] ?? -1);
-                var scratch = (ev[FlagData.Scratch] ?? false) || (ev[FlagData.FreeZone] ?? false);
-
-                // Non note:
-
-                if (ev[FlagData.Note] != true)
-                {
-                    if (ev[NumericData.LoadSound] != null)
-                        sounds[(playerId, columnId, scratch)] = ev[NumericData.LoadSound].Value;
-
-                    if (ev[NumericData.PlaySound] != null)
-                    {
-                        yield return new BmsEvent
-                        {
-                            Lane = "01",
-                            Offset = offset,
-                            Measure = measure,
-                            Value = (int) ev[NumericData.PlaySound]
-                        };
-                    }
-                }
-
-                // Note only:
-
-                else
-                {
-                    var isFreeze = freezes.Contains((playerId, columnId, scratch));
-
-                    if (ev[FlagData.Freeze] == true)
-                    {
-                        freezes.Add((playerId, columnId, scratch));
-                        isFreeze = true;
-                    }
-
-                    var lane = GetLane(ev, isFreeze);
-
-                    if (lane != null)
-                    {
-                        yield return new BmsEvent
-                        {
-                            Lane = lane,
-                            Measure = measure,
-                            Offset = offset,
-                            Value = sounds.ContainsKey((playerId, columnId, scratch))
-                                ? sounds[(playerId, columnId, scratch)]
-                                : 1295 // TODO: ugly constant
-                        };
-                    }
-
-                    if (ev[FlagData.Freeze] != true)
-                    {
-                        freezes.Remove((playerId, columnId, scratch));
-                    }
-                }
-            }
         }
 
         return Do().ToList();
     }
 
-    public IList<BmsEvent> TranslateBpmEvents(IEnumerable<IEvent> events)
+    public IList<BmsEvent> TranslateBpmEvents(IEnumerable<Event> events)
     {
         IEnumerable<BmsEvent> Do()
         {
@@ -167,15 +162,15 @@ public class BmsNoteCommandEncoder : IBmsNoteCommandEncoder
                 if (ev[NumericData.Bpm] == null)
                     continue;
 
-                var offset = ev[NumericData.MetricOffset].Value.GetFractionPart();
-                var measure = (int) ev[NumericData.MetricOffset].Value.GetWholePart();
+                var offset = ev[NumericData.MetricOffset]?.GetFractionPart() ?? 0;
+                var measure = (int)(ev[NumericData.MetricOffset]?.GetWholePart() ?? 0);
 
                 yield return new BmsEvent
                 {
                     Lane = "08",
                     Measure = measure,
                     Offset = offset,
-                    Value = ev[NumericData.Bpm].Value
+                    Value = ev[NumericData.Bpm] ?? 0
                 };
             }
         }

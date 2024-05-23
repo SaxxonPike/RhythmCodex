@@ -8,28 +8,21 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Djmain.Streamers;
 
 [Service]
-public class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
+public class DjmainSampleInfoStreamReader(IDjmainConfiguration djmainConfiguration) : IDjmainSampleInfoStreamReader
 {
-    private readonly IDjmainConfiguration _djmainConfiguration;
-
-    public DjmainSampleInfoStreamReader(IDjmainConfiguration djmainConfiguration)
-    {
-        _djmainConfiguration = djmainConfiguration;
-    }
-
-    public IDictionary<int, IDjmainSampleInfo> Read(Stream stream)
+    public Dictionary<int, DjmainSampleInfo> Read(Stream stream)
     {
         return ReadInternal(stream).ToDictionary(kv => kv.Key, kv => kv.Value);
     }
 
-    private IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> ReadInternal(Stream stream)
+    private IEnumerable<KeyValuePair<int, DjmainSampleInfo>> ReadInternal(Stream stream)
     {
         var buffer = new byte[11];
 
         using var mem = new ReadOnlyMemoryStream(buffer);
         var reader = new BinaryReader(mem);
 
-        for (var i = 0; i < _djmainConfiguration.MaxSampleDefinitions; i++)
+        for (var i = 0; i < djmainConfiguration.MaxSampleDefinitions; i++)
         {
             reader.BaseStream.Position = 0;
 
@@ -48,7 +41,7 @@ public class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
                 SampleType = reader.ReadByte(),
                 Flags = reader.ReadByte()
             };
-            yield return new KeyValuePair<int, IDjmainSampleInfo>(i, result);
+            yield return new KeyValuePair<int, DjmainSampleInfo>(i, result);
         }
     }
 }

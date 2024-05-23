@@ -9,7 +9,7 @@ public abstract class DdrPanelMapperBase : IPanelMapper
 {
     public abstract int PanelCount { get; }
     public abstract int PlayerCount { get; }
-    protected abstract IDictionary<int, IPanelMapping> PanelMap { get; }
+    protected abstract Dictionary<int, IPanelMapping> PanelMap { get; }
 
     public IPanelMapping Map(int panel)
     {
@@ -37,7 +37,7 @@ public abstract class DdrPanelMapperBase : IPanelMapper
     public bool ShouldMap(IEnumerable<IPanelMapping> panels)
     {
         var requiredPanelMappings = PanelMap.Values;
-        var inPanels = panels.AsList();
+        var inPanels = panels;
             
         return requiredPanelMappings.All(pm => inPanels.Any(p => p.Panel == pm.Panel && p.Player == pm.Player))
                && inPanels.All(p => requiredPanelMappings.Any(pm => p.Panel == pm.Panel && p.Player == pm.Player));

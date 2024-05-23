@@ -9,15 +9,9 @@ using RhythmCodex.Vag.Streamers;
 namespace RhythmCodex.Beatmania.Streamers;
 
 [Service]
-public class BeatmaniaPs2OldKeysoundStreamReader : IBeatmaniaPs2OldKeysoundStreamReader
+public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReader)
+    : IBeatmaniaPs2OldKeysoundStreamReader
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-
     public BeatmaniaPs2KeysoundSet Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
@@ -52,22 +46,28 @@ public class BeatmaniaPs2OldKeysoundStreamReader : IBeatmaniaPs2OldKeysoundStrea
                 case 2:
                 {
                     hunkMem.Position = result.OffsetLeft - 61488;
-                    result.Data = new List<VagChunk> {_vagStreamReader.Read(hunkMem, 1, 0)};
+                    result.Data = vagStreamReader.Read(hunkMem, 1, 0) is { } chunk
+                        ? [chunk]
+                        : [];
                     break;
                 }
                 case 3:
                 {
                     hunkMem.Position = header[1] + result.OffsetLeft + 16368;
-                    result.Data = new List<VagChunk> {_vagStreamReader.Read(hunkMem, 1, 0)};
+                    result.Data = vagStreamReader.Read(hunkMem, 1, 0) is {} chunk
+                        ? [chunk]
+                        : [];
                     break;
                 }
                 case 4:
                 {
                     hunkMem.Position = result.OffsetLeft - 61488;
-                    var dataLeft = _vagStreamReader.Read(hunkMem, 1, 0);
+                    var dataLeft = vagStreamReader.Read(hunkMem, 1, 0);
                     hunkMem.Position = result.OffsetRight - 61488;
-                    var dataRight = _vagStreamReader.Read(hunkMem, 1, 0);
-                    result.Data = new List<VagChunk> {dataLeft, dataRight};
+                    var dataRight = vagStreamReader.Read(hunkMem, 1, 0);
+                    result.Data = dataLeft is not null && dataRight is not null
+                        ? [dataLeft, dataRight]
+                        : [];
                     break;
                 }
                 default:
@@ -77,7 +77,7 @@ public class BeatmaniaPs2OldKeysoundStreamReader : IBeatmaniaPs2OldKeysoundStrea
             }
 
             return result;
-        }).Where(entry => entry != null).ToList();
+        }).Where(entry => entry != null).Select(entry => entry!).ToList();
 
         return new BeatmaniaPs2KeysoundSet
         {

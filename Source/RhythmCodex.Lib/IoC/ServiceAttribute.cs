@@ -8,12 +8,7 @@ namespace RhythmCodex.IoC;
 /// </summary>
 [MeansImplicitUse]
 [AttributeUsage(AttributeTargets.Class)]
-public class ServiceAttribute : Attribute
+public class ServiceAttribute(bool singleInstance = true) : Attribute
 {
-    public ServiceAttribute(bool singleInstance = true)
-    {
-        SingleInstance = singleInstance;
-    }
-
-    public bool SingleInstance { get; }
+    public bool SingleInstance { get; } = singleInstance;
 }

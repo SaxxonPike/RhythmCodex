@@ -8,17 +8,13 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Converters;
 
 [Service]
-public class DdrPs2FileDataUnboundTableDecoder : IDdrPs2FileDataUnboundTableDecoder
+public class DdrPs2FileDataUnboundTableDecoder(IBemaniLzDecoder bemaniLzDecoder) : IDdrPs2FileDataUnboundTableDecoder
 {
-    private readonly IBemaniLzDecoder _bemaniLzDecoder;
-
-    public DdrPs2FileDataUnboundTableDecoder(IBemaniLzDecoder bemaniLzDecoder)
+    public IList<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk? chunk)
     {
-        _bemaniLzDecoder = bemaniLzDecoder;
-    }
+        if (chunk == null)
+            return [];
         
-    public IList<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk)
-    {
         var data = chunk.Data;
         var result = new List<DdrPs2FileDataTableEntry>();
         var stream = new MemoryStream(data);
@@ -38,7 +34,7 @@ public class DdrPs2FileDataUnboundTableDecoder : IDdrPs2FileDataUnboundTableDeco
             result.Add(new DdrPs2FileDataTableEntry
             {
                 Index = i,
-                Data = _bemaniLzDecoder.Decode(stream)
+                Data = bemaniLzDecoder.Decode(stream)
             });
         }
 

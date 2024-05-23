@@ -6,5 +6,5 @@ namespace RhythmCodex.Vag.Converters;
 
 public interface IVagSplitter
 {
-    IList<ISample> Split(VagChunk chunk);
+    List<Sample> Split(VagChunk? chunk);
 }

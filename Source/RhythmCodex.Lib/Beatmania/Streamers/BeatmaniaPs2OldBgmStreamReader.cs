@@ -2,20 +2,14 @@ using System.IO;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
+using RhythmCodex.Vag.Models;
 using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Beatmania.Streamers;
 
 [Service]
-public class BeatmaniaPs2OldBgmStreamReader : IBeatmaniaPs2OldBgmStreamReader
+public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : IBeatmaniaPs2OldBgmStreamReader
 {
-    private readonly IVagStreamReader _vagStreamReader;
-
-    public BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader)
-    {
-        _vagStreamReader = vagStreamReader;
-    }
-        
     public BeatmaniaPs2Bgm Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
@@ -30,7 +24,7 @@ public class BeatmaniaPs2OldBgmStreamReader : IBeatmaniaPs2OldBgmStreamReader
 
         var source = reader.ReadBytes(length);
         using var mem = new MemoryStream(source);
-        var data = _vagStreamReader.Read(mem, channels, 0x800);
+        var data = vagStreamReader.Read(mem, channels, 0x800);
         return new BeatmaniaPs2Bgm
         {
             Data = data,

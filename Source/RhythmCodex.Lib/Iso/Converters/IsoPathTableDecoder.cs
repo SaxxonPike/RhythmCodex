@@ -10,15 +10,8 @@ using RhythmCodex.Iso.Streamers;
 namespace RhythmCodex.Iso.Converters;
 
 [Service]
-public class IsoPathTableDecoder : IIsoPathTableDecoder
+public class IsoPathTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory) : IIsoPathTableDecoder
 {
-    private readonly IIsoSectorStreamFactory _isoSectorStreamFactory;
-
-    public IsoPathTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory)
-    {
-        _isoSectorStreamFactory = isoSectorStreamFactory;
-    }
-
     public IList<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors)
     {
         return DecodeInternal(sectors).ToList();
@@ -26,7 +19,7 @@ public class IsoPathTableDecoder : IIsoPathTableDecoder
 
     private IEnumerable<IsoPathRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
     {
-        using var stream = _isoSectorStreamFactory.Open(sectors);
+        using var stream = isoSectorStreamFactory.Open(sectors);
         var reader = new BinaryReader(stream);
         while (true)
         {

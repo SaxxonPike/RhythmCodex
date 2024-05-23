@@ -6,6 +6,6 @@ namespace RhythmCodex.Flac.Converters;
 
 public interface IFlacDecoder
 {
-    ISound Decode(Stream stream);
+    Sound? Decode(Stream stream);
     Memory<byte> DecodeFrame(Stream stream, int blockSize);
 }

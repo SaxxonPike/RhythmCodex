@@ -6,5 +6,5 @@ namespace RhythmCodex.Djmain.Converters;
 
 public interface IDjmainChartDecoder
 {
-    IChart Decode(IEnumerable<IDjmainChartEvent> events, DjmainChartType chartType);
+    Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType);
 }

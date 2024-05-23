@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using MP3Sharp;
@@ -13,7 +14,7 @@ namespace RhythmCodex.Plugin.MP3Sharp;
 [Service]
 public class Mp3Decoder : IMp3Decoder
 {
-    public ISound Decode(Stream stream)
+    public Sound? Decode(Stream stream)
     {
         var inputStream = new MP3Stream(stream);
         var channels = inputStream.ChannelCount;
@@ -23,13 +24,14 @@ public class Mp3Decoder : IMp3Decoder
         var result = new Sound
         {
             Samples = data
+                .AsSpan()
                 .Deinterleave(2, channels)
                 .Select(bytes => new Sample
                 {
-                    Data = bytes.AsArray().Fuse().Select(s => s / 32768f).AsArray(),
+                    Data = bytes.Fuse().Select(s => s / 32768f).ToArray(),
                     [NumericData.Rate] = rate,
                 })
-                .Cast<ISample>()
+                .Cast<Sample>()
                 .ToList()
         };
 

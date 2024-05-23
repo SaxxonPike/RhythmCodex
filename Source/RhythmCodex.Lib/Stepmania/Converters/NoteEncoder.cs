@@ -10,21 +10,14 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Stepmania.Converters;
 
 [Service]
-public class NoteEncoder : INoteEncoder
+public class NoteEncoder(ILogger logger) : INoteEncoder
 {
-    private readonly ILogger _logger;
-
-    public NoteEncoder(ILogger logger)
-    {
-        _logger = logger;
-    }
-
-    public IList<Note> Encode(IEnumerable<IEvent> events)
+    public IList<Note> Encode(IEnumerable<Event> events)
     {
         IEnumerable<Note> Do()
         {
             var result = new List<Note>();
-            var eventList = events.AsList();
+            var eventList = events;
             var columnCount = (int) eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
             var playerCount = (int) eventList.Max(e => e[NumericData.Player] ?? BigRational.Zero) + 1;
 
@@ -95,6 +88,6 @@ public class NoteEncoder : INoteEncoder
             }
 
         foreach (var column in freezeColumns)
-            _logger.Warning($"Column {column} has a freeze tail but no suitable freeze head");
+            logger.Warning($"Column {column} has a freeze tail but no suitable freeze head");
     }
 }

@@ -11,9 +11,9 @@ public class DjmainChartEventStreamReader : IDjmainChartEventStreamReader
 {
     private const int MaxEventCount = 0x1000;
 
-    public IList<DjmainChartEvent> Read(Stream stream)
+    public List<DjmainChartEvent> Read(Stream stream)
     {
-        return ReadInternal(stream).ToArray();
+        return ReadInternal(stream).ToList();
     }
 
     private static IEnumerable<DjmainChartEvent> ReadInternal(Stream stream)

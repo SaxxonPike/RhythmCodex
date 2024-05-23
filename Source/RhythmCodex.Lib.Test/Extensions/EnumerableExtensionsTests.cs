@@ -14,7 +14,7 @@ public class EnumerableExtensionsTests : BaseTestFixture
         var data = CreateMany<int>().Select(i => i).ToArray();
 
         // Act.
-        var output = data.Select(d => d).AsList();
+        var output = data.Select(d => d);
 
         // Assert.
         output.Should().BeEquivalentTo(data);
@@ -28,7 +28,7 @@ public class EnumerableExtensionsTests : BaseTestFixture
         var data = CreateMany<int>().ToArray();
 
         // Act.
-        var output = data.AsList();
+        var output = data;
 
         // Assert.
         output.Should().BeEquivalentTo(data);

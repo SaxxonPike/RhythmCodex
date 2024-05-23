@@ -6,5 +6,5 @@ namespace RhythmCodex.Ddr.Models;
 [Model]
 public class Ddr573Image
 {
-    public IDictionary<int, byte[]> Modules { get; set; }
+    public Dictionary<int, byte[]> Modules { get; set; } = new();
 }

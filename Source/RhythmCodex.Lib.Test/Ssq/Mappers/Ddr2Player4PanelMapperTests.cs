@@ -27,7 +27,7 @@ public class Ddr2Player4PanelMapperTests : BaseUnitTestFixture<Ddr2Player4PanelM
         };
 
         // Act.
-        var result = Enumerable.Range(0, expected.Length).Select(Subject.Map).AsList();
+        var result = Enumerable.Range(0, expected.Length).Select(Subject.Map);
 
         // Assert.
         result.Should().BeEquivalentTo(expected);
@@ -54,7 +54,7 @@ public class Ddr2Player4PanelMapperTests : BaseUnitTestFixture<Ddr2Player4PanelM
         };
 
         // Act.
-        var result = data.Select(Subject.Map).AsList();
+        var result = data.Select(Subject.Map);
 
         // Assert.
         result.Should().BeEquivalentTo(expected);

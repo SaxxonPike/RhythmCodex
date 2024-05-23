@@ -7,9 +7,9 @@ namespace RhythmCodex.Meta.Models;
 
 public class Metadata : IMetadata
 {
-    private IDictionary<FlagData, bool> _flagDatas;
-    private IDictionary<NumericData, BigRational> _numericDatas;
-    private IDictionary<string, string> _stringDatas;
+    private Dictionary<FlagData, bool> _flagDatas;
+    private Dictionary<NumericData, BigRational> _numericDatas;
+    private Dictionary<string, string> _stringDatas;
 
     public Metadata()
     {
@@ -28,7 +28,7 @@ public class Metadata : IMetadata
         _flagDatas = flagDatas.ToDictionary(kv => kv.Key, kv => kv.Value);
     }
 
-    public string this[string key]
+    public string? this[string key]
     {
         get
         {
@@ -72,7 +72,7 @@ public class Metadata : IMetadata
         }
     }
 
-    public string this[StringData type]
+    public string? this[StringData type]
     {
         get => this[type.ToString()];
         set => this[type.ToString()] = value;

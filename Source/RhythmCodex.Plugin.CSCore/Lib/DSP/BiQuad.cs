@@ -167,10 +167,10 @@ public abstract class BiQuad : IFilterContext
     /// </summary>
     /// <param name="input">The input samples to process.</param>
     /// <remarks>The result of the calculation gets stored within the <paramref name="input"/> array.</remarks>
-    public float[] Process(IList<float> input)
+    public float[] Process(ReadOnlySpan<float> input)
     {
-        var result = new float[input.Count];
-        for (var i = 0; i < input.Count; i++)
+        var result = new float[input.Length];
+        for (var i = 0; i < input.Length; i++)
             result[i] = Process(input[i]);
         return result;
     }
@@ -180,7 +180,7 @@ public abstract class BiQuad : IFilterContext
     /// </summary>
     protected abstract void CalculateBiQuadCoefficients();
 
-    IList<float> IFilterContext.Filter(IList<float> data)
+    float[] IFilterContext.Filter(ReadOnlySpan<float> data)
     {
         return Process(data);
     }

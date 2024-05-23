@@ -45,12 +45,11 @@ public class BmsDecoder : IBmsDecoder
             {"VOLWAV", NumericData.Volume}
         };
 
-    public BmsChart Decode(IEnumerable<BmsCommand> commands)
+    public BmsChart Decode(IReadOnlyCollection<BmsCommand> commands)
     {
-        var commandList = commands.AsList();
         var chart = new Chart
         {
-            Events = GetEvents(commandList).ToList()
+            Events = GetEvents(commands).ToList()
         };
 
         var initialBpm = chart.Events
@@ -60,7 +59,7 @@ public class BmsDecoder : IBmsDecoder
 
         if (initialBpm == null)
         {
-            initialBpm = commandList.Where(c => "bpm".Equals(c.Name, StringComparison.OrdinalIgnoreCase))
+            initialBpm = commands.Where(c => "bpm".Equals(c.Name, StringComparison.OrdinalIgnoreCase))
                 .Select(c => BigRationalParser.ParseString(c.Value))
                 .First();
 
@@ -68,18 +67,18 @@ public class BmsDecoder : IBmsDecoder
                 chart.Events.Add(new Event {[NumericData.Bpm] = initialBpm, [NumericData.MetricOffset] = 0});
         }
 
-        AddSingularMetadata(chart, commandList, SingularNumericTags);
-        AddSingularMetadata(chart, commandList, SingularStringTags);
-        AddMultiMetadata(chart, commandList, MultiStringTags);
+        AddSingularMetadata(chart, commands, SingularNumericTags);
+        AddSingularMetadata(chart, commands, SingularStringTags);
+        AddMultiMetadata(chart, commands, MultiStringTags);
 
         return new BmsChart
         {
             Chart = chart,
-            SoundMap = GetStringMap(commandList, "WAV").Map
+            SoundMap = GetStringMap(commands, "WAV").Map
         };
     }
 
-    private void AddSingularMetadata(IMetadata chart, IList<BmsCommand> commandList,
+    private void AddSingularMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
         IDictionary<string, StringData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -91,7 +90,7 @@ public class BmsDecoder : IBmsDecoder
         }
     }
 
-    private void AddSingularMetadata(IMetadata chart, IList<BmsCommand> commandList,
+    private void AddSingularMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
         IDictionary<string, NumericData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -103,7 +102,7 @@ public class BmsDecoder : IBmsDecoder
         }
     }
 
-    private void AddMultiMetadata(IMetadata chart, IList<BmsCommand> commandList,
+    private void AddMultiMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
         IDictionary<string, StringData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -116,7 +115,7 @@ public class BmsDecoder : IBmsDecoder
         }
     }
 
-    private IEnumerable<IEvent> GetEvents(IEnumerable<BmsCommand> commands)
+    private IEnumerable<Event> GetEvents(IEnumerable<BmsCommand> commands)
     {
         // Excluded tags (they are processed separately)
 
@@ -132,15 +131,15 @@ public class BmsDecoder : IBmsDecoder
 
         foreach (var command in commandList)
         {
-            if (command.UseColon && MeasureRegex.IsMatch(command.Name))
-            {
-                foreach (var ev in GetMeasureEvents(command, bpmMapResult.Map))
-                    yield return ev;
-            }
+            if (!command.UseColon || !MeasureRegex.IsMatch(command.Name!))
+                continue;
+
+            foreach (var ev in GetMeasureEvents(command, bpmMapResult.Map))
+                yield return ev;
         }
     }
 
-    private IEnumerable<IEvent> GetMeasureEvents(BmsCommand command, IDictionary<int, BigRational> bpmMap)
+    private IEnumerable<Event> GetMeasureEvents(BmsCommand command, IDictionary<int, BigRational> bpmMap)
     {
         var measure = Alphabet.DecodeNumeric(command.Name.AsSpan(0, 3));
         var lane = Alphabet.DecodeHex(command.Name.AsSpan(3, 2));
@@ -161,7 +160,7 @@ public class BmsDecoder : IBmsDecoder
         }
 
         var events = new List<Event>();
-        var total = command.Value.Length / 2;
+        var total = (command.Value?.Length ?? 0) / 2;
         for (var index = 0; index < total; index++)
         {
             var valueMemory = command.Value.AsMemory(index << 1, 2);
@@ -231,11 +230,11 @@ public class BmsDecoder : IBmsDecoder
                 case 0x08:
                 {
                     var number = Alphabet.DecodeAlphanumeric(value);
-                    if (bpmMap.ContainsKey(number))
+                    if (bpmMap.TryGetValue(number, out var value1))
                     {
                         AddEvent(new Event
                         {
-                            [NumericData.Bpm] = bpmMap[number]
+                            [NumericData.Bpm] = value1
                         });
                     }
 
@@ -352,7 +351,7 @@ public class BmsDecoder : IBmsDecoder
         var map = new Dictionary<int, BigRational>();
         var processedCommands = new List<BmsCommand>();
         foreach (var command in commands
-                     .Where(c => c.Value != null &&
+                     .Where(c => c is { Value: not null, Name: not null } &&
                                  !c.Name.Equals(mapName, StringComparison.InvariantCultureIgnoreCase) &&
                                  c.Name.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase)))
         {
@@ -372,12 +371,12 @@ public class BmsDecoder : IBmsDecoder
         var map = new Dictionary<int, string>();
         var processedCommands = new List<BmsCommand>();
         foreach (var command in commands
-                     .Where(c => c.Value != null &&
+                     .Where(c => c is { Value: not null, Name: not null } &&
                                  !c.Name.Equals(mapName, StringComparison.InvariantCultureIgnoreCase) &&
                                  c.Name.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase)))
         {
             var index = Alphabet.DecodeAlphanumeric(command.Name.AsSpan(3));
-            map[index] = command.Value;
+            map[index] = command.Value!;
             processedCommands.Add(command);
         }
 

@@ -13,7 +13,7 @@ public static class ChartExtensions
     /// Running this will normalize all metric offsets so each measure line lands on an integer.
     /// Measure lengths are populated on measure lines.
     /// </summary>
-    private static void NormalizeMetricOffsets(IChart chart)
+    private static void NormalizeMetricOffsets(Chart chart)
     {
         if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
@@ -72,14 +72,14 @@ public static class ChartExtensions
         }
     }
 
-    public static void QuantizeMetricOffsets(this IChart chart, BigRational quantization)
+    public static void QuantizeMetricOffsets(this Chart chart, BigRational quantization)
     {
         if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
 
         foreach (var ev in chart.Events)
         {
-            var temp = ev[NumericData.MetricOffset];
+            var temp = ev[NumericData.MetricOffset]!;
             temp *= quantization;
             temp = temp.Value.GetWholePart();
             temp /= quantization;
@@ -87,12 +87,12 @@ public static class ChartExtensions
         }
     }
 
-    public static void PopulateMetricOffsets(this IChart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
+    public static void PopulateMetricOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
     {
         if (chart.Events.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException($"All events must have a {nameof(NumericData.LinearOffset)}.");
 
-        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.LinearOffset]).AsList();
+        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.LinearOffset]);
             
         var bpm = chart[NumericData.Bpm] ??
                   chart.Events.FirstOrDefault(
@@ -128,12 +128,12 @@ public static class ChartExtensions
         NormalizeMetricOffsets(chart);
     }
 
-    public static void PopulateLinearOffsets(this IChart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
+    public static void PopulateLinearOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
     {
         if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
 
-        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]).AsList();
+        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]);
             
         var bpm = chart[NumericData.Bpm] ??
                   orderedEvents.FirstOrDefault(
@@ -176,13 +176,13 @@ public static class ChartExtensions
         }
     }
 
-    public static BigRational GetZeroLinearReference(this IChart chart, BigRational? referenceLinear = null,
+    public static BigRational GetZeroLinearReference(this Chart chart, BigRational? referenceLinear = null,
         BigRational? referenceMetric = null)
     {
         if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
 
-        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]).AsList();
+        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]);
             
         var bpm = chart[NumericData.Bpm] ??
                   orderedEvents.FirstOrDefault(

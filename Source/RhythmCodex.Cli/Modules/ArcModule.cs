@@ -6,16 +6,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Cli.Modules;
 
 [Service]
-public class ArcModule : ICliModule
+public class ArcModule(ITaskFactory taskFactory) : ICliModule
 {
-    private readonly ITaskFactory _taskFactory;
-
-    public ArcModule(
-        ITaskFactory taskFactory)
-    {
-        _taskFactory = taskFactory;
-    }
-        
     public string Name => "arc";
     public string Description => "Manipulates ARC archive files.";
 
@@ -31,7 +23,7 @@ public class ArcModule : ICliModule
 
     private ITask Extract(Args args)
     {
-        return _taskFactory
+        return taskFactory
             .BuildArcTask()
             .WithArgs(args)
             .CreateExtract();

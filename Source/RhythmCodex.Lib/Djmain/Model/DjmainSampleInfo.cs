@@ -3,24 +3,47 @@
 namespace RhythmCodex.Djmain.Model;
 
 [Model]
-public class DjmainSampleInfo : IDjmainSampleInfo
+public class DjmainSampleInfo
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Channel number assigned to the sample. 0x1E is "any channel".
+    /// </summary>
     public byte Channel { get; set; }
-    /// <inheritdoc />
+
+    /// <summary>
+    /// Sample info register flags (K054539 address: 0x201)
+    /// </summary>
     public byte Flags { get; set; }
-    /// <inheritdoc />
+
+    /// <summary>
+    /// Frequency of the sample. Hz = (x * 44100 / 60216)
+    /// </summary>
     public ushort Frequency { get; set; }
-    /// <inheritdoc />
+
+    /// <summary>
+    /// Offset within the chunk where the audio starts.
+    /// </summary>
     public uint Offset { get; set; }
-    /// <inheritdoc />
+
+    /// <summary>
+    /// Left/right panning value, 0x1-0xF
+    /// </summary>
     public byte Panning { get; set; }
-    /// <inheritdoc />
+
+    /// <summary>
+    /// Volume of reverb feedback.
+    /// </summary>
     public byte ReverbVolume { get; set; }
-    /// <inheritdoc />
+
+    /// <summary>
+    /// Sample info register flags (K054539 address: 0x200)
+    /// </summary>
     public byte SampleType { get; set; }
-    /// <inheritdoc />
+
+    /// <summary>
+    /// Volume of the sample.
+    /// </summary>
     public byte Volume { get; set; }
-        
+
     public override string ToString() => Json.Serialize(this);
 }

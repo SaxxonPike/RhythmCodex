@@ -11,16 +11,9 @@ using RhythmCodex.Step2.Models;
 namespace RhythmCodex.Step2.Converters;
 
 [Service]
-public class Step2Decoder : IStep2Decoder
+public class Step2Decoder(IStep2EventMapper step2EventMapper) : IStep2Decoder
 {
-    private readonly IStep2EventMapper _step2EventMapper;
-
-    public Step2Decoder(IStep2EventMapper step2EventMapper)
-    {
-        _step2EventMapper = step2EventMapper;
-    }
-        
-    public IChart Decode(Step2Chunk chunk)
+    public Chart Decode(Step2Chunk chunk)
     {
         var stepBlocks = DecodeStepBlocks(chunk);
 
@@ -33,15 +26,15 @@ public class Step2Decoder : IStep2Decoder
         var events = steps
             .SelectMany(step =>
             {
-                var result = new List<IEvent>();
-                var panels = _step2EventMapper.Map(step.Panels).ToList();
+                var result = new List<Event>();
+                var panels = step2EventMapper.Map(step.Panels).ToList();
                 foreach (var panel in panels)
                 {
                     result.Add(new Event
                     {
                         [NumericData.Player] = step.Player,
                         [NumericData.Column] = panel,
-                        [NumericData.SourceColumn] = _step2EventMapper.Map(new[]{panel}),
+                        [NumericData.SourceColumn] = step2EventMapper.Map(new[]{panel}),
                         [FlagData.Note] = true,
                         [NumericData.MetricOffset] = new BigRational(step.MetricOffset, 64),
                         [NumericData.SourceOffset] = step.MetricOffset

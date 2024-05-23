@@ -141,7 +141,7 @@ public class DdrOneShots : BaseIntegrationFixture
             x.Name.Split('/').Last().Equals("musicdb.xml", StringComparison.CurrentCultureIgnoreCase));
         musicDb = arcConverter.Decompress(musicDb);
         using var musicDbStream = new MemoryStream(musicDb.Data);
-        var musicDbEntries = musicDbReader.Read(musicDbStream).AsList();
+        var musicDbEntries = musicDbReader.Read(musicDbStream);
 
         foreach (var metadata in musicDbEntries)
         {
@@ -153,7 +153,7 @@ public class DdrOneShots : BaseIntegrationFixture
             // Get sounds
             var xwbFileName = Path.Combine(soundPath, $"{metadata.BaseName}.xwb");
             using var xwbFileStream = !enableSound || !File.Exists(xwbFileName) ? null : File.OpenRead(xwbFileName);
-            var xwb = xwbFileStream == null ? null : xwbReader.Read(xwbFileStream).AsList();
+            var xwb = xwbFileStream == null ? null : xwbReader.Read(xwbFileStream).ToList();
             var xwbSongSound = !enableSound ? null : xwb?.SingleOrDefault(x =>
                 x.Name?.Equals(metadata.BaseName, StringComparison.OrdinalIgnoreCase) ?? false);
             var xwbPreviewSound = !enableSound ? null : xwb?.SingleOrDefault(x =>

@@ -11,7 +11,12 @@ using RhythmCodex.Stepmania.Model;
 namespace RhythmCodex.Stepmania.Converters;
 
 [Service]
-public class SmEncoder : ISmEncoder
+public class SmEncoder(
+    INoteEncoder noteEncoder,
+    INoteCommandStringEncoder noteCommandStringEncoder,
+    IGrooveRadarEncoder grooveRadarEncoder,
+    ITimedCommandStringEncoder timedCommandStringEncoder)
+    : ISmEncoder
 {
     private static readonly IEnumerable<string> TagsToEncode = new[]
     {
@@ -37,24 +42,7 @@ public class SmEncoder : ISmEncoder
         ChartTag.PreviewTag
     };
 
-    private readonly IGrooveRadarEncoder _grooveRadarEncoder;
-    private readonly INoteCommandStringEncoder _noteCommandStringEncoder;
-    private readonly INoteEncoder _noteEncoder;
-    private readonly ITimedCommandStringEncoder _timedCommandStringEncoder;
-
-    public SmEncoder(
-        INoteEncoder noteEncoder,
-        INoteCommandStringEncoder noteCommandStringEncoder,
-        IGrooveRadarEncoder grooveRadarEncoder,
-        ITimedCommandStringEncoder timedCommandStringEncoder)
-    {
-        _noteEncoder = noteEncoder;
-        _noteCommandStringEncoder = noteCommandStringEncoder;
-        _grooveRadarEncoder = grooveRadarEncoder;
-        _timedCommandStringEncoder = timedCommandStringEncoder;
-    }
-
-    private string[] GetDefault(string name, ChartSet chartSet)
+    private List<string> GetDefault(string name, ChartSet chartSet)
     {
         switch (name)
         {
@@ -64,26 +52,26 @@ public class SmEncoder : ISmEncoder
                     .Select(e => (double) e.Value)
                     .Where(e => !double.IsInfinity(e))
                     .Select(e => Math.Round(e))
-                    .AsList();
+                    .ToList();
 
-                IList<double> validBpms = bpms.Where(e => e > 0 && e < 1000).ToList();
-                if (!validBpms.Any())
+                var validBpms = bpms.Where(e => e is > 0 and < 1000).ToList();
+                if (validBpms.Count == 0)
                     validBpms = bpms;
 
-                var min = Math.Round((decimal) bpms.Min());
-                var max = Math.Round((decimal) bpms.Max());
-                return (min == max)
-                    ? new[] {$"{min}"}
-                    : new[] {$"{min}:{max}"};
+                var min = Math.Round((decimal) validBpms.Min());
+                var max = Math.Round((decimal) validBpms.Max());
+                return min == max
+                    ? [$"{min}"]
+                    : [$"{min}:{max}"];
             }
         }
 
         return [];
     }
 
-    public IList<Command> Encode(ChartSet chartSet)
+    public List<Command> Encode(ChartSet chartSet)
     {
-        var chartList = chartSet.Charts.AsList();
+        var chartList = chartSet.Charts;
         var chartMetadata = chartSet.Metadata ?? new Metadata();
 
         var metaCommands = TagsToEncode
@@ -106,8 +94,8 @@ public class SmEncoder : ISmEncoder
                 chart[NotesCommandTag.DescriptionTag] ?? string.Empty,
                 chart[NotesCommandTag.DifficultyTag] ?? string.Empty,
                 $"{(chart[NumericData.PlayLevel] ?? BigRational.One).GetWholePart()}",
-                _grooveRadarEncoder.Encode(chart),
-                _noteCommandStringEncoder.Encode(_noteEncoder.Encode(chart.Events))
+                grooveRadarEncoder.Encode(chart),
+                noteCommandStringEncoder.Encode(noteEncoder.Encode(chart.Events))
             }
         });
 
@@ -117,7 +105,7 @@ public class SmEncoder : ISmEncoder
             .ToList();
     }
 
-    private IEnumerable<TimedEvent> GetBpmEvents(IEnumerable<IChart> charts)
+    private List<TimedEvent> GetBpmEvents(IEnumerable<Chart> charts)
     {
         var bpms = charts
             .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
@@ -132,16 +120,14 @@ public class SmEncoder : ISmEncoder
             // Find any negative metric offsets, closest to zero
             var initialBpm = bpms
                 .Where(bpm => bpm[NumericData.MetricOffset] <= 0)
-                .OrderBy(bpm => bpm[NumericData.MetricOffset])
-                .LastOrDefault();
+                .MaxBy(bpm => bpm[NumericData.MetricOffset]);
 
             // If all offsets are above zero, use the first one instead
             if (initialBpm == null)
             {
                 initialBpm = bpms
                     .Where(bpm => bpm[NumericData.MetricOffset] > 0)
-                    .OrderBy(bpm => bpm[NumericData.MetricOffset])
-                    .FirstOrDefault();
+                    .MinBy(bpm => bpm[NumericData.MetricOffset]);
             }
 
             // Create a zero-offset BPM so SM knows how to set the BPM
@@ -158,31 +144,33 @@ public class SmEncoder : ISmEncoder
         return bpms
             .Where(ev => ev[NumericData.MetricOffset] >= 0)
             .Select(ev =>
-                new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value});
+                new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value})
+            .ToList();
     }
 
-    private IEnumerable<TimedEvent> GetStopEvents(IEnumerable<IChart> charts)
+    private List<TimedEvent> GetStopEvents(IEnumerable<Chart> charts)
     {
         return charts
             .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Stop] != null))
             .GroupBy(ev => ev[NumericData.MetricOffset])
             .Select(g => g.First())
             .Select(ev =>
-                new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Stop].Value});
+                new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Stop].Value})
+            .ToList();
     }
 
-    private IEnumerable<Command> GetTimingCommands(IList<IChart> charts)
+    private IEnumerable<Command> GetTimingCommands(List<Chart> charts)
     {
         yield return new Command
         {
             Name = ChartTag.BpmsTag,
-            Values = new[] {_timedCommandStringEncoder.Encode(GetBpmEvents(charts))}
+            Values = new[] {timedCommandStringEncoder.Encode(GetBpmEvents(charts))}
         };
 
         yield return new Command
         {
             Name = ChartTag.StopsTag,
-            Values = new[] {_timedCommandStringEncoder.Encode(GetStopEvents(charts))}
+            Values = new[] {timedCommandStringEncoder.Encode(GetStopEvents(charts))}
         };
     }
 }

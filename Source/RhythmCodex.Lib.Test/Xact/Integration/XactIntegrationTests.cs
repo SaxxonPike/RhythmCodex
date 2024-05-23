@@ -8,6 +8,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Xact.Converters;
 using RhythmCodex.Xact.Heuristics;
 using RhythmCodex.Xact.Streamers;

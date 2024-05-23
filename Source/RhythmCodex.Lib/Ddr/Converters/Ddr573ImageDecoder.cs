@@ -10,31 +10,19 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Converters;
 
 [Service]
-public class Ddr573ImageDecoder : IDdr573ImageDecoder
+public class Ddr573ImageDecoder(
+    IDdr573ImageDirectoryDecoder ddr573ImageDirectoryDecoder,
+    IBemaniLzDecoder bemaniLzDecoder,
+    ILogger logger,
+    IDdr573DatabaseDecrypter ddr573DatabaseDecrypter)
+    : IDdr573ImageDecoder
 {
-    private readonly IDdr573ImageDirectoryDecoder _ddr573ImageDirectoryDecoder;
-    private readonly IBemaniLzDecoder _bemaniLzDecoder;
-    private readonly ILogger _logger;
-    private readonly IDdr573DatabaseDecrypter _ddr573DatabaseDecrypter;
-
-    public Ddr573ImageDecoder(
-        IDdr573ImageDirectoryDecoder ddr573ImageDirectoryDecoder, 
-        IBemaniLzDecoder bemaniLzDecoder, 
-        ILogger logger,
-        IDdr573DatabaseDecrypter ddr573DatabaseDecrypter)
-    {
-        _ddr573ImageDirectoryDecoder = ddr573ImageDirectoryDecoder;
-        _bemaniLzDecoder = bemaniLzDecoder;
-        _logger = logger;
-        _ddr573DatabaseDecrypter = ddr573DatabaseDecrypter;
-    }
-        
-    public IList<Ddr573File> Decode(Ddr573Image image, string dbKey)
+    public IList<Ddr573File> Decode(Ddr573Image image, string? dbKey)
     {
         return DecodeInternal(image, dbKey).ToList();
     }
 
-    private IEnumerable<Ddr573File> DecodeInternal(Ddr573Image image, string dbKey)
+    private IEnumerable<Ddr573File> DecodeInternal(Ddr573Image image, string? dbKey)
     {
         if (!image.Modules.Any())
             throw new RhythmCodexException("There must be at least one module in the image.");
@@ -46,7 +34,7 @@ public class Ddr573ImageDecoder : IDdr573ImageDecoder
             
         try
         {
-            foreach (var entry in _ddr573ImageDirectoryDecoder.Decode(image))
+            foreach (var entry in ddr573ImageDirectoryDecoder.Decode(image))
             {
                 if (!readers.ContainsKey(entry.Module))
                     throw new RhythmCodexException($"Module {entry.Module} was requested, but not found.");
@@ -61,7 +49,7 @@ public class Ddr573ImageDecoder : IDdr573ImageDecoder
                     case 1:
                     {
                         if (dbKey != null)
-                            data = _ddr573DatabaseDecrypter.Decrypt(data.Span, _ddr573DatabaseDecrypter.ConvertKey(dbKey));
+                            data = ddr573DatabaseDecrypter.Decrypt(data.Span, ddr573DatabaseDecrypter.ConvertKey(dbKey));
                         else
                             canDecompress = false;
                         break;
@@ -77,11 +65,11 @@ public class Ddr573ImageDecoder : IDdr573ImageDecoder
                             using var compressedStream = new ReadOnlyMemoryStream(data);
                             try
                             {
-                                data = _bemaniLzDecoder.Decode(compressedStream);
+                                data = bemaniLzDecoder.Decode(compressedStream);
                             }
                             catch (Exception)
                             {
-                                _logger.Warning($"Entry Id={entry.Id:X8} Module={entry.Module:X4} Offset={entry.Offset:X7} could not be decompressed. It will be extracted as-is.");
+                                logger.Warning($"Entry Id={entry.Id:X8} Module={entry.Module:X4} Offset={entry.Offset:X7} could not be decompressed. It will be extracted as-is.");
                             }
 
                             break;

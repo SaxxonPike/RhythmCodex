@@ -1,4 +1,6 @@
 using System;
+using System.Buffers.Binary;
+using RhythmCodex.Digital573.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -29,7 +31,7 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         (Bit(v, b1) << 1) |
         (Bit(v, b0) << 0);
 
-    public byte[] DecryptNew(ReadOnlySpan<byte> input, params int[] key)
+    public Digital573Audio DecryptNew(ReadOnlySpan<byte> input, params int[] key)
     {
         if (key == null)
             throw new ArgumentNullException(nameof(key));
@@ -38,6 +40,10 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
 
         var length = input.Length & ~1;
         var output = new byte[length];
+
+        var keyBytes = new byte[8];
+        BinaryPrimitives.WriteInt16LittleEndian(keyBytes, unchecked((short)key[0]));
+        BinaryPrimitives.WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)key[1]));
 
         var key1 = key[0];
         var key2 = key[1];
@@ -105,17 +111,22 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
             }
         }
 
-        return output;
+        return new Digital573Audio
+        {
+            Key = keyBytes,
+            Counter = key[2],
+            Data = output
+        };
     }
 
-    public byte[] DecryptOld(ReadOnlySpan<byte> data, int keyValue)
+    public Digital573Audio DecryptOld(ReadOnlySpan<byte> data, int keyValue)
     {
         var seed = BitSwap16(keyValue,
             0xD, 0xB, 0x9, 0x7,
             0x5, 0x3, 0x1, 0xF,
             0xE, 0xC, 0xA, 0x8,
             0x6, 0x4, 0x2, 0x0);
-        Span<byte> key = stackalloc byte[0x10];
+        var key = new byte[0x10];
         key[0] = unchecked((byte) seed);
         key[1] = unchecked((byte) (seed >> 8));
         for (var i = 2; i < 16; i++)
@@ -163,7 +174,12 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
             counter = (counter + 1) & 0xFF;
         }
 
-        return output;
+        return new Digital573Audio
+        {
+            Counter = 0,
+            Data = output,
+            Key = key
+        };
     }
 
 }

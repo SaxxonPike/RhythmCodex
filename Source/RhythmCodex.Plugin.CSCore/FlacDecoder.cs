@@ -15,16 +15,16 @@ namespace RhythmCodex.Plugin.CSCore;
 [Service]
 public class FlacDecoder : IFlacDecoder
 {
-    public ISound Decode(Stream stream)
+    public Sound? Decode(Stream stream)
     {
         using var inputStream = new FlacFile(stream);
         var samples = StreamExtensions.ReadAllBytes(inputStream.Read)
+            .AsSpan()
             .Deinterleave(2, inputStream.WaveFormat.Channels)
             .Select(bytes => new Sample
             {
-                Data = bytes.AsArray().Fuse().Select(s => s / 32768f).AsArray()
+                Data = bytes.Fuse().Select(s => s / 32768f).ToArray()
             })
-            .Cast<ISample>()
             .ToList();
                 
         return new Sound

@@ -5,6 +5,6 @@ namespace RhythmCodex.Bms.Model;
 
 public class BmsChart
 {
-    public IChart Chart { get; set; }
-    public IDictionary<int, string> SoundMap { get; set; }
+    public Chart? Chart { get; set; }
+    public Dictionary<int, string> SoundMap { get; set; } = new Dictionary<int, string>();
 }

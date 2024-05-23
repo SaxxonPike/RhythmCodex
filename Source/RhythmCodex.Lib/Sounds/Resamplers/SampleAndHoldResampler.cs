@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Providers;
 
@@ -11,11 +12,11 @@ public class SampleAndHoldResampler : IResampler
 
     public int Priority => int.MinValue;
 
-    public IList<float> Resample(IList<float> data, float sourceRate, float targetRate)
+    public float[] Resample(ReadOnlySpan<float> data, float sourceRate, float targetRate)
     {
         var accumulator = 0f;
-        var sourceMax = data.Count - 1;
-        var targetSize = (int) ((data.Count * targetRate + (sourceRate - 1)) / sourceRate);
+        var sourceMax = data.Length - 1;
+        var targetSize = (int) ((data.Length * targetRate + (sourceRate - 1)) / sourceRate);
         var result = new float[targetSize];
         var sourceData = data;
         var sourceCounter = 0;

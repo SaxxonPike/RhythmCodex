@@ -5,5 +5,5 @@ namespace RhythmCodex.Twinkle.Converters;
 
 public interface ITwinkleBeatmaniaSoundDefinitionDecoder
 {
-    TwinkleBeatmaniaSoundDefinition Decode(ReadOnlySpan<byte> data);
+    TwinkleBeatmaniaSoundDefinition? Decode(ReadOnlySpan<byte> data);
 }

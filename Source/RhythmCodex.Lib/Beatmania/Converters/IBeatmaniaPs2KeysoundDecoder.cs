@@ -5,5 +5,5 @@ namespace RhythmCodex.Beatmania.Converters;
 
 public interface IBeatmaniaPs2KeysoundDecoder
 {
-    ISound Decode(BeatmaniaPs2Keysound keysound);
+    Sound? Decode(BeatmaniaPs2Keysound keysound);
 }

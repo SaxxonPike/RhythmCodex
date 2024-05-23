@@ -14,21 +14,13 @@ using RhythmCodex.Wav.Models;
 namespace RhythmCodex.Wav.Converters;
 
 [Service]
-public class ChartRenderer : IChartRenderer
+public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvider)
+    : IChartRenderer
 {
-    private readonly IAudioDsp _audioDsp;
-    private readonly IResamplerProvider _resamplerProvider;
-
-    public ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvider)
-    {
-        _audioDsp = audioDsp;
-        _resamplerProvider = resamplerProvider;
-    }
-
     private class ChannelState
     {
         public BigRational? Channel { get; set; }
-        public ISound Sound { get; set; }
+        public Sound Sound { get; set; }
         public int Offset { get; set; }
         public int LeftLength { get; set; }
         public int RightLength { get; set; }
@@ -44,18 +36,19 @@ public class ChartRenderer : IChartRenderer
         public BigRational? SoundIndex { get; set; }
     }
 
-    public ISound Render(IEnumerable<IEvent> inEvents, IEnumerable<ISound> inSounds, ChartRendererOptions options)
+    public Sound Render(IEnumerable<Event> inEvents, IEnumerable<Sound?> inSounds, ChartRendererOptions options)
     {
         var state = new List<ChannelState>();
         var sampleMap = new List<SampleMapping>();
-        var masterVolume = (float) (options.Volume ?? BigRational.One);
+        var masterVolume = (float)(options.Volume ?? BigRational.One);
 
-        var events = inEvents.AsList();
+        var events = inEvents;
         if (events.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException("Can't render without all events having linear offsets.");
-            
+
         var sounds = inSounds
-            .Select(s => _audioDsp.ApplyResampling(_audioDsp.ApplyEffects(s), _resamplerProvider.GetBest(), options.SampleRate))
+            .Select(s =>
+                audioDsp.ApplyResampling(audioDsp.ApplyEffects(s), resamplerProvider.GetBest(), options.SampleRate))
             .Where(s => s != null)
             .ToArray();
 
@@ -76,10 +69,10 @@ public class ChartRenderer : IChartRenderer
         void StartUserSample(BigRational? player, BigRational? column)
         {
             var sample = sampleMap.FirstOrDefault(sm => sm.Player == player && sm.Column == column);
-            ISound sound = null;
+            Sound sound = null;
             if (sample?.SoundIndex != null)
                 sound = sounds.FirstOrDefault(s => s[NumericData.Id] == sample.SoundIndex);
-            var v = (float) Math.Sqrt(0.5f);
+            var v = (float)Math.Sqrt(0.5f);
             var channel = sound?[NumericData.Channel];
             ChannelState st = null;
             if (channel != null && channel >= 0 && channel < 255)
@@ -87,14 +80,14 @@ public class ChartRenderer : IChartRenderer
 
             if (st == null)
             {
-                st = new ChannelState {Channel = channel};
+                st = new ChannelState { Channel = channel };
                 state.Add(st);
             }
 
             st.Sound = sound;
             st.Offset = 0;
-            st.LeftLength = sound?.Samples[0].Data.Count ?? 0;
-            st.RightLength = sound?.Samples[1].Data.Count ?? 0;
+            st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
+            st.RightLength = sound?.Samples[1].Data.Length ?? 0;
             st.LeftVolume = v * masterVolume;
             st.RightVolume = v * masterVolume;
             st.Playing = true;
@@ -104,22 +97,22 @@ public class ChartRenderer : IChartRenderer
         {
             var sound = sounds.FirstOrDefault(s => s[NumericData.Id] == soundIndex);
             var channel = sound?[NumericData.Channel];
-            var rightVolume = (float) Math.Sqrt((float) (panning ?? BigRational.OneHalf));
-            var leftVolume = (float) Math.Sqrt(1f - (float) (panning ?? BigRational.OneHalf));
+            var rightVolume = (float)Math.Sqrt((float)(panning ?? BigRational.OneHalf));
+            var leftVolume = (float)Math.Sqrt(1f - (float)(panning ?? BigRational.OneHalf));
             ChannelState st = null;
             if (channel != null && channel >= 0 && channel < 255)
                 st = state.FirstOrDefault(s => s.Channel == channel);
 
             if (st == null)
             {
-                st = new ChannelState {Channel = channel};
+                st = new ChannelState { Channel = channel };
                 state.Add(st);
             }
 
             st.Sound = sound;
             st.Offset = 0;
-            st.LeftLength = sound?.Samples[0].Data.Count ?? 0;
-            st.RightLength = sound?.Samples[1].Data.Count ?? 0;
+            st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
+            st.RightLength = sound?.Samples[1].Data.Length ?? 0;
             st.LeftVolume = leftVolume * masterVolume;
             st.RightVolume = rightVolume * masterVolume;
             st.Playing = true;
@@ -144,9 +137,9 @@ public class ChartRenderer : IChartRenderer
                 }
 
                 if (ch.Offset < ch.LeftLength)
-                    finalMixLeft += ch.Sound.Samples[0].Data[ch.Offset] * ch.LeftVolume;
+                    finalMixLeft += ch.Sound.Samples[0].Data.Span[ch.Offset] * ch.LeftVolume;
                 if (ch.Offset < ch.RightLength)
-                    finalMixRight += ch.Sound.Samples[1].Data[ch.Offset] * ch.RightVolume;
+                    finalMixRight += ch.Sound.Samples[1].Data.Span[ch.Offset] * ch.RightVolume;
                 ch.Offset++;
             }
 
@@ -159,12 +152,12 @@ public class ChartRenderer : IChartRenderer
 
         foreach (var tick in eventTicks)
         {
-            var nowSample = (int) (tick.Key.Value * options.SampleRate);
+            var nowSample = (int)(tick.Key.Value * options.SampleRate);
             var tickEvents = tick.ToArray();
 
             for (; lastSample < nowSample; lastSample++)
                 Mix();
-                
+
             foreach (var ev in tickEvents.Where(t => t[NumericData.LoadSound] != null))
             {
                 var column = ev[NumericData.Column] ?? BigRational.Zero;
@@ -197,11 +190,11 @@ public class ChartRenderer : IChartRenderer
         return new Sound
         {
             [NumericData.Rate] = options.SampleRate,
-            Samples = new List<ISample>
-            {
-                new Sample {Data = mixdownLeft},
-                new Sample {Data = mixdownRight}
-            }
+            Samples =
+            [
+                new Sample() { Data = mixdownLeft.ToArray() },
+                new Sample() { Data = mixdownRight.ToArray() }
+            ]
         };
     }
 }

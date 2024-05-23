@@ -10,7 +10,7 @@ public class MjpegHeuristic : IHeuristic
     public string Description => "MJPEG Movie";
     public string FileExtension => "mjpg";
 
-    public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
     {
         var data = reader.Read(0x4);
 

@@ -7,25 +7,18 @@ using RhythmCodex.Vtddd.Models;
 namespace RhythmCodex.Vtddd.Converters;
 
 [Service]
-public class VtdddChartDecoder : IVtdddChartDecoder
+public class VtdddChartDecoder(IVtdddStepDecoder stepDecoder) : IVtdddChartDecoder
 {
-    private readonly IVtdddStepDecoder _stepDecoder;
-
-    public VtdddChartDecoder(IVtdddStepDecoder stepDecoder)
+    public Chart Decode(IEnumerable<VtdddStep> steps)
     {
-        _stepDecoder = stepDecoder;
-    }
-        
-    public IChart Decode(IEnumerable<VtdddStep> steps)
-    {
-        var events = new List<IEvent>();
+        var events = new List<Event>();
             
         var result = new Chart()
         {
             Events = events
         };
 
-        events.AddRange(steps.SelectMany(_stepDecoder.Decode));
+        events.AddRange(steps.SelectMany(stepDecoder.Decode));
         return result;
     }
 }

@@ -8,21 +8,14 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Ddr.Converters;
 
 [Service]
-public class Ddr573DatabaseDecrypter : IDdr573DatabaseDecrypter
+public class Ddr573DatabaseDecrypter(IBemaniLzDecoder bemaniLzDecoder) : IDdr573DatabaseDecrypter
 {
-    private readonly IBemaniLzDecoder _bemaniLzDecoder;
-
-    public Ddr573DatabaseDecrypter(IBemaniLzDecoder bemaniLzDecoder)
-    {
-        _bemaniLzDecoder = bemaniLzDecoder;
-    }
-
     public int FindKey(ReadOnlySpan<byte> database)
     {
         var header = database.Slice(0, 16);
         for (var i = 0; i < 256; i++)
         {
-            var test = _bemaniLzDecoder.Decode(new MemoryStream(Decrypt(header, i)));
+            var test = bemaniLzDecoder.Decode(new MemoryStream(Decrypt(header, i)));
                 
             if (!test[0].IsLetter())
                 continue;

@@ -5,7 +5,7 @@ namespace RhythmCodex.Xa.Models;
 [Model]
 public class XaChunk
 {
-    public byte[] Data { get; set; }
-    public int Channels { get; set; }
-    public int Rate { get; set; }
+    public required byte[] Data { get; set; }
+    public required int Channels { get; set; }
+    public required int Rate { get; set; }
 }

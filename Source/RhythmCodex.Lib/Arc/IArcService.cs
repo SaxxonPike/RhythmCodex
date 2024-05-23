@@ -17,5 +17,5 @@ public interface IArcService
     /// <summary>
     /// Write an ARC archive.
     /// </summary>
-    void WriteArc(Stream stream, IEnumerable<ArcFile> files);
+    void WriteArc(Stream stream, IReadOnlyCollection<ArcFile> files);
 }

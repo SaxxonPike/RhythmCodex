@@ -10,17 +10,9 @@ using RhythmCodex.Xbox.Model;
 namespace RhythmCodex.Xbox.Streamers;
 
 [Service]
-public class XboxIsoStreamReader : IXboxIsoStreamReader
+public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXboxIsoStreamReader
 {
     private string MediaSectorId = "MICROSOFT*XBOX*MEDIA";
-        
-    private readonly IXboxIsoInfoDecoder _xboxIsoInfoDecoder;
-
-    public XboxIsoStreamReader(
-        IXboxIsoInfoDecoder xboxIsoInfoDecoder)
-    {
-        _xboxIsoInfoDecoder = xboxIsoInfoDecoder;
-    }
 
     public IEnumerable<XboxIsoFileEntry> Read(Stream stream, long length)
     {
@@ -31,7 +23,7 @@ public class XboxIsoStreamReader : IXboxIsoStreamReader
         var mediaSector = reader.ReadBytes(0x800);
         if (Encodings.CP437.GetString(mediaSector.AsSpan().Slice(0, 20).ToArray()) != MediaSectorId)
             throw new RhythmCodexException("This doesn't appear to be an Xbox ISO.");
-        var mediaInfo = _xboxIsoInfoDecoder.Decode(mediaSector);
+        var mediaInfo = xboxIsoInfoDecoder.Decode(mediaSector);
 
         // read root directory
         basePosition += 0x800L * mediaInfo.DirectorySectorNumber;

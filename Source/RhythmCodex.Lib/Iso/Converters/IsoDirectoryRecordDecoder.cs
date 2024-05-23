@@ -6,15 +6,8 @@ using RhythmCodex.Iso.Model;
 namespace RhythmCodex.Iso.Converters;
 
 [Service]
-public class IsoDirectoryRecordDecoder : IIsoDirectoryRecordDecoder
+public class IsoDirectoryRecordDecoder(IIsoDateTimeDecoder isoDateTimeDecoder) : IIsoDirectoryRecordDecoder
 {
-    private readonly IIsoDateTimeDecoder _isoDateTimeDecoder;
-
-    public IsoDirectoryRecordDecoder(IIsoDateTimeDecoder isoDateTimeDecoder)
-    {
-        _isoDateTimeDecoder = isoDateTimeDecoder;
-    }
-
     public IsoDirectoryRecord Decode(Stream stream, bool recordOnly)
     {
         var reader = new BinaryReader(stream);
@@ -65,7 +58,7 @@ public class IsoDirectoryRecordDecoder : IIsoDirectoryRecordDecoder
             ExtendedAttributeRecordLength = eaLength,
             LocationOfExtent = lba,
             DataLength = dataLength,
-            RecordingDateTime = _isoDateTimeDecoder.Decode(date),
+            RecordingDateTime = isoDateTimeDecoder.Decode(date),
             Flags = (IsoFileFlags) flags,
             UnitSize = unitSize,
             InterleaveGapSize = interleave,

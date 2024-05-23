@@ -8,15 +8,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Beatmania.Streamers;
 
 [Service]
-public class BeatmaniaPsxBmDataStreamReader : IBeatmaniaPsxBmDataStreamReader
+public class BeatmaniaPsxBmDataStreamReader(ILogger logger) : IBeatmaniaPsxBmDataStreamReader
 {
-    private readonly ILogger _logger;
-
-    public BeatmaniaPsxBmDataStreamReader(ILogger logger)
-    {
-        _logger = logger;
-    }
-        
     public IList<BeatmaniaPsxFolder> Read(Stream stream, int length)
     {
         return ReadInternal(stream, length).ToList();
@@ -24,7 +17,7 @@ public class BeatmaniaPsxBmDataStreamReader : IBeatmaniaPsxBmDataStreamReader
 
     private IEnumerable<BeatmaniaPsxFolder> ReadInternal(Stream stream, int length)
     {
-        _logger.Debug($"{nameof(BeatmaniaPsxBmDataStreamReader)}: reading stream, 0x{length:X8} bytes");
+        logger.Debug($"{nameof(BeatmaniaPsxBmDataStreamReader)}: reading stream, 0x{length:X8} bytes");
             
         var reader = new BinaryReader(stream);
         var offset = 0;
@@ -46,7 +39,7 @@ public class BeatmaniaPsxBmDataStreamReader : IBeatmaniaPsxBmDataStreamReader
                 continue;
             }
                 
-            _logger.Debug($"{nameof(BeatmaniaPsxBmDataStreamReader)}: found directory, offset=0x{offset:X8} fileCount={directoryEntryCount} directorySize=0x{(directorySize * 0x800):X4}");
+            logger.Debug($"{nameof(BeatmaniaPsxBmDataStreamReader)}: found directory, offset=0x{offset:X8} fileCount={directoryEntryCount} directorySize=0x{(directorySize * 0x800):X4}");
 
             var directoryEntries = Enumerable
                 .Range(0, directoryEntryCount)

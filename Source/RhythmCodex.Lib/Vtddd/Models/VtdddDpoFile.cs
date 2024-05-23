@@ -2,6 +2,6 @@
 
 public class VtdddDpoFile
 {
-    public byte[] Key { get; set; }
-    public byte[] Data { get; set; }
+    public required byte[] Key { get; set; }
+    public required byte[] Data { get; set; }
 }

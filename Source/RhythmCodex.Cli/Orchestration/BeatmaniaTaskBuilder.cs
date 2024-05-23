@@ -29,65 +29,27 @@ using RhythmCodex.Wav.Models;
 namespace RhythmCodex.Cli.Orchestration;
 
 [Service(singleInstance: false)]
-public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
+public class BeatmaniaTaskBuilder(
+    IFileSystem fileSystem,
+    ILogger logger,
+    IBeatmaniaPcAudioStreamReader beatmaniaPcAudioStreamReader,
+    IRiffPcm16SoundEncoder riffPcm16SoundEncoder,
+    IRiffStreamWriter riffStreamWriter,
+    IAudioDsp audioDsp,
+    IBeatmaniaPc1StreamReader beatmaniaPc1StreamReader,
+    IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder,
+    IBmsEncoder bmsEncoder,
+    IBmsStreamWriter bmsStreamWriter,
+    IDjmainDecoder djmainDecoder,
+    IDjmainChunkStreamReader djmainChunkStreamReader,
+    IUsedSamplesCounter usedSamplesCounter,
+    IBeatmaniaPcAudioDecoder beatmaniaPcAudioDecoder,
+    IEncryptedBeatmaniaPcAudioStreamReader encryptedBeatmaniaPcAudioStreamReader,
+    IResamplerProvider resamplerProvider,
+    IDjmainChartEventStreamWriter djmainChartEventStreamWriter,
+    IChartRenderer chartRenderer)
+    : TaskBuilderBase<BeatmaniaTaskBuilder>(fileSystem, logger)
 {
-    private readonly IBeatmaniaPcAudioStreamReader _beatmaniaPcAudioStreamReader;
-    private readonly IRiffPcm16SoundEncoder _riffPcm16SoundEncoder;
-    private readonly IRiffStreamWriter _riffStreamWriter;
-    private readonly IAudioDsp _audioDsp;
-    private readonly IBeatmaniaPc1StreamReader _beatmaniaPc1StreamReader;
-    private readonly IBeatmaniaPc1ChartDecoder _beatmaniaPc1ChartDecoder;
-    private readonly IBmsEncoder _bmsEncoder;
-    private readonly IBmsStreamWriter _bmsStreamWriter;
-    private readonly IDjmainDecoder _djmainDecoder;
-    private readonly IDjmainChunkStreamReader _djmainChunkStreamReader;
-    private readonly IUsedSamplesCounter _usedSamplesCounter;
-    private readonly IBeatmaniaPcAudioDecoder _beatmaniaPcAudioDecoder;
-    private readonly IEncryptedBeatmaniaPcAudioStreamReader _encryptedBeatmaniaPcAudioStreamReader;
-    private readonly IResamplerProvider _resamplerProvider;
-    private readonly IDjmainChartEventStreamWriter _djmainChartEventStreamWriter;
-    private readonly IChartRenderer _chartRenderer;
-
-    public BeatmaniaTaskBuilder(
-        IFileSystem fileSystem,
-        ILogger logger,
-        IBeatmaniaPcAudioStreamReader beatmaniaPcAudioStreamReader,
-        IRiffPcm16SoundEncoder riffPcm16SoundEncoder,
-        IRiffStreamWriter riffStreamWriter,
-        IAudioDsp audioDsp,
-        IBeatmaniaPc1StreamReader beatmaniaPc1StreamReader,
-        IBeatmaniaPc1ChartDecoder beatmaniaPc1ChartDecoder,
-        IBmsEncoder bmsEncoder,
-        IBmsStreamWriter bmsStreamWriter,
-        IDjmainDecoder djmainDecoder,
-        IDjmainChunkStreamReader djmainChunkStreamReader,
-        IUsedSamplesCounter usedSamplesCounter,
-        IBeatmaniaPcAudioDecoder beatmaniaPcAudioDecoder,
-        IEncryptedBeatmaniaPcAudioStreamReader encryptedBeatmaniaPcAudioStreamReader,
-        IResamplerProvider resamplerProvider,
-        IDjmainChartEventStreamWriter djmainChartEventStreamWriter,
-        IChartRenderer chartRenderer
-    )
-        : base(fileSystem, logger)
-    {
-        _beatmaniaPcAudioStreamReader = beatmaniaPcAudioStreamReader;
-        _riffPcm16SoundEncoder = riffPcm16SoundEncoder;
-        _riffStreamWriter = riffStreamWriter;
-        _audioDsp = audioDsp;
-        _beatmaniaPc1StreamReader = beatmaniaPc1StreamReader;
-        _beatmaniaPc1ChartDecoder = beatmaniaPc1ChartDecoder;
-        _bmsEncoder = bmsEncoder;
-        _bmsStreamWriter = bmsStreamWriter;
-        _djmainDecoder = djmainDecoder;
-        _djmainChunkStreamReader = djmainChunkStreamReader;
-        _usedSamplesCounter = usedSamplesCounter;
-        _beatmaniaPcAudioDecoder = beatmaniaPcAudioDecoder;
-        _encryptedBeatmaniaPcAudioStreamReader = encryptedBeatmaniaPcAudioStreamReader;
-        _resamplerProvider = resamplerProvider;
-        _djmainChartEventStreamWriter = djmainChartEventStreamWriter;
-        _chartRenderer = chartRenderer;
-    }
-
     private bool EnableExportingCharts => !Args.Options.ContainsKey("+nocharts");
     private bool EnableExportingSounds => !Args.Options.ContainsKey("+noaudio");
     private bool EnableExportingBms => !Args.Options.ContainsKey("+noconvert");
@@ -105,19 +67,19 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
                 return false;
             }
 
-            if (Args.Options.ContainsKey("rate"))
+            if (Args.Options.TryGetValue("rate", out var option))
             {
-                rate = BigRationalParser.ParseString(Args.Options["rate"].Last())
+                rate = BigRationalParser.ParseString(option.Last())
                        ?? throw new RhythmCodexException($"Invalid rate.");
             }
 
             ParallelProgress(task, files, file =>
             {
                 using var stream = OpenRead(task, file);
-                var charts = _beatmaniaPc1StreamReader.Read(stream, stream.Length).ToList();
+                var charts = beatmaniaPc1StreamReader.Read(stream, stream.Length).ToList();
                 var decoded = charts.Select(c =>
                 {
-                    var newChart = _beatmaniaPc1ChartDecoder.Decode(c.Data, rate);
+                    var newChart = beatmaniaPc1ChartDecoder.Decode(c.Data, rate);
                     newChart[NumericData.Id] = c.Index;
 
                     switch (c.Index)
@@ -158,11 +120,11 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
                 foreach (var chart in decoded)
                 {
                     chart.PopulateMetricOffsets();
-                    var encoded = _bmsEncoder.Encode(chart);
+                    var encoded = bmsEncoder.Encode(chart);
                     using var outStream =
                         OpenWriteMulti(task, file,
                             _ => $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme");
-                    _bmsStreamWriter.Write(outStream, encoded);
+                    bmsStreamWriter.Write(outStream, encoded);
                 }
             });
 
@@ -184,21 +146,21 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
             ParallelProgress(task, files, file =>
             {
                 using var stream = OpenRead(task, file);
-                var decrypted = _encryptedBeatmaniaPcAudioStreamReader.Decrypt(stream, stream.Length);
-                var sounds = _beatmaniaPcAudioStreamReader.Read(new MemoryStream(decrypted), decrypted.Length);
+                var decrypted = encryptedBeatmaniaPcAudioStreamReader.Decrypt(stream, stream.Length);
+                var sounds = beatmaniaPcAudioStreamReader.Read(new MemoryStream(decrypted), decrypted.Length);
                 var index = 1;
 
                 if (EnableExportingSounds)
                 {
                     foreach (var sound in sounds)
                     {
-                        var decoded = _beatmaniaPcAudioDecoder.Decode(sound);
-                        var outSound = _audioDsp.ApplyEffects(decoded);
+                        var decoded = beatmaniaPcAudioDecoder.Decode(sound);
+                        var outSound = audioDsp.ApplyEffects(decoded);
                         using (var outStream =
                                OpenWriteMulti(task, file, _ => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
                         {
-                            var encoded = _riffPcm16SoundEncoder.Encode(outSound);
-                            _riffStreamWriter.Write(outStream, encoded);
+                            var encoded = riffPcm16SoundEncoder.Encode(outSound);
+                            riffStreamWriter.Write(outStream, encoded);
                         }
 
                         index++;
@@ -230,11 +192,11 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
 
                 using var stream = OpenRead(task, file);
                 long offset = 0;
-                var chunks = _djmainChunkStreamReader.Read(stream);
+                var chunks = djmainChunkStreamReader.Read(stream);
                 foreach (var chunk in chunks)
                 {
                     var chunkPath = $"{Alphabet.EncodeNumeric(chunk.Id, 4)}";
-                    var decoded = _djmainDecoder.Decode(chunk, options);
+                    var decoded = djmainDecoder.Decode(chunk, options);
                     ExportKeysoundedChart(task, file, chunkPath, $"{Alphabet.EncodeNumeric(chunk.Id, 4)}",
                         decoded.Charts, decoded.Samples);
 
@@ -244,7 +206,7 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
                         {
                             using var rawChartStream = OpenWriteMulti(task, file,
                                 _ => Path.Combine(chunkPath, $"{Alphabet.EncodeNumeric(key, 2)}.cs5"));
-                            _djmainChartEventStreamWriter.Write(rawChartStream, value);
+                            djmainChartEventStreamWriter.Write(rawChartStream, value);
                             rawChartStream.Flush();
                         }
                     }
@@ -283,21 +245,21 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
 
                 using var stream = OpenRead(task, file);
                 long offset = 0;
-                var chunks = _djmainChunkStreamReader.Read(stream);
+                var chunks = djmainChunkStreamReader.Read(stream);
                 foreach (var chunk in chunks)
                 {
                     var chunkPath = $"{Alphabet.EncodeNumeric(chunk.Id, 4)}";
-                    var decoded = _djmainDecoder.Decode(chunk, options);
+                    var decoded = djmainDecoder.Decode(chunk, options);
 
                     foreach (var chart in decoded.Charts)
                     {
                         using var outStream = OpenWriteMulti(task, file,
                             _ => Path.Combine(chunkPath,
                                 $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.render.wav"));
-                        var rendered = _chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
-                        var normalized = _audioDsp.Normalize(rendered, 1.0f, true);
-                        var encoded = _riffPcm16SoundEncoder.Encode(normalized);
-                        _riffStreamWriter.Write(outStream, encoded);
+                        var rendered = chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
+                        var normalized = audioDsp.Normalize(rendered, 1.0f, true);
+                        var encoded = riffPcm16SoundEncoder.Encode(normalized);
+                        riffStreamWriter.Write(outStream, encoded);
                         outStream.Flush();
                     }
 
@@ -314,10 +276,10 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
     }
 
     protected void ExportKeysoundedChart(BuiltTask task, InputFile file, string path, string id,
-        ICollection<IChart> charts, ICollection<ISound> sounds)
+        ICollection<Chart> charts, ICollection<Sound?> sounds)
     {
         var usedSamples = charts
-            .SelectMany(chart => _usedSamplesCounter.GetUsedSamples(chart.Events))
+            .SelectMany(chart => usedSamplesCounter.GetUsedSamples(chart.Events))
             .Distinct()
             .ToArray();
 
@@ -325,13 +287,13 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
         {
             foreach (var sound in sounds.Where(s => usedSamples.Contains((int)s[NumericData.Id])))
             {
-                var outSound = _audioDsp.ApplyEffects(_audioDsp.ApplyResampling(sound, _resamplerProvider.GetBest(), 44100));
+                var outSound = audioDsp.ApplyEffects(audioDsp.ApplyResampling(sound, resamplerProvider.GetBest(), 44100));
                 using var outStream =
                     OpenWriteMulti(task, file,
                         _ => Path.Combine(path,
                             $"{Alphabet.EncodeAlphanumeric((int) sound[NumericData.Id], 4)}.wav"));
-                var encoded = _riffPcm16SoundEncoder.Encode(outSound);
-                _riffStreamWriter.Write(outStream, encoded);
+                var encoded = riffPcm16SoundEncoder.Encode(outSound);
+                riffStreamWriter.Write(outStream, encoded);
             }
         }
 
@@ -341,12 +303,12 @@ public class BeatmaniaTaskBuilder : TaskBuilderBase<BeatmaniaTaskBuilder>
             {
                 chart.PopulateMetricOffsets();
                 chart[StringData.Title] = id;
-                var encoded = _bmsEncoder.Encode(chart);
+                var encoded = bmsEncoder.Encode(chart);
                 using var outStream =
                     OpenWriteMulti(task, file,
                         _ => Path.Combine(path,
                             $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme"));
-                _bmsStreamWriter.Write(outStream, encoded);
+                bmsStreamWriter.Write(outStream, encoded);
             }
         }
     }

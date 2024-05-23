@@ -9,17 +9,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Gui.Forms;
 
 [Service]
-public class ControlFactory : IControlFactory
+public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : IControlFactory
 {
-    private readonly IFileDialog _fileDialog;
-    private readonly IFontFactory _fontFactory;
-
-    public ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory)
-    {
-        _fileDialog = fileDialog;
-        _fontFactory = fontFactory;
-    }
-
     public IEnumerable<FluentControl> CreateCheckbox(string id, string text)
     {
         return new List<FluentControl>
@@ -31,7 +22,7 @@ public class ControlFactory : IControlFactory
                 Id = id,
                 ColumnSpan = 2,
                 Text = text,
-                Font = _fontFactory.GetNormal()
+                Font = fontFactory.GetNormal()
             }
         };
     }
@@ -63,7 +54,7 @@ public class ControlFactory : IControlFactory
                         Dock = DockStyle.Fill,
                         Id = id0,
                         Text = text0,
-                        Font = _fontFactory.GetNormal(),
+                        Font = fontFactory.GetNormal(),
                         AutoSize = true
                     },
                     new FluentCheckbox
@@ -71,7 +62,7 @@ public class ControlFactory : IControlFactory
                         Dock = DockStyle.Fill,
                         Id = id1,
                         Text = text1,
-                        Font = _fontFactory.GetNormal(),
+                        Font = fontFactory.GetNormal(),
                         AutoSize = true
                     },
                 }
@@ -110,7 +101,7 @@ public class ControlFactory : IControlFactory
                 ColumnSpan = 2,
                 AfterBuild = x => GetContextDelegate(x, press),
                 MinimumSize = new Size(0, 45),
-                Font = _fontFactory.GetNormal()
+                Font = fontFactory.GetNormal()
             }
         };
     }
@@ -133,7 +124,7 @@ public class ControlFactory : IControlFactory
                 Dock = DockStyle.Fill,
                 AutoSize = false,
                 Align = ContentAlignment.MiddleRight,
-                Font = _fontFactory.GetNormalDark()
+                Font = fontFactory.GetNormalDark()
             },
             new FluentTextBox
             {
@@ -148,11 +139,11 @@ public class ControlFactory : IControlFactory
                 Text = multi ? "...+" : "...",
                 AfterBuild = x => x.Blueprint.OnClick = () =>
                 {
-                    var fileName = _fileDialog.OpenFile(x.Control.Text, null, multi);
+                    var fileName = fileDialog.OpenFile(x.Control.Text, null, multi);
                     if (fileName != null)
                         x.GetControl<TextBox>(id).Text = fileName;
                 },
-                Font = _fontFactory.GetNormal()
+                Font = fontFactory.GetNormal()
             }
         };
     }
@@ -167,13 +158,13 @@ public class ControlFactory : IControlFactory
                 Dock = DockStyle.Fill,
                 AutoSize = false,
                 Align = ContentAlignment.MiddleRight,
-                Font = _fontFactory.GetNormalDark()
+                Font = fontFactory.GetNormalDark()
             },
             new FluentTextBox
             {
                 Id = id,
                 Dock = DockStyle.Fill,
-                Font = _fontFactory.GetNormal()
+                Font = fontFactory.GetNormal()
             },
             new FluentButton
             {
@@ -182,11 +173,11 @@ public class ControlFactory : IControlFactory
                 Text = "...",
                 AfterBuild = x => x.Blueprint.OnClick = () =>
                 {
-                    var folderPath = _fileDialog.OpenFolder(x.Control.Text);
+                    var folderPath = fileDialog.OpenFolder(x.Control.Text);
                     if (folderPath != null)
                         x.GetControl<TextBox>(id).Text = folderPath;
                 },
-                Font = _fontFactory.GetNormal()
+                Font = fontFactory.GetNormal()
             }
         };
     }
@@ -201,7 +192,7 @@ public class ControlFactory : IControlFactory
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 Align = ContentAlignment.MiddleRight,
-                Font = _fontFactory.GetLarge(),
+                Font = fontFactory.GetLarge(),
                 ColumnSpan = 3,
                 Padding = new Padding(0, 8, 10, 3),
                 ForeColor = SystemColors.ActiveCaptionText,
@@ -220,13 +211,13 @@ public class ControlFactory : IControlFactory
                 Dock = DockStyle.Fill,
                 AutoSize = false,
                 Align = ContentAlignment.MiddleRight,
-                Font = _fontFactory.GetNormalDark()
+                Font = fontFactory.GetNormalDark()
             },
             new FluentTextBox
             {
                 Id = id,
                 Dock = DockStyle.Fill,
-                Font = _fontFactory.GetNormal()
+                Font = fontFactory.GetNormal()
             },
             new FluentEmpty()
         };
@@ -243,7 +234,7 @@ public class ControlFactory : IControlFactory
                 Dock = DockStyle.Fill,
                 AutoSize = false,
                 Align = ContentAlignment.MiddleRight,
-                Font = _fontFactory.GetNormalDark()
+                Font = fontFactory.GetNormalDark()
             },
             new FluentProgressBar
             {
@@ -256,7 +247,7 @@ public class ControlFactory : IControlFactory
                 Dock = DockStyle.Fill,
                 AutoSize = false,
                 Align = ContentAlignment.MiddleLeft,
-                Font = _fontFactory.GetNormal(),
+                Font = fontFactory.GetNormal(),
                 Id = id + "Percent"
             },
             new FluentEmpty
