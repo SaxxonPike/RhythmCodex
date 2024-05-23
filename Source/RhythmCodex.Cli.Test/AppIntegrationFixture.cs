@@ -13,6 +13,7 @@ namespace RhythmCodex.Cli;
 public class AppIntegrationFixture : BaseTestFixture
 {
     protected IContainer AppContainer { get; private set; }
+
     protected FakeFileSystem FileSystem => AppContainer.Resolve<FakeFileSystem>();
 
     [SetUp]
@@ -68,7 +69,8 @@ public class AppIntegrationFixture : BaseTestFixture
     [TearDown]
     public void __TeardownApp()
     {
-        AppContainer.Disposer.Dispose();
+        AppContainer.Dispose();
+        // AppContainer.Disposer.Dispose();
         AppContainer = null;
     }
 }

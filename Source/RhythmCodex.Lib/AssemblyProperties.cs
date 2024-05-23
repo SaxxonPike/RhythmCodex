@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("RhythmCodex.Test")]
+[assembly: InternalsVisibleTo("RhythmCodex.Lib.Test")]
 [assembly: InternalsVisibleTo("RhythmCodex.Plugin.BouncyCastle")]
 [assembly: InternalsVisibleTo("RhythmCodex.Plugin.CSCore")]
 [assembly: InternalsVisibleTo("RhythmCodex.Plugin.ImageSharp")]

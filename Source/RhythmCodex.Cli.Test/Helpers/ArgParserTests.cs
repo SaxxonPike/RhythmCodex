@@ -58,7 +58,7 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
     public void Parse_ParsesMultiKeyMultiValue()
     {
         // Arrange.
-        var argKinds = ManyOf(CharacterSets.AsciiLetters, 2);
+        var argKinds = ManyOf(CharacterSets.AsciiLetters, 2, true);
         var argValues = CreateMany<string>(2);
         var data = new[] {$"-{argKinds[0]}", argValues[0], $"-{argKinds[1]}", argValues[1]};
 

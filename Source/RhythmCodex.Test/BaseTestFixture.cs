@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.IO.Compression;
-using System.Linq;
 using AutoFixture;
 using AutoFixture.Dsl;
-using NUnit.Framework;
 using RhythmCodex.Data;
 
 namespace RhythmCodex;
@@ -14,6 +9,7 @@ namespace RhythmCodex;
 /// <summary>
 ///     Contains features available to all tests.
 /// </summary>
+[Parallelizable(ParallelScope.All)]
 public abstract class BaseTestFixture
 {
     private readonly Lazy<Fixture> _fixture = new(() =>
@@ -125,23 +121,28 @@ public abstract class BaseTestFixture
     {
         return OneOf(items.ToArray());
     }
-    
+
     /// <summary>
     ///     Chooses one item at random from the specified set.
     /// </summary>
-    protected T[] ManyOf<T>(IReadOnlyList<T> items, int count)
+    protected T[] ManyOf<T>(IReadOnlyList<T> items, int count, bool unique = false)
     {
         var result = new T[count];
         for (var i = 0; i < count; i++)
-            result[i] = items[TestContext.CurrentContext.Random.Next(items.Count)];
+        {
+            var item = items[TestContext.CurrentContext.Random.Next(items.Count)];
+            if (!unique || !result.Contains(item))
+                result[i] = item;
+        }
+
         return result;
     }
-    
+
     /// <summary>
     ///     Chooses one item at random from the specified set.
     /// </summary>
-    protected T[] ManyOf<T>(IEnumerable<T> items, int count)
+    protected T[] ManyOf<T>(IEnumerable<T> items, int count, bool unique = false)
     {
-        return ManyOf(items.ToArray(), count);
+        return ManyOf(items.ToArray(), count, unique);
     }
 }

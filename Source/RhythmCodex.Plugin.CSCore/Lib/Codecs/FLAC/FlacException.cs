@@ -50,7 +50,7 @@ public class FlacException : Exception
         if (info == null)
             throw new ArgumentNullException(nameof(info));
 
-        Layer = (FlacLayer) info.GetValue("Layer", typeof (FlacLayer));
+        Layer = (FlacLayer?)info.GetValue("Layer", typeof (FlacLayer)) ?? default;
     }
 
     /// <summary>
@@ -62,6 +62,7 @@ public class FlacException : Exception
     ///   <IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Read="*AllFiles*" PathDiscovery="*AllFiles*" />
     ///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="SerializationFormatter" />
     /// </PermissionSet>
+    [Obsolete("Obsolete .NET API")]
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);

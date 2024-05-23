@@ -18,7 +18,7 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RhythmCodex.Cli\RhythmCodex.Cli.csproj"/>
-        <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Test.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Lib.Test\RhythmCodex.Lib.Test.csproj" />
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
     </ItemGroup>
     <ItemGroup>

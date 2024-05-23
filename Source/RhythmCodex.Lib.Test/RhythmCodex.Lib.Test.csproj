@@ -25,6 +25,7 @@
         <ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj"/>
         <ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj"/>
         <ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Test\RhythmCodex.Test.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="ImaAdpcm\Converters"/>

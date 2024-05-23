@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Autofac;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public class BaseIntegrationFixture : BaseTestFixture, IResolver
 {
     private readonly Lazy<IContainer> _container;
@@ -36,6 +35,7 @@ public class BaseIntegrationFixture : BaseTestFixture, IResolver
     ///     Gets an object from the container of the specified type.
     /// </summary>
     protected TObject Resolve<TObject>()
+        where TObject : notnull
     {
         return Container.Resolve<TObject>();
     }        
@@ -46,7 +46,8 @@ public class BaseIntegrationFixture : BaseTestFixture, IResolver
 /// <summary>
 ///     Base test fixture for all integration tests that use a simple container.
 /// </summary>
-public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver
+public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver 
+    where TSubject : notnull
 {
     private readonly Lazy<IContainer> _container;
     private readonly Lazy<TSubject> _subject;
@@ -94,6 +95,7 @@ public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver
     ///     Gets an object from the container of the specified type.
     /// </summary>
     protected TObject Resolve<TObject>()
+        where TObject : notnull
     {
         return Container.Resolve<TObject>();
     }

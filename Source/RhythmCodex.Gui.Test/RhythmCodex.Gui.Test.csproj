@@ -21,6 +21,7 @@
     <ItemGroup>
         <ProjectReference Include="..\RhythmCodex.Gui\RhythmCodex.Gui.csproj"/>
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Test\RhythmCodex.Test.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="*.DotSettings"/>

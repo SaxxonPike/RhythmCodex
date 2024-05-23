@@ -1,6 +1,4 @@
-﻿using NUnit.Framework;
-
-namespace RhythmCodex.Infrastructure;
+﻿namespace RhythmCodex.Infrastructure;
 
 public class TestConsole : IConsole
 {
