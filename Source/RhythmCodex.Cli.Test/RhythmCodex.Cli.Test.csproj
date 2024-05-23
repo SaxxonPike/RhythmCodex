@@ -4,6 +4,7 @@
         <AssemblyName>RhythmCodex.Cli.Test</AssemblyName>
         <RootNamespace>RhythmCodex.Cli</RootNamespace>
         <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Autofac" Version="8.0.0"/>
