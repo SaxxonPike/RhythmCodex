@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
@@ -5,6 +6,7 @@ using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex;
 
+[PublicAPI]
 public static class TestHelper
 {
     public static void CreateDirectory(this IResolver resolver, string path)

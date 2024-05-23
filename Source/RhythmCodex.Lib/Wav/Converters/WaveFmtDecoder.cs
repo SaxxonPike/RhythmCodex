@@ -21,7 +21,7 @@ public class WaveFmtDecoder : IWaveFmtDecoder
             ByteRate = Bitter.ToInt32(data, 8),
             BlockAlign = Bitter.ToInt16(data, 12),
             BitsPerSample = Bitter.ToInt16(data, 14),
-            ExtraData = data.Length > 16 ? data.AsSpan(16).ToArray() : Array.Empty<byte>()
+            ExtraData = data.Length > 16 ? data.AsSpan(16).ToArray() : []
         };
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using RhythmCodex.Extensions;
 using RhythmCodex.ImaAdpcm.Converters;
@@ -85,7 +84,7 @@ public class XwbDecoder : IXwbDecoder
                     format,
                     new MicrosoftAdpcmFormat
                     {
-                        Coefficients = Array.Empty<int>(),
+                        Coefficients = [],
                         SamplesPerBlock = format.AdpcmSamplesPerBlock
                     });
             }

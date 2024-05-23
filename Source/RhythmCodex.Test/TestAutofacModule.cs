@@ -3,7 +3,7 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex;
 
-public class TestAutofacModule : Autofac.Module
+public class TestAutofacModule : Module
 {
     /// <inheritdoc />
     protected override void Load(ContainerBuilder builder)
@@ -15,8 +15,10 @@ public class TestAutofacModule : Autofac.Module
         {
             var registration = builder.RegisterType(mapping.Implementation);
             foreach (var service in mapping.Services)
-                registration.As(service)
+                registration
+                    .As(service)
                     .AsSelf();
+
             if (mapping.SingleInstance)
                 registration.SingleInstance();
             else

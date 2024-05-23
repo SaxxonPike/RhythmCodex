@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using JetBrains.Annotations;
+using Moq;
 using Moqzilla;
 
 namespace RhythmCodex;
@@ -6,6 +7,7 @@ namespace RhythmCodex;
 /// <summary>
 ///     Base test fixture for all unit tests that use mocking.
 /// </summary>
+[PublicAPI]
 public abstract class BaseUnitTestFixture : BaseTestFixture
 {
     private readonly Lazy<Mocker> _mocker = new(() => new Mocker());

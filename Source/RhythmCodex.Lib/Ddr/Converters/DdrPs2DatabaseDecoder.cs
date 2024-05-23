@@ -36,7 +36,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
             Unknown014 = Bitter.ToInt16(record, 0x14),
             SonglistOrder = Bitter.ToInt16(record, 0x16),
             UnlockNumber = Bitter.ToInt16(record, 0x18),
-            Difficulties = Array.Empty<int>(),
+            Difficulties = [],
             Flags = Bitter.ToInt32(record, 0x1C),
             // Radar0 = Bitter.ToInt16Array(record, 0x20, 6),
             // Radar1 = Bitter.ToInt16Array(record, 0x2C, 6),

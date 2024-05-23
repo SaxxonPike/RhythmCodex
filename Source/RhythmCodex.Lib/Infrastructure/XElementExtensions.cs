@@ -26,6 +26,6 @@ public static class XElementExtensions
             .Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries)
             .Select(int.Parse)
             .ToArray();
-        return values ?? Array.Empty<int>();
+        return values ?? [];
     }
 }

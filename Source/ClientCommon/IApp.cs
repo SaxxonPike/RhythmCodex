@@ -1,10 +1,11 @@
 ﻿using System.IO;
+using JetBrains.Annotations;
 
-namespace ClientCommon
+namespace ClientCommon;
+
+[PublicAPI]
+public interface IApp
 {
-    public interface IApp
-    {
-        void Run(TextWriter log, Args args);
-        void Usage(TextWriter log);
-    }
+    void Run(TextWriter log, Args args);
+    void Usage(TextWriter log);
 }

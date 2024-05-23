@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace ClientCommon;
 
+[PublicAPI]
 public interface IFileSystem
 {
     /// <summary>
@@ -49,7 +51,7 @@ public interface IFileSystem
     /// <summary>
     ///     Get all file names from the specified directory path.
     /// </summary>
-    IEnumerable<string> GetFileNames(string path, string pattern, bool recursive = false);
+    IEnumerable<string> GetFileNames(string? path, string pattern, bool recursive = false);
 
     /// <summary>
     ///     Get all subdirectory names from the specified directory path.
@@ -59,7 +61,7 @@ public interface IFileSystem
     /// <summary>
     ///     Get the directory portion of a path.
     /// </summary>
-    string GetDirectory(string path);
+    string? GetDirectory(string path);
 
     /// <summary>
     ///     Replace all invalid path characters with a safe alternative character.

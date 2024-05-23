@@ -9,7 +9,8 @@ namespace ClientCommon;
 
 public static class Bootstrap
 {
-    public static void StartApp<TApp>(params string[] args) where TApp : class, IApp
+    public static void StartApp<TApp>(params string[] args) 
+        where TApp : class, IApp
     {
         var console = System.Console.Out;
 
@@ -22,10 +23,10 @@ public static class Bootstrap
         container.AddSingleton<IConsole, Console>();
 
         var serviceProvider = container.BuildServiceProvider();
-        var argsParser = (IArgParser) serviceProvider.GetService(typeof(IArgParser));
+        var argsParser = serviceProvider.GetRequiredService<IArgParser>();
         var newArgs = argsParser.Parse(args);
 
-        var app = (IApp) serviceProvider.GetService(typeof(IApp));
+        var app = serviceProvider.GetRequiredService<IApp>();
 
         if (newArgs.InputFiles.Any())
         {

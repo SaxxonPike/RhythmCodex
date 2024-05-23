@@ -53,7 +53,7 @@ public class RiffPcm16SoundEncoder : IRiffPcm16SoundEncoder
             ByteRate = (int) byteRate,
             BitsPerSample = 16,
             BlockAlign = channels * 2,
-            ExtraData = Array.Empty<byte>()
+            ExtraData = []
         };
 
         container.Chunks.Add(_formatEncoder.Encode(format));

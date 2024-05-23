@@ -1,4 +1,3 @@
-using System;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 
@@ -12,7 +11,7 @@ public class Bitmap : Metadata, IBitmap
         if (width == 0)
         {
             Width = 0;
-            Data = Array.Empty<int>();
+            Data = [];
         }
         else
         {

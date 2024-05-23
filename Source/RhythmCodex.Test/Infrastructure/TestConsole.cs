@@ -1,5 +1,8 @@
-﻿namespace RhythmCodex.Infrastructure;
+﻿using JetBrains.Annotations;
 
+namespace RhythmCodex.Infrastructure;
+
+[UsedImplicitly]
 public class TestConsole : IConsole
 {
     public void Write(string text)

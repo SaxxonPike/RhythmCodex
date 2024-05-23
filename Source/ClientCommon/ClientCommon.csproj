@@ -2,6 +2,7 @@
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>

@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using AutoFixture;
 using AutoFixture.Dsl;
+using JetBrains.Annotations;
 using RhythmCodex.Data;
 
 namespace RhythmCodex;
@@ -10,6 +11,7 @@ namespace RhythmCodex;
 ///     Contains features available to all tests.
 /// </summary>
 [Parallelizable(ParallelScope.All)]
+[PublicAPI]
 public abstract class BaseTestFixture
 {
     private readonly Lazy<Fixture> _fixture = new(() =>
@@ -39,7 +41,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Retrieves an embedded resource by name.
     /// </summary>
-    protected byte[] GetEmbeddedResource(string name)
+    protected static byte[] GetEmbeddedResource(string name)
     {
         using var stream =
             typeof(TestDataBeacon).Assembly.GetManifestResourceStream($"RhythmCodex.Data.{name}");
@@ -54,7 +56,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Retrieves an embedded resource by name as an archive and extracts the first file from it.
     /// </summary>
-    protected IDictionary<string, byte[]> GetArchiveResource(string name)
+    protected static IDictionary<string, byte[]> GetArchiveResource(string name)
     {
         var output = new Dictionary<string, byte[]>();
 
@@ -109,7 +111,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Chooses one item at random from the specified set.
     /// </summary>
-    protected T OneOf<T>(IReadOnlyList<T> items)
+    protected static T OneOf<T>(IReadOnlyList<T> items)
     {
         return items[TestContext.CurrentContext.Random.Next(items.Count)];
     }
@@ -117,7 +119,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Chooses one item at random from the specified set.
     /// </summary>
-    protected T OneOf<T>(IEnumerable<T> items)
+    protected static T OneOf<T>(IEnumerable<T> items)
     {
         return OneOf(items.ToArray());
     }
@@ -125,7 +127,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Chooses one item at random from the specified set.
     /// </summary>
-    protected T[] ManyOf<T>(IReadOnlyList<T> items, int count, bool unique = false)
+    protected static T[] ManyOf<T>(IReadOnlyList<T> items, int count, bool unique = false)
     {
         var result = new T[count];
         for (var i = 0; i < count; i++)
@@ -141,7 +143,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Chooses one item at random from the specified set.
     /// </summary>
-    protected T[] ManyOf<T>(IEnumerable<T> items, int count, bool unique = false)
+    protected static T[] ManyOf<T>(IEnumerable<T> items, int count, bool unique = false)
     {
         return ManyOf(items.ToArray(), count, unique);
     }

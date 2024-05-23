@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Infrastructure;
@@ -12,14 +11,16 @@ public sealed class Args
         var opts = options.ToDictionary(kv => kv.Key, kv => kv.Value);
         Options = opts;
 
-        OutputPath = opts.ContainsKey("o")
-            ? opts["o"].Last()
+        OutputPath = opts.TryGetValue("o", out var opt)
+            ? opt.Last()
             : null;
+
         opts.Remove("o");
             
         InputFiles = opts.ContainsKey(string.Empty)
             ? opts[string.Empty]
-            : Array.Empty<string>();
+            : [];
+
         opts.Remove(string.Empty);
 
         RecursiveInputFiles = opts.ContainsKey("+r");
@@ -28,28 +29,21 @@ public sealed class Args
         FilesAreZipArchives = opts.ContainsKey("+zip");
         opts.Remove("+zip");
 
-        if (opts.ContainsKey("log"))
+        if (opts.TryGetValue("log", out opt))
         {
-            switch (opts["log"].FirstOrDefault()?.ToLowerInvariant())
+            LogLevel = opt.FirstOrDefault()?.ToLowerInvariant() switch
             {
-                case "debug":
-                    LogLevel = LoggerVerbosityLevel.Debug;
-                    break;
-                case "info":
-                    LogLevel = LoggerVerbosityLevel.Info;
-                    break;
-                case "warning":
-                    LogLevel = LoggerVerbosityLevel.Warning;
-                    break;
-                case "error":
-                    LogLevel = LoggerVerbosityLevel.Error;
-                    break;
-            }            
+                "debug" => LoggerVerbosityLevel.Debug,
+                "info" => LoggerVerbosityLevel.Info,
+                "warning" => LoggerVerbosityLevel.Warning,
+                "error" => LoggerVerbosityLevel.Error,
+                _ => LogLevel
+            };
         }
     }
         
     public IReadOnlyDictionary<string, string[]> Options { get; }
-    public string OutputPath { get; }
+    public string? OutputPath { get; }
     public IReadOnlyList<string> InputFiles { get; }
     public bool RecursiveInputFiles { get; }
     public bool FilesAreZipArchives { get; }

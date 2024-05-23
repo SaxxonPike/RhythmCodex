@@ -18,7 +18,7 @@ public class ChunkStreamWriter : IChunkStreamWriter
             return;
         }
 
-        var chunkData = ssqChunk.Data ?? Array.Empty<byte>();
+        var chunkData = ssqChunk.Data ?? [];
         var writeLength = ((chunkData.Length + 3) >> 2) << 2;
         var writeData = new byte[writeLength];
         Array.Copy(chunkData, writeData, chunkData.Length);

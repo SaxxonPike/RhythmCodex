@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -39,7 +38,7 @@ public class IsoDirectoryRecordDecoder : IIsoDirectoryRecordDecoder
             
         if (recordOnly)
         {
-            extra = Array.Empty<byte>();
+            extra = [];
         }
         else
         {

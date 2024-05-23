@@ -78,7 +78,7 @@ public class SmEncoder : ISmEncoder
             }
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 
     public IList<Command> Encode(ChartSet chartSet)

@@ -131,7 +131,7 @@ public class TwinkleBeatmaniaDecoder : ITwinkleBeatmaniaDecoder
                 {
                     Channel = def.Value?.Channel ?? 255,
                     Data = mem.ToArray(),
-                    ExtraInfo = Array.Empty<byte>(),
+                    ExtraInfo = [],
                     Panning = def.Value?.Panning ?? 0x40,
                     Volume = def.Value?.Volume ?? 0x01
                 };

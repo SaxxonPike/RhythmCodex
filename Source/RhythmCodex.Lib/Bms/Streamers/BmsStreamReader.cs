@@ -59,13 +59,13 @@ public partial class BmsStreamReader : IBmsStreamReader
             if (delimiterOffset != null)
             {
                 cmd.Name = trimmedLine.Substring(1, delimiterOffset.Index - 1).Trim().ToUpperInvariant();
-                cmd.Value = trimmedLine.Substring(delimiterOffset.Index + 1).Trim();
+                cmd.Value = trimmedLine[(delimiterOffset.Index + 1)..].Trim();
                 if (delimiterOffset.Delimiter == ':')
                     cmd.UseColon = true;
             }
             else
             {
-                cmd.Name = trimmedLine.Substring(1).ToUpperInvariant();
+                cmd.Name = trimmedLine[1..].ToUpperInvariant();
             }
                 
             yield return cmd;

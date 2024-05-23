@@ -8,15 +8,9 @@ using RhythmCodex.IoC;
 namespace ClientCommon;
 
 [Service]
-public class FileSystem : IFileSystem
+public class FileSystem(ILogger logger) 
+    : IFileSystem
 {
-    private readonly ILogger _logger;
-
-    public FileSystem(ILogger logger)
-    {
-        _logger = logger;
-    }
-        
     private const char SafeChar = '_';
 
     private readonly char[] _invalidChars = Path
@@ -34,14 +28,14 @@ public class FileSystem : IFileSystem
     /// <inheritdoc />
     public Stream OpenRead(string path)
     {
-        _logger.Debug($"Open for read: {path}");
+        logger.Debug($"Open for read: {path}");
         return File.OpenRead(path);
     }
 
     /// <inheritdoc />
     public Stream OpenWrite(string path)
     {
-        _logger.Debug($"Open for write: {path}");
+        logger.Debug($"Open for write: {path}");
         BuildPathIfNotExists(path);
         return File.Open(path, FileMode.Create, FileAccess.ReadWrite);
     }
@@ -67,14 +61,14 @@ public class FileSystem : IFileSystem
     /// <inheritdoc />
     public byte[] ReadAllBytes(string path)
     {
-        _logger.Debug($"Reading all bytes: {path}");
+        logger.Debug($"Reading all bytes: {path}");
         return File.ReadAllBytes(path);
     }
 
     /// <inheritdoc />
     public void WriteAllBytes(string path, ReadOnlySpan<byte> data)
     {
-        _logger.Debug($"Writing all bytes: {path}");
+        logger.Debug($"Writing all bytes: {path}");
         using var stream = File.Open(path, FileMode.Create);
         stream.Write(data);
         stream.Flush();
@@ -85,18 +79,18 @@ public class FileSystem : IFileSystem
     {
         if (!Directory.Exists(path))
         {
-            _logger.Debug($"Creating directory: {path}");
+            logger.Debug($"Creating directory: {path}");
             Directory.CreateDirectory(path);                
         }
     }
 
     /// <inheritdoc />
-    public IEnumerable<string> GetFileNames(string path, string pattern, bool recursive)
+    public IEnumerable<string> GetFileNames(string? path, string pattern, bool recursive)
     {
         if (string.IsNullOrWhiteSpace(path))
             path = ".\\";
 
-        _logger.Debug(string.IsNullOrWhiteSpace(pattern)
+        logger.Debug(string.IsNullOrWhiteSpace(pattern)
             ? $"Getting all files from path: {path} (no pattern)"
             : $"Getting all files from path: {path} (with pattern {pattern})");
 
@@ -114,12 +108,16 @@ public class FileSystem : IFileSystem
     /// <inheritdoc />
     public IEnumerable<string> GetDirectoryNames(string path)
     {
-        _logger.Debug($"Getting all directories from path: {path}");
-        return Directory.GetDirectories(path).Select(Path.GetFileName);
+        logger.Debug($"Getting all directories from path: {path}");
+        return Directory
+            .GetDirectories(path)
+            .Select(Path.GetFileName)
+            .Where(f => f != null)
+            .Select(f => f!);
     }
 
     /// <inheritdoc />
-    public string GetDirectory(string path)
+    public string? GetDirectory(string path)
     {
         return Path.GetDirectoryName(path);
     }

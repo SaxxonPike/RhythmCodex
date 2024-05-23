@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using ClientCommon;
 using FluentAssertions;
@@ -157,7 +156,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             
         var files = CreateMany<string>();
         foreach (var file in files)
-            File.WriteAllBytes(Path.Combine(basePath, file), Array.Empty<byte>());
+            File.WriteAllBytes(Path.Combine(basePath, file), []);
             
         try
         {
@@ -184,7 +183,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             
         var files = CreateMany<string>();
         foreach (var file in files)
-            File.WriteAllBytes(Path.Combine(basePath, file), Array.Empty<byte>());
+            File.WriteAllBytes(Path.Combine(basePath, file), []);
             
         try
         {

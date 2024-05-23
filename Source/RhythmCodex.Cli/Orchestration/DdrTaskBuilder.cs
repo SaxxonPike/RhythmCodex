@@ -123,7 +123,7 @@ public class DdrTaskBuilder : TaskBuilderBase<DdrTaskBuilder>
                 // This is a temporary hack to make building sets easier for right now
                 // TODO: make this optional via command line switch
                 if (title.EndsWith("_all", StringComparison.InvariantCultureIgnoreCase))
-                    title = title.Substring(0, title.Length - 4);
+                    title = title[..^4];
 
                 var encoded = _smEncoder.Encode(new ChartSet
                 {

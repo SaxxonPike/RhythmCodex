@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
 using Autofac;
+using JetBrains.Annotations;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex;
 
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
+[PublicAPI]
 public class BaseIntegrationFixture : BaseTestFixture, IResolver
 {
     private readonly Lazy<IContainer> _container;
@@ -46,6 +48,7 @@ public class BaseIntegrationFixture : BaseTestFixture, IResolver
 /// <summary>
 ///     Base test fixture for all integration tests that use a simple container.
 /// </summary>
+[PublicAPI]
 public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver 
     where TSubject : notnull
 {
