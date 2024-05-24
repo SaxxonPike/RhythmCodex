@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace RhythmCodex.Sounds.Providers
+namespace RhythmCodex.Sounds.Providers;
+
+public interface IFilterProvider
 {
-    public interface IFilterProvider
-    {
-        IEnumerable<IFilter> Get(FilterType type);
-    }
+    IEnumerable<IFilter> Get(FilterType type);
 }

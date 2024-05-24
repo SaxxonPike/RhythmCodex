@@ -4,102 +4,94 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using ClientCommon;
-using RhythmCodex.Cli.Helpers;
 
-namespace RhythmCodex.Cli
+namespace RhythmCodex.Cli;
+
+/// <summary>
+///     A file system that doesn't actually write to disk.
+/// </summary>
+[ExcludeFromCodeCoverage]
+public class FakeFileSystem(IFileSystem fileSystem) : IFileSystem
 {
-    /// <summary>
-    ///     A file system that doesn't actually write to disk.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class FakeFileSystem : IFileSystem
+    private readonly Dictionary<string, MemoryStream> _files = new();
+
+    /// <inheritdoc />
+    public string GetFileName(string path)
     {
-        private readonly IDictionary<string, MemoryStream> _files = new Dictionary<string, MemoryStream>();
-        private readonly IFileSystem _fileSystem;
+        return fileSystem.GetFileName(path);
+    }
 
-        public FakeFileSystem(IFileSystem fileSystem)
-        {
-            _fileSystem = fileSystem;
-        }
+    /// <inheritdoc />
+    public Stream OpenRead(string path)
+    {
+        if (!_files.TryGetValue(path, out var file))
+            throw new IOException($"File not found: {path}");
 
-        /// <inheritdoc />
-        public string GetFileName(string path)
-        {
-            return _fileSystem.GetFileName(path);
-        }
+        var result = new MemoryStream(file.ToArray());
+        return result;
+    }
 
-        /// <inheritdoc />
-        public Stream OpenRead(string path)
-        {
-            if (!_files.ContainsKey(path))
-                throw new IOException($"File not found: {path}");
+    /// <inheritdoc />
+    public Stream OpenWrite(string path)
+    {
+        if (_files.TryGetValue(path, out var file))
+            file.Dispose();
 
-            var result = new MemoryStream(_files[path].ToArray());
-            return result;
-        }
+        var result = new MemoryStream();
+        _files[path] = result;
+        return result;
+    }
 
-        /// <inheritdoc />
-        public Stream OpenWrite(string path)
-        {
-            if (_files.ContainsKey(path))
-                _files[path].Dispose();
+    /// <inheritdoc />
+    public string CombinePath(params string[] paths)
+    {
+        return fileSystem.CombinePath(paths);
+    }
 
-            var result = new MemoryStream();
-            _files[path] = result;
-            return result;
-        }
+    /// <inheritdoc />
+    public string CurrentPath => new(Path.DirectorySeparatorChar, 1);
 
-        /// <inheritdoc />
-        public string CombinePath(params string[] paths)
-        {
-            return _fileSystem.CombinePath(paths);
-        }
+    /// <inheritdoc />
+    public Memory<byte> ReadAllBytes(string path)
+    {
+        if (!_files.TryGetValue(path, out var file))
+            throw new IOException($"File not found: {path}");
 
-        /// <inheritdoc />
-        public string CurrentPath => new(Path.DirectorySeparatorChar, 1);
+        return file.ToArray();
+    }
 
-        /// <inheritdoc />
-        public byte[] ReadAllBytes(string path)
-        {
-            if (!_files.ContainsKey(path))
-                throw new IOException($"File not found: {path}");
+    /// <inheritdoc />
+    public void WriteAllBytes(string path, ReadOnlySpan<byte> data)
+    {
+        _files[path] = new MemoryStream(data.ToArray());
+    }
 
-            return _files[path].ToArray();
-        }
+    /// <inheritdoc />
+    public void CreateDirectory(string path)
+    {
+    }
 
-        /// <inheritdoc />
-        public void WriteAllBytes(string path, ReadOnlySpan<byte> data)
-        {
-            _files[path] = new MemoryStream(data.ToArray());
-        }
+    /// <inheritdoc />
+    public IEnumerable<string> GetFileNames(string path, string pattern, bool recursive = false)
+    {
+        return _files.Where(f => f.Key.StartsWith(path, StringComparison.OrdinalIgnoreCase)).Select(f => f.Key);
+    }
 
-        /// <inheritdoc />
-        public void CreateDirectory(string path)
-        {
-        }
+    /// <inheritdoc />
+    public IEnumerable<string> GetDirectoryNames(string path)
+    {
+        throw new NotImplementedException();
+    }
 
-        /// <inheritdoc />
-        public IEnumerable<string> GetFileNames(string path, string pattern, bool recursive = false)
-        {
-            return _files.Where(f => f.Key.StartsWith(path, StringComparison.OrdinalIgnoreCase)).Select(f => f.Key);
-        }
+    /// <inheritdoc />
+    public string GetDirectory(string path)
+    {
+        return fileSystem.GetDirectory(path);
+    }
 
-        /// <inheritdoc />
-        public IEnumerable<string> GetDirectoryNames(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public string GetDirectory(string path)
-        {
-            return _fileSystem.GetDirectory(path);
-        }
-
-        /// <inheritdoc />
-        public string GetSafeFileName(string fileName)
-        {
-            return _fileSystem.GetSafeFileName(fileName);
-        }
+    /// <inheritdoc />
+    public string GetSafeFileName(string fileName)
+    {
+        return fileSystem.GetSafeFileName(fileName);
     }
 }

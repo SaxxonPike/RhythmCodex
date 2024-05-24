@@ -5,36 +5,29 @@ using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;
 using RhythmCodex.Iso.Streamers;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+[Service]
+public class IsoDirectoryTableDecoder(
+    IIsoSectorStreamFactory isoSectorStreamFactory,
+    IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
+    : IIsoDirectoryTableDecoder
 {
-    [Service]
-    public class IsoDirectoryTableDecoder : IIsoDirectoryTableDecoder
+    public List<IsoDirectoryRecord> Decode(IEnumerable<ICdSector> sectors)
     {
-        private readonly IIsoSectorStreamFactory _isoSectorStreamFactory;
-        private readonly IIsoDirectoryRecordDecoder _isoDirectoryRecordDecoder;
+        return DecodeInternal(sectors).ToList();
+    }
 
-        public IsoDirectoryTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory, IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
+    private IEnumerable<IsoDirectoryRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
+    {
+        using var stream = isoSectorStreamFactory.Open(sectors);
+        while (true)
         {
-            _isoSectorStreamFactory = isoSectorStreamFactory;
-            _isoDirectoryRecordDecoder = isoDirectoryRecordDecoder;
-        }
-        
-        public IList<IsoDirectoryRecord> Decode(IEnumerable<ICdSector> sectors)
-        {
-            return DecodeInternal(sectors).ToList();
-        }
-
-        private IEnumerable<IsoDirectoryRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
-        {
-            using var stream = _isoSectorStreamFactory.Open(sectors);
-            while (true)
-            {
-                var record = _isoDirectoryRecordDecoder.Decode(stream, false);
-                if (record != null)
-                    yield return record;
-                else
-                    yield break;
-            }
+            var record = isoDirectoryRecordDecoder.Decode(stream, false);
+            if (record != null)
+                yield return record;
+            else
+                yield break;
         }
     }
 }

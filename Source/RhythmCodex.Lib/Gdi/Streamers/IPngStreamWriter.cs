@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Graphics.Models;
 
-namespace RhythmCodex.Gdi.Streamers
+namespace RhythmCodex.Gdi.Streamers;
+
+public interface IPngStreamWriter
 {
-    public interface IPngStreamWriter
-    {
-        void Write(Stream stream, IBitmap bitmap);
-    }
+    void Write(Stream stream, Bitmap bitmap);
 }

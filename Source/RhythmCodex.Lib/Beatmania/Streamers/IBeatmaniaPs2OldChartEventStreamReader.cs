@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Beatmania.Models;
 
-namespace RhythmCodex.Beatmania.Streamers
+namespace RhythmCodex.Beatmania.Streamers;
+
+public interface IBeatmaniaPs2OldChartEventStreamReader
 {
-    public interface IBeatmaniaPs2OldChartEventStreamReader
-    {
-        IList<BeatmaniaPs2Event> Read(Stream stream, int length);
-    }
+    List<BeatmaniaPs2Event> Read(Stream stream, long length);
 }

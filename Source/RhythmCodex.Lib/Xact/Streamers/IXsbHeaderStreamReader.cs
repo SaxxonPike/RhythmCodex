@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using RhythmCodex.Xact.Model;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+public interface IXsbHeaderStreamReader
 {
-    public interface IXsbHeaderStreamReader
-    {
-        XsbHeader Read(Stream stream);
-    }
+    XsbHeader Read(Stream stream);
 }

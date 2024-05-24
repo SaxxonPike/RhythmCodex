@@ -1,9 +1,8 @@
 using System;
 
-namespace RhythmCodex.Compression
+namespace RhythmCodex.Compression;
+
+public interface IBemaniLzEncoder
 {
-    public interface IBemaniLzEncoder
-    {
-        byte[] Encode(ReadOnlySpan<byte> source);
-    }
+    Memory<byte> Encode(ReadOnlySpan<byte> source);
 }

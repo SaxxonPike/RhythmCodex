@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+[PublicAPI]
+public interface IStepPanelSplitter
 {
-    public interface IStepPanelSplitter
-    {
-        IList<int> Split(int panels);
-    }
+    List<int> Split(int panels);
 }

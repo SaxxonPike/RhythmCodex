@@ -2,10 +2,9 @@
 using System.IO;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Streamers
+namespace RhythmCodex.Stepmania.Streamers;
+
+public interface ISmStreamReader
 {
-    public interface ISmStreamReader
-    {
-        IEnumerable<Command> Read(Stream source);
-    }
+    IEnumerable<Command> Read(Stream source);
 }

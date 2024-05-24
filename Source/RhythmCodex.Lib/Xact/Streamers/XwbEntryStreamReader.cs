@@ -2,37 +2,26 @@ using System.IO;
 using RhythmCodex.IoC;
 using RhythmCodex.Xact.Model;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+[Service]
+public class XwbEntryStreamReader(
+    IXwbMiniWaveFormatStreamReader xwbMiniWaveFormatStreamReader,
+    IXwbRegionStreamReader xwbRegionStreamReader,
+    IXwbSampleRegionStreamReader xwbSampleRegionStreamReader)
+    : IXwbEntryStreamReader
 {
-    [Service]
-    public class XwbEntryStreamReader : IXwbEntryStreamReader
+    public XwbEntry Read(Stream source)
     {
-        private readonly IXwbMiniWaveFormatStreamReader _xwbMiniWaveFormatStreamReader;
-        private readonly IXwbRegionStreamReader _xwbRegionStreamReader;
-        private readonly IXwbSampleRegionStreamReader _xwbSampleRegionStreamReader;
-
-        public XwbEntryStreamReader(
-            IXwbMiniWaveFormatStreamReader xwbMiniWaveFormatStreamReader,
-            IXwbRegionStreamReader xwbRegionStreamReader,
-            IXwbSampleRegionStreamReader xwbSampleRegionStreamReader)
+        var reader = new BinaryReader(source);
+        var result = new XwbEntry
         {
-            _xwbMiniWaveFormatStreamReader = xwbMiniWaveFormatStreamReader;
-            _xwbRegionStreamReader = xwbRegionStreamReader;
-            _xwbSampleRegionStreamReader = xwbSampleRegionStreamReader;
-        }
-        
-        public XwbEntry Read(Stream source)
-        {
-            var reader = new BinaryReader(source);
-            var result = new XwbEntry
-            {
-                Value = reader.ReadInt32(),
-                Format = _xwbMiniWaveFormatStreamReader.Read(source),
-                PlayRegion = _xwbRegionStreamReader.Read(source),
-                LoopRegion = _xwbSampleRegionStreamReader.Read(source)
-            };
+            Value = reader.ReadInt32(),
+            Format = xwbMiniWaveFormatStreamReader.Read(source),
+            PlayRegion = xwbRegionStreamReader.Read(source),
+            LoopRegion = xwbSampleRegionStreamReader.Read(source)
+        };
 
-            return result;
-        }
+        return result;
     }
 }

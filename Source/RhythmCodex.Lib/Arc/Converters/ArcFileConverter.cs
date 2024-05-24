@@ -1,50 +1,50 @@
-using System.Linq;
+using System;
 using RhythmCodex.Arc.Model;
 using RhythmCodex.Compression;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Arc.Converters
+namespace RhythmCodex.Arc.Converters;
+
+/// <inheritdoc />
+[Service]
+public class ArcFileConverter(IArcLzDecoder arcLzDecoder, IArcLzEncoder arcLzEncoder) : IArcFileConverter
 {
-    [Service]
-    public class ArcFileConverter : IArcFileConverter
+    public ArcFile Compress(ArcFile file)
     {
-        private readonly IArcLzDecoder _arcLzDecoder;
-        private readonly IArcLzEncoder _arcLzEncoder;
+        var data = file.CompressedSize != file.DecompressedSize
+            ? file.Data
+            : arcLzEncoder.Encode(file.Data.Span);
 
-        public ArcFileConverter(IArcLzDecoder arcLzDecoder, IArcLzEncoder arcLzEncoder)
+        return new ArcFile
         {
-            _arcLzDecoder = arcLzDecoder;
-            _arcLzEncoder = arcLzEncoder;
+            Name = file.Name,
+            DecompressedSize = file.DecompressedSize,
+            CompressedSize = data.Length,
+            Data = data
+        };
+    }
+
+    public ArcFile Decompress(ArcFile file)
+    {
+        Memory<byte> data;
+
+        if (file.CompressedSize == file.DecompressedSize)
+        {
+            data = file.Data;
+        }
+        else
+        {
+            using var stream = new ReadOnlyMemoryStream(file.Data);
+            data = arcLzDecoder.Decode(stream);
         }
 
-        public ArcFile Compress(ArcFile file)
+        return new ArcFile
         {
-            var data = file.CompressedSize != file.DecompressedSize
-                ? file.Data.ToArray()
-                : _arcLzEncoder.Encode(file.Data);
-            
-            return new ArcFile
-            {
-                Name = file.Name,
-                DecompressedSize = file.DecompressedSize,
-                CompressedSize = data.Length,
-                Data = data
-            };
-        }
-
-        public ArcFile Decompress(ArcFile file)
-        {
-            var data = file.CompressedSize == file.DecompressedSize
-                ? file.Data.ToArray()
-                : _arcLzDecoder.Decode(file.Data);
-            
-            return new ArcFile
-            {
-                Name = file.Name,
-                DecompressedSize = data.Length,
-                CompressedSize = data.Length,
-                Data = data
-            };
-        }
+            Name = file.Name,
+            DecompressedSize = data.Length,
+            CompressedSize = data.Length,
+            Data = data
+        };
     }
 }

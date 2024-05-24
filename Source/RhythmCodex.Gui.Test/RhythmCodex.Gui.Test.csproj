@@ -1,24 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net7.0-windows</TargetFramework>
-		<EnableWindowsTargeting>true</EnableWindowsTargeting>
-		<ApplicationIcon />
-		<StartupObject />
-		<VersionPrefix>0.0.1</VersionPrefix>
-		<UseWindowsForms>true</UseWindowsForms>
-		<LangVersion>latest</LangVersion>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Autofac" Version="7.0.0" />
-		<PackageReference Include="AutoFixture" Version="4.18.0" />
-		<PackageReference Include="FluentAssertions" Version="6.10.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-		<PackageReference Include="Moqzilla" Version="1.1.0" />
-		<PackageReference Include="NUnit" Version="3.13.3" />
-		<PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\RhythmCodex.Gui\RhythmCodex.Gui.csproj" />
-		<ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
-	</ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <ApplicationIcon/>
+        <StartupObject/>
+        <VersionPrefix>0.0.1</VersionPrefix>
+        <UseWindowsForms>true</UseWindowsForms>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="8.0.0"/>
+        <PackageReference Include="AutoFixture" Version="4.18.1"/>
+        <PackageReference Include="FluentAssertions" Version="6.12.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
+        <PackageReference Include="Moqzilla" Version="1.1.0"/>
+        <PackageReference Include="NUnit" Version="4.1.0"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\RhythmCodex.Gui\RhythmCodex.Gui.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Test\RhythmCodex.Test.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="*.DotSettings"/>
+    </ItemGroup>
 </Project>

@@ -1,13 +1,12 @@
-﻿namespace RhythmCodex.Infrastructure
+﻿namespace RhythmCodex.Infrastructure;
+
+/// <summary>
+///     A culture-invariant number formatter.
+/// </summary>
+public interface INumberFormatter
 {
     /// <summary>
-    ///     A culture-invariant number formatter.
+    ///     Format a value to the specified number of places, fixed point.
     /// </summary>
-    public interface INumberFormatter
-    {
-        /// <summary>
-        ///     Format a value to the specified number of places, fixed point.
-        /// </summary>
-        string Format(BigRational value, int places);
-    }
+    string Format(BigRational value, int places);
 }

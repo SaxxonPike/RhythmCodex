@@ -1,10 +1,9 @@
-﻿namespace RhythmCodex.Sounds.Providers
+﻿namespace RhythmCodex.Sounds.Providers;
+
+public interface IFilter
 {
-    public interface IFilter
-    {
-        string Name { get; }
-        int Priority { get; }
-        FilterType Type { get; }
-        IFilterContext Create(double sampleRate, double cutoff);
-    }
+    string Name { get; }
+    int Priority { get; }
+    FilterType Type { get; }
+    IFilterContext Create(double sampleRate, double cutoff);
 }

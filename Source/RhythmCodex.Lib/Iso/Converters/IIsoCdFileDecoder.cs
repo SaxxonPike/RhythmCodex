@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using RhythmCodex.Cd.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoCdFileDecoder
 {
-    public interface IIsoCdFileDecoder
-    {
-        IList<ICdFile> Decode(IEnumerable<ICdSector> cdSectors);
-    }
+    List<ICdFile> Decode(IEnumerable<ICdSector> cdSectors);
 }

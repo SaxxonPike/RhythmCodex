@@ -1,12 +1,11 @@
 using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Graphics.Models
+namespace RhythmCodex.Graphics.Models;
+
+public interface IPaletteBitmap : IMetadata
 {
-    public interface IPaletteBitmap : IMetadata
-    {
-        int Width { get; }
-        int Height { get; }
-        int[] Data { get; }
-        int[] Palette { get; }
-    }
+    int Width { get; }
+    int Height { get; }
+    int[] Data { get; }
+    int[] Palette { get; }
 }

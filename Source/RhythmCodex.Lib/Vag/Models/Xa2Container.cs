@@ -1,10 +1,9 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Vag.Models
+namespace RhythmCodex.Vag.Models;
+
+[Model]
+public class Xa2Container
 {
-    [Model]
-    public class Xa2Container
-    {
-        public VagChunk VagChunk { get; set; }
-    }
+    public VagChunk? VagChunk { get; set; }
 }

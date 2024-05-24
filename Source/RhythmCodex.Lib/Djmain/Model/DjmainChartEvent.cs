@@ -1,14 +1,13 @@
 ﻿using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Djmain.Model
-{
-    [Model]
-    public class DjmainChartEvent : IDjmainChartEvent
-    {
-        public ushort Offset { get; set; }
-        public byte Param0 { get; set; }
-        public byte Param1 { get; set; }
+namespace RhythmCodex.Djmain.Model;
 
-        public override string ToString() => Json.Serialize(this);
-    }
+[Model]
+public class DjmainChartEvent
+{
+    public ushort Offset { get; set; }
+    public byte Param0 { get; set; }
+    public byte Param1 { get; set; }
+
+    public override string ToString() => Json.Serialize(this);
 }

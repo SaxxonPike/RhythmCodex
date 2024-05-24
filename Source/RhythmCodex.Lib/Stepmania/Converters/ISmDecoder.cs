@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+public interface ISmDecoder
 {
-    public interface ISmDecoder
-    {
-        ChartSet Decode(IEnumerable<Command> commands);
-    }
+    ChartSet Decode(IEnumerable<Command> commands);
 }

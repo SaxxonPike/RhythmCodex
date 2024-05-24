@@ -1,25 +1,24 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Bms.Model
+namespace RhythmCodex.Bms.Model;
+
+[Model]
+public class BmsCommand
 {
-    [Model]
-    public class BmsCommand
+    public string? Name { get; set; }
+    public string? Value { get; set; }
+    public bool UseColon { get; set; }
+    public string? Comment { get; set; }
+
+    public override string ToString()
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public bool UseColon { get; set; }
-        public string Comment { get; set; }
-
-        public override string ToString()
+        if (Name != null)
         {
-            if (Name != null)
-            {
-                return Value != null 
-                    ? $"#{Name}{(UseColon ? ":" : " ")}{Value} {Comment}" 
-                    : $"#{Name} {Comment}";
-            }
-
-            return $"{Comment}";
+            return Value != null 
+                ? $"#{Name}{(UseColon ? ":" : " ")}{Value} {Comment}" 
+                : $"#{Name} {Comment}";
         }
+
+        return $"{Comment}";
     }
 }

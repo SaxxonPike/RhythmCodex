@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
-namespace RhythmCodex.Djmain.Converters
+namespace RhythmCodex.Djmain.Converters;
+
+public interface IDjmainAudioDecoder
 {
-    public interface IDjmainAudioDecoder
-    {
-        IList<float> DecodeDpcm(IEnumerable<byte> data);
-        IList<float> DecodePcm8(IEnumerable<byte> data);
-        IList<float> DecodePcm16(IEnumerable<byte> data);
-    }
+    float[] DecodeDpcm(ReadOnlySpan<byte> data);
+    float[] DecodePcm8(ReadOnlySpan<byte> data);
+    float[] DecodePcm16(ReadOnlySpan<byte> data);
 }

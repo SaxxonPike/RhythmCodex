@@ -2,60 +2,59 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+public static class Reducer
 {
-    public static class Reducer
+    public static T[] ReduceRhythm<T>(this IEnumerable<T> source, Predicate<T> canReduce)
     {
-        public static T[] ReduceRhythm<T>(this IEnumerable<T> source, Predicate<T> canReduce)
+        var result = source.ToArray().AsSpan();
+        var count = result.Length;
+        var fail = false;
+
+        while (!fail && count > 1)
         {
-            var result = source.ToArray().AsSpan();
-            var count = result.Length;
-            var fail = false;
-
-            while (!fail && count > 1)
+            for (var p = 2; p <= count; p++)
             {
-                for (var p = 2; p <= count; p++)
+                fail = false;
+
+                if (count % p == 0)
                 {
-                    fail = false;
-
-                    if (count % p == 0)
+                    for (var j = 0; j < count; j++)
                     {
-                        for (var j = 0; j < count; j++)
-                        {
-                            if (j % p == 0)
-                                continue;
+                        if (j % p == 0)
+                            continue;
 
-                            if (canReduce(result[j]))
-                                continue;
+                        if (canReduce(result[j]))
+                            continue;
 
-                            fail = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
                         fail = true;
+                        break;
                     }
-
-                    if (fail)
-                        continue;
-
-                    var newCount = count / p;
-                    var index = 0;
-
-                    for (var j = count - p; j >= 0; j -= p)
-                    {
-                        result[index] = result[j];
-                        index++;
-                    }
-
-                    count = newCount;
-                    result = result.Slice(0, newCount);
-                    break;
                 }
-            }
+                else
+                {
+                    fail = true;
+                }
 
-            return result.ToArray();
+                if (fail)
+                    continue;
+
+                var newCount = count / p;
+                var index = 0;
+
+                for (var j = count - p; j >= 0; j -= p)
+                {
+                    result[index] = result[j];
+                    index++;
+                }
+
+                count = newCount;
+                result = result.Slice(0, newCount);
+                break;
+            }
         }
+
+        return result.ToArray();
     }
 }

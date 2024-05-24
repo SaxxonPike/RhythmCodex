@@ -1,10 +1,9 @@
 using RhythmCodex.Dds.Models;
 using RhythmCodex.Graphics.Models;
 
-namespace RhythmCodex.Dds.Converters
+namespace RhythmCodex.Dds.Converters;
+
+public interface IDdsBitmapDecoder
 {
-    public interface IDdsBitmapDecoder
-    {
-        Bitmap Decode(DdsImage image);
-    }
+    Bitmap Decode(DdsImage image);
 }

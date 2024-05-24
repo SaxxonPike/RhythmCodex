@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Djmain.Model;
 
-namespace RhythmCodex.Djmain.Converters
+namespace RhythmCodex.Djmain.Converters;
+
+public interface IDjmainUsedSampleFilter
 {
-    public interface IDjmainUsedSampleFilter
-    {
-        IDictionary<int, IDjmainSampleInfo> Filter(IDictionary<int, IDjmainSampleInfo> samples,
-            IEnumerable<IDjmainChartEvent> events);
-    }
+    Dictionary<int, DjmainSampleInfo> Filter(IDictionary<int, DjmainSampleInfo> samples,
+        IEnumerable<DjmainChartEvent> events);
 }

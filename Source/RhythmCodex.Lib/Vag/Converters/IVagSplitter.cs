@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Models;
 
-namespace RhythmCodex.Vag.Converters
+namespace RhythmCodex.Vag.Converters;
+
+public interface IVagSplitter
 {
-    public interface IVagSplitter
-    {
-        IList<ISample> Split(VagChunk chunk);
-    }
+    List<Sample> Split(VagChunk? chunk);
 }

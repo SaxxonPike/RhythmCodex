@@ -1,8 +1,9 @@
-namespace RhythmCodex.Ddr.Models
+using System;
+
+namespace RhythmCodex.Ddr.Models;
+
+public class DdrPs2FileDataTableChunk
 {
-    public class DdrPs2FileDataTableChunk
-    {
-        public bool HasHeaders { get; set; }
-        public byte[] Data { get; set; }
-    }
+    public bool HasHeaders { get; set; }
+    public Memory<byte> Data { get; set; }
 }

@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using RhythmCodex.Xact.Model;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+public interface IXsbSoundDspStreamReader
 {
-    public interface IXsbSoundDspStreamReader
-    {
-        XsbSoundDsp Read(Stream stream);
-    }
+    XsbSoundDsp Read(Stream stream);
 }

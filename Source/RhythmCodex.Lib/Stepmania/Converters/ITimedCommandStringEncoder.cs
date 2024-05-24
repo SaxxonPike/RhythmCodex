@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+public interface ITimedCommandStringEncoder
 {
-    public interface ITimedCommandStringEncoder
-    {
-        string Encode(IEnumerable<TimedEvent> events);
-    }
+    string Encode(IEnumerable<TimedEvent> events);
 }

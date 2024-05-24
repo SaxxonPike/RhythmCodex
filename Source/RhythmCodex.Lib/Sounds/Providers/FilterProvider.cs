@@ -2,19 +2,11 @@
 using System.Linq;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Sounds.Providers
-{
-    [Service]
-    public class FilterProvider : IFilterProvider
-    {
-        private readonly IList<IFilter> _filters;
+namespace RhythmCodex.Sounds.Providers;
 
-        public FilterProvider(IList<IFilter> filters)
-        {
-            _filters = filters;
-        }
-        
-        public IEnumerable<IFilter> Get(FilterType type) => 
-            _filters.OrderByDescending(x => x.Priority).Where(x => x.Type == type).ToList();
-    }
+[Service]
+public class FilterProvider(IList<IFilter> filters) : IFilterProvider
+{
+    public IEnumerable<IFilter> Get(FilterType type) => 
+        filters.OrderByDescending(x => x.Priority).Where(x => x.Type == type).ToList();
 }

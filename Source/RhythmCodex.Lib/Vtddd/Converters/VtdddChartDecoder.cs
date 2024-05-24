@@ -4,29 +4,21 @@ using RhythmCodex.Charting.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Vtddd.Models;
 
-namespace RhythmCodex.Vtddd.Converters
+namespace RhythmCodex.Vtddd.Converters;
+
+[Service]
+public class VtdddChartDecoder(IVtdddStepDecoder stepDecoder) : IVtdddChartDecoder
 {
-    [Service]
-    public class VtdddChartDecoder : IVtdddChartDecoder
+    public Chart Decode(IEnumerable<VtdddStep> steps)
     {
-        private readonly IVtdddStepDecoder _stepDecoder;
-
-        public VtdddChartDecoder(IVtdddStepDecoder stepDecoder)
-        {
-            _stepDecoder = stepDecoder;
-        }
-        
-        public IChart Decode(IEnumerable<VtdddStep> steps)
-        {
-            var events = new List<IEvent>();
+        var events = new List<Event>();
             
-            var result = new Chart()
-            {
-                Events = events
-            };
+        var result = new Chart()
+        {
+            Events = events
+        };
 
-            events.AddRange(steps.SelectMany(_stepDecoder.Decode));
-            return result;
-        }
+        events.AddRange(steps.SelectMany(stepDecoder.Decode));
+        return result;
     }
 }

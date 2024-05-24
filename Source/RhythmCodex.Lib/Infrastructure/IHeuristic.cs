@@ -1,13 +1,10 @@
-using System;
-using System.IO;
 using RhythmCodex.Heuristics;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+public interface IHeuristic
 {
-    public interface IHeuristic
-    {
-        string Description { get; }
-        string FileExtension { get; }
-        HeuristicResult Match(IHeuristicReader reader);
-    }
+    string Description { get; }
+    string FileExtension { get; }
+    HeuristicResult? Match(IHeuristicReader reader);
 }

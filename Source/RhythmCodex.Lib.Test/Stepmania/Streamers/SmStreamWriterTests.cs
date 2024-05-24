@@ -1,6 +1,5 @@
-﻿namespace RhythmCodex.Stepmania.Streamers
+﻿namespace RhythmCodex.Stepmania.Streamers;
+
+public class SmStreamWriterTests : BaseUnitTestFixture<SmStreamWriter, ISmStreamWriter>
 {
-    public class SmStreamWriterTests : BaseUnitTestFixture<SmStreamWriter, ISmStreamWriter>
-    {
-    }
 }

@@ -1,9 +1,8 @@
 using System.IO;
 
-namespace RhythmCodex.Compression
+namespace RhythmCodex.Compression;
+
+public interface IZlibStreamFactory
 {
-    public interface IZlibStreamFactory
-    {
-        Stream Create(Stream source);
-    }
+    Stream Create(Stream source);
 }

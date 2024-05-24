@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Wav.Converters
+namespace RhythmCodex.Wav.Converters;
+
+public interface IWavDecoder
 {
-    public interface IWavDecoder
-    {
-        ISound Decode(Stream stream);
-    }
+    Sound? Decode(Stream stream);
 }

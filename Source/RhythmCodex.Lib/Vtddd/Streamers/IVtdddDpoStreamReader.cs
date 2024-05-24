@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Vtddd.Models;
 
-namespace RhythmCodex.Vtddd.Streamers
+namespace RhythmCodex.Vtddd.Streamers;
+
+public interface IVtdddDpoStreamReader
 {
-    public interface IVtdddDpoStreamReader
-    {
-        VtdddDpoFile Read(Stream stream, int length);
-    }
+    VtdddDpoFile Read(Stream stream, int length);
 }

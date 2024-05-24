@@ -1,8 +1,9 @@
-namespace RhythmCodex.Cd.Model
+using System;
+
+namespace RhythmCodex.Cd.Model;
+
+public interface ICdSector
 {
-    public interface ICdSector
-    {
-        int Number { get; }
-        byte[] Data { get; }
-    }
+    int Number { get; }
+    Memory<byte> Data { get; }
 }

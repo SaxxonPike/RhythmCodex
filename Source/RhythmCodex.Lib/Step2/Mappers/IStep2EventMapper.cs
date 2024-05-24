@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 
-namespace RhythmCodex.Step2.Mappers
+namespace RhythmCodex.Step2.Mappers;
+
+public interface IStep2EventMapper
 {
-    public interface IStep2EventMapper
-    {
-        IList<int> Map(int panels);
-        int Map(IEnumerable<int> panels);
-    }
+    List<int> Map(int panels);
+    int Map(IEnumerable<int> panels);
 }

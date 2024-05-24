@@ -1,10 +1,9 @@
 using System;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoPrimaryVolumeDescriptorDecoder
 {
-    public interface IIsoPrimaryVolumeDescriptorDecoder
-    {
-        IsoVolume Decode(ReadOnlySpan<byte> data);
-    }
+    IsoVolume Decode(ReadOnlySpan<byte> data);
 }

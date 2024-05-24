@@ -1,12 +1,11 @@
 using RhythmCodex.Graphics.Models;
 using RhythmCodex.Tga.Models;
 
-namespace RhythmCodex.Tga.Converters
+namespace RhythmCodex.Tga.Converters;
+
+public interface ITgaDecoder
 {
-    public interface ITgaDecoder
-    {
-        bool IsIndexedPalette(TgaImage tgaImage);
-        IBitmap Decode(TgaImage tgaImage);
-        IPaletteBitmap DecodeIndexed(TgaImage tgaImage);
-    }
+    bool IsIndexedPalette(TgaImage tgaImage);
+    Bitmap Decode(TgaImage tgaImage);
+    PaletteBitmap DecodeIndexed(TgaImage tgaImage);
 }

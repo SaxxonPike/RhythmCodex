@@ -1,36 +1,31 @@
 using System.Linq;
 using RhythmCodex.IoC;
 
-namespace ClientCommon
+namespace ClientCommon;
+
+[Service]
+
+public class ArgResolver(IFileSystem fileSystem) 
+    : IArgResolver
 {
-    [Service]
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class ArgResolver : IArgResolver
+    /// <summary>
+    /// Get all input files from command line args.
+    /// </summary>
+    public string[] GetInputFiles(Args args)
     {
-        private readonly IFileSystem _fileSystem;
+        return args.InputFiles
+            .SelectMany(a =>
+                fileSystem.GetFileNames(a, args.RecursiveInputFiles))
+            .ToArray();
+    }
 
-        public ArgResolver(IFileSystem fileSystem)
-        {
-            _fileSystem = fileSystem;
-        }
-        
-        /// <summary>
-        /// Get all input files from command line args.
-        /// </summary>
-        public string[] GetInputFiles(Args args)
-        {
-            return args.InputFiles.SelectMany(a => _fileSystem.GetFileNames(a, args.RecursiveInputFiles)).ToArray();
-        }
-
-        /// <summary>
-        /// Get output directory from command line args.
-        /// </summary>
-        public string GetOutputDirectory(Args args)
-        {
-            return !string.IsNullOrEmpty(args.OutputPath)
-                ? args.OutputPath
-                : _fileSystem.CurrentPath;
-        }
-        
+    /// <summary>
+    /// Get output directory from command line args.
+    /// </summary>
+    public string GetOutputDirectory(Args args)
+    {
+        return !string.IsNullOrEmpty(args.OutputPath)
+            ? args.OutputPath
+            : fileSystem.CurrentPath;
     }
 }

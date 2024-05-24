@@ -1,13 +1,12 @@
-﻿namespace RhythmCodex.Cli
+﻿namespace RhythmCodex.Cli;
+
+/// <summary>
+/// The main application container.
+/// </summary>
+public interface IApp
 {
     /// <summary>
-    /// The main application container.
+    /// Begins executing this instance of the application container.
     /// </summary>
-    public interface IApp
-    {
-        /// <summary>
-        /// Begins executing this instance of the application container.
-        /// </summary>
-        void Run(params string[] args);
-    }
+    void Run(params string[] args);
 }

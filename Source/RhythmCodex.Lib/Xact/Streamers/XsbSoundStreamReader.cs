@@ -1,62 +1,49 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using RhythmCodex.IoC;
 using RhythmCodex.Xact.Model;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+[Service]
+public class XsbSoundStreamReader(
+    IXsbSoundDspStreamReader xsbSoundDspStreamReader,
+    IXsbSoundRpcStreamReader xsbSoundRpcStreamReader,
+    IXsbSoundClipStreamReader xsbSoundClipStreamReader)
+    : IXsbSoundStreamReader
 {
-    [Service]
-    public class XsbSoundStreamReader : IXsbSoundStreamReader
+    public XsbSound Read(Stream stream)
     {
-        private readonly IXsbSoundDspStreamReader _xsbSoundDspStreamReader;
-        private readonly IXsbSoundRpcStreamReader _xsbSoundRpcStreamReader;
-        private readonly IXsbSoundClipStreamReader _xsbSoundClipStreamReader;
+        var reader = new BinaryReader(stream);
 
-        public XsbSoundStreamReader(
-            IXsbSoundDspStreamReader xsbSoundDspStreamReader,
-            IXsbSoundRpcStreamReader xsbSoundRpcStreamReader,
-            IXsbSoundClipStreamReader xsbSoundClipStreamReader)
+        var sound = new XsbSound {Flags = reader.ReadByte()};
+
+        var isComplex = (sound.Flags & 0x01) != 0;
+        var hasRpc = (sound.Flags & 0x0E) != 0;
+        var hasDsp = (sound.Flags & 0x10) != 0;
+
+        sound.Category = reader.ReadInt16();
+        sound.Volume = reader.ReadByte();
+        sound.Pitch = reader.ReadInt16();
+        sound.Priority = reader.ReadByte();
+        sound.Unk0 = reader.ReadInt16();
+
+        var numClips = isComplex ? reader.ReadByte() : 0;
+        sound.TrackIndex = isComplex ? (short) 0 : reader.ReadInt16();
+        sound.WaveBankIndex = isComplex ? (byte) 0 : reader.ReadByte();
+
+        if (hasRpc)
+            sound.Rpc = xsbSoundRpcStreamReader.Read(stream);
+
+        if (hasDsp)
+            sound.Dsp = xsbSoundDspStreamReader.Read(stream);
+
+        if (isComplex)
         {
-            _xsbSoundDspStreamReader = xsbSoundDspStreamReader;
-            _xsbSoundRpcStreamReader = xsbSoundRpcStreamReader;
-            _xsbSoundClipStreamReader = xsbSoundClipStreamReader;
+            sound.Clips = new XsbSoundClip[numClips];
+            for (var i = 0; i < numClips; i++)
+                sound.Clips[i] = xsbSoundClipStreamReader.Read(stream);
         }
-        
-        public XsbSound Read(Stream stream)
-        {
-            var reader = new BinaryReader(stream);
 
-            var sound = new XsbSound {Flags = reader.ReadByte()};
-
-            var isComplex = (sound.Flags & 0x01) != 0;
-            var hasRpc = (sound.Flags & 0x0E) != 0;
-            var hasDsp = (sound.Flags & 0x10) != 0;
-
-            sound.Category = reader.ReadInt16();
-            sound.Volume = reader.ReadByte();
-            sound.Pitch = reader.ReadInt16();
-            sound.Priority = reader.ReadByte();
-            sound.Unk0 = reader.ReadInt16();
-
-            var numClips = isComplex ? reader.ReadByte() : 0;
-            sound.TrackIndex = isComplex ? (short) 0 : reader.ReadInt16();
-            sound.WaveBankIndex = isComplex ? (byte) 0 : reader.ReadByte();
-
-            if (hasRpc)
-                sound.Rpc = _xsbSoundRpcStreamReader.Read(stream);
-
-            if (hasDsp)
-                sound.Dsp = _xsbSoundDspStreamReader.Read(stream);
-
-            if (isComplex)
-            {
-                sound.Clips = new XsbSoundClip[numClips];
-                for (var i = 0; i < numClips; i++)
-                    sound.Clips[i] = _xsbSoundClipStreamReader.Read(stream);
-            }
-
-            return sound;
-        }
+        return sound;
     }
 }

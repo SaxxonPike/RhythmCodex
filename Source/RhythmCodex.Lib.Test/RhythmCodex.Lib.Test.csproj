@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>RhythmCodex</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="8.0.0"/>
+        <PackageReference Include="AutoFixture" Version="4.18.1"/>
+        <PackageReference Include="FluentAssertions" Version="6.12.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
+        <PackageReference Include="Moqzilla" Version="1.1.0"/>
+        <PackageReference Include="NUnit" Version="4.1.0"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4"/>
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\RhythmCodex.Lib.Test.Data\RhythmCodex.Test.Data.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.ImageSharp\RhythmCodex.Plugin.ImageSharp.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj"/>
+        <ProjectReference Include="..\RhythmCodex.Test\RhythmCodex.Test.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="ImaAdpcm\Converters"/>
+        <Folder Include="Ssq"/>
+        <Folder Include="Stepmania"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Remove="*.DotSettings"/>
+    </ItemGroup>
+</Project>

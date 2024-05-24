@@ -1,13 +1,12 @@
-namespace RhythmCodex.Cli.Orchestration.Infrastructure
+namespace RhythmCodex.Cli.Orchestration.Infrastructure;
+
+public interface ITaskFactory
 {
-    public interface ITaskFactory
-    {
-        BeatmaniaTaskBuilder BuildBeatmaniaTask();
-        DdrTaskBuilder BuildDdrTask();
-        XboxTaskBuilder BuildXboxTask();
-        GraphicsTaskBuilder BuildGraphicsTask();
-        CompressionTaskBuilder BuildCompressionTask();
-        BmsTaskBuilder BuildBmsTask();
-        ArcTaskBuilder BuildArcTask();
-    }
+    BeatmaniaTaskBuilder BuildBeatmaniaTask();
+    DdrTaskBuilder BuildDdrTask();
+    XboxTaskBuilder BuildXboxTask();
+    GraphicsTaskBuilder BuildGraphicsTask();
+    CompressionTaskBuilder BuildCompressionTask();
+    BmsTaskBuilder BuildBmsTask();
+    ArcTaskBuilder BuildArcTask();
 }

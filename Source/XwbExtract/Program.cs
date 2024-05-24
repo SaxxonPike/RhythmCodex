@@ -1,12 +1,11 @@
 ﻿using ClientCommon;
 
-namespace XwbExtract
+namespace XwbExtract;
+
+internal static class Program
 {
-    internal static class Program
+    private static void Main(string[] args)
     {
-        private static void Main(string[] args)
-        {
-            Bootstrap.StartApp<App>(args);
-        }
+        Bootstrap.StartApp<App>(args);
     }
 }

@@ -3,50 +3,38 @@ using System.Linq;
 using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+[Service]
+public class IsoStorageMediumDecoder(
+    IIsoPrimaryVolumeDescriptorDecoder isoPrimaryVolumeDescriptorDecoder,
+    IIsoBootRecordDecoder isoBootRecordDecoder,
+    IIsoDescriptorSectorFinder isoDescriptorSectorFinder)
+    : IIsoStorageMediumDecoder
 {
-    [Service]
-    public class IsoStorageMediumDecoder : IIsoStorageMediumDecoder
+    public IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors)
     {
-        private readonly IIsoPrimaryVolumeDescriptorDecoder _isoPrimaryVolumeDescriptorDecoder;
-        private readonly IIsoBootRecordDecoder _isoBootRecordDecoder;
-        private readonly IIsoDescriptorSectorFinder _isoDescriptorSectorFinder;
-
-        public IsoStorageMediumDecoder(
-            IIsoPrimaryVolumeDescriptorDecoder isoPrimaryVolumeDescriptorDecoder,
-            IIsoBootRecordDecoder isoBootRecordDecoder,
-            IIsoDescriptorSectorFinder isoDescriptorSectorFinder)
+        var result = new IsoStorageMedium
         {
-            _isoPrimaryVolumeDescriptorDecoder = isoPrimaryVolumeDescriptorDecoder;
-            _isoBootRecordDecoder = isoBootRecordDecoder;
-            _isoDescriptorSectorFinder = isoDescriptorSectorFinder;
-        }
-        
-        public IsoStorageMedium Decode(IEnumerable<IsoSectorInfo> sectors)
-        {
-            var result = new IsoStorageMedium
-            {
-                BootRecords = new List<IsoBootRecord>(),
-                Volumes = new List<IsoVolume>()
-            };
+            BootRecords = [],
+            Volumes = []
+        };
 
-            var descriptorSectors = _isoDescriptorSectorFinder.Find(sectors).ToList();
-            
-            var bootDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x00).ToList();
-            var primaryVolumeDescriptor = descriptorSectors.Single(s => s.UserData[0] == 0x01);
+        var descriptorSectors = isoDescriptorSectorFinder.Find(sectors).ToList();
+        var bootDescriptors = descriptorSectors.Where(s => s.UserData.Span[0] == 0x00).ToList();
+        var primaryVolumeDescriptor = descriptorSectors.Single(s => s.UserData.Span[0] == 0x01);
 //            var supplementaryVolumeDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x02).ToList();
 //            var partitionDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x03).ToList();
 
-            foreach (var bootDescriptor in bootDescriptors)
-                result.BootRecords.Add(_isoBootRecordDecoder.Decode(bootDescriptor.UserData));
+        foreach (var bootDescriptor in bootDescriptors)
+            result.BootRecords.Add(isoBootRecordDecoder.Decode(bootDescriptor.UserData.Span));
 
-            var primaryVolume = _isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData);
+        var primaryVolume = isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData.Span);
             
-            result.Volumes.Add(primaryVolume);
+        result.Volumes.Add(primaryVolume);
 
-            return result;
-        }
-        
-        
+        return result;
     }
+        
+        
 }

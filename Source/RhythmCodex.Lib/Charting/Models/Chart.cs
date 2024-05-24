@@ -2,11 +2,10 @@
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Charting.Models
+namespace RhythmCodex.Charting.Models;
+
+[Model]
+public class Chart : Metadata
 {
-    [Model]
-    public class Chart : Metadata, IChart
-    {
-        public IList<IEvent> Events { get; set; }
-    }
+    public List<Event> Events { get; set; } = [];
 }

@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Vag.Models;
 
-namespace RhythmCodex.Vag.Streamers
+namespace RhythmCodex.Vag.Streamers;
+
+public interface ISvagStreamReader
 {
-    public interface ISvagStreamReader
-    {
-        SvagContainer Read(Stream stream);
-    }
+    SvagContainer Read(Stream stream);
 }

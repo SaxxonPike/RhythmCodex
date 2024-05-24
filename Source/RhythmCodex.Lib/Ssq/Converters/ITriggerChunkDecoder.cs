@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+[PublicAPI]
+public interface ITriggerChunkDecoder
 {
-    public interface ITriggerChunkDecoder
-    {
-        IList<Trigger> Convert(byte[] data);
-    }
+    List<Trigger> Convert(byte[] data);
 }

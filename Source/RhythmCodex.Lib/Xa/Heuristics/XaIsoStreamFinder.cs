@@ -5,54 +5,54 @@ using RhythmCodex.IoC;
 using RhythmCodex.Iso.Model;
 using RhythmCodex.Xa.Models;
 
-namespace RhythmCodex.Xa.Heuristics
+namespace RhythmCodex.Xa.Heuristics;
+
+[Service]
+public class XaIsoStreamFinder : IXaIsoStreamFinder
 {
-    [Service]
-    public class XaIsoStreamFinder : IXaIsoStreamFinder
+    public List<XaChunk> Find(IEnumerable<IsoSectorInfo> sectors)
     {
-        public IList<XaChunk> Find(IEnumerable<IsoSectorInfo> sectors)
+        var result = new List<XaChunk>();
+        var mode2Sectors = sectors
+            .Where(s => s.Mode == 2)
+            .OrderBy(s => (s.Minutes << 16) | (s.Seconds << 8) | s.Frames)
+            .ToList();
+        var currentStreams = mode2Sectors
+            .Where(s => s.Channel != null)
+            .GroupBy(s => s.Channel)
+            .ToDictionary(g => (int)g.Key!, _ => new List<IsoSectorInfo>());
+        var streamCount = currentStreams.Max(s => s.Key) + 1;
+        var currentStream = 0;
+
+        void AddCurrentStream()
         {
-            var result = new List<XaChunk>();
-            var mode2Sectors = sectors
-                .Where(s => s.Mode == 2)
-                .OrderBy(s => (s.Minutes << 16) | (s.Seconds << 8) | s.Frames)
-                .ToList();
-            var currentStreams = mode2Sectors
-                .Where(s => s.Channel != null)
-                .GroupBy(s => s.Channel)
-                .ToDictionary(g => g.Key, g => new List<IsoSectorInfo>());
-            var streamCount = currentStreams.Max(s => s.Key).Value + 1;
-            var currentStream = 0;
-
-            void AddCurrentStream()
+            if (currentStreams[currentStream].Count >= 2)
             {
-                if (currentStreams[currentStream].Count >= 2)
+                result.Add(new XaChunk
                 {
-                    result.Add(new XaChunk
-                    {
-                        Channels = currentStreams[currentStream].First().AudioChannels.Value,
-                        Data = currentStreams[currentStream].SelectMany(s => s.Data.Slice(s.UserDataOffset, s.UserDataLength)).ToArray(),
-                        Rate = currentStreams[currentStream].First().AudioRate.Value
-                    });                    
-                }
-                
-                currentStreams[currentStream].Clear();
-            }
-            
-            foreach (var sector in mode2Sectors)
-            {
-                if (sector.IsAudio ?? false)
-                    currentStreams[currentStream].Add(sector);
-                else
-                    AddCurrentStream();
-
-                currentStream = (currentStream + 1) % streamCount;
+                    Channels = currentStreams[currentStream].First().AudioChannels!.Value,
+                    Data = currentStreams[currentStream].Select(s =>
+                        s.Data.Slice(s.UserDataOffset, s.UserDataLength)).Combine(),
+                    Rate = currentStreams[currentStream].First().AudioRate!.Value
+                });
             }
 
-            for (currentStream = 0; currentStream < streamCount; currentStream++)
+            currentStreams[currentStream].Clear();
+        }
+
+        foreach (var sector in mode2Sectors)
+        {
+            if (sector.IsAudio ?? false)
+                currentStreams[currentStream].Add(sector);
+            else
                 AddCurrentStream();
 
-            return result;
+            currentStream = (currentStream + 1) % streamCount;
         }
+
+        for (currentStream = 0; currentStream < streamCount; currentStream++)
+            AddCurrentStream();
+
+        return result;
     }
 }

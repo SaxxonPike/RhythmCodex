@@ -4,26 +4,17 @@ using RhythmCodex.Graphics.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Tim.Streamers;
 
-namespace RhythmCodex.Tim.Converters
-{
-    [Service]
-    public class TimDecoder : ITimDecoder
-    {
-        private readonly ITimBitmapDecoder _bitmapDecoder;
-        private readonly ITimStreamReader _streamReader;
+namespace RhythmCodex.Tim.Converters;
 
-        public TimDecoder(
-            ITimBitmapDecoder bitmapDecoder, 
-            ITimStreamReader streamReader)
-        {
-            _bitmapDecoder = bitmapDecoder;
-            _streamReader = streamReader;
-        }
-        
-        public IList<IBitmap> Decode(Stream stream)
-        {
-            var image = _streamReader.Read(stream);
-            return _bitmapDecoder.Decode(image);
-        }
+[Service]
+public class TimDecoder(
+    ITimBitmapDecoder bitmapDecoder,
+    ITimStreamReader streamReader)
+    : ITimDecoder
+{
+    public List<Bitmap> Decode(Stream stream)
+    {
+        var image = streamReader.Read(stream);
+        return bitmapDecoder.Decode(image);
     }
 }

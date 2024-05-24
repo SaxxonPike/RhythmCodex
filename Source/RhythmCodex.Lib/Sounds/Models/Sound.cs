@@ -2,11 +2,10 @@
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Sounds.Models
+namespace RhythmCodex.Sounds.Models;
+
+[Model]
+public class Sound : Metadata
 {
-    [Model]
-    public class Sound : Metadata, ISound
-    {
-        public IList<ISample> Samples { get; set; }
-    }
+    public List<Sample> Samples { get; set; }
 }

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using RhythmCodex.Bms.Model;
 
-namespace RhythmCodex.Bms.Converters
+namespace RhythmCodex.Bms.Converters;
+
+public interface IBmsRandomResolver
 {
-    public interface IBmsRandomResolver
-    {
-        IList<BmsCommand> Resolve(IEnumerable<BmsCommand> commands);
-    }
+    List<BmsCommand> Resolve(IEnumerable<BmsCommand> commands);
 }

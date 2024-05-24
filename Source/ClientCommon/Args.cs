@@ -2,56 +2,50 @@ using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Infrastructure;
 
-namespace ClientCommon
+namespace ClientCommon;
+
+public sealed class Args
 {
-    public sealed class Args
+    public Args(IDictionary<string, string[]> options)
     {
-        public Args(IDictionary<string, string[]> options)
-        {
-            var opts = options.ToDictionary(kv => kv.Key, kv => kv.Value);
-            Options = opts;
+        var opts = options.ToDictionary(kv => kv.Key, kv => kv.Value);
+        Options = opts;
 
-            OutputPath = opts.ContainsKey("o")
-                ? opts["o"].Last()
-                : null;
-            opts.Remove("o");
+        OutputPath = opts.TryGetValue("o", out var opt)
+            ? opt.Last()
+            : null;
+
+        opts.Remove("o");
             
-            InputFiles = opts.ContainsKey(string.Empty)
-                ? opts[string.Empty]
-                : new string[0];
-            opts.Remove(string.Empty);
+        InputFiles = opts.ContainsKey(string.Empty)
+            ? opts[string.Empty]
+            : [];
 
-            RecursiveInputFiles = opts.ContainsKey("+r");
-            opts.Remove("+r");
+        opts.Remove(string.Empty);
 
-            FilesAreZipArchives = opts.ContainsKey("+zip");
-            opts.Remove("+zip");
+        RecursiveInputFiles = opts.ContainsKey("+r");
+        opts.Remove("+r");
 
-            if (opts.ContainsKey("log"))
+        FilesAreZipArchives = opts.ContainsKey("+zip");
+        opts.Remove("+zip");
+
+        if (opts.TryGetValue("log", out opt))
+        {
+            LogLevel = opt.FirstOrDefault()?.ToLowerInvariant() switch
             {
-                switch (opts["log"].FirstOrDefault()?.ToLowerInvariant())
-                {
-                    case "debug":
-                        LogLevel = LoggerVerbosityLevel.Debug;
-                        break;
-                    case "info":
-                        LogLevel = LoggerVerbosityLevel.Info;
-                        break;
-                    case "warning":
-                        LogLevel = LoggerVerbosityLevel.Warning;
-                        break;
-                    case "error":
-                        LogLevel = LoggerVerbosityLevel.Error;
-                        break;
-                }            
-            }
+                "debug" => LoggerVerbosityLevel.Debug,
+                "info" => LoggerVerbosityLevel.Info,
+                "warning" => LoggerVerbosityLevel.Warning,
+                "error" => LoggerVerbosityLevel.Error,
+                _ => LogLevel
+            };
         }
-        
-        public IReadOnlyDictionary<string, string[]> Options { get; }
-        public string OutputPath { get; }
-        public IReadOnlyList<string> InputFiles { get; }
-        public bool RecursiveInputFiles { get; }
-        public bool FilesAreZipArchives { get; }
-        public LoggerVerbosityLevel LogLevel { get; } = LoggerVerbosityLevel.Info;
     }
+        
+    public IReadOnlyDictionary<string, string[]> Options { get; }
+    public string? OutputPath { get; }
+    public IReadOnlyList<string> InputFiles { get; }
+    public bool RecursiveInputFiles { get; }
+    public bool FilesAreZipArchives { get; }
+    public LoggerVerbosityLevel LogLevel { get; } = LoggerVerbosityLevel.Info;
 }

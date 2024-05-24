@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Tcb.Models;
 
-namespace RhythmCodex.Tcb.Streamers
+namespace RhythmCodex.Tcb.Streamers;
+
+public interface ITcbStreamReader
 {
-    public interface ITcbStreamReader
-    {
-        TcbImage Read(Stream stream);
-    }
+    TcbImage Read(Stream stream);
 }

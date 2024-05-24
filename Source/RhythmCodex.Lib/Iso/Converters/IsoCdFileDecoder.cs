@@ -7,88 +7,71 @@ using RhythmCodex.Iso.Streamers;
 
 // ReSharper disable PossibleMultipleEnumeration
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+[Service]
+public class IsoCdFileDecoder(
+    IIsoStorageMediumDecoder isoStorageMediumDecoder,
+    IIsoSectorInfoDecoder isoSectorInfoDecoder,
+    IIsoDescriptorSectorFinder isoDescriptorSectorFinder,
+    IIsoPathTableDecoder isoPathTableDecoder,
+    IIsoSectorStreamFactory isoSectorStreamFactory,
+    IIsoDirectoryTableDecoder isoDirectoryTableDecoder)
+    : IIsoCdFileDecoder
 {
-    [Service]
-    public class IsoCdFileDecoder : IIsoCdFileDecoder
+    public List<ICdFile> Decode(IEnumerable<ICdSector> cdSectors)
     {
-        private readonly IIsoStorageMediumDecoder _isoStorageMediumDecoder;
-        private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
-        private readonly IIsoDescriptorSectorFinder _isoDescriptorSectorFinder;
-        private readonly IIsoPathTableDecoder _isoPathTableDecoder;
-        private readonly IIsoSectorStreamFactory _isoSectorStreamFactory;
-        private readonly IIsoDirectoryTableDecoder _isoDirectoryTableDecoder;
+        return DecodeInternal(cdSectors).ToList();
+    }
 
-        public IsoCdFileDecoder(
-            IIsoStorageMediumDecoder isoStorageMediumDecoder,
-            IIsoSectorInfoDecoder isoSectorInfoDecoder,
-            IIsoDescriptorSectorFinder isoDescriptorSectorFinder,
-            IIsoPathTableDecoder isoPathTableDecoder,
-            IIsoSectorStreamFactory isoSectorStreamFactory,
-            IIsoDirectoryTableDecoder isoDirectoryTableDecoder)
-        {
-            _isoStorageMediumDecoder = isoStorageMediumDecoder;
-            _isoSectorInfoDecoder = isoSectorInfoDecoder;
-            _isoDescriptorSectorFinder = isoDescriptorSectorFinder;
-            _isoPathTableDecoder = isoPathTableDecoder;
-            _isoSectorStreamFactory = isoSectorStreamFactory;
-            _isoDirectoryTableDecoder = isoDirectoryTableDecoder;
-        }
-        
-        public IList<ICdFile> Decode(IEnumerable<ICdSector> cdSectors)
-        {
-            return DecodeInternal(cdSectors).ToList();
-        }
+    private IEnumerable<ICdFile> DecodeInternal(IEnumerable<ICdSector> cdSectors)
+    {
+        var sectorInfos = isoDescriptorSectorFinder
+            .Find(cdSectors.Select(s => isoSectorInfoDecoder.Decode(s)));
 
-        private IEnumerable<ICdFile> DecodeInternal(IEnumerable<ICdSector> cdSectors)
+        var storageMediums = isoStorageMediumDecoder.Decode(sectorInfos);
+        foreach (var volume in storageMediums.Volumes)
         {
-            var sectorInfos = _isoDescriptorSectorFinder
-                .Find(cdSectors.Select(s => _isoSectorInfoDecoder.Decode(s)));
-
-            var storageMediums = _isoStorageMediumDecoder.Decode(sectorInfos);
-            foreach (var volume in storageMediums.Volumes)
-            {
-                var pathLba = volume.TypeLPathTableLocation;
-                var pathTable = _isoPathTableDecoder.Decode(cdSectors.SkipWhile(cds => cds.Number != pathLba));
+            var pathLba = volume.TypeLPathTableLocation;
+            var pathTable = isoPathTableDecoder.Decode(cdSectors.SkipWhile(cds => cds.Number != pathLba));
                 
-                foreach (var path in pathTable)
+            foreach (var path in pathTable)
+            {
+                var directory =
+                    isoDirectoryTableDecoder.Decode(
+                        cdSectors.SkipWhile(cds => cds.Number != path.LocationOfExtent));
+                foreach (var entry in directory)
                 {
-                    var directory =
-                        _isoDirectoryTableDecoder.Decode(
-                            cdSectors.SkipWhile(cds => cds.Number != path.LocationOfExtent));
-                    foreach (var entry in directory)
-                    {
-                        if (entry.Flags.HasFlag(IsoFileFlags.Directory))
-                            continue;
+                    if (entry.Flags.HasFlag(IsoFileFlags.Directory))
+                        continue;
                         
-                        yield return new CdFile(() =>
-                            _isoSectorStreamFactory.Open(
-                                cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent), entry.DataLength))
-                        {
-                            Name = GetPath(pathTable, entry, path),
-                            Length = entry.DataLength
-                        };
-                    }
+                    yield return new CdFile(() =>
+                        isoSectorStreamFactory.Open(
+                            cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent), entry.DataLength))
+                    {
+                        Name = GetPath(pathTable, entry, path),
+                        Length = entry.DataLength
+                    };
                 }
             }
         }
+    }
 
-        private string GetPath(IList<IsoPathRecord> pathRecords, IsoDirectoryRecord directoryRecord, IsoPathRecord pathRecord)
+    private string GetPath(IList<IsoPathRecord> pathRecords, IsoDirectoryRecord directoryRecord, IsoPathRecord pathRecord)
+    {
+        var currentPath = pathRecord;
+        var output = new List<string> {directoryRecord.Identifier};
+
+        while (currentPath.ParentDirectoryNumber != 0)
         {
-            var currentPath = pathRecord;
-            var output = new List<string> {directoryRecord.Identifier};
-
-            while (currentPath.ParentDirectoryNumber != 0)
-            {
-                output.Add(currentPath.DirectoryIdentifier);
-                var newPath = pathRecords[currentPath.ParentDirectoryNumber - 1];
-                if (newPath == currentPath)
-                    break;
-                currentPath = newPath;
-            }
-
-            output.Reverse();
-            return string.Join("/", output.Where(o => !string.IsNullOrEmpty(o)));
+            output.Add(currentPath.DirectoryIdentifier);
+            var newPath = pathRecords[currentPath.ParentDirectoryNumber - 1];
+            if (newPath == currentPath)
+                break;
+            currentPath = newPath;
         }
+
+        output.Reverse();
+        return string.Join("/", output.Where(o => !string.IsNullOrEmpty(o)));
     }
 }

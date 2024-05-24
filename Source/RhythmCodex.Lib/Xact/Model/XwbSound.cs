@@ -1,12 +1,11 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Xact.Model
+namespace RhythmCodex.Xact.Model;
+
+[Model]
+public class XwbSound
 {
-    [Model]
-    public class XwbSound
-    {
-        public byte[] Data { get; set; }
-        public string Name { get; set; }
-        public XwbEntry Info { get; set; }
-    }
+    public required byte[] Data { get; set; }
+    public required string Name { get; set; }
+    public required XwbEntry Info { get; set; }
 }

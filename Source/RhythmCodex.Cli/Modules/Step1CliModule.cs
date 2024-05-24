@@ -1,62 +1,59 @@
 using System.Collections.Generic;
 using ClientCommon;
-using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Cli.Modules
+namespace RhythmCodex.Cli.Modules;
+
+/// <summary>
+/// A module which operates with the SSQ and other associated file formats.
+/// </summary>
+[Service]
+public class Step1CliModule : ICliModule
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
+    private readonly ITaskFactory _taskFactory;
+
     /// <summary>
-    /// A module which operates with the SSQ and other associated file formats.
+    /// Create an instance of the SSQ module.
     /// </summary>
-    [Service]
-    public class Step1CliModule : ICliModule
+    public Step1CliModule(ITaskFactory taskFactory)
     {
-        private readonly ITaskFactory _taskFactory;
+        _taskFactory = taskFactory;
+    }
 
-        /// <summary>
-        /// Create an instance of the SSQ module.
-        /// </summary>
-        public Step1CliModule(ITaskFactory taskFactory)
+    /// <inheritdoc />
+    public string Name => "step";
+
+    /// <inheritdoc />
+    public string Description => "Encodes and decodes the STEP format. (2nd-3rdPlus, SoloBass)";
+
+    /// <inheritdoc />
+    public IEnumerable<ICommand> Commands => new ICommand[]
+    {
+        new Command
         {
-            _taskFactory = taskFactory;
-        }
-
-        /// <inheritdoc />
-        public string Name => "step";
-
-        /// <inheritdoc />
-        public string Description => "Encodes and decodes the STEP format. (2nd-3rdPlus, SoloBass)";
-
-        /// <inheritdoc />
-        public IEnumerable<ICommand> Commands => new ICommand[]
-        {
-            new Command
+            Name = "decode",
+            Description = "Decodes a STEP file.",
+            TaskFactory = Decode,
+            Parameters = new[]
             {
-                Name = "decode",
-                Description = "Decodes a STEP file.",
-                TaskFactory = Decode,
-                Parameters = new []
+                new CommandParameter
                 {
-                    new CommandParameter
-                    {
-                        Name = "-offset",
-                        Description = "Global offset to add to output #OFFSET tag."
-                    }
+                    Name = "-offset",
+                    Description = "Global offset to add to output #OFFSET tag."
                 }
             }
-        };
-
-        /// <summary>
-        /// Perform the DECODE command.
-        /// </summary>
-        private ITask Decode(Args args)
-        {
-            return _taskFactory
-                .BuildDdrTask()
-                .WithArgs(args)
-                .CreateDecodeStep1();
         }
+    };
+
+    /// <summary>
+    /// Perform the DECODE command.
+    /// </summary>
+    private ITask Decode(Args args)
+    {
+        return _taskFactory
+            .BuildDdrTask()
+            .WithArgs(args)
+            .CreateDecodeStep1();
     }
 }

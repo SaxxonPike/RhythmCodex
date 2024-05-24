@@ -3,24 +3,16 @@ using System.IO;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Streamers
+namespace RhythmCodex.Ssq.Streamers;
+
+[Service]
+public class SsqStreamWriter(IChunkStreamWriter chunkStreamWriter) : ISsqStreamWriter
 {
-    [Service]
-    public class SsqStreamWriter : ISsqStreamWriter
+    public void Write(Stream stream, IEnumerable<SsqChunk> chunks)
     {
-        private readonly IChunkStreamWriter _chunkStreamWriter;
+        foreach (var chunk in chunks)
+            chunkStreamWriter.Write(stream, chunk);
 
-        public SsqStreamWriter(IChunkStreamWriter chunkStreamWriter)
-        {
-            _chunkStreamWriter = chunkStreamWriter;
-        }
-
-        public void Write(Stream stream, IEnumerable<SsqChunk> chunks)
-        {
-            foreach (var chunk in chunks)
-                _chunkStreamWriter.Write(stream, chunk);
-
-            _chunkStreamWriter.Write(stream, null);
-        }
+        chunkStreamWriter.Write(stream, null);
     }
 }

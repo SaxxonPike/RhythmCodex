@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Iso.Model;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoDirectoryRecordDecoder
 {
-    public interface IIsoDirectoryRecordDecoder
-    {
-        IsoDirectoryRecord Decode(Stream stream, bool recordOnly);
-    }
+    IsoDirectoryRecord? Decode(Stream stream, bool recordOnly);
 }

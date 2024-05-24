@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Tim.Models;
 
-namespace RhythmCodex.Tim.Streamers
+namespace RhythmCodex.Tim.Streamers;
+
+public interface ITimStreamReader
 {
-    public interface ITimStreamReader
-    {
-        TimImage Read(Stream stream);
-    }
+    TimImage Read(Stream stream);
 }

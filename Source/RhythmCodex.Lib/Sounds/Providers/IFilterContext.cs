@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
-namespace RhythmCodex.Sounds.Providers
+namespace RhythmCodex.Sounds.Providers;
+
+public interface IFilterContext
 {
-    public interface IFilterContext
-    {
-        IList<float> Filter(IList<float> data);
-    }
+    float[] Filter(ReadOnlySpan<float> data);
 }

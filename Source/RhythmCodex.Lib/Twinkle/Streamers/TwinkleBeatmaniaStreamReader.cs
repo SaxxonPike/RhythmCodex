@@ -6,39 +6,38 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Twinkle.Model;
 
-namespace RhythmCodex.Twinkle.Streamers
+namespace RhythmCodex.Twinkle.Streamers;
+
+[Service]
+public class TwinkleBeatmaniaStreamReader : ITwinkleBeatmaniaStreamReader
 {
-    [Service]
-    public class TwinkleBeatmaniaStreamReader : ITwinkleBeatmaniaStreamReader
+    private const int ChunkLength = 0x1A00000;
+    private const int DataStart = 0x8000000;
+
+    public IEnumerable<TwinkleBeatmaniaChunk> Read(Stream stream, long length, bool skipHeader = true)
     {
-        private const int ChunkLength = 0x1A00000;
-        private const int DataStart = 0x8000000;
+        var index = 0;
+        var reader = new BinaryReader(stream);
+        var actualLength = length / ChunkLength * ChunkLength;
 
-        public IEnumerable<TwinkleBeatmaniaChunk> Read(Stream stream, long length, bool skipHeader = true)
+        if (skipHeader)
+            stream.SkipBytes(DataStart);
+
+        var offset = 0L;
+        while (offset < actualLength)
         {
-            var index = 0;
-            var reader = new BinaryReader(stream);
-            var actualLength = length / ChunkLength * ChunkLength;
+            var data = reader.ReadBytes(ChunkLength);
+            data.AsSpan().Swap16();
 
-            if (skipHeader)
-                stream.SkipBytes(DataStart);
-
-            var offset = 0L;
-            while (offset < actualLength)
+            yield return new TwinkleBeatmaniaChunk
             {
-                var data = reader.ReadBytes(ChunkLength);
-                data.AsSpan().Swap16();
+                Data = data,
+                Index = index,
+                Offset = offset
+            };
 
-                yield return new TwinkleBeatmaniaChunk
-                {
-                    Data = data,
-                    Index = index,
-                    Offset = offset
-                };
-
-                offset += ChunkLength;
-                index++;
-            }
+            offset += ChunkLength;
+            index++;
         }
     }
 }

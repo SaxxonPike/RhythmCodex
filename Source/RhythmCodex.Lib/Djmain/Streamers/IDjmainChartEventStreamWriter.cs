@@ -2,10 +2,9 @@
 using System.IO;
 using RhythmCodex.Djmain.Model;
 
-namespace RhythmCodex.Djmain.Streamers
+namespace RhythmCodex.Djmain.Streamers;
+
+public interface IDjmainChartEventStreamWriter
 {
-    public interface IDjmainChartEventStreamWriter
-    {
-        int Write(Stream stream, IEnumerable<IDjmainChartEvent> events);
-    }
+    int Write(Stream stream, IEnumerable<DjmainChartEvent> events);
 }

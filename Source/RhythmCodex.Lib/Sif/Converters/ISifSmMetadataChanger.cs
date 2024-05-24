@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using RhythmCodex.Sif.Models;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Sif.Converters
+namespace RhythmCodex.Sif.Converters;
+
+public interface ISifSmMetadataChanger
 {
-    public interface ISifSmMetadataChanger
-    {
-        void Apply(ICollection<Command> commands, SifInfo sif);
-    }
+    void Apply(ICollection<Command> commands, SifInfo sif);
 }

@@ -1,60 +1,67 @@
-using System.IO;
-using System.Linq;
-using RhythmCodex.Infrastructure;
+using System;
+using System.Buffers.Binary;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Tim.Converters
+namespace RhythmCodex.Tim.Converters;
+
+[Service]
+public class TimDataDecoder : ITimDataDecoder
 {
-    [Service]
-    public class TimDataDecoder : ITimDataDecoder
+    public int[] Decode4Bit(ReadOnlySpan<byte> data, int stride, int height)
     {
-        public int[] Decode4Bit(byte[] data, int stride, int height)
-        {
-            using var stream = new ReadOnlyMemoryStream(data);
-            using var reader = new BinaryReader(stream);
-            var size = height * stride * 2;
-            var result = new int[size];
-            for (var i = 0; i < size; i++)
-            {
-                var pixels = reader.ReadByte();
-                result[i++] = pixels & 0xF;
-                result[i] = pixels >> 4;
-            }
+        var size = height * stride * 2;
+        var result = new int[size];
+        var sourceIdx = 0;
 
-            return result;
+        for (var i = 0; i < size; i++)
+        {
+            var pixels = data[sourceIdx++];
+            result[i++] = pixels & 0xF;
+            result[i] = pixels >> 4;
         }
 
-        public int[] Decode8Bit(byte[] data, int stride, int height)
+        return result;
+    }
+
+    public int[] Decode8Bit(ReadOnlySpan<byte> data, int stride, int height)
+    {
+        var size = height * stride;
+        var result = new int[data.Length];
+
+        for (var i = 0; i < size; i++)
+            result[i] = data[i];
+
+        return result;
+    }
+
+    public int[] Decode16Bit(ReadOnlySpan<byte> data, int stride, int height)
+    {
+        var size = height * stride / 2;
+        var result = new int[size];
+        var sourceIdx = 0;
+
+        for (var i = 0; i < size; i++)
         {
-            using var stream = new ReadOnlyMemoryStream(data);
-            using var reader = new BinaryReader(stream);
-            var size = height * stride;
-            return reader.ReadBytes(size).Select(b => (int) b).ToArray();
+            result[i] = BinaryPrimitives.ReadUInt16LittleEndian(data[sourceIdx..]);
+            sourceIdx += 2;
         }
 
-        public int[] Decode16Bit(byte[] data, int stride, int height)
+        return result;
+    }
+
+    public int[] Decode24Bit(ReadOnlySpan<byte> data, int stride, int height)
+    {
+        var size = height * stride / 3;
+        var result = new int[size];
+        var sourceIdx = 0;
+        
+        for (var i = 0; i < size; i++)
         {
-            using var stream = new ReadOnlyMemoryStream(data);
-            using var reader = new BinaryReader(stream);
-            var size = height * stride / 2;
-            var result = new int[size];
-            for (var i = 0; i < size; i++)
-                result[i] = reader.ReadUInt16();
-            return result;
+            var pixels = data.Slice(sourceIdx, 3);
+            result[i] = pixels[0] | (pixels[1] << 8) | (pixels[2] << 16);
+            sourceIdx += 3;
         }
 
-        public int[] Decode24Bit(byte[] data, int stride, int height)
-        {
-            using var stream = new ReadOnlyMemoryStream(data);
-            using var reader = new BinaryReader(stream);
-            var size = height * stride / 3;
-            var result = new int[size];
-            for (var i = 0; i < size; i++)
-            {
-                var pixels = reader.ReadBytes(3);
-                result[i] = pixels[0] | (pixels[1] << 8) | (pixels[2] << 16);
-            }
-            return result;
-        }
+        return result;
     }
 }

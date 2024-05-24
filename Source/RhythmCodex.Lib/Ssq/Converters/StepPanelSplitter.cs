@@ -2,34 +2,33 @@
 using System.Linq;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+[Service]
+public class StepPanelSplitter : IStepPanelSplitter
 {
-    [Service]
-    public class StepPanelSplitter : IStepPanelSplitter
+    public List<int> Split(int panels)
     {
-        public IList<int> Split(int panels)
+        IEnumerable<int> Do()
         {
-            IEnumerable<int> Do()
+            var n = 0;
+
+            if (panels == -1)
             {
-                var n = 0;
-
-                if (panels == -1)
-                {
-                    yield return 0;
-                    panels ^= int.MinValue;
-                    n++;
-                }
-
-                while (panels > 0)
-                {
-                    if ((panels & 1) != 0)
-                        yield return n;
-                    panels >>= 1;
-                    n++;
-                }
+                yield return 0;
+                panels ^= int.MinValue;
+                n++;
             }
 
-            return Do().ToList();
+            while (panels > 0)
+            {
+                if ((panels & 1) != 0)
+                    yield return n;
+                panels >>= 1;
+                n++;
+            }
         }
+
+        return Do().ToList();
     }
 }

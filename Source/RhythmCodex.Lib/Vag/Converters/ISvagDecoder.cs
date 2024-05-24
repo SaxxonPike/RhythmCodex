@@ -1,10 +1,9 @@
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Vag.Models;
 
-namespace RhythmCodex.Vag.Converters
+namespace RhythmCodex.Vag.Converters;
+
+public interface ISvagDecoder
 {
-    public interface ISvagDecoder
-    {
-        ISound Decode(SvagContainer container);
-    }
+    Sound? Decode(SvagContainer container);
 }

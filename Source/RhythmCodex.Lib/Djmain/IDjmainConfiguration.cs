@@ -1,7 +1,6 @@
-﻿namespace RhythmCodex.Djmain
+﻿namespace RhythmCodex.Djmain;
+
+public interface IDjmainConfiguration
 {
-    public interface IDjmainConfiguration
-    {
-        int MaxSampleDefinitions { get; }
-    }
+    int MaxSampleDefinitions { get; }
 }

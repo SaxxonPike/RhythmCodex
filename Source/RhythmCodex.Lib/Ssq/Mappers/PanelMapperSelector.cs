@@ -5,53 +5,42 @@ using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Mappers
+namespace RhythmCodex.Ssq.Mappers;
+
+[Service]
+public class PanelMapperSelector(
+    IEnumerable<IPanelMapper> panelMappers,
+    IStepPanelSplitter stepPanelSplitter,
+    ILogger logger)
+    : IPanelMapperSelector
 {
-    [Service]
-    public class PanelMapperSelector : IPanelMapperSelector
+    public IPanelMapper Select(IEnumerable<Step> steps, ChartInfo chartInfo)
     {
-        private readonly IEnumerable<IPanelMapper> _panelMappers;
-        private readonly IStepPanelSplitter _stepPanelSplitter;
-        private readonly ILogger _logger;
+        var panelsUsed = steps
+            .Select(s => s.Panels | (s.ExtraPanels ?? 0))
+            .SelectMany(stepPanelSplitter.Split)
+            .Distinct()
+            .ToArray();
 
-        public PanelMapperSelector(
-            IEnumerable<IPanelMapper> panelMappers,
-            IStepPanelSplitter stepPanelSplitter,
-            ILogger logger)
+        var eligibleMappers = panelMappers
+            .Where(m => (chartInfo?.PlayerCount == null || chartInfo.PlayerCount == m.PlayerCount) && 
+                        panelsUsed.Select(m.Map).All(p => p != null))
+            .Distinct()
+            .ToArray();
+
+        if (eligibleMappers.Length == 0)
         {
-            _panelMappers = panelMappers;
-            _stepPanelSplitter = stepPanelSplitter;
-            _logger = logger;
+            logger.Warning($"No eligible mappers for {chartInfo?.PlayerCount} player(s) and {chartInfo?.PanelCount} panel(s)");
+        }
+        else if (eligibleMappers.Length > 1)
+        {
+            var mapperNames = eligibleMappers.Select(m => m.GetType().Name).ToArray();
+            logger.Debug($"Multiple eligible mappers for {chartInfo?.PlayerCount} player(s) and {chartInfo?.PanelCount} panel(s)");
+            logger.Debug($"Eligible mappers: {string.Join(", ", mapperNames)}");
+            var chosenMapper = eligibleMappers.OrderBy(m => m.PanelCount).First();
+            return chosenMapper;
         }
 
-        public IPanelMapper Select(IEnumerable<Step> steps, ChartInfo chartInfo)
-        {
-            var panelsUsed = steps
-                .Select(s => s.Panels | (s.ExtraPanels ?? 0))
-                .SelectMany(_stepPanelSplitter.Split)
-                .Distinct()
-                .ToArray();
-
-            var eligibleMappers = _panelMappers
-                .Where(m => (chartInfo?.PlayerCount == null || chartInfo.PlayerCount == m.PlayerCount) && 
-                            panelsUsed.Select(m.Map).All(p => p != null))
-                .Distinct()
-                .ToArray();
-
-            if (eligibleMappers.Length == 0)
-            {
-                _logger.Warning($"No eligible mappers for {chartInfo?.PlayerCount} player(s) and {chartInfo?.PanelCount} panel(s)");
-            }
-            else if (eligibleMappers.Length > 1)
-            {
-                var mapperNames = eligibleMappers.Select(m => m.GetType().Name).ToArray();
-                _logger.Debug($"Multiple eligible mappers for {chartInfo?.PlayerCount} player(s) and {chartInfo?.PanelCount} panel(s)");
-                _logger.Debug($"Eligible mappers: {string.Join(", ", mapperNames)}");
-                var chosenMapper = eligibleMappers.OrderBy(m => m.PanelCount).First();
-                return chosenMapper;
-            }
-
-            return eligibleMappers.FirstOrDefault();
-        }
+        return eligibleMappers.FirstOrDefault();
     }
 }

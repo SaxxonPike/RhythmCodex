@@ -1,8 +1,7 @@
-﻿namespace RhythmCodex.Ssq.Model
+﻿namespace RhythmCodex.Ssq.Model;
+
+public interface IPanelMapping
 {
-    public interface IPanelMapping
-    {
-        int Player { get; }
-        int Panel { get; }
-    }
+    int Player { get; }
+    int Panel { get; }
 }

@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Tga.Models;
 
-namespace RhythmCodex.Tga.Streamers
+namespace RhythmCodex.Tga.Streamers;
+
+public interface ITgaStreamReader
 {
-    public interface ITgaStreamReader
-    {
-        TgaImage Read(Stream source, long length);
-    }
+    TgaImage Read(Stream source, long length);
 }

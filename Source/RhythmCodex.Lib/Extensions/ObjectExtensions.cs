@@ -1,9 +1,10 @@
 using System;
+using System.Diagnostics;
 
-namespace RhythmCodex.Extensions
+namespace RhythmCodex.Extensions;
+
+[DebuggerStepThrough]
+internal static class ObjectExtensions
 {
-    public static class ObjectExtensions
-    {
-        public static TOut Use<TIn, TOut>(this TIn subj, Func<TIn, TOut> func) => func(subj);
-    }
+    public static TOut Use<TIn, TOut>(this TIn subj, Func<TIn, TOut> func) => func(subj);
 }

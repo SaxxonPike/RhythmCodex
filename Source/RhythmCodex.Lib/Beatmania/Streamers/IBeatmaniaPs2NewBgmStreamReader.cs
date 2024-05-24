@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Beatmania.Models;
 
-namespace RhythmCodex.Beatmania.Streamers
+namespace RhythmCodex.Beatmania.Streamers;
+
+public interface IBeatmaniaPs2NewBgmStreamReader
 {
-    public interface IBeatmaniaPs2NewBgmStreamReader
-    {
-        BeatmaniaPs2Bgm Read(Stream stream);
-    }
+    BeatmaniaPs2Bgm Read(Stream stream);
 }

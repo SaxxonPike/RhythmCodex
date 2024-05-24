@@ -1,79 +1,72 @@
-using System;
-using System.IO;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Twinkle.Heuristics
+namespace RhythmCodex.Twinkle.Heuristics;
+
+[Service]
+public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
 {
-    [Service]
-    public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
-    {
-        public string Description { get; }
+    public string Description { get; }
 
-        public string FileExtension { get; }
+    public string FileExtension { get; }
         
-        public HeuristicResult Match(IHeuristicReader reader)
+    public HeuristicResult? Match(IHeuristicReader reader)
+    {
+        var noteCountMode = true;
+        var hasBpm = false;
+        var hasEnd = false;
+        var hasTerminator = false;
+        var evData = new byte[4];
+
+        while (true)
         {
-            var noteCountMode = true;
-            var hasBpm = false;
-            var hasEnd = false;
-            var hasTerminator = false;
-            var evData = new byte[4];
+            if (reader.Read(evData, 0, 4) < 4)
+                break;
 
-            while (true)
+            var eventOffset = Bitter.ToInt16S(evData);
+            var eventValue = evData[2];
+            var eventCommand = evData[3];
+            var eventParameter = eventCommand >> 4;
+            var eventType = eventCommand & 0xF;
+
+            // empty event = invalid
+            if (Bitter.ToInt32(evData) == 0)
+                return null;
+                
+            // positive event offsets only
+            if (eventOffset < 0)
+                return null;
+                
+            // offsets can't be present during note count
+            if (noteCountMode && eventOffset != 0)
+                return null;
+                
+            // disable note count info if another event type shows up
+            if (eventCommand != 0x00 && eventCommand != 0x01)
+                noteCountMode = false;
+                
+            // skip the rest of processing if in note count mode
+            if (noteCountMode)
+                continue;
+
+            // terminator bytes
+            if (eventOffset == 0x7FFF)
             {
-                if (reader.Read(evData, 0, 4) < 4)
-                    break;
-
-                var eventOffset = Bitter.ToInt16S(evData);
-                var eventValue = evData[2];
-                var eventCommand = evData[3];
-                var eventParameter = eventCommand >> 4;
-                var eventType = eventCommand & 0xF;
-
-                // empty event = invalid
-                if (Bitter.ToInt32(evData) == 0)
-                    return null;
-                
-                // positive event offsets only
-                if (eventOffset < 0)
-                    return null;
-                
-                // offsets can't be present during note count
-                if (noteCountMode && eventOffset != 0)
-                    return null;
-                
-                // disable note count info if another event type shows up
-                if (eventCommand != 0x00 && eventCommand != 0x01)
-                    noteCountMode = false;
-                
-                // skip the rest of processing if in note count mode
-                if (noteCountMode)
-                    continue;
-
-                // terminator bytes
-                if (eventOffset == 0x7FFF)
-                {
-                    hasTerminator = true;
-                    break;
-                }
-
-                // make sure we have the bare minimums
-                if (eventType == 6)
-                    hasEnd = true;
-                else if (eventType == 4 && eventValue + (eventParameter << 8) != 0)
-                    hasBpm = true;
+                hasTerminator = true;
+                break;
             }
 
-            if (!(hasBpm && hasEnd && hasTerminator))
-                return null;
-            
-            return new HeuristicResult(this);
+            // make sure we have the bare minimums
+            if (eventType == 6)
+                hasEnd = true;
+            else if (eventType == 4 && eventValue + (eventParameter << 8) != 0)
+                hasBpm = true;
         }
-    }
 
-    public interface ITwinkleBeatmaniaChartHeuristic : IHeuristic
-    {
+        if (!(hasBpm && hasEnd && hasTerminator))
+            return null;
+            
+        return new HeuristicResult(this);
     }
 }

@@ -3,15 +3,15 @@ using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Djmain.Model
-{
-    public class DjmainArchive : IDjmainArchive
-    {
-        public int Id { get; set; }
-        public IList<IChart> Charts { get; set; }
-        public IList<ISound> Samples { get; set; }
-        public IDictionary<int, IEnumerable<IDjmainChartEvent>> RawCharts { get; set; }
+namespace RhythmCodex.Djmain.Model;
 
-        public override string ToString() => Json.Serialize(this);
-    }
+public class DjmainArchive
+{
+    public int Id { get; set; }
+    public List<Chart> Charts { get; set; } = [];
+    public List<Sound> Samples { get; set; } = [];
+
+    public Dictionary<int, List<DjmainChartEvent>> RawCharts { get; set; } = new();
+
+    public override string ToString() => Json.Serialize(this);
 }

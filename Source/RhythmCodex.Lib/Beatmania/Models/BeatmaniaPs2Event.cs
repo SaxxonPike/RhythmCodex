@@ -1,10 +1,9 @@
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Beatmania.Models
+namespace RhythmCodex.Beatmania.Models;
+
+[Model]
+public class BeatmaniaPs2Event
 {
-    [Model]
-    public class BeatmaniaPs2Event
-    {
         
-    }
 }

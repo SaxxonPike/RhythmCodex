@@ -5,53 +5,45 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+[Service]
+public class TimedCommandStringDecoder(ILogger logger) : ITimedCommandStringDecoder
 {
-    [Service]
-    public class TimedCommandStringDecoder : ITimedCommandStringDecoder
+    /// <inheritdoc />
+    public List<TimedEvent> Decode(string events)
     {
-        private readonly ILogger _logger;
-
-        public TimedCommandStringDecoder(ILogger logger)
+        IEnumerable<TimedEvent> Do()
         {
-            _logger = logger;
-        }
-
-        /// <inheritdoc />
-        public IList<TimedEvent> Decode(string events)
-        {
-            IEnumerable<TimedEvent> Do()
+            foreach (var ev in events.SplitEx(',').Select(s => s.Trim()))
             {
-                foreach (var ev in events.SplitEx(',').Select(s => s.Trim()))
+                var kv = ev.Split('=');
+                if (kv.Length != 2)
                 {
-                    var kv = ev.Split('=');
-                    if (kv.Length != 2)
-                    {
-                        _logger.Warning($"Invalid timed command key/value pair: {ev}");
-                        continue;
-                    }
-
-                    if (!double.TryParse(kv[0], out var beat))
-                    {
-                        _logger.Warning($"Invalid offset in timed command: {ev}");
-                        continue;
-                    }
-
-                    if (!double.TryParse(kv[1], out var value))
-                    {
-                        _logger.Warning($"Invalid value in timed command: {ev}");
-                        continue;
-                    }
-
-                    yield return new TimedEvent
-                    {
-                        Offset = new BigRational(beat) / 4,
-                        Value = new BigRational(value)
-                    };
+                    logger.Warning($"Invalid timed command key/value pair: {ev}");
+                    continue;
                 }
-            }
 
-            return Do().ToList();
+                if (!double.TryParse(kv[0], out var beat))
+                {
+                    logger.Warning($"Invalid offset in timed command: {ev}");
+                    continue;
+                }
+
+                if (!double.TryParse(kv[1], out var value))
+                {
+                    logger.Warning($"Invalid value in timed command: {ev}");
+                    continue;
+                }
+
+                yield return new TimedEvent
+                {
+                    Offset = new BigRational(beat) / 4,
+                    Value = new BigRational(value)
+                };
+            }
         }
+
+        return Do().ToList();
     }
 }

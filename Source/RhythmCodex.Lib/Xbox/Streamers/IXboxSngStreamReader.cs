@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Xbox.Model;
 
-namespace RhythmCodex.Xbox.Streamers
+namespace RhythmCodex.Xbox.Streamers;
+
+public interface IXboxSngStreamReader
 {
-    public interface IXboxSngStreamReader
-    {
-        IEnumerable<XboxSngEntry> Read(Stream stream);
-    }
+    IEnumerable<XboxSngEntry> Read(Stream stream);
 }

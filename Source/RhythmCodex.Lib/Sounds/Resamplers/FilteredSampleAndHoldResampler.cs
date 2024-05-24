@@ -1,39 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Providers;
 
-namespace RhythmCodex.Sounds.Resamplers
+namespace RhythmCodex.Sounds.Resamplers;
+
+[Service]
+public class FilteredSampleAndHoldResampler(IFilterProvider filterProvider) : IResampler
 {
-    [Service]
-    public class FilteredSampleAndHoldResampler : IResampler
+    private readonly IResampler _baseResampler = new SampleAndHoldResampler();
+
+    public string Name => "filteredsampleandhold";
+
+    public int Priority => int.MinValue + 1;
+
+    public float[] Resample(ReadOnlySpan<float> data, float sourceRate, float targetRate)
     {
-        private readonly IFilterProvider _filterProvider;
-        private readonly IResampler _baseResampler;
-
-        public FilteredSampleAndHoldResampler(IFilterProvider filterProvider)
+        var unfiltered = _baseResampler.Resample(data, sourceRate, targetRate);
+        if (targetRate > sourceRate)
         {
-            _filterProvider = filterProvider;
-            _baseResampler = new SampleAndHoldResampler();
+            var filter = filterProvider.Get(FilterType.LowPass).First();
+            var context = filter.Create(targetRate, sourceRate / 2);
+            return context.Filter(unfiltered);
         }
-        
-        public string Name => "filteredsampleandhold";
-
-        public int Priority => int.MinValue + 1;
-
-        public IList<float> Resample(IList<float> data, float sourceRate, float targetRate)
+        else
         {
-            var unfiltered = _baseResampler.Resample(data, sourceRate, targetRate);
-            if (targetRate > sourceRate)
-            {
-                var filter = _filterProvider.Get(FilterType.LowPass).First();
-                var context = filter.Create(targetRate, sourceRate / 2);
-                return context.Filter(unfiltered);
-            }
-            else
-            {
-                return unfiltered;
-            }
+            return unfiltered;
         }
     }
 }

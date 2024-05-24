@@ -1,7 +1,6 @@
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+public interface IRandomizer
 {
-    public interface IRandomizer
-    {
-        int GetInt(int max);
-    }
+    int GetInt(int max);
 }

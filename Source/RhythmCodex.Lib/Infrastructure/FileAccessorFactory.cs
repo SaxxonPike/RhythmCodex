@@ -1,13 +1,12 @@
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Infrastructure
+namespace RhythmCodex.Infrastructure;
+
+[Service]
+public class FileAccessorFactory : IFileAccessorFactory
 {
-    [Service]
-    public class FileAccessorFactory : IFileAccessorFactory
+    public IFileAccessor Create(string basePath)
     {
-        public IFileAccessor Create(string basePath)
-        {
-            return new FileAccessor(basePath);
-        }
+        return new FileAccessor(basePath);
     }
 }

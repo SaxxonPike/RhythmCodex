@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Bms.Converters
+namespace RhythmCodex.Bms.Converters;
+
+public interface IBmsSoundLoader
 {
-    public interface IBmsSoundLoader
-    {
-        IList<ISound> Load(IDictionary<int, string> map, IFileAccessor accessor);
-    }
+    List<Sound?> Load(IDictionary<int, string> map, IFileAccessor accessor);
 }

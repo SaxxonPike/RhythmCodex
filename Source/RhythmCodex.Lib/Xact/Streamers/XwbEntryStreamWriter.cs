@@ -1,9 +1,8 @@
 ﻿using RhythmCodex.IoC;
 
-namespace RhythmCodex.Xact.Streamers
+namespace RhythmCodex.Xact.Streamers;
+
+[Service]
+public class XwbEntryStreamWriter : IXwbEntryStreamWriter
 {
-    [Service]
-    public class XwbEntryStreamWriter : IXwbEntryStreamWriter
-    {
-    }
 }

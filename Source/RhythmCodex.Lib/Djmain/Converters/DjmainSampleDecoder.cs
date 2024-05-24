@@ -1,76 +1,61 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Djmain.Converters
+namespace RhythmCodex.Djmain.Converters;
+
+[Service]
+public class DjmainSampleDecoder(
+    IDjmainAudioStreamReader djmainAudioStreamReader)
+    : IDjmainSampleDecoder
 {
-    [Service]
-    public class DjmainSampleDecoder : IDjmainSampleDecoder
+    public Dictionary<int, DjmainSample> Decode(
+        Stream stream,
+        IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos,
+        int sampleOffset)
     {
-        private readonly IDjmainAudioStreamReader _djmainAudioStreamReader;
+        return DecodeInternal(stream, infos, sampleOffset)
+            .ToDictionary(kv => kv.Key, kv => kv.Value);
+    }
 
-        public DjmainSampleDecoder(
-            IDjmainAudioStreamReader djmainAudioStreamReader)
+    private IEnumerable<KeyValuePair<int, DjmainSample>> DecodeInternal(
+        Stream stream,
+        IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos,
+        int sampleOffset)
+    {
+        foreach (var (key, props) in infos)
         {
-            _djmainAudioStreamReader = djmainAudioStreamReader;
-        }
+            if (props.Frequency == 0)
+                continue;
 
-        public IDictionary<int, IDjmainSample> Decode(
-            Stream stream,
-            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
-            int sampleOffset)
-        {
-            return DecodeInternal(stream, infos, sampleOffset)
-                .ToDictionary(kv => kv.Key, kv => kv.Value);
-        }
+            // There's fuckery in some of the samples. This addresses a specific anomaly in the input
+            // data where the whole line is 0x0A repeated.
+            if (props is { Frequency: 0x0A0A, Channel: 0x0A, Panning: 0x0A, Volume: 0x0A })
+                continue;
 
-        private IEnumerable<KeyValuePair<int, IDjmainSample>> DecodeInternal(
-            Stream stream,
-            IEnumerable<KeyValuePair<int, IDjmainSampleInfo>> infos,
-            int sampleOffset)
-        {
-            foreach (var info in infos)
-            {
-                var props = info.Value;
+            stream.Position = sampleOffset + props.Offset;
 
-                if (props.Frequency == 0)
-                    continue;
-                
-                // There's fuckery in some of the samples. This addresses a specific anomaly in the input
-                // data where the whole line is 0x0A repeated.
-                if (props.Frequency == 0x0A0A &&
-                    props.Channel == 0x0A &&
-                    props.Panning == 0x0A &&
-                    props.Volume == 0x0A)
-                    continue;
-
-                IList<byte> GetSampleData()
+            yield return new KeyValuePair<int, DjmainSample>(key,
+                new DjmainSample
                 {
-                    switch (props.SampleType & 0xC)
-                    {
-                        case 0x0:
-                            return _djmainAudioStreamReader.ReadPcm8(stream);
-                        case 0x4:
-                            return _djmainAudioStreamReader.ReadPcm16(stream);
-                        case 0x8:
-                            return _djmainAudioStreamReader.ReadDpcm(stream);
-                        default:
-                            return new List<byte>();
-                    }
-                }
+                    Data = GetSampleData(),
+                    Info = props
+                });
 
-                stream.Position = sampleOffset + props.Offset;
+            continue;
 
-                yield return new KeyValuePair<int, IDjmainSample>(info.Key,
-                    new DjmainSample
-                    {
-                        Data = GetSampleData(),
-                        Info = props
-                    });
-            }
+            Memory<byte> GetSampleData() =>
+                (props.SampleType & 0xC) switch
+                {
+                    0x0 => djmainAudioStreamReader.ReadPcm8(stream),
+                    0x4 => djmainAudioStreamReader.ReadPcm16(stream),
+                    0x8 => djmainAudioStreamReader.ReadDpcm(stream),
+                    _ => Memory<byte>.Empty
+                };
         }
     }
 }

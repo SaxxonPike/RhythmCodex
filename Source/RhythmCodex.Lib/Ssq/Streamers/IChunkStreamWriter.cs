@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Streamers
+namespace RhythmCodex.Ssq.Streamers;
+
+public interface IChunkStreamWriter
 {
-    public interface IChunkStreamWriter
-    {
-        void Write(Stream stream, SsqChunk ssqChunk);
-    }
+    void Write(Stream stream, SsqChunk ssqChunk);
 }

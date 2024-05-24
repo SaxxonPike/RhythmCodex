@@ -1,24 +1,22 @@
-﻿using System.Collections.Generic;
-using RhythmCodex.Extensions;
+﻿using System;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 
-namespace RhythmCodex.Sounds.Models
+namespace RhythmCodex.Sounds.Models;
+
+[Model]
+public class Sample : Metadata
 {
-    [Model]
-    public class Sample : Metadata, ISample
-    {
-        public IList<float> Data { get; set; }
+    public Memory<float> Data { get; set; }
         
-        public ISample Clone()
+    public Sample Clone()
+    {
+        var clone = new Sample
         {
-            var clone = new Sample
-            {
-                Data = (float[])Data.AsArray().Clone()
-            };
+            Data = Data.ToArray()
+        };
             
-            clone.CloneMetadataFrom(this);
-            return clone;
-        }
+        clone.CloneMetadataFrom(this);
+        return clone;
     }
 }

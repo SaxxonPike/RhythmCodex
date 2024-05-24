@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Djmain.Model;
@@ -6,62 +7,54 @@ using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Djmain.Converters
+namespace RhythmCodex.Djmain.Converters;
+
+[Service]
+public class DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
+    : IDjmainSoundDecoder
 {
-    [Service]
-    public class DjmainSoundDecoder : IDjmainSoundDecoder
+    public Dictionary<int, Sound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
     {
-        private readonly IDjmainAudioDecoder _djmainAudioDecoder;
-        private readonly IBeatmaniaDspTranslator _beatmaniaDspTranslator;
+        return DecodeInternal(samples)
+            .ToDictionary(s => (int)s[NumericData.Id]!.Value, s => s);
+    }
 
-        public DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
+    private IEnumerable<Sound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
+    {
+        foreach (var def in samples)
         {
-            _djmainAudioDecoder = djmainAudioDecoder;
-            _beatmaniaDspTranslator = beatmaniaDspTranslator;
-        }
+            var info = def.Value.Info;
+            var data = def.Value.Data;
 
-        public IDictionary<int, ISound> Decode(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
-        {
-            return DecodeInternal(samples).ToDictionary(s => (int)s[NumericData.Id].Value, s => s);
-        }
+            var sample = new Sample();
 
-        private IEnumerable<ISound> DecodeInternal(IEnumerable<KeyValuePair<int, IDjmainSample>> samples)
-        {
-            foreach (var def in samples)
+            switch (def.Value.Info.SampleType & 0xC)
             {
-                var info = def.Value.Info;
-                var data = def.Value.Data;
-
-                var sample = new Sample();
-
-                switch (def.Value.Info.SampleType & 0xC)
-                {
-                    case 0x0:
-                        sample.Data = _djmainAudioDecoder.DecodePcm8(data);
-                        break;
-                    case 0x4:
-                        sample.Data = _djmainAudioDecoder.DecodePcm16(data);
-                        break;
-                    case 0x8:
-                        sample.Data = _djmainAudioDecoder.DecodeDpcm(data);
-                        break;
-                    default:
-                        sample.Data = new List<float>();
-                        break;
-                }
-
-                yield return new Sound
-                {
-                    Samples = new List<ISample> {sample},
-                    [NumericData.Volume] = _beatmaniaDspTranslator.GetDjmainVolume(info.Volume),
-                    [NumericData.SourceVolume] = info.Volume,
-                    [NumericData.Panning] = _beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
-                    [NumericData.SourcePanning] = info.Panning,
-                    [NumericData.Channel] = info.Channel,
-                    [NumericData.Rate] = _beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
-                    [NumericData.Id] = def.Key
-                };
+                case 0x0:
+                    sample.Data = djmainAudioDecoder.DecodePcm8(data.Span);
+                    break;
+                case 0x4:
+                    sample.Data = djmainAudioDecoder.DecodePcm16(data.Span);
+                    break;
+                case 0x8:
+                    sample.Data = djmainAudioDecoder.DecodeDpcm(data.Span);
+                    break;
+                default:
+                    sample.Data = Memory<float>.Empty;
+                    break;
             }
+
+            yield return new Sound
+            {
+                Samples = [sample],
+                [NumericData.Volume] = beatmaniaDspTranslator.GetDjmainVolume(info.Volume),
+                [NumericData.SourceVolume] = info.Volume,
+                [NumericData.Panning] = beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
+                [NumericData.SourcePanning] = info.Panning,
+                [NumericData.Channel] = info.Channel,
+                [NumericData.Rate] = beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
+                [NumericData.Id] = def.Key
+            };
         }
     }
 }

@@ -1,11 +1,10 @@
 using System.Drawing;
 using RhythmCodex.Graphics.Models;
 
-namespace RhythmCodex.Graphics.Converters
+namespace RhythmCodex.Graphics.Converters;
+
+public interface IGraphicDsp
 {
-    public interface IGraphicDsp
-    {
-        IBitmap DeIndex(IPaletteBitmap bitmap);
-        IBitmap Snip(IBitmap bitmap, Rectangle rect);
-    }
+    Bitmap DeIndex(PaletteBitmap bitmap);
+    Bitmap Snip(Bitmap bitmap, Rectangle rect);
 }

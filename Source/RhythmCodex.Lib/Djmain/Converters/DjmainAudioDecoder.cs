@@ -1,60 +1,75 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Djmain.Converters
+namespace RhythmCodex.Djmain.Converters;
+
+[Service]
+public class DjmainAudioDecoder : IDjmainAudioDecoder
 {
-    [Service]
-    public class DjmainAudioDecoder : IDjmainAudioDecoder
+    private static readonly int[] DpcmTable =
+    [
+        0x00, 0x01, 0x02, 0x04,
+        0x08, 0x10, 0x20, 0x40,
+        0x00, 0xC0, 0xE0, 0xF0,
+        0xF8, 0xFC, 0xFE, 0xFF
+    ];
+
+    public float[] DecodeDpcm(ReadOnlySpan<byte> data)
     {
-        private static readonly int[] DpcmTable =
-        {
-            0x00, 0x01, 0x02, 0x04,
-            0x08, 0x10, 0x20, 0x40,
-            0x00, 0xC0, 0xE0, 0xF0,
-            0xF8, 0xFC, 0xFE, 0xFF
-        };
+        var result = new float[data.Length * 2];
+        var inCursor = data;
+        var outCursor = result.AsSpan();
+        
+        var accumulator = 0x00;
 
-        public IList<float> DecodeDpcm(IEnumerable<byte> data)
+        while (inCursor.Length >= 1)
         {
-            return DecodeDpcmData(data).ToArray();
+            accumulator = (accumulator + DpcmTable[inCursor[0] & 0xF]) & 0xFF;
+            outCursor[0] = ((accumulator ^ 0x80) - 0x80) / 128f;
+            accumulator = (accumulator + DpcmTable[inCursor[0] >> 4]) & 0xFF;
+            outCursor[1] = ((accumulator ^ 0x80) - 0x80) / 128f;
+            inCursor = inCursor[1..];
+            outCursor = outCursor[2..];
         }
 
-        public IList<float> DecodePcm8(IEnumerable<byte> data)
+        return result;
+    }
+
+    public float[] DecodePcm8(ReadOnlySpan<byte> data)
+    {
+        var result = new float[data.Length];
+        var inCursor = data;
+        var outCursor = result.AsSpan();
+
+        while (inCursor.Length >= 1)
         {
-            return data.Select(b => ((b ^ 0x80) - 0x80) / 128f).ToArray();
+            outCursor[0] = ((inCursor[0] ^ 0x80) - 0x80) / 128f;
+            inCursor = inCursor[1..];
+            outCursor = outCursor[1..];
         }
 
-        public IList<float> DecodePcm16(IEnumerable<byte> data)
+        return result;
+    }
+
+    public float[] DecodePcm16(ReadOnlySpan<byte> data)
+    {
+        var result = new float[(data.Length + 1) / 2];
+        var inCursor = data;
+        var outCursor = result.AsSpan();
+
+        while (inCursor.Length > 0)
         {
-            return DecodePcm16Data(data).ToArray();
+            var low = inCursor[0];
+            var high = inCursor.Length > 1 ? inCursor[1] : 0;
+            outCursor[0] = (((low | (high << 8)) << 16) >> 16) / 32768f;
+
+            if (inCursor.Length < 2)
+                break;
+
+            inCursor = inCursor[2..];
+            outCursor = outCursor[1..];
         }
 
-        private static IEnumerable<float> DecodePcm16Data(IEnumerable<byte> data)
-        {
-            using var e = data.GetEnumerator();
-            while (true)
-            {
-                if (!e.MoveNext())
-                    yield break;
-
-                var low = e.Current;
-                var high = e.MoveNext() ? e.Current : 0;
-
-                yield return (((low | (high << 8)) << 16) >> 16) / 32768f;
-            }
-        }
-
-        private static IEnumerable<float> DecodeDpcmData(IEnumerable<byte> data)
-        {
-            var accumulator = 0x00;
-            foreach (var b in data)
-            {
-                accumulator = (accumulator + DpcmTable[b & 0xF]) & 0xFF;
-                yield return ((accumulator ^ 0x80) - 0x80) / 128f;
-                accumulator = (accumulator + DpcmTable[b >> 4]) & 0xFF;
-                yield return ((accumulator ^ 0x80) - 0x80) / 128f;
-            }
-        }
+        return result;
     }
 }

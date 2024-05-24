@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Vtddd.Models;
 
-namespace RhythmCodex.Vtddd.Converters
+namespace RhythmCodex.Vtddd.Converters;
+
+public interface IVtdddChartDecoder
 {
-    public interface IVtdddChartDecoder
-    {
-        IChart Decode(IEnumerable<VtdddStep> steps);
-    }
+    Chart Decode(IEnumerable<VtdddStep> steps);
 }

@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 
-namespace RhythmCodex.Compression
+namespace RhythmCodex.Compression;
+
+public interface IBemaniLzssDecoder
 {
-    public interface IBemaniLzssDecoder
-    {
-        Memory<byte> Decode(Stream source);
-    }
+    Memory<byte> Decode(Stream source);
 }

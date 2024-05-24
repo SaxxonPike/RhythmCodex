@@ -1,9 +1,8 @@
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Step1.Converters
+namespace RhythmCodex.Step1.Converters;
+
+public interface IStep1ChartInfoDecoder
 {
-    public interface IStep1ChartInfoDecoder
-    {
-        ChartInfo Decode(int metadata, int playerCount, int panelCount);
-    }
+    ChartInfo Decode(int metadata, int playerCount, int panelCount);
 }

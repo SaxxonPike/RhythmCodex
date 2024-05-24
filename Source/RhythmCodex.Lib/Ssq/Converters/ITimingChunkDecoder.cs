@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using RhythmCodex.Ssq.Model;
 
-namespace RhythmCodex.Ssq.Converters
+namespace RhythmCodex.Ssq.Converters;
+
+[PublicAPI]
+public interface ITimingChunkDecoder
 {
-    public interface ITimingChunkDecoder
-    {
-        IList<Timing> Convert(ReadOnlyMemory<byte> data);
-    }
+    List<Timing> Convert(ReadOnlyMemory<byte> data);
 }

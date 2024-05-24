@@ -1,12 +1,12 @@
+using System;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Iso.Model
+namespace RhythmCodex.Iso.Model;
+
+[Model]
+public class IsoBootRecord
 {
-    [Model]
-    public class IsoBootRecord
-    {
-        public string BootSystemIdentifier { get; set; }
-        public string BootIdentifier { get; set; }
-        public byte[] BootSystemData { get; set; }
-    }
+    public string BootSystemIdentifier { get; set; }
+    public string BootIdentifier { get; set; }
+    public Memory<byte> BootSystemData { get; set; }
 }

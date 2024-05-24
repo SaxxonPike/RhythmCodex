@@ -1,11 +1,11 @@
-﻿using RhythmCodex.Infrastructure;
+﻿using System.Collections.Generic;
+using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Xact.Model
+namespace RhythmCodex.Xact.Model;
+
+[Model]
+public class XsbFile
 {
-    [Model]
-    public class XsbFile
-    {
-        public XsbHeader Header { get; set; }
-        public XsbCue[] Cues { get; set; }
-    }
+    public required XsbHeader Header { get; init; }
+    public required List<XsbCue> Cues { get; init; }
 }

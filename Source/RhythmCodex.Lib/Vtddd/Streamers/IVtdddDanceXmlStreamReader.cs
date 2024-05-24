@@ -1,10 +1,9 @@
 using System.IO;
 using RhythmCodex.Vtddd.Models;
 
-namespace RhythmCodex.Vtddd.Streamers
+namespace RhythmCodex.Vtddd.Streamers;
+
+public interface IVtdddDanceXmlStreamReader
 {
-    public interface IVtdddDanceXmlStreamReader
-    {
-        VtdddDanceDb Read(Stream stream, string chartPrefix);
-    }
+    VtdddDanceDb Read(Stream stream, string chartPrefix);
 }

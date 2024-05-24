@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Beatmania.Models;
 
-namespace RhythmCodex.Beatmania.Streamers
+namespace RhythmCodex.Beatmania.Streamers;
+
+public interface IBeatmaniaPsxBmDataStreamReader
 {
-    public interface IBeatmaniaPsxBmDataStreamReader
-    {
-        IList<BeatmaniaPsxFolder> Read(Stream stream, int length);
-    }
+    List<BeatmaniaPsxFolder> Read(Stream stream, int length);
 }

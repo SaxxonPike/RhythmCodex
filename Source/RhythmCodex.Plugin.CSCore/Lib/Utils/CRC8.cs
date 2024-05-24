@@ -1,42 +1,41 @@
-﻿namespace RhythmCodex.Plugin.CSCore.Lib.Utils
+﻿namespace RhythmCodex.Plugin.CSCore.Lib.Utils;
+
+/// <summary>
+/// This class is based on the CUETools.NET project (see http://sourceforge.net/p/cuetoolsnet/)
+/// The author "Grigory Chudov" explicitly gave the permission to use the source as part of the cscore source code which got licensed under the ms-pl.
+/// </summary>
+internal class CRC8 : CRCBase<byte>
 {
-    /// <summary>
-    /// This class is based on the CUETools.NET project (see http://sourceforge.net/p/cuetoolsnet/)
-    /// The author "Grigory Chudov" explicitly gave the permission to use the source as part of the cscore source code which got licensed under the ms-pl.
-    /// </summary>
-    internal class CRC8 : CRCBase<byte>
+    private static CRC8 _instance;
+
+    public CRC8()
     {
-        private static CRC8 _instance;
+        CalcTable(8);
+    }
 
-        public CRC8()
+    public static CRC8 Instance => _instance ?? (_instance = new CRC8());
+
+    public override byte CalcCheckSum(byte[] buffer, int offset, int count)
+    {
+        var res = 0;
+        for (var i = offset; i < offset + count; i++)
         {
-            CalcTable(8);
+            res = crc_table[res ^ buffer[i]];
         }
 
-        public static CRC8 Instance => _instance ?? (_instance = new CRC8());
+        return (byte) res;
+    }
 
-        public override byte CalcCheckSum(byte[] buffer, int offset, int count)
+    public unsafe byte CalcCheckSum(byte* buffer, int offset, int count)
+    {
+        //byte[] buff = new byte[count];
+        //System.Runtime.InteropServices.Marshal.Copy(new IntPtr(buffer), buff, offset, count);
+        //return CalcCheckSum(buff, 0, buff.Length);
+        var res = 0;
+        for (var i = offset; i < offset + count; i++)
         {
-            var res = 0;
-            for (var i = offset; i < offset + count; i++)
-            {
-                res = crc_table[res ^ buffer[i]];
-            }
-
-            return (byte) res;
+            res = crc_table[res ^ buffer[i]];
         }
-
-        public unsafe byte CalcCheckSum(byte* buffer, int offset, int count)
-        {
-            //byte[] buff = new byte[count];
-            //System.Runtime.InteropServices.Marshal.Copy(new IntPtr(buffer), buff, offset, count);
-            //return CalcCheckSum(buff, 0, buff.Length);
-            var res = 0;
-            for (var i = offset; i < offset + count; i++)
-            {
-                res = crc_table[res ^ buffer[i]];
-            }
-            return (byte) res;
-        }
+        return (byte) res;
     }
 }

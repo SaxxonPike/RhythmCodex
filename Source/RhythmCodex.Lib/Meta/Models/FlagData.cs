@@ -1,18 +1,17 @@
-﻿namespace RhythmCodex.Meta.Models
+﻿namespace RhythmCodex.Meta.Models;
+
+public enum FlagData
 {
-    public enum FlagData
-    {
-        Note,
-        Freeze,
-        Mine,
-        Shock,
-        Measure,
-        FreeZone,
-        Scratch,
-        End,
-        Roll,
-        Lift,
-        Fake,
-        FreezeEnd
-    }
+    Note,
+    Freeze,
+    Mine,
+    Shock,
+    Measure,
+    FreeZone,
+    Scratch,
+    End,
+    Roll,
+    Lift,
+    Fake,
+    FreezeEnd
 }

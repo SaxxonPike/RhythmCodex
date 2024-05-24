@@ -1,9 +1,8 @@
 using System;
 
-namespace RhythmCodex.Iso.Converters
+namespace RhythmCodex.Iso.Converters;
+
+public interface IIsoDateTimeDecoder
 {
-    public interface IIsoDateTimeDecoder
-    {
-        DateTimeOffset? Decode(ReadOnlySpan<byte> data);
-    }
+    DateTimeOffset? Decode(ReadOnlySpan<byte> data);
 }

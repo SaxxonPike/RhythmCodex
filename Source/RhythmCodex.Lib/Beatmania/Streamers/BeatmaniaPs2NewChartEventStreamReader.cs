@@ -3,14 +3,13 @@ using System.IO;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Beatmania.Streamers
+namespace RhythmCodex.Beatmania.Streamers;
+
+[Service]
+public class BeatmaniaPs2NewChartEventStreamReader : IBeatmaniaPs2NewChartEventStreamReader
 {
-    [Service]
-    public class BeatmaniaPs2NewChartEventStreamReader : IBeatmaniaPs2NewChartEventStreamReader
+    public List<BeatmaniaPs2Event> Read(Stream stream, long length)
     {
-        public IList<BeatmaniaPs2Event> Read(Stream stream, int length)
-        {
-            throw new System.NotImplementedException();
-        }
+        throw new System.NotImplementedException();
     }
 }

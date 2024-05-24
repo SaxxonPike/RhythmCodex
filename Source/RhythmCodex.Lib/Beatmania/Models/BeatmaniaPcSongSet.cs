@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Beatmania.Models
+namespace RhythmCodex.Beatmania.Models;
+
+[Model]
+public class BeatmaniaPcSongSet
 {
-    [Model]
-    public class BeatmaniaPcSongSet
-    {
-        public IList<BeatmaniaPcAudioEntry> Sounds { get; set; }
-        public IList<BeatmaniaPc1Chart> Charts { get; set; }
-    }
+    public List<BeatmaniaPcAudioEntry> Sounds { get; set; } = [];
+    public List<BeatmaniaPc1Chart> Charts { get; set; } = [];
 }

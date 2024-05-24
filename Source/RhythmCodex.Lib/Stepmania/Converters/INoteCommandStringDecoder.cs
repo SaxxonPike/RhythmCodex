@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+public interface INoteCommandStringDecoder
 {
-    public interface INoteCommandStringDecoder
-    {
-        IList<Note> Decode(int columns, string notes);
-    }
+    List<Note> Decode(int columns, string notes);
 }

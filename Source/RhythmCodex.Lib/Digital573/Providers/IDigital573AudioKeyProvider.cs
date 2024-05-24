@@ -1,7 +1,6 @@
-namespace RhythmCodex.Digital573.Providers
+namespace RhythmCodex.Digital573.Providers;
+
+public interface IDigital573AudioKeyProvider
 {
-    public interface IDigital573AudioKeyProvider
-    {
-        int[] Get(byte[] source);
-    }
+    int[]? Get(byte[] source);
 }

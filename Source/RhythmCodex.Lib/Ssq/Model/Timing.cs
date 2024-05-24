@@ -1,11 +1,10 @@
 ﻿using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Ssq.Model
+namespace RhythmCodex.Ssq.Model;
+
+[Model]
+public class Timing
 {
-    [Model]
-    public class Timing
-    {
-        public int MetricOffset { get; set; }
-        public int LinearOffset { get; set; }
-    }
+    public int MetricOffset { get; set; }
+    public int LinearOffset { get; set; }
 }

@@ -1,45 +1,34 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Ddr.Converters
+namespace RhythmCodex.Ddr.Converters;
+
+[Service]
+public class DdrPs2FileDataBoundTableDecoder(IBemaniLzDecoder bemaniLzDecoder) : IDdrPs2FileDataBoundTableDecoder
 {
-    [Service]
-    public class DdrPs2FileDataBoundTableDecoder : IDdrPs2FileDataBoundTableDecoder
+    public List<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk)
     {
-        private readonly IBemaniLzDecoder _bemaniLzDecoder;
+        var data = chunk.Data;
+        var result = new List<DdrPs2FileDataTableEntry>();
+        var stream = new ReadOnlyMemoryStream(data);
+        var offsets = Bitter.ToInt32Values(data.Span);
+        var count = offsets[0];
 
-        public DdrPs2FileDataBoundTableDecoder(IBemaniLzDecoder bemaniLzDecoder)
+        for (var i = 0; i < count; i++)
         {
-            _bemaniLzDecoder = bemaniLzDecoder;
-        }
-
-        public IList<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk)
-        {
-            var data = chunk.Data;
-            var result = new List<DdrPs2FileDataTableEntry>();
-            var stream = new MemoryStream(data);
-            var offsets = Bitter.ToInt32Values(data);
-            var count = offsets[0];
-
-            for (var i = 0; i < count; i++)
+            var offset = offsets[i + 1];
+            var length = offsets[i + 1 + count];
+            stream.Position = offset;
+            result.Add(new DdrPs2FileDataTableEntry
             {
-                var offset = offsets[i + 1];
-                var length = offsets[i + 1 + count];
-                stream.Position = offset;
-                result.Add(new DdrPs2FileDataTableEntry
-                {
-                    Index = i,
-                    Data = _bemaniLzDecoder.Decode(stream)
-                });
-            }
-
-            return result;
+                Index = i,
+                Data = bemaniLzDecoder.Decode(stream)
+            });
         }
+
+        return result;
     }
 }

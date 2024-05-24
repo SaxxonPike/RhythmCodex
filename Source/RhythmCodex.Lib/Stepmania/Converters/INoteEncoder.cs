@@ -2,10 +2,9 @@
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+public interface INoteEncoder
 {
-    public interface INoteEncoder
-    {
-        IList<Note> Encode(IEnumerable<IEvent> events);
-    }
+    List<Note> Encode(IEnumerable<Event> events);
 }

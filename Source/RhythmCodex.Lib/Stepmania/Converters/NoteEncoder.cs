@@ -1,101 +1,92 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charting.Models;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Stepmania.Model;
 
-namespace RhythmCodex.Stepmania.Converters
+namespace RhythmCodex.Stepmania.Converters;
+
+[Service]
+public class NoteEncoder(ILogger logger) : INoteEncoder
 {
-    [Service]
-    public class NoteEncoder : INoteEncoder
+    public List<Note> Encode(IEnumerable<Event> events)
     {
-        private readonly ILogger _logger;
-
-        public NoteEncoder(ILogger logger)
+        IEnumerable<Note> Do()
         {
-            _logger = logger;
-        }
+            var result = new List<Note>();
+            var eventList = events;
+            var columnCount = (int) eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
+            var playerCount = (int) eventList.Max(e => e[NumericData.Player] ?? BigRational.Zero) + 1;
 
-        public IList<Note> Encode(IEnumerable<IEvent> events)
-        {
-            IEnumerable<Note> Do()
+            foreach (var ev in eventList.Where(e => e[NumericData.MetricOffset] != null))
             {
-                var result = new List<Note>();
-                var eventList = events.AsList();
-                var columnCount = (int) eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
-                var playerCount = (int) eventList.Max(e => e[NumericData.Player] ?? BigRational.Zero) + 1;
+                var offset = ev[NumericData.MetricOffset];
+                if (offset == null)
+                    throw new RhythmCodexException($"{nameof(NumericData.MetricOffset)} must be present.");
 
-                foreach (var ev in eventList.Where(e => e[NumericData.MetricOffset] != null))
+                var offsetValue = offset.Value;
+
+                if (ev[NumericData.Column] != null)
                 {
-                    var offset = ev[NumericData.MetricOffset];
-                    if (offset == null)
-                        throw new RhythmCodexException($"{nameof(NumericData.MetricOffset)} must be present.");
+                    var column = (int) ev[NumericData.Column].Value +
+                                 (int) (ev[NumericData.Player] ?? BigRational.Zero) * columnCount;
 
-                    var offsetValue = offset.Value;
-
-                    if (ev[NumericData.Column] != null)
+                    if (ev[FlagData.Note] == true)
                     {
-                        var column = (int) ev[NumericData.Column].Value +
-                                     (int) (ev[NumericData.Player] ?? BigRational.Zero) * columnCount;
-
-                        if (ev[FlagData.Note] == true)
-                        {
-                            result.Add(new Note
-                            {
-                                MetricOffset = offsetValue,
-                                Type = NoteType.Step,
-                                Column = column
-                            });
-                            continue;
-                        }
-
-                        if (ev[FlagData.Freeze] == true)
-                        {
-                            result.Add(new Note
-                            {
-                                MetricOffset = offsetValue,
-                                Type = NoteType.Tail,
-                                Column = column
-                            });
-                            continue;
-                        }
-                    }
-
-                    if (ev[FlagData.Shock] == true)
-                        result.AddRange(Enumerable.Range(0, columnCount * playerCount).Select(i => new Note
+                        result.Add(new Note
                         {
                             MetricOffset = offsetValue,
-                            Type = NoteType.Mine,
-                            Column = i
-                        }));
+                            Type = NoteType.Step,
+                            Column = column
+                        });
+                        continue;
+                    }
+
+                    if (ev[FlagData.Freeze] == true)
+                    {
+                        result.Add(new Note
+                        {
+                            MetricOffset = offsetValue,
+                            Type = NoteType.Tail,
+                            Column = column
+                        });
+                        continue;
+                    }
                 }
 
-                ApplyFreezeHeads(result);
-                return result;
+                if (ev[FlagData.Shock] == true)
+                    result.AddRange(Enumerable.Range(0, columnCount * playerCount).Select(i => new Note
+                    {
+                        MetricOffset = offsetValue,
+                        Type = NoteType.Mine,
+                        Column = i
+                    }));
             }
 
-            return Do().ToList();
+            ApplyFreezeHeads(result);
+            return result;
         }
 
-        private void ApplyFreezeHeads(IEnumerable<Note> notes)
-        {
-            var freezeColumns = new HashSet<int>();
-            foreach (var note in notes.Reverse())
-                if (note.Type == NoteType.Tail)
-                {
-                    freezeColumns.Add(note.Column);
-                }
-                else if (note.Type == NoteType.Step && freezeColumns.Contains(note.Column))
-                {
-                    freezeColumns.Remove(note.Column);
-                    note.Type = NoteType.Freeze;
-                }
+        return Do().ToList();
+    }
 
-            foreach (var column in freezeColumns)
-                _logger.Warning($"Column {column} has a freeze tail but no suitable freeze head");
-        }
+    private void ApplyFreezeHeads(IEnumerable<Note> notes)
+    {
+        var freezeColumns = new HashSet<int>();
+        foreach (var note in notes.Reverse())
+            if (note.Type == NoteType.Tail)
+            {
+                freezeColumns.Add(note.Column);
+            }
+            else if (note.Type == NoteType.Step && freezeColumns.Contains(note.Column))
+            {
+                freezeColumns.Remove(note.Column);
+                note.Type = NoteType.Freeze;
+            }
+
+        foreach (var column in freezeColumns)
+            logger.Warning($"Column {column} has a freeze tail but no suitable freeze head");
     }
 }
