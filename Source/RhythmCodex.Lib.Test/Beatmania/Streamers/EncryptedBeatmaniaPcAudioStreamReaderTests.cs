@@ -26,7 +26,7 @@ public class EncryptedBeatmaniaPcAudioStreamReaderTests : BaseUnitTestFixture<En
         {
             using var stream = new MemoryStream(file);
             var decrypted = Subject.Decrypt(stream, file.Length);
-            var observed = decrypted.AsSpan(0x00, 0x10).NullTerminated().GetString();
+            var observed = decrypted.Span[..0x10].NullTerminated().GetString();
             observed.Should().Be(expectedId);
         }
     }

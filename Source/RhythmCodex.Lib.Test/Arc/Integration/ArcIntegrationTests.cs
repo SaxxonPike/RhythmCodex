@@ -27,7 +27,7 @@ public class ArcIntegrationTests : BaseIntegrationFixture
 
         var file = output[1];
         file.Name.Should().Be("data/chara/pl_shadow00/pl_shadow00.dds");
-        file.Data.Should().BeEquivalentTo(expected);
+        file.Data.ToArray().Should().BeEquivalentTo(expected);
     }
 
     [Test]

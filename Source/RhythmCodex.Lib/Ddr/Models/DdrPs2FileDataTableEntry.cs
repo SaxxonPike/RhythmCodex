@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Ddr.Models;
@@ -6,5 +7,5 @@ namespace RhythmCodex.Ddr.Models;
 public class DdrPs2FileDataTableEntry
 {
     public required int Index { get; set; }
-    public required byte[] Data { get; set; }
+    public required Memory<byte> Data { get; set; }
 }

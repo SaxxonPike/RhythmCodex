@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Extensions;
@@ -10,7 +11,7 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class StepChunkEncoder : IStepChunkEncoder
 {
-    public byte[] Convert(IReadOnlyCollection<Step> steps)
+    public Memory<byte> Convert(IReadOnlyCollection<Step> steps)
     {
         var count = steps.Count;
 

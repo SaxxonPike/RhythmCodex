@@ -9,7 +9,9 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Djmain.Converters;
 
 [Service]
-public class DjmainSampleDecoder(IDjmainAudioStreamReader djmainAudioStreamReader) : IDjmainSampleDecoder
+public class DjmainSampleDecoder(
+    IDjmainAudioStreamReader djmainAudioStreamReader)
+    : IDjmainSampleDecoder
 {
     public Dictionary<int, DjmainSample> Decode(
         Stream stream,
@@ -29,7 +31,7 @@ public class DjmainSampleDecoder(IDjmainAudioStreamReader djmainAudioStreamReade
         {
             if (props.Frequency == 0)
                 continue;
-                
+
             // There's fuckery in some of the samples. This addresses a specific anomaly in the input
             // data where the whole line is 0x0A repeated.
             if (props is { Frequency: 0x0A0A, Channel: 0x0A, Panning: 0x0A, Volume: 0x0A })

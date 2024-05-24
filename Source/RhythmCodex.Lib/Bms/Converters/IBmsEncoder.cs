@@ -6,5 +6,5 @@ namespace RhythmCodex.Bms.Converters;
 
 public interface IBmsEncoder
 {
-    IList<BmsCommand> Encode(Chart chart);
+    List<BmsCommand> Encode(Chart chart);
 }

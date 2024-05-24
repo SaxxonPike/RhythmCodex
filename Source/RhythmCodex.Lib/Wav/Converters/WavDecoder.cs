@@ -41,7 +41,7 @@ public class WavDecoder(
         var result = new Sound
         {
             [NumericData.Rate] = format.SampleRate,
-            Samples = new List<Sample>()
+            Samples = []
         };
 
         switch (format.Format)
@@ -52,16 +52,16 @@ public class WavDecoder(
                 switch (format.BitsPerSample)
                 {
                     case 8:
-                        decoded = pcmDecoder.Decode8Bit(data.Data);
+                        decoded = pcmDecoder.Decode8Bit(data.Data.Span);
                         break;
                     case 16:
-                        decoded = pcmDecoder.Decode16Bit(data.Data);
+                        decoded = pcmDecoder.Decode16Bit(data.Data.Span);
                         break;
                     case 24:
-                        decoded = pcmDecoder.Decode24Bit(data.Data);
+                        decoded = pcmDecoder.Decode24Bit(data.Data.Span);
                         break;
                     case 32:
-                        decoded = pcmDecoder.Decode32Bit(data.Data);
+                        decoded = pcmDecoder.Decode32Bit(data.Data.Span);
                         break;
                     default:
                         throw new RhythmCodexException("Invalid bits per sample.");
@@ -81,7 +81,7 @@ public class WavDecoder(
             case 0x0002: // Microsoft ADPCM
             {
                 var exFormat = new MicrosoftAdpcmFormat(format.ExtraData.Span);
-                var decoded = microsoftAdpcmDecoder.Decode(data.Data, format, exFormat);
+                var decoded = microsoftAdpcmDecoder.Decode(data.Data.Span, format, exFormat);
 
                 foreach (var sample in decoded.Samples)
                     result.Samples.Add(sample);
@@ -90,7 +90,7 @@ public class WavDecoder(
             }
             case 0x0003: // 32-bit float
             {
-                var decoded = pcmDecoder.DecodeFloat(data.Data);
+                var decoded = pcmDecoder.DecodeFloat(data.Data.Span);
 
                 foreach (var channel in decoded.AsSpan().Deinterleave(1, format.Channels))
                 {

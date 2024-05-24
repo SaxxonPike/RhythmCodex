@@ -9,16 +9,16 @@ namespace RhythmCodex.Stepmania.Converters;
 [Service]
 public class SmMetadataChanger : ISmMetadataChanger
 {
-    private void AddOrReplace(ICollection<Command> commands, string key, params string[] values)
+    private static void AddOrReplace(ICollection<Command> commands, string key, params string[] values)
     {
         var command = commands.FirstOrDefault(c => c.Name.Equals(key, StringComparison.OrdinalIgnoreCase));
         if (command != null)
-            command.Values = values;
+            command.Values = values.ToList();
         else
-            commands.Add(new Command {Name = key, Values = values});
+            commands.Add(new Command { Name = key, Values = values.ToList() });
     }
 
-    private void EditWhere(IEnumerable<Command> commands, Func<Command, bool> predicate, Action<Command> replace)
+    private static void EditWhere(IEnumerable<Command> commands, Func<Command, bool> predicate, Action<Command> replace)
     {
         foreach (var command in commands.Where(predicate))
             replace(command);

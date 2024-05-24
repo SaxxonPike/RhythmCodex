@@ -1,4 +1,5 @@
-﻿using RhythmCodex.Infrastructure;
+﻿using System;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Arc.Model;
 
@@ -27,5 +28,5 @@ public class ArcFile
     /// Raw data. Can be compressed or uncompressed. If this data is compressed, there will be a difference
     /// between <see cref="CompressedSize"/> and <see cref="DecompressedSize"/>.
     /// </summary>
-    public byte[]? Data { get; set; }
+    public Memory<byte> Data { get; set; }
 }

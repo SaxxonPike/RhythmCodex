@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Tga.Models;
@@ -19,6 +20,6 @@ public class TgaImage
     public int AttributeBitsPerPixel { get; set; }
     public TgaInterleave Interleave { get; set; }
     public TgaOriginType OriginType { get; set; }
-    public byte[] IdentificationField { get; set; }
-    public byte[] ImageData { get; set; }
+    public Memory<byte> IdentificationField { get; set; }
+    public Memory<byte> ImageData { get; set; }
 }

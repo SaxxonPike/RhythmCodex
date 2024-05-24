@@ -7,12 +7,12 @@ namespace RhythmCodex.Djmain.Converters;
 public class DjmainAudioDecoder : IDjmainAudioDecoder
 {
     private static readonly int[] DpcmTable =
-    {
+    [
         0x00, 0x01, 0x02, 0x04,
         0x08, 0x10, 0x20, 0x40,
         0x00, 0xC0, 0xE0, 0xF0,
         0xF8, 0xFC, 0xFE, 0xFF
-    };
+    ];
 
     public float[] DecodeDpcm(ReadOnlySpan<byte> data)
     {

@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Converters;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Ddr.Integration;
 
@@ -24,8 +25,8 @@ public class Ddr573SongDatabaseIntegrationTests : BaseIntegrationFixture
         var decrypter = Resolve<IDdr573DatabaseDecrypter>();
         var decompressor = Resolve<IBemaniLzDecoder>();
         var decrypted = decrypter.Decrypt(data, decrypter.ConvertKey("EXTREME"));
-        var decompressed = decompressor.Decode(new MemoryStream(decrypted));
-        decompressed.Should().BeEquivalentTo(expected);
+        var decompressed = decompressor.Decode(new ReadOnlyMemoryStream(decrypted));
+        decompressed.ToArray().Should().BeEquivalentTo(expected);
     }
 
     [Test]

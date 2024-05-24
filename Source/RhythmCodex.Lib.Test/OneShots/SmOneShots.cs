@@ -87,7 +87,7 @@ public class SmOneShots : BaseIntegrationFixture
         var existingCommand = commands.FirstOrDefault(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         if (existingCommand != null) return existingCommand;
 
-        existingCommand = new Command {Name = name, Values = new List<string>()};
+        existingCommand = new Command {Name = name, Values = [] };
 
         commands.Add(existingCommand);
         return existingCommand;

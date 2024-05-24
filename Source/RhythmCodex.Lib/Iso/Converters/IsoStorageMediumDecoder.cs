@@ -16,21 +16,20 @@ public class IsoStorageMediumDecoder(
     {
         var result = new IsoStorageMedium
         {
-            BootRecords = new List<IsoBootRecord>(),
-            Volumes = new List<IsoVolume>()
+            BootRecords = [],
+            Volumes = []
         };
 
         var descriptorSectors = isoDescriptorSectorFinder.Find(sectors).ToList();
-            
-        var bootDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x00).ToList();
-        var primaryVolumeDescriptor = descriptorSectors.Single(s => s.UserData[0] == 0x01);
+        var bootDescriptors = descriptorSectors.Where(s => s.UserData.Span[0] == 0x00).ToList();
+        var primaryVolumeDescriptor = descriptorSectors.Single(s => s.UserData.Span[0] == 0x01);
 //            var supplementaryVolumeDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x02).ToList();
 //            var partitionDescriptors = descriptorSectors.Where(s => s.UserData[0] == 0x03).ToList();
 
         foreach (var bootDescriptor in bootDescriptors)
-            result.BootRecords.Add(isoBootRecordDecoder.Decode(bootDescriptor.UserData));
+            result.BootRecords.Add(isoBootRecordDecoder.Decode(bootDescriptor.UserData.Span));
 
-        var primaryVolume = isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData);
+        var primaryVolume = isoPrimaryVolumeDescriptorDecoder.Decode(primaryVolumeDescriptor.UserData.Span);
             
         result.Volumes.Add(primaryVolume);
 

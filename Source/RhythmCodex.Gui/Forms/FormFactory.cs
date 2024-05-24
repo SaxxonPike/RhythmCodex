@@ -74,11 +74,11 @@ public class FormFactory(
         {
             Id = Ids.MainForm,
             Text = "RhythmCodex GUI",
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 CreateMainFormTabs(),
-                CreateMainFormMenu(),
-            },
+                CreateMainFormMenu()
+            ],
             AfterBuild = x =>
             {
                 x.Control.MainMenuStrip = x.GetControl<MenuStrip>(Ids.MainFormMenu);
@@ -151,21 +151,21 @@ public class FormFactory(
         return new FluentMenu
         {
             Id = Ids.MainFormMenu,
-            Items = new List<FluentMenuItem>
-            {
+            Items =
+            [
                 new FluentMenuItem
                 {
                     Text = "&File",
-                    Items = new List<FluentMenuItem>
-                    {
+                    Items =
+                    [
                         new FluentMenuItem
                         {
                             Text = "E&xit",
                             OnClick = Application.Exit
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
     }
 
@@ -175,13 +175,13 @@ public class FormFactory(
         {
             Dock = DockStyle.Fill,
             Padding = new Padding(8, 2, 8, 8),
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 controlFactory.CreateStandardTable(null,
                     controlFactory.CreateFolderSelect(
                             Ids.MainFormOutputFolderSelect, "Output Path")
-                        .Concat(new[] {CreateMainFormTabControl()}), true)
-            }
+                        .Concat(new[] { CreateMainFormTabControl() }), true)
+            ]
         };
     }
 
@@ -192,42 +192,36 @@ public class FormFactory(
             Dock = DockStyle.Fill,
             Id = Ids.MainFormTabControl,
             ColumnSpan = 3,
-            Items = new List<FluentTabPage>
-            {
+            Items =
+            [
                 new FluentTabPage
                 {
                     Id = Ids.LogTabId,
                     Text = "Log",
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormLog()
-                    }
+                    Controls = [CreateMainFormLog()]
                 },
+
                 new FluentTabPage
                 {
                     Text = "BMS",
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormBmsPage(),
-                    }
+                    Controls =
+                    [
+                        CreateMainFormBmsPage()
+                    ]
                 },
+
                 new FluentTabPage
                 {
                     Text = "beatmania",
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormBeatmaniaPage()
-                    }
+                    Controls = [CreateMainFormBeatmaniaPage()]
                 },
+
                 new FluentTabPage
                 {
                     Text = "DanceDanceRevolution",
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormDanceDanceRevolutionPage()
-                    }
+                    Controls = [CreateMainFormDanceDanceRevolutionPage()]
                 }
-            }
+            ]
         };
     }
 
@@ -238,8 +232,8 @@ public class FormFactory(
             Dock = DockStyle.Fill,
             AutoSize = false,
             AutoScroll = true,
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 controlFactory.CreateStandardTable(null,
                     controlFactory.CreateSpacer("Render BMS to WAV")
                         .Concat(controlFactory
@@ -248,7 +242,7 @@ public class FormFactory(
                             .CreateBigButton(Ids.BmsRenderStart, "Go",
                                 BmsRender))
                     , false)
-            }
+            ]
         };
     }
 
@@ -256,61 +250,56 @@ public class FormFactory(
     {
         return new FluentTabControl
         {
-            Items = new List<FluentTabPage>
-            {
+            Items =
+            [
                 new FluentTabPage
                 {
                     Text = "Common",
                     AutoScroll = true,
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormDanceDanceRevolutionCommonPage()
-                    }
+                    Controls = [CreateMainFormDanceDanceRevolutionCommonPage()]
                 },
+
                 new FluentTabPage
                 {
                     Text = "Playstation"
                 },
+
                 new FluentTabPage
                 {
                     Text = "Playstation 2"
                 },
+
                 new FluentTabPage
                 {
                     Text = "Xbox",
                     AutoScroll = true,
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormDanceDanceRevolutionXboxPage()
-                    }
+                    Controls = [CreateMainFormDanceDanceRevolutionXboxPage()]
                 },
+
                 new FluentTabPage
                 {
                     Text = "Xbox 360"
                 },
+
                 new FluentTabPage
                 {
                     Text = "System 573",
                     AutoScroll = true,
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormDanceDanceRevolution573Page()
-                    }
+                    Controls = [CreateMainFormDanceDanceRevolution573Page()]
                 },
+
                 new FluentTabPage
                 {
                     Text = "Python"
                 },
+
                 new FluentTabPage
                 {
                     Text = "PC",
                     AutoScroll = true,
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormDanceDanceRevolutionPcPage()
-                    }
+                    Controls = [CreateMainFormDanceDanceRevolutionPcPage()]
                 }
-            }
+            ]
         };
     }
 
@@ -321,8 +310,8 @@ public class FormFactory(
             Dock = DockStyle.Fill,
             AutoSize = false,
             AutoScroll = true,
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 controlFactory.CreateStandardTable(null,
                     controlFactory.CreateSpacer("Extract ARC")
                         .Concat(controlFactory
@@ -331,7 +320,7 @@ public class FormFactory(
                             .CreateBigButton(Ids.ArcExtractStart, "Go",
                                 ArcExtract))
                     , false)
-            }
+            ]
         };
     }
 
@@ -342,8 +331,8 @@ public class FormFactory(
             Dock = DockStyle.Fill,
             AutoSize = false,
             AutoScroll = true,
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 controlFactory.CreateStandardTable(null,
                     controlFactory.CreateSpacer("Convert SSQ to SM/SSC")
                         .Concat(controlFactory
@@ -354,7 +343,7 @@ public class FormFactory(
                             .CreateBigButton(Ids.SsqDecodeStart, "Go",
                                 SsqDecode))
                     , false)
-            }
+            ]
         };
     }
 
@@ -365,8 +354,8 @@ public class FormFactory(
             Dock = DockStyle.Fill,
             AutoSize = false,
             AutoScroll = true,
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 controlFactory.CreateStandardTable(null,
                     controlFactory.CreateSpacer("Extract files from HBN+BIN blobs")
                         .Concat(controlFactory
@@ -375,7 +364,7 @@ public class FormFactory(
                             .CreateBigButton(Ids.HbnExtractStart, "Go",
                                 HbnExtract))
                     , false)
-            }
+            ]
         };
     }
 
@@ -386,8 +375,8 @@ public class FormFactory(
             Dock = DockStyle.Fill,
             AutoSize = false,
             AutoScroll = true,
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 controlFactory.CreateStandardTable(null,
                     controlFactory.CreateSpacer("Extract files from flash card images")
                         .Concat(controlFactory
@@ -406,7 +395,7 @@ public class FormFactory(
                             .CreateBigButton(Ids.DdrDecrypt573AudioStart, "Go",
                                 DdrDecrypt573Audio))
                     , false)
-            }
+            ]
         };
     }
 
@@ -414,42 +403,45 @@ public class FormFactory(
     {
         return new FluentTabControl
         {
-            Items = new List<FluentTabPage>
-            {
+            Items =
+            [
                 new FluentTabPage
                 {
                     Text = "Common"
                 },
+
                 new FluentTabPage
                 {
                     Text = "Playstation"
                 },
+
                 new FluentTabPage
                 {
                     Text = "Playstation 2"
                 },
+
                 new FluentTabPage
                 {
                     Text = "Djmain",
                     AutoScroll = true,
-                    Controls = new List<FluentControl>
-                    {
-                        CreateMainFormBeatmaniaDjmainPage()
-                    }
+                    Controls = [CreateMainFormBeatmaniaDjmainPage()]
                 },
+
                 new FluentTabPage
                 {
                     Text = "Twinkle"
                 },
+
                 new FluentTabPage
                 {
                     Text = "Firebeat"
                 },
+
                 new FluentTabPage
                 {
                     Text = "PC"
                 }
-            }
+            ]
         };
     }
 
@@ -460,8 +452,8 @@ public class FormFactory(
             Dock = DockStyle.Fill,
             AutoSize = false,
             AutoScroll = true,
-            Controls = new List<FluentControl>
-            {
+            Controls =
+            [
                 controlFactory.CreateStandardTable(null,
                     controlFactory.CreateSpacer("Convert Djmain HDD to BMS")
                         .Concat(controlFactory
@@ -481,7 +473,7 @@ public class FormFactory(
                             .CreateBigButton(Ids.BeatmaniaRenderDjmainGstStart, "Go",
                                 BeatmaniaRenderDjmainGst))
                     , false)
-            }
+            ]
         };
     }
 

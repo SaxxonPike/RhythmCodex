@@ -8,7 +8,7 @@ namespace RhythmCodex.Plugin.ImageSharp;
 [Service]
 public class ImageSharpBitmapConverter : IImageSharpBitmapConverter
 {
-    public Image<Rgba32> ConvertBitmap(IBitmap bitmap)
+    public Image<Rgba32> ConvertBitmap(Bitmap bitmap)
     {
         var image = new Image<Rgba32>(bitmap.Width, bitmap.Height);
         image.ProcessPixelRows(accessor =>
@@ -30,7 +30,7 @@ public class ImageSharpBitmapConverter : IImageSharpBitmapConverter
         return image;
     }
 
-    public IBitmap ConvertImage(Image<Rgba32> image)
+    public Bitmap ConvertImage(Image<Rgba32> image)
     {
         var bitmap = new Bitmap(image.Width, image.Height);
         image.ProcessPixelRows(accessor =>

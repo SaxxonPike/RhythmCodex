@@ -19,7 +19,7 @@ public class IsoCdFileDecoder(
     IIsoDirectoryTableDecoder isoDirectoryTableDecoder)
     : IIsoCdFileDecoder
 {
-    public IList<ICdFile> Decode(IEnumerable<ICdSector> cdSectors)
+    public List<ICdFile> Decode(IEnumerable<ICdSector> cdSectors)
     {
         return DecodeInternal(cdSectors).ToList();
     }

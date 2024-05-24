@@ -128,8 +128,8 @@ public class DxtDecoder : IDxtDecoder
         var a0 = src[0];
         var a1 = src[1];
         var a = a0 > a1
-            ? new[]
-            {
+            ?
+            [
                 a0,
                 a1,
                 (6 * a0 + 1 * a1) / 7,
@@ -138,7 +138,7 @@ public class DxtDecoder : IDxtDecoder
                 (3 * a0 + 4 * a1) / 7,
                 (2 * a0 + 5 * a1) / 7,
                 (1 * a0 + 6 * a1) / 7
-            }
+            ]
             : new[]
             {
                 a0,

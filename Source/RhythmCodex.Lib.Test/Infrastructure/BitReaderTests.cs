@@ -9,10 +9,9 @@ public class BitReaderTests : BaseUnitTestFixture
     [Test]
     public void Test1()
     {
-        var reader = new BitReader(new MemoryStream(new byte[]
-        {
+        var reader = new BitReader(new MemoryStream([
             0x00, 0xFF, 0x55, 0xAA, 0xC4
-        }));
+        ]));
 
         reader.Read(4).Should().Be(0x0);
         reader.Read(4).Should().Be(0x0);

@@ -48,7 +48,7 @@ public class RiffStreamWriter : IRiffStreamWriter
         {
             writer.Write(chunk.Id.GetBytes());
             writer.Write(chunk.Data.Length);
-            writer.Write(chunk.Data);
+            writer.Write(chunk.Data.Span);
         }
 
         return length + 8;

@@ -6,6 +6,6 @@ namespace RhythmCodex.Ssq.Model;
 [Model]
 public class TimingChunk
 {
-    public IList<Timing> Timings { get; set; }
+    public List<Timing> Timings { get; set; }
     public int Rate { get; set; }
 }

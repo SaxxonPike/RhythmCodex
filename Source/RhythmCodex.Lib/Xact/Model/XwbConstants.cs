@@ -38,7 +38,7 @@ public static class XwbConstants
     public const int MaxWmaBlockAlignEntries = 17;
 
     public static readonly int[] WmaAvgBytesPerSec =
-    {
+    [
         12000,
         24000,
         4000,
@@ -46,10 +46,10 @@ public static class XwbConstants
         8000,
         20000,
         2500
-    };
+    ];
 
     public static readonly int[] WmaBlockAlign =
-    {
+    [
         929,
         1487,
         1280,
@@ -67,5 +67,5 @@ public static class XwbConstants
         6827,
         5462,
         1280
-    };
+    ];
 }

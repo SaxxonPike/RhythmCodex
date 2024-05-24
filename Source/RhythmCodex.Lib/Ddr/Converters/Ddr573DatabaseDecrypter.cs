@@ -12,10 +12,10 @@ public class Ddr573DatabaseDecrypter(IBemaniLzDecoder bemaniLzDecoder) : IDdr573
 {
     public int FindKey(ReadOnlySpan<byte> database)
     {
-        var header = database.Slice(0, 16);
+        var header = database[..16];
         for (var i = 0; i < 256; i++)
         {
-            var test = bemaniLzDecoder.Decode(new MemoryStream(Decrypt(header, i)));
+            var test = bemaniLzDecoder.Decode(new ReadOnlyMemoryStream(Decrypt(header, i))).Span;
                 
             if (!test[0].IsLetter())
                 continue;
@@ -35,7 +35,7 @@ public class Ddr573DatabaseDecrypter(IBemaniLzDecoder bemaniLzDecoder) : IDdr573
         throw new RhythmCodexException("Can't seem to find the key for this MDB");
     }
 
-    public byte[] Decrypt(ReadOnlySpan<byte> database, int key)
+    public Memory<byte> Decrypt(ReadOnlySpan<byte> database, int key)
     {
         var val = 0x41C64E6D;
         var key1 = unchecked(val * key);

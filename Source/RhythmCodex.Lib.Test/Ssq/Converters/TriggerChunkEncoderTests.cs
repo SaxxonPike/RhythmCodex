@@ -34,6 +34,6 @@ public class TriggerChunkEncoderTests : BaseUnitTestFixture<TriggerChunkEncoder,
         var result = Subject.Convert(triggers);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ToArray().Should().BeEquivalentTo(expected);
     }
 }

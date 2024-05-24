@@ -18,8 +18,8 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
 
     private static DdrDatabaseEntry? GetOldRecord(DdrPs2MetadataTableEntry item)
     {
-        var record = item.Data.AsSpan();
-        var id = Encodings.CP437.GetStringWithoutNulls(record.Slice(0x00, 5));
+        var record = item.Data.Span;
+        var id = Encodings.CP437.GetStringWithoutNulls(record[..5]);
         if (id == string.Empty)
             return null;
 
@@ -47,7 +47,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
 
     private static DdrDatabaseEntry? GetNewRecord(DdrPs2MetadataTableEntry records)
     {
-        var record = records.Data.AsSpan();
+        var record = records.Data.Span;
         var id = Encodings.CP437.GetStringWithoutNulls(record.Slice(0x00, 5));
         var mdbIndex = 0;
         var difficultyOffset = 0;
@@ -104,8 +104,8 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
 
         if (isXDifficulties)
         {
-            difficulties = new[]
-            {
+            difficulties =
+            [
                 record[0x26],
                 record[0x27],
                 record[0x28],
@@ -121,13 +121,13 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
                 record[0x2A],
                 0,
                 0,
-                0,
-            };
+                0
+            ];
         }
         else
         {
-            difficulties = new[]
-            {
+            difficulties =
+            [
                 record[0x24 + difficultyOffset] & 0xF,
                 record[0x24 + difficultyOffset] >> 4,
                 record[0x25 + difficultyOffset] & 0xF,
@@ -144,7 +144,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
                 record[0x2A + difficultyOffset] >> 4,
                 record[0x2B + difficultyOffset] & 0xF,
                 record[0x2B + difficultyOffset] >> 4
-            };
+            ];
         }
 
         return new DdrDatabaseEntry

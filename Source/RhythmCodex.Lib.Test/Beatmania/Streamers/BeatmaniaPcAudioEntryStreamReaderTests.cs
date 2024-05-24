@@ -22,8 +22,8 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         writer.Write((short) entry.Channel);
         writer.Write((short) entry.Panning);
         writer.Write((short) entry.Volume);
-        writer.Write(entry.ExtraInfo);
-        writer.Write(entry.Data);
+        writer.Write(entry.ExtraInfo.Span);
+        writer.Write(entry.Data.Span);
 
         mem.Position = 0;
         return mem;
@@ -91,7 +91,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.ExtraInfo.Should().BeEquivalentTo(entry.ExtraInfo);
+        observed.ExtraInfo.ToArray().Should().Equal(entry.ExtraInfo.ToArray());
     }
 
     [Test]
@@ -104,7 +104,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.Data.Should().BeEquivalentTo(entry.Data);
+        observed.Data.ToArray().Should().Equal(entry.Data.ToArray());
     }
 
     [Test]

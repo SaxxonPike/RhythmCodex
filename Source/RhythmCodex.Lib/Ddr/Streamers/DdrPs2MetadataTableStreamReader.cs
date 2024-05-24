@@ -14,7 +14,7 @@ public class DdrPs2MetadataTableStreamReader : IDdrPs2MetadataTableStreamReader
 {
     private const int BufferCheckInterval = 0x010;
 
-    public IList<DdrPs2MetadataTableEntry> Get(Stream stream, long length)
+    public List<DdrPs2MetadataTableEntry> Get(Stream stream, long length)
     {
         var cache = new CachedStream(stream);
         Span<byte> buffer = stackalloc byte[BufferCheckInterval];
@@ -58,7 +58,7 @@ public class DdrPs2MetadataTableStreamReader : IDdrPs2MetadataTableStreamReader
             if (recordSize >= 100)
             {
                 cache.Rewind();
-                var records = new List<byte[]>();
+                var records = new List<Memory<byte>>();
                 while (true)
                 {
                     var record = new byte[recordSize];

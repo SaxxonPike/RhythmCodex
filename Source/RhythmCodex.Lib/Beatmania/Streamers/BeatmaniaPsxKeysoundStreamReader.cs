@@ -12,7 +12,7 @@ namespace RhythmCodex.Beatmania.Streamers;
 [Service]
 public class BeatmaniaPsxKeysoundStreamReader(IVagStreamReader vagStreamReader) : IBeatmaniaPsxKeysoundStreamReader
 {
-    public IList<BeatmaniaPsxKeysound> Read(Stream stream)
+    public List<BeatmaniaPsxKeysound> Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
 

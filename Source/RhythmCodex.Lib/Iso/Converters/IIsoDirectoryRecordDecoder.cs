@@ -5,5 +5,5 @@ namespace RhythmCodex.Iso.Converters;
 
 public interface IIsoDirectoryRecordDecoder
 {
-    IsoDirectoryRecord Decode(Stream stream, bool recordOnly);
+    IsoDirectoryRecord? Decode(Stream stream, bool recordOnly);
 }

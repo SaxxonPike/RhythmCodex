@@ -5,5 +5,5 @@ namespace RhythmCodex.Gdi.Streamers;
 
 public interface IPngStreamWriter
 {
-    void Write(Stream stream, IBitmap bitmap);
+    void Write(Stream stream, Bitmap bitmap);
 }

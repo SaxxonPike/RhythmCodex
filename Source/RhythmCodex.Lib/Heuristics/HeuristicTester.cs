@@ -11,7 +11,7 @@ namespace RhythmCodex.Heuristics;
 [Service]
 public class HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger) : IHeuristicTester
 {
-    public IList<HeuristicResult> Match(Stream stream, long length, params Context[] contexts)
+    public List<HeuristicResult> Match(Stream stream, long length, params Context[] contexts)
     {
         var cache = new CachedStream(stream);
         var result = new List<HeuristicResult>();
@@ -33,7 +33,7 @@ public class HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger)
         return result;
     }
 
-    public IList<HeuristicResult> Match(Memory<byte> data, params Context[] contexts)
+    public List<HeuristicResult> Match(Memory<byte> data, params Context[] contexts)
     {
         var result = new List<HeuristicResult>();
         foreach (var heuristic in GetHeuristics(contexts))

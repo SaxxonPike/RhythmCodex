@@ -25,14 +25,14 @@ public class CdSectorStream(IReadOnlyList<ICdSector> sectors) : Stream
             var data = sectors[_sectorIndex].Data;
             if (remaining > data.Length - _sectorIndex)
             {
-                data.AsSpan().Slice(_sectorIndex).CopyTo(buffer.AsSpan().Slice(offset));
+                data.Span[_sectorIndex..].CopyTo(buffer.AsSpan(offset));
                 remaining -= data.Length - _sectorIndex;
                 result += data.Length - _sectorIndex;
                 _sectorIndex = 0;
             }
             else
             {
-                data.AsSpan().Slice(_sectorIndex, remaining).CopyTo(buffer.AsSpan().Slice(offset));
+                data.Span.Slice(_sectorIndex, remaining).CopyTo(buffer.AsSpan(offset));
                 _sectorIndex += remaining;
                 result += remaining;
                 remaining = 0;

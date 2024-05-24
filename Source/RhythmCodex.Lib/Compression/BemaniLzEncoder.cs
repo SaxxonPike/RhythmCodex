@@ -253,7 +253,7 @@ public class BemaniLzEncoder : IBemaniLzEncoder
         return result;
     }
 
-    public byte[] Encode(ReadOnlySpan<byte> source)
+    public Memory<byte> Encode(ReadOnlySpan<byte> source)
     {
         var tokens = GetTokens(source);
         return EncodeTokens(tokens);

@@ -8,7 +8,7 @@ namespace RhythmCodex.Graphics.Converters;
 [Service]
 public class GraphicDsp : IGraphicDsp
 {
-    public IBitmap DeIndex(IPaletteBitmap bitmap)
+    public Bitmap DeIndex(PaletteBitmap bitmap)
     {
         var palette = bitmap.Palette;
         var sourceData = bitmap.Data;
@@ -21,7 +21,7 @@ public class GraphicDsp : IGraphicDsp
         return new Bitmap(bitmap.Width, targetData);
     }
 
-    public IBitmap Snip(IBitmap bitmap, Rectangle rect)
+    public Bitmap Snip(Bitmap bitmap, Rectangle rect)
     {
         var sourceData = bitmap.Data.AsSpan();
         var sourceOffset = rect.Top * bitmap.Width + rect.Left;

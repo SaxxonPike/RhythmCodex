@@ -183,7 +183,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
         foreach (var entry in decodedTable)
         {
             var name = $"{entry.Index:D4}";
-            using var imageStream = new MemoryStream(entry.Data);
+            using var imageStream = new ReadOnlyMemoryStream(entry.Data);
             var tcb = imageReader.Read(imageStream);
             if (tcb == null)
                 continue;
@@ -216,7 +216,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
             var name = $"{i:D4}";
             tableSource.Position = offset + offsets[i];
             var file = decomp.Decode(tableSource);
-            var imageStream = new MemoryStream(file);
+            var imageStream = new ReadOnlyMemoryStream(file);
             var tcb = imageReader.Read(imageStream);
             if (tcb == null)
                 continue;
@@ -295,7 +295,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
             if (decompress)
             {
                 var decompressed = decompressor.Decode(source);
-                imageStream = new MemoryStream(decompressed);
+                imageStream = new ReadOnlyMemoryStream(decompressed);
             }
                 
             var name = $"{offset:X8}";
@@ -405,7 +405,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
         var ssqDecoder = Resolve<ISsqDecoder>();
         var chartSets = table.Select((e, i) =>
         {
-            var charts = ssqDecoder.Decode(ssqReader.Read(new MemoryStream(e.Data)));
+            var charts = ssqDecoder.Decode(ssqReader.Read(new ReadOnlyMemoryStream(e.Data)));
             var idMd = rawMetaDatas.FirstOrDefault(md => md.InternalId == i + 1);
 
             var newMd = new Metadata();

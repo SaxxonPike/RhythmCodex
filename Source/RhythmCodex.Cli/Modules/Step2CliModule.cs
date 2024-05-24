@@ -5,7 +5,6 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Cli.Modules;
 
-// ReSharper disable once ClassNeverInstantiated.Global
 /// <summary>
 /// A module which operates with the SSQ and other associated file formats.
 /// </summary>

@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace ClientCommon;
 
 [Service]
-// ReSharper disable once ClassNeverInstantiated.Global
+
 public class ArgParser : IArgParser
 {
     /// <inheritdoc />

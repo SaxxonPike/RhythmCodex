@@ -12,7 +12,7 @@ namespace RhythmCodex.Iso.Converters;
 [Service]
 public class IsoPathTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory) : IIsoPathTableDecoder
 {
-    public IList<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors)
+    public List<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors)
     {
         return DecodeInternal(sectors).ToList();
     }
@@ -36,9 +36,9 @@ public class IsoPathTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory)
             if (name.Length == 1)
             {
                 if (name[0] == 0x00)
-                    name = new byte[] {0x2E};
+                    name = [0x2E];
                 else if (name[0] == 0x01)
-                    name = new byte[] {0x2E, 0x2E};
+                    name = [0x2E, 0x2E];
             }
                     
             yield return new IsoPathRecord

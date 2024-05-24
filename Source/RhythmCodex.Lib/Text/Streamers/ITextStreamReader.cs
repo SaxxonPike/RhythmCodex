@@ -5,5 +5,5 @@ namespace RhythmCodex.Text.Streamers;
 
 public interface ITextStreamReader
 {
-    IList<string> Read(Stream stream);
+    List<string> Read(Stream stream);
 }

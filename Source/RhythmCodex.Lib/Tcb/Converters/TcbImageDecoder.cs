@@ -9,7 +9,7 @@ namespace RhythmCodex.Tcb.Converters;
 [Service]
 public class TcbImageDecoder : ITcbImageDecoder
 {
-    public IBitmap Decode(TcbImage image)
+    public Bitmap Decode(TcbImage image)
     {
         var result = new Bitmap(image.Width, image.Height);
         var resultData = result.Data;

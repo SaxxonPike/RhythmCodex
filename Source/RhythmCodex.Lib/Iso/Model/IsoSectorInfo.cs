@@ -9,7 +9,7 @@ namespace RhythmCodex.Iso.Model;
 public class IsoSectorInfo
 {
     public int Number { get; set; }
-    public byte[] Data { get; set; }
+    public Memory<byte> Data { get; set; }
     public int UserDataOffset { get; set; }
     public int UserDataLength { get; set; }
     public int? EdcOffset { get; set; }
@@ -33,7 +33,7 @@ public class IsoSectorInfo
     public int? AudioBitsPerSample { get; set; }
     public bool? AudioEmphasis { get; set; }
 
-    public Span<byte> UserData => Data.AsSpan(UserDataOffset, UserDataLength);
+    public Memory<byte> UserData => Data.Slice(UserDataOffset, UserDataLength);
 
     public override string ToString()
     {

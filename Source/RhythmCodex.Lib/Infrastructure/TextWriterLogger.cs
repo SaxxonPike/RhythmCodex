@@ -1,6 +1,6 @@
 ﻿namespace RhythmCodex.Infrastructure;
 
-// ReSharper disable once ClassNeverInstantiated.Global
+
 public class TextWriterLogger(IConsole console, ILoggerConfigurationSource loggerConfigurationSource)
     : ILogger
 {

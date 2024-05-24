@@ -6,6 +6,6 @@ namespace RhythmCodex.Tga.Converters;
 public interface ITgaDecoder
 {
     bool IsIndexedPalette(TgaImage tgaImage);
-    IBitmap Decode(TgaImage tgaImage);
-    IPaletteBitmap DecodeIndexed(TgaImage tgaImage);
+    Bitmap Decode(TgaImage tgaImage);
+    PaletteBitmap DecodeIndexed(TgaImage tgaImage);
 }

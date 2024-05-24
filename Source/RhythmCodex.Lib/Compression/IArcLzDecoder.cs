@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace RhythmCodex.Compression;
 
 public interface IArcLzDecoder
 {
-    byte[] Decode(Stream source);
+    Memory<byte> Decode(Stream source);
 }

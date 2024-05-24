@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Ddr.Models;
@@ -20,7 +21,7 @@ public class Ddr573ImageStreamReader : IDdr573ImageStreamReader
 
         return new Ddr573Image
         {
-            Modules = new Dictionary<int, byte[]>
+            Modules = new Dictionary<int, Memory<byte>>
             {
                 {0, gameDatReader.ReadBytes(gameDatLength)}
             }
@@ -34,7 +35,7 @@ public class Ddr573ImageStreamReader : IDdr573ImageStreamReader
 
         return new Ddr573Image
         {
-            Modules = new Dictionary<int, byte[]>
+            Modules = new Dictionary<int, Memory<byte>>
             {
                 {0, gameDatReader.ReadBytes(gameDatLength)},
                 {1, cardDatReader.ReadBytes(cardDatLength)}

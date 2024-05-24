@@ -12,7 +12,7 @@ public class Ddr573ImageDirectoryDecoder : IDdr573ImageDirectoryDecoder
 {
     private const int PsxIdString = 0x582D5350;
 
-    public IList<Ddr573DirectoryEntry> Decode(Ddr573Image image)
+    public List<Ddr573DirectoryEntry> Decode(Ddr573Image image)
     {
         return DecodeInternal(image).ToList();
     }

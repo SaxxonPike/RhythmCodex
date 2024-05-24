@@ -38,7 +38,7 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
         return builder.ToString();
     }
 
-    public IList<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events)
+    public List<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events)
     {
         IEnumerable<BmsEvent> Do()
         {
@@ -153,7 +153,7 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
         return Do().ToList();
     }
 
-    public IList<BmsEvent> TranslateBpmEvents(IEnumerable<Event> events)
+    public List<BmsEvent> TranslateBpmEvents(IEnumerable<Event> events)
     {
         IEnumerable<BmsEvent> Do()
         {

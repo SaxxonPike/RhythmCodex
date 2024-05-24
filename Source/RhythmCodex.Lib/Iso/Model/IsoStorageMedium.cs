@@ -6,6 +6,6 @@ namespace RhythmCodex.Iso.Model;
 [Model]
 public class IsoStorageMedium
 {
-    public IList<IsoVolume> Volumes { get; set; }
-    public IList<IsoBootRecord> BootRecords { get; set; }
+    public List<IsoVolume> Volumes { get; set; }
+    public List<IsoBootRecord> BootRecords { get; set; }
 }

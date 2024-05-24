@@ -1,3 +1,5 @@
+using System;
+
 namespace RhythmCodex.Riff.Models;
 
 public interface IRiffFormat
@@ -8,5 +10,5 @@ public interface IRiffFormat
     int ByteRate { get; }
     int BlockAlign { get; }
     int BitsPerSample { get; }
-    byte[] ExtraData { get; }
+    Memory<byte> ExtraData { get; }
 }

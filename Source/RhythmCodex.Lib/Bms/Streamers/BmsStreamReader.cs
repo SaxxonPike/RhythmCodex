@@ -12,7 +12,7 @@ namespace RhythmCodex.Bms.Streamers;
 [Service]
 public partial class BmsStreamReader : IBmsStreamReader
 {
-    private static readonly char[] Delimiters = {' ', '\t', ':'};
+    private static readonly char[] Delimiters = [' ', '\t', ':'];
         
     public IEnumerable<BmsCommand> Read(Stream stream)
     {

@@ -73,15 +73,15 @@ public class ChdStream : Stream
     private struct CachedHunk
     {
         public int Index;
-        public byte[]? Data;
+        public Memory<byte> Data;
     }
 
     private const int HunkCacheMaxSize = 256;
 
     private CachedHunk _currentHunk;
-    private readonly List<CachedHunk> _hunkCache = new();
+    private readonly List<CachedHunk> _hunkCache = [];
     private readonly BinaryReader _reader;
-    private readonly Func<int, byte[]?> _readHunk;
+    private readonly Func<int, Memory<byte>> _readHunk;
 
     private long _hunkOffset;
     private long _hunkSize;
@@ -145,22 +145,22 @@ public class ChdStream : Stream
     {
         var total = count;
 
-        if (_currentHunk.Data == null)
+        if (_currentHunk.Data.IsEmpty)
             GetHunk((int) (_position / _hunkSize));
 
-        if (_currentHunk.Data == null)
+        if (_currentHunk.Data.IsEmpty)
             return 0;
 
-        var hunkPosition = _position - _hunkOffset;
+        var hunkPosition = (int)(_position - _hunkOffset);
         while (count > 0)
         {
             if (hunkPosition >= _hunkSize || hunkPosition < 0)
             {
                 GetHunk((int) (_position / _hunkSize));
-                hunkPosition = _position - _hunkOffset;
+                hunkPosition = (int)(_position - _hunkOffset);
             }
 
-            buffer[offset] = _currentHunk.Data[hunkPosition];
+            buffer[offset] = _currentHunk.Data.Span[hunkPosition];
             hunkPosition++;
             offset++;
             _position++;
@@ -198,7 +198,7 @@ public class ChdStream : Stream
         throw new NotImplementedException();
     }
 
-    private byte[] DecompressMini(ulong data, uint decompressedLength)
+    private Memory<byte> DecompressMini(ulong data, uint decompressedLength)
     {
         var result = new byte[decompressedLength];
         Span<byte> buffer = stackalloc byte[8];
@@ -224,17 +224,17 @@ public class ChdStream : Stream
         return result;
     }
 
-    private byte[]? DecompressParentHunk(ulong offs)
+    private Memory<byte> DecompressParentHunk(ulong offs)
     {
-        return _parent?._readHunk((int) (offs & 0x7FFFFFFFul));
+        return _parent?._readHunk((int) (offs & 0x7FFFFFFFul)) ?? Memory<byte>.Empty;
     }
 
-    private byte[]? DecompressSelfHunk(ulong offs)
+    private Memory<byte> DecompressSelfHunk(ulong offs)
     {
         return _readHunk((int) (offs & 0x7FFFFFFFul));
     }
 
-    private byte[] DecompressZlib(uint decompressedLength)
+    private Memory<byte> DecompressZlib(uint decompressedLength)
     {
         var buffer = new byte[decompressedLength];
         using var ds = new DeflateStream(_baseStream, CompressionMode.Decompress, true);
@@ -243,7 +243,7 @@ public class ChdStream : Stream
         return buffer;
     }
 
-    private byte[] DecompressLzma(uint compressedLength, uint decompressedLength)
+    private Memory<byte> DecompressLzma(uint compressedLength, uint decompressedLength)
     {
         var buffer = new byte[decompressedLength];
         var lc = 3;
@@ -263,7 +263,7 @@ public class ChdStream : Stream
         return _lzmaDecoder.Decode(_baseStream, (int) compressedLength, (int) decompressedLength, decoderProperties);
     }
 
-    private byte[] DecompressFlac()
+    private Memory<byte> DecompressFlac()
     {
         var endian = _baseStream.ReadByte();
 
@@ -302,7 +302,7 @@ public class ChdStream : Stream
         }
     }
 
-    private byte[] DecompressCustom(ChdMapInfo map)
+    private Memory<byte> DecompressCustom(ChdMapInfo map)
     {
         var id = _header.compressors[map.compression];
         switch (id)
@@ -411,13 +411,12 @@ public class ChdStream : Stream
         var header = new ChdHeaderInfo
         {
             compressors =
-                new[]
-                {
-                    _reader.ReadUInt32S(),
+            [
+                _reader.ReadUInt32S(),
                     _reader.ReadUInt32S(),
                     _reader.ReadUInt32S(),
                     _reader.ReadUInt32S()
-                },
+            ],
             logicalBytes = _reader.ReadUInt64S(),
             mapOffset = _reader.ReadUInt64S(),
             metaOffset = _reader.ReadUInt64S(),
@@ -433,16 +432,16 @@ public class ChdStream : Stream
         return header;
     }
 
-    private byte[] ReadHunkV1(int index)
+    private Memory<byte> ReadHunkV1(int index)
     {
         var entry = _map[index];
-        byte[] result;
+        Memory<byte> result;
 
         _baseStream.Position = (long) entry.offset;
         if (entry.length == _header.hunkSize)
         {
             result = new byte[_header.hunkSize];
-            _baseStream.ReadAtLeast(result, (int)(_header.hunkSize * _header.seclen));
+            _baseStream.ReadAtLeast(result.Span, (int)(_header.hunkSize * _header.seclen));
         }
         else
         {
@@ -452,10 +451,10 @@ public class ChdStream : Stream
         return result;
     }
 
-    private byte[]? ReadHunkV3(int index)
+    private Memory<byte> ReadHunkV3(int index)
     {
         var entry = _map[index];
-        byte[]? result;
+        Memory<byte> result;
 
         switch (entry.flags & 0xF)
         {
@@ -466,7 +465,7 @@ public class ChdStream : Stream
             case 0x2:
                 _baseStream.Position = (long) entry.offset;
                 result = new byte[_header.hunkBytes];
-                _baseStream.Read(result, 0, (int) _header.hunkBytes);
+                _baseStream.ReadExactly(result.Span);
                 break;
             case 0x3:
                 result = DecompressMini(entry.offset, _header.hunkBytes);
@@ -486,7 +485,7 @@ public class ChdStream : Stream
         return result;
     }
 
-    private byte[]? ReadHunkV5(int index)
+    private Memory<byte> ReadHunkV5(int index)
     {
         var entry = _map[index];
 

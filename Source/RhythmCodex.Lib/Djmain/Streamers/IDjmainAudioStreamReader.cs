@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace RhythmCodex.Djmain.Streamers;
 
 public interface IDjmainAudioStreamReader
 {
-    byte[] ReadDpcm(Stream stream);
-    byte[] ReadPcm8(Stream stream);
-    byte[] ReadPcm16(Stream stream);
+    Memory<byte> ReadDpcm(Stream stream);
+    Memory<byte> ReadPcm8(Stream stream);
+    Memory<byte> ReadPcm16(Stream stream);
 }

@@ -17,7 +17,7 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
     private static readonly int[] K0 = [0, 60, 115, 98, 122];
     private static readonly int[] K1 = [0, 0, -52, -55, -60];
 
-    public IList<Sound?> Decode(XaChunk chunk)
+    public List<Sound?> Decode(XaChunk chunk)
     {
         var sounds = new List<Sound?>();
         var buffer = new float[28];

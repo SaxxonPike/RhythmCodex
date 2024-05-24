@@ -5,5 +5,5 @@ namespace RhythmCodex.Iso.Converters;
 
 public interface IIsoDescriptorSectorFinder
 {
-    IList<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors);
+    List<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors);
 }

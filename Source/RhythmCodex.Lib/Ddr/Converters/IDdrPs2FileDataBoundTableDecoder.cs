@@ -5,5 +5,5 @@ namespace RhythmCodex.Ddr.Converters;
 
 public interface IDdrPs2FileDataBoundTableDecoder
 {
-    IList<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk);
+    List<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk);
 }

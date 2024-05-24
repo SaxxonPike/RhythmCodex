@@ -41,7 +41,7 @@ public class StepChunkEncoderTests : BaseUnitTestFixture<StepChunkEncoder, IStep
         var result = Subject.Convert(steps);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ToArray().Should().BeEquivalentTo(expected);
     }
 
     [Test]
@@ -74,6 +74,6 @@ public class StepChunkEncoderTests : BaseUnitTestFixture<StepChunkEncoder, IStep
         var result = Subject.Convert(steps);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ToArray().Should().BeEquivalentTo(expected);
     }
 }

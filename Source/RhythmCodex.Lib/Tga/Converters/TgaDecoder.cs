@@ -24,7 +24,7 @@ public class TgaDecoder(IGraphicDsp graphicDsp) : ITgaDecoder
         }
     }
 
-    public IBitmap Decode(TgaImage tgaImage)
+    public Bitmap Decode(TgaImage tgaImage)
     {
         if (tgaImage.Interleave != TgaInterleave.None)
             throw new RhythmCodexException("Only non-interleaved images are supported for now.");
@@ -46,7 +46,7 @@ public class TgaDecoder(IGraphicDsp graphicDsp) : ITgaDecoder
                     ? 0
                     : tgaImage.Width * -2;
 
-                var data = tgaImage.ImageData;
+                var data = tgaImage.ImageData.Span;
 
                 switch (tgaImage.BitsPerPixel)
                 {
@@ -99,7 +99,7 @@ public class TgaDecoder(IGraphicDsp graphicDsp) : ITgaDecoder
         }
     }
 
-    public IPaletteBitmap DecodeIndexed(TgaImage tgaImage)
+    public PaletteBitmap DecodeIndexed(TgaImage tgaImage)
     {
         if (!IsIndexedPalette(tgaImage))
             throw new RhythmCodexException(
@@ -107,7 +107,7 @@ public class TgaDecoder(IGraphicDsp graphicDsp) : ITgaDecoder
 
         var palette = new int[tgaImage.ColorMapLength];
         var paletteSize = tgaImage.ColorMapLength * tgaImage.ColorMapBitsPerEntry / 8;
-        var paletteData = tgaImage.ImageData.AsSpan(0, paletteSize);
+        var paletteData = tgaImage.ImageData.Span[0..paletteSize];
 
         switch (tgaImage.ColorMapBitsPerEntry)
         {
@@ -176,7 +176,7 @@ public class TgaDecoder(IGraphicDsp graphicDsp) : ITgaDecoder
                     ? 0
                     : tgaImage.Width * -2;
 
-                var data = tgaImage.ImageData.AsSpan(paletteSize);
+                var data = tgaImage.ImageData.Span[paletteSize..];
 
                 for (var y = 0; y < tgaImage.Height; y++)
                 {

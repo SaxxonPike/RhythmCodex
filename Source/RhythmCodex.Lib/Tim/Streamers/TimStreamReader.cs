@@ -65,7 +65,7 @@ public class TimStreamReader : ITimStreamReader
 
         for (var i = 0; i < numCluts; i++)
         {
-            var entries = new short[numColors];
+            var entries = new List<short>(numColors);
             var clut = new TimPalette
             {
                 OriginX = originX,
@@ -74,7 +74,7 @@ public class TimStreamReader : ITimStreamReader
             };
                 
             for (var j = 0; j < numColors; j++)
-                entries[j] = reader.ReadInt16();
+                entries.Add(reader.ReadInt16());
 
             yield return clut;
         }

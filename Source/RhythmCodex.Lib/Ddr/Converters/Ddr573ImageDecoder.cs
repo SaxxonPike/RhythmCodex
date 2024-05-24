@@ -17,7 +17,7 @@ public class Ddr573ImageDecoder(
     IDdr573DatabaseDecrypter ddr573DatabaseDecrypter)
     : IDdr573ImageDecoder
 {
-    public IList<Ddr573File> Decode(Ddr573Image image, string? dbKey)
+    public List<Ddr573File> Decode(Ddr573Image image, string? dbKey)
     {
         return DecodeInternal(image, dbKey).ToList();
     }

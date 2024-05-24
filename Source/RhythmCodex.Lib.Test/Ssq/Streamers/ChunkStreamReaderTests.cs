@@ -12,7 +12,7 @@ public class ChunkStreamReaderTests : ChunkStreamBaseTests<ChunkStreamReader, IC
     public void Read_ReadsEndChunk()
     {
         // Arrange.
-        var stream = new MemoryStream(new byte[] {0, 0, 0, 0});
+        var stream = new MemoryStream([0, 0, 0, 0]);
 
         // Act.
         var result = Subject.Read(stream);

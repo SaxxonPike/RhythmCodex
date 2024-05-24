@@ -8,7 +8,7 @@ namespace RhythmCodex.Compression;
 [Service]
 public class ArcLzEncoder : IArcLzEncoder
 {
-    public byte[] Encode(ReadOnlySpan<byte> source)
+    public Memory<byte> Encode(ReadOnlySpan<byte> source)
     {
         var context = new LzCompress();
         context.Write(source);

@@ -8,7 +8,7 @@ namespace RhythmCodex.Text.Streamers;
 [Service]
 public class TextStreamReader : ITextStreamReader
 {
-    public IList<string> Read(Stream stream)
+    public List<string> Read(Stream stream)
     {
         return ReadInternal(stream).ToList();
     }

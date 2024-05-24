@@ -5,5 +5,5 @@ namespace RhythmCodex.Ddr.Converters;
 
 public interface IDdr573ImageDecoder
 {
-    IList<Ddr573File> Decode(Ddr573Image image, string? dbKey);
+    List<Ddr573File> Decode(Ddr573Image image, string? dbKey);
 }

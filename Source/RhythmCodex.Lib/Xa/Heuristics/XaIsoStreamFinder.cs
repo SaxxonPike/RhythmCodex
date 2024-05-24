@@ -10,7 +10,7 @@ namespace RhythmCodex.Xa.Heuristics;
 [Service]
 public class XaIsoStreamFinder : IXaIsoStreamFinder
 {
-    public IList<XaChunk> Find(IEnumerable<IsoSectorInfo> sectors)
+    public List<XaChunk> Find(IEnumerable<IsoSectorInfo> sectors)
     {
         var result = new List<XaChunk>();
         var mode2Sectors = sectors
@@ -30,15 +30,16 @@ public class XaIsoStreamFinder : IXaIsoStreamFinder
             {
                 result.Add(new XaChunk
                 {
-                    Channels = currentStreams[currentStream].First().AudioChannels.Value,
-                    Data = currentStreams[currentStream].SelectMany(s => s.Data.Slice(s.UserDataOffset, s.UserDataLength)).ToArray(),
-                    Rate = currentStreams[currentStream].First().AudioRate.Value
-                });                    
+                    Channels = currentStreams[currentStream].First().AudioChannels!.Value,
+                    Data = currentStreams[currentStream].Select(s =>
+                        s.Data.Slice(s.UserDataOffset, s.UserDataLength)).Combine(),
+                    Rate = currentStreams[currentStream].First().AudioRate!.Value
+                });
             }
-                
+
             currentStreams[currentStream].Clear();
         }
-            
+
         foreach (var sector in mode2Sectors)
         {
             if (sector.IsAudio ?? false)

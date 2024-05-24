@@ -32,7 +32,7 @@ public class GraphicsTaskBuilder(
 {
     private readonly ITimStreamReader _timStreamReader = timStreamReader;
 
-    private IBitmap CropImage(IBitmap bitmap)
+    private Bitmap CropImage(Bitmap bitmap)
     {
         if (Args.Options.ContainsKey("+crop_ddr"))
         {

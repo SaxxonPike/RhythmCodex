@@ -5,5 +5,5 @@ namespace RhythmCodex.Iso.Converters;
 
 public interface IIsoCdFileDecoder
 {
-    IList<ICdFile> Decode(IEnumerable<ICdSector> cdSectors);
+    List<ICdFile> Decode(IEnumerable<ICdSector> cdSectors);
 }

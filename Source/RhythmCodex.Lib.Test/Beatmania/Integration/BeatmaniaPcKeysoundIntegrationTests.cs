@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Streamers;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Models;
@@ -32,9 +33,9 @@ public class BeatmaniaPcKeysoundIntegrationTests : BaseIntegrationFixture
             Directory.CreateDirectory(outFolder);
 
         var decrypted = decrypter.Decrypt(new MemoryStream(data), data.Length);
-        File.WriteAllBytes(Path.Combine(outFolder, $"decrypted.2dx"), decrypted);
+        this.WriteFile(decrypted, Path.Combine(outFolder, "decrypted.2dx"));
 
-        using var dataStream = new MemoryStream(decrypted);
+        using var dataStream = new ReadOnlyMemoryStream(decrypted);
         var keysounds = streamer.Read(dataStream, dataStream.Length);
         var index = 1;
                 

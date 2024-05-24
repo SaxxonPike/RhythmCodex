@@ -35,6 +35,6 @@ public class TimingChunkEncoderTests : BaseUnitTestFixture<TimingChunkEncoder, I
         var result = Subject.Convert(timings);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ToArray().Should().BeEquivalentTo(expected);
     }
 }

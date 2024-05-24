@@ -10,12 +10,12 @@ namespace RhythmCodex.Ddr.Converters;
 [Service]
 public class DdrPs2FileDataBoundTableDecoder(IBemaniLzDecoder bemaniLzDecoder) : IDdrPs2FileDataBoundTableDecoder
 {
-    public IList<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk)
+    public List<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk chunk)
     {
         var data = chunk.Data;
         var result = new List<DdrPs2FileDataTableEntry>();
-        var stream = new MemoryStream(data);
-        var offsets = Bitter.ToInt32Values(data);
+        var stream = new ReadOnlyMemoryStream(data);
+        var offsets = Bitter.ToInt32Values(data.Span);
         var count = offsets[0];
 
         for (var i = 0; i < count; i++)

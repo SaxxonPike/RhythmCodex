@@ -52,7 +52,7 @@ public class FakeFileSystem(IFileSystem fileSystem) : IFileSystem
     public string CurrentPath => new(Path.DirectorySeparatorChar, 1);
 
     /// <inheritdoc />
-    public byte[] ReadAllBytes(string path)
+    public Memory<byte> ReadAllBytes(string path)
     {
         if (!_files.TryGetValue(path, out var file))
             throw new IOException($"File not found: {path}");

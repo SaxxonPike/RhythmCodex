@@ -59,7 +59,7 @@ public class FileSystem(ILogger logger)
     public string CurrentPath => Directory.GetCurrentDirectory();
 
     /// <inheritdoc />
-    public byte[] ReadAllBytes(string path)
+    public Memory<byte> ReadAllBytes(string path)
     {
         logger.Debug($"Reading all bytes: {path}");
         return File.ReadAllBytes(path);

@@ -11,7 +11,7 @@ namespace RhythmCodex.Wav.Converters;
 [Service]
 public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
 {
-    public byte[] Encode(Sound? sound, int samplesPerBlock)
+    public Memory<byte> Encode(Sound? sound, int samplesPerBlock)
     {
         var channelCount = sound.Samples.Count;
         var buffer = new float[samplesPerBlock];

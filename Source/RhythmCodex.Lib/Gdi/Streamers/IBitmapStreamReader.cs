@@ -5,5 +5,5 @@ namespace RhythmCodex.Gdi.Streamers;
 
 public interface IBitmapStreamReader
 {
-    IBitmap Read(Stream stream);
+    Bitmap Read(Stream stream);
 }

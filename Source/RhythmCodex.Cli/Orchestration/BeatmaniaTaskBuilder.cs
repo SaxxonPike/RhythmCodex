@@ -147,7 +147,7 @@ public class BeatmaniaTaskBuilder(
             {
                 using var stream = OpenRead(task, file);
                 var decrypted = encryptedBeatmaniaPcAudioStreamReader.Decrypt(stream, stream.Length);
-                var sounds = beatmaniaPcAudioStreamReader.Read(new MemoryStream(decrypted), decrypted.Length);
+                var sounds = beatmaniaPcAudioStreamReader.Read(new ReadOnlyMemoryStream(decrypted), decrypted.Length);
                 var index = 1;
 
                 if (EnableExportingSounds)

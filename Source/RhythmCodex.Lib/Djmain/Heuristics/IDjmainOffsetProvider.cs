@@ -5,9 +5,9 @@ namespace RhythmCodex.Djmain.Heuristics;
 
 public interface IDjmainOffsetProvider
 {
-    ICollection<int> GetChartOffsets(DjmainChunkFormat format);
+    List<int> GetChartOffsets(DjmainChunkFormat format);
     int GetSoundOffset(DjmainChunkFormat format);
-    ICollection<int> GetSampleMapOffsets(DjmainChunkFormat format);
-    ICollection<string> GetChartNames(DjmainChunkFormat format);
-    IList<int> GetSampleChartMap(DjmainChunkFormat format);
+    List<int> GetSampleMapOffsets(DjmainChunkFormat format);
+    List<string> GetChartNames(DjmainChunkFormat format);
+    List<int> GetSampleChartMap(DjmainChunkFormat format);
 }

@@ -12,7 +12,7 @@ namespace RhythmCodex.Stepmania.Converters;
 [Service]
 public class NoteEncoder(ILogger logger) : INoteEncoder
 {
-    public IList<Note> Encode(IEnumerable<Event> events)
+    public List<Note> Encode(IEnumerable<Event> events)
     {
         IEnumerable<Note> Do()
         {

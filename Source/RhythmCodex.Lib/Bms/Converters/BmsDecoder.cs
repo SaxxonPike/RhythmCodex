@@ -345,7 +345,7 @@ public class BmsDecoder : IBmsDecoder
         return events;
     }
 
-    private (Dictionary<int, BigRational> Map, IList<BmsCommand> Commands) GetNumericMap(
+    private (Dictionary<int, BigRational> Map, List<BmsCommand> Commands) GetNumericMap(
         IEnumerable<BmsCommand> commands, string mapName)
     {
         var map = new Dictionary<int, BigRational>();
@@ -365,7 +365,7 @@ public class BmsDecoder : IBmsDecoder
         return (map, processedCommands);
     }
 
-    private (Dictionary<int, string> Map, IList<BmsCommand> Commands) GetStringMap(IEnumerable<BmsCommand> commands,
+    private (Dictionary<int, string> Map, List<BmsCommand> Commands) GetStringMap(IEnumerable<BmsCommand> commands,
         string mapName)
     {
         var map = new Dictionary<int, string>();

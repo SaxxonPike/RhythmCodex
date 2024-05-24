@@ -10,7 +10,7 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
     // reference: https://github.com/windyfairy/iidx-ps2tools/blob/master/plugins
 
     private static readonly string[] KeyParts14 =
-    {
+    [
         "FIRE FIRE", // b0 0
         "Blind Justice", // b4 1
         "earth-like planet", // b8 2
@@ -20,11 +20,11 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         "Sense 2007", // c8 6
         "Cyber Force", // cc 7
         "ANDROMEDA II", // d0 8
-        "heaven above", // d4 9
-    };
+        "heaven above" // d4 9
+    ];
 
     private static readonly string[] KeyParts15 =
-    {
+    [
         "Blue Rain", // 70 0
         "oratio", // 74 1
         "Digitank System", // 78 2
@@ -34,11 +34,11 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         "Darling my LUV", // 88 6
         "MENDES", // 8c 7
         "TRIP MACHINE PhoeniX", // 90 8
-        "NEW GENERATION", // 94 9
-    };
+        "NEW GENERATION" // 94 9
+    ];
 
     private static readonly string[] KeyParts16 =
-    {
+    [
         "PERFECT FULL COMBO HARD EASY", // c0 0
         "ASSIST CLEAR PLAY", // c4 1
         "RANDOM MIRROR", // c8 2
@@ -48,8 +48,8 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         "Normal Hyper Another", // d8 6
         "Beginner Tutorial", // dc 7
         "ECHO REVERB EQ ONLY", // e0 8
-        "STANDARD EXPERT CLASS", // e4 9
-    };
+        "STANDARD EXPERT CLASS" // e4 9
+    ];
 
     public string GetKeyFor14thStyle()
     {

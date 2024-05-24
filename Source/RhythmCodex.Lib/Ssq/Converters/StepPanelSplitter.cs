@@ -7,7 +7,7 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class StepPanelSplitter : IStepPanelSplitter
 {
-    public IList<int> Split(int panels)
+    public List<int> Split(int panels)
     {
         IEnumerable<int> Do()
         {

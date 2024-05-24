@@ -4,6 +4,6 @@ namespace RhythmCodex.Step2.Mappers;
 
 public interface IStep2EventMapper
 {
-    IList<int> Map(int panels);
+    List<int> Map(int panels);
     int Map(IEnumerable<int> panels);
 }

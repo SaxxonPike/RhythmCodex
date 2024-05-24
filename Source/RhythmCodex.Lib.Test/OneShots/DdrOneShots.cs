@@ -12,6 +12,7 @@ using RhythmCodex.Dds.Converters;
 using RhythmCodex.Dds.Streamers;
 using RhythmCodex.Extensions;
 using RhythmCodex.Gdi.Streamers;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
@@ -140,7 +141,7 @@ public class DdrOneShots : BaseIntegrationFixture
         var musicDb = startupFiles.Single(x =>
             x.Name.Split('/').Last().Equals("musicdb.xml", StringComparison.CurrentCultureIgnoreCase));
         musicDb = arcConverter.Decompress(musicDb);
-        using var musicDbStream = new MemoryStream(musicDb.Data);
+        using var musicDbStream = new ReadOnlyMemoryStream(musicDb.Data);
         var musicDbEntries = musicDbReader.Read(musicDbStream);
 
         foreach (var metadata in musicDbEntries)
@@ -187,7 +188,7 @@ public class DdrOneShots : BaseIntegrationFixture
                     .Equals($"{metadata.BaseName}_jk.dds", StringComparison.OrdinalIgnoreCase) ?? false);
             using var ddsStream = arcJacket == null
                 ? null
-                : new MemoryStream(arcConverter.Decompress(arcJacket).Data);
+                : new ReadOnlyMemoryStream(arcConverter.Decompress(arcJacket).Data);
             var jacket = ddsStream == null
                 ? null
                 : ddsDecoder.Decode(ddsReader.Read(ddsStream, (int) ddsStream.Length));

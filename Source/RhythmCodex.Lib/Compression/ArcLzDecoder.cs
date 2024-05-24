@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Compression;
@@ -7,7 +8,7 @@ namespace RhythmCodex.Compression;
 [Service]
 public class ArcLzDecoder : IArcLzDecoder
 {
-    public byte[] Decode(Stream source)
+    public Memory<byte> Decode(Stream source)
     {
         var context = new LzDecompress(source);
         return context.Decompress();

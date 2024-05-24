@@ -56,7 +56,7 @@ public class ArcStreamWriter : IArcStreamWriter
             entries[i].Entry.Offset = (int) buffer.Position;
             
             if (entries[i].File.Data is {} data)
-                writer.Write(data);
+                writer.Write(data.Span);
         }
 
         Pad0X20();

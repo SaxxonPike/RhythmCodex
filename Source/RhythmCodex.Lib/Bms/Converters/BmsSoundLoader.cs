@@ -21,7 +21,7 @@ public class BmsSoundLoader(
     IFlacDecoder flacDecoder)
     : IBmsSoundLoader
 {
-    private readonly Dictionary<string, Func<Stream, Sound>> _extensions = new()
+    private readonly Dictionary<string, Func<Stream, Sound?>> _extensions = new()
     {
         { "wav", wavDecoder.Decode },
         { "flac", flacDecoder.Decode },
@@ -60,13 +60,12 @@ public class BmsSoundLoader(
         }
     }
 
-    private (string Filename, Func<Stream, Sound>? Decoder) GetDecoder(string name, IFileAccessor accessor)
+    private (string Filename, Func<Stream, Sound?>? Decoder) GetDecoder(string name, IFileAccessor accessor)
     {
         var file = accessor.GetFileNameByExtension(name, _extensions.Keys);
         
-        if (file == null)
-            return (name, null);
-
-        return (file.Filename, _extensions[file.Extension]);
+        return file == null 
+            ? (name, null) 
+            : (file.Filename, _extensions[file.Extension]);
     }
 }

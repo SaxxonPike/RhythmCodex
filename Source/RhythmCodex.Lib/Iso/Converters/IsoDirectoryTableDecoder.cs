@@ -13,7 +13,7 @@ public class IsoDirectoryTableDecoder(
     IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
     : IIsoDirectoryTableDecoder
 {
-    public IList<IsoDirectoryRecord> Decode(IEnumerable<ICdSector> sectors)
+    public List<IsoDirectoryRecord> Decode(IEnumerable<ICdSector> sectors)
     {
         return DecodeInternal(sectors).ToList();
     }

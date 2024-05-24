@@ -4,5 +4,5 @@ namespace RhythmCodex.Compression;
 
 public interface IArcLzEncoder
 {
-    byte[] Encode(ReadOnlySpan<byte> source);
+    Memory<byte> Encode(ReadOnlySpan<byte> source);
 }

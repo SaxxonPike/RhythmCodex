@@ -10,7 +10,7 @@ namespace RhythmCodex.Step1.Converters;
 [Service]
 public class Step1StepChunkDecoder : IStep1StepChunkDecoder
 {
-    public IList<Step> Convert(byte[] data)
+    public List<Step> Convert(byte[] data)
     {
         return ConvertInternal(data).ToList();
     }

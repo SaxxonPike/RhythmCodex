@@ -6,8 +6,7 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Cli;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-internal class Boot
+internal static class Boot
 {
     /// <summary>
     /// Entry point for the application.
@@ -17,7 +16,7 @@ internal class Boot
         var container = BuildContainer();
         var app = container.Resolve<IApp>();
         var logger = container.Resolve<ILogger>();
-            
+
         logger.Debug("IoC container initialized.");
 
         if (Debugger.IsAttached)
@@ -37,7 +36,7 @@ internal class Boot
                 logger.Debug(e.ToString());
                 LogErrors(logger, e, 0);
                 logger.Warning("An error occurred and the application cannot continue.");
-            }                
+            }
         }
     }
 

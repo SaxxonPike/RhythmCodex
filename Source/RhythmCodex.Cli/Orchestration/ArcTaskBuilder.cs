@@ -40,8 +40,8 @@ public class ArcTaskBuilder(
                     task.Progress = index / (float) entries.Length;
                     task.Message = $"Extracting {entry.Name}";
                     using var outFile = OpenWriteSingle(task, file, _ => entry.Name);
-                    using var str = new MemoryStream(entry.Data);
-                    outFile.Write(arcLzDecoder.Decode(str));
+                    using var str = new ReadOnlyMemoryStream(entry.Data);
+                    outFile.Write(arcLzDecoder.Decode(str).Span);
                     outFile.Flush();
                 }
             });

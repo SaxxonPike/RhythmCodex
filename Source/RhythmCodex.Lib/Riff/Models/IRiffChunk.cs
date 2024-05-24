@@ -1,7 +1,9 @@
+using System;
+
 namespace RhythmCodex.Riff.Models;
 
 public interface IRiffChunk
 {
     string Id { get; }
-    byte[] Data { get; }
+    Memory<byte> Data { get; }
 }

@@ -1,7 +1,7 @@
-using System.IO;
-using System.Linq;
+using System;
 using RhythmCodex.Arc.Model;
 using RhythmCodex.Compression;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Arc.Converters;
@@ -13,8 +13,8 @@ public class ArcFileConverter(IArcLzDecoder arcLzDecoder, IArcLzEncoder arcLzEnc
     public ArcFile Compress(ArcFile file)
     {
         var data = file.CompressedSize != file.DecompressedSize
-            ? file.Data?.ToArray() ?? []
-            : arcLzEncoder.Encode(file.Data);
+            ? file.Data
+            : arcLzEncoder.Encode(file.Data.Span);
 
         return new ArcFile
         {
@@ -27,15 +27,15 @@ public class ArcFileConverter(IArcLzDecoder arcLzDecoder, IArcLzEncoder arcLzEnc
 
     public ArcFile Decompress(ArcFile file)
     {
-        byte[] data;
+        Memory<byte> data;
 
         if (file.CompressedSize == file.DecompressedSize)
         {
-            data = file.Data?.ToArray() ?? [];
+            data = file.Data;
         }
         else
         {
-            using var stream = new MemoryStream(file.Data ?? []);
+            using var stream = new ReadOnlyMemoryStream(file.Data);
             data = arcLzDecoder.Decode(stream);
         }
 

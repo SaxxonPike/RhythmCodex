@@ -6,5 +6,5 @@ namespace RhythmCodex.Beatmania.Streamers;
 
 public interface IBeatmaniaPsxBmDataStreamReader
 {
-    IList<BeatmaniaPsxFolder> Read(Stream stream, int length);
+    List<BeatmaniaPsxFolder> Read(Stream stream, int length);
 }

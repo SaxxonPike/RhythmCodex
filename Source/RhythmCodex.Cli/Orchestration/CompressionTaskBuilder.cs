@@ -36,8 +36,7 @@ public class CompressionTaskBuilder(
                 task.Message = $"Compressed {data.Length} -> {encoded.Length} bytes.";
 
                 using var output = OpenWriteSingle(task, file, i => $"{i}.bemanilz");
-                var writer = new BinaryWriter(output);
-                writer.Write(encoded);
+                output.Write(encoded.Span);
                 output.Flush();
             });
 
@@ -62,8 +61,7 @@ public class CompressionTaskBuilder(
                 var decoded = bemaniLzDecoder.Decode(stream);
                 task.Message = $"Deompressed {stream.Length} -> {decoded.Length} bytes.";
                 using var output = OpenWriteSingle(task, file, i => $"{i}.decoded");
-                var writer = new BinaryWriter(output);
-                writer.Write(decoded);
+                output.Write(decoded.Span);
                 output.Flush();
             });
 

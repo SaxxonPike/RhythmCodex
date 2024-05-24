@@ -6,6 +6,6 @@ namespace RhythmCodex.Ddr.Converters;
 
 public interface IDdr573DatabaseDecoder
 {
-    IList<DdrDatabaseEntry> Decode(ReadOnlySpan<byte> database);
+    List<DdrDatabaseEntry> Decode(ReadOnlySpan<byte> database);
     int FindRecordSize(ReadOnlySpan<byte> database);
 }

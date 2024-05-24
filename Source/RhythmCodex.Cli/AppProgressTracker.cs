@@ -8,7 +8,7 @@ namespace RhythmCodex.Cli;
 [Service]
 public class AppProgressTracker : IAppProgressTracker
 {
-    private readonly List<ITask> _tasks = new();
+    private readonly List<ITask> _tasks = [];
     private readonly Dictionary<string, Exception> _failedTasks = new();
 
     public void Add(ITask task) => _tasks.Add(task);

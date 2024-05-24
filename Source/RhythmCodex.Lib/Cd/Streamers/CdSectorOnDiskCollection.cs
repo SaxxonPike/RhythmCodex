@@ -8,12 +8,12 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Cd.Streamers;
 
 [NotService]
-public class CdSectorOnDiskCollection(int total, Func<int, byte[]> read) : IReadOnlyList<ICdSector>
+public class CdSectorOnDiskCollection(int total, Func<int, Memory<byte>> read) : IReadOnlyList<ICdSector>
 {
-    private class OnDiskCdSector(int number, Func<int, byte[]> read) : ICdSector
+    private class OnDiskCdSector(int number, Func<int, Memory<byte>> read) : ICdSector
     {
         public int Number { get; } = number;
-        public byte[] Data => read(Number);
+        public Memory<byte> Data => read(Number);
     }
 
     public IEnumerator<ICdSector> GetEnumerator() => 

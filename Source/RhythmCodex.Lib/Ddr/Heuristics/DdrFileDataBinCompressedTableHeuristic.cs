@@ -13,9 +13,9 @@ namespace RhythmCodex.Ddr.Heuristics;
 public class DdrFileDataBinCompressedTableHeuristic(
     IDdrPs2FileDataTableChunkStreamReader ddrPs2FileDataTableChunkStreamReader,
     IDdrPs2FileDataUnboundTableDecoder ddrPs2FileDataUnboundTableDecoder)
-    : IReadableHeuristic<IList<DdrPs2FileDataTableEntry>>
+    : IReadableHeuristic<List<DdrPs2FileDataTableEntry>>
 {
-    public IList<DdrPs2FileDataTableEntry> Read(HeuristicResult heuristicResult, Stream stream)
+    public List<DdrPs2FileDataTableEntry> Read(HeuristicResult heuristicResult, Stream stream)
     {
         var table = ddrPs2FileDataTableChunkStreamReader.GetUnbound(stream);
         var decoded = ddrPs2FileDataUnboundTableDecoder.Decode(table);

@@ -49,7 +49,7 @@ public class SmEncoder(
             case ChartTag.DisplayBpmTag:
             {
                 var bpms = GetBpmEvents(chartSet.Charts)
-                    .Select(e => (double) e.Value)
+                    .Select(e => (double)e.Value)
                     .Where(e => !double.IsInfinity(e))
                     .Select(e => Math.Round(e))
                     .ToList();
@@ -58,8 +58,8 @@ public class SmEncoder(
                 if (validBpms.Count == 0)
                     validBpms = bpms;
 
-                var min = Math.Round((decimal) validBpms.Min());
-                var max = Math.Round((decimal) validBpms.Max());
+                var min = Math.Round((decimal)validBpms.Min());
+                var max = Math.Round((decimal)validBpms.Max());
                 return min == max
                     ? [$"{min}"]
                     : [$"{min}:{max}"];
@@ -78,8 +78,8 @@ public class SmEncoder(
             .Select(s => new Command
             {
                 Name = s,
-                Values = chartMetadata[s] != null
-                    ? new[] {chartMetadata[s]}
+                Values = chartMetadata[s] is { } md
+                    ? [md]
                     : GetDefault(s, chartSet)
             });
 
@@ -88,15 +88,15 @@ public class SmEncoder(
         var noteCommands = chartList.Select(chart => new Command
         {
             Name = ChartTag.NotesTag,
-            Values = new[]
-            {
+            Values =
+            [
                 chart[NotesCommandTag.TypeTag] ?? string.Empty,
                 chart[NotesCommandTag.DescriptionTag] ?? string.Empty,
                 chart[NotesCommandTag.DifficultyTag] ?? string.Empty,
                 $"{(chart[NumericData.PlayLevel] ?? BigRational.One).GetWholePart()}",
                 grooveRadarEncoder.Encode(chart),
                 noteCommandStringEncoder.Encode(noteEncoder.Encode(chart.Events))
-            }
+            ]
         });
 
         return metaCommands
@@ -144,7 +144,7 @@ public class SmEncoder(
         return bpms
             .Where(ev => ev[NumericData.MetricOffset] >= 0)
             .Select(ev =>
-                new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value})
+                new TimedEvent { Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Bpm].Value })
             .ToList();
     }
 
@@ -155,7 +155,11 @@ public class SmEncoder(
             .GroupBy(ev => ev[NumericData.MetricOffset])
             .Select(g => g.First())
             .Select(ev =>
-                new TimedEvent {Offset = ev[NumericData.MetricOffset].Value, Value = ev[NumericData.Stop].Value})
+                new TimedEvent
+                {
+                    Offset = ev[NumericData.MetricOffset]!.Value,
+                    Value = ev[NumericData.Stop]!.Value
+                })
             .ToList();
     }
 
@@ -164,13 +168,13 @@ public class SmEncoder(
         yield return new Command
         {
             Name = ChartTag.BpmsTag,
-            Values = new[] {timedCommandStringEncoder.Encode(GetBpmEvents(charts))}
+            Values = [timedCommandStringEncoder.Encode(GetBpmEvents(charts))]
         };
 
         yield return new Command
         {
             Name = ChartTag.StopsTag,
-            Values = new[] {timedCommandStringEncoder.Encode(GetStopEvents(charts))}
+            Values = [timedCommandStringEncoder.Encode(GetStopEvents(charts))]
         };
     }
 }

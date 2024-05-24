@@ -5,5 +5,5 @@ namespace RhythmCodex.Stepmania.Converters;
 
 public interface INoteCommandStringDecoder
 {
-    IList<Note> Decode(int columns, string notes);
+    List<Note> Decode(int columns, string notes);
 }

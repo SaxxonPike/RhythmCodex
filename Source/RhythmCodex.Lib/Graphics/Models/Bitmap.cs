@@ -4,7 +4,7 @@ using RhythmCodex.Meta.Models;
 namespace RhythmCodex.Graphics.Models;
 
 [Model]
-public class Bitmap : Metadata, IBitmap
+public class Bitmap : Metadata
 {
     public Bitmap(int width, int[] data)
     {

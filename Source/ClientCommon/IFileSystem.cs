@@ -36,7 +36,7 @@ public interface IFileSystem
     /// <summary>
     ///     Read all bytes from the specified file path.
     /// </summary>
-    byte[] ReadAllBytes(string path);
+    Memory<byte> ReadAllBytes(string path);
 
     /// <summary>
     ///     Write all bytes to the specified file path.

@@ -42,7 +42,7 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
         {
             var remaining = Math.Min(count, _remaining);
             var result = 0;
-            var sector = _currentSector.UserData;
+            var sector = _currentSector.UserData.Span;
             
             while (remaining > 0)
             {
@@ -55,7 +55,7 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
                     _offset -= _sectorSize;
                     _sectorEnumerator.MoveNext();
                     _currentSector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current);
-                    sector = _currentSector.UserData;
+                    sector = _currentSector.UserData.Span;
                 }
                     
                 remaining--;

@@ -18,7 +18,7 @@ public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
             UserDataLength = 2352
         };
 
-        var data = sector.Data;
+        var data = sector.Data.Span;
 
         if (!(data[0x0000] == 0x00 &&
               data[0x0001] == 0xFF &&

@@ -9,7 +9,7 @@ namespace RhythmCodex.Plugin.ImageSharp;
 [Service]
 public class ImageSharpBitmapStreamReader(IImageSharpBitmapConverter imageSharpBitmapConverter) : IBitmapStreamReader
 {
-    public IBitmap Read(Stream stream)
+    public Bitmap Read(Stream stream)
     {
         using var image = Image.Load<Rgba32>(stream);
         return imageSharpBitmapConverter.ConvertImage(image);

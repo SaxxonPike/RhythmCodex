@@ -10,10 +10,10 @@ namespace RhythmCodex.Stepmania.Converters;
 [Service]
 public class NoteCommandStringDecoder : INoteCommandStringDecoder
 {
-    private static readonly char[] SkippedChars = {' ', '\t', '\n', '\r'};
-    private static readonly char[] Delimiters = {';', ','};
+    private static readonly char[] SkippedChars = [' ', '\t', '\n', '\r'];
+    private static readonly char[] Delimiters = [';', ','];
 
-    public IList<Note> Decode(int columns, string notes)
+    public List<Note> Decode(int columns, string notes)
     {
         IEnumerable<Note> Do()
         {

@@ -6,6 +6,6 @@ namespace RhythmCodex.Tim.Converters;
 
 public interface ITimBitmapDecoder
 {
-    IList<IBitmap> Decode(TimImage image);
-    IBitmap Decode(TimImage image, int clutIndex);
+    List<Bitmap> Decode(TimImage image);
+    Bitmap Decode(TimImage image, int clutIndex);
 }

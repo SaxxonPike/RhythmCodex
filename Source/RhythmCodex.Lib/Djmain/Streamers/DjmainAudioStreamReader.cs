@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.IoC;
@@ -8,17 +9,17 @@ namespace RhythmCodex.Djmain.Streamers;
 [Service]
 public class DjmainAudioStreamReader : IDjmainAudioStreamReader
 {
-    public byte[] ReadDpcm(Stream stream)
+    public Memory<byte> ReadDpcm(Stream stream)
     {
         return ReadDpcmStream(stream).ToArray();
     }
 
-    public byte[] ReadPcm16(Stream stream)
+    public Memory<byte> ReadPcm16(Stream stream)
     {
         return DecodePcm16Stream(stream).ToArray();
     }
 
-    public byte[] ReadPcm8(Stream stream)
+    public Memory<byte> ReadPcm8(Stream stream)
     {
         return DecodePcm8Stream(stream).ToArray();
     }

@@ -12,7 +12,7 @@ public class TimDecoder(
     ITimStreamReader streamReader)
     : ITimDecoder
 {
-    public IList<IBitmap> Decode(Stream stream)
+    public List<Bitmap> Decode(Stream stream)
     {
         var image = streamReader.Read(stream);
         return bitmapDecoder.Decode(image);

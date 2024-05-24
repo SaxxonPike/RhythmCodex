@@ -5,6 +5,6 @@ namespace RhythmCodex.Graphics.Converters;
 
 public interface IGraphicDsp
 {
-    IBitmap DeIndex(IPaletteBitmap bitmap);
-    IBitmap Snip(IBitmap bitmap, Rectangle rect);
+    Bitmap DeIndex(PaletteBitmap bitmap);
+    Bitmap Snip(Bitmap bitmap, Rectangle rect);
 }

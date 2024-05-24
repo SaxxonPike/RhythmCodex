@@ -7,7 +7,7 @@ namespace RhythmCodex.Step2.Mappers;
 [Service]
 public class Step2EventMapper : IStep2EventMapper
 {
-    public IList<int> Map(int panels)
+    public List<int> Map(int panels)
     {
         IEnumerable<int> Do()
         {

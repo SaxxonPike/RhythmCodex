@@ -17,7 +17,7 @@ public class RiffFormatEncoder : IRiffFormatEncoder
         writer.Write(format.ByteRate);
         writer.Write(unchecked((short)format.BlockAlign));
         writer.Write(unchecked((short)format.BitsPerSample));
-        writer.Write(format.ExtraData ?? []);
+        writer.Write(format.ExtraData.Span);
         writer.Flush();
                 
         return new RiffChunk

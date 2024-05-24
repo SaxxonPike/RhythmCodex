@@ -32,7 +32,7 @@ public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEnc
             {NumericData.PlayLevel, "PLAYLEVEL"}
         };
 
-    public IList<BmsCommand> Encode(Chart chart)
+    public List<BmsCommand> Encode(Chart chart)
     {
         return EncodeInternal(chart).ToList();
     }

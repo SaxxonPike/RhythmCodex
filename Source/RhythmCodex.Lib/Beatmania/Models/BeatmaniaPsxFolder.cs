@@ -6,5 +6,5 @@ namespace RhythmCodex.Beatmania.Models;
 [Model]
 public class BeatmaniaPsxFolder
 {
-    public IList<BeatmaniaPsxFile> Files { get; set; } = [];
+    public List<BeatmaniaPsxFile> Files { get; set; } = [];
 }

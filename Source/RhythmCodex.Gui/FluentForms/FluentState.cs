@@ -5,6 +5,6 @@ namespace RhythmCodex.Gui.FluentForms;
 
 public class FluentState
 {
-    public List<Action> Callbacks { get; } = new();
+    public List<Action> Callbacks { get; } = [];
     public Dictionary<string, object> Map { get; } = new();
 }

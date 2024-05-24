@@ -74,7 +74,7 @@ public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXbox
         }
     }
 
-    public byte[] Extract(Stream stream, XboxIsoFileEntry entry)
+    public Memory<byte> Extract(Stream stream, XboxIsoFileEntry entry)
     {
         stream.Position = entry.StartSector * 0x800L;
         var reader = new BinaryReader(stream);

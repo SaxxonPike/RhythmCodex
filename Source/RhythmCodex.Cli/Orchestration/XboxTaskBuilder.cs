@@ -85,8 +85,7 @@ public class XboxTaskBuilder(
                     using (var outStream =
                            OpenWriteMulti(task, file, _ => entry.FileName))
                     {
-                        var writer = new BinaryWriter(outStream);
-                        writer.Write(xboxIsoStreamReader.Extract(stream, entry));
+                        outStream.Write(xboxIsoStreamReader.Extract(stream, entry).Span);
                         outStream.Flush();
                     }
 

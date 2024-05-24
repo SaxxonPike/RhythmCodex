@@ -4,6 +4,6 @@ namespace RhythmCodex.Riff.Models;
 
 public class RiffContainer : IRiffContainer
 {
-    public IList<IRiffChunk> Chunks { get; set; }
+    public List<IRiffChunk> Chunks { get; set; }
     public string Format { get; set; }
 }

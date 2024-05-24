@@ -38,17 +38,14 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
                 AutoSize = true,
                 Dock = DockStyle.Fill,
                 ColumnSpan = 2,
-                Columns = new List<ColumnStyle>
-                {
+                Columns =
+                [
                     new ColumnStyle(SizeType.Percent, 50),
                     new ColumnStyle(SizeType.Percent, 50)
-                },
-                Rows = new List<RowStyle>
-                {
-                    new RowStyle(SizeType.AutoSize)
-                },
-                Controls = new List<FluentControl>
-                {
+                ],
+                Rows = [new RowStyle(SizeType.AutoSize)],
+                Controls =
+                [
                     new FluentCheckbox
                     {
                         Dock = DockStyle.Fill,
@@ -57,6 +54,7 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
                         Font = fontFactory.GetNormal(),
                         AutoSize = true
                     },
+
                     new FluentCheckbox
                     {
                         Dock = DockStyle.Fill,
@@ -64,8 +62,9 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
                         Text = text1,
                         Font = fontFactory.GetNormal(),
                         AutoSize = true
-                    },
-                }
+                    }
+
+                ]
             }
         };
     }
@@ -78,12 +77,12 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
             AutoSize = true,
             Anchor = fill ? AnchorStyles.None : AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
             Dock = fill ? DockStyle.Fill : DockStyle.None,
-            Columns = new List<ColumnStyle>
-            {
+            Columns =
+            [
                 new ColumnStyle(SizeType.Absolute, 145),
                 new ColumnStyle(SizeType.Percent, 100),
                 new ColumnStyle(SizeType.Absolute, 50)
-            },
+            ],
             Controls = controls.ToList()
         };
     }

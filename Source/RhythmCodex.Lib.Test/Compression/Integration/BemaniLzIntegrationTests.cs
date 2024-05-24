@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Compression.Integration;
 
@@ -17,9 +18,9 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var encoded = encoder.Encode(data);
             
         var decoder = Resolve<BemaniLzDecoder>();
-        var decoded = decoder.Decode(new MemoryStream(encoded));
+        var decoded = decoder.Decode(new ReadOnlyMemoryStream(encoded));
 
-        decoded.Should().BeEquivalentTo(data);
+        decoded.ToArray().Should().BeEquivalentTo(data);
     }
 
     [Test]
@@ -31,9 +32,9 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var encoded = encoder.Encode(data);
             
         var decoder = Resolve<BemaniLzDecoder>();
-        var decoded = decoder.Decode(new MemoryStream(encoded));
+        var decoded = decoder.Decode(new ReadOnlyMemoryStream(encoded));
 
-        decoded.Should().BeEquivalentTo(data);
+        decoded.ToArray().Should().BeEquivalentTo(data);
     }
 
     [Test]
@@ -49,7 +50,7 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var decoder = Resolve<BemaniLzDecoder>();
         var decoded = decoder.Decode(new MemoryStream(data));
 
-        decoded.Should().BeEquivalentTo(expected);
+        decoded.ToArray().Should().BeEquivalentTo(expected);
     }
 
     [Test]
@@ -64,9 +65,9 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var decoder = Resolve<BemaniLzDecoder>();
         var decoded = decoder.Decode(new MemoryStream(data));
         var encoder = Resolve<BemaniLzEncoder>();
-        var encoded = encoder.Encode(decoded);
-        var reDecoded = decoder.Decode(new MemoryStream(encoded));
+        var encoded = encoder.Encode(decoded.Span);
+        var reDecoded = decoder.Decode(new ReadOnlyMemoryStream(encoded));
 
-        reDecoded.Should().BeEquivalentTo(expected);
+        reDecoded.ToArray().Should().BeEquivalentTo(expected);
     }
 }

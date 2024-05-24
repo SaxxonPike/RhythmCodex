@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -8,7 +9,7 @@ namespace RhythmCodex.Iso.Converters;
 [Service]
 public class IsoDirectoryRecordDecoder(IIsoDateTimeDecoder isoDateTimeDecoder) : IIsoDirectoryRecordDecoder
 {
-    public IsoDirectoryRecord Decode(Stream stream, bool recordOnly)
+    public IsoDirectoryRecord? Decode(Stream stream, bool recordOnly)
     {
         var reader = new BinaryReader(stream);
         var length = reader.ReadByte();
@@ -27,11 +28,11 @@ public class IsoDirectoryRecordDecoder(IIsoDateTimeDecoder isoDateTimeDecoder) :
         reader.ReadInt16();
         var identifierLength = reader.ReadByte();
         var identifier = reader.ReadBytes(identifierLength);
-        byte[] extra;
+        Memory<byte> extra;
             
         if (recordOnly)
         {
-            extra = [];
+            extra = Memory<byte>.Empty;
         }
         else
         {
@@ -48,9 +49,9 @@ public class IsoDirectoryRecordDecoder(IIsoDateTimeDecoder isoDateTimeDecoder) :
         if (identifier.Length == 1)
         {
             if (identifier[0] == 0x00)
-                identifier = new byte[] {0x2E};
+                identifier = [0x2E];
             else if (identifier[0] == 0x01)
-                identifier = new byte[] {0x2E, 0x2E};
+                identifier = [0x2E, 0x2E];
         }
                 
         return new IsoDirectoryRecord

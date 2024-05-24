@@ -11,7 +11,7 @@ public class BemaniLzDecoder(ILogger logger) : IBemaniLzDecoder
     private const int BufferMask = 0x3FF; // 10 bits window
     private const int BufferSize = 0x400;
 
-    public byte[] Decode(Stream source)
+    public Memory<byte> Decode(Stream source)
     {
         var mem = new MemoryStream();
         var writer = new BinaryWriter(mem);

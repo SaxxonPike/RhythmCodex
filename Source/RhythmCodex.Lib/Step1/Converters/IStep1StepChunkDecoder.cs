@@ -5,5 +5,5 @@ namespace RhythmCodex.Step1.Converters;
 
 public interface IStep1StepChunkDecoder
 {
-    IList<Step> Convert(byte[] data);
+    List<Step> Convert(byte[] data);
 }

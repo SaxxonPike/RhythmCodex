@@ -2,14 +2,14 @@ namespace RhythmCodex.Ddr.Models;
 
 public static class DdrConstants
 {
-    public static string[] KnownAnimeNames => new[]
-    {
+    public static string[] KnownAnimeNames =>
+    [
         "mfjc1", "mfjb1", "mfja1", "mljc1", "mljb1", "mlja1", "mrsc1", "mrsb1", "mrsa1", "mfsc1", "mfsb1", "mfsa1",
         "mbsc1", "mbsb1", "mbsa1", "mlsc1", "mlsb1", "mlsa1", "mnor1"
-    };
+    ];
 
-    public static string[] KnownSongNames => new[]
-    {
+    public static string[] KnownSongNames =>
+    [
         "have",
         "that",
         "kung",
@@ -1628,5 +1628,5 @@ public static class DdrConstants
         "swin",
         "keep3",
         "goin"
-    };
+    ];
 }

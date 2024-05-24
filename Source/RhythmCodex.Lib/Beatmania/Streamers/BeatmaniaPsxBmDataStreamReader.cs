@@ -10,7 +10,7 @@ namespace RhythmCodex.Beatmania.Streamers;
 [Service]
 public class BeatmaniaPsxBmDataStreamReader(ILogger logger) : IBeatmaniaPsxBmDataStreamReader
 {
-    public IList<BeatmaniaPsxFolder> Read(Stream stream, int length)
+    public List<BeatmaniaPsxFolder> Read(Stream stream, int length)
     {
         return ReadInternal(stream, length).ToList();
     }

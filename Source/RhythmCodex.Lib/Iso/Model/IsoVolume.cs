@@ -17,7 +17,7 @@ public class IsoVolume
     public int OptionalTypeLPathTableLocation { get; set; }
     public int TypeMPathTableLocation { get; set; }
     public int OptionalTypeMPathTableLocation { get; set; }
-    public IsoDirectoryRecord RootDirectoryRecord { get; set; }
+    public IsoDirectoryRecord? RootDirectoryRecord { get; set; }
     public string VolumeSetIdentifier { get; set; }
     public string PublisherIdentifier { get; set; }
     public string DataPreparerIdentifier { get; set; }

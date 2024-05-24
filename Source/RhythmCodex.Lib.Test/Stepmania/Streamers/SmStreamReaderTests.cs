@@ -17,9 +17,9 @@ public class SmStreamReaderTests : BaseUnitTestFixture<SmStreamReader, ISmStream
         // Arrange.
         var expected = new[]
         {
-            new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()},
-            new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()},
-            new Command {Name = Create<string>(), Values = CreateMany<string>().ToArray()}
+            new Command { Name = Create<string>(), Values = CreateMany<string>().ToList() },
+            new Command { Name = Create<string>(), Values = CreateMany<string>().ToList() },
+            new Command { Name = Create<string>(), Values = CreateMany<string>().ToList() }
         };
 
         var input = string.Join(Environment.NewLine,
@@ -46,12 +46,12 @@ public class SmStreamReaderTests : BaseUnitTestFixture<SmStreamReader, ISmStream
             new Command
             {
                 Name = Create<string>(),
-                Values = new[] {string.Join(Environment.NewLine, CreateMany<string>())}
+                Values = [string.Join(Environment.NewLine, CreateMany<string>())]
             },
             new Command
             {
                 Name = Create<string>(),
-                Values = new[] {string.Join(Environment.NewLine, CreateMany<string>())}
+                Values = [string.Join(Environment.NewLine, CreateMany<string>())]
             }
         };
 

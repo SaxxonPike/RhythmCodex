@@ -35,7 +35,7 @@ public class RiffPcm16SoundEncoder(IRiffFormatEncoder formatEncoder) : IRiffPcm1
         var container = new RiffContainer
         {
             Format = "WAVE",
-            Chunks = new List<IRiffChunk>()
+            Chunks = []
         };
 
         var format = new RiffFormat
@@ -46,7 +46,7 @@ public class RiffPcm16SoundEncoder(IRiffFormatEncoder formatEncoder) : IRiffPcm1
             ByteRate = (int) byteRate,
             BitsPerSample = 16,
             BlockAlign = channels * 2,
-            ExtraData = []
+            ExtraData = Memory<byte>.Empty
         };
 
         container.Chunks.Add(formatEncoder.Encode(format));

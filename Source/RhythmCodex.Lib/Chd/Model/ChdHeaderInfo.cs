@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Chd.Model;
@@ -14,14 +15,14 @@ public struct ChdHeaderInfo
     public uint hunkSize;
     public ulong logicalBytes;
     public ulong mapOffset;
-    public byte[] md5;
+    public Memory<byte> md5;
     public ulong metaOffset;
-    public byte[] parentmd5;
-    public byte[] parentsha1;
-    public byte[] rawsha1;
+    public Memory<byte> parentmd5;
+    public Memory<byte> parentsha1;
+    public Memory<byte> rawsha1;
     public uint seclen;
     public uint sectors;
-    public byte[] sha1;
+    public Memory<byte> sha1;
     public uint totalHunks;
     public uint unitBytes;
 }

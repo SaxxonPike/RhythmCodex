@@ -11,6 +11,6 @@ public interface IBmsNoteCommandEncoder
     string Encode(IEnumerable<BmsEvent> events, Func<BigRational?, string> encodeValue,
         BigRational measureLength, int quantize);
 
-    IList<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events);
-    IList<BmsEvent> TranslateBpmEvents(IEnumerable<Event> chartEvents);
+    List<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events);
+    List<BmsEvent> TranslateBpmEvents(IEnumerable<Event> chartEvents);
 }

@@ -10,7 +10,7 @@ namespace RhythmCodex.Ddr.Converters;
 [Service]
 public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
 {
-    public IList<DdrDatabaseEntry> Decode(ReadOnlySpan<byte> database)
+    public List<DdrDatabaseEntry> Decode(ReadOnlySpan<byte> database)
     {
         var offset = 0;
         var length = database.Length;
@@ -39,8 +39,8 @@ public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
                 Unknown014 = Bitter.ToInt16(raw, 0x14),
                 SonglistOrder = Bitter.ToInt16(raw, 0x16),
                 UnlockNumber = Bitter.ToInt16(raw, 0x18),
-                Difficulties = new[]
-                {
+                Difficulties =
+                [
                     raw[0x1C] & 0xF,
                     raw[0x1C] >> 4,
                     raw[0x1D] & 0xF,
@@ -48,8 +48,8 @@ public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
                     raw[0x20] & 0xF,
                     raw[0x20] >> 4,
                     raw[0x21] & 0xF,
-                    raw[0x21] >> 4,
-                },
+                    raw[0x21] >> 4
+                ],
                 Unknown01E = Bitter.ToInt16(raw, 0x1E),
                 Unknown022 = Bitter.ToInt16(raw, 0x22),
                 Flags = Bitter.ToInt32(raw, 0x24),

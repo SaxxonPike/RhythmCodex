@@ -10,14 +10,14 @@ namespace RhythmCodex.Iso.Converters;
 [Service]
 public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
 {
-    private static readonly byte[] StandardIdentifier = {0x43, 0x44, 0x30, 0x30, 0x31};
+    private static readonly byte[] StandardIdentifier = [0x43, 0x44, 0x30, 0x30, 0x31];
 
-    public IList<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors)
+    public List<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors)
     {
         return FindInternal(sectors).ToList();
     }
         
-    private IList<IsoSectorInfo> FindInternal(IEnumerable<IsoSectorInfo> sectors)
+    private List<IsoSectorInfo> FindInternal(IEnumerable<IsoSectorInfo> sectors)
     {
         var result = new List<IsoSectorInfo>();
         var mode1Sectors = sectors.Where(s => s.Mode == 1).ToList();
@@ -34,7 +34,7 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
             if (descriptorSector == null)
                 throw new RhythmCodexException($"Volume descriptors incomplete. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");
 
-            var userData = descriptorSector.UserData;
+            var userData = descriptorSector.UserData.Span;
                 
             if (!userData.Slice(0x0001, 5).SequenceEqual(StandardIdentifier))
                 throw new RhythmCodexException($"Standard identifier is incorrect. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");

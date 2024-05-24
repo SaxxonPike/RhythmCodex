@@ -39,7 +39,7 @@ public class RiffMicrosoftAdpcmSoundEncoder(
         var container = new RiffContainer
         {
             Format = "WAVE",
-            Chunks = new List<IRiffChunk>()
+            Chunks = []
         };
             
         var extraFormat = new MicrosoftAdpcmFormat

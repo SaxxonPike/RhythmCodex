@@ -15,5 +15,5 @@ public class IsoDirectoryRecord
     public int InterleaveGapSize { get; set; }
     public int VolumeSequenceNumber { get; set; }
     public string Identifier { get; set; }
-    public byte[] Extra { get; set; }
+    public Memory<byte> Extra { get; set; }
 }

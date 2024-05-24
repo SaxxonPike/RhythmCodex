@@ -12,7 +12,7 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
 {
     // Reference: https://github.com/dbry/adpcm-xq/blob/master/adpcm-lib.c
 
-    public IList<Sound?> Decode(ImaAdpcmChunk chunk)
+    public List<Sound?> Decode(ImaAdpcmChunk chunk)
     {
         var sounds = new List<Sound?>();
         var buffer = new float[chunk.ChannelSamplesPerFrame];
@@ -23,7 +23,7 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
 
         for (var offset = 0; offset < max; offset += frameSize)
         {
-            var mem = chunk.Data.AsSpan(offset, frameSize);
+            var mem = chunk.Data.Span.Slice(offset, frameSize);
             for (var channel = 0; channel < channels; channel++)
             {
                 DecodeFrame(mem, buffer, channel, channels);
