@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Infrastructure;

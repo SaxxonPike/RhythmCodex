@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Infrastructure;

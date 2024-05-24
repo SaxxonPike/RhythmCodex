@@ -9,7 +9,6 @@ using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
-using RhythmCodex.Sounds.Models;
 using RhythmCodex.Xact.Converters;
 using RhythmCodex.Xact.Streamers;
 using RhythmCodex.Xbox.Streamers;

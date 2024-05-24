@@ -1,5 +1,4 @@
 using System;
-using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Riff.Models;

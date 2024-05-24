@@ -11,7 +11,6 @@ using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
-using RhythmCodex.Sounds.Models;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Stepmania;
@@ -22,7 +21,6 @@ using RhythmCodex.Tcb.Converters;
 using RhythmCodex.Tcb.Streamers;
 using RhythmCodex.Vag.Converters;
 using RhythmCodex.Vag.Heuristics;
-using RhythmCodex.Vag.Models;
 using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Ddr.Integration;

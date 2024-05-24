@@ -5,7 +5,6 @@ using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
-using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Converters;
 
 namespace RhythmCodex.Wav.Integration;

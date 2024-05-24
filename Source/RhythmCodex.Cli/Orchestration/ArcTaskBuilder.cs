@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using ClientCommon;
 using RhythmCodex.Arc.Streamers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;

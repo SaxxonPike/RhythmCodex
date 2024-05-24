@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using RhythmCodex.Bms.Model;
 using RhythmCodex.Charting.Models;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;

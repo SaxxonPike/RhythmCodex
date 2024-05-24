@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Providers;
 

@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using RhythmCodex.Compression;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;

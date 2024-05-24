@@ -3,7 +3,6 @@ using System.Linq;
 using ClientCommon;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
-using RhythmCodex.Sounds.Models;
 using RhythmCodex.Xact.Converters;
 using RhythmCodex.Xact.Streamers;
 

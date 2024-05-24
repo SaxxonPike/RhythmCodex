@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Stepmania.Model;

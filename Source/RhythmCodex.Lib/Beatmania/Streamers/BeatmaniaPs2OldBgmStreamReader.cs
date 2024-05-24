@@ -2,7 +2,6 @@ using System.IO;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
-using RhythmCodex.Vag.Models;
 using RhythmCodex.Vag.Streamers;
 
 namespace RhythmCodex.Beatmania.Streamers;

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Models;

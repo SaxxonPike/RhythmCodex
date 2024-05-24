@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Charting.Models;
-using RhythmCodex.Extensions;
 using RhythmCodex.Ssq.Converters;
 using RhythmCodex.Ssq.Streamers;
 using RhythmCodex.Statistics;

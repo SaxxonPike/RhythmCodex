@@ -3,7 +3,6 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using RhythmCodex.Plugin.CSCore;
-using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Flac;
 
