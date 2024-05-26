@@ -15,6 +15,8 @@ public class NoteCommandStringDecoder : INoteCommandStringDecoder
 
     public List<Note> Decode(int columns, string notes)
     {
+        return Do().ToList();
+
         IEnumerable<Note> Do()
         {
             var column = 0;
@@ -47,7 +49,5 @@ public class NoteCommandStringDecoder : INoteCommandStringDecoder
                 measureId++;
             }
         }
-
-        return Do().ToList();
     }
 }
