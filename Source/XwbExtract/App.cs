@@ -42,6 +42,6 @@ public class App(
 
     public void Usage(TextWriter log)
     {
-        log.WriteLine(@"XwbExtract [files] [-o <path>] [+r]");
+        log.WriteLine("XwbExtract [files] [-o <path>] [+r]");
     }
 }

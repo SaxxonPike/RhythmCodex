@@ -13,7 +13,7 @@ public class VtdddChartDecoder(IVtdddStepDecoder stepDecoder) : IVtdddChartDecod
     {
         var events = new List<Event>();
             
-        var result = new Chart()
+        var result = new Chart
         {
             Events = events
         };

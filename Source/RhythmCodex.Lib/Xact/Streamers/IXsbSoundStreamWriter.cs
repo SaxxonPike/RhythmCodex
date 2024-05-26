@@ -1,6 +1,3 @@
 ﻿namespace RhythmCodex.Xact.Streamers;
 
-public interface IXsbSoundStreamWriter
-{
-        
-}
+public interface IXsbSoundStreamWriter;

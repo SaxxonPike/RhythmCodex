@@ -1,5 +1,3 @@
 namespace RhythmCodex.Infrastructure;
 
-public static class MemoryConvert
-{
-}
+public static class MemoryConvert;

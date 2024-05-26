@@ -20,5 +20,5 @@ public enum ChannelAssignment
     /// <summary>
     /// Mid/side stereo. Channel 0 becomes the mid channel while channel 1 becomes the side channel. 
     /// </summary>
-    MidSide = 3,
+    MidSide = 3
 }

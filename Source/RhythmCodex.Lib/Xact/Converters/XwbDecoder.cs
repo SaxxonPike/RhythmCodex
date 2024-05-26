@@ -32,16 +32,16 @@ public class XwbDecoder(
                 switch (format.BitsPerSample)
                 {
                     case 8:
-                        decoded = pcmDecoder.Decode8Bit(sound.Data);
+                        decoded = pcmDecoder.Decode8Bit(sound.Data.Span);
                         break;
                     case 16:
-                        decoded = pcmDecoder.Decode16Bit(sound.Data);
+                        decoded = pcmDecoder.Decode16Bit(sound.Data.Span);
                         break;
                     case 24:
-                        decoded = pcmDecoder.Decode24Bit(sound.Data);
+                        decoded = pcmDecoder.Decode24Bit(sound.Data.Span);
                         break;
                     case 32:
-                        decoded = pcmDecoder.Decode32Bit(sound.Data);
+                        decoded = pcmDecoder.Decode32Bit(sound.Data.Span);
                         break;
                     default:
                         return null;
@@ -71,7 +71,7 @@ public class XwbDecoder(
             case XwbConstants.WavebankminiformatTagAdpcm:
             {
                 return microsoftAdpcmDecoder.Decode(
-                    sound.Data,
+                    sound.Data.Span,
                     format,
                     new MicrosoftAdpcmFormat
                     {

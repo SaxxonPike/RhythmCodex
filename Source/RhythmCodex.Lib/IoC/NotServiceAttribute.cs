@@ -6,6 +6,4 @@ namespace RhythmCodex.IoC;
 /// A reminder to NOT use the Service attribute.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
-public class NotServiceAttribute : Attribute
-{
-}
+public class NotServiceAttribute : Attribute;

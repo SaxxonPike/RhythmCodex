@@ -41,7 +41,7 @@ public class DdrMetadataDatabase : IDdrMetadataDatabase
             ArtistRoman = xml.GetString("ArtistRoman"),
             TitleLocal = xml.GetString("TitleLocal"),
             SubtitleLocal = xml.GetString("SubtitleLocal"),
-            ArtistLocal = xml.GetString("ArtistLocal"),
+            ArtistLocal = xml.GetString("ArtistLocal")
         }).ToArray();
     }
 

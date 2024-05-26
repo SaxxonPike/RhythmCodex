@@ -14,6 +14,6 @@ public class Ddr1Player3PanelMapper : DdrPanelMapperBase
     {
         {1, new PanelMapping {Player = 0, Panel = 1}},
         {4, new PanelMapping {Player = 0, Panel = 0}},
-        {6, new PanelMapping {Player = 0, Panel = 2}},
+        {6, new PanelMapping {Player = 0, Panel = 2}}
     };
 }
