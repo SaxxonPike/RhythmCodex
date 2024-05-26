@@ -17,7 +17,7 @@ public class BeatmaniaPcKeysoundIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_Keysounds_9th()
     {
-        var data = GetArchiveResource($"Beatmania.2dx9th.zip")
+        var data = GetArchiveResource("Beatmania.2dx9th.zip")
             .First()
             .Value;
 

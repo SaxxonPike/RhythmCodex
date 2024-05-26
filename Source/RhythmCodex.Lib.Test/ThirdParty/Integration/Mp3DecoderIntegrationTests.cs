@@ -15,7 +15,7 @@ public class Mp3DecoderIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_MP3()
     {
-        var data = GetArchiveResource($"Mp3.example.mp3.zip")
+        var data = GetArchiveResource("Mp3.example.mp3.zip")
             .First()
             .Value;
             

@@ -35,7 +35,7 @@ public class BmsIntegrationTests : BaseIntegrationFixture
     public void Test_ReadingSampleMap()
     {
         // Arrange.
-        var data = GetArchiveResource($"Bms.random.zip")
+        var data = GetArchiveResource("Bms.random.zip")
             .First()
             .Value;
         var mem = new MemoryStream(data);
@@ -53,7 +53,7 @@ public class BmsIntegrationTests : BaseIntegrationFixture
     public void Test_ParsingLargeRandom()
     {
         // Arrange.
-        var data = GetArchiveResource($"Bms.random.zip")
+        var data = GetArchiveResource("Bms.random.zip")
             .First()
             .Value;
         var mem = new MemoryStream(data);

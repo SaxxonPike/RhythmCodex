@@ -299,7 +299,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
             var name = $"{offset:X8}";
             var tcb = imageReader.Read(imageStream);
             var bitmap = imageDecoder.Decode(tcb);
-            using var outStream = this.OpenWrite(Path.Combine($"searched", $"{name}.png"));
+            using var outStream = this.OpenWrite(Path.Combine("searched", $"{name}.png"));
             pngEncoder.Write(outStream, bitmap);
             outStream.Flush();
                 
