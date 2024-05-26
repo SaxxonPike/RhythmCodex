@@ -37,6 +37,8 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
 
     public List<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events)
     {
+        return Do().ToList();
+
         IEnumerable<BmsEvent> Do()
         {
             var sounds = new Dictionary<(int player, int column, bool scratch), BigRational>();
@@ -146,12 +148,12 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
                 return null;
             }
         }
-
-        return Do().ToList();
     }
 
     public List<BmsEvent> TranslateBpmEvents(IEnumerable<Event> events)
     {
+        return Do().ToList();
+
         IEnumerable<BmsEvent> Do()
         {
             foreach (var ev in events.OrderBy(ev => ev[NumericData.MetricOffset]))
@@ -171,7 +173,5 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
                 };
             }
         }
-
-        return Do().ToList();
     }
 }

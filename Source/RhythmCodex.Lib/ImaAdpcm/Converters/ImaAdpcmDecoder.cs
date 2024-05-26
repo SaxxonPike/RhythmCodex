@@ -52,6 +52,25 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
 
         while (index < max)
         {
+            if (nybbleIndex == 8)
+            {
+                nybbleIndex = 0;
+                channelIndex++;
+                if (channelIndex == channelCount)
+                    channelIndex = 0;
+            }
+                
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index]);
+            nybbleIndex++;
+
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
+            nybbleIndex++;
+                
+            index++;
+            continue;
+
             float DecodeNybble(int data)
             {
                 var step = ImaAdpcmConstants.StepTable[control];
@@ -75,24 +94,6 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                     control = 88;
                 return sample / 32768f;
             }
-
-            if (nybbleIndex == 8)
-            {
-                nybbleIndex = 0;
-                channelIndex++;
-                if (channelIndex == channelCount)
-                    channelIndex = 0;
-            }
-                
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index]);
-            nybbleIndex++;
-
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
-            nybbleIndex++;
-                
-            index++;
         }
 
         return bufferIndex;

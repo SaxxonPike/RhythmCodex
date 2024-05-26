@@ -23,15 +23,6 @@ public class TcbImageDecoder : ITcbImageDecoder
             palette = FilterPalette(palSpan);
         }
 
-        int ConvertPixel(int px)
-        {
-            // fill the upper 8 bits with the alpha bit with this one cheap hack
-            px = ((px >> 7) & ~0xFFFFFF) | (px & 0xFFFFFF);
-            // swap red and blue
-            px = (px & ~0xFF00FF) | ((px & 0xFF) << 16) | ((px & 0xFF0000) >> 16);
-            return px;
-        }
-
         switch (image.PaletteType)
         {
             case 0x05:
@@ -65,6 +56,15 @@ public class TcbImageDecoder : ITcbImageDecoder
         }
 
         return result;
+
+        int ConvertPixel(int px)
+        {
+            // fill the upper 8 bits with the alpha bit with this one cheap hack
+            px = ((px >> 7) & ~0xFFFFFF) | (px & 0xFFFFFF);
+            // swap red and blue
+            px = (px & ~0xFF00FF) | ((px & 0xFF) << 16) | ((px & 0xFF0000) >> 16);
+            return px;
+        }
     }
 
     private int[] FilterPalette(ReadOnlySpan<int> palette)

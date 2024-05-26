@@ -24,48 +24,6 @@ public class BeatmaniaPc1ChartDecoder : IBeatmaniaPc1ChartDecoder
 
     private IEnumerable<Event> DecodeInternal(IEnumerable<BeatmaniaPc1Event> events, BigRational rate)
     {
-        Event GetNewEvent(BeatmaniaPc1Event input)
-        {
-            return new Event
-            {
-                [NumericData.SourceCommand] = input.Parameter0,
-                [NumericData.SourceColumn] = input.Parameter1,
-                [NumericData.SourceData] = input.Value,
-                [NumericData.LinearOffset] = input.LinearOffset / rate,
-                [NumericData.SourceOffset] = input.LinearOffset
-            };
-        }
-
-        void SetPropertiesForColumn(BeatmaniaPc1Event input, IMetadata output)
-        {
-            output[NumericData.Player] = input.Parameter0 & 0x1;
-                
-            switch (input.Parameter1)
-            {
-                case 0x00:
-                case 0x01:
-                case 0x02:
-                case 0x03:
-                case 0x04:
-                case 0x05:
-                case 0x06:
-                {
-                    output[NumericData.Column] = input.Parameter1;
-                    break;
-                }
-                case 0x07:
-                {
-                    output[FlagData.Scratch] = true;
-                    break;
-                }
-                case 0x08:
-                {
-                    output[FlagData.FreeZone] = true;
-                    break;
-                }
-            }
-        }
-
         foreach (var ev in events)
         {
             switch ((BeatmaniaPc1EventType) ev.Parameter0)
@@ -168,6 +126,50 @@ public class BeatmaniaPc1ChartDecoder : IBeatmaniaPc1ChartDecoder
                 default:
                 {
                     yield return GetNewEvent(ev);
+                    break;
+                }
+            }
+        }
+
+        yield break;
+
+        Event GetNewEvent(BeatmaniaPc1Event input)
+        {
+            return new Event
+            {
+                [NumericData.SourceCommand] = input.Parameter0,
+                [NumericData.SourceColumn] = input.Parameter1,
+                [NumericData.SourceData] = input.Value,
+                [NumericData.LinearOffset] = input.LinearOffset / rate,
+                [NumericData.SourceOffset] = input.LinearOffset
+            };
+        }
+
+        void SetPropertiesForColumn(BeatmaniaPc1Event input, IMetadata output)
+        {
+            output[NumericData.Player] = input.Parameter0 & 0x1;
+                
+            switch (input.Parameter1)
+            {
+                case 0x00:
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                case 0x04:
+                case 0x05:
+                case 0x06:
+                {
+                    output[NumericData.Column] = input.Parameter1;
+                    break;
+                }
+                case 0x07:
+                {
+                    output[FlagData.Scratch] = true;
+                    break;
+                }
+                case 0x08:
+                {
+                    output[FlagData.FreeZone] = true;
                     break;
                 }
             }

@@ -29,15 +29,6 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
         const int marker = DjmainConstants.DpcmEndMarker;
         var buffer = marker;
 
-        void Fetch()
-        {
-            buffer >>= 8;
-            var newByte = stream.ReadByte();
-            if (newByte < 0)
-                newByte = 0x88;
-            buffer = (buffer & 0xFFFFFF) | (newByte << 24);
-        }
-
         for (var i = 0; i < 4; i++)
             Fetch();
 
@@ -46,6 +37,17 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
             yield return unchecked((byte) buffer);
             Fetch();
         }
+
+        yield break;
+
+        void Fetch()
+        {
+            buffer >>= 8;
+            var newByte = stream.ReadByte();
+            if (newByte < 0)
+                newByte = 0x88;
+            buffer = (buffer & 0xFFFFFF) | (newByte << 24);
+        }
     }
 
     private static IEnumerable<byte> DecodePcm16Stream(Stream stream)
@@ -53,6 +55,20 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
         const long marker = DjmainConstants.Pcm16EndMarker;
         var buffer0 = marker;
         var buffer1 = marker;
+
+        // Preload buffer.
+        for (var i = 0; i < 8; i++)
+            Fetch();
+
+        // Load sample.
+        while (buffer0 != marker || buffer1 != marker)
+        {
+            yield return unchecked((byte) buffer0);
+            yield return unchecked((byte) (buffer0 >> 8));
+            Fetch();
+        }
+
+        yield break;
 
         void Fetch()
         {
@@ -69,32 +85,12 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
                 newByte = 0x80;
             buffer1 |= (long) newByte << 56;
         }
-
-        // Preload buffer.
-        for (var i = 0; i < 8; i++)
-            Fetch();
-
-        // Load sample.
-        while (buffer0 != marker || buffer1 != marker)
-        {
-            yield return unchecked((byte) buffer0);
-            yield return unchecked((byte) (buffer0 >> 8));
-            Fetch();
-        }
     }
 
     private static IEnumerable<byte> DecodePcm8Stream(Stream stream)
     {
         const long marker = DjmainConstants.Pcm8EndMarker;
         var buffer = marker;
-
-        void Fetch()
-        {
-            long newByte = stream.ReadByte();
-            if (newByte < 0)
-                newByte = 0x80;
-            buffer = ((buffer >> 8) & 0xFFFFFFFFFFFFFF) | (newByte << 56);
-        }
 
         // Preload buffer.
         for (var i = 0; i < 8; i++)
@@ -105,6 +101,16 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
         {
             yield return unchecked((byte) buffer);
             Fetch();
+        }
+
+        yield break;
+
+        void Fetch()
+        {
+            long newByte = stream.ReadByte();
+            if (newByte < 0)
+                newByte = 0x80;
+            buffer = ((buffer >> 8) & 0xFFFFFFFFFFFFFF) | (newByte << 56);
         }
     }
 }

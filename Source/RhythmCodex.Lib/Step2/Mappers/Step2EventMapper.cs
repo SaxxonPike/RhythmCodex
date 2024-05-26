@@ -9,6 +9,8 @@ public class Step2EventMapper : IStep2EventMapper
 {
     public List<int> Map(int panels)
     {
+        return Do().ToList();
+
         IEnumerable<int> Do()
         {
             if ((panels & 0x01) != 0)
@@ -20,8 +22,6 @@ public class Step2EventMapper : IStep2EventMapper
             if ((panels & 0x08) != 0)
                 yield return 1;                
         }
-
-        return Do().ToList();
     }
 
     public int Map(IEnumerable<int> panels)

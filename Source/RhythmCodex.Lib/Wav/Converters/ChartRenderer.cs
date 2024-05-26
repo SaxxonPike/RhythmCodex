@@ -53,6 +53,59 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             .Where(s => s != null)
             .ToArray();
 
+        var mixdownLeft = new List<float>();
+        var mixdownRight = new List<float>();
+
+        var lastSample = 0;
+        var eventTicks = events.GroupBy(ev => ev[NumericData.LinearOffset]).OrderBy(g => g.Key).ToList();
+
+        foreach (var tick in eventTicks)
+        {
+            var nowSample = (int)(tick.Key.Value * options.SampleRate);
+            var tickEvents = tick.ToArray();
+
+            for (; lastSample < nowSample; lastSample++)
+                Mix();
+
+            foreach (var ev in tickEvents.Where(t => t[NumericData.LoadSound] != null))
+            {
+                var column = ev[NumericData.Column] ?? BigRational.Zero;
+                if (ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true)
+                    column += 1000;
+                MapSample(ev[NumericData.Player], column, ev[NumericData.LoadSound]);
+            }
+
+            foreach (var ev in tickEvents.Where(t => t[FlagData.Note] != null))
+            {
+                var column = ev[NumericData.Column] ?? BigRational.Zero;
+                if (ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true)
+                    column += 1000;
+                if (options.UseSourceDataForSamples && ev[NumericData.SourceData] != null)
+                    MapSample(ev[NumericData.Player], column, ev[NumericData.SourceData]);
+                StartUserSample(ev[NumericData.Player], column);
+            }
+
+            foreach (var ev in tick.Where(t => t[NumericData.PlaySound] != null))
+            {
+                StartBgmSample(ev[NumericData.PlaySound], ev[NumericData.Panning]);
+            }
+
+            state.RemoveAll(s => !s.Playing);
+        }
+
+        while (state.Any(s => s.Playing))
+            Mix();
+
+        return new Sound
+        {
+            [NumericData.Rate] = options.SampleRate,
+            Samples =
+            [
+                new Sample { Data = mixdownLeft.ToArray() },
+                new Sample { Data = mixdownRight.ToArray() }
+            ]
+        };
+
         void MapSample(BigRational? player, BigRational? column, BigRational? soundIndex)
         {
             var sample = sampleMap.FirstOrDefault(st => st.Player == player && st.Column == column);
@@ -118,9 +171,6 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             st.Playing = true;
         }
 
-        var mixdownLeft = new List<float>();
-        var mixdownRight = new List<float>();
-
         void Mix()
         {
             var finalMixLeft = 0f;
@@ -146,55 +196,5 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             mixdownLeft.Add(finalMixLeft);
             mixdownRight.Add(finalMixRight);
         }
-
-        var lastSample = 0;
-        var eventTicks = events.GroupBy(ev => ev[NumericData.LinearOffset]).OrderBy(g => g.Key).ToList();
-
-        foreach (var tick in eventTicks)
-        {
-            var nowSample = (int)((tick.Key ?? 0) * options.SampleRate);
-            var tickEvents = tick.ToArray();
-
-            for (; lastSample < nowSample; lastSample++)
-                Mix();
-
-            foreach (var ev in tickEvents.Where(t => t[NumericData.LoadSound] != null))
-            {
-                var column = ev[NumericData.Column] ?? BigRational.Zero;
-                if (ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true)
-                    column += 1000;
-                MapSample(ev[NumericData.Player], column, ev[NumericData.LoadSound]);
-            }
-
-            foreach (var ev in tickEvents.Where(t => t[FlagData.Note] != null))
-            {
-                var column = ev[NumericData.Column] ?? BigRational.Zero;
-                if (ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true)
-                    column += 1000;
-                if (options.UseSourceDataForSamples && ev[NumericData.SourceData] != null)
-                    MapSample(ev[NumericData.Player], column, ev[NumericData.SourceData]);
-                StartUserSample(ev[NumericData.Player], column);
-            }
-
-            foreach (var ev in tick.Where(t => t[NumericData.PlaySound] != null))
-            {
-                StartBgmSample(ev[NumericData.PlaySound], ev[NumericData.Panning]);
-            }
-
-            state.RemoveAll(s => !s.Playing);
-        }
-
-        while (state.Any(s => s.Playing))
-            Mix();
-
-        return new Sound
-        {
-            [NumericData.Rate] = options.SampleRate,
-            Samples =
-            [
-                new Sample { Data = mixdownLeft.ToArray() },
-                new Sample { Data = mixdownRight.ToArray() }
-            ]
-        };
     }
 }

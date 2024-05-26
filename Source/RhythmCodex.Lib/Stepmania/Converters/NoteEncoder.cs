@@ -13,6 +13,8 @@ public class NoteEncoder(ILogger logger) : INoteEncoder
 {
     public List<Note> Encode(IEnumerable<Event> events)
     {
+        return Do().ToList();
+
         IEnumerable<Note> Do()
         {
             var result = new List<Note>();
@@ -68,8 +70,6 @@ public class NoteEncoder(ILogger logger) : INoteEncoder
             ApplyFreezeHeads(result);
             return result;
         }
-
-        return Do().ToList();
     }
 
     private void ApplyFreezeHeads(IEnumerable<Note> notes)
