@@ -27,7 +27,7 @@ public class ResamplerIntegrationTests : BaseIntegrationFixture
 
         foreach (var resampler in resamplers)
         {
-            var data = GetArchiveResource($"Wav.pcm16.zip")
+            var data = GetArchiveResource("Wav.pcm16.zip")
                 .First()
                 .Value;
 

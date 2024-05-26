@@ -13,7 +13,7 @@ public class Ddr573SongDatabaseIntegrationTests : BaseIntegrationFixture
     [Test]
     public void Decrypt_ShouldProduceExpectedResult()
     {
-        var inputArchive = GetArchiveResource($"Ddr.mdb.zip");
+        var inputArchive = GetArchiveResource("Ddr.mdb.zip");
         var data = inputArchive
             .First(name => name.Key.Equals("mdb", StringComparison.OrdinalIgnoreCase))
             .Value;
@@ -31,7 +31,7 @@ public class Ddr573SongDatabaseIntegrationTests : BaseIntegrationFixture
     [Test]
     public void FindKey_ShouldFindCorrectKey()
     {
-        var inputArchive = GetArchiveResource($"Ddr.mdb.zip");
+        var inputArchive = GetArchiveResource("Ddr.mdb.zip");
         var data = inputArchive
             .First(name => name.Key.Equals("mdb", StringComparison.OrdinalIgnoreCase))
             .Value;
@@ -44,7 +44,7 @@ public class Ddr573SongDatabaseIntegrationTests : BaseIntegrationFixture
     [Test]
     public void FindRecordSize_Test()
     {
-        var inputArchive = GetArchiveResource($"Ddr.mdb.zip");
+        var inputArchive = GetArchiveResource("Ddr.mdb.zip");
         var data = inputArchive
             .First(name => name.Key.Equals("expected", StringComparison.OrdinalIgnoreCase))
             .Value;

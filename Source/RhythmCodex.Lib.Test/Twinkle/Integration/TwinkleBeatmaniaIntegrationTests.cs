@@ -113,7 +113,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, options), 1.0f, true);
 
         // Assert.
-        this.WriteSound(rendered, Path.Combine($"twinkle.wav"));
+        this.WriteSound(rendered, Path.Combine("twinkle.wav"));
     }
         
     [Test]

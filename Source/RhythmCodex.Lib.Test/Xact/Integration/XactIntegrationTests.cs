@@ -63,7 +63,7 @@ public class XactIntegrationTests : BaseIntegrationFixture
     public void Test_XWB()
     {
         // Arrange.
-        var data = GetArchiveResource($"Xact.xwb.zip")
+        var data = GetArchiveResource("Xact.xwb.zip")
             .First()
             .Value;
         var reader = Resolve<IXwbStreamReader>();

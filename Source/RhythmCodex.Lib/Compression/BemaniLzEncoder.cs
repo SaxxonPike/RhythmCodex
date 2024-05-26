@@ -207,7 +207,7 @@ public class BemaniLzEncoder : IBemaniLzEncoder
                 }
                 default:
                 {
-                    throw new RhythmCodexException($"Something went wrong with the tokenizer. Report this.");
+                    throw new RhythmCodexException("Something went wrong with the tokenizer. Report this.");
                 }
             }
 

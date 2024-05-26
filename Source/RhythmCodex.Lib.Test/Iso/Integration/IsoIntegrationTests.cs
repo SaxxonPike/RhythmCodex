@@ -14,7 +14,7 @@ public class IsoIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void TestBoringIso()
     {
-        var data = GetArchiveResource($"Iso.test-iso.zip")
+        var data = GetArchiveResource("Iso.test-iso.zip")
             .First()
             .Value;
         var mem = new MemoryStream(data);

@@ -103,7 +103,7 @@ public class App : IApp
         {
             _appProgressTracker.Remove(task);
         }
-        _console.WriteLine($"Task complete.");
+        _console.WriteLine("Task complete.");
     }
 
     /// <summary>

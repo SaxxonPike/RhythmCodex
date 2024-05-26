@@ -17,7 +17,7 @@ public class BeatmaniaPsxKeysoundIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_Keysounds()
     {
-        var data = GetArchiveResource($"BeatmaniaPsx.keysounds.zip")
+        var data = GetArchiveResource("BeatmaniaPsx.keysounds.zip")
             .First()
             .Value;
 

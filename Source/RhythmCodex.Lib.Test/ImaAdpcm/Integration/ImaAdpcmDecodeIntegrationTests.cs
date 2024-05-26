@@ -21,7 +21,7 @@ public class ImaAdpcmDecodeIntegrationTests : BaseIntegrationFixture
         var encoder = Resolve<IRiffPcm16SoundEncoder>();
         var writer = Resolve<IRiffStreamWriter>();
             
-        var data = GetArchiveResource($"ImaAdpcm.RawXboxAdpcm.zip")
+        var data = GetArchiveResource("ImaAdpcm.RawXboxAdpcm.zip")
             .First()
             .Value;
 
