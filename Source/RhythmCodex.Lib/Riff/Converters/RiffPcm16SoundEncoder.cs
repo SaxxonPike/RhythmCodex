@@ -11,7 +11,7 @@ namespace RhythmCodex.Riff.Converters;
 [Service]
 public class RiffPcm16SoundEncoder(IRiffFormatEncoder formatEncoder) : IRiffPcm16SoundEncoder
 {
-    public IRiffContainer Encode(Sound? sound)
+    public RiffContainer Encode(Sound? sound)
     {
         var sampleRate = sound[NumericData.Rate];
 
@@ -26,8 +26,7 @@ public class RiffPcm16SoundEncoder(IRiffFormatEncoder formatEncoder) : IRiffPcm1
             sampleRate = sampleRates.SingleOrDefault();
         }
 
-        if (sampleRate == null)
-            sampleRate = 44100;
+        sampleRate ??= 44100;
 
         var channels = sound.Samples.Count;
         var byteRate = sampleRate * channels * 2;
@@ -42,7 +41,7 @@ public class RiffPcm16SoundEncoder(IRiffFormatEncoder formatEncoder) : IRiffPcm1
             Format = 1,
             SampleRate = (int) sampleRate,
             Channels = channels,
-            ByteRate = (int) byteRate,
+            ByteRate = (int) byteRate!,
             BitsPerSample = 16,
             BlockAlign = channels * 2,
             ExtraData = Memory<byte>.Empty

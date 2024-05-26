@@ -45,7 +45,7 @@ public class XboxKasStreamReaderIntegrationTests : BaseIntegrationFixture
             {
                 var outFile = $"{Path.GetFileNameWithoutExtension(fileName)}-{idx:D2}.xma";
                 var finalOutPath = Path.Combine(outPath, outFile);
-                File.WriteAllBytes(finalOutPath, entry.Data);
+                this.WriteFile(entry.Data, Path.Combine("xbox_kas", outFile));
                 idx++;
 
                 var proc = new Process

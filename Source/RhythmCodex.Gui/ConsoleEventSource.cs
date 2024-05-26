@@ -5,8 +5,8 @@ namespace RhythmCodex.Gui;
 
 public class ConsoleEventSource : IConsole, IConsoleEventSource
 {
-    public event EventHandler<FormConsoleEventArgs> Logged; 
-        
+    public event EventHandler<FormConsoleEventArgs>? Logged;
+
     public void Write(string text)
     {
         Logged?.Invoke(this, new FormConsoleEventArgs(text));

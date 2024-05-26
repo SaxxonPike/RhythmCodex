@@ -9,11 +9,16 @@ namespace RhythmCodex.Cli;
 public class Command : ICommand
 {
     /// <inheritdoc />
-    public string Name { get; set; }
+    public string Name { get; init; }
+
     /// <inheritdoc />
-    public IEnumerable<ICommandParameter> Parameters { get; set; } = Array.Empty<ICommandParameter>();
+    public IEnumerable<ICommandParameter> Parameters { get; init; } = 
+        Array.Empty<ICommandParameter>();
+
     /// <inheritdoc />
-    public string Description { get; set; }
+    public string Description { get; init; }
+
     /// <inheritdoc />
-    public Func<Args, ITask> TaskFactory { get; set; } = _ => throw new Exception("Execute is not defined.");
+    public Func<Args, ITask> TaskFactory { get; init; } = 
+        _ => throw new Exception("Execute is not defined.");
 }

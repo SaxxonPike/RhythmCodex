@@ -1,8 +1,10 @@
 namespace RhythmCodex.Heuristics;
 
-public class HeuristicBlockResult
+public record HeuristicBlockResult
 {
-    public HeuristicResult Result { get; set; }
-    public int BlockIndex { get; set; }
-    public long Offset { get; set; }
+    public HeuristicResult? Result { get; init; }
+
+    public int BlockIndex { get; init; }
+
+    public long Offset { get; init; }
 }

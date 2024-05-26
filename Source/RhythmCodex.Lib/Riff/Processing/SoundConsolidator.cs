@@ -13,60 +13,42 @@ namespace RhythmCodex.Riff.Processing;
 [Service]
 public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
 {
-    private struct PlayedEvent
+    private record struct PlayedEvent
     {
-        public int Index { get; set; }
-        public BigRational Panning { get; set; }
-        public BigRational Offset { get; set; }
+        public int Index { get; init; }
+        public BigRational Panning { get; init; }
+        public BigRational Offset { get; init; }
     }
 
-    private struct MatchedSound
+    private record struct MatchedSound
     {
-        public int A { get; set; }
-        public int B { get; set; }
+        public int A { get; init; }
+        public int B { get; init; }
     }
         
     public void Consolidate(IEnumerable<Sound> sounds, IEnumerable<Event> events)
     {
-        // Evaluate if two samples should be combined based on panning and play time.
-        bool Compare(IList<PlayedEvent> a, IList<PlayedEvent> b)
-        {
-            if (a.Count != b.Count)
-                return false;
-                
-            for (var i = 0; i < a.Count; i++)
-            {
-                if (a[i].Offset != b[i].Offset ||
-                    a[i].Panning != 1 - b[i].Panning)
-                    return false;
-            }
-
-            return true;
-        }
-            
-        var soundList = sounds;
-        var eventList = events;
         var matches = new List<MatchedSound>();
 
         // Loaded samples are excluded because they can be played by the player.
-        var loaded = eventList
+        var loaded = events
             .Where(e => e?[NumericData.LoadSound] != null)
             .Select(e => e[NumericData.LoadSound])
             .Distinct()
             .ToList();
 
         // Get all the times a sample is played.
-        var played = eventList
+        var played = events
             .Where(e => e?[NumericData.PlaySound] != null && !loaded.Contains(e[NumericData.PlaySound]))
             .Select(e =>
             {
-                var index = (int) e[NumericData.PlaySound];
+                var index = (int) e[NumericData.PlaySound]!;
                 return new PlayedEvent
                 {
                     Index = index,
                     Offset = e[NumericData.LinearOffset] ?? 0,
                     Panning = e[NumericData.Panning] ?? 
-                              soundList.FirstOrDefault(s => index == (int)s[NumericData.Id].Value)[NumericData.Panning] ?? 
+                              sounds.FirstOrDefault(s => index == (int)s[NumericData.Id].Value)[NumericData.Panning] ?? 
                               new BigRational(1, 2)
                 };
             })
@@ -99,8 +81,8 @@ public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
             if (doneMatch.Contains(match.A) || doneMatch.Contains(match.B))
                 continue;
                 
-            var soundA = soundList.FirstOrDefault(s => s[NumericData.Id] == match.A);
-            var soundB = soundList.FirstOrDefault(s => s[NumericData.Id] == match.B);
+            var soundA = sounds.FirstOrDefault(s => s[NumericData.Id] == match.A);
+            var soundB = sounds.FirstOrDefault(s => s[NumericData.Id] == match.B);
 
             if (soundA == null || soundB == null)
                 continue;
@@ -118,6 +100,23 @@ public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
             soundA[NumericData.Panning] = soundB[NumericData.Panning] = mix[NumericData.Panning];
             soundA[NumericData.Volume] = soundB[NumericData.Volume] = mix[NumericData.Volume];
         }
-            
+
+        return;
+
+        // Evaluate if two samples should be combined based on panning and play time.
+        bool Compare(IList<PlayedEvent> a, IList<PlayedEvent> b)
+        {
+            if (a.Count != b.Count)
+                return false;
+                
+            for (var i = 0; i < a.Count; i++)
+            {
+                if (a[i].Offset != b[i].Offset ||
+                    a[i].Panning != 1 - b[i].Panning)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

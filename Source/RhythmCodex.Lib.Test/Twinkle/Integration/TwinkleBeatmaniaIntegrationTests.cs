@@ -78,16 +78,16 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         var archive = decoder.Decode(chunk, new TwinkleDecodeOptions());
 
         // Assert.
-        foreach (var sound in archive.Samples.Where(s => s.Samples.Any()))
+        foreach (var sound in archive.Samples.Where(s => s.Samples.Count != 0))
         {
-            this.WriteSound(sound, Path.Combine("bmiidx", $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id], 4)}.wav"));
+            this.WriteSound(sound, Path.Combine("bmiidx", $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 4)}.wav"));
         }
 
         foreach (var chart in archive.Charts)
         {
             chart.PopulateMetricOffsets();
             using var outStream =
-                this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]}.bms"));
+                this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]!}.bms"));
             bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
             outStream.Flush();
         }
@@ -192,7 +192,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         {
             var bpc = decoder.MigrateToBemaniPc(chunk);
             using var mem = new MemoryStream();
-            chartWriter.Write(mem, bpc.Charts);
+            chartWriter.Write(mem, bpc!.Charts);
             mem.Flush();
             this.WriteFile(mem.ToArray(), $"{chunk.Index:D4}.1");
         }

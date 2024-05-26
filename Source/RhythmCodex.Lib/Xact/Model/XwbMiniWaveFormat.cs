@@ -35,7 +35,7 @@ public struct XwbMiniWaveFormat : IWaveFormat
                 case XwbConstants.WavebankminiformatTagPcm:
                     return wBlockAlign;
                 case XwbConstants.WavebankminiformatTagXma:
-                    return (nChannels * (8 * 2) / 8);
+                    return nChannels * 8 * 2 / 8;
                 case XwbConstants.WavebankminiformatTagAdpcm:
                     return (wBlockAlign + XwbConstants.AdpcmMiniwaveformatBlockalignConversionOffset) * nChannels;
                 case XwbConstants.WavebankminiformatTagWma:
@@ -56,9 +56,9 @@ public struct XwbMiniWaveFormat : IWaveFormat
             {
                 case XwbConstants.WavebankminiformatTagPcm:
                 case XwbConstants.WavebankminiformatTagXma:
-                    return (nSamplesPerSec * wBlockAlign);
+                    return nSamplesPerSec * wBlockAlign;
                 case XwbConstants.WavebankminiformatTagAdpcm:
-                    return (BlockAlign * nSamplesPerSec / AdpcmSamplesPerBlock);
+                    return BlockAlign * nSamplesPerSec / AdpcmSamplesPerBlock;
                 case XwbConstants.WavebankminiformatTagWma:
                     var dwBytesPerSecIndex = wBlockAlign >> 5;
                     if (dwBytesPerSecIndex < XwbConstants.MaxWmaAvgBytesPerSecEntries)

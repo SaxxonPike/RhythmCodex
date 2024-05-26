@@ -14,7 +14,7 @@ internal static class Boot
     /// Entry point for the application.
     /// </summary>
     [STAThread]
-    private static void Main(string[] args)
+    private static void Main()
     {
         var container = BuildContainer();
         var formFactory = container.Resolve<IFormFactory>();

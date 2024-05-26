@@ -1,12 +1,12 @@
 using System;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace RhythmCodex.Cli.Helpers;
 
-public static class StreamExtensions
+[PublicAPI]
+internal static class StreamExtensions
 {
-    private const int BufferSize = 4096;
-
     public static void WriteAllBytes(this ReadOnlySpan<byte> data, Stream stream)
     {
         stream.Write(data);

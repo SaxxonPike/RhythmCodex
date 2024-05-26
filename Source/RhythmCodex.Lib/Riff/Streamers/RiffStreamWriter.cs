@@ -10,9 +10,9 @@ namespace RhythmCodex.Riff.Streamers;
 [Service]
 public class RiffStreamWriter : IRiffStreamWriter
 {
-    public int Write(Stream stream, IRiffContainer container)
+    public int Write(Stream stream, RiffContainer container)
     {
-        var writer = new BinaryWriter(stream, Encodings.CP437);
+        var writer = new BinaryWriter(stream, Encodings.Cp437);
             
         // Validate.
             

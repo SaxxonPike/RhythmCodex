@@ -8,11 +8,11 @@ namespace RhythmCodex.Infrastructure;
 [DebuggerStepThrough]
 public static class Encodings
 {
-    public static readonly Encoding CP437 = CodePagesEncodingProvider.Instance.GetEncoding(437);
-    public static readonly Encoding CP932 = CodePagesEncodingProvider.Instance.GetEncoding(932);
-    public static readonly Encoding CP1252 = CodePagesEncodingProvider.Instance.GetEncoding(1252);
-    public static readonly Encoding UTF8 = Encoding.UTF8;
-    public static readonly Encoding ASCII = Encoding.ASCII;
+    public static readonly Encoding Cp437 = CodePagesEncodingProvider.Instance.GetEncoding(437)!;
+    public static readonly Encoding Cp932 = CodePagesEncodingProvider.Instance.GetEncoding(932)!;
+    public static readonly Encoding Cp1252 = CodePagesEncodingProvider.Instance.GetEncoding(1252)!;
+    public static readonly Encoding Utf8 = Encoding.UTF8;
+    public static readonly Encoding Ascii = Encoding.ASCII;
 
     public static string GetString(this Encoding encoding, ReadOnlySpan<byte> bytes) =>
         encoding.GetString(bytes.ToArray());

@@ -54,7 +54,7 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
     }
 
     public int GetBlockSize(int samplesPerBlock, int channels) => 
-        ((samplesPerBlock - 2) * channels / 2) + (channels * 7);
+        (samplesPerBlock - 2) * channels / 2 + channels * 7;
 
     // returns delta
     private int EncodeFrame(Span<byte> frame, ReadOnlySpan<float> buffer, int channel, int channelCount,

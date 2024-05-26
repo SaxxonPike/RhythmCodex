@@ -17,7 +17,7 @@ public class ByteSwappedReadStreamTests : BaseUnitTestFixture
         // Act.
         var subject = new ByteSwappedReadStream(stream);
         var result = new byte[3];
-        subject.Read(result, 0, result.Length);
+        subject.Read(result, 0, result.Length).Should().Be(3);
 
         // Assert.
         result.ShouldBeEquivalentTo(new[] {data[1], data[0], data[3]});

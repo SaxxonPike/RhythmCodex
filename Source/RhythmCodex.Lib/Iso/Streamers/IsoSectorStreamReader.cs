@@ -23,7 +23,7 @@ public class IsoSectorStreamReader : IIsoSectorStreamReader
             {
                 stream.Position = i * (long) InputSectorLength;
                 var totalFrame = 150 + i;
-                return ExpandSector(totalFrame / 4500, (totalFrame / 75) % 60, totalFrame % 75,
+                return ExpandSector(totalFrame / 4500, totalFrame / 75 % 60, totalFrame % 75,
                     reader.ReadBytes(InputSectorLength));
             });
         }

@@ -75,7 +75,7 @@ public class XaDecodeIntegrationTests : BaseIntegrationFixture
 
             foreach (var sound in decoded)
             {
-                sound[NumericData.Rate] = xa.Rate;
+                sound![NumericData.Rate] = xa.Rate;
                 var encoded = encoder.Encode(sound);
                 var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa");
                 if (!Directory.Exists(outfolder))

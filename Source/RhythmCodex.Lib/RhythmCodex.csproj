@@ -18,4 +18,7 @@
     <ItemGroup>
         <None Remove="*.DotSettings" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\StreamCursors\Lib\Saxxon.StreamCursors.csproj" />
+    </ItemGroup>
 </Project>

@@ -50,7 +50,8 @@ public class DjmainHddDescriptionHeuristic : IDjmainHddDescriptionHeuristic
             
         return new DjmainHddDescription
         {
-            Format = DjmainChunkFormat.Unknown
+            Format = DjmainChunkFormat.Unknown,
+            BytesAreSwapped = false
         };
     }
 }

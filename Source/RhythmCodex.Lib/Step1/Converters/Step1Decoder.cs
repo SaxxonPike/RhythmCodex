@@ -26,12 +26,12 @@ public class Step1Decoder(
     IStep1ChartInfoDecoder chartInfoDecoder)
     : IStep1Decoder
 {
-    public List<Chart> Decode(IReadOnlyCollection<Step1Chunk> data)
+    public List<Chart> Decode(IEnumerable<Step1Chunk> data)
     {
         return DecodeInternal(data).ToList();
     }
 
-    private IEnumerable<Chart> DecodeInternal(IReadOnlyCollection<Step1Chunk> data)
+    private IEnumerable<Chart> DecodeInternal(IEnumerable<Step1Chunk> data)
     {
         var chunks = data;
 

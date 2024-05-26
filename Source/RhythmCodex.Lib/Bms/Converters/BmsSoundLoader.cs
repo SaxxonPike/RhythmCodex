@@ -47,7 +47,7 @@ public class BmsSoundLoader(
 
             try
             {
-                decoded = decoder.Decoder(stream);
+                decoded = decoder.Decoder(stream)!;
                 decoded[NumericData.Id] = kv.Key;
             }
             catch

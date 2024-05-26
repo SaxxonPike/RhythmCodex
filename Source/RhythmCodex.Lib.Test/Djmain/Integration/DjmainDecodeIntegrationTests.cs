@@ -23,7 +23,11 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         {
             Data = data,
             Format = format
-        }, new DjmainDecodeOptions());
+        }, new DjmainDecodeOptions
+        {
+            DisableAudio = false,
+            DoNotConsolidateSamples = false
+        });
     }
 
     [Test]

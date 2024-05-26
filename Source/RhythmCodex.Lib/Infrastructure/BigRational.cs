@@ -796,7 +796,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
         }
 
         return !isDouble
-            ? (value.Sign < 0 ? double.NegativeInfinity : double.PositiveInfinity)
+            ? value.Sign < 0 ? double.NegativeInfinity : double.PositiveInfinity
             : result;
     }
 

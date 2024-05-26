@@ -13,6 +13,8 @@ public class TimingEventDecoder : ITimingEventDecoder
 {
     public List<Event> Decode(TimingChunk timingChunk)
     {
+        return Do().ToList();
+
         IEnumerable<Event> Do()
         {
             var timings = timingChunk.Timings;
@@ -59,7 +61,5 @@ public class TimingEventDecoder : ITimingEventDecoder
                 };
             }
         }
-
-        return Do().ToList();
     }
 }

@@ -19,7 +19,7 @@ public class SsqDecoder(
     ISsqChunkFilter ssqChunkFilter)
     : ISsqDecoder
 {
-    public List<Chart> Decode(IReadOnlyCollection<SsqChunk> data)
+    public List<Chart> Decode(IEnumerable<SsqChunk> data)
     {
         var chunks = data;
 

@@ -14,7 +14,7 @@ public class BlowfishDecrypter : IBlowfishDecrypter
     public Memory<byte> Decrypt(ReadOnlySpan<byte> data, string key)
     {
         var paddedData = data;
-        var keyBytes = Encodings.ASCII.GetBytes(key);
+        var keyBytes = Encodings.Ascii.GetBytes(key);
         var iv = new byte[8];
         var cipher = new CtsBlockCipher(new CbcBlockCipher(new BlowfishEngine()));
         var keyParam = new ParametersWithIV(new KeyParameter(keyBytes), iv);

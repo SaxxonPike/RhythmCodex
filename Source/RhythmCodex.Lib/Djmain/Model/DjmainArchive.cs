@@ -5,13 +5,15 @@ using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Djmain.Model;
 
-public class DjmainArchive
+public record DjmainArchive
 {
-    public int Id { get; set; }
-    public List<Chart> Charts { get; set; } = [];
-    public List<Sound> Samples { get; set; } = [];
+    public int Id { get; init; }
 
-    public Dictionary<int, List<DjmainChartEvent>> RawCharts { get; set; } = new();
+    public List<Chart> Charts { get; init; } = [];
+
+    public List<Sound> Samples { get; init; } = [];
+
+    public Dictionary<int, List<DjmainChartEvent>> RawCharts { get; init; } = new();
 
     public override string ToString() => Json.Serialize(this);
 }

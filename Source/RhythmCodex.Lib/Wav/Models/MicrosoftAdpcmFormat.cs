@@ -24,7 +24,7 @@ public class MicrosoftAdpcmFormat
 
     public byte[] ToBytes()
     {
-        var output = new byte[6 + (Coefficients.Length * 2)];
+        var output = new byte[6 + Coefficients.Length * 2];
         var coeffCount = Coefficients.Length / 2;
 
         output[0x0] = 0x20;

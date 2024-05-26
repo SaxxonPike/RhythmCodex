@@ -12,8 +12,8 @@ public class IsoBootRecordDecoder : IIsoBootRecordDecoder
     {
         return new IsoBootRecord
         {
-            BootSystemIdentifier = Encodings.CP437.GetString(data.Slice(7, 32)),
-            BootIdentifier = Encodings.CP437.GetString(data.Slice(39, 32)),
+            BootSystemIdentifier = Encodings.Cp437.GetString(data.Slice(7, 32)),
+            BootIdentifier = Encodings.Cp437.GetString(data.Slice(39, 32)),
             BootSystemData = data.Slice(71, 1977).ToArray()
         };
     }

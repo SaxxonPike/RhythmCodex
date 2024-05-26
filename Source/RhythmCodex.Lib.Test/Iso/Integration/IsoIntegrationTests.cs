@@ -30,6 +30,6 @@ public class IsoIntegrationTests : BaseIntegrationFixture
         var output = fileReader.ReadBytes((int) file.Length);
         File.WriteAllBytes(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                Path.GetFileName(file.Name)), output);
+                Path.GetFileName(file.Name)!), output);
     }
 }

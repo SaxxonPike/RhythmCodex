@@ -108,7 +108,7 @@ public sealed class FlacFrame : IDisposable
         _subFrameData = data;
 
         var buffer = new byte[0x20000];
-        if ((_streamInfo.MaxFrameSize * Header.Channels * Header.BitsPerSample * 2 >> 3) > buffer.Length)
+        if (_streamInfo.MaxFrameSize * Header.Channels * Header.BitsPerSample * 2 >> 3 > buffer.Length)
         {
             buffer = new byte[(_streamInfo.MaxFrameSize * Header.Channels * Header.BitsPerSample * 2 >> 3) - FlacConstant.FrameHeaderSize];
         }
@@ -180,7 +180,7 @@ public sealed class FlacFrame : IDisposable
                     var mid = subFrames0[i] << 1;
                     var side = subFrames1[i];
 
-                    mid |= (side & 1);
+                    mid |= side & 1;
 
                     subFrames0[i] = (mid + side) >> 1;
                     subFrames1[i] = (mid - side) >> 1;
@@ -253,9 +253,9 @@ public sealed class FlacFrame : IDisposable
 
     private unsafe List<FlacSubFrameData> AllocOuputMemory()
     {
-        if (_destBuffer == null || _destBuffer.Length < (Header.Channels * Header.BlockSize))
+        if (_destBuffer == null || _destBuffer.Length < Header.Channels * Header.BlockSize)
             _destBuffer = new int[Header.Channels * Header.BlockSize];
-        if (_residualBuffer == null || _residualBuffer.Length < (Header.Channels * Header.BlockSize))
+        if (_residualBuffer == null || _residualBuffer.Length < Header.Channels * Header.BlockSize)
             _residualBuffer = new int[Header.Channels * Header.BlockSize];
 
         var output = new List<FlacSubFrameData>();

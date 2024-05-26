@@ -7,7 +7,7 @@ public interface IPanelMapper
 {
     int PanelCount { get; }
     int PlayerCount { get; }
-    IPanelMapping Map(int panel);
+    IPanelMapping? Map(int panel);
     int? Map(IPanelMapping mapping);
 
     bool ShouldMap(IEnumerable<int> panels);

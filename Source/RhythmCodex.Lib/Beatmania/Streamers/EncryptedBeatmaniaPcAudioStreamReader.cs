@@ -88,7 +88,7 @@ public class EncryptedBeatmaniaPcAudioStreamReader : IEncryptedBeatmaniaPcAudioS
 
         {
             var filelength = reader.ReadInt32();
-            var fileExtraBytes = (8 - (filelength % 8)) % 8;
+            var fileExtraBytes = (8 - filelength % 8) % 8;
             var data = reader.ReadBytes(filelength + fileExtraBytes);
             reader.ReadBytes((int)(length - data.Length - 8));
             using var encodedDataMem = new ReadOnlyMemoryStream(data);

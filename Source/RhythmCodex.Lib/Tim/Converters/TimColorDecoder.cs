@@ -17,7 +17,7 @@ public class TimColorDecoder : ITimColorDecoder
     public int Decode24Bit(int color)
     {
         var red = (color & 0x0000FF) << 16;
-        var green = (color & 0x00FF00);
+        var green = color & 0x00FF00;
         var blue = (color & 0xFF0000) >> 16;
         return red | green | blue | ~0xFFFFFF;
     }

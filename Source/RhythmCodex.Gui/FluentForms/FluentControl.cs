@@ -80,13 +80,13 @@ public abstract class FluentControl<TControl> : FluentControl
 {
     public override Type Type => typeof(TControl);
 
-    public Action<FluentContext<FluentControl<TControl>, TControl>> AfterBuild { get; set; }
+    public Action<FluentContext<FluentControl<TControl>, TControl>>? AfterBuild { get; set; }
 
-    public Action OnClick { get; set; }
-    public Action OnEnter { get; set; }
-    public Action OnLeave { get; set; }
+    public Action? OnClick { get; set; }
+    public Action? OnEnter { get; set; }
+    public Action? OnLeave { get; set; }
 
-    public override Control Build(FluentState state, Control parent = null)
+    public override Control Build(FluentState state, Control? parent = null)
     {
         var result = base.Build(state, parent);
         state.Callbacks.Add(() => AfterBuild?.Invoke(

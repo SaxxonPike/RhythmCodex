@@ -17,14 +17,12 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
     public string Encode(IEnumerable<BmsEvent> events, Func<BigRational?, string> encodeValue,
         BigRational measureLength, int quantize)
     {
-        var eventList = events;
-
         // round up and multiply for longer measures (100% minimoo-G would be a nightmare otherwise)
         var maxQ = Math.Max(quantize, (int) ((measureLength + BigRational.OneHalf).GetWholePart() * quantize));
-        var q = quantizer.GetQuantization(eventList.Select(e => e.Offset), BigInteger.One, maxQ);
+        var q = quantizer.GetQuantization(events.Select(e => e.Offset), BigInteger.One, maxQ);
 
         var buffer = Enumerable.Range(0, q).Select(_ => (BigRational?) null).ToArray();
-        foreach (var ev in eventList)
+        foreach (var ev in events)
         {
             var i = (int) (ev.Offset * q);
             buffer[i] = ev.Value;

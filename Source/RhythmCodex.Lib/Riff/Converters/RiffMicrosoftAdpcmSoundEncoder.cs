@@ -14,7 +14,7 @@ public class RiffMicrosoftAdpcmSoundEncoder(
     IMicrosoftAdpcmEncoder microsoftAdpcmEncoder)
     : IRiffMicrosoftAdpcmSoundEncoder
 {
-    public IRiffContainer Encode(Sound? sound, int samplesPerBlock)
+    public RiffContainer Encode(Sound? sound, int samplesPerBlock)
     {
         var sampleRate = sound[NumericData.Rate];
 

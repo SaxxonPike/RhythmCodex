@@ -15,7 +15,7 @@ public class SsqStreamWriterTests : BaseUnitTestFixture<SsqStreamWriter, ISsqStr
     public void Write_WritesAllChunks()
     {
         // Arrange.
-        var chunks = CreateMany<SsqChunk>().Concat(new SsqChunk[] {null}).ToList();
+        var chunks = CreateMany<SsqChunk?>().Concat([null]).ToList();
         var chunkStreamer = Mock<IChunkStreamWriter>();
         var stream = new MemoryStream();
         var result = new List<SsqChunk>();

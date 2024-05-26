@@ -35,13 +35,13 @@ public class App : IApp
         _appProgressTracker = appProgressTracker;
     }
 
-    private string AppName => "RhythmCodex";
+    private static string AppName => "RhythmCodex";
 
-    private string AppVersion =>
+    private static string? AppVersion =>
         typeof(App)
             .GetTypeInfo()
             .Assembly
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
             .InformationalVersion;
 
     /// <inheritdoc />
@@ -111,7 +111,7 @@ public class App : IApp
     /// </summary>
     private void SetLogLevel(string logLevel)
     {
-        switch ((logLevel ?? string.Empty).ToLowerInvariant())
+        switch (logLevel.ToLowerInvariant())
         {
             case "debug":
                 _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Debug;

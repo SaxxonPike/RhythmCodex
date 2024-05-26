@@ -23,7 +23,7 @@ public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
         while (offset < length)
         {
             var raw = database.Slice(offset, 0x80);
-            var id = Encodings.CP437.GetStringWithoutNulls(raw.Slice(0x00, 5));
+            var id = Encodings.Cp437.GetStringWithoutNulls(raw.Slice(0x00, 5));
             if (id == string.Empty)
                 break;
 
@@ -73,10 +73,10 @@ public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
         // Read string table
         var strings = database.Slice(offset);
         foreach (var kv in longNameOffsets)
-            result[kv.Key].LongName = Encodings.CP437.GetStringWithoutNulls(strings.Slice(kv.Value));
+            result[kv.Key].LongName = Encodings.Cp437.GetStringWithoutNulls(strings.Slice(kv.Value));
 
         foreach (var kv in shortNameOffsets)
-            result[kv.Key].ShortName = Encodings.CP437.GetStringWithoutNulls(strings.Slice(kv.Value));
+            result[kv.Key].ShortName = Encodings.Cp437.GetStringWithoutNulls(strings.Slice(kv.Value));
 
         return result;
     }

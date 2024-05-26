@@ -21,7 +21,7 @@ public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXbox
         var basePosition = stream.Position;
         stream.Position = basePosition + 0x800 * 0x20;
         var mediaSector = reader.ReadBytes(0x800);
-        if (Encodings.CP437.GetString(mediaSector.AsSpan().Slice(0, 20).ToArray()) != MediaSectorId)
+        if (Encodings.Cp437.GetString(mediaSector.AsSpan().Slice(0, 20).ToArray()) != MediaSectorId)
             throw new RhythmCodexException("This doesn't appear to be an Xbox ISO.");
         var mediaInfo = xboxIsoInfoDecoder.Decode(mediaSector);
 
@@ -44,7 +44,7 @@ public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXbox
         };
 
         var nameLength = reader.ReadByte();
-        entry.FileName = $"{path}{Encodings.UTF8.GetString(reader.ReadBytes(nameLength))}";
+        entry.FileName = $"{path}{Encodings.Utf8.GetString(reader.ReadBytes(nameLength))}";
 
         if (!entry.Attributes.HasFlag(XboxIsoFileAttributes.Directory))
         {

@@ -17,8 +17,8 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
         var sounds = new List<Sound?>();
         var buffer = new float[chunk.ChannelSamplesPerFrame];
         var channels = chunk.Channels;
-        var frameSize = (chunk.ChannelSamplesPerFrame * chunk.Channels / 2) + (chunk.Channels * 4);
-        var max = (chunk.Data.Length / frameSize) * frameSize;
+        var frameSize = chunk.ChannelSamplesPerFrame * chunk.Channels / 2 + chunk.Channels * 4;
+        var max = chunk.Data.Length / frameSize * frameSize;
         var output = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToArray();
 
         for (var offset = 0; offset < max; offset += frameSize)
@@ -57,8 +57,8 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                 var step = ImaAdpcmConstants.StepTable[control];
                 var delta = step >> 3;
 
-                if ((data & 0x01) != 0) delta += (step >> 2);
-                if ((data & 0x02) != 0) delta += (step >> 1);
+                if ((data & 0x01) != 0) delta += step >> 2;
+                if ((data & 0x02) != 0) delta += step >> 1;
                 if ((data & 0x04) != 0) delta += step;
                 if ((data & 0x08) != 0) delta = -delta;
 
