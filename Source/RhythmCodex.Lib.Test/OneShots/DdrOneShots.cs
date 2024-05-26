@@ -53,24 +53,6 @@ public class DdrOneShots : BaseIntegrationFixture
         using var stream = new FileStream(executable, FileMode.Open, FileAccess.Read);
         var reader = new BinaryReader(stream);
 
-        string ReadZeroString(int offs)
-        {
-            var realOffs = offs - stringBase + stringOffset;
-            if (realOffs < 0)
-                return null;
-            stream.Position = realOffs;
-            var result = new List<byte>();
-            while (true)
-            {
-                var b = reader.ReadByte();
-                if (b == 0)
-                    break;
-                result.Add(b);
-            }
-
-            return result.ToArray().GetString();
-        }
-
         var offset = recordOffset;
         while (true)
         {
@@ -109,6 +91,25 @@ public class DdrOneShots : BaseIntegrationFixture
         var writer = new StreamWriter(outStream);
         writer.Write(output);
         writer.Flush();
+        return;
+
+        string ReadZeroString(int offs)
+        {
+            var realOffs = offs - stringBase + stringOffset;
+            if (realOffs < 0)
+                return null;
+            stream.Position = realOffs;
+            var result = new List<byte>();
+            while (true)
+            {
+                var b = reader.ReadByte();
+                if (b == 0)
+                    break;
+                result.Add(b);
+            }
+
+            return result.ToArray().GetString();
+        }
     }
         
     [Test]

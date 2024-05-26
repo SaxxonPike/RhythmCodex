@@ -70,6 +70,23 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
         // Proces the rest of the samples.
         while (index < max)
         {
+            channelIndex++;
+            if (channelIndex == channelCount)
+                channelIndex = 0;
+
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
+
+            channelIndex++;
+            if (channelIndex == channelCount)
+                channelIndex = 0;
+
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index] & 0xF);
+
+            index++;
+            continue;
+
             float DecodeNybble(int data)
             {
                 var predictor = (sample1 * coeff1 + sample2 * coeff2) / 256;
@@ -89,22 +106,6 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
 
                 return sample1 / 32768f;
             }
-
-            channelIndex++;
-            if (channelIndex == channelCount)
-                channelIndex = 0;
-
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
-
-            channelIndex++;
-            if (channelIndex == channelCount)
-                channelIndex = 0;
-
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index] & 0xF);
-
-            index++;
         }
 
         return bufferIndex;

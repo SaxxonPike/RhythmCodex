@@ -42,44 +42,6 @@ public class BemaniLzEncoder : IBemaniLzEncoder
         // Short: 10LLDDDD (length 2-5, distance 1-16)
         // Block: 11LLLLLL (length 8-70, 1:1)
 
-        Match FindMatch(ReadOnlySpan<byte> src, int lowIndex, int cursorIndex, int length,
-            int matchMinLength, int matchMaxLength)
-        {
-            var bestOffset = -1;
-            var bestLength = matchMinLength;
-
-            for (var idx = Math.Max(0, lowIndex); idx < cursorIndex; idx++)
-            {
-                var match = true;
-                var matchLength = 0;
-
-                for (var matchIdx = 0;
-                     matchIdx < matchMaxLength && matchIdx + idx < length && cursorIndex + matchIdx < length;
-                     matchIdx++)
-                {
-                    if (src[idx + matchIdx] != src[cursorIndex + matchIdx])
-                    {
-                        match = false;
-                        break;
-                    }
-
-                    matchLength++;
-                }
-
-                if (match && matchLength >= bestLength)
-                {
-                    bestLength = matchLength;
-                    bestOffset = idx;
-                }
-            }
-
-            return new Match
-            {
-                Offset = bestOffset,
-                Length = bestOffset < 0 ? 0 : bestLength
-            };
-        }
-
         var inputLength = source.Length;
         var inputOffset = 0;
 
@@ -149,6 +111,44 @@ public class BemaniLzEncoder : IBemaniLzEncoder
             tokens.Add(token);
 
         return tokens;
+
+        Match FindMatch(ReadOnlySpan<byte> src, int lowIndex, int cursorIndex, int length,
+            int matchMinLength, int matchMaxLength)
+        {
+            var bestOffset = -1;
+            var bestLength = matchMinLength;
+
+            for (var idx = Math.Max(0, lowIndex); idx < cursorIndex; idx++)
+            {
+                var match = true;
+                var matchLength = 0;
+
+                for (var matchIdx = 0;
+                     matchIdx < matchMaxLength && matchIdx + idx < length && cursorIndex + matchIdx < length;
+                     matchIdx++)
+                {
+                    if (src[idx + matchIdx] != src[cursorIndex + matchIdx])
+                    {
+                        match = false;
+                        break;
+                    }
+
+                    matchLength++;
+                }
+
+                if (match && matchLength >= bestLength)
+                {
+                    bestLength = matchLength;
+                    bestOffset = idx;
+                }
+            }
+
+            return new Match
+            {
+                Offset = bestOffset,
+                Length = bestOffset < 0 ? 0 : bestLength
+            };
+        }
     }
 
     /// <summary>
@@ -162,34 +162,6 @@ public class BemaniLzEncoder : IBemaniLzEncoder
         // Theoretical maximum of a command byte + all commands (70 * 8 + 1)
         var buffer = MemoryPool<byte>.Shared.Rent(561);
         var bufferLen = 0;
-
-        void AppendBufferByte(byte value)
-        {
-            buffer.Memory.Span[bufferLen] = value;
-            bufferLen++;
-        }
-
-        void AppendBufferBytes(ReadOnlySpan<byte> values)
-        {
-            values.CopyTo(buffer.Memory.Span[bufferLen..]);
-            bufferLen += values.Length;
-        }
-
-        void CommitBuffer(bool flag)
-        {
-            control >>= 1;
-            if (flag)
-                control |= 0x80;
-
-            if (--bits != 0)
-                return;
-
-            bits = 8;
-            output.WriteByte(unchecked((byte)control));
-            output.Write(buffer.Memory.Span[..bufferLen]);
-            bufferLen = 0;
-            control = 0;
-        }
 
         foreach (var token in tokens)
         {
@@ -251,6 +223,34 @@ public class BemaniLzEncoder : IBemaniLzEncoder
 
         var result = output.ToArray();
         return result;
+
+        void AppendBufferByte(byte value)
+        {
+            buffer.Memory.Span[bufferLen] = value;
+            bufferLen++;
+        }
+
+        void AppendBufferBytes(ReadOnlySpan<byte> values)
+        {
+            values.CopyTo(buffer.Memory.Span[bufferLen..]);
+            bufferLen += values.Length;
+        }
+
+        void CommitBuffer(bool flag)
+        {
+            control >>= 1;
+            if (flag)
+                control |= 0x80;
+
+            if (--bits != 0)
+                return;
+
+            bits = 8;
+            output.WriteByte(unchecked((byte)control));
+            output.Write(buffer.Memory.Span[..bufferLen]);
+            bufferLen = 0;
+            control = 0;
+        }
     }
 
     public Memory<byte> Encode(ReadOnlySpan<byte> source)

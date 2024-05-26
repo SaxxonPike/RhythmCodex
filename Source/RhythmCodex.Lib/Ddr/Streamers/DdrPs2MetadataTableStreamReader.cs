@@ -19,22 +19,6 @@ public class DdrPs2MetadataTableStreamReader : IDdrPs2MetadataTableStreamReader
         var cache = new CachedStream(stream);
         Span<byte> buffer = stackalloc byte[BufferCheckInterval];
 
-        static bool IsName(ReadOnlySpan<byte> buff, int offs)
-        {
-            return buff[offs].IsLetterOrDigit() &&
-                   buff[offs + 1].IsLetterOrDigit() &&
-                   buff[offs + 2].IsLetterOrDigit() &&
-                   buff[offs + 3].IsLetterOrDigit() &&
-                   (buff[offs + 4] == 0 || buff[offs + 4].IsLetterOrDigit()) &&
-                   buff[offs + 5] == 0;
-        }
-
-        static string GetName(ReadOnlySpan<byte> buff, int offs)
-        {
-            var name = buff.Slice(offs, 6).ToArray().TakeWhile(c => c != 0).ToArray().GetString();
-            return name;
-        }
-
         while (true)
         {
             if (cache.TryRead(buffer, 0, BufferCheckInterval) < BufferCheckInterval)
@@ -87,5 +71,21 @@ public class DdrPs2MetadataTableStreamReader : IDdrPs2MetadataTableStreamReader
         }
 
         return [];
+
+        static bool IsName(ReadOnlySpan<byte> buff, int offs)
+        {
+            return buff[offs].IsLetterOrDigit() &&
+                   buff[offs + 1].IsLetterOrDigit() &&
+                   buff[offs + 2].IsLetterOrDigit() &&
+                   buff[offs + 3].IsLetterOrDigit() &&
+                   (buff[offs + 4] == 0 || buff[offs + 4].IsLetterOrDigit()) &&
+                   buff[offs + 5] == 0;
+        }
+
+        static string GetName(ReadOnlySpan<byte> buff, int offs)
+        {
+            var name = buff.Slice(offs, 6).ToArray().TakeWhile(c => c != 0).ToArray().GetString();
+            return name;
+        }
     }
 }

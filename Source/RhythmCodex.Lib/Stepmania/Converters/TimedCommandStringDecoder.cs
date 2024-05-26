@@ -13,6 +13,8 @@ public class TimedCommandStringDecoder(ILogger logger) : ITimedCommandStringDeco
     /// <inheritdoc />
     public List<TimedEvent> Decode(string events)
     {
+        return Do().ToList();
+
         IEnumerable<TimedEvent> Do()
         {
             foreach (var ev in events.SplitEx(',').Select(s => s.Trim()))
@@ -43,7 +45,5 @@ public class TimedCommandStringDecoder(ILogger logger) : ITimedCommandStringDeco
                 };
             }
         }
-
-        return Do().ToList();
     }
 }

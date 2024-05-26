@@ -167,15 +167,6 @@ public class BmsDecoder : IBmsDecoder
             if (value[0] == '0' && value[1] == '0')
                 continue;
 
-            void AddEvent(Event ev)
-            {
-                ev[NumericData.MetricOffset] = new BigRational(new BigInteger(measure), new BigInteger(index),
-                    new BigInteger(total));
-                ev[NumericData.SourceData] = Alphabet.DecodeAlphanumeric(valueMemory.Span);
-                ev[NumericData.SourceCommand] = lane;
-                events.Add(ev);
-            }
-
             switch (lane)
             {
                 case 0x01:
@@ -338,6 +329,17 @@ public class BmsDecoder : IBmsDecoder
                     });
                     break;
                 }
+            }
+
+            continue;
+
+            void AddEvent(Event ev)
+            {
+                ev[NumericData.MetricOffset] = new BigRational(new BigInteger(measure), new BigInteger(index),
+                    new BigInteger(total));
+                ev[NumericData.SourceData] = Alphabet.DecodeAlphanumeric(valueMemory.Span);
+                ev[NumericData.SourceCommand] = lane;
+                events.Add(ev);
             }
         }
 
