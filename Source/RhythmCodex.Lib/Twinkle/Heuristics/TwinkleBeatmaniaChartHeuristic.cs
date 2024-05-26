@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -17,11 +18,11 @@ public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
         var hasBpm = false;
         var hasEnd = false;
         var hasTerminator = false;
-        var evData = new byte[4];
+        Span<byte> evData = stackalloc byte[4];
 
         while (true)
         {
-            if (reader.Read(evData, 0, 4) < 4)
+            if (reader.Read(evData) < 4)
                 break;
 
             var eventOffset = Bitter.ToInt16S(evData);
