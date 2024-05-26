@@ -70,7 +70,7 @@ public class BeatmaniaTaskBuilder(
             if (Args.Options.TryGetValue("rate", out var option))
             {
                 rate = BigRationalParser.ParseString(option.Last())
-                       ?? throw new RhythmCodexException($"Invalid rate.");
+                       ?? throw new RhythmCodexException("Invalid rate.");
             }
 
             ParallelProgress(task, files, file =>

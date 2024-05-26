@@ -13,11 +13,11 @@ public class VagStreamReader : IVagStreamReader
     public VagChunk? Read(Stream stream, int channels, int interleave)
     {
         if (channels < 1)
-            throw new RhythmCodexException($"Channel count must be at least 1.");
+            throw new RhythmCodexException("Channel count must be at least 1.");
         if (interleave != 0 && interleave < 16)
-            throw new RhythmCodexException($"Interleave must be at least 16.");
+            throw new RhythmCodexException("Interleave must be at least 16.");
         if ((interleave & 0xF) != 0)
-            throw new RhythmCodexException($"Interleave must be a multiple of 16.");
+            throw new RhythmCodexException("Interleave must be a multiple of 16.");
         if (interleave == 0)
             interleave = 16;
             

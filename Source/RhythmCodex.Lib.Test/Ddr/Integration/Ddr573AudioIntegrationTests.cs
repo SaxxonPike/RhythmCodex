@@ -13,7 +13,7 @@ public class Ddr573AudioIntegrationTests : BaseIntegrationFixture
     [Test]
     public void DecryptNewTest()
     {
-        var inputArchive = GetArchiveResource($"Ddr.mp3.zip");
+        var inputArchive = GetArchiveResource("Ddr.mp3.zip");
         var data = inputArchive
             .First(name => name.Key.EndsWith(".dat", StringComparison.OrdinalIgnoreCase))
             .Value;

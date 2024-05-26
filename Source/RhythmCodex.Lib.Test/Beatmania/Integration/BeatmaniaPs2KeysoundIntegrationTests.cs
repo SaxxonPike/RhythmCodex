@@ -17,7 +17,7 @@ public class BeatmaniaPs2KeysoundIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_Bgm_New()
     {
-        var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2newbgm.zip")
+        var data = GetArchiveResource("BeatmaniaPs2.bm2dxps2newbgm.zip")
             .First()
             .Value;
 
@@ -40,14 +40,14 @@ public class BeatmaniaPs2KeysoundIntegrationTests : BaseIntegrationFixture
         using var outStream = new MemoryStream();
         writer.Write(outStream, encoded);
         outStream.Flush();
-        File.WriteAllBytes(Path.Combine(outFolder, $"bgm.wav"), outStream.ToArray());
+        File.WriteAllBytes(Path.Combine(outFolder, "bgm.wav"), outStream.ToArray());
     }
 
     [Test]
     [Explicit]
     public void Test_Keys_New()
     {
-        var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2newkey.zip")
+        var data = GetArchiveResource("BeatmaniaPs2.bm2dxps2newkey.zip")
             .First()
             .Value;
 
@@ -81,7 +81,7 @@ public class BeatmaniaPs2KeysoundIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_Bgm_Old()
     {
-        var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2bgm.zip")
+        var data = GetArchiveResource("BeatmaniaPs2.bm2dxps2bgm.zip")
             .First()
             .Value;
 
@@ -104,14 +104,14 @@ public class BeatmaniaPs2KeysoundIntegrationTests : BaseIntegrationFixture
         using var outStream = new MemoryStream();
         writer.Write(outStream, encoded);
         outStream.Flush();
-        File.WriteAllBytes(Path.Combine(outFolder, $"bgm.wav"), outStream.ToArray());
+        File.WriteAllBytes(Path.Combine(outFolder, "bgm.wav"), outStream.ToArray());
     }
 
     [Test]
     [Explicit]
     public void Test_Keys_Old()
     {
-        var data = GetArchiveResource($"BeatmaniaPs2.bm2dxps2key.zip")
+        var data = GetArchiveResource("BeatmaniaPs2.bm2dxps2key.zip")
             .First()
             .Value;
 
