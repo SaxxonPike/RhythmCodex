@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace RhythmCodex.Vag.Streamers;
 [Service]
 public class VagStreamReader : IVagStreamReader
 {
-    public VagChunk? Read(Stream stream, int channels, int interleave)
+    public VagChunk Read(Stream stream, int channels, int interleave)
     {
         if (channels < 1)
             throw new RhythmCodexException("Channel count must be at least 1.");
@@ -29,10 +30,10 @@ public class VagStreamReader : IVagStreamReader
         };
     }
 
-    private IEnumerable<byte> ReadInternal(Stream stream, int channels, int interleave)
+    private static IEnumerable<byte> ReadInternal(Stream stream, int channels, int interleave)
     {
         var ended = false;
-        var buffer = new byte[0x10];
+        Span<byte> buffer = stackalloc byte[0x10];
 
         while (!ended)
         {
@@ -43,7 +44,7 @@ public class VagStreamReader : IVagStreamReader
                     var toRead = 16;
                     while (toRead > 0)
                     {
-                        var justRead = stream.Read(buffer, 0, 0x10);
+                        var justRead = stream.ReadAtLeast(buffer, 0x10, false);
                         if (justRead == 0)
                             yield break;
                         toRead -= justRead;
