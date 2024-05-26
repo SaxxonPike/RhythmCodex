@@ -52,7 +52,7 @@ public class Huffman
         for (var codeLen = 32; codeLen > 0; codeLen--)
         {
             var nextStart = (curStart + bitHisto[codeLen]) >> 1;
-            if (codeLen != 1 && (nextStart * 2) != (curStart + bitHisto[codeLen]))
+            if (codeLen != 1 && nextStart * 2 != curStart + bitHisto[codeLen])
                 throw new Exception("Canonical code error- internal inconsistency.");
             bitHisto[codeLen] = curStart;
             curStart = nextStart;

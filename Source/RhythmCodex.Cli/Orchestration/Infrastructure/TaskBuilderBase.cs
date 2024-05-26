@@ -26,12 +26,14 @@ public abstract class TaskBuilderBase<TTask>(
         }
     }
 
-    protected ITask Build(string name, Func<BuiltTask, bool> task)
+    protected ITask Build(string name, Func<BuiltTask?, bool> task)
     {
-        BuiltTask result = null;
-        result = new BuiltTask(name, () => task(result));
+        BuiltTask? result = null;
+        result = new BuiltTask(name, RunTask);
         result.MessageUpdated += (_, message) => Logger.Info(message);
         return result;
+
+        bool RunTask() => task(result);
     }
 
     protected Stream OpenRelatedRead(InputFile inputFile, Func<string, string> transformName)
@@ -40,7 +42,7 @@ public abstract class TaskBuilderBase<TTask>(
         return inputFile.OpenRelated(transformedName);
     }
 
-    protected string GetOutputFolder(string inputFile) =>
+    protected string? GetOutputFolder(string inputFile) =>
         Args.OutputPath ?? Path.GetDirectoryName(inputFile);
 
     protected InputFile[] GetInputFiles(BuiltTask task)
@@ -146,10 +148,11 @@ public abstract class TaskBuilderBase<TTask>(
         return inputFile.Open();
     }
 
-    protected Stream OpenWriteSingle(BuiltTask task, InputFile inputFile, Func<string, string> generateName)
+    protected Stream OpenWriteSingle(BuiltTask task, InputFile inputFile, Func<string?, string?> generateName)
     {
         if (fileSystem == null)
             throw new RhythmCodexException("Filesystem is not defined.");
+
         var path = GetOutputFolder(inputFile.Name);
         var newName = generateName(Path.GetFileNameWithoutExtension(inputFile.Name));
         var newPath = Path.Combine(path, newName);
@@ -199,7 +202,7 @@ public abstract class TaskBuilderBase<TTask>(
             }
         }
 
-        public Func<bool> Run { get; set; } = run;
+        public Func<bool> Run => run;
 
         public string Message
         {

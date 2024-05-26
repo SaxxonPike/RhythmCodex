@@ -19,8 +19,7 @@ public class FileAccessor(string basePath) : IFileAccessor
             throw new RhythmCodexException("File name cannot be null.");
 
         var path = Path.Combine(basePath, name);
-        var extensionsList = extensions;
-        foreach (var e in extensionsList)
+        foreach (var e in extensions)
         {
             if (path.EndsWith($".{e}", StringComparison.InvariantCultureIgnoreCase))
                 return new ExtensionMatchedFile
@@ -30,7 +29,7 @@ public class FileAccessor(string basePath) : IFileAccessor
                 };
         }
 
-        foreach (var e in extensionsList)
+        foreach (var e in extensions)
         {
             var newPath = $"{Path.Combine(basePath, Path.GetDirectoryName(path) ?? ".", Path.GetFileNameWithoutExtension(path))}.{e}";
             var newName = $"{Path.Combine(Path.GetDirectoryName(name) ?? "", Path.GetFileNameWithoutExtension(path))}.{e}";

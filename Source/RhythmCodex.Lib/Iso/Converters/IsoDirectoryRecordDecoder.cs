@@ -64,7 +64,7 @@ public class IsoDirectoryRecordDecoder(IIsoDateTimeDecoder isoDateTimeDecoder) :
             UnitSize = unitSize,
             InterleaveGapSize = interleave,
             VolumeSequenceNumber = volumeSequenceNumber,
-            Identifier = Encodings.CP437.GetString(identifier),
+            Identifier = Encodings.Cp437.GetString(identifier),
             Extra = extra
         };                    
     }

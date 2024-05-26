@@ -103,7 +103,7 @@ public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
                         result.EccOffset = 2076;
                         break;
                     case 2:
-                        result.UserDataLength = (result.IsAudio ?? false) ? 2304 : 2324;
+                        result.UserDataLength = result.IsAudio ?? false ? 2304 : 2324;
                         result.EdcOffset = 2348;
                         break;
                 }

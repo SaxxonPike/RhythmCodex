@@ -29,7 +29,7 @@ public class SmOneShots : BaseIntegrationFixture
             using (var stream = File.OpenRead(file))
                 commands = smReader.Read(stream).ToList();
 
-            var smPath = Path.GetDirectoryName(file);
+            var smPath = Path.GetDirectoryName(file)!;
             var images = Directory.GetFiles(smPath, "*.png").ToDictionary(f => f, Image.Load);
             var musics = Directory.GetFiles(smPath, "*.mp3").ToDictionary(f => f, f => new FileInfo(f));
 
@@ -122,8 +122,11 @@ public class SmOneShots : BaseIntegrationFixture
                 else
                 {
                     var numValue = BigRationalParser.ParseString(offsetCommand.Values.Single());
-                    numValue += amount;
-                    offsetCommand.Values[0] = $"{(double) numValue}";
+                    if (numValue != null)
+                    {
+                        numValue += amount;
+                        offsetCommand.Values[0] = $"{(double) numValue}";
+                    }
                 }
             }
 
@@ -151,7 +154,7 @@ public class SmOneShots : BaseIntegrationFixture
             var artist = commands.FirstOrDefault(c => c.Name.Equals("artist", StringComparison.OrdinalIgnoreCase));
 
             var newTitle = title?.Values.FirstOrDefault() ?? string.Empty;
-            newTitle = Path.GetInvalidFileNameChars().Aggregate(newTitle, (current, c) => current.Replace(c, '_'))?.Trim();
+            newTitle = Path.GetInvalidFileNameChars().Aggregate(newTitle, (current, c) => current.Replace(c, '_')).Trim();
 
             if (string.IsNullOrWhiteSpace(newTitle))
                 return null;
@@ -176,7 +179,7 @@ public class SmOneShots : BaseIntegrationFixture
 
             foreach (var item in items)
             {
-                var oldDir = Path.GetDirectoryName(item.File);
+                var oldDir = Path.GetDirectoryName(item.File)!;
                 var frags = oldDir.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                 var newDir = Path.Combine(string.Join(Path.DirectorySeparatorChar, frags.Take(frags.Length - 1)), item.Title);
                 if (oldDir != newDir)

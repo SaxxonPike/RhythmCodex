@@ -3,8 +3,8 @@
 namespace RhythmCodex.Djmain.Model;
 
 [Model]
-public class DjmainDecodeOptions
+public record DjmainDecodeOptions
 {
-    public bool DisableAudio { get; set; }
-    public bool DoNotConsolidateSamples { get; set; }
+    public bool DisableAudio { get; init; }
+    public bool DoNotConsolidateSamples { get; init; }
 }

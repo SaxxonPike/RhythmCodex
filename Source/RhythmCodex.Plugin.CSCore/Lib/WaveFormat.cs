@@ -178,7 +178,7 @@ public class WaveFormat : ICloneable, IEquatable<WaveFormat>
     /// <returns>Duration in bytes.</returns>
     public long MillisecondsToBytes(double milliseconds)
     {
-        var result = (long) ((BytesPerSecond / 1000.0) * milliseconds);
+        var result = (long) (BytesPerSecond / 1000.0 * milliseconds);
         result -= result % BlockAlign;
         return result;
     }
@@ -191,7 +191,7 @@ public class WaveFormat : ICloneable, IEquatable<WaveFormat>
     public double BytesToMilliseconds(long bytes)
     {
         bytes -= bytes % BlockAlign;
-        var result = ((bytes / (double) BytesPerSecond) * 1000.0);
+        var result = bytes / (double) BytesPerSecond * 1000.0;
         return result;
     }
 
@@ -240,7 +240,7 @@ public class WaveFormat : ICloneable, IEquatable<WaveFormat>
     /// </summary>
     protected internal void UpdateProperties()
     {
-        BlockAlign = (BitsPerSample / 8) * Channels;
+        BlockAlign = BitsPerSample / 8 * Channels;
         BytesPerSecond = BlockAlign * SampleRate;
     }
 

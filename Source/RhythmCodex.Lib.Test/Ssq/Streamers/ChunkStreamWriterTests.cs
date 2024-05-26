@@ -15,7 +15,7 @@ public class ChunkStreamWriterTests : ChunkStreamBaseTests<ChunkStreamWriter, IC
         var stream = new MemoryStream();
 
         // Act.
-        Subject.Write(stream, null);
+        Subject.WriteEnd(stream);
         stream.Flush();
 
         // Assert.

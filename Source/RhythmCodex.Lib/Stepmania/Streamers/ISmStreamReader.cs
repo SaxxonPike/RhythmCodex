@@ -6,5 +6,5 @@ namespace RhythmCodex.Stepmania.Streamers;
 
 public interface ISmStreamReader
 {
-    IEnumerable<Command> Read(Stream source);
+    List<Command> Read(Stream source);
 }

@@ -86,7 +86,7 @@ public class XactIntegrationTests : BaseIntegrationFixture
             using var outStream = new MemoryStream();
             writer.Write(outStream, encoded);
             outStream.Flush();
-            File.WriteAllBytes(Path.Combine(outFolder, $"{decoded[StringData.Name]}.wav"),
+            File.WriteAllBytes(Path.Combine(outFolder, $"{decoded![StringData.Name]}.wav"),
                 outStream.ToArray());
         }
     }
@@ -127,7 +127,7 @@ public class XactIntegrationTests : BaseIntegrationFixture
                 using var outStream = new MemoryStream();
                 writer.Write(outStream, encoded);
                 outStream.Flush();
-                File.WriteAllBytes(Path.Combine(outFolder, $"{decoded[StringData.Name]}.wav"),
+                File.WriteAllBytes(Path.Combine(outFolder, $"{decoded![StringData.Name]}.wav"),
                     outStream.ToArray());
             }
         }

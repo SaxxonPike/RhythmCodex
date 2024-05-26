@@ -39,7 +39,7 @@ public class BeatmaniaPsxBmDataStreamReader(ILogger logger) : IBeatmaniaPsxBmDat
                 continue;
             }
                 
-            logger.Debug($"{nameof(BeatmaniaPsxBmDataStreamReader)}: found directory, offset=0x{offset:X8} fileCount={directoryEntryCount} directorySize=0x{(directorySize * 0x800):X4}");
+            logger.Debug($"{nameof(BeatmaniaPsxBmDataStreamReader)}: found directory, offset=0x{offset:X8} fileCount={directoryEntryCount} directorySize=0x{directorySize * 0x800:X4}");
 
             var directoryEntries = Enumerable
                 .Range(0, directoryEntryCount)
@@ -54,7 +54,7 @@ public class BeatmaniaPsxBmDataStreamReader(ILogger logger) : IBeatmaniaPsxBmDat
             var directoryPadding = directorySize * 0x800 - directoryEntryCount * 8 - 8;
             reader.ReadBytes(directoryPadding);
 
-            var maxSize = directoryEntries.Max(de => (de.Offset * 0x800) + de.Length);
+            var maxSize = directoryEntries.Max(de => de.Offset * 0x800 + de.Length);
             if ((maxSize & 0x7FF) != 0)
                 maxSize = (maxSize & ~0x7FF) + 0x800;
 

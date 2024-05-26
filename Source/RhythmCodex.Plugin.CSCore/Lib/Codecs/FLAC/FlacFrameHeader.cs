@@ -114,7 +114,7 @@ public sealed class FlacFrameHeader
     /// </summary>
     /// <param name="stream">The underlying stream which contains the <see cref="FlacFrameHeader"/>.</param>
     public FlacFrameHeader(Stream stream)
-        : this(stream, null, true)
+        : this(stream, null)
     {
     }
 
@@ -169,7 +169,7 @@ public sealed class FlacFrameHeader
                 var ptrSave = ptrBuffer;
                 var __ptrBuffer = ptrBuffer;
                 var result = ParseHeader(ref __ptrBuffer, streamInfo);
-                stream.Position -= (headerBuffer.Length - (__ptrBuffer - ptrSave)); //todo
+                stream.Position -= headerBuffer.Length - (__ptrBuffer - ptrSave); //todo
 
                 return result;
             }
@@ -412,8 +412,8 @@ public sealed class FlacFrameHeader
     /// <returns><c>true</c> if the format of the current <see cref="FlacFrameHeader"/> is equal to the format of the <paramref name="other"/> <see cref="FlacFrameHeader"/>.</returns>
     public bool IsFormatEqualTo(FlacFrameHeader other)
     {
-        return (BitsPerSample == other.BitsPerSample &&
-                Channels == other.Channels &&
-                SampleRate == other.SampleRate);
+        return BitsPerSample == other.BitsPerSample &&
+               Channels == other.Channels &&
+               SampleRate == other.SampleRate;
     }
 }

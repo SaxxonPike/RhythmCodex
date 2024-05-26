@@ -9,15 +9,15 @@ namespace RhythmCodex.Riff.Streamers;
 [Service]
 public class RiffStreamReader(IRiffChunkStreamReader chunkStreamReader) : IRiffStreamReader
 {
-    public IRiffContainer Read(Stream stream)
+    public RiffContainer Read(Stream stream)
     {
-        var reader = new BinaryReader(stream, Encodings.CP437);
+        var reader = new BinaryReader(stream, Encodings.Cp437);
         var id = new string(reader.ReadChars(4));
         if (id != "RIFF")
             throw new RhythmCodexException("Missing RIFF header.");
         var length = reader.ReadInt32() - 4;
         var format = new string(reader.ReadChars(4));
-        var chunks = new List<IRiffChunk>();
+        var chunks = new List<RiffChunk>();
 
         while (length > 0)
         {

@@ -5,5 +5,5 @@ namespace RhythmCodex.Riff.Streamers;
 
 public interface IRiffChunkStreamReader
 {
-    IRiffChunk Read(Stream stream);
+    RiffChunk Read(Stream stream);
 }

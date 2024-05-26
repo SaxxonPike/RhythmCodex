@@ -15,7 +15,7 @@ public class Mp3DecoderTest : BaseUnitTestFixture<Mp3Decoder>
     {
         var data = GetArchiveResource(fileName).Single();
         using var stream = new MemoryStream(data.Value);
-        var output = Subject.Decode(stream);
+        var output = Subject.Decode(stream)!;
         output.Should().NotBeNull();
         output.Samples.Should().HaveCount(2);
     }

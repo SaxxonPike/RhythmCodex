@@ -198,7 +198,7 @@ public sealed class FlacFile : IFlacFile
         CheckForDisposed();
 
         var read = 0;
-        count -= (count % WaveFormat.BlockAlign);
+        count -= count % WaveFormat.BlockAlign;
 
         lock (_bufferLock)
         {
@@ -227,8 +227,8 @@ public sealed class FlacFile : IFlacFile
                 read += bytesToCopy;
                 offset += bytesToCopy;
 
-                _overflowCount = ((bufferlength > bytesToCopy) ? (bufferlength - bytesToCopy) : 0);
-                _overflowOffset = ((bufferlength > bytesToCopy) ? (bytesToCopy) : 0);
+                _overflowCount = bufferlength > bytesToCopy ? bufferlength - bytesToCopy : 0;
+                _overflowOffset = bufferlength > bytesToCopy ? bytesToCopy : 0;
             }
         }
         _position += read;
@@ -278,11 +278,11 @@ public sealed class FlacFile : IFlacFile
             lock (_bufferLock)
             {
                 value = Math.Max(Math.Min(value, Length), 0);
-                value -= (value % WaveFormat.BlockAlign);
+                value -= value % WaveFormat.BlockAlign;
 
                 for (var i = 0; i < _scan.Frames.Count; i++)
                 {
-                    if ((value / WaveFormat.BlockAlign) <= _scan.Frames[i].SampleOffset)
+                    if (value / WaveFormat.BlockAlign <= _scan.Frames[i].SampleOffset)
                     {
                         if (i != 0)
                             i--;
@@ -296,7 +296,7 @@ public sealed class FlacFile : IFlacFile
                         _overflowOffset = 0;
 
                         var diff = (int) (value - Position);
-                        diff -= (diff % WaveFormat.BlockAlign);
+                        diff -= diff % WaveFormat.BlockAlign;
                         if (diff > 0)
                         {
                             _stream.Read(new byte[diff], 0, diff);

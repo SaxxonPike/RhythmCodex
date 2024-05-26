@@ -89,7 +89,7 @@ internal static class FlacPartitionedRice
                     else
                     {
                         reader.SeekBits((int)(msbs & 7) + 1);
-                        uval = (msbs << riceParameter) | ((reader.Cache >> (32 - riceParameter)));
+                        uval = (msbs << riceParameter) | (reader.Cache >> (32 - riceParameter));
                         reader.SeekBits(riceParameter);
                     }
                     ptrDest[i] = (int)((uval >> 1) ^ -(int)(uval & 1));

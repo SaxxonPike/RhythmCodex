@@ -116,7 +116,7 @@ public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEnc
             yield return new BmsCommand
             {
                 Name = "BPM",
-                Value = $"{(decimal) bpms[0]!}"
+                Value = $"{(decimal) bpms[0]}"
             };
         }
 

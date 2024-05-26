@@ -15,7 +15,7 @@ public class SsqStreamWriterTests : BaseUnitTestFixture<SsqStreamWriter, ISsqStr
     public void Write_WritesAllChunks()
     {
         // Arrange.
-        var chunks = CreateMany<SsqChunk>().Concat(new SsqChunk[] {null}).ToList();
+        var chunks = CreateMany<SsqChunk?>().ToList();
         var chunkStreamer = Mock<IChunkStreamWriter>();
         var stream = new MemoryStream();
         var result = new List<SsqChunk>();
@@ -26,6 +26,7 @@ public class SsqStreamWriterTests : BaseUnitTestFixture<SsqStreamWriter, ISsqStr
         Subject.Write(stream, chunks);
 
         // Assert.
-        result.Should().BeEquivalentTo(chunks.Concat(new SsqChunk[] {null}));
+        result.Should().BeEquivalentTo(chunks);
+        chunkStreamer.Verify(x => x.WriteEnd(It.IsAny<Stream>()));
     }
 }

@@ -31,7 +31,7 @@ public static class XwbConstants
     public const int WavebankentryXmastreamsMax = 3;
     public const int WavebankentryXmachannelsMax = 6;
     public const int WavebankDvdSectorSize = 2048;
-    public const int WavebankDvdBlockSize = (WavebankDvdSectorSize * 16);
+    public const int WavebankDvdBlockSize = WavebankDvdSectorSize * 16;
     public const int WavebankAlignmentMin = 4;
     public const int WavebankAlignmentDvd = WavebankDvdSectorSize;
     public const int MaxWmaAvgBytesPerSecEntries = 7;

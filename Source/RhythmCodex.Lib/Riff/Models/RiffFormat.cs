@@ -2,13 +2,13 @@ using System;
 
 namespace RhythmCodex.Riff.Models;
 
-public class RiffFormat : IRiffFormat
+public record RiffFormat
 {
-    public int Format { get; set; }
-    public int Channels { get; set; }
-    public int SampleRate { get; set; }
-    public int ByteRate { get; set; }
-    public int BlockAlign { get; set; }
-    public int BitsPerSample { get; set; }
-    public Memory<byte> ExtraData { get; set; }
+    public int Format { get; init; }
+    public int Channels { get; init; }
+    public int SampleRate { get; init; }
+    public int ByteRate { get; init; }
+    public int BlockAlign { get; init; }
+    public int BitsPerSample { get; init; }
+    public ReadOnlyMemory<byte> ExtraData { get; init; }
 }

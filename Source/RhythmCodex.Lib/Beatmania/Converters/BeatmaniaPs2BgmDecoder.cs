@@ -11,9 +11,12 @@ namespace RhythmCodex.Beatmania.Converters;
 public class BeatmaniaPs2BgmDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
     : IBeatmaniaPs2BgmDecoder
 {
-    public Sound Decode(BeatmaniaPs2Bgm bgm)
+    public Sound? Decode(BeatmaniaPs2Bgm bgm)
     {
         var output = vagDecoder.Decode(bgm.Data);
+        if (output == null)
+            return null;
+
         output[NumericData.Rate] = bgm.Rate;
         output[NumericData.Channel] = bgm.Channels;
         output[NumericData.SourceVolume] = bgm.Volume;

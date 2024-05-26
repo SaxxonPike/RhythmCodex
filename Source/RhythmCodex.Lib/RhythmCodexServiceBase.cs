@@ -5,6 +5,6 @@ namespace RhythmCodex;
 
 public abstract class RhythmCodexServiceBase(IServiceProvider services)
 {
-    protected T Svc<T>() =>
+    protected T Svc<T>() where T : notnull =>
         services.GetRequiredService<T>();
 }

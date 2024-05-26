@@ -9,6 +9,8 @@ public class StepPanelSplitter : IStepPanelSplitter
 {
     public List<int> Split(int panels)
     {
+        return Do().ToList();
+
         IEnumerable<int> Do()
         {
             var n = 0;
@@ -28,7 +30,5 @@ public class StepPanelSplitter : IStepPanelSplitter
                 n++;
             }
         }
-
-        return Do().ToList();
     }
 }

@@ -45,7 +45,7 @@ public class DdrPs2FileDataTableChunkStreamReader(IBemaniLzDecoder bemaniLzDecod
         var hasHeaders = headTest0 > 0 && headTest1 > 0 && headTest2 > 0 &&
                          headTest2 > headTest1 && headTest1 > headTest0 &&
                          (headTest0 & 0x3) == 0 &&
-                         ((headTest0 | headTest1 | headTest2) >> 24) == 0;
+                         (headTest0 | headTest1 | headTest2) >> 24 == 0;
 
         cache.Position = prevPosition;
         var desiredPosition = table[index - 1];

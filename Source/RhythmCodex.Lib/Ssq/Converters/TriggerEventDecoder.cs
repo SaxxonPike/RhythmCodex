@@ -11,12 +11,10 @@ namespace RhythmCodex.Ssq.Converters;
 [Service]
 public class TriggerEventDecoder : ITriggerEventDecoder
 {
-    public List<Event> Decode(IEnumerable<Trigger> triggers)
-    {
-        return triggers.Select(trigger => new Event
+    public List<Event> Decode(IEnumerable<Trigger> triggers) =>
+        triggers.Select(trigger => new Event
         {
             [NumericData.MetricOffset] = (BigRational) trigger.MetricOffset / SsqConstants.MeasureLength,
             [NumericData.Trigger] = trigger.Id
-        }).Cast<Event>().ToList();
-    }
+        }).ToList();
 }

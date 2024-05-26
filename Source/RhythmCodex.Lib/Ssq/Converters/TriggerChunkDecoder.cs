@@ -1,34 +1,34 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using RhythmCodex.Infrastructure;
+﻿using System;
+using System.Collections.Generic;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
+using Saxxon.StreamCursors;
 
 namespace RhythmCodex.Ssq.Converters;
 
 [Service]
 public class TriggerChunkDecoder : ITriggerChunkDecoder
 {
-    public List<Trigger> Convert(byte[] data)
+    public List<Trigger> Convert(ReadOnlySpan<byte> data)
     {
-        using var mem = new ReadOnlyMemoryStream(data);
-        using var reader = new BinaryReader(mem);
-        var count = reader.ReadInt32();
+        var cursor = data.ReadS32L(out var count);
 
-        var metricOffsets = Enumerable
-            .Range(0, count)
-            .Select(_ => reader.ReadInt32())
-            .ToArray();
+        var metricOffsets = new int[count];
+        for (var i = 0; i < count; i++)
+            cursor = cursor.ReadS32L(out metricOffsets[i]);
 
-        return Enumerable
-            .Range(0, count)
-            .Select(i => new Trigger
+        var ids = new short[count];
+        for (var i = 0; i < count; i++)
+            cursor = cursor.ReadS16L(out ids[i]);
+
+        var result = new List<Trigger>();
+        for (var i = 0; i < count; i++)
+            result.Add(new Trigger
             {
-                // ReSharper disable once AccessToDisposedClosure
-                Id = reader.ReadInt16(),
+                Id = ids[i],
                 MetricOffset = metricOffsets[i]
-            })
-            .ToList();
+            });
+
+        return result;
     }
 }

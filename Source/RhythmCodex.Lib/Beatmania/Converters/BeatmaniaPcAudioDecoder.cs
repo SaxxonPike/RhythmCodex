@@ -14,17 +14,21 @@ public class BeatmaniaPcAudioDecoder(IWavDecoder wavDecoder) : IBeatmaniaPcAudio
     public Sound? Decode(BeatmaniaPcAudioEntry entry)
     {
         using var wavDataMem = new ReadOnlyMemoryStream(entry.Data);
+        
         var result = wavDecoder.Decode(wavDataMem);
+        if (result == null)
+            return null;
 
         var panning = entry.Panning;
         if (panning is > 0x7F or < 0x01)
             panning = 0x40;
 
-        var volume = entry.Volume;
-        if (volume < 0x01)
-            volume = 0x01;
-        else if (volume > 0xFF)
-            volume = 0xFF;
+        var volume = entry.Volume switch
+        {
+            < 0x01 => 0x01,
+            > 0xFF => 0xFF,
+            _ => entry.Volume
+        };
 
         result[NumericData.Panning] = (panning - 1.0d) / 126.0d;
         result[NumericData.Volume] = BeatmaniaPcConstants.VolumeTable.Span[volume];

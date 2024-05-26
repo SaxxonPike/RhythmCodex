@@ -5,5 +5,5 @@ namespace RhythmCodex.Wav.Converters;
 
 public interface IWaveFmtDecoder
 {
-    WaveFmtChunk Decode(IRiffChunk chunk);
+    WaveFmtChunk Decode(RiffChunk chunk);
 }
