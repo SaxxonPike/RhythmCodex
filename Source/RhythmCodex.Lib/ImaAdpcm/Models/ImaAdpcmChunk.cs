@@ -6,7 +6,7 @@ namespace RhythmCodex.ImaAdpcm.Models;
 [Model]
 public class ImaAdpcmChunk
 {
-    public ReadOnlyMemory<byte> Data { get; set; }
+    public Memory<byte> Data { get; set; }
     public int Channels { get; set; }
     public int Rate { get; set; }
     public int ChannelSamplesPerFrame { get; set; }

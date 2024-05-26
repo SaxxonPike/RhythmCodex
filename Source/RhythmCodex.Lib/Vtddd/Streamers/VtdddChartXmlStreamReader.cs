@@ -17,14 +17,14 @@ public class VtdddChartXmlStreamReader : IVtdddChartXmlStreamReader
         // okay, this is a hack to bypass the "XML version 1.1 is invalid" error
         // var doc = XDocument.Load(stream);
         var reader = new StreamReader(stream);
-        var text = reader.ReadToEnd().Replace(@"<?xml version='1.1'?>", @"<?xml version='1.0'?>");
+        var text = reader.ReadToEnd().Replace("<?xml version='1.1'?>", "<?xml version='1.0'?>");
         var doc = XDocument.Parse(text);
         var stepNodes = doc.Root?.Elements();
         var steps = stepNodes?.SelectMany(DecodeStep).ToList();
         return steps;
     }
 
-    private IEnumerable<VtdddStep> DecodeStep(XElement xml)
+    private static IEnumerable<VtdddStep> DecodeStep(XElement xml)
     {
         var panels = new List<(int Player, int Panel, bool Hold)>();
 

@@ -1,6 +1,3 @@
 namespace RhythmCodex.Twinkle.Model;
 
-public enum TwinkleBeatmaniaColumnType
-{
-        
-}
+public enum TwinkleBeatmaniaColumnType;

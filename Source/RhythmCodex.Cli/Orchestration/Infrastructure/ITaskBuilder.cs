@@ -3,9 +3,7 @@ using ClientCommon;
 
 namespace RhythmCodex.Cli.Orchestration.Infrastructure;
 
-public interface ITaskBuilder
-{
-}
+public interface ITaskBuilder;
 
 public interface ITaskBuilder<out TTaskBuilder> : ITaskBuilder where TTaskBuilder : ITaskBuilder
 {

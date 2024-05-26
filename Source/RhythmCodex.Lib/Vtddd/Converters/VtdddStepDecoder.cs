@@ -12,7 +12,7 @@ public class VtdddStepDecoder : IVtdddStepDecoder
 {
     public IEnumerable<Event> Decode(VtdddStep step)
     {
-        yield return new Event()
+        yield return new Event
         {
             [NumericData.LinearOffset] = step.Target / (BigRational)1000,
             [NumericData.Column] = step.Panel,
@@ -22,7 +22,7 @@ public class VtdddStepDecoder : IVtdddStepDecoder
 
         if (step.Hold)
         {
-            yield return new Event()
+            yield return new Event
             {
                 [NumericData.LinearOffset] = step.End / (BigRational)1000,
                 [NumericData.Column] = step.Panel,

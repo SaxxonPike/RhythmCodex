@@ -7,7 +7,7 @@ namespace RhythmCodex.Vtddd.Streamers;
 [Service]
 public class VtdddDpoStreamReader : IVtdddDpoStreamReader
 {
-    public VtdddDpoFile Read(Stream stream, int length)
+    public VtdddDpoFile? Read(Stream stream, int length)
     {
         if (length < 4)
             return null;

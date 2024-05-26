@@ -39,7 +39,7 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
                 [NumericData.SourceCommand] = ev.Param0,
                 [NumericData.SourceData] = ev.Param1,
                 [NumericData.SourceOffset] = ev.Offset,
-                [NumericData.LinearOffset] = offset,
+                [NumericData.LinearOffset] = offset
             };
 
             switch (chartType)

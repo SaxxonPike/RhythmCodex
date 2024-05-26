@@ -11,6 +11,7 @@ using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
 using RhythmCodex.Vtddd.Converters;
+using RhythmCodex.Vtddd.Models;
 using RhythmCodex.Vtddd.Streamers;
 
 namespace RhythmCodex.Vtddd.Integration;
@@ -37,7 +38,7 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
             using var fileStream = File.OpenRead(inFile);
             var dpo = dpoStreamReader.Read(fileStream, (int)fileStream.Length);
             var outFile = Path.Combine(outPath, $"{Path.GetFileName(inFile)}.ogg");
-            File.WriteAllBytes(outFile, dpo.Data);
+            File.WriteAllBytes(outFile, dpo.Data.ToArray());
         }
     }
 
@@ -106,7 +107,7 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
                 [ChartTag.DisplayBpmTag] = "*"
             };
 
-            var chartSet = new ChartSet()
+            var chartSet = new ChartSet
             {
                 Charts = charts,
                 Metadata = metadata

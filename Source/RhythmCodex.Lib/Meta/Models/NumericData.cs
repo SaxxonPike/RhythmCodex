@@ -2,7 +2,7 @@
 
 public enum NumericData
 {
-    LinearOffset,
+    LinearOffset = 10000,
     MetricOffset,
     Bpm,
     Stop,

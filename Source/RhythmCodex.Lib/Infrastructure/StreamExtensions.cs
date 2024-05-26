@@ -158,13 +158,21 @@ public static class StreamExtensions
         return result;
     }
 
-    public static Span<byte> AsSpan(this MemoryStream mem)
-    {
-        return mem.GetBuffer().AsSpan(0, (int)mem.Length);
-    }
+    public static Span<byte> AsSpan(this MemoryStream mem) => 
+        mem.GetBuffer().AsSpan(0, (int)mem.Length);
 
-    public static Memory<byte> AsMemory(this MemoryStream mem)
-    {
-        return mem.GetBuffer().AsMemory(0, (int)mem.Length);
-    }
+    public static Span<byte> AsSpan(this MemoryStream mem, int offset) => 
+        AsSpan(mem)[offset..];
+
+    public static Span<byte> AsSpan(this MemoryStream mem, Range range) => 
+        AsSpan(mem)[range];
+
+    public static Memory<byte> AsMemory(this MemoryStream mem) => 
+        mem.GetBuffer().AsMemory(0, (int)mem.Length);
+
+    public static Memory<byte> AsMemory(this MemoryStream mem, int offset) =>
+        AsMemory(mem)[offset..];
+    
+    public static Memory<byte> AsMemory(this MemoryStream mem, Range range) => 
+        AsMemory(mem)[range];
 }

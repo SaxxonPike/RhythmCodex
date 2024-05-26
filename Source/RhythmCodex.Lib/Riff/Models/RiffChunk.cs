@@ -2,8 +2,8 @@ using System;
 
 namespace RhythmCodex.Riff.Models;
 
-public record RiffChunk
+public class RiffChunk
 {
-    public string? Id { get; init; }
-    public ReadOnlyMemory<byte> Data { get; init; }
+    public string? Id { get; set; }
+    public Memory<byte> Data { get; set; }
 }

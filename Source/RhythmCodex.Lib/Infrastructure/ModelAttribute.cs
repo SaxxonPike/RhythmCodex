@@ -6,6 +6,4 @@ namespace RhythmCodex.Infrastructure;
 ///     Marks a class or struct as a data model.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-public class ModelAttribute : Attribute
-{
-}
+public class ModelAttribute : Attribute;

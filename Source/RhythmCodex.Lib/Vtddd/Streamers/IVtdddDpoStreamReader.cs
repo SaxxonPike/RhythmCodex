@@ -5,5 +5,5 @@ namespace RhythmCodex.Vtddd.Streamers;
 
 public interface IVtdddDpoStreamReader
 {
-    VtdddDpoFile Read(Stream stream, int length);
+    VtdddDpoFile? Read(Stream stream, int length);
 }

@@ -36,28 +36,29 @@ public class XwbStreamReader(
             var buffer = reader.ReadBytes(region.Length);
             using var mem = new ReadOnlyMemoryStream(buffer);
             var memReader = new BinaryReader(mem);
-            switch (i)
+            switch ((XwbSegIdx)i)
             {
-                case (int) XwbSegIdx.BankData:
+                case XwbSegIdx.BankData:
                     var bank = xwbDataStreamReader.Read(mem);
                     sampleCount = bank.EntryCount;
                     entries = new XwbEntry[sampleCount];
                     names = new string[sampleCount];
                     break;
-                case (int) XwbSegIdx.EntryMetaData:
+                case XwbSegIdx.EntryMetaData:
                     for (var j = 0; j < sampleCount; j++)
                         entries[j] = xwbEntryStreamReader.Read(mem);
                     break;
-                case (int) XwbSegIdx.EntryNames:
+                case XwbSegIdx.EntryNames:
                     for (var j = 0; j < sampleCount; j++)
                         names[j] = memReader.ReadBytes(XwbConstants.WavebankEntrynameLength)
                             .TakeWhile(c => c != 0).ToArray().GetString();
                     break;
-                case (int) XwbSegIdx.EntryWaveData:
+                case XwbSegIdx.EntryWaveData:
                     dataChunk = buffer;
                     break;
-                case (int) XwbSegIdx.SeekTables:
+                case XwbSegIdx.SeekTables:
                     break;
+                case XwbSegIdx.Count:
                 default:
                     break;
             }

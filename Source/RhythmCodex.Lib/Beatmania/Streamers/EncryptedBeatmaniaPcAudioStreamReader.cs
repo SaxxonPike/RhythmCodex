@@ -58,27 +58,27 @@ public class EncryptedBeatmaniaPcAudioStreamReader : IEncryptedBeatmaniaPcAudioS
 
         switch (headerId)
         {
-            case @"%eNc":
+            case "%eNc":
                 key = EncryptionKey9;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;
-            case @"%e10":
+            case "%e10":
                 key = EncryptionKey10;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;
-            case @"%e11":
+            case "%e11":
                 key = EncryptionKey11;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;
-            case @"%e12":
+            case "%e12":
                 key = EncryptionKey11;
                 encType = BeatmaniaPcAudioEncryptionType.Partial;
                 break;
-            case @"%hid":
+            case "%hid":
                 key = EncryptionKey11;
                 encType = BeatmaniaPcAudioEncryptionType.Partial;
                 break;
-            case @"%iO0":
+            case "%iO0":
                 key = EncryptionKey16;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;

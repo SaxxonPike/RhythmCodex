@@ -42,7 +42,7 @@ public class BeatmaniaPs2NewBgmHeuristic(IVagStreamReader vagStreamReader)
             SampleRate = Bitter.ToInt32(data.Slice(0x18)),
             Channels = Bitter.ToInt32(data.Slice(0x1C)),
             Interleave = Bitter.ToInt32(data.Slice(0x24)),
-            Volume = new BigRational(Bitter.ToInt32(data.Slice(0x28)), 100),
+            Volume = new BigRational(Bitter.ToInt32(data.Slice(0x28)), 100)
         };
 
         if (data[0x20] != 0x00 || data[0x21] != 0x00 || data[0x22] != 0x00 || data[0x23] != 0x00)

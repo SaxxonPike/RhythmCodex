@@ -269,7 +269,7 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
         return new FluentPanel
         {
             Controls = controls.ToList(),
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.Fill
         };
     }
 }

@@ -72,7 +72,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     private static readonly BigInteger DecimalMaxValue = (BigInteger) decimal.MaxValue;
     private static readonly BigInteger DecimalMinValue = (BigInteger) decimal.MinValue;
 
-    private const string Solidus = @"/";
+    private const string Solidus = "/";
 
     #endregion Members for Internal Support
 

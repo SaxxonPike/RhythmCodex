@@ -15,15 +15,15 @@ public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
 {
     private record struct PlayedEvent
     {
-        public int Index { get; init; }
-        public BigRational Panning { get; init; }
-        public BigRational Offset { get; init; }
+        public int Index { get; set; }
+        public BigRational Panning { get; set; }
+        public BigRational Offset { get; set; }
     }
 
     private record struct MatchedSound
     {
-        public int A { get; init; }
-        public int B { get; init; }
+        public int A { get; set; }
+        public int B { get; set; }
     }
         
     public void Consolidate(IEnumerable<Sound> sounds, IEnumerable<Event> events)

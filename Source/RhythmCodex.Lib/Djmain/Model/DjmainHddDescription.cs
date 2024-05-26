@@ -2,11 +2,11 @@ using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Djmain.Model;
 
-public record DjmainHddDescription
+public class DjmainHddDescription
 {
-    public DjmainChunkFormat Format { get; init; }
+    public DjmainChunkFormat Format { get; set; }
 
-    public bool BytesAreSwapped { get; init; }
+    public bool BytesAreSwapped { get; set; }
 
     public override string ToString() => Json.Serialize(this);
 }

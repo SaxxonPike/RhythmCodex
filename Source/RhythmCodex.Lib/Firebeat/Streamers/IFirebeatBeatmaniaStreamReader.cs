@@ -1,5 +1,3 @@
 namespace RhythmCodex.Firebeat.Streamers;
 
-public interface IFirebeatBeatmaniaStreamReader
-{
-}
+public interface IFirebeatBeatmaniaStreamReader;

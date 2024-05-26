@@ -29,7 +29,7 @@ public class Mp3Decoder : IMp3Decoder
                 .Select(bytes => new Sample
                 {
                     Data = bytes.Fuse().Select(s => s / 32768f).ToArray(),
-                    [NumericData.Rate] = rate,
+                    [NumericData.Rate] = rate
                 })
                 .Cast<Sample>()
                 .ToList()
