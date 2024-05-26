@@ -4,10 +4,10 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Model;
 
 [Model]
-public record DjmainSampleSet
+public class DjmainSampleSet
 {
-    public int DataOffset { get; init; }
-    public Dictionary<int, DjmainSample> Samples { get; init; } = new();
+    public int DataOffset { get; set; }
+    public Dictionary<int, DjmainSample> Samples { get; set; } = new();
         
     public override string ToString() => Json.Serialize(this);
 }

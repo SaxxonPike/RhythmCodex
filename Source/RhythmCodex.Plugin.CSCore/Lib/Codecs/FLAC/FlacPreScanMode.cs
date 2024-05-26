@@ -27,5 +27,5 @@ public enum FlacPreScanMode
     /// <summary>
     /// Default value.
     /// </summary>
-    Default = Sync,
+    Default = Sync
 }

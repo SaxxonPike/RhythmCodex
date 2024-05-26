@@ -3,6 +3,4 @@
 namespace RhythmCodex.Xact.Streamers;
 
 [Service]
-public class XwbEntryStreamWriter : IXwbEntryStreamWriter
-{
-}
+public class XwbEntryStreamWriter : IXwbEntryStreamWriter;

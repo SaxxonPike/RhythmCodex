@@ -191,8 +191,8 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             [NumericData.Rate] = options.SampleRate,
             Samples =
             [
-                new Sample() { Data = mixdownLeft.ToArray() },
-                new Sample() { Data = mixdownRight.ToArray() }
+                new Sample { Data = mixdownLeft.ToArray() },
+                new Sample { Data = mixdownRight.ToArray() }
             ]
         };
     }

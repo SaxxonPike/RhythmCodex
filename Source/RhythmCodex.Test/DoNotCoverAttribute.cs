@@ -7,6 +7,4 @@ namespace RhythmCodex;
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Class)]
-public class DoNotCoverAttribute : Attribute
-{
-}
+public class DoNotCoverAttribute : Attribute;

@@ -4,11 +4,11 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Djmain.Model;
 
 [Model]
-public record DjmainSample
+public class DjmainSample
 {
-    public DjmainSampleInfo Info { get; init; }
+    public DjmainSampleInfo Info { get; set; }
 
-    public Memory<byte> Data { get; init; }
+    public Memory<byte> Data { get; set; }
 
     public override string ToString() => Json.Serialize(this);
 }

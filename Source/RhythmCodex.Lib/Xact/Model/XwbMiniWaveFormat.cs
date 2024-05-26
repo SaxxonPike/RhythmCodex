@@ -10,19 +10,14 @@ public struct XwbMiniWaveFormat : IWaveFormat
 
     public int BitsPerSample
     {
-                
         get
         {
-            switch (wFormatTag)
+            return wFormatTag switch
             {
-                case XwbConstants.WavebankminiformatTagXma:
-                case XwbConstants.WavebankminiformatTagWma:
-                    return 2 * 8;
-                case XwbConstants.WavebankminiformatTagAdpcm:
-                    return 4;
-                default:
-                    return wBitsPerSample == XwbConstants.WavebankminiformatBitdepth16 ? 16 : 8;
-            }
+                XwbConstants.WavebankminiformatTagXma or XwbConstants.WavebankminiformatTagWma => 2 * 8,
+                XwbConstants.WavebankminiformatTagAdpcm => 4,
+                _ => wBitsPerSample == XwbConstants.WavebankminiformatBitdepth16 ? 16 : 8
+            };
         }
     }
 
@@ -44,6 +39,7 @@ public struct XwbMiniWaveFormat : IWaveFormat
                         return XwbConstants.WmaBlockAlign[dwBlockAlignIndex];
                     break;
             }
+
             return 0;
         }
     }
@@ -65,6 +61,7 @@ public struct XwbMiniWaveFormat : IWaveFormat
                         return XwbConstants.WmaAvgBytesPerSec[dwBytesPerSecIndex];
                     break;
             }
+
             return 0;
         }
     }
@@ -87,30 +84,50 @@ public struct XwbMiniWaveFormat : IWaveFormat
     private int wFormatTag
     {
         get => (Value >> 0) & 0x3;
-        set { Value &= ~(0x3 << 0); Value |= (value & 0x3) << 0; }
+        set
+        {
+            Value &= ~(0x3 << 0);
+            Value |= (value & 0x3) << 0;
+        }
     }
 
     private int nChannels
     {
         get => (Value >> 2) & 0x7;
-        set { Value &= ~(0x7 << 2); Value |= (value & 0x7) << 2; }
+        set
+        {
+            Value &= ~(0x7 << 2);
+            Value |= (value & 0x7) << 2;
+        }
     }
 
     private int nSamplesPerSec
     {
         get => (Value >> 5) & 0x3FFFF;
-        set { Value &= ~(0x3FFFF << 5); Value |= (value & 0x3FFFF) << 5; }
+        set
+        {
+            Value &= ~(0x3FFFF << 5);
+            Value |= (value & 0x3FFFF) << 5;
+        }
     }
 
     private int wBlockAlign
     {
         get => (Value >> 23) & 0xFF;
-        set { Value &= ~(0xFF << 23); Value |= (value & 0xFF) << 23; }
+        set
+        {
+            Value &= ~(0xFF << 23);
+            Value |= (value & 0xFF) << 23;
+        }
     }
 
     private int wBitsPerSample
     {
         get => (Value >> 31) & 0x1;
-        set { Value &= ~(0x1 << 31); Value |= (value & 0x1) << 31; }
+        set
+        {
+            Value &= ~(0x1 << 31);
+            Value |= (value & 0x1) << 31;
+        }
     }
 }

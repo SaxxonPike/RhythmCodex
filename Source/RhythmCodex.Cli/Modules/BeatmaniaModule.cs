@@ -77,7 +77,7 @@ public class BeatmaniaModule : ICliModule
                     Description = "Ticks per second. Pre-GOLD uses 59.94. GOLD uses 60.94. Default is 1000."
                 }
             }
-        },
+        }
     };
 
     private ITask RenderDjmainGst(Args args)

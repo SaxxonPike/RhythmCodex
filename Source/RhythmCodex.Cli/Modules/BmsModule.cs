@@ -13,7 +13,7 @@ public class BmsModule(ITaskFactory taskFactory) : ICliModule
 
     public IEnumerable<ICommand> Commands => new ICommand[]
     {
-        new Command()
+        new Command
         {
             Name = "render",
             Description = "Render a BMS to WAV.",

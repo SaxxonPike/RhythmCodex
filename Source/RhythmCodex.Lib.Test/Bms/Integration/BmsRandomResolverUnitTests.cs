@@ -19,7 +19,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "SETRANDOM", Value = "3" },
             new BmsCommand { Name = "IF", Value = "3" },
             new BmsCommand { Name = "PASS" },
-            new BmsCommand { Name = "ENDIF" },
+            new BmsCommand { Name = "ENDIF" }
         };
 
         // Act.
@@ -44,7 +44,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "RANDOM", Value = "3" },
             new BmsCommand { Name = "IF", Value = "3" },
             new BmsCommand { Name = "PASS" },
-            new BmsCommand { Name = "ENDIF" },
+            new BmsCommand { Name = "ENDIF" }
         };
 
         var randomizer = new Mock<IRandomizer>();
@@ -75,7 +75,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "FAIL" },
             new BmsCommand { Name = "ELSEIF", Value = "3" },
             new BmsCommand { Name = "PASS" },
-            new BmsCommand { Name = "ENDIF" },
+            new BmsCommand { Name = "ENDIF" }
         };
 
         var randomizer = new Mock<IRandomizer>();
@@ -106,7 +106,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "FAIL" },
             new BmsCommand { Name = "ELSE" },
             new BmsCommand { Name = "PASS" },
-            new BmsCommand { Name = "ENDIF" },
+            new BmsCommand { Name = "ENDIF" }
         };
 
         var randomizer = new Mock<IRandomizer>();
@@ -141,7 +141,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "SKIP" },
             new BmsCommand { Name = "DEF" },
             new BmsCommand { Name = "FAIL" },
-            new BmsCommand { Name = "ENDSW" },
+            new BmsCommand { Name = "ENDSW" }
         };
 
         var randomizer = new Mock<IRandomizer>();
@@ -173,7 +173,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "SKIP" },
             new BmsCommand { Name = "DEF" },
             new BmsCommand { Name = "PASS" },
-            new BmsCommand { Name = "ENDSW" },
+            new BmsCommand { Name = "ENDSW" }
         };
 
         var randomizer = new Mock<IRandomizer>();
@@ -207,7 +207,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "PASS 1" },
             new BmsCommand { Name = "DEF" },
             new BmsCommand { Name = "PASS 2" },
-            new BmsCommand { Name = "ENDSW" },
+            new BmsCommand { Name = "ENDSW" }
         };
 
         var randomizer = new Mock<IRandomizer>();
@@ -244,7 +244,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "FAIL" },
             new BmsCommand { Name = "ENDIF" },
             new BmsCommand { Name = "PASS 3" },
-            new BmsCommand { Name = "ENDIF" },
+            new BmsCommand { Name = "ENDIF" }
         };
 
         // Act.
@@ -277,7 +277,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "PASS 2" },
             new BmsCommand { Name = "ENDIF" },
             new BmsCommand { Name = "PASS 3" },
-            new BmsCommand { Name = "ENDIF" },
+            new BmsCommand { Name = "ENDIF" }
         };
 
         // Act.
