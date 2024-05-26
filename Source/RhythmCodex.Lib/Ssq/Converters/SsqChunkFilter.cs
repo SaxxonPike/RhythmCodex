@@ -37,7 +37,7 @@ public class SsqChunkFilter(
     {
         var result = chunks
             .Where(c => c.Parameter0 == Parameter0.Triggers)
-            .SelectMany(tc => triggerChunkDecoder.Convert(tc.Data))
+            .SelectMany(tc => triggerChunkDecoder.Convert(tc.Data.Span))
             .ToList();
 
         return result;

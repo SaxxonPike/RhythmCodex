@@ -18,7 +18,7 @@ public static class ServiceTypes
     /// </summary>
     public static IEnumerable<ServiceMapping> GetMappings(params Assembly[] externalAssemblies)
     {
-        var myPath = Path.GetDirectoryName(typeof(ServiceTypes).Assembly.Location);
+        var myPath = Path.GetDirectoryName(typeof(ServiceTypes).Assembly.Location)!;
 
         var assemblies = new List<Assembly> {AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(myPath, "RhythmCodex.dll"))};
         var pluginAssemblies = Directory
@@ -46,7 +46,7 @@ public static class ServiceTypes
                 return new ServiceMapping(
                     t,
                     t.GetInterfaces().Where(i => i != typeof(IDisposable)),
-                    (bool) at.GetValue(a));
+                    (bool) at!.GetValue(a)!);
             })
             .ToList();
     }

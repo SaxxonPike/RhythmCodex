@@ -23,7 +23,7 @@ public class PsfIntegrationTests : BaseIntegrationFixture
 
         var reader = Resolve<IPsfStreamReader>();
         var psf = reader.Read(new MemoryStream(source));
-        psf.Reserved.Should().BeEmpty();
-        psf.Data.Should().BeEquivalentTo(expected);
+        psf.Reserved.ToArray().Should().BeEmpty();
+        psf.Data.ToArray().Should().BeEquivalentTo(expected);
     }
 }

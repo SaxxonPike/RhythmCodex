@@ -18,7 +18,7 @@ public class FileDialog : IFileDialog
             ofd.FileName = fileName;
 
         return ofd.ShowDialog() == DialogResult.OK 
-            ? (multi ? string.Join('|', ofd.FileNames) : ofd.FileName) 
+            ? multi ? string.Join('|', ofd.FileNames) : ofd.FileName 
             : null;
     }
 

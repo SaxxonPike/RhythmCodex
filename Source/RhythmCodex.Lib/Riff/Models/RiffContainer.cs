@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace RhythmCodex.Riff.Models;
 
-public class RiffContainer : IRiffContainer
+public record RiffContainer
 {
-    public List<IRiffChunk> Chunks { get; set; }
-    public string Format { get; set; }
+    public List<RiffChunk> Chunks { get; init; }
+    public string? Format { get; init; }
 }

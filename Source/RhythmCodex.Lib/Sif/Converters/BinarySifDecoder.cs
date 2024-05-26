@@ -22,7 +22,7 @@ public class BinarySifDecoder : IBinarySifDecoder
 
         var text = new string[5];
         var chunkMem = new ReadOnlyMemoryStream(bytes);
-        var reader = new BinaryReader(chunkMem, Encodings.CP1252);
+        var reader = new BinaryReader(chunkMem, Encodings.Cp1252);
         var builder = new StringBuilder();
         chunkMem.Position = 0x001;
             

@@ -126,14 +126,14 @@ public class DdrTaskBuilder(
                     task.Message = $"Can't find key for {inputFile.Name}";
                     continue;
                 }
-                var decoded = (key.Length == 1)
-                    ? digital573AudioDecrypter.DecryptOld(encoded, key[0])
-                    : digital573AudioDecrypter.DecryptNew(encoded, key);
+                var decoded = key.Values.Count == 1
+                    ? digital573AudioDecrypter.DecryptOld(encoded, key.Values[0])
+                    : digital573AudioDecrypter.DecryptNew(encoded, key.Values);
 
                 using var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
-                    ? ddr573AudioNameFinder.GetPath(i)
+                    ? ddr573AudioNameFinder.GetPath(i!)
                     : $"{i}.mp3");
-                decoded.Data.WriteAllBytes(outFile);
+                decoded.Data.ToArray().WriteAllBytes(outFile);
                 outFile.Flush();
             }
 

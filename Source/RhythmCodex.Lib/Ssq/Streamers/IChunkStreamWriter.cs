@@ -6,4 +6,5 @@ namespace RhythmCodex.Ssq.Streamers;
 public interface IChunkStreamWriter
 {
     void Write(Stream stream, SsqChunk ssqChunk);
+    void WriteEnd(Stream stream);
 }

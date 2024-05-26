@@ -9,14 +9,12 @@ namespace RhythmCodex;
 public class RhythmCodexService : IRhythmCodexService, IDisposable
 {
     private readonly IServiceProvider _services;
-    private readonly IDisposable _disposable;
 
     public RhythmCodexService()
     {
         var container = new ServiceCollection();
         container.AddRhythmCodex();
         var provider = container.BuildServiceProvider();
-        _disposable = provider;
         _services = provider;
     }
 
@@ -27,5 +25,5 @@ public class RhythmCodexService : IRhythmCodexService, IDisposable
     public IBeatmaniaService Beatmania => _services.GetRequiredService<IBeatmaniaService>();
 
     public void Dispose() =>
-        _disposable?.Dispose();
+        (_services as IDisposable)?.Dispose();
 }

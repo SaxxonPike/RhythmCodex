@@ -73,7 +73,7 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
             float DecodeNybble(int data)
             {
                 var predictor = (sample1 * coeff1 + sample2 * coeff2) / 256;
-                predictor += ((data & 0x08) != 0 ? (data - 0x10) : data) * delta;
+                predictor += ((data & 0x08) != 0 ? data - 0x10 : data) * delta;
 
                 sample2 = sample1;
                 sample1 = predictor;

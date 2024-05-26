@@ -28,11 +28,11 @@ public class XboxSngStreamReader : IXboxSngStreamReader
             .Range(0, count)
             .Select(i =>
             {
-                stream.Position = baseOffset + directoryOffset + (i * 0x14);
+                stream.Position = baseOffset + directoryOffset + i * 0x14;
 
                 var result = new XboxSngEntry
                 {
-                    Name = Encodings.UTF8.GetString(reader.ReadBytes(4))
+                    Name = Encodings.Utf8.GetString(reader.ReadBytes(4))
                 };
 
                 var songOffset = reader.ReadInt32();

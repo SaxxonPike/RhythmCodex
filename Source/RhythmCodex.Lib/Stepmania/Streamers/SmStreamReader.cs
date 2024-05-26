@@ -11,14 +11,15 @@ namespace RhythmCodex.Stepmania.Streamers;
 [Service]
 public class SmStreamReader : ISmStreamReader
 {
-    public IEnumerable<Command> Read(Stream source)
+    public List<Command> Read(Stream source)
     {
         var lines = source.ReadAllLines();
         var commands = ExtractCommands(lines);
 
         return commands
             .Select(c => c.Split(':'))
-            .Select(cl => new Command {Name = cl.First(), Values = cl.Skip(1).ToList()});
+            .Select(cl => new Command {Name = cl.First(), Values = cl.Skip(1).ToList()})
+            .ToList();
     }
 
     private static IEnumerable<string> ExtractCommands(IEnumerable<string> lines)

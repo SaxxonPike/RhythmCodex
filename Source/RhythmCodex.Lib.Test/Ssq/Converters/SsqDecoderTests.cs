@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
@@ -24,13 +25,13 @@ public class SsqDecoderTests : BaseUnitTestFixture<SsqDecoder, ISsqDecoder>
 
         Mock<ITimingChunkDecoder>(mock =>
         {
-            mock.Setup(m => m.Convert(It.IsAny<byte[]>()))
+            mock.Setup(m => m.Convert(It.IsAny<ReadOnlyMemory<byte>>()))
                 .Returns(timings);
         });
 
         Mock<IStepChunkDecoder>(mock =>
         {
-            mock.Setup(m => m.Convert(It.IsAny<byte[]>()))
+            mock.Setup(m => m.Convert(It.IsAny<ReadOnlyMemory<byte>>()))
                 .Returns(steps);
         });
 

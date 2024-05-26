@@ -47,20 +47,23 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         var bmsWriter = Resolve<IBmsStreamWriter>();
 
         // Act.
-        var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
-        var archive = decoder.Decode(chunk);
+        var chunk = streamer
+            .Read(new MemoryStream(data), data.Length)
+            .First();
+
+        var archive = decoder.Decode(chunk)!;
 
         // Assert.
-        foreach (var sound in archive.Samples.Where(s => s.Samples.Any()))
+        foreach (var sound in archive.Samples.Where(s => s.Samples.Count != 0))
         {
-            this.WriteSound(sound, Path.Combine("bmiidx", $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id], 4)}.wav"));
+            this.WriteSound(sound, Path.Combine("bmiidx", $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 4)}.wav"));
         }
 
         foreach (var chart in archive.Charts)
         {
             chart.PopulateMetricOffsets();
             using var outStream =
-                this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]}.bms"));
+                this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]!}.bms"));
             bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
             outStream.Flush();
         }
@@ -81,9 +84,9 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         var options = new ChartRendererOptions();
 
         // Act.
-        var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
+        var chunk = streamer.Read(new MemoryStream(data), data.Length).First();
         var archive = decoder.Decode(chunk);
-        var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, options), 1.0f, true);
+        var rendered = dsp.Normalize(renderer.Render(archive!.Charts[1].Events, archive.Samples, options), 1.0f, true);
 
         // Assert.
         this.WriteSound(rendered, Path.Combine($"twinkle.wav"));
@@ -114,7 +117,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
             foreach (var chart in archive.Charts.AsParallel())
             {
                 var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
-                this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
+                this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]!:D2}.wav"));
             }
         }
     }
@@ -151,7 +154,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         {
             var bpc = decoder.MigrateToBemaniPc(chunk);
             using var mem = new MemoryStream();
-            chartWriter.Write(mem, bpc.Charts);
+            chartWriter.Write(mem, bpc!.Charts);
             mem.Flush();
             this.WriteFile(mem.ToArray(), $"{chunk.Index:D4}.1");
         }

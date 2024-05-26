@@ -40,7 +40,7 @@ public class TimingEventDecoderTests : BaseUnitTestFixture<TimingEventDecoder, I
         // Assert.
         result.Should().HaveCount(expected.Count);
         var resultMatches = Enumerable.Range(0, expected.Count)
-            .Select(i => ((Event)result[i]).MetadataEquals(expected[i]));
+            .Select(i => result[i].MetadataEquals(expected[i]));
         resultMatches.Should().BeEquivalentTo(Enumerable.Repeat(true, expected.Count));
     }
 }

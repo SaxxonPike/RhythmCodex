@@ -10,7 +10,7 @@ public class BeatmaniaDspTranslator : IBeatmaniaDspTranslator
 {
     public BigRational GetFirebeatVolume(int volume)
     {
-        return new BigRational(Math.Pow(10.0f, (-36.0f * volume / 144f) / 20.0f));
+        return new BigRational(Math.Pow(10.0f, -36.0f * volume / 144f / 20.0f));
     }
         
     public BigRational GetLinearVolume(int volume)

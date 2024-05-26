@@ -3,11 +3,13 @@
 namespace RhythmCodex.Djmain.Model;
 
 [Model]
-public class DjmainChartEvent
+public record DjmainChartEvent
 {
-    public ushort Offset { get; set; }
-    public byte Param0 { get; set; }
-    public byte Param1 { get; set; }
+    public ushort Offset { get; init; }
+
+    public byte Param0 { get; init; }
+
+    public byte Param1 { get; init; }
 
     public override string ToString() => Json.Serialize(this);
 }

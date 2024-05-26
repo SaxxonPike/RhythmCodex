@@ -13,7 +13,7 @@ public class SsqInfoChunkDecoder : ISsqInfoChunkDecoder
     {
         var text = new string[12];
         var chunkMem = new ReadOnlyMemoryStream(ssqChunk.Data);
-        var reader = new BinaryReader(chunkMem, Encodings.CP1252);
+        var reader = new BinaryReader(chunkMem, Encodings.Cp1252);
         var builder = new StringBuilder();
             
         for (var i = 0; i < text.Length; i++)

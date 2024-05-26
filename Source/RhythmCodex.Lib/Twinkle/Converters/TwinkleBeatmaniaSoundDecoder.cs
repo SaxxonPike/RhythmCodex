@@ -14,7 +14,7 @@ public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
     {
         var offset = definition.SampleStart << 1;
         var stereo = (definition.Flags0F & 0x80) != 0;
-        var length = (definition.SampleEnd - definition.SampleStart);
+        var length = definition.SampleEnd - definition.SampleStart;
         var channels = Enumerable
             .Range(0, stereo ? 2 : 1)
             .Select(_ => new float[length >> (stereo ? 2 : 1)])

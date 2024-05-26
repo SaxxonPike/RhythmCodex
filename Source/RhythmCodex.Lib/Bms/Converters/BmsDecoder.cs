@@ -44,7 +44,7 @@ public class BmsDecoder : IBmsDecoder
             {"VOLWAV", NumericData.Volume}
         };
 
-    public BmsChart Decode(IReadOnlyCollection<BmsCommand> commands)
+    public BmsChart Decode(IEnumerable<BmsCommand> commands)
     {
         var chart = new Chart
         {
@@ -77,7 +77,7 @@ public class BmsDecoder : IBmsDecoder
         };
     }
 
-    private void AddSingularMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
+    private void AddSingularMetadata(IMetadata chart, IEnumerable<BmsCommand> commandList,
         IDictionary<string, StringData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -89,7 +89,7 @@ public class BmsDecoder : IBmsDecoder
         }
     }
 
-    private void AddSingularMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
+    private void AddSingularMetadata(IMetadata chart, IEnumerable<BmsCommand> commandList,
         IDictionary<string, NumericData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -101,7 +101,7 @@ public class BmsDecoder : IBmsDecoder
         }
     }
 
-    private void AddMultiMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
+    private void AddMultiMetadata(IMetadata chart, IEnumerable<BmsCommand> commandList,
         IDictionary<string, StringData> metadataMap)
     {
         foreach (var kv in metadataMap)

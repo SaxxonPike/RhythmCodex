@@ -106,7 +106,7 @@ public class WaveFormatExtensible : WaveFormat
         var cm = 0;
         for (var i = 0; i < channels; i++)
         {
-            cm |= (1 << i);
+            cm |= 1 << i;
         }
 
         ChannelMask = (ChannelMask) cm;

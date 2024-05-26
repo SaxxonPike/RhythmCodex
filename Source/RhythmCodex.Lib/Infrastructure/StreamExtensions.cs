@@ -29,7 +29,7 @@ public static class StreamExtensions
         var offset = 0;
         while (offset < length)
         {
-            var count = (length - offset >= BufferSize)
+            var count = length - offset >= BufferSize
                 ? stream.Read(buffer, 0, BufferSize)
                 : stream.Read(buffer, 0, (int)(length - offset));
 

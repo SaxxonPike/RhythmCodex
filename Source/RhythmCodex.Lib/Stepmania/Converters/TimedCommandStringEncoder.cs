@@ -17,7 +17,7 @@ public class TimedCommandStringEncoder(INumberFormatter numberFormatter) : ITime
             events.Select(ev =>
             {
                 var key = numberFormatter.Format(ev.Offset * 4, places);
-                var value = numberFormatter.Format(BigRational.IsInfinity(ev.Value) ? (ev.Offset == 0 ? 99999 : -1) : ev.Value, places);
+                var value = numberFormatter.Format(BigRational.IsInfinity(ev.Value) ? ev.Offset == 0 ? 99999 : -1 : ev.Value, places);
                 return $"{key}={value}";
             }));
     }

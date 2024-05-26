@@ -4,9 +4,9 @@ namespace RhythmCodex.Gui.FluentForms;
 
 public abstract class FluentComponent
 {
-    public string Id { get; set; }
-    public object Tag { get; set; }
-    public string Text { get; set; }
+    public string? Id { get; set; }
+    public object? Tag { get; set; }
+    public string? Text { get; set; }
     public bool AutoSize { get; set; }
 
     protected void UpdateMap(FluentState state, object result)

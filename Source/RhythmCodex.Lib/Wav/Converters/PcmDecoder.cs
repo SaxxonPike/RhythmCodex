@@ -11,7 +11,7 @@ public class PcmDecoder : IPcmDecoder
     {
         var result = new float[bytes.Length];
         for (var i = 0; i < bytes.Length; i++)
-            result[i] = (bytes[i] / 128f) - 0.5f;
+            result[i] = bytes[i] / 128f - 0.5f;
         return result;
     }
 

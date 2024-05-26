@@ -9,7 +9,7 @@ namespace RhythmCodex.Wav.Converters;
 [Service]
 public class WaveFmtDecoder : IWaveFmtDecoder
 {
-    public WaveFmtChunk Decode(IRiffChunk chunk)
+    public WaveFmtChunk Decode(RiffChunk chunk)
     {
         var data = chunk.Data;
             

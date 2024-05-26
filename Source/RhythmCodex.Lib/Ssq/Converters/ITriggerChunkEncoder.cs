@@ -8,5 +8,5 @@ namespace RhythmCodex.Ssq.Converters;
 [PublicAPI]
 public interface ITriggerChunkEncoder
 {
-    Memory<byte> Convert(IReadOnlyCollection<Trigger> triggers);
+    Memory<byte> Convert(IEnumerable<Trigger> triggers);
 }

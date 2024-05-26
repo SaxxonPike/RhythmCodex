@@ -43,7 +43,7 @@ public class TriggerEventDecoderTests : BaseUnitTestFixture<TriggerEventDecoder,
         // Assert.
         result.Should().HaveCount(expected.Length);
         var resultMatches = Enumerable.Range(0, expected.Length)
-            .Select(i => ((Event) result[i]).MetadataEquals(expected[i]));
+            .Select(i => result[i].MetadataEquals(expected[i]));
         resultMatches.Should().BeEquivalentTo(Enumerable.Repeat(true, expected.Length));
     }
 }

@@ -68,7 +68,7 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
         foreach (var song in db.Tracks)
         {
             var charts = new List<Chart>();
-            var bpm = 145;
+            const int bpm = 145;
             var chartConfig = new[]
             {
                 (song.ChartEasy, SmNotesDifficulties.Easy),
@@ -79,9 +79,6 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
 
             foreach (var (chartFile, chartDifficulty) in chartConfig)
             {
-                if (chartFile == default)
-                    continue;
-
                 var chartPath = Path.Combine(scriptPath!, chartFile);
                 if (!File.Exists(chartPath))
                     continue;

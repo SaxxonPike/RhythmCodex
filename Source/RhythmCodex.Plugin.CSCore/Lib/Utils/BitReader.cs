@@ -62,10 +62,10 @@ internal unsafe class BitReader : IDisposable
         unchecked
         {
             var ptr = _buffer;
-            uint result = *(ptr++);
-            result = (result << 8) + *(ptr++);
-            result = (result << 8) + *(ptr++);
-            result = (result << 8) + *(ptr++);
+            uint result = *ptr++;
+            result = (result << 8) + *ptr++;
+            result = (result << 8) + *ptr++;
+            result = (result << 8) + *ptr++;
 
             return result << _bitoffset;
         }
@@ -118,8 +118,8 @@ internal unsafe class BitReader : IDisposable
             throw new ArgumentOutOfRangeException(nameof(bits), "bits has to be a value between 1 and 32");
 
         var result = (int) ReadBits(bits);
-        result <<= (32 - bits);
-        result >>= (32 - bits);
+        result <<= 32 - bits;
+        result >>= 32 - bits;
         return result;
     }
 
@@ -147,8 +147,8 @@ internal unsafe class BitReader : IDisposable
             throw new ArgumentOutOfRangeException(nameof(bits), "bits has to be a value between 1 and 64");
 
         var result = (long) ReadBits64(bits);
-        result <<= (64 - bits);
-        result >>= (64 - bits);
+        result <<= 64 - bits;
+        result >>= 64 - bits;
         return result;
     }
 

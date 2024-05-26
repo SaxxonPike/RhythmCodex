@@ -1,6 +1,8 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using RhythmCodex.Digital573.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -31,23 +33,26 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         (Bit(v, b1) << 1) |
         (Bit(v, b0) << 0);
 
-    public Digital573Audio DecryptNew(ReadOnlySpan<byte> input, params int[] key)
+    public Digital573Audio DecryptNew(ReadOnlySpan<byte> input, IEnumerable<int> key)
     {
         if (key == null)
             throw new ArgumentNullException(nameof(key));
-        if (key.Length < 3)
-            throw new RhythmCodexException($"Key must have at least 3 values. Found: {key.Length}");
+
+        var keyList = key.AsList();
+
+        if (keyList.Count < 3)
+            throw new RhythmCodexException($"Key must have at least 3 values. Found: {keyList.Count}");
 
         var length = input.Length & ~1;
         var output = new byte[length];
 
         var keyBytes = new byte[8];
-        BinaryPrimitives.WriteInt16LittleEndian(keyBytes, unchecked((short)key[0]));
-        BinaryPrimitives.WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)key[1]));
+        BinaryPrimitives.WriteInt16LittleEndian(keyBytes, unchecked((short)keyList[0]));
+        BinaryPrimitives.WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)keyList[1]));
 
-        var key1 = key[0];
-        var key2 = key[1];
-        var key3 = key[2];
+        var key1 = keyList[0];
+        var key2 = keyList[1];
+        var key3 = keyList[2];
         for (var i = 0; i < length; i += 2, key3++)
         {
             var v = input[i] | (input[i + 1] << 8);
@@ -93,8 +98,8 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
                 1, 6, 0, 7
             );
 
-            output[i] = unchecked((byte) (v >> 8));
-            output[i + 1] = unchecked((byte) v);
+            output[i] = unchecked((byte)(v >> 8));
+            output[i + 1] = unchecked((byte)v);
 
             key1 = (
                 (key1 & 0x8000) |
@@ -114,7 +119,7 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         return new Digital573Audio
         {
             Key = keyBytes,
-            Counter = key[2],
+            Counter = keyList[2],
             Data = output
         };
     }
@@ -127,12 +132,12 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
             0xE, 0xC, 0xA, 0x8,
             0x6, 0x4, 0x2, 0x0);
         var key = new byte[0x10];
-        key[0] = unchecked((byte) seed);
-        key[1] = unchecked((byte) (seed >> 8));
+        key[0] = unchecked((byte)seed);
+        key[1] = unchecked((byte)(seed >> 8));
         for (var i = 2; i < 16; i++)
         {
             var j = key[i - 2];
-            key[i] = unchecked((byte) ((j << 1) | (j >> 7)));
+            key[i] = unchecked((byte)((j << 1) | (j >> 7)));
         }
 
         var counter = 0;
@@ -168,8 +173,8 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
                     outputWord |= 1 << oddBitShift;
             }
 
-            output[outputIdx] = unchecked((byte) (outputWord >> 8));
-            output[outputIdx + 1] = unchecked((byte) outputWord);
+            output[outputIdx] = unchecked((byte)(outputWord >> 8));
+            output[outputIdx + 1] = unchecked((byte)outputWord);
             outputIdx += 2;
             counter = (counter + 1) & 0xFF;
         }
@@ -181,5 +186,4 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
             Key = key
         };
     }
-
 }

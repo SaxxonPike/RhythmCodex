@@ -13,7 +13,8 @@ namespace RhythmCodex.Beatmania;
 
 /// <inheritdoc cref="IBeatmaniaService"/>
 [Service]
-public class BeatmaniaService(IServiceProvider services) : RhythmCodexServiceBase(services), IBeatmaniaService
+public class BeatmaniaService(IServiceProvider services) 
+    : RhythmCodexServiceBase(services), IBeatmaniaService
 {
     public List<Chart> ReadPcCharts(Stream stream, BigRational rate) =>
         Svc<IBeatmaniaPc1StreamReader>().Read(stream, stream.Length)
@@ -23,6 +24,8 @@ public class BeatmaniaService(IServiceProvider services) : RhythmCodexServiceBas
     public List<Sound> ReadPcSounds(Stream stream) =>
         Svc<IBeatmaniaPcAudioStreamReader>().Read(stream, stream.Length)
             .Select(Svc<IBeatmaniaPcAudioDecoder>().Decode)
+            .Where(sound => sound != null)
+            .Select(sound => sound!)
             .ToList();
 
     public Chart ReadOldPs2Chart(Stream stream) =>

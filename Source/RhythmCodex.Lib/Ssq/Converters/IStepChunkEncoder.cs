@@ -8,5 +8,5 @@ namespace RhythmCodex.Ssq.Converters;
 [PublicAPI]
 public interface IStepChunkEncoder
 {
-    Memory<byte> Convert(IReadOnlyCollection<Step> steps);
+    Memory<byte> Convert(IEnumerable<Step> steps);
 }

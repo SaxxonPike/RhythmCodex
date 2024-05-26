@@ -26,7 +26,7 @@ public class VagDecodeIntegrationTests : BaseIntegrationFixture
 
         using var stream = new MemoryStream(data);
         var vag = streamer.Read(stream);
-        var decoded = decoder.Decode(vag.VagChunk);
+        var decoded = decoder.Decode(vag.VagChunk)!;
         decoded[NumericData.Rate] = 44100;
         this.WriteSound(decoded, "xa2.wav");
     }
@@ -46,7 +46,7 @@ public class VagDecodeIntegrationTests : BaseIntegrationFixture
 
         using var stream = new MemoryStream(data);
         var vag = streamer.Read(stream);
-        var decoded = decoder.Decode(vag.VagChunk);
+        var decoded = decoder.Decode(vag.VagChunk)!;
         decoded[NumericData.Rate] = vag.SampleRate;
         var encoded = encoder.Encode(decoded);
         using var outStream = new MemoryStream();
