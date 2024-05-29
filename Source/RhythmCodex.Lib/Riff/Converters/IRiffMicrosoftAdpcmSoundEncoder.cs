@@ -5,5 +5,5 @@ namespace RhythmCodex.Riff.Converters;
 
 public interface IRiffMicrosoftAdpcmSoundEncoder
 {
-    RiffContainer Encode(Sound? sound, int samplesPerBlock);
+    RiffContainer Encode(Sound sound, int samplesPerBlock);
 }

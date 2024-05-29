@@ -66,7 +66,7 @@ public class XwbDecoder(
                     ChannelSamplesPerFrame = format.AdpcmSamplesPerBlock,
                     Data = sound.Data,
                     Rate = format.SampleRate
-                }).SingleOrDefault();
+                });
             }
             case XwbConstants.WavebankminiformatTagAdpcm:
             {

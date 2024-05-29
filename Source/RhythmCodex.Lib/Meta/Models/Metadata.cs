@@ -29,9 +29,11 @@ public class Metadata : IMetadata
     {
         get
         {
-            var actualKey = _stringDatas?.Keys
-                .FirstOrDefault(k => k.Equals(key, StringComparison.OrdinalIgnoreCase));
-            return actualKey == null ? null : _stringDatas![actualKey];
+            return _stringDatas?
+                .Where(kv => kv.Key.Equals(key, StringComparison.OrdinalIgnoreCase))
+                .Select(kv => kv.Value)
+                .DefaultIfEmpty(null)
+                .First();
         }
         set
         {
@@ -48,7 +50,7 @@ public class Metadata : IMetadata
 
     public BigRational? this[NumericData type]
     {
-        get => _numericDatas?.ContainsKey(type) ?? false ? _numericDatas[type] : null;
+        get => _numericDatas?.TryGetValue(type, out var val) ?? false ? val : null;
         set
         {
             _numericDatas ??= new Dictionary<NumericData, BigRational>();
@@ -61,7 +63,7 @@ public class Metadata : IMetadata
 
     public bool? this[FlagData type]
     {
-        get => _flagDatas?.ContainsKey(type) ?? false ? _flagDatas[type] : null;
+        get => _flagDatas?.TryGetValue(type, out var val) ?? false ? val : null;
         set
         {
             _flagDatas ??= new Dictionary<FlagData, bool>();

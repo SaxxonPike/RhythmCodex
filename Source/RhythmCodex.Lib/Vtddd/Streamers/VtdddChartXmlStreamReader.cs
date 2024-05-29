@@ -20,7 +20,7 @@ public class VtdddChartXmlStreamReader : IVtdddChartXmlStreamReader
         var text = reader.ReadToEnd().Replace("<?xml version='1.1'?>", "<?xml version='1.0'?>");
         var doc = XDocument.Parse(text);
         var stepNodes = doc.Root?.Elements();
-        var steps = stepNodes?.SelectMany(DecodeStep).ToList();
+        var steps = stepNodes?.SelectMany(DecodeStep).ToList() ?? [];
         return steps;
     }
 

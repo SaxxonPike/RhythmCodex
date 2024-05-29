@@ -47,24 +47,14 @@ public class WavDecoder(
         {
             case 0x0001: // raw PCM
             {
-                float[] decoded;
-                switch (format.BitsPerSample)
+                var decoded = format.BitsPerSample switch
                 {
-                    case 8:
-                        decoded = pcmDecoder.Decode8Bit(data.Data.Span);
-                        break;
-                    case 16:
-                        decoded = pcmDecoder.Decode16Bit(data.Data.Span);
-                        break;
-                    case 24:
-                        decoded = pcmDecoder.Decode24Bit(data.Data.Span);
-                        break;
-                    case 32:
-                        decoded = pcmDecoder.Decode32Bit(data.Data.Span);
-                        break;
-                    default:
-                        throw new RhythmCodexException("Invalid bits per sample.");
-                }
+                    8 => pcmDecoder.Decode8Bit(data.Data.Span),
+                    16 => pcmDecoder.Decode16Bit(data.Data.Span),
+                    24 => pcmDecoder.Decode24Bit(data.Data.Span),
+                    32 => pcmDecoder.Decode32Bit(data.Data.Span),
+                    _ => throw new RhythmCodexException("Invalid bits per sample.")
+                };
 
                 foreach (var channel in decoded.AsSpan().Deinterleave(1, format.Channels))
                 {
@@ -81,6 +71,9 @@ public class WavDecoder(
             {
                 var exFormat = new MicrosoftAdpcmFormat(format.ExtraData.Span);
                 var decoded = microsoftAdpcmDecoder.Decode(data.Data.Span, format, exFormat);
+
+                if (decoded == null)
+                    return null;
 
                 foreach (var sample in decoded.Samples)
                     result.Samples.Add(sample);
@@ -113,7 +106,10 @@ public class WavDecoder(
                     ChannelSamplesPerFrame = exFormat.SamplesPerBlock
                 });
 
-                foreach (var sample in decoded.SelectMany(s => s.Samples))
+                if (decoded == null)
+                    return null;
+
+                foreach (var sample in decoded.Samples)
                     result.Samples.Add(sample);
                     
                 break;

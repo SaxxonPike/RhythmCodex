@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charting.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -37,31 +38,33 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         public BigRational? SoundIndex { get; set; }
     }
 
-    public Sound Render(IEnumerable<Event> inEvents, IEnumerable<Sound?> inSounds, ChartRendererOptions options)
+    public Sound Render(IEnumerable<Event> inEvents, IEnumerable<Sound> inSounds, ChartRendererOptions options)
     {
         var state = new List<ChannelState>();
         var sampleMap = new List<SampleMapping>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
 
-        var events = inEvents.ToList();
+        var events = inEvents.AsCollection();
         if (events.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException("Can't render without all events having linear offsets.");
 
         var sounds = inSounds
             .Select(s =>
                 audioDsp.ApplyResampling(audioDsp.ApplyEffects(s), resamplerProvider.GetBest(), options.SampleRate))
-            .Where(s => s != null)
             .ToArray();
 
         var mixdownLeft = new List<float>();
         var mixdownRight = new List<float>();
 
         var lastSample = 0;
-        var eventTicks = events.GroupBy(ev => ev[NumericData.LinearOffset]).OrderBy(g => g.Key).ToList();
+        var eventTicks = events
+            .GroupBy(ev => (BigRational)ev[NumericData.LinearOffset]!)
+            .OrderBy(g => g.Key)
+            .ToList();
 
         foreach (var tick in eventTicks)
         {
-            var nowSample = (int)(tick.Key.Value * options.SampleRate);
+            var nowSample = (int)(tick.Key * options.SampleRate);
             var tickEvents = tick.ToArray();
 
             for (; lastSample < nowSample; lastSample++)
@@ -128,7 +131,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                 sound = sounds.FirstOrDefault(s => s?[NumericData.Id] == sample.SoundIndex);
             var channel = sound?[NumericData.Channel];
             ChannelState? st = null;
-            if (channel != null && channel >= 0 && channel < 255)
+            if (channel >= 0 && channel < 255)
                 st = state.FirstOrDefault(s => s.Channel == channel);
 
             if (st == null)

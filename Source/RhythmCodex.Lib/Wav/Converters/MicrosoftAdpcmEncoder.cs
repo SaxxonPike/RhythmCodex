@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.IoC;
@@ -10,9 +11,10 @@ namespace RhythmCodex.Wav.Converters;
 [Service]
 public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
 {
-    public Memory<byte> Encode(Sound? sound, int samplesPerBlock)
+    public Memory<byte> Encode(Sound sound, int samplesPerBlock)
     {
         var channelCount = sound.Samples.Count;
+        var adaptationTable = MicrosoftAdpcmConstants.CreateAdaptationTable().ToArray();
         var buffer = new float[samplesPerBlock];
         var max = sound.Samples.Select(s => s.Data.Length).Max();
         var remaining = max + 1;
@@ -20,6 +22,7 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
         var offset = 0;
         var channels = sound.Samples.Select(s => s.Data).ToArray();
         var deltas = new int[channelCount];
+        var coefficients = MicrosoftAdpcmConstants.CreateCoefficientTable().ToArray();
 
         using var encoded = new MemoryStream();
         while (remaining > 0)
@@ -31,7 +34,7 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
                 var length = Math.Min(samplesPerBlock, source.Length - offset);
                 if (length < samplesPerBlock)
                 {
-                    buffer.AsSpan(0, length).Fill(0);
+                    buffer.AsSpan(0, length).Clear();
                     source.Slice(offset, length).CopyTo(buffer);
                     bufferSpan = buffer;
                 }
@@ -41,40 +44,40 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
                 }
 
                 deltas[channel] = EncodeFrame(output, bufferSpan, channel, channelCount,
-                    MicrosoftAdpcmConstants.DefaultCoefficients, deltas[channel]);
+                    coefficients, deltas[channel], adaptationTable);
             }
 
             encoded.Write(output, 0, output.Length);
             offset += samplesPerBlock;
             remaining -= samplesPerBlock;
-            output.AsSpan().Fill(0x00);
+            output.AsSpan().Clear();
         }
 
         return encoded.ToArray();
     }
 
-    public int GetBlockSize(int samplesPerBlock, int channels) => 
+    public int GetBlockSize(int samplesPerBlock, int channels) =>
         (samplesPerBlock - 2) * channels / 2 + channels * 7;
 
     // returns delta
-    private int EncodeFrame(Span<byte> frame, ReadOnlySpan<float> buffer, int channel, int channelCount,
-        ReadOnlySpan<int> coefficients, int initialDelta)
+    private static int EncodeFrame(Span<byte> frame, ReadOnlySpan<float> buffer, int channel, int channelCount,
+        ReadOnlySpan<int> coefficients, int initialDelta, ReadOnlySpan<int> adaptationTable)
     {
         // write starting sample to buffer
         var sample2 = ToSample(buffer[0]);
         var sample1 = ToSample(buffer[1]);
         var sample1Offset = channelCount * 3 + (channel << 1);
         var sample2Offset = channelCount * 5 + (channel << 1);
-        frame[sample1Offset] = unchecked((byte) sample1);
-        frame[sample1Offset + 1] = unchecked((byte) (sample1 >> 8));
-        frame[sample2Offset] = unchecked((byte) sample2);
-        frame[sample2Offset + 1] = unchecked((byte) (sample2 >> 8));
+        frame[sample1Offset] = unchecked((byte)sample1);
+        frame[sample1Offset + 1] = unchecked((byte)(sample1 >> 8));
+        frame[sample2Offset] = unchecked((byte)sample2);
+        frame[sample2Offset + 1] = unchecked((byte)(sample2 >> 8));
 
         // write starting delta to buffer
         var delta = SaturateDelta(initialDelta);
         var deltaOffset = channelCount + (channel << 1);
-        frame[deltaOffset] = unchecked((byte) delta);
-        frame[deltaOffset + 1] = unchecked((byte) (delta >> 8));
+        frame[deltaOffset] = unchecked((byte)delta);
+        frame[deltaOffset + 1] = unchecked((byte)(delta >> 8));
 
         // try each coefficient
         var coeffCount = coefficients.Length >> 1;
@@ -91,9 +94,10 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
             sample2 = ToSample(buffer[0]);
             sample1 = ToSample(buffer[1]);
             var coeffError = 0d;
-            for (var i = 0; i < buffer.Length; i++)
+
+            foreach (var t in buffer)
             {
-                var (error, _, d, s1) = FindBestNybble(buffer[i], sample1, coeff1, sample2, coeff2, delta);
+                var (error, _, d, s1) = FindBestNybble(t, sample1, coeff1, sample2, coeff2, delta, adaptationTable);
                 coeffError += error;
                 coeffError /= 2;
                 sample2 = sample1;
@@ -121,7 +125,7 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
         delta = SaturateDelta(initialDelta);
         coeff1 = coefficients[bestCoeff << 1];
         coeff2 = coefficients[(bestCoeff << 1) + 1];
-        frame[channel] = unchecked((byte) bestCoeff);
+        frame[channel] = unchecked((byte)bestCoeff);
 
         while (frameIndex < frame.Length)
         {
@@ -132,8 +136,8 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
             if (channelIndex == channel)
             {
                 var (_, data, d, s1) =
-                    FindBestNybble(buffer[bufferIndex++], sample1, coeff1, sample2, coeff2, delta);
-                frame[frameIndex] |= unchecked((byte) (data << 4));
+                    FindBestNybble(buffer[bufferIndex++], sample1, coeff1, sample2, coeff2, delta, adaptationTable);
+                frame[frameIndex] |= unchecked((byte)(data << 4));
                 sample2 = sample1;
                 sample1 = s1;
                 delta = d;
@@ -146,8 +150,8 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
             if (channelIndex == channel)
             {
                 var (_, data, d, s1) =
-                    FindBestNybble(buffer[bufferIndex++], sample1, coeff1, sample2, coeff2, delta);
-                frame[frameIndex] |= unchecked((byte) data);
+                    FindBestNybble(buffer[bufferIndex++], sample1, coeff1, sample2, coeff2, delta, adaptationTable);
+                frame[frameIndex] |= unchecked((byte)data);
                 sample2 = sample1;
                 sample1 = s1;
                 delta = d;
@@ -158,9 +162,11 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
 
         return delta;
     }
-        
-    private static (double error, int data, int d, int s1) FindBestNybble(float target, int s1, int ce1, int s2, int ce2,
-        int d)
+
+    private static (double error, int data, int d, int s1) FindBestNybble(float target, int s1, int ce1, int s2,
+        int ce2,
+        int d,
+        ReadOnlySpan<int> adaptationTable)
     {
         var bestNybble = -1;
         var bestError = double.MaxValue;
@@ -179,7 +185,7 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
             if (newS1 > 32767)
                 newS1 = 32767;
 
-            var newD = SaturateDelta((MicrosoftAdpcmConstants.AdaptationTable[data] * d) >> 8);
+            var newD = SaturateDelta((adaptationTable[data] * d) >> 8);
 
             double error = newS1 - targetSample;
             error *= error;
@@ -198,16 +204,14 @@ public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
         return (bestError, bestNybble, bestD, bestS1);
     }
 
-    private static int SaturateDelta(int d) => 
+    private static int SaturateDelta(int d) =>
         d < 16 ? 16 : d;
 
-    private static int ToSample(float sample)
-    {
-        var s = (int) (sample * 32768);
-        if (s > 32767)
-            return 32767;
-        if (s < -32768)
-            return -32768;
-        return s;
-    }
+    private static int ToSample(float sample) =>
+        (int)(sample * 32768) switch
+        {
+            > 32767 => 32767,
+            < -32768 => -32768,
+            var s => s
+        };
 }
