@@ -7,5 +7,5 @@ namespace RhythmCodex.Xact.Model;
 public class XsbFile
 {
     public XsbHeader Header { get; set; }
-    public List<XsbCue> Cues { get; set; }
+    public List<XsbCue> Cues { get; set; } = [];
 }

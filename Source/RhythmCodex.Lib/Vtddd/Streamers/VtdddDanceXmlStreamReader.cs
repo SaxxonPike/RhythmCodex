@@ -14,7 +14,7 @@ public class VtdddDanceXmlStreamReader : IVtdddDanceXmlStreamReader
     {
         var doc = XDocument.Load(stream);
         var songNodes = doc.Root?.Elements("tracks").SelectMany(e => e.Elements()) ?? [];
-        var songDb = songNodes?.Select((e, i) => DecodeSong(e, i, chartPrefix)).ToList() ?? [];
+        var songDb = songNodes.Select((e, i) => DecodeSong(e, i, chartPrefix)).ToList();
         return new VtdddDanceDb
         {
             Tracks = songDb

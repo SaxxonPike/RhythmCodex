@@ -6,5 +6,5 @@ namespace RhythmCodex.Bms.Converters;
 
 public interface IBmsSoundLoader
 {
-    List<Sound?> Load(IDictionary<int, string> map, IFileAccessor accessor);
+    List<Sound> Load(IDictionary<int, string> map, IFileAccessor accessor);
 }

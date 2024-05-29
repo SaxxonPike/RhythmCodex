@@ -69,10 +69,12 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
             var filter0 = k0 * p1;
             var filter1 = k1 * p2;
             var p0 = (delta >> magnitude) + ((filter0 + filter1) >> 6);
-            if (p0 > 32767)
-                p0 = 32767;
-            else if (p0 < -32768)
-                p0 = -32768;
+            p0 = p0 switch
+            {
+                > 32767 => 32767,
+                < -32768 => -32768,
+                _ => p0
+            };
             buffer[i] = p0 / 32768f;
             p2 = p1;
             p1 = p0;

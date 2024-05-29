@@ -11,15 +11,18 @@ namespace RhythmCodex.Vag.Heuristics;
 [Service]
 public class SvagHeuristic(IVagStreamReader vagStreamReader) : IReadableHeuristic<SvagContainer>
 {
-    public SvagContainer Read(HeuristicResult result, Stream stream)
+    public SvagContainer? Read(HeuristicResult result, Stream stream)
     {
-        if (!(result is VagHeuristicResult info))
+        if (result is not VagHeuristicResult info)
             return null;
-            
+
         if (info.Start != null)
-            stream.TryRead(0, (int) info.Start);
+            stream.TryRead(0, (int)info.Start);
 
         var output = vagStreamReader.Read(stream, info.Channels ?? 1, info.Interleave ?? 0);
+        if (output == null) 
+            return null;
+
         output.Volume = info.Volume;
         output.SampleRate = info.SampleRate;
         output.Length = info.Length;
@@ -29,12 +32,13 @@ public class SvagHeuristic(IVagStreamReader vagStreamReader) : IReadableHeuristi
             SampleRate = info.SampleRate,
             VagChunk = output
         };
+
     }
 
     public string Description => "SVAG sample";
 
     public string FileExtension => "svag";
-        
+
     public HeuristicResult? Match(IHeuristicReader reader)
     {
         Span<int> words = stackalloc int[7];
@@ -44,19 +48,19 @@ public class SvagHeuristic(IVagStreamReader vagStreamReader) : IReadableHeuristi
             return null;
 
         Bitter.ToInt32Values(data, words);
-            
+
         // "Svag"
         if (words[0] != 0x67617653)
             return null;
-            
+
         // Make sure length is 16-byte aligned
         if ((words[1] & 0xF) != 0)
             return null;
-            
+
         // Make sure sample rate fits in 16bits
         if (words[2] > 0xFFFF || words[2] <= 0)
             return null;
-            
+
         // More than 4 channels is pretty unlikely
         if (words[3] < 1 || words[3] > 4)
             return null;
@@ -72,13 +76,13 @@ public class SvagHeuristic(IVagStreamReader vagStreamReader) : IReadableHeuristi
         // Interleave must be present if more than 1 channel
         if (words[3] > 1 && words[4] == 0)
             return null;
-            
+
         // Must have at least 1 full block present
         if (words[1] < words[3] * words[4])
             return null;
-            
+
         // The usable header length is 0x1C but the last two words are loop info, we don't care about it
-            
+
         return new VagHeuristicResult(this)
         {
             Start = 0x800,

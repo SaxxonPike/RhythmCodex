@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -14,8 +15,11 @@ public class RiffMicrosoftAdpcmSoundEncoder(
     IMicrosoftAdpcmEncoder microsoftAdpcmEncoder)
     : IRiffMicrosoftAdpcmSoundEncoder
 {
-    public RiffContainer Encode(Sound? sound, int samplesPerBlock)
+    public RiffContainer Encode(Sound sound, int samplesPerBlock)
     {
+        ArgumentNullException.ThrowIfNull(sound, nameof(sound));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(samplesPerBlock, nameof(samplesPerBlock));
+        
         var sampleRate = sound[NumericData.Rate];
 
         if (sampleRate == null)
@@ -43,7 +47,6 @@ public class RiffMicrosoftAdpcmSoundEncoder(
             
         var extraFormat = new MicrosoftAdpcmFormat
         {
-            Coefficients = MicrosoftAdpcmConstants.DefaultCoefficients,
             SamplesPerBlock = 500
         };
             
@@ -52,7 +55,7 @@ public class RiffMicrosoftAdpcmSoundEncoder(
             Format = 2,
             SampleRate = (int) sampleRate,
             Channels = channels,
-            ByteRate = (int) byteRate,
+            ByteRate = (int) byteRate!,
             BitsPerSample = 4,
             BlockAlign = microsoftAdpcmEncoder.GetBlockSize(samplesPerBlock, channels),
             ExtraData = extraFormat.ToBytes()

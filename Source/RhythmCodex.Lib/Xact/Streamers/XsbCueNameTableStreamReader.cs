@@ -29,7 +29,7 @@ public class XsbCueNameTableStreamReader : IXsbCueNameTableStreamReader
             buffer.Add(b);
         }
             
-        if (buffer.Any())
+        if (buffer.Count != 0)
             result.Add(buffer.ToArray().GetString());
 
         return result;

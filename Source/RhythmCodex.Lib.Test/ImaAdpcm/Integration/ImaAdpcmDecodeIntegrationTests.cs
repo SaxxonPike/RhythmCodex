@@ -33,22 +33,18 @@ public class ImaAdpcmDecodeIntegrationTests : BaseIntegrationFixture
             Rate = 44100
         };
 
-        var decoded = decoder.Decode(ima);
-        var index = 0;
+        var sound = decoder.Decode(ima)!;
+        const int index = 0;
             
-        foreach (var sound in decoded)
-        {
-            sound[NumericData.Rate] = ima.Rate;
-            var encoded = encoder.Encode(sound);
-            var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ima");
-            if (!Directory.Exists(outfolder))
-                Directory.CreateDirectory(outfolder);
+        sound[NumericData.Rate] = ima.Rate;
+        var encoded = encoder.Encode(sound);
+        var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ima");
+        if (!Directory.Exists(outfolder))
+            Directory.CreateDirectory(outfolder);
 
-            using var outStream = new MemoryStream();
-            writer.Write(outStream, encoded);
-            outStream.Flush();
-            File.WriteAllBytes(Path.Combine(outfolder, $"{index:000}.wav"), outStream.ToArray());
-            index++;
-        }
+        using var outStream = new MemoryStream();
+        writer.Write(outStream, encoded);
+        outStream.Flush();
+        File.WriteAllBytes(Path.Combine(outfolder, $"{index:000}.wav"), outStream.ToArray());
     }
 }
