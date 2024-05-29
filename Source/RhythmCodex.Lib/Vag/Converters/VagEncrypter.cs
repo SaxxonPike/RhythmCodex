@@ -29,11 +29,11 @@ public class VagEncrypter : IVagEncrypter
 
         while (inOffset < maxOffset)
         {
-            var inBuffer = input.Slice(inOffset);
-            var outBuffer = output.Slice(outOffset);
+            var inBuffer = input[inOffset..];
+            var outBuffer = output[outOffset..];
 
-            workBufferSpan.Fill(0x00);
-            frameDiffSpan.Fill(0f);
+            workBufferSpan.Clear();
+            frameDiffSpan.Clear();
 
             for (var index = 0; index < 28; index++)
                 inputSampleBuffer[index] = (int) (inBuffer[index] * 32768f);
@@ -62,7 +62,7 @@ public class VagEncrypter : IVagEncrypter
                             sampleToEncode = -32768;
 
                         var nybble = ((sampleToEncode << (magnitude + 16)) >> 28) & 0xF;
-                        if (nybble == 0x8 || nybble == 0x7)
+                        if (nybble is 0x8 or 0x7)
                             filterMagnitude[filter] = Math.Min(filterMagnitude[filter], magnitude);
 
                         var encodedSample = ((nybble << 28) >> (magnitude + 16)) + ((filter0 + filter1) >> 6);
@@ -109,11 +109,11 @@ public class VagEncrypter : IVagEncrypter
                 var isEmptyFrame = true;
                 for (var i = 2; i < 16; i++)
                 {
-                    if (outBuffer[i] != 0)
-                    {
-                        isEmptyFrame = false;
-                        break;
-                    }
+                    if (outBuffer[i] == 0) 
+                        continue;
+
+                    isEmptyFrame = false;
+                    break;
                 }
 
                 if (isEmptyFrame)

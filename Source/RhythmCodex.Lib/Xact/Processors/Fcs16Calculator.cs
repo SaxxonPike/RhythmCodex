@@ -50,8 +50,10 @@ public class Fcs16Calculator : IFcs16Calculator
     {
         var fcs = PppInitFcs16;
         var tab = FcsTab.Value;
-        for (var i = 0; i < data.Length; i++)
-            fcs = ((fcs >> 8) ^ tab[(fcs ^ data[i]) & 0xFF]) & 0xFFFF;
-        return unchecked((short) (fcs ^ 0xFFFF));
+
+        foreach (var t in data)
+            fcs = ((fcs >> 8) ^ tab[(fcs ^ t) & 0xFF]) & 0xFFFF;
+
+        return unchecked((short)(fcs ^ 0xFFFF));
     }
 }

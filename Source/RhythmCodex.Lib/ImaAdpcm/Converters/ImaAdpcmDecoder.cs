@@ -12,9 +12,8 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
 {
     // Reference: https://github.com/dbry/adpcm-xq/blob/master/adpcm-lib.c
 
-    public List<Sound?> Decode(ImaAdpcmChunk chunk)
+    public Sound? Decode(ImaAdpcmChunk chunk)
     {
-        var sounds = new List<Sound?>();
         var buffer = new float[chunk.ChannelSamplesPerFrame];
         var channels = chunk.Channels;
         var frameSize = chunk.ChannelSamplesPerFrame * chunk.Channels / 2 + chunk.Channels * 4;
@@ -30,16 +29,14 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                 output[channel].AddRange(buffer);
             }
         }
-            
-        sounds.Add(new Sound
-        {
-            Samples = output.Select(s => new Sample {Data = s.ToArray()}).ToList()
-        });
 
-        return sounds;            
+        return new Sound
+        {
+            Samples = output.Select(s => new Sample { Data = s.ToArray() }).ToList()
+        };
     }
 
-    private int DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, int channelCount)
+    private static int DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, int channelCount)
     {
         var index = channel << 2;
         var sample = ((frame[index] | (frame[index + 1] << 8)) << 16) >> 16;
@@ -59,7 +56,7 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                 if (channelIndex == channelCount)
                     channelIndex = 0;
             }
-                
+
             if (channelIndex == channel)
                 buffer[bufferIndex++] = DecodeNybble(frame[index]);
             nybbleIndex++;
@@ -67,7 +64,7 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
             if (channelIndex == channel)
                 buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
             nybbleIndex++;
-                
+
             index++;
             continue;
 
@@ -85,7 +82,7 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                     sample = -32768;
                 if (sample > 32767)
                     sample = 32767;
-                
+
                 sample += delta;
                 control += ImaAdpcmConstants.IndexTable[data & 0x7];
                 if (control < 0)
