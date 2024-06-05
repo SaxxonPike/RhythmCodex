@@ -19,8 +19,8 @@ public class FontFactory : IFontFactory, IDisposable
 
     public void Dispose()
     {
-        _normal?.Dispose();
-        _normalDark?.Dispose();
-        _large?.Dispose();
+        _normal.Dispose();
+        _normalDark.Dispose();
+        _large.Dispose();
     }
 }

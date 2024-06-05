@@ -377,7 +377,7 @@ public sealed class FlacFrameHeader
 
             if (DoCrc)
             {
-                var crc8 = Utils.CRC8.Instance.CalcCheckSum(reader.Buffer, 0, reader.Position);
+                var crc8 = CRC8.Instance.CalcCheckSum(reader.Buffer, 0, reader.Position);
                 Crc8 = (byte) reader.ReadBits(8);
                 if (Crc8 != crc8)
                 {

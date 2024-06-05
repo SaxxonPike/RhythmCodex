@@ -61,7 +61,7 @@ public class BeatmaniaTaskBuilder(
         {
             var rate = new BigRational(1000, 1);
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -82,33 +82,14 @@ public class BeatmaniaTaskBuilder(
                     var newChart = beatmaniaPc1ChartDecoder.Decode(c.Data, rate);
                     newChart[NumericData.Id] = c.Index;
 
-                    switch (c.Index)
+                    newChart[NumericData.Difficulty] = c.Index switch
                     {
-                        case 0:
-                        case 6:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.NormalId;
-                            break;
-                        }
-                        case 1:
-                        case 7:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.LightId;
-                            break;
-                        }
-                        case 2:
-                        case 8:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.AnotherId;
-                            break;
-                        }
-                        case 3:
-                        case 9:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.BeginnerId;
-                            break;
-                        }
-                    }
+                        0 or 6 => BeatmaniaDifficultyConstants.NormalId,
+                        1 or 7 => BeatmaniaDifficultyConstants.LightId,
+                        2 or 8 => BeatmaniaDifficultyConstants.AnotherId,
+                        3 or 9 => BeatmaniaDifficultyConstants.BeginnerId,
+                        _ => newChart[NumericData.Difficulty]
+                    };
 
                     newChart[StringData.Title] = Path.GetFileNameWithoutExtension(file.Name);
                     return newChart;
@@ -137,7 +118,7 @@ public class BeatmaniaTaskBuilder(
         return Build("Extract 2DX", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -155,10 +136,11 @@ public class BeatmaniaTaskBuilder(
                     foreach (var sound in sounds)
                     {
                         var decoded = beatmaniaPcAudioDecoder.Decode(sound);
-                        var outSound = audioDsp.ApplyEffects(decoded);
-                        using (var outStream =
-                               OpenWriteMulti(task, file, _ => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
+                        if (decoded != null)
                         {
+                            var outSound = audioDsp.ApplyEffects(decoded);
+                            using var outStream =
+                                OpenWriteMulti(task, file, _ => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav");
                             var encoded = riffPcm16SoundEncoder.Encode(outSound);
                             riffStreamWriter.Write(outStream, encoded);
                         }
@@ -177,7 +159,7 @@ public class BeatmaniaTaskBuilder(
         return Build("Extract DJMAIN HDD", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -229,7 +211,7 @@ public class BeatmaniaTaskBuilder(
         return Build("Render DJMAIN GST", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -301,7 +283,7 @@ public class BeatmaniaTaskBuilder(
                 using var outStream =
                     OpenWriteMulti(task, file,
                         _ => Path.Combine(path,
-                            $"{Alphabet.EncodeAlphanumeric((int)sound![NumericData.Id]!, 4)}.wav"));
+                            $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 4)}.wav"));
                 var encoded = riffPcm16SoundEncoder.Encode(outSound);
                 riffStreamWriter.Write(outStream, encoded);
             }

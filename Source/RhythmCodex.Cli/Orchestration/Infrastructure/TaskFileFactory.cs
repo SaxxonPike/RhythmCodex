@@ -15,7 +15,7 @@ public class TaskFileFactory(IFileSystem fileSystem) : ITaskFileFactory
         return new TaskFile
         {
             FileName = Path.GetFileName(path),
-            Path = Path.GetDirectoryName(path),
+            Path = Path.GetDirectoryName(path)!,
             Open = () => fileSystem.OpenRead(path)
         };
     }
@@ -23,6 +23,6 @@ public class TaskFileFactory(IFileSystem fileSystem) : ITaskFileFactory
     public IReadOnlyList<TaskFile> CreateFromArchive(string path)
     {
         var archive = new ZipArchive(fileSystem.OpenRead(path), ZipArchiveMode.Read, false);
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }

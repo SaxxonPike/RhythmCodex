@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charting.Models;
@@ -59,7 +58,7 @@ public class Step2Decoder(IStep2EventMapper step2EventMapper) : IStep2Decoder
         };
     }
 
-    private IEnumerable<Step2Step> DecodeSteps(IEnumerable<byte> data, int player)
+    private static IEnumerable<Step2Step> DecodeSteps(IEnumerable<byte> data, int player)
     {
         var i = 0;
         foreach (var panels in data)
@@ -78,7 +77,7 @@ public class Step2Decoder(IStep2EventMapper step2EventMapper) : IStep2Decoder
         }
     }
 
-    private (List<byte> p1, List<byte> p2) DecodeStepBlocks(Step2Chunk chunk)
+    private static (List<byte> p1, List<byte> p2) DecodeStepBlocks(Step2Chunk chunk)
     {
         var p1 = new List<byte>();
         var p2 = new List<byte>();
@@ -89,7 +88,7 @@ public class Step2Decoder(IStep2EventMapper step2EventMapper) : IStep2Decoder
         {
             var meta = chunk.Metadatas[currentP1];
             var data = new byte[meta.Length];
-            Buffer.BlockCopy(chunk.Data, meta.Offset, data, 0, meta.Length);
+            chunk.Data.Slice(meta.Offset, meta.Length).CopyTo(data);
             p1.AddRange(data);
             if (meta.Next1P == currentP1)
                 break;
@@ -100,7 +99,7 @@ public class Step2Decoder(IStep2EventMapper step2EventMapper) : IStep2Decoder
         {
             var meta = chunk.Metadatas[currentP2];
             var data = new byte[meta.Length];
-            Buffer.BlockCopy(chunk.Data, meta.Offset, data, 0, meta.Length);
+            chunk.Data.Slice(meta.Offset, meta.Length).CopyTo(data);
             p2.AddRange(data);
             if (meta.Next2P == currentP2)
                 break;

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Stepmania.Model;
@@ -28,7 +29,7 @@ public class NoteCommandStringEncoder(IQuantizer quantizer) : INoteCommandString
                 measureBuilder.AppendLine(new string(row));
 
             if (!isFirst)
-                resultBuilder.Append(",");
+                resultBuilder.Append(',');
             else
                 isFirst = false;
 
@@ -40,12 +41,12 @@ public class NoteCommandStringEncoder(IQuantizer quantizer) : INoteCommandString
 
     private IEnumerable<char[][]> EncodeMeasures(IEnumerable<Note> notes)
     {
-        var notesList = notes;
-        if (!notesList.Any())
+        var notesList = notes.AsCollection();
+        if (notesList.Count == 0)
             yield break;
             
         var columns = notesList.Max(n => n.Column) + 1;
-        var measures = notesList.GroupBy(n => n.MetricOffset.GetWholePart());
+        var measures = notesList.GroupBy(n => n.MetricOffset.GetWholePart()).AsCollection();
         var maxMeasure = measures.Max(m => m.Key);
 
         for (var measureNumber = 0; measureNumber <= maxMeasure; measureNumber++)

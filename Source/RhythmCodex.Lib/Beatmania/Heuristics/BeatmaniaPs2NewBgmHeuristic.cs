@@ -56,7 +56,7 @@ public class BeatmaniaPs2NewBgmHeuristic(IVagStreamReader vagStreamReader)
         if (result is not VagHeuristicResult info)
             return null;
             
-        var decryptStream = info.Key != null
+        var decryptStream = info.Key.Length > 0
             ? new BeatmaniaPs2NewAudioDecryptStream(stream, info.Key)
             : stream;
 

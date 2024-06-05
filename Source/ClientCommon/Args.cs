@@ -17,9 +17,7 @@ public sealed class Args
 
         opts.Remove("o");
             
-        InputFiles = opts.ContainsKey(string.Empty)
-            ? opts[string.Empty]
-            : [];
+        InputFiles = opts.TryGetValue(string.Empty, out var value) ? value : [];
 
         opts.Remove(string.Empty);
 

@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
@@ -7,7 +8,10 @@ namespace RhythmCodex.Djmain.Heuristics;
 [Service]
 public class DjmainHddDescriptionHeuristic : IDjmainHddDescriptionHeuristic
 {
-    public DjmainHddDescription Get(byte[] chunk)
+    public DjmainHddDescription Get(byte[] chunk) =>
+        Get(chunk.AsSpan());
+    
+    public DjmainHddDescription Get(ReadOnlySpan<byte> chunk)
     {
         var format =
             GetFormat(new[] {chunk[1], chunk[0], chunk[3], chunk[2], chunk[5], chunk[4]}.GetString());

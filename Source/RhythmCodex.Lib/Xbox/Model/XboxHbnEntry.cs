@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Xbox.Model;
@@ -6,5 +7,5 @@ namespace RhythmCodex.Xbox.Model;
 public class XboxHbnEntry
 {
     public string? Name { get; set; }
-    public byte[]? Data { get; set; }
+    public Memory<byte> Data { get; set; }
 }

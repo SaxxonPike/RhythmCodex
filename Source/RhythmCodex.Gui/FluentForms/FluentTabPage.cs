@@ -16,8 +16,7 @@ public class FluentTabPage : FluentControl<TabPage>
         result.VerticalScroll.Enabled = AutoScroll;
             
         var children = BuildChildren(state);
-        if (children != null)
-            result.Controls.AddRange(children);
+        result.Controls.AddRange(children);
 
         UpdateMap(state, result);
         return result;

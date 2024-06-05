@@ -11,8 +11,10 @@ namespace RhythmCodex.Gui.Forms;
 [Service]
 public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : IControlFactory
 {
-    public IEnumerable<FluentControl> CreateCheckbox(string id, string text)
+    public IEnumerable<FluentControl> CreateCheckbox(string? id, string text)
     {
+        id ??= $"Checkbox{GetHashCode():X8}";
+
         return new List<FluentControl>
         {
             new FluentEmpty(),
@@ -27,8 +29,11 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
         };
     }
 
-    public IEnumerable<FluentControl> CreateDualCheckbox(string id0, string text0, string id1, string text1)
+    public IEnumerable<FluentControl> CreateDualCheckbox(string? id0, string text0, string? id1, string text1)
     {
+        id0 ??= $"DualCheckboxA{GetHashCode():X8}";
+        id1 ??= $"DualCheckboxB{GetHashCode():X8}";
+
         return new List<FluentControl>
         {
             new FluentEmpty(),
@@ -63,14 +68,15 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
                         Font = fontFactory.GetNormal(),
                         AutoSize = true
                     }
-
                 ]
             }
         };
     }
 
-    public FluentTable CreateStandardTable(string id, IEnumerable<FluentControl> controls, bool fill)
+    public FluentTable CreateStandardTable(string? id, IEnumerable<FluentControl> controls, bool fill)
     {
+        id ??= $"StandardTable{GetHashCode():X8}";
+
         return new FluentTable
         {
             Id = id,
@@ -87,8 +93,10 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
         };
     }
 
-    public IEnumerable<FluentControl> CreateBigButton(string id, string text, Action<FluentContext> press)
+    public IEnumerable<FluentControl> CreateBigButton(string? id, string text, Action<FluentContext> press)
     {
+        id ??= $"BigButton{GetHashCode():X8}";
+
         return new FluentControl[]
         {
             new FluentEmpty(),
@@ -113,8 +121,10 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
         x.Blueprint.OnClick = () => action(x);
     }
 
-    public IEnumerable<FluentControl> CreateFileSelect(string id, string text, bool multi)
+    public IEnumerable<FluentControl> CreateFileSelect(string? id, string text, bool multi)
     {
+        id ??= $"FileSelect{GetHashCode():X8}";
+
         return new FluentControl[]
         {
             new FluentLabel
@@ -133,22 +143,24 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
             },
             new FluentButton
             {
-                Id = id + "Button",
+                Id = $"{id}Button",
                 Dock = DockStyle.Fill,
                 Text = multi ? "...+" : "...",
                 AfterBuild = x => x.Blueprint.OnClick = () =>
                 {
                     var fileName = fileDialog.OpenFile(x.Control.Text, null, multi);
-                    if (fileName != null)
-                        x.GetControl<TextBox>(id).Text = fileName;
+                    if (fileName != null &&
+                        x.GetControl<TextBox>(id) is {} textBox)
+                        textBox.Text = fileName;
                 },
                 Font = fontFactory.GetNormal()
             }
         };
     }
 
-    public IEnumerable<FluentControl> CreateFolderSelect(string id, string text)
+    public IEnumerable<FluentControl> CreateFolderSelect(string? id, string text)
     {
+        id ??= $"FolderSelect{GetHashCode():X8}";
         return new FluentControl[]
         {
             new FluentLabel
@@ -167,26 +179,29 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
             },
             new FluentButton
             {
-                Id = id + "Button",
+                Id = $"{id}Button",
                 Dock = DockStyle.Fill,
                 Text = "...",
                 AfterBuild = x => x.Blueprint.OnClick = () =>
                 {
                     var folderPath = fileDialog.OpenFolder(x.Control.Text);
-                    if (folderPath != null)
-                        x.GetControl<TextBox>(id).Text = folderPath;
+                    if (!string.IsNullOrWhiteSpace(folderPath) &&
+                        x.GetControl<TextBox>(id) is { } textBox)
+                        textBox.Text = folderPath;
                 },
                 Font = fontFactory.GetNormal()
             }
         };
     }
 
-    public IEnumerable<FluentControl> CreateSpacer(string text)
+    public IEnumerable<FluentControl> CreateSpacer(string? text)
     {
+        var id = $"Spacer{GetHashCode():X8}";
         return new FluentControl[]
         {
             new FluentLabel
             {
+                Id = id,
                 Text = text,
                 Dock = DockStyle.Fill,
                 AutoSize = true,
@@ -200,8 +215,10 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
         };
     }
 
-    public IEnumerable<FluentControl> CreateTextEntry(string id, string text)
+    public IEnumerable<FluentControl> CreateTextEntry(string? id, string text)
     {
+        id ??= $"TextEntry{GetHashCode():X8}";
+
         return new FluentControl[]
         {
             new FluentLabel
@@ -222,13 +239,15 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
         };
     }
 
-    public IEnumerable<FluentControl> CreateProgress(string id, string text)
+    public IEnumerable<FluentControl> CreateProgress(string? id, string text)
     {
+        id ??= $"Progress{GetHashCode():X8}";
+        
         return new FluentControl[]
         {
             new FluentLabel
             {
-                Id = id + "Label",
+                Id = $"{id}Label",
                 Text = text,
                 Dock = DockStyle.Fill,
                 AutoSize = false,
@@ -247,15 +266,15 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
                 AutoSize = false,
                 Align = ContentAlignment.MiddleLeft,
                 Font = fontFactory.GetNormal(),
-                Id = id + "Percent"
+                Id = $"{id}Percent"
             },
             new FluentEmpty
             {
-                Id = id + "Blank0"
+                Id = $"{id}Blank0"
             },
             new FluentLabel
             {
-                Id = id + "Message",
+                Id = $"{id}Message",
                 Text = "...",
                 AutoSize = true,
                 Align = ContentAlignment.MiddleLeft,
@@ -266,6 +285,7 @@ public class ControlFactory(IFileDialog fileDialog, IFontFactory fontFactory) : 
 
     public FluentControl CreateVerticalContainer(IEnumerable<FluentControl> controls)
     {
+        var id = $"VerticalContainer{GetHashCode():X8}";
         return new FluentPanel
         {
             Controls = controls.ToList(),

@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using ClientCommon;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Streamers;
@@ -34,7 +33,7 @@ public class BmsTaskBuilder(
         return Build("BMS to WAV", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;

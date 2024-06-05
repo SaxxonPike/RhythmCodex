@@ -1,5 +1,4 @@
 using System.IO;
-using System.Linq;
 using ClientCommon;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Compression;
@@ -21,7 +20,7 @@ public class CompressionTaskBuilder(
         return Build("Compress Bemani LZ", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -49,7 +48,7 @@ public class CompressionTaskBuilder(
         return Build("Decompress Bemani LZ", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -59,7 +58,7 @@ public class CompressionTaskBuilder(
             {
                 using var stream = OpenRead(task, file);
                 var decoded = bemaniLzDecoder.Decode(stream);
-                task.Message = $"Deompressed {stream.Length} -> {decoded.Length} bytes.";
+                task.Message = $"Decompressed {stream.Length} -> {decoded.Length} bytes.";
                 using var output = OpenWriteSingle(task, file, i => $"{i}.decoded");
                 output.Write(decoded.Span);
                 output.Flush();

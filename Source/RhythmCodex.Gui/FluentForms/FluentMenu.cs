@@ -11,15 +11,14 @@ public class FluentMenu : FluentControl<MenuStrip>
         Dock = DockStyle.Top;
         AutoSize = true;
     }
-        
-    public List<FluentMenuItem> Items { get; set; }
+
+    public List<FluentMenuItem> Items { get; set; } = [];
 
     protected override Control OnBuild(FluentState state)
     {
         var result = new MenuStrip();
         SetDefault(result);
-        if (Items != null)
-            result.Items.AddRange(Items.Select(i => i.Build(state)).ToArray());
+        result.Items.AddRange(Items.Select(i => i.Build(state)).ToArray());
         UpdateMap(state, result);
         return result;
     }

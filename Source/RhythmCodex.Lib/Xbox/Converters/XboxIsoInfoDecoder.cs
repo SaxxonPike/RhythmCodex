@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Xbox.Model;
@@ -7,7 +8,7 @@ namespace RhythmCodex.Xbox.Converters;
 [Service]
 public class XboxIsoInfoDecoder : IXboxIsoInfoDecoder
 {
-    public XboxIsoInfo Decode(byte[] sector)
+    public XboxIsoInfo Decode(ReadOnlySpan<byte> sector)
     {
         return new XboxIsoInfo
         {

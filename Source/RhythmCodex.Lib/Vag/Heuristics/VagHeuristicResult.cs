@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 
@@ -13,5 +14,5 @@ public class VagHeuristicResult(IHeuristic heuristic) : HeuristicResult(heuristi
     public BigRational? Volume { get; set; }
     public int? LoopStart { get; set; }
     public int? LoopEnd { get; set; }
-    public byte[]? Key { get; set; }
+    public Memory<byte> Key { get; set; }
 }

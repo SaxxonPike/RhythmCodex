@@ -1,16 +1,16 @@
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
+using Saxxon.StreamCursors;
 
 namespace RhythmCodex.Step1.Converters;
 
 [Service]
 public class Step1TimingChunkDecoder : IStep1TimingChunkDecoder
 {
-    public TimingChunk Convert(byte[] data)
+    public TimingChunk Convert(ReadOnlySpan<byte> data)
     {
         return new TimingChunk
         {
@@ -19,17 +19,24 @@ public class Step1TimingChunkDecoder : IStep1TimingChunkDecoder
         };
     }
 
-    private IEnumerable<Timing> ConvertInternal(byte[] data)
+    private static List<Timing> ConvertInternal(ReadOnlySpan<byte> data)
     {
-        using var mem = new ReadOnlyMemoryStream(data);
-        using var reader = new BinaryReader(mem);
-        while (mem.Position < mem.Length - 7)
+        var cursor = data;
+        var result = new List<Timing>();
+
+        while (cursor.Length >= 8)
         {
-            yield return new Timing
+            cursor = cursor
+                .ReadS32L(out var metricOffset)
+                .ReadS32L(out var linearOffset);
+
+            result.Add(new Timing
             {
-                MetricOffset = reader.ReadInt32(),
-                LinearOffset = reader.ReadInt32()
-            };
+                MetricOffset = metricOffset,
+                LinearOffset = linearOffset
+            });
         }
+
+        return result;
     }
 }

@@ -93,7 +93,7 @@ public class ByteSwappedReadStream : Stream
             // Read pairs of bytes at once.
             var inBuffer = new byte[c & ~1];
             var i = 0;
-            _baseStream.Read(inBuffer, 0, inBuffer.Length);
+            _baseStream.ReadAtLeast(inBuffer.AsSpan(), inBuffer.Length, false);
             while (c > 1)
             {
                 buffer[o++] = inBuffer[i + 1];

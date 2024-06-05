@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using RhythmCodex.Infrastructure;
@@ -90,9 +91,10 @@ internal static class BinaryWriterExtensions
         writer.Write((byte)(value & 0xFF));
     }
 
-    public static void WriteS(this BinaryWriter writer, byte[] value)
+    public static void WriteS(this BinaryWriter writer, ReadOnlySpan<byte> value)
     {
         for (var i = value.Length - 1; i >= 0; i--)
             writer.Write(value[i]);
     }
+    
 }
