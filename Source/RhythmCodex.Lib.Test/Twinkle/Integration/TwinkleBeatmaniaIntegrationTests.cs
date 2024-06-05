@@ -57,7 +57,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         using var entryStream = entry.Open();
         var chunks = streamer.Read(entryStream, entry.Length);
         var chunk = chunks.Skip(1).First();
-        File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data);
+        File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data.ToArray());
     }
 
     [Test]

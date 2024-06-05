@@ -12,7 +12,7 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
 {
     // Reference: https://github.com/dbry/adpcm-xq/blob/master/adpcm-lib.c
 
-    public Sound? Decode(ImaAdpcmChunk chunk)
+    public Sound Decode(ImaAdpcmChunk chunk)
     {
         var buffer = new float[chunk.ChannelSamplesPerFrame];
         var channels = chunk.Channels;

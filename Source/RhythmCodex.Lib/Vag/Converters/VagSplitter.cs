@@ -26,7 +26,7 @@ public class VagSplitter(IVagDecrypter vagDecrypter)
             var length = (int) (chunk.Length ?? chunk.Data.Length);
             var totalSamples = length * 28 / 16;
             var output = new float[totalSamples];
-            vagDecrypter.Decrypt(chunk.Data, output, length, new VagState());
+            vagDecrypter.Decrypt(chunk.Data.Span, output, length, new VagState());
                 
             yield return new Sample
             {
@@ -52,7 +52,7 @@ public class VagSplitter(IVagDecrypter vagDecrypter)
                 while (offset < length)
                 {
                     totalWritten += vagDecrypter
-                        .Decrypt(chunk.Data.AsSpan(offset), output.AsSpan(totalWritten, outBlockSize), interleave, state);
+                        .Decrypt(chunk.Data.Span[offset..], output.AsSpan(totalWritten, outBlockSize), interleave, state);
 
                     offset += interval;
                 }

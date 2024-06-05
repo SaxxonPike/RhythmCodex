@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,42 +22,50 @@ public class VagStreamReader : IVagStreamReader
             throw new RhythmCodexException("Interleave must be a multiple of 16.");
         if (interleave == 0)
             interleave = 16;
-            
+
+        var data = ReadInternal(stream, channels, interleave);
+
         return new VagChunk
         {
-            Data = ReadInternal(stream, channels, interleave).ToArray(),
+            Data = data.GetBuffer().AsMemory(0, (int)data.Length),
             Channels = channels,
             Interleave = interleave
         };
     }
 
-    private static IEnumerable<byte> ReadInternal(Stream stream, int channels, int interleave)
+    private static MemoryStream ReadInternal(Stream stream, int channels, int interleave)
     {
         var ended = false;
-        Span<byte> buffer = stackalloc byte[0x10];
+        var total = channels * interleave;
+        var block = new byte[total];
+        var output = new MemoryStream();
 
         while (!ended)
         {
+            var cursor = block.AsSpan();
+            stream.ReadAtLeast(cursor, total, false);
+
             for (var c = 0; c < channels; c++)
             {
-                for (var i = 0; i < interleave; i += 16)
-                {
-                    var toRead = 16;
-                    while (toRead > 0)
-                    {
-                        var justRead = stream.ReadAtLeast(buffer, 0x10, false);
-                        if (justRead == 0)
-                            yield break;
-                        toRead -= justRead;
-                    }
-                    
-                    if ((buffer[1] & 0x01) == 0x01)
-                        ended = true;
+                var blank = false;
 
-                    for (var j = 0; j < 16; j++)
-                        yield return buffer[j];
-                }                    
+                for (var i = 0; i < interleave; i += 0x10)
+                {
+                    if (blank)
+                    {
+                        cursor[..0x10].Clear();
+                    }
+                    else if ((cursor[1] & 0x01) == 0x01)
+                    {
+                        ended = true;
+                        blank = true;
+                    }
+
+                    cursor = cursor[0x10..];
+                }
             }
         }
+
+        return output;
     }
 }

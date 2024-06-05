@@ -16,11 +16,11 @@ public class TwinkleBeatmaniaSoundDefinitionDecoder : ITwinkleBeatmaniaSoundDefi
         var invalid = true;
         for (var i = 1; i < 0x12; i++)
         {
-            if (data[i] != data[0])
-            {
-                invalid = false;
-                break;
-            }
+            if (data[i] == data[0]) 
+                continue;
+
+            invalid = false;
+            break;
         }
 
         if (invalid)

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Sounds.Models;
 

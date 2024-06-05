@@ -9,7 +9,7 @@ namespace RhythmCodex.Tim;
 [Service]
 public class TimHeuristic(ITimStreamReader timStreamReader) : IReadableHeuristic<TimImage>
 {
-    public TimImage Read(HeuristicResult heuristicResult, Stream stream)
+    public TimImage Read(HeuristicResult result, Stream stream)
     {
         return timStreamReader.Read(stream);
     }

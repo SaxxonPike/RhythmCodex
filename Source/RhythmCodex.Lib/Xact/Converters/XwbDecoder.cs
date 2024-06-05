@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using RhythmCodex.Extensions;
 using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;

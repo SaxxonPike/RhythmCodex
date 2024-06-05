@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using RhythmCodex.Infrastructure;
@@ -23,7 +24,7 @@ public class VtdddDanceXmlStreamReader : IVtdddDanceXmlStreamReader
 
     private static VtdddDanceDbSong DecodeSong(XElement node, int index, string chartPrefix)
     {
-        var songId = int.Parse(node.Name.LocalName.Replace("song_", string.Empty));
+        var songId = int.Parse(node.Name.LocalName.Replace("song_", string.Empty), NumberStyles.Integer);
         return new VtdddDanceDbSong
         {
             Artist = node.GetString("artist"),

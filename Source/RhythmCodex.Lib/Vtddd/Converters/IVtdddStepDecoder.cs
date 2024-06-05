@@ -6,5 +6,5 @@ namespace RhythmCodex.Vtddd.Converters;
 
 public interface IVtdddStepDecoder
 {
-    IEnumerable<Event> Decode(VtdddStep step);
+    IEnumerable<Event> Decode(VtdddStep value);
 }

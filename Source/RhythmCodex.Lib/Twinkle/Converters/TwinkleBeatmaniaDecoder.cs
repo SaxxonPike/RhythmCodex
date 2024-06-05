@@ -38,31 +38,36 @@ public class TwinkleBeatmaniaDecoder(
 
     public TwinkleArchive? Decode(TwinkleBeatmaniaChunk chunk, TwinkleDecodeOptions options)
     {
-        if (chunk?.Data == null || chunk.Data.Length < 0x1A00000)
-            return null;
+        var data = chunk.Data;
+
+        if (data.Length < 0x1A00000)
+            return new TwinkleArchive();
 
         var definitions = Enumerable.Range(0, 255)
             .ToDictionary(i => i,
-                i => twinkleBeatmaniaSoundDefinitionDecoder.Decode(chunk.Data.AsSpan(i * 0x12)));
+                i => twinkleBeatmaniaSoundDefinitionDecoder.Decode(data.Span[(i * 0x12)..]));
 
         var sounds = definitions
             .Where(def => def.Value is { SizeInBlocks: > 0 })
             .Select(def =>
             {
-                var sample = twinkleBeatmaniaSoundDecoder.Decode(def.Value, chunk.Data.AsSpan(0x100000));
-                sample[NumericData.Id] = def.Key + 1;
+                var sample = twinkleBeatmaniaSoundDecoder.Decode(def.Value!, data.Span[0x100000..]);
+                if (sample != null)
+                    sample[NumericData.Id] = def.Key + 1;
                 return sample;
             })
+            .Where(s => s != null)
+            .Select(s => s!)
             .ToList();
 
         var charts = ChartOffsets
             .Select((offset, index) =>
             {
-                if (twinkleBeatmaniaChartHeuristic.Match(chunk.Data.AsMemory(offset, 0x4000)) == null)
+                if (twinkleBeatmaniaChartHeuristic.Match(data.Slice(offset, 0x4000)) == null)
                     return null;
 
                 var events = twinkleBeatmaniaChartDecoder
-                    .Decode(chunk.Data.AsSpan(offset), 0x4000)
+                    .Decode(chunk.Data.Span.Slice(offset, 0x4000))
                     .Select(twinkleBeatmaniaChartEventConverter.ConvertToBeatmaniaPc1)
                     .ToList();
 
@@ -70,16 +75,14 @@ public class TwinkleBeatmaniaDecoder(
                     return null;
 
                 var chart = beatmaniaPc1ChartDecoder.Decode(events, TwinkleConstants.BeatmaniaRate);
-                if (chart != null)
-                {
-                    chart[NumericData.ByteOffset] = offset;
-                    chart[NumericData.Id] = index;
-                    twinkleBeatmaniaChartMetadataDecoder.AddMetadata(chart, index);
-                }
+                chart[NumericData.ByteOffset] = offset;
+                chart[NumericData.Id] = index;
+                twinkleBeatmaniaChartMetadataDecoder.AddMetadata(chart, index);
 
                 return chart;
             })
             .Where(c => c != null)
+            .Select(c => c!)
             .ToList();
 
         if (!options.DoNotConsolidateSamples)
@@ -95,18 +98,22 @@ public class TwinkleBeatmaniaDecoder(
 
     public BeatmaniaPcSongSet MigrateToBemaniPc(TwinkleBeatmaniaChunk chunk)
     {
-        if (chunk?.Data == null || chunk.Data.Length < 0x1A00000)
-            return null;
+        var data = chunk.Data;
+
+        if (data.Length < 0x1A00000)
+            return new BeatmaniaPcSongSet();
+
+        data = data[..0x1A00000];
 
         var definitions = Enumerable.Range(0, 255)
             .ToDictionary(i => i,
-                i => twinkleBeatmaniaSoundDefinitionDecoder.Decode(chunk.Data.AsSpan(i * 0x12)));
+                i => twinkleBeatmaniaSoundDefinitionDecoder.Decode(data.Span[(i * 0x12)..]));
 
         var sounds = definitions
             .Select(def =>
             {
                 var source = def.Value != null
-                    ? twinkleBeatmaniaSoundDecoder.Decode(def.Value, chunk.Data.AsSpan(0x100000))
+                    ? twinkleBeatmaniaSoundDecoder.Decode(def.Value, data.Span[0x100000..])
                     : new Sound { Samples = [new Sample { Data = Memory<float>.Empty }], [NumericData.Rate] = 44100 };
 
                 using var mem = new MemoryStream();
@@ -126,11 +133,11 @@ public class TwinkleBeatmaniaDecoder(
         var charts = ChartOffsets
             .Select((offset, index) =>
             {
-                if (twinkleBeatmaniaChartHeuristic.Match(chunk.Data.AsMemory(offset, 0x4000)) == null)
+                if (twinkleBeatmaniaChartHeuristic.Match(data.Slice(offset, 0x4000)) == null)
                     return null;
 
                 var events = twinkleBeatmaniaChartDecoder
-                    .Decode(chunk.Data.AsSpan(offset), 0x4000)
+                    .Decode(data.Span.Slice(offset, 0x4000))
                     .Select(twinkleBeatmaniaChartEventConverter.ConvertToBeatmaniaPc1)
                     .ToList();
 
@@ -139,7 +146,7 @@ public class TwinkleBeatmaniaDecoder(
 
                 var noteCountEvents =
                     twinkleBeatmaniaChartEventConverter.ConvertNoteCountsToBeatmaniaPc1(
-                        twinkleBeatmaniaChartDecoder.GetNoteCounts(chunk.Data.AsSpan(offset), 0x4000));
+                        twinkleBeatmaniaChartDecoder.GetNoteCounts(chunk.Data.Span.Slice(offset, 0x4000)));
 
                 return new BeatmaniaPc1Chart
                 {
@@ -148,6 +155,7 @@ public class TwinkleBeatmaniaDecoder(
                 };
             })
             .Where(c => c != null)
+            .Select(c => c!)
             .ToList();
 
         return new BeatmaniaPcSongSet

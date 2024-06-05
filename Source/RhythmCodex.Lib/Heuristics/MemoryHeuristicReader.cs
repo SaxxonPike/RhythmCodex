@@ -2,7 +2,7 @@ using System;
 
 namespace RhythmCodex.Heuristics;
 
-public class MemoryHeuristicReader(Memory<byte> bytes) : IHeuristicReader
+public class MemoryHeuristicReader(ReadOnlyMemory<byte> bytes) : IHeuristicReader
 {
     private int _offset;
 

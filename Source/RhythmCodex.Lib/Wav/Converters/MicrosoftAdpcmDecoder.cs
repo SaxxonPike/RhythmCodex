@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.PortableExecutable;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Models;
@@ -13,7 +12,7 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
 {
     // Reference: https://wiki.multimedia.cx/index.php/Microsoft_ADPCM
 
-    public Sound? Decode(
+    public Sound Decode(
         ReadOnlySpan<byte> data,
         IWaveFormat fmtChunk,
         MicrosoftAdpcmFormat microsoftAdpcmFormat)
@@ -51,8 +50,8 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
             var mem = data.Slice(offset, frameSize);
             for (var channel = 0; channel < channels; channel++)
             {
-                DecodeFrame(mem, buffer, channel, channels, coefficients, adaptationTable);
-                output[channel].AddRange(buffer);
+                var amount = DecodeFrame(mem, buffer, channel, channels, coefficients, adaptationTable);
+                output[channel].AddRange(buffer.AsSpan(0, amount));
             }
         }
 

@@ -155,7 +155,7 @@ public class XboxTaskBuilder(
                             ChannelSamplesPerFrame = 64,
                             Data = entry.Song,
                             Rate = 44100
-                        }).Single();
+                        });
 
                         var encoded = riffPcm16SoundEncoder.Encode(sound);
                         using var outStream = OpenWriteMulti(task, file, _ => $"{entry.Name}.wav");
@@ -171,7 +171,7 @@ public class XboxTaskBuilder(
                             ChannelSamplesPerFrame = 64,
                             Data = entry.Preview,
                             Rate = 44100
-                        }).Single();
+                        });
 
                         var encoded = riffPcm16SoundEncoder.Encode(sound);
                         using var outStream = OpenWriteMulti(task, file, _ => $"{entry.Name}-preview.wav");
@@ -204,7 +204,7 @@ public class XboxTaskBuilder(
                     ChannelSamplesPerFrame = 64,
                     Data = GetFile(task, file),
                     Rate = 44100
-                }).Single();
+                });
 
                 var encoded = riffPcm16SoundEncoder.Encode(sound);
                 using var outStream = OpenWriteSingle(task, file, i => $"{i}.wav");

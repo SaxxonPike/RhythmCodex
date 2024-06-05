@@ -14,7 +14,7 @@ namespace RhythmCodex.Plugin.MP3Sharp;
 [Service]
 public class Mp3Decoder : IMp3Decoder
 {
-    public Sound? Decode(Stream stream)
+    public Sound Decode(Stream stream)
     {
         var inputStream = new MP3Stream(stream);
         var channels = inputStream.ChannelCount;

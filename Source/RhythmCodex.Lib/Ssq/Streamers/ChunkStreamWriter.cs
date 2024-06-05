@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 

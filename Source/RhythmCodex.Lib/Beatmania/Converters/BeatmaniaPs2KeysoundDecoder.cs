@@ -11,7 +11,7 @@ namespace RhythmCodex.Beatmania.Converters;
 public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
     : IBeatmaniaPs2KeysoundDecoder
 {
-    public Sound? Decode(BeatmaniaPs2Keysound keysound)
+    public Sound Decode(BeatmaniaPs2Keysound keysound)
     {
         var samples = keysound.Data
             .SelectMany(d => vagDecoder.Decode(d)?.Samples ?? [])

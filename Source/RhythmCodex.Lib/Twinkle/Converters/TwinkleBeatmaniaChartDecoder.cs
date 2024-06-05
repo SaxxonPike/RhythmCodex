@@ -9,12 +9,12 @@ namespace RhythmCodex.Twinkle.Converters;
 [Service]
 public class TwinkleBeatmaniaChartDecoder : ITwinkleBeatmaniaChartDecoder
 {
-    public List<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data, int length)
+    public List<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data)
     {
         var result = new List<TwinkleBeatmaniaChartEvent>();
         var noteCountMode = true;
 
-        for (var i = 0; i < length; i += 4)
+        for (var i = 0; i < data.Length; i += 4)
         {
             if (noteCountMode)
             {
@@ -40,11 +40,11 @@ public class TwinkleBeatmaniaChartDecoder : ITwinkleBeatmaniaChartDecoder
         return result;
     }
 
-    public int[] GetNoteCounts(ReadOnlySpan<byte> data, int length)
+    public int[] GetNoteCounts(ReadOnlySpan<byte> data)
     {
         var result = new int[2];
 
-        for (var i = 0; i < length; i += 4)
+        for (var i = 0; i < data.Length; i += 4)
         {
             if (data[i + 0x03] != 0 && data[i + 0x03] != 1)
                 return result;
