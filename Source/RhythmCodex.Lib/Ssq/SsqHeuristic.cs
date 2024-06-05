@@ -11,7 +11,7 @@ namespace RhythmCodex.Ssq;
 [Service]
 public class SsqHeuristic(ISsqStreamReader ssqStreamReader) : IReadableHeuristic<IEnumerable<SsqChunk>>
 {
-    public IEnumerable<SsqChunk> Read(HeuristicResult heuristicResult, Stream stream)
+    public IEnumerable<SsqChunk> Read(HeuristicResult result, Stream stream)
     {
         return ssqStreamReader.Read(stream);
     }

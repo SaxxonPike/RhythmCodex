@@ -15,7 +15,7 @@ public class DdrFileDataBinCompressedTableHeuristic(
     IDdrPs2FileDataUnboundTableDecoder ddrPs2FileDataUnboundTableDecoder)
     : IReadableHeuristic<List<DdrPs2FileDataTableEntry>>
 {
-    public List<DdrPs2FileDataTableEntry> Read(HeuristicResult heuristicResult, Stream stream)
+    public List<DdrPs2FileDataTableEntry> Read(HeuristicResult result, Stream stream)
     {
         var table = ddrPs2FileDataTableChunkStreamReader.GetUnbound(stream);
         var decoded = ddrPs2FileDataUnboundTableDecoder.Decode(table);

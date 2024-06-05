@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using ClientCommon;
 using RhythmCodex.Bms.Converters;
@@ -11,7 +10,6 @@ using RhythmCodex.IoC;
 using RhythmCodex.Riff.Converters;
 using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
-using RhythmCodex.Sounds.Models;
 using RhythmCodex.Wav.Converters;
 using RhythmCodex.Wav.Models;
 

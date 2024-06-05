@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -16,18 +17,9 @@ public class XwbHeuristic : IHeuristic
         if (data.Length < 4)
             return null;
 
-        if (data[0x00] != 0x57)
-            return null;
-
-        if (data[0x01] != 0x42)
-            return null;
-
-        if (data[0x02] != 0x4E)
-            return null;
-
-        if (data[0x03] != 0x44)
-            return null;
-            
-        return new HeuristicResult(this);
+        var value = BinaryPrimitives.ReadInt32LittleEndian(data);
+        return (value == 0x444E4257)
+            ? new HeuristicResult(this)
+            : null;
     }
 }

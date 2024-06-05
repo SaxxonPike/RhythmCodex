@@ -12,7 +12,8 @@ public class SvagDecoder(IVagDecoder vagDecoder) : ISvagDecoder
     public Sound Decode(SvagContainer container)
     {
         ArgumentNullException.ThrowIfNull(container, nameof(container));
-        
+        ArgumentNullException.ThrowIfNull(container.VagChunk, nameof(container.VagChunk));
+
         var decoded = vagDecoder.Decode(container.VagChunk);
         decoded[NumericData.Rate] = container.SampleRate;
         return decoded;
