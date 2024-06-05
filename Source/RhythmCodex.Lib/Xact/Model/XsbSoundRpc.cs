@@ -1,4 +1,5 @@
-﻿using RhythmCodex.Infrastructure;
+﻿using System;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Xact.Model;
 
@@ -6,5 +7,5 @@ namespace RhythmCodex.Xact.Model;
 public struct XsbSoundRpc
 {
     public int[] Curves { get; set; }
-    public byte[] ExtraData { get; set; }
+    public Memory<byte> ExtraData { get; set; }
 }

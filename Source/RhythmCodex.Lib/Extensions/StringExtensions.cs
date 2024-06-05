@@ -115,6 +115,18 @@ internal static class StringExtensions
     /// <summary>
     /// Convert a string from bytes using Codepage 437.
     /// </summary>
+    public static string GetString(this ReadOnlyMemory<byte> b) 
+        => Encodings.Cp437.GetString(b.Span);
+
+    /// <summary>
+    /// Convert a string from bytes using Codepage 437.
+    /// </summary>
+    public static string GetString(this Memory<byte> b) 
+        => Encodings.Cp437.GetString(b.Span);
+
+    /// <summary>
+    /// Convert a string from bytes using Codepage 437.
+    /// </summary>
     public static string GetString(this byte[] b) 
         => Encodings.Cp437.GetString(b);
 

@@ -17,7 +17,7 @@ public class Step1Heuristic(IStep1StreamReader step1StreamReader) : IReadableHeu
     public HeuristicResult? Match(IHeuristicReader reader)
     {
         // Must have at least 4 bytes
-        if (reader.Length == null || reader.Length < 4)
+        if (reader.Length is null or < 4)
             return null;
 
         // Put a hard cap of 64k as a sanity check

@@ -181,10 +181,12 @@ public class AudioDsp : IAudioDsp
         return newSound;
     }
 
-    public Sound? ApplyEffects(Sound? sound)
+    public Sound ApplyEffects(Sound sound)
     {
-        if (sound == null || sound.Samples.Count == 0)
-            return null;
+        ArgumentNullException.ThrowIfNull(sound, nameof(sound));
+        
+        if (sound.Samples.Count == 0)
+            return sound;
 
         var samples = new List<Sample>(sound.Samples);
         if (samples.Count == 1)

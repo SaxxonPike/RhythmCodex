@@ -10,4 +10,11 @@ public static class Iteration
         foreach (var item in items)
             action(item);
     }
+
+    public static void ForEach<T>(IEnumerable<T> items, Action<T, int> action)
+    {
+        var idx = 0;
+        foreach (var item in items)
+            action(item, idx++);
+    }
 }

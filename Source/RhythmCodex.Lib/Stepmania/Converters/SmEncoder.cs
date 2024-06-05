@@ -104,7 +104,7 @@ public class SmEncoder(
             .ToList();
     }
 
-    private List<TimedEvent> GetBpmEvents(IEnumerable<Chart> charts)
+    private static List<TimedEvent> GetBpmEvents(IEnumerable<Chart> charts)
     {
         var bpms = charts
             .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Bpm] != null))
@@ -147,7 +147,7 @@ public class SmEncoder(
             .ToList();
     }
 
-    private List<TimedEvent> GetStopEvents(IEnumerable<Chart> charts)
+    private static List<TimedEvent> GetStopEvents(IEnumerable<Chart> charts)
     {
         return charts
             .SelectMany(chart => chart.Events.Where(ev => ev[NumericData.Stop] != null))

@@ -10,8 +10,8 @@ public class FluentTabControl : FluentControl<TabControl, int>
     {
         Dock = DockStyle.Fill;
     }
-        
-    public List<FluentTabPage> Items { get; set; }
+
+    public List<FluentTabPage> Items { get; set; } = [];
 
     protected override Control OnBuild(FluentState state)
     {
@@ -19,8 +19,7 @@ public class FluentTabControl : FluentControl<TabControl, int>
         SetDefault(result);
 
         result.TabIndexChanged += (_, _) => OnChange?.Invoke(result, result.TabIndex);
-        if (Items != null)
-            result.TabPages.AddRange(Items.Select(tab => (TabPage) tab.Build(state)).ToArray());
+        result.TabPages.AddRange(Items.Select(tab => (TabPage) tab.Build(state)).ToArray());
             
         UpdateMap(state, result);
         return result;

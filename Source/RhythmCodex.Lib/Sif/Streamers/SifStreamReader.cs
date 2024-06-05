@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -20,7 +21,7 @@ public class SifStreamReader(
             : ReadTextSif(data);
     }
 
-    private SifInfo ReadTextSif(byte[] data)
+    private SifInfo ReadTextSif(ReadOnlyMemory<byte> data)
     {
         using var dataStream = new ReadOnlyMemoryStream(data);
         return textSifDecoder.Decode(dataStream.ReadAllLines());

@@ -27,12 +27,12 @@ public class App(
             var fileName = Path.GetFileNameWithoutExtension(file);
             using var inStream = fileSystem.OpenRead(file);
             var xwbSounds = xwbStreamReader.Read(inStream).ToArray();
-            Iteration.ForEach(xwbSounds, xwbSound =>
+            Iteration.ForEach(xwbSounds, (xwbSound, idx) =>
             {
                 var decoded = xwbDecoder.Decode(xwbSound);
                 var riff = riffPcm16SoundEncoder.Encode(decoded);
                 var outPath = Path.Combine(outFolder, fileName,
-                    fileSystem.GetSafeFileName(xwbSound.Name) + ".wav");
+                    $"{fileSystem.GetSafeFileName(xwbSound.Name ?? $"{idx:X8}")}.wav");
                 using var outStream = fileSystem.OpenWrite(outPath);
                 riffStreamWriter.Write(outStream, riff);
                 outStream.Flush();

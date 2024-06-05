@@ -11,22 +11,22 @@ public class FluentTable : FluentControl<TableLayoutPanel>
         Dock = DockStyle.Fill;
     }
 
-    public List<ColumnStyle> Columns { get; set; }
-    public List<RowStyle> Rows { get; set; }
+    public List<ColumnStyle> Columns { get; set; } = [];
+    public List<RowStyle> Rows { get; set; } = [];
 
     protected override Control OnBuild(FluentState state)
     {
         var result = new TableLayoutPanel();
         SetDefault(result);
 
-        if (Columns != null)
+        if (Columns.Count > 0)
         {
             foreach (var style in Columns)
                 result.ColumnStyles.Add(style);
             result.ColumnCount = Columns.Count;
         }
 
-        if (Rows != null)
+        if (Rows.Count > 0)
         {
             foreach (var style in Rows)
                 result.RowStyles.Add(style);
@@ -34,8 +34,7 @@ public class FluentTable : FluentControl<TableLayoutPanel>
         }
             
         var children = BuildChildren(state);
-        if (children != null)
-            result.Controls.AddRange(children.ToArray());
+        result.Controls.AddRange(children.ToArray());
 
         UpdateMap(state, result);
         return result;

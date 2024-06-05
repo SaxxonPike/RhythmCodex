@@ -26,8 +26,10 @@ public abstract class TaskBuilderBase<TTask>(
         }
     }
 
-    protected ITask Build(string name, Func<BuiltTask?, bool> task)
+    protected ITask Build(string name, Func<BuiltTask, bool> task)
     {
+        ArgumentNullException.ThrowIfNull(task, nameof(task));
+        
         BuiltTask? result = null;
         result = new BuiltTask(name, RunTask);
         result.MessageUpdated += (_, message) => Logger.Info(message);
@@ -45,8 +47,11 @@ public abstract class TaskBuilderBase<TTask>(
     protected string? GetOutputFolder(string inputFile) =>
         Args.OutputPath ?? Path.GetDirectoryName(inputFile);
 
-    protected InputFile[] GetInputFiles(BuiltTask task)
+    protected InputFile[] GetInputFiles(BuiltTask? task)
     {
+        if (task == null)
+            return [];
+        
         task.Message = "Resolving input files.";
         var sourceFiles = Args.InputFiles
             .SelectMany(a => fileSystem.GetFileNames(a, Args.RecursiveInputFiles));
@@ -64,14 +69,12 @@ public abstract class TaskBuilderBase<TTask>(
                     return new InputFile(
                             sf,
                             () => fileSystem.OpenRead(sf),
-                            f => fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                            f => fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf)!, f)),
                             s => s.Dispose())
                         { Length = info.Length };
                 }
-                else
-                {
-                    throw new RhythmCodexException($"File doesn't exist: {sf}");
-                }
+
+                throw new RhythmCodexException($"File doesn't exist: {sf}");
             })
             .ToArray();
     }
@@ -81,20 +84,20 @@ public abstract class TaskBuilderBase<TTask>(
         return sourceFiles
             .SelectMany(sf =>
             {
-                using var parentArc = new ZipArchive(fileSystem.OpenRead(sf));
+                var parentArc = new ZipArchive(fileSystem.OpenRead(sf));
                 return parentArc.Entries.Select(e => new InputFile(
-                    Path.Combine(Path.GetDirectoryName(sf), Path.GetFileNameWithoutExtension(sf), e.FullName),
+                    Path.Combine(Path.GetDirectoryName(sf)!, Path.GetFileNameWithoutExtension(sf), e.FullName),
                     () =>
                     {
                         var archive = new ZipArchive(fileSystem.OpenRead(sf));
                         var entry = archive.GetEntry(e.Name);
-                        return entry.Open();
+                        return entry!.Open();
                     },
                     f =>
                     {
                         var archive = new ZipArchive(fileSystem.OpenRead(sf));
-                        var entry = archive.GetEntry(Path.Combine(Path.GetDirectoryName(sf), f));
-                        return entry.Open();
+                        var entry = archive.GetEntry(Path.Combine(Path.GetDirectoryName(sf)!, f));
+                        return entry!.Open();
                     },
                     s =>
                     {
@@ -178,14 +181,14 @@ public abstract class TaskBuilderBase<TTask>(
 
     public TTask WithArgs(Args args)
     {
-        this.Args = args;
+        Args = args;
         return (TTask) this;
     }
 
     protected sealed class BuiltTask(string name, Func<bool> run) : ITask
     {
-        public event EventHandler<string> MessageUpdated;
-        public event EventHandler<float> ProgressUpdated;
+        public event EventHandler<string>? MessageUpdated;
+        public event EventHandler<float>? ProgressUpdated;
         private string _message = string.Empty;
         private float _progress = 0;
 

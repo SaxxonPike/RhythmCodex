@@ -5,6 +5,8 @@ using JetBrains.Annotations;
 
 namespace Saxxon.StreamCursors;
 
+public delegate ReadOnlySpan<TResult> MemorySelectDelegate<TSource, TResult>(ReadOnlyMemory<TSource> source);
+
 [PublicAPI]
 public static class ByteMemoryExtensions
 {
@@ -731,6 +733,530 @@ public static class ByteMemoryExtensions
         val[..count].CopyTo(memory);
         return memory[count..];
     }
+
+    #endregion
+
+    // ***************************************************
+
+    #region Conversions
+
+    [DebuggerStepThrough]
+    public static Memory<ushort> ToU16L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToU16L();
+
+    [DebuggerStepThrough]
+    public static Memory<ushort> ToU16L(this Memory<byte> mem) =>
+        mem.Span.ToU16L();
+
+    [DebuggerStepThrough]
+    public static Memory<ushort> ToU16B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToU16B();
+
+    [DebuggerStepThrough]
+    public static Memory<ushort> ToU16B(this Memory<byte> mem) =>
+        mem.Span.ToU16B();
+
+    [DebuggerStepThrough]
+    public static Memory<short> ToS16L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToS16L();
+
+    [DebuggerStepThrough]
+    public static Memory<short> ToS16L(this Memory<byte> mem) =>
+        mem.Span.ToS16L();
+
+    [DebuggerStepThrough]
+    public static Memory<short> ToS16B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToS16B();
+
+    [DebuggerStepThrough]
+    public static Memory<short> ToS16B(this Memory<byte> mem) =>
+        mem.Span.ToS16B();
+
+    [DebuggerStepThrough]
+    public static Memory<uint> ToU32L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToU32L();
+
+    [DebuggerStepThrough]
+    public static Memory<uint> ToU32L(this Memory<byte> mem) =>
+        mem.Span.ToU32L();
+
+    [DebuggerStepThrough]
+    public static Memory<uint> ToU32B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToU32B();
+
+    [DebuggerStepThrough]
+    public static Memory<uint> ToU32B(this Memory<byte> mem) =>
+        mem.Span.ToU32B();
+
+    [DebuggerStepThrough]
+    public static Memory<int> ToS32L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToS32L();
+
+    [DebuggerStepThrough]
+    public static Memory<int> ToS32L(this Memory<byte> mem) =>
+        mem.Span.ToS32L();
+
+    [DebuggerStepThrough]
+    public static Memory<int> ToS32B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToS32B();
+
+    [DebuggerStepThrough]
+    public static Memory<int> ToS32B(this Memory<byte> mem) =>
+        mem.Span.ToS32B();
+
+    [DebuggerStepThrough]
+    public static Memory<float> ToF32L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToF32L();
+
+    [DebuggerStepThrough]
+    public static Memory<float> ToF32L(this Memory<byte> mem) =>
+        mem.Span.ToF32L();
+
+    [DebuggerStepThrough]
+    public static Memory<float> ToF32B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToF32B();
+
+    [DebuggerStepThrough]
+    public static Memory<float> ToF32B(this Memory<byte> mem) =>
+        mem.Span.ToF32B();
+
+    [DebuggerStepThrough]
+    public static Memory<ulong> ToU64L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToU64L();
+
+    [DebuggerStepThrough]
+    public static Memory<ulong> ToU64L(this Memory<byte> mem) =>
+        mem.Span.ToU64L();
+
+    [DebuggerStepThrough]
+    public static Memory<ulong> ToU64B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToU64B();
+
+    [DebuggerStepThrough]
+    public static Memory<ulong> ToU64B(this Memory<byte> mem) =>
+        mem.Span.ToU64B();
+
+    [DebuggerStepThrough]
+    public static Memory<long> ToS64L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToS64L();
+
+    [DebuggerStepThrough]
+    public static Memory<long> ToS64L(this Memory<byte> mem) =>
+        mem.Span.ToS64L();
+
+    [DebuggerStepThrough]
+    public static Memory<long> ToS64B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToS64B();
+
+    [DebuggerStepThrough]
+    public static Memory<long> ToS64B(this Memory<byte> mem) =>
+        mem.Span.ToS64B();
+
+    [DebuggerStepThrough]
+    public static Memory<double> ToF64L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToF64L();
+
+    [DebuggerStepThrough]
+    public static Memory<double> ToF64L(this Memory<byte> mem) =>
+        mem.Span.ToF64L();
+
+    [DebuggerStepThrough]
+    public static Memory<double> ToF64B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.ToF64B();
+
+    [DebuggerStepThrough]
+    public static Memory<double> ToF64B(this Memory<byte> mem) =>
+        mem.Span.ToF64B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<ushort> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<ushort> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<short> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<short> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<uint> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<uint> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<int> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<int> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<float> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<float> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<ulong> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<ulong> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<long> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<long> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this ReadOnlyMemory<double> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8L(this Memory<double> mem) =>
+        mem.Span.ToU8L();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<ushort> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<ushort> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<short> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<short> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<uint> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<uint> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<int> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<int> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<float> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<float> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<ulong> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<ulong> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<long> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<long> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this ReadOnlyMemory<double> mem) =>
+        mem.Span.ToU8B();
+
+    [DebuggerStepThrough]
+    public static Memory<byte> ToU8B(this Memory<double> mem) =>
+        mem.Span.ToU8B();
+
+    #endregion
+
+    // ***************************************************
+
+    #region Interpretations
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ushort> CastU16L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastU16L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ushort> CastU16L(this Memory<byte> mem) =>
+        mem.Span.CastU16L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ushort> CastU16B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastU16B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ushort> CastU16B(this Memory<byte> mem) =>
+        mem.Span.CastU16B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<short> CastS16L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastS16L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<short> CastS16L(this Memory<byte> mem) =>
+        mem.Span.CastS16L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<short> CastS16B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastS16B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<short> CastS16B(this Memory<byte> mem) =>
+        mem.Span.CastS16B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<uint> CastU32L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastU32L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<uint> CastU32L(this Memory<byte> mem) =>
+        mem.Span.CastU32L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<uint> CastU32B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastU32B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<uint> CastU32B(this Memory<byte> mem) =>
+        mem.Span.CastU32B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<int> CastS32L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastS32L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<int> CastS32L(this Memory<byte> mem) =>
+        mem.Span.CastS32L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<int> CastS32B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastS32B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<int> CastS32B(this Memory<byte> mem) =>
+        mem.Span.CastS32B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<float> CastF32L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastF32L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<float> CastF32L(this Memory<byte> mem) =>
+        mem.Span.CastF32L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<float> CastF32B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastF32B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<float> CastF32B(this Memory<byte> mem) =>
+        mem.Span.CastF32B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ulong> CastU64L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastU64L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ulong> CastU64L(this Memory<byte> mem) =>
+        mem.Span.CastU64L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ulong> CastU64B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastU64B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<ulong> CastU64B(this Memory<byte> mem) =>
+        mem.Span.CastU64B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<long> CastS64L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastS64L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<long> CastS64L(this Memory<byte> mem) =>
+        mem.Span.CastS64L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<long> CastS64B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastS64B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<long> CastS64B(this Memory<byte> mem) =>
+        mem.Span.CastS64B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<double> CastF64L(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastF64L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<double> CastF64L(this Memory<byte> mem) =>
+        mem.Span.CastF64L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<double> CastF64B(this ReadOnlyMemory<byte> mem) =>
+        mem.Span.CastF64B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<double> CastF64B(this Memory<byte> mem) =>
+        mem.Span.CastF64B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<ushort> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<ushort> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<short> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<short> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<uint> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<uint> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<int> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<int> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<float> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<float> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<ulong> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<ulong> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<long> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<long> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this ReadOnlyMemory<double> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8L(this Memory<double> mem) =>
+        mem.Span.CastU8L();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<ushort> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<ushort> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<short> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<short> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<uint> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<uint> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<int> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<int> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<float> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<float> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<ulong> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<ulong> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<long> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<long> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this ReadOnlyMemory<double> mem) =>
+        mem.Span.CastU8B();
+
+    [DebuggerStepThrough]
+    public static ReadOnlySpan<byte> CastU8B(this Memory<double> mem) =>
+        mem.Span.CastU8B();
 
     #endregion
 

@@ -40,7 +40,7 @@ public class VagEncodeIntegrationTests : BaseIntegrationFixture
             Interleave = 16
         });
 
-        decodedVag![NumericData.Rate] = sound[NumericData.Rate];
+        decodedVag[NumericData.Rate] = sound[NumericData.Rate];
         this.WriteSound(decodedVag, "out.vag.wav");
     }
 }

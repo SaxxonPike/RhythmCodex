@@ -5,5 +5,5 @@ namespace RhythmCodex.Tcb.Streamers;
 
 public interface ITcbStreamReader
 {
-    TcbImage Read(Stream stream);
+    TcbImage? Read(Stream stream);
 }
