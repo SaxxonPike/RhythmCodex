@@ -6,7 +6,7 @@ namespace RhythmCodex.Xact.Model;
 [Model]
 public struct XwbMiniWaveFormat : IWaveFormat
 {
-    public int Value;
+    public int Value { get; set; }
 
     public int BitsPerSample
     {

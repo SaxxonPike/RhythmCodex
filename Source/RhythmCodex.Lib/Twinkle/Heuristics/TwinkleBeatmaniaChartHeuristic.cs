@@ -8,10 +8,10 @@ namespace RhythmCodex.Twinkle.Heuristics;
 [Service]
 public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
 {
-    public string Description { get; }
+    public string Description => "Twinkle Beatmania Chart";
 
-    public string FileExtension { get; }
-        
+    public string FileExtension => ".ac7";
+
     public HeuristicResult? Match(IHeuristicReader reader)
     {
         var noteCountMode = true;
@@ -34,19 +34,19 @@ public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
             // empty event = invalid
             if (Bitter.ToInt32(evData) == 0)
                 return null;
-                
+
             // positive event offsets only
             if (eventOffset < 0)
                 return null;
-                
+
             // offsets can't be present during note count
             if (noteCountMode && eventOffset != 0)
                 return null;
-                
+
             // disable note count info if another event type shows up
             if (eventCommand != 0x00 && eventCommand != 0x01)
                 noteCountMode = false;
-                
+
             // skip the rest of processing if in note count mode
             if (noteCountMode)
                 continue;
@@ -67,7 +67,7 @@ public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
 
         if (!(hasBpm && hasEnd && hasTerminator))
             return null;
-            
+
         return new HeuristicResult(this);
     }
 }

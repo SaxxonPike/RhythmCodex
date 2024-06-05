@@ -11,7 +11,6 @@ using RhythmCodex.Stepmania.Converters;
 using RhythmCodex.Stepmania.Model;
 using RhythmCodex.Stepmania.Streamers;
 using RhythmCodex.Vtddd.Converters;
-using RhythmCodex.Vtddd.Models;
 using RhythmCodex.Vtddd.Streamers;
 
 namespace RhythmCodex.Vtddd.Integration;

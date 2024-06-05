@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -28,7 +29,7 @@ public class VtdddChartXmlStreamReader : IVtdddChartXmlStreamReader
     {
         var panels = new List<(int Player, int Panel, bool Hold)>();
 
-        switch (xml.Name.LocalName.ToLower())
+        switch (xml.Name.LocalName.ToLower(CultureInfo.InvariantCulture))
         {
             case "left":
                 panels.Add((Player: 0, Panel: 0, Hold: false));

@@ -74,7 +74,7 @@ public class Step1Heuristic(IStep1StreamReader step1StreamReader) : IReadableHeu
         return new HeuristicResult(this);
     }
 
-    public IEnumerable<Step1Chunk> Read(HeuristicResult heuristicResult, Stream stream)
+    public IEnumerable<Step1Chunk> Read(HeuristicResult result, Stream stream)
     {
         return step1StreamReader.Read(stream);
     }

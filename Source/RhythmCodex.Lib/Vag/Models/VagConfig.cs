@@ -7,7 +7,7 @@ public class VagConfig
     /// Not used for mono streams.
     /// Changing this setting has no effect after a stream is created.
     /// </summary>
-    public int Interleave { get; set; } = 0;
+    public int Interleave { get; set; }
 
     /// <summary>
     /// Number of channels in the stream.
@@ -22,14 +22,14 @@ public class VagConfig
     /// Use dimensions of int[5][2].
     /// Changing this setting has no effect after a stream is created.
     /// </summary>
-    public int[][] Coefficients { get; set; }
+    public int[][]? Coefficients { get; set; }
 
     /// <summary>
     /// If true, decoding will end on sixteen consecutive zero bytes.
     /// Not used when encoding.
     /// If decoding tends to run well past the end, set this to true.
     /// </summary>
-    public bool StopDecodingOnBlankLine { get; set; } = false;
+    public bool StopDecodingOnBlankLine { get; set; }
 
     /// <summary>
     /// If true, the end-of-stream bit determines the end of the stream.
@@ -43,7 +43,7 @@ public class VagConfig
     /// Not used when encoding.
     /// If decoding produces a bit of garbage at the start of the data, set this to true.
     /// </summary>
-    public bool DoNotDecodeUntilStartMarker { get; set; } = false;
+    public bool DoNotDecodeUntilStartMarker { get; set; }
 
     /// <summary>
     /// Maximum length of the stream.

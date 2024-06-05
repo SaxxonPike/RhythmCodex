@@ -12,7 +12,7 @@ namespace RhythmCodex.Sounds.Converters;
 [Service]
 public class AudioDsp : IAudioDsp
 {
-    public Sound? ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)
+    public Sound ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)
     {
         var newSound = new Sound
         {
@@ -62,7 +62,7 @@ public class AudioDsp : IAudioDsp
         return result;
     }
 
-    public Sound? Normalize(Sound sound, BigRational target, bool cutOnly)
+    public Sound Normalize(Sound sound, BigRational target, bool cutOnly)
     {
         var newSound = new Sound
         {

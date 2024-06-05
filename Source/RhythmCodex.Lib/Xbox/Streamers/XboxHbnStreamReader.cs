@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Infrastructure;
@@ -35,8 +36,8 @@ public class XboxHbnStreamReader : IXboxHbnStreamReader
                 return new XboxHbnDefinition
                 {
                     Name = definition[0],
-                    Offset = int.Parse(definition[1]),
-                    Length = int.Parse(definition[2])
+                    Offset = int.Parse(definition[1], NumberStyles.Integer),
+                    Length = int.Parse(definition[2], NumberStyles.Integer)
                 };
             })
             .ToArray();
