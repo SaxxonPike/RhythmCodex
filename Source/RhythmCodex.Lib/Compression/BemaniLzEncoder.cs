@@ -18,10 +18,10 @@ public class BemaniLzEncoder : IBemaniLzEncoder
         Long
     }
 
-    private struct Match
+    private readonly struct Match
     {
-        public int Offset;
-        public int Length;
+        public int Offset { get; init; }
+        public int Length { get; init; }
     }
 
     private struct Token
@@ -117,13 +117,15 @@ public class BemaniLzEncoder : IBemaniLzEncoder
         {
             var bestOffset = -1;
             var bestLength = matchMinLength;
+            int idx;
+            int matchIdx;
 
-            for (var idx = Math.Max(0, lowIndex); idx < cursorIndex; idx++)
+            for (idx = Math.Max(0, lowIndex); idx < cursorIndex; idx++)
             {
                 var match = true;
                 var matchLength = 0;
 
-                for (var matchIdx = 0;
+                for (matchIdx = 0;
                      matchIdx < matchMaxLength && matchIdx + idx < length && cursorIndex + matchIdx < length;
                      matchIdx++)
                 {
@@ -136,11 +138,13 @@ public class BemaniLzEncoder : IBemaniLzEncoder
                     matchLength++;
                 }
 
-                if (match && matchLength >= bestLength)
-                {
-                    bestLength = matchLength;
-                    bestOffset = idx;
-                }
+                if (!match || matchLength < bestLength) 
+                    continue;
+
+                bestLength = matchLength;
+                bestOffset = idx;
+                if (matchLength >= matchMaxLength)
+                    break;
             }
 
             return new Match
