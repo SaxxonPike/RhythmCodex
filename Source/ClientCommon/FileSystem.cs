@@ -40,7 +40,7 @@ public class FileSystem(ILogger logger)
         return File.Open(path, FileMode.Create, FileAccess.ReadWrite);
     }
 
-    private void BuildPathIfNotExists(string path)
+    private static void BuildPathIfNotExists(string path)
     {
         var dir = Path.GetDirectoryName(path);
         if (string.IsNullOrWhiteSpace(dir) || Directory.Exists(dir))
@@ -77,11 +77,11 @@ public class FileSystem(ILogger logger)
     /// <inheritdoc />
     public void CreateDirectory(string path)
     {
-        if (!Directory.Exists(path))
-        {
-            logger.Debug($"Creating directory: {path}");
-            Directory.CreateDirectory(path);                
-        }
+        if (Directory.Exists(path)) 
+            return;
+
+        logger.Debug($"Creating directory: {path}");
+        Directory.CreateDirectory(path);
     }
 
     /// <inheritdoc />

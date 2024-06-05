@@ -19,7 +19,7 @@ public class Step1DecodeIntegrationTests : BaseIntegrationFixture
     {
         var streamReader = Resolve<IStep1StreamReader>();
         var decoder = Resolve<IStep1Decoder>();
-            
+
         var data = GetArchiveResource($"Step1.{chartName}.zip")
             .First()
             .Value;
@@ -29,7 +29,8 @@ public class Step1DecodeIntegrationTests : BaseIntegrationFixture
 
         foreach (var chart in charts)
         {
-            TestContext.Out.WriteLine($"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
+            TestContext.Out.WriteLine(
+                $"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
         }
     }
 
@@ -39,7 +40,7 @@ public class Step1DecodeIntegrationTests : BaseIntegrationFixture
     {
         var streamReader = Resolve<IStep1StreamReader>();
         var decoder = Resolve<IStep1Decoder>();
-            
+
         var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ddr3mp");
         var files = Directory.GetFiles(folder, "*.step");
 
@@ -52,8 +53,9 @@ public class Step1DecodeIntegrationTests : BaseIntegrationFixture
 
             foreach (var chart in charts)
             {
-                TestContext.Out.WriteLine($"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
-            }                
+                TestContext.Out.WriteLine(
+                    $"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
+            }
         }
     }
 }

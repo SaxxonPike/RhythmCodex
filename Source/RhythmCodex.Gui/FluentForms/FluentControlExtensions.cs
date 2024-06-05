@@ -5,7 +5,7 @@ namespace RhythmCodex.Gui.FluentForms;
 
 public static class FluentControlExtensions
 {
-    public static Control Build(this FluentControl fc, Control parent = null)
+    public static Control Build(this FluentControl fc, Control? parent = null)
     {
         var state = new FluentState();
         var result = fc.Build(state, parent);

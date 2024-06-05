@@ -18,14 +18,14 @@ public class FluentTextBox : FluentControl<TextBox, string>
 
         result.DragEnter += (_, e) =>
         {
-            if (result.AllowDrop && e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (result.AllowDrop && (e.Data?.GetDataPresent(DataFormats.FileDrop) ?? false))
                 e.Effect = DragDropEffects.Link;
         };
 
         result.DragDrop += (_, e) =>
         {
-            if (result.AllowDrop && e.Data.GetDataPresent(DataFormats.FileDrop))
-                result.Text = string.Join('|', (string[]) e.Data.GetData(DataFormats.FileDrop));
+            if (result.AllowDrop && (e.Data?.GetDataPresent(DataFormats.FileDrop) ?? false))
+                result.Text = string.Join('|', (string[]) e.Data.GetData(DataFormats.FileDrop)!);
         };
             
         UpdateMap(state, result);

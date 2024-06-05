@@ -12,6 +12,21 @@ internal static class StreamExtensions
         stream.Write(data);
     }
         
+    public static void WriteAllBytes(this Span<byte> data, Stream stream)
+    {
+        stream.Write(data);
+    }
+        
+    public static void WriteAllBytes(this ReadOnlyMemory<byte> data, Stream stream)
+    {
+        stream.Write(data.Span);
+    }
+        
+    public static void WriteAllBytes(this Memory<byte> data, Stream stream)
+    {
+        stream.Write(data.Span);
+    }
+        
     public static void WriteAllBytes(this byte[] data, Stream stream)
     {
         stream.Write(data);

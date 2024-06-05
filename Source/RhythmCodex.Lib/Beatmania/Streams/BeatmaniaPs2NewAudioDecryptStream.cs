@@ -1,11 +1,11 @@
 using System;
 using System.IO;
-using RhythmCodex.Streamers;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Beatmania.Streams;
 
 public class BeatmaniaPs2NewAudioDecryptStream(Stream baseStream, ReadOnlyMemory<byte> key)
-    : PassthroughStream(baseStream)
+    : StreamWrapper(baseStream)
 {
     public override int Read(byte[] buffer, int offset, int count)
     {

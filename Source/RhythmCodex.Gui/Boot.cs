@@ -32,9 +32,18 @@ internal static class Boot
     /// </summary>
     private static void LogErrors(ILogger logger, Exception exception, int level)
     {
-        logger.Error($"{new string(' ', level)}{exception.Message}");
-        if (exception.InnerException != null)
-            LogErrors(logger, exception.InnerException, level + 2);
+        while (true)
+        {
+            logger.Error($"{new string(' ', level)}{exception.Message}");
+            if (exception.InnerException != null)
+            {
+                exception = exception.InnerException;
+                level += 2;
+                continue;
+            }
+
+            break;
+        }
     }
 
     /// <summary>

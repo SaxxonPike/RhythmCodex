@@ -13,7 +13,7 @@ internal sealed class FlacPreScan
     private readonly Stream _stream;
     private bool _isRunning;
 
-    public event EventHandler<FlacPreScanFinishedEventArgs> ScanFinished;
+    public event EventHandler<FlacPreScanFinishedEventArgs>? ScanFinished;
 
     public List<FlacFrameInformation> Frames { get; private set; }
 

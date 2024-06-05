@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charting.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -18,7 +19,7 @@ public class NoteEncoder(ILogger logger) : INoteEncoder
         IEnumerable<Note> Do()
         {
             var result = new List<Note>();
-            var eventList = events;
+            var eventList = events.AsCollection();
             var columnCount = (int) eventList.Max(e => e[NumericData.Column] ?? BigRational.Zero) + 1;
             var playerCount = (int) eventList.Max(e => e[NumericData.Player] ?? BigRational.Zero) + 1;
 
@@ -76,14 +77,15 @@ public class NoteEncoder(ILogger logger) : INoteEncoder
     {
         var freezeColumns = new HashSet<int>();
         foreach (var note in notes.Reverse())
-            if (note.Type == NoteType.Tail)
+            switch (note.Type)
             {
-                freezeColumns.Add(note.Column);
-            }
-            else if (note.Type == NoteType.Step && freezeColumns.Contains(note.Column))
-            {
-                freezeColumns.Remove(note.Column);
-                note.Type = NoteType.Freeze;
+                case NoteType.Tail:
+                    freezeColumns.Add(note.Column);
+                    break;
+                case NoteType.Step when freezeColumns.Contains(note.Column):
+                    freezeColumns.Remove(note.Column);
+                    note.Type = NoteType.Freeze;
+                    break;
             }
 
         foreach (var column in freezeColumns)

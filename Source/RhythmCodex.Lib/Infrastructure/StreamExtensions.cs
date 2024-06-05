@@ -2,68 +2,76 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace RhythmCodex.Infrastructure;
 
 public static class StreamExtensions
 {
-    private const int BufferSize = 1 << 16;
+    private const int MaxBufferSize = 1 << 20;
 
-    public static byte[] ReadZeroTerminated(this Stream stream)
+    public static Memory<byte> ReadZeroTerminated(this Stream stream)
     {
-        var buffer = new List<byte>();
+        var ms = new MemoryStream();
         while (true)
         {
             var b = stream.ReadByte();
             if (b <= 0)
-                return buffer.ToArray();
-            buffer.Add(unchecked((byte)b));
+                return ms.GetBuffer().AsMemory(0, (int)ms.Length);
+            ms.WriteByte(unchecked((byte)b));
         }
     }
 
-    public static void SkipBytes(this Stream stream, long length)
+    public static long SkipBytes(this Stream stream, long length)
     {
-        var buffer = new byte[BufferSize];
+        using var bufferHandle = length < MaxBufferSize
+            ? MemoryPool<byte>.Shared.Rent((int)length)
+            : MemoryPool<byte>.Shared.Rent();
+        var buffer = bufferHandle.Memory.Span;
+        var remaining = length;
         var offset = 0;
-        while (offset < length)
-        {
-            var count = length - offset >= BufferSize
-                ? stream.Read(buffer, 0, BufferSize)
-                : stream.Read(buffer, 0, (int)(length - offset));
 
-            if (count == 0)
+        while (remaining > 0)
+        {
+            var size = (int)Math.Min(length, buffer.Length);
+            var amount = stream.ReadAtLeast(buffer, size, false);
+            if (amount < 1)
                 break;
-            offset += count;
+            remaining -= amount;
+            offset += amount;
         }
+
+        return offset;
     }
 
-    public static byte[] ReadAllBytes(Func<byte[], int, int, int> readFunc)
+    public static Memory<byte> ReadAllBytes(Func<byte[], int, int, int> readFunc)
     {
-        var buffer = new byte[BufferSize];
-        var result = new List<byte>();
-        while (true)
-        {
-            var actualBytesRead = readFunc(buffer, 0, BufferSize);
-            if (actualBytesRead == BufferSize)
-            {
-                result.AddRange(buffer);
-            }
-            else if (actualBytesRead > 0)
-            {
-                result.AddRange(buffer.Take(actualBytesRead));
-            }
-            else
-            {
-                break;
-            }
-        }
+        byte[]? buffer = null;
+        var ms = new MemoryStream();
 
-        return result.ToArray();
+        try
+        {
+            buffer = ArrayPool<byte>.Shared.Rent(MaxBufferSize);
+
+            while (true)
+            {
+                var actualBytesRead = readFunc(buffer, 0, buffer.Length);
+                if (actualBytesRead < 1)
+                    break;
+
+                ms.Write(buffer.AsSpan(0, actualBytesRead));
+            }
+
+            return ms.GetBuffer().AsMemory(0, (int)ms.Length);
+        }
+        finally
+        {
+            if (buffer != null)
+                ArrayPool<byte>.Shared.Return(buffer);
+        }
     }
 
-    public static byte[] ReadAllBytes(this Stream stream)
+    public static Memory<byte> ReadAllBytes(this Stream stream)
     {
         return ReadAllBytes(stream.Read);
     }
@@ -101,43 +109,10 @@ public static class StreamExtensions
     public static int TryRead(this Stream stream, Span<byte> buffer, int offset, int length) =>
         stream.ReadAtLeast(buffer.Slice(offset, length), length);
 
-    // public static int TryRead(this Stream stream, byte[] buffer, int offset, long count)
-    // {
-    //     var result = 0;
-    //     
-    //     while (true)
-    //     {
-    //         var actualBytesRead = stream.Read(buffer, offset, (int) Math.Min(int.MaxValue, count));
-    //         offset += actualBytesRead;
-    //         result += actualBytesRead;
-    //         if (actualBytesRead >= count || actualBytesRead <= 0)
-    //             break;
-    //         count -= actualBytesRead;
-    //     }
-    //
-    //     return result;
-    // }
-    //
-    private static void PipeAllBytes(Func<byte[], int, int, int> read, Action<byte[], int, int> write)
-    {
-        var buffer = new byte[BufferSize];
-        while (true)
-        {
-            var bytesRead = read(buffer, 0, BufferSize);
-            if (bytesRead <= 0)
-                break;
-            write(buffer, 0, bytesRead);
-        }
-    }
-
-    public static void PipeAllBytes(this Stream stream, Stream target)
-    {
-        PipeAllBytes(stream.Read, target.Write);
-    }
-
     public static long Skip(this Stream stream, long length)
     {
-        // This will be faster in all cases.
+        // If the stream is seekable, using its own seek means the most appropriate method
+        // will be used.
         if (stream.CanSeek)
             return stream.Seek(length, SeekOrigin.Current);
 
@@ -158,21 +133,21 @@ public static class StreamExtensions
         return result;
     }
 
-    public static Span<byte> AsSpan(this MemoryStream mem) => 
+    public static Span<byte> AsSpan(this MemoryStream mem) =>
         mem.GetBuffer().AsSpan(0, (int)mem.Length);
 
-    public static Span<byte> AsSpan(this MemoryStream mem, int offset) => 
+    public static Span<byte> AsSpan(this MemoryStream mem, int offset) =>
         AsSpan(mem)[offset..];
 
-    public static Span<byte> AsSpan(this MemoryStream mem, Range range) => 
+    public static Span<byte> AsSpan(this MemoryStream mem, Range range) =>
         AsSpan(mem)[range];
 
-    public static Memory<byte> AsMemory(this MemoryStream mem) => 
+    public static Memory<byte> AsMemory(this MemoryStream mem) =>
         mem.GetBuffer().AsMemory(0, (int)mem.Length);
 
     public static Memory<byte> AsMemory(this MemoryStream mem, int offset) =>
         AsMemory(mem)[offset..];
-    
-    public static Memory<byte> AsMemory(this MemoryStream mem, Range range) => 
+
+    public static Memory<byte> AsMemory(this MemoryStream mem, Range range) =>
         AsMemory(mem)[range];
 }

@@ -27,6 +27,7 @@ public class GuiTasks(IApp app, ILogger logger) : IGuiTasks
             }
             catch
             {
+                // Do nothing - use this for breakpoints
                 throw;
             }
         });
@@ -47,7 +48,7 @@ public class GuiTasks(IApp app, ILogger logger) : IGuiTasks
     private static string[] CleanArgs(IEnumerable<string> args) =>
         args.Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
 
-    private static void AddOutPath(ICollection<string> args, string outPath)
+    private static void AddOutPath(List<string> args, string outPath)
     {
         if (string.IsNullOrWhiteSpace(outPath))
             return;
@@ -56,11 +57,10 @@ public class GuiTasks(IApp app, ILogger logger) : IGuiTasks
         args.Add(outPath);
     }
 
-    private static void AddFiles(ICollection<string> args, params string[] files)
+    private static void AddFiles(List<string> args, params string[] files)
     {
         var splitFiles = files.SelectMany(f => f.Split('|'));
-        foreach (var file in splitFiles.Where(f => !string.IsNullOrWhiteSpace(f)))
-            args.Add(file);
+        args.AddRange(splitFiles.Where(f => !string.IsNullOrWhiteSpace(f)));
     }
 
     public void DdrExtract573Flash(string gamePath, string cardPath, string outPath)

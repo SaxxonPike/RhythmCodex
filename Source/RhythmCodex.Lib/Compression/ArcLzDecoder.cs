@@ -100,7 +100,7 @@ public class ArcLzDecoder : IArcLzDecoder
             return num;
         }
 
-        public byte[] Decompress()
+        public Memory<byte> Decompress()
         {
             var output = new MemoryStream();
             while (true)

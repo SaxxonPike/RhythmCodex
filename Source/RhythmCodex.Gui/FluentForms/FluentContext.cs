@@ -5,7 +5,7 @@ namespace RhythmCodex.Gui.FluentForms;
 
 public class FluentContext(FluentState state)
 {
-    public TControl GetControl<TControl>(string id) 
+    public TControl? GetControl<TControl>(string id) 
         where TControl : class
     {
         if (!state.Map.TryGetValue(id, out var obj))

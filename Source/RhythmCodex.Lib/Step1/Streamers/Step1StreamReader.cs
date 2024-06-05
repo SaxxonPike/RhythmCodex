@@ -14,7 +14,7 @@ public class Step1StreamReader : IStep1StreamReader
         return ReadInternal(stream).ToList();
     }
 
-    private IEnumerable<Step1Chunk> ReadInternal(Stream stream)
+    private static IEnumerable<Step1Chunk> ReadInternal(Stream stream)
     {
         var reader = new BinaryReader(stream);
             
