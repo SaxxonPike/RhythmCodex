@@ -84,12 +84,12 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
     {
         // Arrange.
         var data = new byte[] {0x12, 0x34, 0x56, 0x78};
-        var expected = data.Select(v => ((v ^ 0x80) - 0x80) / 128f);
+        var expected = data.Select(v => ((v ^ 0x80) - 0x80) / 128f).ToArray();
 
         // Act.
         var result = Subject.DecodePcm8(data);
 
         // Assert.
-        result.ShouldBe(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 }
