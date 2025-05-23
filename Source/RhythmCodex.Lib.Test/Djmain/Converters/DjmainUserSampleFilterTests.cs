@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AutoFixture;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Model;
 
@@ -34,14 +34,14 @@ public class DjmainUserSampleFilterTests : BaseUnitTestFixture<DjmainUsedSampleF
 
         var inputSamples = new Dictionary<int, DjmainSampleInfo>
         {
-            {allIds[0], expectedSample},
-            {allIds[1], Create<DjmainSampleInfo>()}
+            { allIds[0], expectedSample },
+            { allIds[1], Create<DjmainSampleInfo>() }
         };
 
         var inputEvents = new[]
         {
             Build<DjmainChartEvent>()
-                .With(x => x.Param0, (byte) command)
+                .With(x => x.Param0, (byte)command)
                 .With(x => x.Param1, allIds.First() + 1)
                 .Create()
         };
@@ -51,11 +51,13 @@ public class DjmainUserSampleFilterTests : BaseUnitTestFixture<DjmainUsedSampleF
 
         // Assert.
         if (expectedInclusion)
-            result.Should()
-                .HaveCount(1)
-                .And.Contain(new KeyValuePair<int, DjmainSampleInfo>(allIds[0], expectedSample));
+        {
+            result.Count.ShouldBe(1);
+            result.ShouldContainKeyAndValue(allIds[0], expectedSample);
+        }
         else
-            result.Should()
-                .BeEmpty();
+        {
+            result.ShouldBeEmpty();
+        }
     }
 }

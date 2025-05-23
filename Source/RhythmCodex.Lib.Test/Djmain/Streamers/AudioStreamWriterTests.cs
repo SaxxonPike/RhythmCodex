@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Djmain.Streamers;
@@ -32,7 +32,7 @@ public class AudioStreamWriterTests : BaseUnitTestFixture<DjmainAudioStreamWrite
         }
 
         // Assert.
-        output.Should().BeEquivalentTo(expected);
+        output.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -63,7 +63,7 @@ public class AudioStreamWriterTests : BaseUnitTestFixture<DjmainAudioStreamWrite
         }
 
         // Assert.
-        output.Should().BeEquivalentTo(expected);
+        output.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -94,7 +94,7 @@ public class AudioStreamWriterTests : BaseUnitTestFixture<DjmainAudioStreamWrite
         }
 
         // Assert.
-        output.Should().BeEquivalentTo(expected);
+        output.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -123,6 +123,6 @@ public class AudioStreamWriterTests : BaseUnitTestFixture<DjmainAudioStreamWrite
         }
 
         // Assert.
-        output.Should().BeEquivalentTo(expected);
+        output.ShouldBeEquivalentTo(expected);
     }
 }

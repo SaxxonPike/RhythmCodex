@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
 
@@ -20,7 +20,7 @@ public class ChunkStreamWriterTests : ChunkStreamBaseTests<ChunkStreamWriter, IC
 
         // Assert.
         var observed = stream.ToArray();
-        observed.Should().BeEquivalentTo(new byte[] {0, 0, 0, 0});
+        observed.ShouldBeEquivalentTo(new byte[] {0, 0, 0, 0});
     }
 
     [Test]
@@ -39,6 +39,6 @@ public class ChunkStreamWriterTests : ChunkStreamBaseTests<ChunkStreamWriter, IC
 
         // Assert.
         var observed = stream.ToArray();
-        observed.Should().BeEquivalentTo(expected);
+        observed.ShouldBeEquivalentTo(expected);
     }
 }

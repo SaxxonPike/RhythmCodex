@@ -1,5 +1,5 @@
 using System.IO;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Models;
 using RhythmCodex.Infrastructure;
@@ -39,7 +39,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.Reserved.Should().Be(entry.Reserved);
+        observed.Reserved.ShouldBe(entry.Reserved);
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.Channel.Should().Be(entry.Channel);
+        observed.Channel.ShouldBe(entry.Channel);
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.Panning.Should().Be(entry.Panning);
+        observed.Panning.ShouldBe(entry.Panning);
     }
 
     [Test]
@@ -78,7 +78,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.Volume.Should().Be(entry.Volume);
+        observed.Volume.ShouldBe(entry.Volume);
     }
 
     [Test]
@@ -91,7 +91,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.ExtraInfo.ToArray().Should().Equal(entry.ExtraInfo.ToArray());
+        observed.ExtraInfo.ToArray().ShouldBeEquivalentTo(entry.ExtraInfo.ToArray());
     }
 
     [Test]
@@ -104,7 +104,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         var observed = Subject.Read(CreateData(entry));
 
         // Assert.
-        observed.Data.ToArray().Should().Equal(entry.Data.ToArray());
+        observed.Data.ToArray().ShouldBeEquivalentTo(entry.Data.ToArray());
     }
 
     [Test]
@@ -117,6 +117,7 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         data.Position = 0;
 
         // Act.
-        Subject.Invoking(x => x.Read(data)).Should().Throw<RhythmCodexException>();
+        var act = () => Subject.Read(data);
+        act.ShouldThrow<RhythmCodexException>();
     }
 }

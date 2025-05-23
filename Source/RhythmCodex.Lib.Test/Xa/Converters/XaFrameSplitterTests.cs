@@ -1,4 +1,5 @@
-using FluentAssertions;
+using System.Linq;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Xa.Converters;
@@ -91,8 +92,8 @@ public class XaFrameSplitterTests : BaseUnitTestFixture<XaFrameSplitter, IXaFram
     public void Get4BitData_ShouldRetrieveCorrectDataStreams(byte[] frame, int channel, int expectedStatus, byte[] expectedData)
     {
         var buffer = new int[28];
-        Subject.GetStatus(frame, channel).Should().Be(expectedStatus);
+        Subject.GetStatus(frame, channel).ShouldBe(expectedStatus);
         Subject.Get4BitData(frame, buffer, channel);
-        buffer.Should().BeEquivalentTo(expectedData);
+        buffer.Select(b => (byte)b).ShouldBe(expectedData);
     }
 }

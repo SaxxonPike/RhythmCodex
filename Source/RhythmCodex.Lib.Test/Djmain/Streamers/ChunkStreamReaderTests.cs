@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using AutoFixture;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Heuristics;
@@ -41,7 +41,7 @@ public class ChunkStreamReaderTests : BaseUnitTestFixture<DjmainChunkStreamReade
         // Act.
         using var mem = new MemoryStream(input);
         var output = Subject.Read(mem).ToArray();
-        output.Should().HaveCount(1, "only whole chunks should be returned");
+        output.Length.ShouldBe(1, "only whole chunks should be returned");
 
         // Assert.
         foreach (var chunk in output)

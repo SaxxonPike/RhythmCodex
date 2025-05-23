@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
@@ -41,9 +41,9 @@ public class TriggerEventDecoderTests : BaseUnitTestFixture<TriggerEventDecoder,
         var result = Subject.Decode(triggers).ToArray();
 
         // Assert.
-        result.Should().HaveCount(expected.Length);
+        result.Length.ShouldBe(expected.Length);
         var resultMatches = Enumerable.Range(0, expected.Length)
-            .Select(i => ((Event) result[i]).MetadataEquals(expected[i]));
-        resultMatches.Should().BeEquivalentTo(Enumerable.Repeat(true, expected.Length));
+            .Select(i => result[i].MetadataEquals(expected[i]));
+        resultMatches.ShouldBe(Enumerable.Repeat(true, expected.Length));
     }
 }

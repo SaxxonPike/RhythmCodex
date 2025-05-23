@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Model;
 
@@ -59,6 +59,6 @@ public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<Djmai
 
         // Assert.
         var output = mem.ToArray();
-        output.Should().BeEquivalentTo(expected);
+        output.ShouldBeEquivalentTo(expected);
     }
 }

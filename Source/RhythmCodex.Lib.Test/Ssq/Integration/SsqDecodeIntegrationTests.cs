@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Ssq.Converters;
@@ -51,9 +51,9 @@ public class SsqDecodeIntegrationTests : BaseIntegrationFixture<SsqDecoder>
         var charts = DecodeCharts(data);
 
         // Assert.
-        charts.Select(c => eventCounter.CountCombos(c.Events)).Should().BeEquivalentTo(expectedCombos);
-        charts.Select(c => eventCounter.CountComboFreezes(c.Events)).Should().BeEquivalentTo(expectedFreezes);
-        charts.Select(c => eventCounter.CountComboShocks(c.Events)).Should().BeEquivalentTo(expectedShocks);
+        charts.Select(c => eventCounter.CountCombos(c.Events)).ShouldBe(expectedCombos);
+        charts.Select(c => eventCounter.CountComboFreezes(c.Events)).ShouldBe(expectedFreezes);
+        charts.Select(c => eventCounter.CountComboShocks(c.Events)).ShouldBe(expectedShocks);
     }
 
     [Test]
@@ -72,8 +72,8 @@ public class SsqDecodeIntegrationTests : BaseIntegrationFixture<SsqDecoder>
         var charts = DecodeCharts(data);
 
         // Assert.
-        charts.Select(c => eventCounter.CountCombos(c.Events)).Should().BeEquivalentTo(expectedCombos);
-        charts.Select(c => eventCounter.CountComboFreezes(c.Events)).Should().BeEquivalentTo(expectedFreezes);
-        charts.Select(c => eventCounter.CountComboShocks(c.Events)).Should().BeEquivalentTo(expectedShocks);
+        charts.Select(c => eventCounter.CountCombos(c.Events)).ShouldBe(expectedCombos);
+        charts.Select(c => eventCounter.CountComboFreezes(c.Events)).ShouldBe(expectedFreezes);
+        charts.Select(c => eventCounter.CountComboShocks(c.Events)).ShouldBe(expectedShocks);
     }
 }

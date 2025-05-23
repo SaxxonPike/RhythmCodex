@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
@@ -26,6 +26,6 @@ public class SsqStreamWriterTests : BaseUnitTestFixture<SsqStreamWriter, ISsqStr
         Subject.Write(stream, chunks);
 
         // Assert.
-        result.Should().BeEquivalentTo(chunks.Concat(new SsqChunk[] {null}));
+        result.ShouldBe(chunks.Concat(new SsqChunk[] {null}));
     }
 }

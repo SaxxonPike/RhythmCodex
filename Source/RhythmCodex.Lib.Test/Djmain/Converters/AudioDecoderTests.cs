@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Djmain.Converters;
@@ -18,7 +18,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodeDpcm(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodeDpcm(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -62,7 +62,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodePcm16(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -76,7 +76,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodePcm16(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -90,6 +90,6 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodePcm8(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBe(expected);
     }
 }

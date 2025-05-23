@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
@@ -38,8 +38,8 @@ public class XactIntegrationTests : BaseIntegrationFixture
 
         // Assert.
         this.WriteFile(written.ToArray(), "out.xsb");
-        total.Should().Be(data.Length);
-        written.ToArray().Should().BeEquivalentTo(data);
+        total.ShouldBe(data.Length);
+        written.ToArray().ShouldBeEquivalentTo(data);
     }
 
     [Test]

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using ClientCommon;
-using FluentAssertions;
 using NUnit.Framework;
+using Shouldly;
 
 namespace RhythmCodex.Cli.Helpers;
 
@@ -19,7 +19,7 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(data);
 
         // Assert.
-        output.Options.Should().BeEmpty();
+        output.Options.ShouldBeEmpty();
     }
 
     [Test]
@@ -34,8 +34,8 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(data);
 
         // Assert.
-        output.Options.Should().HaveCount(1);
-        output.Options[$"{argKind}"].Should().BeEquivalentTo(argValue);
+        output.Options.Count.ShouldBe(1);
+        output.Options[$"{argKind}"].ShouldBe([argValue]);
     }
 
     [Test]
@@ -50,8 +50,8 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(data);
 
         // Assert.
-        output.Options.Should().HaveCount(1);
-        output.Options[$"{argKind}"].Should().BeEquivalentTo(argValues);
+        output.Options.Count.ShouldBe(1);
+        output.Options[$"{argKind}"].ShouldBeEquivalentTo(argValues);
     }
 
     [Test]
@@ -66,9 +66,9 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(data);
 
         // Assert.
-        output.Options.Should().HaveCount(2);
-        output.Options[$"{argKinds[0]}"].Should().BeEquivalentTo(argValues[0]);
-        output.Options[$"{argKinds[1]}"].Should().BeEquivalentTo(argValues[1]);
+        output.Options.Count.ShouldBe(2);
+        output.Options[$"{argKinds[0]}"].ShouldBe([argValues[0]]);
+        output.Options[$"{argKinds[1]}"].ShouldBe([argValues[1]]);
     }
 
     [Test]
@@ -82,8 +82,8 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(data);
 
         // Assert.
-        output.InputFiles.Should().HaveCount(1);
-        output.InputFiles.Should().BeEquivalentTo(argValue);
+        output.InputFiles.Count.ShouldBe(1);
+        output.InputFiles.ShouldBe([argValue]);
     }
 
     [Test]
@@ -96,8 +96,8 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(argValues);
 
         // Assert.
-        output.InputFiles.Should().HaveCount(argValues.Length);
-        output.InputFiles.Should().BeEquivalentTo(argValues);
+        output.InputFiles.Count.ShouldBe(argValues.Length);
+        output.InputFiles.ShouldBe(argValues);
     }
 
     [Test]
@@ -114,10 +114,10 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(data);
             
         // Assert.
-        output.Options.Should().HaveCount(2);
-        output.InputFiles.Should().BeEquivalentTo(defaultValues);
-        output.Options[$"{argKinds[0]}"].Should().BeEquivalentTo(argValues[0]);
-        output.Options[$"{argKinds[1]}"].Should().BeEquivalentTo(argValues[1]);
+        output.Options.Count.ShouldBe(2);
+        output.InputFiles.ShouldBeEquivalentTo(defaultValues);
+        output.Options[$"{argKinds[0]}"].ShouldBe([argValues[0]]);
+        output.Options[$"{argKinds[1]}"].ShouldBe([argValues[1]]);
     }
         
     [Test]
@@ -131,6 +131,6 @@ public class ArgParserTests : BaseUnitTestFixture<ArgParser, IArgParser>
         var output = Subject.Parse(data);
             
         // Assert.
-        output.InputFiles.Should().BeEquivalentTo(defaultValues);
+        output.InputFiles.ShouldBeEquivalentTo(defaultValues);
     }
 }

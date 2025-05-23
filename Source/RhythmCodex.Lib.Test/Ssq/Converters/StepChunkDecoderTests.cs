@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
 
@@ -41,7 +41,7 @@ public class StepChunkDecoderTests : BaseUnitTestFixture<StepChunkDecoder, IStep
         var result = Subject.Convert(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBe(expected);
     }
 
     [Test]
@@ -73,6 +73,6 @@ public class StepChunkDecoderTests : BaseUnitTestFixture<StepChunkDecoder, IStep
         var result = Subject.Convert(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBe(expected);
     }
 }

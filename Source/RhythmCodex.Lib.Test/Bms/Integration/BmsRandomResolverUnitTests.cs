@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using NUnit.Framework;
 using RhythmCodex.Bms.Converters;
@@ -27,7 +27,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS" }
@@ -56,7 +56,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS" }
@@ -87,7 +87,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS" }
@@ -118,7 +118,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS" }
@@ -153,7 +153,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS" }
@@ -185,7 +185,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS" }
@@ -219,7 +219,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS 1" },
@@ -252,7 +252,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS 1" },
@@ -285,7 +285,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         var output = subject.Resolve(commands);
 
         // Assert.
-        output.Should().BeEquivalentTo(
+        output.ShouldBe(
             new[]
             {
                 new BmsCommand { Name = "PASS 1" },

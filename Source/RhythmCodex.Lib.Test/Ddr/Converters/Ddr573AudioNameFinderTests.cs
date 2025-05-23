@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ddr.Processors;
 
@@ -14,7 +14,7 @@ public class Ddr573AudioNameFinderTests : BaseUnitTestFixture<Ddr573AudioNameFin
     public void GetName_ShouldExtractNameFromFileName(string input, string expected)
     {
         var observed = Subject.GetName(input);
-        observed.Should().Be(expected, "name must be extracted correctly");
+        observed.ShouldBe(expected, "name must be extracted correctly");
     }
         
     [Test]
@@ -26,6 +26,6 @@ public class Ddr573AudioNameFinderTests : BaseUnitTestFixture<Ddr573AudioNameFin
     public void GetPath_ShouldExtractAndBuildPath(string input, string expected)
     {
         var observed = Subject.GetPath(input);
-        observed.Should().Be(expected, "name must be extracted correctly");
+        observed.ShouldBe(expected, "name must be extracted correctly");
     }
 }

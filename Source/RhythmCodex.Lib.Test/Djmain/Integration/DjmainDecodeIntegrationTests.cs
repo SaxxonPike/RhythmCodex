@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Converters;
 using RhythmCodex.Djmain.Model;
@@ -92,10 +92,10 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, Create<DjmainChartType>());
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[NumericData.PlaySound].Value.Should().Be(param1 - 1);
-        ev[NumericData.Panning].Value.Should().Be(new BigRational(expectedPanning, 14));
+        ev[NumericData.PlaySound].Value.ShouldBe(param1 - 1);
+        ev[NumericData.Panning].Value.ShouldBe(new BigRational(expectedPanning, 14));
     }
 
     [Test]
@@ -120,9 +120,9 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, Create<DjmainChartType>());
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[FlagData.End].Value.Should().BeTrue();
+        ev[FlagData.End].Value.ShouldBeTrue();
     }
 
     [Test]
@@ -148,10 +148,10 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, DjmainChartType.Beatmania);
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[FlagData.FreeZone].Should().Be(true);
-        ev[NumericData.Player].Value.Should().Be(expectedPlayer);
+        ev[FlagData.FreeZone].ShouldBe(true);
+        ev[NumericData.Player].Value.ShouldBe(expectedPlayer);
     }
 
     [Test]
@@ -177,10 +177,10 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, DjmainChartType.Beatmania);
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[FlagData.Measure].Should().Be(true);
-        ev[NumericData.Player].Value.Should().Be(expectedPlayer);
+        ev[FlagData.Measure].ShouldBe(true);
+        ev[NumericData.Player].Value.ShouldBe(expectedPlayer);
     }
 
     [Test]
@@ -214,11 +214,11 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, DjmainChartType.Beatmania);
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[FlagData.Note].Should().Be(true);
-        ev[NumericData.Player].Value.Should().Be(expectedPlayer);
-        ev[NumericData.Column].Value.Should().Be(expectedColumn);
+        ev[FlagData.Note].ShouldBe(true);
+        ev[NumericData.Player].Value.ShouldBe(expectedPlayer);
+        ev[NumericData.Column].Value.ShouldBe(expectedColumn);
     }
 
     [Test]
@@ -252,11 +252,11 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, DjmainChartType.Beatmania);
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[NumericData.LoadSound].Value.Should().Be(param1 - 1);
-        ev[NumericData.Player].Value.Should().Be(expectedPlayer);
-        ev[NumericData.Column].Value.Should().Be(expectedColumn);
+        ev[NumericData.LoadSound].Value.ShouldBe(param1 - 1);
+        ev[NumericData.Player].Value.ShouldBe(expectedPlayer);
+        ev[NumericData.Column].Value.ShouldBe(expectedColumn);
     }
 
     [Test]
@@ -282,10 +282,10 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, DjmainChartType.Beatmania);
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[FlagData.Scratch].Should().Be(true);
-        ev[NumericData.Player].Value.Should().Be(expectedPlayer);
+        ev[FlagData.Scratch].ShouldBe(true);
+        ev[NumericData.Player].Value.ShouldBe(expectedPlayer);
     }
 
     [Test]
@@ -313,11 +313,11 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, DjmainChartType.Beatmania);
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[FlagData.Scratch].Value.Should().BeTrue();
-        ev[NumericData.LoadSound].Value.Should().Be(param1 - 1);
-        ev[NumericData.Player].Value.Should().Be(expectedPlayer);
+        ev[FlagData.Scratch].Value.ShouldBeTrue();
+        ev[NumericData.LoadSound].Value.ShouldBe(param1 - 1);
+        ev[NumericData.Player].Value.ShouldBe(expectedPlayer);
     }
 
     [Test]
@@ -352,9 +352,9 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         var output = subject.Decode(data, Create<DjmainChartType>());
 
         // Assert.
-        output.Events.Should().HaveCount(1);
+        output.Events.Count.ShouldBe(1);
         var ev = output.Events.Single();
-        ev[NumericData.Bpm].Value.Should().Be(expectedTempo);
+        ev[NumericData.Bpm].Value.ShouldBe(expectedTempo);
     }
 
 }

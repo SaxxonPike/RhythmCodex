@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 using ClientCommon;
-using FluentAssertions;
 using NUnit.Framework;
+using Shouldly;
 
 namespace RhythmCodex.Cli.Helpers;
 
@@ -16,7 +16,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
         var output = Subject.CurrentPath;
             
         // Assert.
-        output.Should().Be(TestContext.CurrentContext.WorkDirectory);
+        output.ShouldBe(TestContext.CurrentContext.WorkDirectory);
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
         var output = Subject.CombinePath(paths);
             
         // Assert.
-        output.Should().Be(Path.Combine(paths));
+        output.ShouldBe(Path.Combine(paths));
     }
 
     [Test]
@@ -44,7 +44,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             Subject.CreateDirectory(name);
                 
             // Assert.
-            Directory.Exists(name).Should().BeTrue();
+            Directory.Exists(name).ShouldBeTrue();
         }
         finally
         {
@@ -65,7 +65,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             Subject.CreateDirectory(name);
                 
             // Assert.
-            Directory.Exists(name).Should().BeTrue();
+            Directory.Exists(name).ShouldBeTrue();
         }
         finally
         {
@@ -86,7 +86,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             Subject.CreateDirectory(Path.Combine(paths));
                 
             // Assert.
-            Directory.Exists(Path.Combine(paths)).Should().BeTrue();
+            Directory.Exists(Path.Combine(paths)).ShouldBeTrue();
         }
         finally
         {
@@ -106,7 +106,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
         var output = Subject.GetDirectory(path);
             
         // Assert.
-        output.Should().Be(directory);
+        output.ShouldBe(directory);
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             var output = Subject.GetDirectoryNames(basePath);
                 
             // Assert.
-            output.Should().BeEquivalentTo(directories);
+            output.ShouldBe(directories, ignoreOrder: true);
         }
         finally
         {
@@ -144,7 +144,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
         var output = Subject.GetFileName(path);
             
         // Assert.
-        output.Should().Be(file);
+        output.ShouldBe(file);
     }
 
     [Test]
@@ -164,7 +164,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             var output = Subject.GetFileNames(basePath, files.First());
                 
             // Assert.
-            output.Should().BeEquivalentTo(Path.Combine(basePath, files.First()));
+            output.ShouldBe([Path.Combine(basePath, files.First())]);
         }
         finally
         {
@@ -191,7 +191,7 @@ public class FileSystemTests : BaseUnitTestFixture<FileSystem, IFileSystem>
             var output = Subject.GetFileNames(basePath, pattern);
                 
             // Assert.
-            output.Should().BeEquivalentTo(files.Select(f => Path.Combine(basePath, f)));
+            output.ShouldBe(files.Select(f => Path.Combine(basePath, f)), ignoreOrder: true);
         }
         finally
         {

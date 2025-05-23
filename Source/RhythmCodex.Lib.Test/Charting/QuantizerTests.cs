@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 
@@ -37,6 +37,6 @@ public class QuantizerTests : BaseUnitTestFixture<Quantizer, IQuantizer>
         var result = Subject.GetQuantization(data);
 
         // Assert.
-        result.Should().Be(expected);
+        result.ShouldBe(expected);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
@@ -14,7 +14,7 @@ public class SsqStreamerTests : BaseUnitTestFixture<SsqStreamReader, ISsqStreamR
     public void Read_ReadsAllChunks()
     {
         // Arrange.
-        var chunks = CreateMany<SsqChunk>().Concat(new SsqChunk[] {null}).ToList();
+        var chunks = CreateMany<SsqChunk>().Concat([null]).ToList();
         var chunkStreamer = Mock<IChunkStreamReader>();
         var chunkIndex = 0;
         var stream = new MemoryStream();
@@ -25,6 +25,6 @@ public class SsqStreamerTests : BaseUnitTestFixture<SsqStreamReader, ISsqStreamR
         var result = Subject.Read(stream);
 
         // Assert.
-        result.Should().BeEquivalentTo(chunks.TakeWhile(c => c != null));
+        result.ShouldBe(chunks.TakeWhile(c => c != null));
     }
 }

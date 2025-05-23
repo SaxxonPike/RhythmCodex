@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Model;
 
@@ -39,6 +39,6 @@ public class
         }
 
         // Assert.
-        events.Should().BeEquivalentTo(expected);
+        events.ShouldBeEquivalentTo(expected);
     }
 }

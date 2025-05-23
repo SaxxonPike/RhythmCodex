@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Ssq.Streamers;
@@ -18,7 +18,7 @@ public class ChunkStreamReaderTests : ChunkStreamBaseTests<ChunkStreamReader, IC
         var result = Subject.Read(stream);
 
         // Assert.
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     [Test]
@@ -34,9 +34,9 @@ public class ChunkStreamReaderTests : ChunkStreamBaseTests<ChunkStreamReader, IC
         var result = Subject.Read(stream);
 
         // Assert.
-        result.Should().NotBe(null);
-        result.Parameter0.Should().Be(param0);
-        result.Parameter1.Should().Be(param1);
-        result.Data.Take(data.Length).Should().BeEquivalentTo(data);
+        result.ShouldNotBe(null);
+        result.Parameter0.ShouldBe(param0);
+        result.Parameter1.ShouldBe(param1);
+        result.Data.Take(data.Length).ShouldBe(data);
     }
 }
