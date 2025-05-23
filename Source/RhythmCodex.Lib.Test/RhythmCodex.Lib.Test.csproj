@@ -6,16 +6,16 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.0.0"/>
+        <PackageReference Include="Autofac" Version="8.3.0" />
         <PackageReference Include="AutoFixture" Version="4.18.1"/>
         <PackageReference Include="FluentAssertions" Version="6.12.0"/>
-        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
         <PackageReference Include="Moqzilla" Version="1.1.0"/>
-        <PackageReference Include="NUnit" Version="4.1.0"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5"/>
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0"/>
+        <PackageReference Include="NUnit" Version="4.3.2" />
+        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.5" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RhythmCodex.Lib.Test.Data\RhythmCodex.Test.Data.csproj"/>
