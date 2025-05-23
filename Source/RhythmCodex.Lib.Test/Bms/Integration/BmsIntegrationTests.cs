@@ -62,8 +62,7 @@ public class BmsIntegrationTests : BaseIntegrationFixture
 
         // Act.
         var observed = reader.Read(mem);
-        var act = () => resolver.Resolve(observed);
-        act.ShouldNotThrow();
+        Should.NotThrow(() => resolver.Resolve(observed));
     }
 
     [Test]

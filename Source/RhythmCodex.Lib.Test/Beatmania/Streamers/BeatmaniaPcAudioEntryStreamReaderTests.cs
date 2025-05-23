@@ -117,7 +117,6 @@ public class BeatmaniaPcAudioEntryStreamReaderTests : BaseUnitTestFixture<Beatma
         data.Position = 0;
 
         // Act.
-        var act = () => Subject.Read(data);
-        act.ShouldThrow<RhythmCodexException>();
+        Should.Throw<RhythmCodexException>(() => Subject.Read(data));
     }
 }
