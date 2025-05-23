@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Extensions;
 
@@ -27,7 +27,7 @@ public class EncryptedBeatmaniaPcAudioStreamReaderTests : BaseUnitTestFixture<En
             using var stream = new MemoryStream(file);
             var decrypted = Subject.Decrypt(stream, file.Length);
             var observed = decrypted.Span[..0x10].NullTerminated().GetString();
-            observed.Should().Be(expectedId);
+            observed.ShouldBe(expectedId);
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Psf.Streamers;
 
@@ -23,7 +23,7 @@ public class PsfIntegrationTests : BaseIntegrationFixture
 
         var reader = Resolve<IPsfStreamReader>();
         var psf = reader.Read(new MemoryStream(source));
-        psf.Reserved.Should().BeEmpty();
-        psf.Data.Should().BeEquivalentTo(expected);
+        psf.Reserved.ShouldBeEmpty();
+        psf.Data.ShouldBeEquivalentTo(expected);
     }
 }

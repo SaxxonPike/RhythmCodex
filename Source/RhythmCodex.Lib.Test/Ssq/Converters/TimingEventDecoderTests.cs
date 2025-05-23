@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Meta.Models;
@@ -38,9 +38,9 @@ public class TimingEventDecoderTests : BaseUnitTestFixture<TimingEventDecoder, I
         var result = Subject.Decode(timings).ToArray();
 
         // Assert.
-        result.Should().HaveCount(expected.Count);
+        result.Length.ShouldBe(expected.Count);
         var resultMatches = Enumerable.Range(0, expected.Count)
-            .Select(i => ((Event)result[i]).MetadataEquals(expected[i]));
-        resultMatches.Should().BeEquivalentTo(Enumerable.Repeat(true, expected.Count));
+            .Select(i => result[i].MetadataEquals(expected[i]));
+        resultMatches.ShouldBe(Enumerable.Repeat(true, expected.Count));
     }
 }

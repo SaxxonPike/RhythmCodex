@@ -1,5 +1,5 @@
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 
@@ -17,6 +17,6 @@ public class Step1HeuristicTests : BaseUnitTestFixture<Step1Heuristic>
             .First()
             .Value;
 
-        Subject.Match(data).Should().NotBeNull();
+        Subject.Match(data).ShouldNotBeNull();
     }
 }

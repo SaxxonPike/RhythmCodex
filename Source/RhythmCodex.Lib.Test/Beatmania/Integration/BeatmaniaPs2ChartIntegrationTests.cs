@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Blowfish.Converters;
@@ -20,6 +20,6 @@ public class BeatmaniaPs2ChartIntegrationTests : BaseIntegrationFixture
         var blowfish = Resolve<IBlowfishDecrypter>();
         var observed = blowfish.Decrypt(input, key);
 
-        observed.Should().BeEquivalentTo(expected);
+        observed.ShouldBeEquivalentTo(expected);
     }
 }

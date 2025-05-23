@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Model;
 
@@ -28,8 +28,8 @@ public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<Djmai
         var output = Subject.Read(mem).ToArray();
 
         // Assert.
-        output.Should().HaveCount(2);
-        output[0].Should().BeEquivalentTo(new KeyValuePair<int, DjmainSampleInfo>(0, new DjmainSampleInfo
+        output.Length.ShouldBe(2);
+        output[0].ShouldBe(new KeyValuePair<int, DjmainSampleInfo>(0, new DjmainSampleInfo
         {
             Channel = 0x12,
             Frequency = 0x5634,
@@ -40,7 +40,7 @@ public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<Djmai
             SampleType = 0x90,
             Flags = 0x12
         }));
-        output[1].Should().BeEquivalentTo(new KeyValuePair<int, DjmainSampleInfo>(1, new DjmainSampleInfo
+        output[1].ShouldBe(new KeyValuePair<int, DjmainSampleInfo>(1, new DjmainSampleInfo
         {
             Channel = 0x34,
             Frequency = 0x7856,

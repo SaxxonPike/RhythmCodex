@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
 
@@ -28,7 +28,7 @@ public class Ddr1Player6PanelMapperTests : BaseUnitTestFixture<Ddr1Player6PanelM
         var result = Enumerable.Range(0, expected.Length).Select(Subject.Map);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBe(expected);
     }
 
     [Test]
@@ -52,6 +52,6 @@ public class Ddr1Player6PanelMapperTests : BaseUnitTestFixture<Ddr1Player6PanelM
         var result = data.Select(Subject.Map);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBe(expected);
     }
 }

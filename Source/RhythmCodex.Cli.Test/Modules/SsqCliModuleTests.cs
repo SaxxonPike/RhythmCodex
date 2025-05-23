@@ -2,7 +2,7 @@
 using System.Linq;
 using Autofac;
 using ClientCommon;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Cli.Modules;
@@ -33,6 +33,6 @@ public class SsqCliModuleTests : AppIntegrationFixture
             .TaskFactory(parsedArgs);
 
         // Assert.
-        act.Should().NotThrow();
+        act.ShouldNotThrow();
     }
 }

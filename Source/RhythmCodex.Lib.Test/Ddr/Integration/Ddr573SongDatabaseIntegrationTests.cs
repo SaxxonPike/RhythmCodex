@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Converters;
@@ -25,7 +25,7 @@ public class Ddr573SongDatabaseIntegrationTests : BaseIntegrationFixture
         var decompressor = Resolve<IBemaniLzDecoder>();
         var decrypted = decrypter.Decrypt(data, decrypter.ConvertKey("EXTREME"));
         var decompressed = decompressor.Decode(new ReadOnlyMemoryStream(decrypted));
-        decompressed.ToArray().Should().BeEquivalentTo(expected);
+        decompressed.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -38,7 +38,7 @@ public class Ddr573SongDatabaseIntegrationTests : BaseIntegrationFixture
 
         var decrypter = Resolve<IDdr573DatabaseDecrypter>();
         var observed = decrypter.FindKey(data);
-        observed.Should().Be(decrypter.ConvertKey("EXTREME"));
+        observed.ShouldBe(decrypter.ConvertKey("EXTREME"));
     }
 
     [Test]
@@ -51,6 +51,6 @@ public class Ddr573SongDatabaseIntegrationTests : BaseIntegrationFixture
 
         var decoder = Resolve<IDdr573DatabaseDecoder>();
         var observed = decoder.FindRecordSize(data);
-        observed.Should().Be(0x80);
+        observed.ShouldBe(0x80);
     }
 }

@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Plugin.CSCore;
 
@@ -16,7 +16,7 @@ public class FlacDecoderTest : BaseUnitTestFixture<FlacDecoder>
         var data = GetArchiveResource(fileName).Single();
         using var stream = new MemoryStream(data.Value);
         var output = Subject.Decode(stream);
-        output.Should().NotBeNull();
-        output.Samples.Should().HaveCount(1);
+        output.ShouldNotBeNull();
+        output.Samples.Count.ShouldBe(1);
     }
 }

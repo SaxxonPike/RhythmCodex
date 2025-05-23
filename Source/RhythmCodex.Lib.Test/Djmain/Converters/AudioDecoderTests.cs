@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Djmain.Converters;
@@ -18,7 +18,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodeDpcm(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodeDpcm(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -62,7 +62,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodePcm16(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -76,7 +76,7 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         var result = Subject.DecodePcm16(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -84,12 +84,12 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
     {
         // Arrange.
         var data = new byte[] {0x12, 0x34, 0x56, 0x78};
-        var expected = data.Select(v => ((v ^ 0x80) - 0x80) / 128f);
+        var expected = data.Select(v => ((v ^ 0x80) - 0x80) / 128f).ToArray();
 
         // Act.
         var result = Subject.DecodePcm8(data);
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 }

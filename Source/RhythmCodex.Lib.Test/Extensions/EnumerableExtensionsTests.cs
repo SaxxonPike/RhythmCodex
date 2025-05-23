@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Extensions;
@@ -17,8 +17,8 @@ public class EnumerableExtensionsTests : BaseTestFixture
         var output = data.Select(d => d);
 
         // Assert.
-        output.Should().BeEquivalentTo(data);
-        output.Should().NotBeSameAs(data);
+        output.ShouldBe(data);
+        output.ShouldNotBeSameAs(data);
     }
 
     [Test]
@@ -31,7 +31,7 @@ public class EnumerableExtensionsTests : BaseTestFixture
         var output = data;
 
         // Assert.
-        output.Should().BeEquivalentTo(data);
-        output.Should().BeSameAs(data);
+        output.ShouldBe(data);
+        output.ShouldBeSameAs(data);
     }
 }

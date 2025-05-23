@@ -3,7 +3,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Bms.Model;
 
 [Model]
-public class BmsCommand
+public record BmsCommand
 {
     public string? Name { get; set; }
     public string? Value { get; set; }

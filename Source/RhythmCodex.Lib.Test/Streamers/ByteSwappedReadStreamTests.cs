@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Streamers;
@@ -20,7 +20,7 @@ public class ByteSwappedReadStreamTests : BaseUnitTestFixture
         subject.Read(result, 0, result.Length);
 
         // Assert.
-        result.Should().BeEquivalentTo(new[] {data[1], data[0], data[3]});
+        result.ShouldBeEquivalentTo(new[] {data[1], data[0], data[3]});
     }
 
     [Test]
@@ -35,10 +35,10 @@ public class ByteSwappedReadStreamTests : BaseUnitTestFixture
 
         // Assert.
         var firstResult = subject.ReadByte();
-        firstResult.Should().Be(data[1]);
+        firstResult.ShouldBe(data[1]);
         var secondResult = subject.ReadByte();
-        secondResult.Should().Be(data[0]);
+        secondResult.ShouldBe(data[0]);
         var thirdResult = subject.ReadByte();
-        thirdResult.Should().Be(data[3]);
+        thirdResult.ShouldBe(data[3]);
     }
 }

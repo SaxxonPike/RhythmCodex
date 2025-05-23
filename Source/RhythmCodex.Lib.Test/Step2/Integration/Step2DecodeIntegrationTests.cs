@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Step2.Converters;
@@ -27,7 +27,7 @@ public class Step2DecodeIntegrationTests : BaseIntegrationFixture
         var chunk = streamReader.Read(new MemoryStream(data), data.Length);
         var chart = decoder.Decode(chunk);
 
-        chart.Events.Count(ev => ev[FlagData.Note] == true && ev[NumericData.Player] == 0).Should().Be(expectedStepsP1);
-        chart.Events.Count(ev => ev[FlagData.Note] == true && ev[NumericData.Player] == 1).Should().Be(expectedStepsP2);
+        chart.Events.Count(ev => ev[FlagData.Note] == true && ev[NumericData.Player] == 0).ShouldBe(expectedStepsP1);
+        chart.Events.Count(ev => ev[FlagData.Note] == true && ev[NumericData.Player] == 1).ShouldBe(expectedStepsP2);
     }
 }

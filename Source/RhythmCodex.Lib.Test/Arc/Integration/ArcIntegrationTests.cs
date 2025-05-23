@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Arc.Converters;
 using RhythmCodex.Arc.Streamers;
@@ -26,8 +26,8 @@ public class ArcIntegrationTests : BaseIntegrationFixture
             .ToList();
 
         var file = output[1];
-        file.Name.Should().Be("data/chara/pl_shadow00/pl_shadow00.dds");
-        file.Data.ToArray().Should().BeEquivalentTo(expected);
+        file.Name.ShouldBe("data/chara/pl_shadow00/pl_shadow00.dds");
+        file.Data.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -49,7 +49,7 @@ public class ArcIntegrationTests : BaseIntegrationFixture
 
         this.WriteFile(outStream.ToArray(), "out.arc");
             
-        inStream.ToArray().Should().BeEquivalentTo(outStream.ToArray());
+        inStream.ToArray().ShouldBeEquivalentTo(outStream.ToArray());
     }
 
     [Test]

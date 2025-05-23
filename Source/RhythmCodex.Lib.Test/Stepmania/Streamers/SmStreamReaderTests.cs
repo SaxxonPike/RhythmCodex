@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Stepmania.Model;
 
@@ -33,7 +33,7 @@ public class SmStreamReaderTests : BaseUnitTestFixture<SmStreamReader, ISmStream
         var result = Subject.Read(mem).ToArray();
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -66,6 +66,6 @@ public class SmStreamReaderTests : BaseUnitTestFixture<SmStreamReader, ISmStream
         var result = Subject.Read(mem).ToArray();
 
         // Assert.
-        result.Should().BeEquivalentTo(expected);
+        result.ShouldBeEquivalentTo(expected);
     }
 }

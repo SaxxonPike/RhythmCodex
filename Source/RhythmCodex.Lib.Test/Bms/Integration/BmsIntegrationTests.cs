@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Bms.Converters;
 using RhythmCodex.Bms.Model;
@@ -62,7 +62,7 @@ public class BmsIntegrationTests : BaseIntegrationFixture
 
         // Act.
         var observed = reader.Read(mem);
-        resolver.Invoking(x => x.Resolve(observed)).Should().NotThrow();
+        Should.NotThrow(() => resolver.Resolve(observed));
     }
 
     [Test]
@@ -86,7 +86,7 @@ public class BmsIntegrationTests : BaseIntegrationFixture
         var observed = reader.Read(mem);
 
         // Assert.
-        observed.Should().BeEquivalentTo(
+        observed.ShouldBeEquivalentTo(
             new[]
             {
                 new BmsCommand { Name = "WAV04", Value = "test.wav" },

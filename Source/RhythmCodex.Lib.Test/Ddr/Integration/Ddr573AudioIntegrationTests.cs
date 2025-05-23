@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Digital573.Converters;
 using RhythmCodex.Digital573.Providers;
@@ -24,7 +24,7 @@ public class Ddr573AudioIntegrationTests : BaseIntegrationFixture
         var keyProvider = Resolve<IDigital573AudioKeyProvider>();
         var key = keyProvider.Get(data);
         var observed = decrypter.DecryptNew(data, key);
-        observed.Data.Should().Equal(expected);
+        observed.Data.ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -43,6 +43,6 @@ public class Ddr573AudioIntegrationTests : BaseIntegrationFixture
         var keyProvider = Resolve<IDigital573AudioKeyProvider>();
         var key = keyProvider.Get(data);
         var observed = decrypter.DecryptOld(data, key[0]);
-        observed.Data.Should().Equal(expected);
+        observed.Data.ShouldBeEquivalentTo(expected);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 
 namespace RhythmCodex.Djmain.Streamers;
@@ -19,7 +19,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadDpcm(stream);
 
         // Assert.
-        result.ToArray().Should().BeEmpty();
+        result.ToArray().ShouldBeEmpty();
     }
 
     [Test]
@@ -33,7 +33,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadDpcm(stream);
 
         // Assert.
-        result.ToArray().Should().BeEmpty();
+        result.ToArray().ShouldBeEmpty();
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadDpcm(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -62,7 +62,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadDpcm(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -77,7 +77,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadDpcm(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -97,7 +97,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm16(stream);
 
         // Assert.
-        result.ToArray().Should().BeEmpty();
+        result.ToArray().ShouldBeEmpty();
     }
 
     [Test]
@@ -111,7 +111,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm16(stream);
 
         // Assert.
-        result.ToArray().Should().BeEmpty();
+        result.ToArray().ShouldBeEmpty();
     }
 
     [Test]
@@ -132,7 +132,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm16(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -146,7 +146,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm16(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -161,7 +161,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm16(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -175,7 +175,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm8(stream);
 
         // Assert.
-        result.ToArray().Should().BeEmpty();
+        result.ToArray().ShouldBeEmpty();
     }
 
     [Test]
@@ -189,7 +189,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm8(stream);
 
         // Assert.
-        result.ToArray().Should().BeEmpty();
+        result.ToArray().ShouldBeEmpty();
     }
 
     [Test]
@@ -204,7 +204,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm8(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -218,7 +218,7 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm8(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -233,6 +233,6 @@ public class AudioStreamReaderTests : BaseUnitTestFixture<DjmainAudioStreamReade
         var result = Subject.ReadPcm8(stream);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 }

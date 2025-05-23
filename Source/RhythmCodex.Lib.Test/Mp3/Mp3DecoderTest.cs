@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Plugin.MP3Sharp;
 
@@ -16,7 +16,7 @@ public class Mp3DecoderTest : BaseUnitTestFixture<Mp3Decoder>
         var data = GetArchiveResource(fileName).Single();
         using var stream = new MemoryStream(data.Value);
         var output = Subject.Decode(stream);
-        output.Should().NotBeNull();
-        output.Samples.Should().HaveCount(2);
+        output.ShouldNotBeNull();
+        output.Samples.Count.ShouldBe(2);
     }
 }

@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
 
@@ -35,6 +35,6 @@ public class TimingChunkEncoderTests : BaseUnitTestFixture<TimingChunkEncoder, I
         var result = Subject.Convert(timings);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 }

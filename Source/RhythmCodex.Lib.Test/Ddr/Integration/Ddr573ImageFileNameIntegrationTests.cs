@@ -1,4 +1,4 @@
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ddr.Processors;
 
@@ -19,6 +19,6 @@ public class Ddr573ImageFileNameIntegrationTests : BaseIntegrationFixture
         var observed = $"{subject.Calculate(name):X8}";
 
         // Assert.
-        observed.Should().Be($"{hash:X8}");
+        observed.ShouldBe($"{hash:X8}");
     }
 }

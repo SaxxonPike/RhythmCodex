@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using NUnit.Framework;
 using RhythmCodex.Charting.Models;
@@ -98,9 +98,9 @@ public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder, IStep
         var result = Subject.Decode(steps, panelMapper.Object);
 
         // Assert.
-        result.Should().HaveCount(expected.Length);
+        result.Count.ShouldBe(expected.Length);
         var resultMatches = Enumerable.Range(0, expected.Length)
-            .Select(i => ((Event) result[i]).MetadataEquals(expected[i]));
-        resultMatches.Should().BeEquivalentTo(Enumerable.Repeat(true, expected.Length));
+            .Select(i => result[i].MetadataEquals(expected[i]));
+        resultMatches.ShouldBe(Enumerable.Repeat(true, expected.Length));
     }
 }

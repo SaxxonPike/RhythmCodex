@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
 
@@ -34,6 +34,6 @@ public class TriggerChunkEncoderTests : BaseUnitTestFixture<TriggerChunkEncoder,
         var result = Subject.Convert(triggers);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBeEquivalentTo(expected);
     }
 }

@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ssq.Model;
 
@@ -18,7 +18,7 @@ public class StepChunkEncoderTests : BaseUnitTestFixture<StepChunkEncoder, IStep
             new Step {MetricOffset = 0x345678, Panels = 0x00, ExtraPanels = 0x80, ExtraPanelInfo = 0x03}
         };
 
-        var expected = new[]
+        var expected = new byte[]
         {
             0x03, 0x00, 0x00, 0x00,
 
@@ -41,7 +41,7 @@ public class StepChunkEncoderTests : BaseUnitTestFixture<StepChunkEncoder, IStep
         var result = Subject.Convert(steps);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBe(expected);
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class StepChunkEncoderTests : BaseUnitTestFixture<StepChunkEncoder, IStep
             new Step {MetricOffset = 0x345678, Panels = 0x40}
         };
 
-        var expected = new[]
+        var expected = new byte[]
         {
             0x03, 0x00, 0x00, 0x00,
 
@@ -74,6 +74,6 @@ public class StepChunkEncoderTests : BaseUnitTestFixture<StepChunkEncoder, IStep
         var result = Subject.Convert(steps);
 
         // Assert.
-        result.ToArray().Should().BeEquivalentTo(expected);
+        result.ToArray().ShouldBe(expected);
     }
 }

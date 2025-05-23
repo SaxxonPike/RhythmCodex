@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Meta.Models;
 
@@ -30,6 +30,6 @@ public class GrooveRadarEncoderTests : BaseUnitTestFixture<GrooveRadarEncoder, I
         var output = Subject.Encode(data);
 
         // Assert.
-        output.Should().BeEquivalentTo($"{stream},{voltage},{air},{freeze},{chaos}");
+        output.ShouldBeEquivalentTo($"{stream},{voltage},{air},{freeze},{chaos}");
     }
 }

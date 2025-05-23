@@ -1,6 +1,6 @@
 using System.IO;
 using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
 
@@ -20,7 +20,7 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var decoder = Resolve<BemaniLzDecoder>();
         var decoded = decoder.Decode(new ReadOnlyMemoryStream(encoded));
 
-        decoded.ToArray().Should().BeEquivalentTo(data);
+        decoded.ToArray().ShouldBeEquivalentTo(data);
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var decoder = Resolve<BemaniLzDecoder>();
         var decoded = decoder.Decode(new ReadOnlyMemoryStream(encoded));
 
-        decoded.ToArray().Should().BeEquivalentTo(data);
+        decoded.ToArray().ShouldBeEquivalentTo(data);
     }
 
     [Test]
@@ -50,7 +50,7 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var decoder = Resolve<BemaniLzDecoder>();
         var decoded = decoder.Decode(new MemoryStream(data));
 
-        decoded.ToArray().Should().BeEquivalentTo(expected);
+        decoded.ToArray().ShouldBeEquivalentTo(expected);
     }
 
     [Test]
@@ -68,6 +68,6 @@ public class BemaniLzIntegrationTests : BaseIntegrationFixture
         var encoded = encoder.Encode(decoded.Span);
         var reDecoded = decoder.Decode(new ReadOnlyMemoryStream(encoded));
 
-        reDecoded.ToArray().Should().BeEquivalentTo(expected);
+        reDecoded.ToArray().ShouldBeEquivalentTo(expected);
     }
 }

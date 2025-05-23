@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.Infrastructure;
@@ -51,8 +51,8 @@ public class DjmainChartDecoderTests : BaseUnitTestFixture<DjmainChartDecoder, I
         var output = Subject.Decode(data, DjmainChartType.Beatmania);
 
         // Assert.
-        output.Events.Should().HaveCount(1).And
-            .Subject.First()[NumericData.LinearOffset].Should().Be(new BigRational(offset, 58));
+        output.Events.Count.ShouldBe(1);
+        output.Events.First()[NumericData.LinearOffset].ShouldBe(new BigRational(offset, 58));
     }
 
     [Test]
@@ -84,8 +84,8 @@ public class DjmainChartDecoderTests : BaseUnitTestFixture<DjmainChartDecoder, I
         var output = Subject.Decode(data, Create<DjmainChartType>());
 
         // Assert.
-        output.Events.Should().HaveCount(1).And
-            .Subject.First()[NumericData.LinearOffset].Should().Be(new BigRational(offset, 58));
+        output.Events.Count.ShouldBe(1);
+        output.Events.First()[NumericData.LinearOffset].ShouldBe(new BigRational(offset, 58));
     }
 
     [Test]
@@ -105,7 +105,7 @@ public class DjmainChartDecoderTests : BaseUnitTestFixture<DjmainChartDecoder, I
         var output = Subject.Decode(data, Create<DjmainChartType>());
 
         // Assert.
-        output.Events.Should().HaveCount(1).And
-            .Subject.First()[NumericData.LinearOffset].Should().Be(new BigRational(timingValue, 58));
+        output.Events.Count.ShouldBe(1);
+        output.Events.First()[NumericData.LinearOffset].ShouldBe(new BigRational(timingValue, 58));
     }
 }
