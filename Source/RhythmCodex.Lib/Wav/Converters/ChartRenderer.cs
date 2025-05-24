@@ -16,10 +16,12 @@ namespace RhythmCodex.Wav.Converters;
 public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvider)
     : IChartRenderer
 {
+    private const float SqrtHalf = 0.70710677f;
+    
     private class ChannelState
     {
         public BigRational? Channel { get; set; }
-        public Sound Sound { get; set; }
+        public Sound? Sound { get; set; }
         public int Offset { get; set; }
         public int LeftLength { get; set; }
         public int RightLength { get; set; }
@@ -41,7 +43,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         var sampleMap = new List<SampleMapping>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
 
-        var events = inEvents;
+        var events = inEvents.ToList();
         if (events.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException("Can't render without all events having linear offsets.");
 
@@ -68,12 +70,11 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         void StartUserSample(BigRational? player, BigRational? column)
         {
             var sample = sampleMap.FirstOrDefault(sm => sm.Player == player && sm.Column == column);
-            Sound sound = null;
+            Sound? sound = null;
             if (sample?.SoundIndex != null)
-                sound = sounds.FirstOrDefault(s => s[NumericData.Id] == sample.SoundIndex);
-            var v = (float)Math.Sqrt(0.5f);
+                sound = sounds.FirstOrDefault(s => s?[NumericData.Id] == sample.SoundIndex);
             var channel = sound?[NumericData.Channel];
-            ChannelState st = null;
+            ChannelState? st = null;
             if (channel != null && channel >= 0 && channel < 255)
                 st = state.FirstOrDefault(s => s.Channel == channel);
 
@@ -87,18 +88,18 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             st.Offset = 0;
             st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
             st.RightLength = sound?.Samples[1].Data.Length ?? 0;
-            st.LeftVolume = v * masterVolume;
-            st.RightVolume = v * masterVolume;
+            st.LeftVolume = SqrtHalf * masterVolume;
+            st.RightVolume = SqrtHalf * masterVolume;
             st.Playing = true;
         }
 
         void StartBgmSample(BigRational? soundIndex, BigRational? panning = null)
         {
-            var sound = sounds.FirstOrDefault(s => s[NumericData.Id] == soundIndex);
+            var sound = sounds.FirstOrDefault(s => s?[NumericData.Id] == soundIndex);
             var channel = sound?[NumericData.Channel];
-            var rightVolume = (float)Math.Sqrt((float)(panning ?? BigRational.OneHalf));
-            var leftVolume = (float)Math.Sqrt(1f - (float)(panning ?? BigRational.OneHalf));
-            ChannelState st = null;
+            var rightVolume = MathF.Sqrt((float)(panning ?? BigRational.OneHalf));
+            var leftVolume = MathF.Sqrt(1f - (float)(panning ?? BigRational.OneHalf));
+            ChannelState? st = null;
             if (channel != null && channel >= 0 && channel < 255)
                 st = state.FirstOrDefault(s => s.Channel == channel);
 
@@ -151,7 +152,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
 
         foreach (var tick in eventTicks)
         {
-            var nowSample = (int)(tick.Key.Value * options.SampleRate);
+            var nowSample = (int)((tick.Key ?? 0) * options.SampleRate);
             var tickEvents = tick.ToArray();
 
             for (; lastSample < nowSample; lastSample++)

@@ -14,25 +14,24 @@ public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
     {
         var offset = definition.SampleStart << 1;
         var stereo = (definition.Flags0F & 0x80) != 0;
-        var length = (definition.SampleEnd - definition.SampleStart);
+        var length = definition.SampleEnd - definition.SampleStart;
         var channels = Enumerable
             .Range(0, stereo ? 2 : 1)
-            .Select(_ => new float[length >> (stereo ? 2 : 1)])
+            .Select(_ => new float[length])
             .ToArray();
-        var channelIndex = 0;
         var channelCount = channels.Length;
-            
-        for (var i = 0; i < length; i++)
-        {
-            var sample = (data[offset] << 8) | data[offset + 1];
-            if (sample >= 0x8000)
-                sample = -(sample & 0x7FFF);
+        var total = length / (stereo ? 2 : 1);
 
-            channels[channelIndex][i] = (float)sample / 0x7FFF;
-            channelIndex++;
-            while (channelIndex >= channelCount)
-                channelIndex -= channelCount;
-            offset += 2;
+        for (var i = 0; i < total; i++)
+        {
+            for (var c = 0; c < channelCount; c++, offset += 2)
+            {
+                var sample = (data[offset] << 8) | data[offset + 1];
+                if (sample >= 0x8000)
+                    sample = -(sample & 0x7FFF);
+
+                channels[c][i] = (float)sample / 0x7FFF;
+            }
         }
 
         var panning = (float) (definition.Panning - 1) / 0x7E;

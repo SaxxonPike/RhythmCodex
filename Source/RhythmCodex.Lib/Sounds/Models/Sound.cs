@@ -7,5 +7,5 @@ namespace RhythmCodex.Sounds.Models;
 [Model]
 public class Sound : Metadata
 {
-    public List<Sample> Samples { get; set; }
+    public List<Sample> Samples { get; set; } = [];
 }

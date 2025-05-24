@@ -1,10 +1,9 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using RhythmCodex.Arc;
 using RhythmCodex.Beatmania;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex;
+namespace RhythmCodex.Plugin.DependencyInjection;
 
 public class RhythmCodexService : IRhythmCodexService, IDisposable
 {
