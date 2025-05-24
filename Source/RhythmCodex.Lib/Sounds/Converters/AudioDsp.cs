@@ -29,14 +29,14 @@ public class AudioDsp : IAudioDsp
 
     public Sound? ApplyResampling(Sound? sound, IResampler resampler, BigRational rate)
     {
-        if (sound == null || !sound.Samples.Any())
+        if (sound == null || sound.Samples.Count == 0)
             return null;
 
         if (rate <= BigRational.Zero ||
             sound[NumericData.Rate] == rate ||
             sound[NumericData.Rate] == 0 ||
-            sound.Samples == null ||
-            !sound.Samples.Any() ||
+            sound.Samples == null! ||
+            sound.Samples.Count == 0 ||
             sound.Samples.Any(sa => sa[NumericData.Rate] != null && sa[NumericData.Rate] <= 0))
             return sound;
 
@@ -46,7 +46,7 @@ public class AudioDsp : IAudioDsp
         {
             Samples = samples.Select(s =>
             {
-                var sourceRate = (float)(double)(s[NumericData.Rate] ?? sound[NumericData.Rate]);
+                var sourceRate = (float)(double)(s[NumericData.Rate] ?? sound[NumericData.Rate])!;
                 var sample = new Sample
                 {
                     Data = resampler.Resample(s.Data.Span, sourceRate, targetRate)
@@ -62,7 +62,7 @@ public class AudioDsp : IAudioDsp
         return result;
     }
 
-    public Sound? Normalize(Sound sound, BigRational target, bool cutOnly)
+    public Sound Normalize(Sound sound, BigRational target, bool cutOnly)
     {
         var newSound = new Sound
         {
@@ -98,8 +98,7 @@ public class AudioDsp : IAudioDsp
                     throw new RhythmCodexException("Can't downsample without a source rate.");
                 var sample = new Sample();
                 sample.CloneMetadataFrom(s);
-                if (s[NumericData.Rate] != null)
-                    s[NumericData.Rate] /= factor;
+                s[NumericData.Rate] = rate / factor;
                 var length = s.Data.Length / factor;
                 var data = new float[length];
                 sample.Data = data;
@@ -125,7 +124,7 @@ public class AudioDsp : IAudioDsp
 
     public Sound? ApplyEffects(Sound? sound)
     {
-        if (!sound.Samples.Any())
+        if (sound == null || sound.Samples.Count == 0)
             return null;
 
         var samples = new List<Sample>(sound.Samples);
@@ -151,20 +150,23 @@ public class AudioDsp : IAudioDsp
         return result;
     }
 
-    private void ApplyEffectsInternal(Sound? sound)
+    private static void ApplyEffectsInternal(Sound? sound)
     {
+        if (sound == null)
+            return;
+        
         if (sound[NumericData.Volume].HasValue)
         {
             foreach (var sample in sound.Samples)
-                ApplyGain(sample.Data.Span, sound[NumericData.Volume].Value);
+                ApplyGain(sample.Data.Span, sound[NumericData.Volume]!.Value);
             sound[NumericData.Volume] = null;
         }
 
         if (sound[NumericData.Panning].HasValue)
         {
             var isLeftPanning = true;
-            var left = BigRational.Sqrt(BigRational.One - sound[NumericData.Panning].Value);
-            var right = BigRational.Sqrt(sound[NumericData.Panning].Value);
+            var left = BigRational.Sqrt(BigRational.One - sound[NumericData.Panning]!.Value);
+            var right = BigRational.Sqrt(sound[NumericData.Panning]!.Value);
             foreach (var sample in sound.Samples)
             {
                 ApplyGain(sample.Data.Span,
