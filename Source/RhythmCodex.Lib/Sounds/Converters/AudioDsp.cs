@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -193,7 +194,46 @@ public class AudioDsp : IAudioDsp
             return;
 
         var amp = (float)value;
-        for (var i = 0; i < data.Length; i++)
-            data[i] *= amp;
+        var cursor = data;
+
+        if (Vector512.IsHardwareAccelerated)
+        {
+            while (cursor.Length >= 16)
+            {
+                var v = Vector512.Create<float>(cursor) * amp;
+                v.CopyTo(cursor);
+                cursor = cursor[16..];
+            }
+        }
+        else if (Vector256.IsHardwareAccelerated)
+        {
+            while (cursor.Length >= 8)
+            {
+                var v = Vector256.Create<float>(cursor) * amp;
+                v.CopyTo(cursor);
+                cursor = cursor[8..];
+            }
+        }
+        else if (Vector128.IsHardwareAccelerated)
+        {
+            while (cursor.Length >= 4)
+            {
+                var v = Vector128.Create<float>(cursor) * amp;
+                v.CopyTo(cursor);
+                cursor = cursor[4..];
+            }
+        }
+        else if (Vector64.IsHardwareAccelerated)
+        {
+            while (cursor.Length >= 2)
+            {
+                var v = Vector64.Create<float>(cursor) * amp;
+                v.CopyTo(cursor);
+                cursor = cursor[2..];
+            }
+        }
+
+        for (var i = 0; i < cursor.Length; i++)
+            cursor[i] *= amp;
     }
 }
