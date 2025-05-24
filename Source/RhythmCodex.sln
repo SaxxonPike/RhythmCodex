@@ -35,18 +35,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.SevenZip", "RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj", "{7A815285-3FAC-4021-B00D-EFE23AE4988C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{44A45635-5452-4399-99D9-40F6A496A2C1}"
-ProjectSection(SolutionItems) = preProject
-	..\.gitignore = ..\.gitignore
-	..\DESIGN.md = ..\DESIGN.md
-	..\LICENSE.md = ..\LICENSE.md
-	..\README.md = ..\README.md
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+		..\DESIGN.md = ..\DESIGN.md
+		..\LICENSE.md = ..\LICENSE.md
+		..\README.md = ..\README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C33870F0-797F-4C36-9CBB-14CAF0E1235E}"
-ProjectSection(SolutionItems) = preProject
-	..\publish.bat = ..\publish.bat
-	..\publish.sh = ..\publish.sh
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		..\publish.bat = ..\publish.bat
+		..\publish.sh = ..\publish.sh
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XwbExtract", "XwbExtract\XwbExtract.csproj", "{3DC90D6E-B7DE-4D5B-AE32-43331C1819F3}"
 EndProject
@@ -57,6 +57,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.SharpZipLib", "RhythmCodex.Plugin.SharpZipLib\RhythmCodex.Plugin.SharpZipLib.csproj", "{489D1E8C-8653-4D37-80E7-885F5004411A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Test", "RhythmCodex.Test\RhythmCodex.Test.csproj", "{6D428D79-7BB1-42E3-9783-D5BA284D32A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.DependencyInjection", "RhythmCodex.Plugin.DependencyInjection\RhythmCodex.Plugin.DependencyInjection.csproj", "{7E92C74E-B6A6-45C0-86FD-8EF3363B8B46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +134,10 @@ Global
 		{6D428D79-7BB1-42E3-9783-D5BA284D32A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D428D79-7BB1-42E3-9783-D5BA284D32A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D428D79-7BB1-42E3-9783-D5BA284D32A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E92C74E-B6A6-45C0-86FD-8EF3363B8B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E92C74E-B6A6-45C0-86FD-8EF3363B8B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E92C74E-B6A6-45C0-86FD-8EF3363B8B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E92C74E-B6A6-45C0-86FD-8EF3363B8B46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,5 +160,6 @@ Global
 		{D6BA6668-839A-4834-ABB2-35F06B08D4D9} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 		{489D1E8C-8653-4D37-80E7-885F5004411A} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 		{6D428D79-7BB1-42E3-9783-D5BA284D32A5} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
+		{7E92C74E-B6A6-45C0-86FD-8EF3363B8B46} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 	EndGlobalSection
 EndGlobal
