@@ -1,14 +1,19 @@
 using System;
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using RhythmCodex.Digital573.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Digital573.Converters;
 
+// Revised algorithm source:
+// https://github.com/mamedev/mame/blob/master/src/mame/konami/k573fpga.cpp
+
 [Service]
 public class Digital573AudioDecrypter : IDigital573AudioDecrypter
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int Bit(int value, int n) =>
         (value >> n) & 1;
 
@@ -31,6 +36,27 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         (Bit(v, b1) << 1) |
         (Bit(v, b0) << 0);
 
+    private static int DecryptCommon(int data, int key) =>
+        BitSwap16(
+            data,
+            15 - Bit(key, 0xF),
+            14 + Bit(key, 0xF),
+            13 - Bit(key, 0xD),
+            12 + Bit(key, 0xD),
+            11 - Bit(key, 0xB),
+            10 + Bit(key, 0xB),
+            9 - Bit(key, 0x9),
+            8 + Bit(key, 0x9),
+            7 - Bit(key, 0x7),
+            6 + Bit(key, 0x7),
+            5 - Bit(key, 0x5),
+            4 + Bit(key, 0x5),
+            3 - Bit(key, 0x3),
+            2 + Bit(key, 0x3),
+            1 - Bit(key, 0x1),
+            0 + Bit(key, 0x1)
+        ) ^ (key & 0x5555);
+
     public Digital573Audio DecryptNew(ReadOnlySpan<byte> input, params int[] key)
     {
         if (key == null)
@@ -41,51 +67,27 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         var length = input.Length & ~1;
         var output = new byte[length];
 
-        var keyBytes = new byte[8];
+        var keyBytes = new byte[4];
         BinaryPrimitives.WriteInt16LittleEndian(keyBytes, unchecked((short)key[0]));
         BinaryPrimitives.WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)key[1]));
 
         var key1 = key[0];
         var key2 = key[1];
         var key3 = key[2];
+
         for (var i = 0; i < length; i += 2, key3++)
         {
-            var v = input[i] | (input[i + 1] << 8);
-            var m = key1 ^ key2;
-
-            v = BitSwap16(
-                v,
-                15 - Bit(m, 0xF),
-                14 + Bit(m, 0xF),
-                13 - Bit(m, 0xE),
-                12 + Bit(m, 0xE),
-                11 - Bit(m, 0xB),
-                10 + Bit(m, 0xB),
-                9 - Bit(m, 0x9),
-                8 + Bit(m, 0x9),
-                7 - Bit(m, 0x8),
-                6 + Bit(m, 0x8),
-                5 - Bit(m, 0x5),
-                4 + Bit(m, 0x5),
-                3 - Bit(m, 0x3),
-                2 + Bit(m, 0x3),
-                1 - Bit(m, 0x2),
-                0 + Bit(m, 0x2)
+            var m = BitSwap16(
+                key1 ^ key2,
+                15, 13, 14, 12,
+                11, 10, 9, 7,
+                8, 6, 5, 4,
+                3, 1, 2, 0
             );
 
-            v = (
-                v ^
-                (Bit(m, 0xD) << 14) ^
-                (Bit(m, 0xC) << 12) ^
-                (Bit(m, 0xA) << 10) ^
-                (Bit(m, 0x7) << 8) ^
-                (Bit(m, 0x6) << 6) ^
-                (Bit(m, 0x4) << 4) ^
-                (Bit(m, 0x1) << 2) ^
-                (Bit(m, 0x0) << 0)
-            ) & 0xFFFF;
+            var v = DecryptCommon(BinaryPrimitives.ReadUInt16LittleEndian(input[i..]), m);
 
-            v = v ^ BitSwap16(
+            v ^= BitSwap16(
                 key3,
                 7, 0, 6, 1,
                 5, 2, 4, 3,
@@ -93,22 +95,16 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
                 1, 6, 0, 7
             );
 
-            output[i] = unchecked((byte) (v >> 8));
-            output[i + 1] = unchecked((byte) v);
+            BinaryPrimitives.WriteUInt16BigEndian(output.AsSpan(i), unchecked((ushort)v));
+
+            if ((Bit(key1, 14) ^ Bit(key1, 15)) != 0)
+                key2 = ((key2 << 1) | (key2 >> 15)) & 0xFFFF;
 
             key1 = (
                 (key1 & 0x8000) |
                 ((key1 << 1) & 0x7FFE) |
                 ((key1 >> 14) & 1)
             ) & 0xFFFF;
-
-            if ((((key1 >> 15) ^ key1) & 1) != 0)
-            {
-                key2 = (
-                    (key2 << 1) |
-                    (key2 >> 15)
-                ) & 0xFFFF;
-            }
         }
 
         return new Digital573Audio
@@ -119,66 +115,28 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         };
     }
 
-    public Digital573Audio DecryptOld(ReadOnlySpan<byte> data, int keyValue)
+    public Digital573Audio DecryptOld(ReadOnlySpan<byte> data, int key)
     {
-        var seed = BitSwap16(keyValue,
-            0xD, 0xB, 0x9, 0x7,
-            0x5, 0x3, 0x1, 0xF,
-            0xE, 0xC, 0xA, 0x8,
-            0x6, 0x4, 0x2, 0x0);
-        var key = new byte[0x10];
-        key[0] = unchecked((byte) seed);
-        key[1] = unchecked((byte) (seed >> 8));
-        for (var i = 2; i < 16; i++)
+        var length = data.Length & ~1;
+        var output = new byte[length];
+
+        var keyBytes = new byte[4];
+        BinaryPrimitives.WriteInt32LittleEndian(keyBytes, key);
+
+        var key1 = key;
+
+        for (var i = 0; i < length; i += 2)
         {
-            var j = key[i - 2];
-            key[i] = unchecked((byte) ((j << 1) | (j >> 7)));
-        }
-
-        var counter = 0;
-        var dataLen = data.Length & ~1;
-        var output = new byte[dataLen];
-        var outputIdx = 0;
-        var keyIdx = 0;
-        var curKey = key[0xF];
-
-        for (var idx = 0; idx < dataLen; idx += 2)
-        {
-            var outputWord = 0;
-            var curData = (data[idx + 1] << 8) | data[idx];
-            var curScramble = curKey;
-            curKey = key[keyIdx & 0xF];
-            keyIdx++;
-
-            for (var curBit = 0; curBit < 8; curBit++)
-            {
-                var evenBitShift = (curBit << 1) & 0xFF;
-                var oddBitShift = ((curBit << 1) + 1) & 0xFF;
-                var isEvenBitSet = (curData & (1 << evenBitShift)) != 0;
-                var isOddBitSet = (curData & (1 << oddBitShift)) != 0;
-                var isKeyBitSet = (curKey & (1 << curBit)) != 0;
-                var isScrambleBitSet = (curScramble & (1 << curBit)) != 0;
-
-                if (isScrambleBitSet)
-                    (isEvenBitSet, isOddBitSet) = (isOddBitSet, isEvenBitSet);
-
-                if (isEvenBitSet ^ isKeyBitSet)
-                    outputWord |= 1 << evenBitShift;
-                if (isOddBitSet)
-                    outputWord |= 1 << oddBitShift;
-            }
-
-            output[outputIdx] = unchecked((byte) (outputWord >> 8));
-            output[outputIdx + 1] = unchecked((byte) outputWord);
-            outputIdx += 2;
-            counter = (counter + 1) & 0xFF;
+            var v = DecryptCommon(BinaryPrimitives.ReadUInt16LittleEndian(data[i..]), key1);
+            BinaryPrimitives.WriteUInt16BigEndian(output.AsSpan(i), unchecked((ushort)v));
+            key1 = ((key1 << 1) | (key1 >> 15)) & 0xFFFF;
         }
 
         return new Digital573Audio
         {
             Counter = 0,
             Data = output,
-            Key = key
+            Key = keyBytes
         };
     }
 
