@@ -157,8 +157,7 @@ public class AudioDsp : IAudioDsp
                     throw new RhythmCodexException("Can't downsample without a source rate.");
                 var sample = new Sample();
                 sample.CloneMetadataFrom(s);
-                if (s[NumericData.Rate] != null)
-                    s[NumericData.Rate] /= factor;
+                s[NumericData.Rate] = rate / factor;
                 var length = s.Data.Length / factor;
                 var data = new float[length];
                 sample.Data = data;
