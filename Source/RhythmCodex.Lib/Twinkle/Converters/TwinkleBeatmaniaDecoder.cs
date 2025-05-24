@@ -32,7 +32,7 @@ public class TwinkleBeatmaniaDecoder(
         .Select(i => i * 0x4000 + 0x2000)
         .ToArray();
 
-    public TwinkleArchive Decode(TwinkleBeatmaniaChunk chunk)
+    public TwinkleArchive? Decode(TwinkleBeatmaniaChunk chunk)
     {
         if (chunk?.Data == null || chunk.Data.Length < 0x1A00000)
             return null;

@@ -99,7 +99,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         var dsp = Resolve<IAudioDsp>();
         var options = new ChartRendererOptions();
 
-        using var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx7th.zip");
+        using var stream = File.OpenRead(@"/Users/saxxon/iidx7th.zip");
         using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
         var entry = zipStream.Entries.Single();
         using var entryStream = entry.Open();
@@ -114,7 +114,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
             foreach (var chart in archive.Charts.AsParallel())
             {
                 var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
-                this.WriteSound(rendered, Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int) chart[NumericData.Id]:D2}.wav"));
+                this.WriteSound(rendered, Path.Combine("twinkle7", $"{chunk.Index:D4}_{(int) chart[NumericData.Id]!:D2}.wav"));
             }
         }
     }
