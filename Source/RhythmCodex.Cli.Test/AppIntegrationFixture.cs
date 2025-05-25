@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Autofac;
 using ClientCommon;
@@ -12,7 +15,20 @@ namespace RhythmCodex.Cli;
 [Explicit]
 public class AppIntegrationFixture : BaseTestFixture
 {
-    protected IContainer AppContainer { get; private set; }
+    private static readonly ConcurrentDictionary<string, IContainer> AppContainers = [];
+
+    protected IContainer AppContainer
+    {
+        get => AppContainers.TryGetValue(TestContext.CurrentContext.Test.ID, out var container)
+            ? container
+            : throw new InvalidOperationException("App container not found.");
+
+        private set => AppContainers.AddOrUpdate(
+            TestContext.CurrentContext.Test.ID,
+            value,
+            (_, container) => container
+        );
+    }
 
     protected FakeFileSystem FileSystem => AppContainer.Resolve<FakeFileSystem>();
 
@@ -20,7 +36,7 @@ public class AppIntegrationFixture : BaseTestFixture
     public void __SetupApp()
     {
         var builder = new ContainerBuilder();
-            
+
         builder.Register(c => new FakeFileSystem(new FileSystem(c.Resolve<ILogger>())))
             .AsSelf()
             .AsImplementedInterfaces()
@@ -61,7 +77,7 @@ public class AppIntegrationFixture : BaseTestFixture
             .AsSelf()
             .AsImplementedInterfaces()
             .InstancePerRequest();
-            
+
         builder.RegisterModule<AppAutofacModule<App>>();
         AppContainer = builder.Build();
     }
@@ -69,8 +85,7 @@ public class AppIntegrationFixture : BaseTestFixture
     [TearDown]
     public void __TeardownApp()
     {
-        AppContainer.Dispose();
-        // AppContainer.Disposer.Dispose();
-        AppContainer = null;
+        if (AppContainers.Remove(TestContext.CurrentContext.Test.ID, out var container))
+            container.Dispose();
     }
 }

@@ -23,7 +23,7 @@ public class Ddr573AudioIntegrationTests : BaseIntegrationFixture
         var decrypter = Resolve<IDigital573AudioDecrypter>();
         var keyProvider = Resolve<IDigital573AudioKeyProvider>();
         var key = keyProvider.Get(data);
-        var observed = decrypter.DecryptNew(data, key);
+        var observed = decrypter.DecryptNew(data, key!);
         observed.Data.ShouldBeEquivalentTo(expected);
     }
 
@@ -42,7 +42,7 @@ public class Ddr573AudioIntegrationTests : BaseIntegrationFixture
         var decrypter = Resolve<IDigital573AudioDecrypter>();
         var keyProvider = Resolve<IDigital573AudioKeyProvider>();
         var key = keyProvider.Get(data);
-        var observed = decrypter.DecryptOld(data, key[0]);
+        var observed = decrypter.DecryptOld(data, key![0]);
         observed.Data.ShouldBeEquivalentTo(expected);
     }
 }

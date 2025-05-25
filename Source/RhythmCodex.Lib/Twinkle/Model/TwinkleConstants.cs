@@ -11,6 +11,9 @@ public static class TwinkleConstants
 
     private static readonly Lazy<BigRational[]> VolumeTableLazy = new(() =>
     {
+        // This algorithm is based on the one written into MAME:
+        // https://github.com/mamedev/mame/blob/master/src/devices/sound/rf5c400.cpp
+
         var result = new BigRational[256];
         var max = BigRational.One;
         for (var i = 0; i < 256; i++)
