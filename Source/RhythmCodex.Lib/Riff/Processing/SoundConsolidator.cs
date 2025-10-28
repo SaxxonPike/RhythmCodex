@@ -1,54 +1,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charting.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
-using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Riff.Processing;
 
 [Service]
-public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
+public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
 {
-    private record struct PlayedEvent
-    {
-        public int Index { get; set; }
-        public BigRational Panning { get; set; }
-        public BigRational Offset { get; set; }
-    }
+    private record struct PlayedEvent(int Index, BigRational Panning, BigRational Offset);
 
-    private record struct MatchedSound
+    private record struct MatchedSound(int A, int B);
+
+    public void Consolidate(IEnumerable<Sound> inSounds, IEnumerable<Event> inEvents)
     {
-        public int A { get; set; }
-        public int B { get; set; }
-    }
-        
-    public void Consolidate(IEnumerable<Sound> sounds, IEnumerable<Event> events)
-    {
+        var events = inEvents.AsList();
+        var sounds = inSounds.AsList();
         var matches = new List<MatchedSound>();
 
         // Loaded samples are excluded because they can be played by the player.
         var loaded = events
-            .Where(e => e?[NumericData.LoadSound] != null)
+            .Where(e => e[NumericData.LoadSound] != null)
             .Select(e => e[NumericData.LoadSound])
             .Distinct()
             .ToList();
 
         // Get all the times a sample is played.
         var played = events
-            .Where(e => e?[NumericData.PlaySound] != null && !loaded.Contains(e[NumericData.PlaySound]))
+            .Where(e => e[NumericData.PlaySound] != null && !loaded.Contains(e[NumericData.PlaySound]))
             .Select(e =>
             {
-                var index = (int) e[NumericData.PlaySound]!;
+                var index = (int)e[NumericData.PlaySound]!;
                 return new PlayedEvent
                 {
                     Index = index,
                     Offset = e[NumericData.LinearOffset] ?? 0,
-                    Panning = e[NumericData.Panning] ?? 
-                              sounds.FirstOrDefault(s => index == (int)s[NumericData.Id].Value)[NumericData.Panning] ?? 
+                    Panning = e[NumericData.Panning] ??
+                              sounds.FirstOrDefault(s => index == (int)s[NumericData.Id]!.Value)!
+                                  [NumericData.Panning] ??
                               new BigRational(1, 2)
                 };
             })
@@ -73,14 +67,14 @@ public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
                     });
             }
         }
-            
+
         // Consolidate each match.
         var doneMatch = new List<int>();
         foreach (var match in matches)
         {
             if (doneMatch.Contains(match.A) || doneMatch.Contains(match.B))
                 continue;
-                
+
             var soundA = sounds.FirstOrDefault(s => s[NumericData.Id] == match.A);
             var soundB = sounds.FirstOrDefault(s => s[NumericData.Id] == match.B);
 
@@ -89,8 +83,8 @@ public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
 
             doneMatch.Add(match.A);
             doneMatch.Add(match.B);
-                
-            var mix = _audioDsp.Mix(new[] { soundA, soundB });
+
+            var mix = audioDsp.Mix([soundA, soundB]);
             soundA.Samples.Clear();
 
             foreach (var sample in soundB.Samples)
@@ -108,7 +102,7 @@ public class SoundConsolidator(IAudioDsp _audioDsp) : ISoundConsolidator
         {
             if (a.Count != b.Count)
                 return false;
-                
+
             for (var i = 0; i < a.Count; i++)
             {
                 if (a[i].Offset != b[i].Offset ||

@@ -34,7 +34,7 @@ public static class ServiceTypes
         return assemblies
             .SelectMany(assembly => assembly
                 .ExportedTypes
-                .Where(t => t.IsClass && !t.IsAbstract &&
+                .Where(t => t is { IsClass: true, IsAbstract: false } &&
                             t.GetCustomAttributes().Any(a => a.GetType().FullName == serviceAttributeName)))
             .Select(t =>
             {
@@ -45,7 +45,7 @@ public static class ServiceTypes
 
                 return new ServiceMapping(
                     t,
-                    t.GetInterfaces().Where(i => i != typeof(IDisposable)),
+                    t.GetInterfaces().Where(i => i != typeof(IDisposable)).ToArray(),
                     (bool) at!.GetValue(a)!);
             })
             .ToList();

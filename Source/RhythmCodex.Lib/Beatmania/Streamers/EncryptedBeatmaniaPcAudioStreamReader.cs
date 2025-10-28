@@ -101,9 +101,10 @@ public class EncryptedBeatmaniaPcAudioStreamReader : IEncryptedBeatmaniaPcAudioS
     {
         var output = new byte[length];
         var outputIndex = 0;
-        Span<byte> block = stackalloc byte[8];
-        Span<byte> lastBlock = stackalloc byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
-        Span<byte> currentBlock = stackalloc byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        Span<byte> buffer = stackalloc byte[24];
+        var block = buffer[..8];
+        var lastBlock = buffer[8..16];
+        var currentBlock = buffer[16..24];
 
         while (source.Position < source.Length)
         {

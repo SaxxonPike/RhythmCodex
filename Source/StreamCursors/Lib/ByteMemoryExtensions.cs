@@ -5,8 +5,6 @@ using JetBrains.Annotations;
 
 namespace Saxxon.StreamCursors;
 
-public delegate ReadOnlySpan<TResult> MemorySelectDelegate<TSource, TResult>(ReadOnlyMemory<TSource> source);
-
 [PublicAPI]
 public static class ByteMemoryExtensions
 {

@@ -10,5 +10,5 @@ namespace RhythmCodex.IoC;
 [AttributeUsage(AttributeTargets.Class)]
 public class ServiceAttribute(bool singleInstance = true) : Attribute
 {
-    public bool SingleInstance { get; } = singleInstance;
+    public bool SingleInstance => singleInstance;
 }

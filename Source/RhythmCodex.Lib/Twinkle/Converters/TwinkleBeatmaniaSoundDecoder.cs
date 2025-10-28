@@ -34,7 +34,7 @@ public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
             }
         }
 
-        var panning = ((float)definition.Panning - 1) / 0x7E switch
+        var panning = ((definition.Panning - 1) / (float)0x7E) switch
         {
             < 0 => 0f,
             > 1 => 1f,
