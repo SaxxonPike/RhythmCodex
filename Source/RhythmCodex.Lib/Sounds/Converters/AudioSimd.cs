@@ -42,11 +42,11 @@ internal static class AudioSimd
                             Vector512.Create(source)
                         )
                     ) * 32767f
-                ).AsInt16();
+                );
 
                 for (var i = 0; i < 16; i++)
                 {
-                    target[startSample] = v[i];
+                    target[startSample] = unchecked((short)v[i]);
                     target = target[advanceSamples..];
                 }
                 
@@ -67,11 +67,11 @@ internal static class AudioSimd
                             Vector256.Create(source)
                         )
                     ) * 32767f
-                ).AsInt16();
+                );
 
                 for (var i = 0; i < 8; i++)
                 {
-                    target[startSample] = v[i];
+                    target[startSample] = unchecked((short)v[i]);
                     target = target[advanceSamples..];
                 }
                 
@@ -92,11 +92,11 @@ internal static class AudioSimd
                             Vector128.Create(source)
                         )
                     ) * 32767f
-                ).AsInt16();
+                );
 
                 for (var i = 0; i < 4; i++)
                 {
-                    target[startSample] = v[i];
+                    target[startSample] = unchecked((short)v[i]);
                     target = target[advanceSamples..];
                 }
                 
