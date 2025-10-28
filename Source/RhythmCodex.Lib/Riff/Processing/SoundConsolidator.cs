@@ -41,8 +41,10 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
                     Index = index,
                     Offset = e[NumericData.LinearOffset] ?? 0,
                     Panning = e[NumericData.Panning] ??
-                              sounds.FirstOrDefault(s => index == (int)s[NumericData.Id]!.Value)!
-                                  [NumericData.Panning] ??
+                              sounds.FirstOrDefault(s =>
+                                  s[NumericData.Id] is { } id &&
+                                  index == (int)id
+                              )?[NumericData.Panning] ??
                               new BigRational(1, 2)
                 };
             })
