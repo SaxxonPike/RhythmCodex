@@ -23,26 +23,26 @@ public class BeatmaniaPs2NewBgmHeuristic(IVagStreamReader vagStreamReader)
 
         var data = reader.Read(0x2C);
             
-        if (Bitter.ToInt32(data.Slice(0x00)) != 0x08640001)
+        if (Bitter.ToInt32(data[..]) != 0x08640001)
             return null;
 
-        if (Bitter.ToInt32(data.Slice(0x04)) != 0)
+        if (Bitter.ToInt32(data[0x04..]) != 0)
             return null;
 
-        var startOffset = Bitter.ToInt32(data.Slice(0x08));
+        var startOffset = Bitter.ToInt32(data[0x08..]);
         if (startOffset < 0x00000030)
             return null;
 
         var result = new VagHeuristicResult(this)
         {
             Start = startOffset,
-            Length = Bitter.ToInt32(data.Slice(0x0C)),
-            LoopStart = Bitter.ToInt32(data.Slice(0x10)),
-            LoopEnd = Bitter.ToInt32(data.Slice(0x14)),
-            SampleRate = Bitter.ToInt32(data.Slice(0x18)),
-            Channels = Bitter.ToInt32(data.Slice(0x1C)),
-            Interleave = Bitter.ToInt32(data.Slice(0x24)),
-            Volume = new BigRational(Bitter.ToInt32(data.Slice(0x28)), 100)
+            Length = Bitter.ToInt32(data[0x0C..]),
+            LoopStart = Bitter.ToInt32(data[0x10..]),
+            LoopEnd = Bitter.ToInt32(data[0x14..]),
+            SampleRate = Bitter.ToInt32(data[0x18..]),
+            Channels = Bitter.ToInt32(data[0x1C..]),
+            Interleave = Bitter.ToInt32(data[0x24..]),
+            Volume = new BigRational(Bitter.ToInt32(data[0x28..]), 100)
         };
 
         if (data[0x20] != 0x00 || data[0x21] != 0x00 || data[0x22] != 0x00 || data[0x23] != 0x00)

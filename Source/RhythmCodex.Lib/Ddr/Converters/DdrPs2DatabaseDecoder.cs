@@ -47,7 +47,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
     private static DdrDatabaseEntry? GetNewRecord(DdrPs2MetadataTableEntry records)
     {
         var record = records.Data.Span;
-        var id = Encodings.Cp437.GetStringWithoutNulls(record.Slice(0x00, 5));
+        var id = Encodings.Cp437.GetStringWithoutNulls(record[..5]);
         var mdbIndex = 0;
         var difficultyOffset = 0;
         int[] difficulties;

@@ -15,7 +15,7 @@ internal static class FlacPartitionedRice
 
         var partitionCount = 1 << partitionOrder;  //2^partitionOrder -> There will be 2^order partitions. -> "order" = partitionOrder in this case
 
-        var residualBuffer = data.ResidualBuffer.Span.Slice(order);
+        var residualBuffer = data.ResidualBuffer.Span[order..];
 
         for (var p = 0; p < partitionCount; p++)
         {
@@ -45,7 +45,7 @@ internal static class FlacPartitionedRice
                 ReadFlacRiceBlock(reader, samplesPerPartition, (int)riceParameter, residualBuffer);
             }
 
-            residualBuffer = residualBuffer.Slice(samplesPerPartition);
+            residualBuffer = residualBuffer[samplesPerPartition..];
         }
     }
 

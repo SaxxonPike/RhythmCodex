@@ -59,8 +59,7 @@ public partial class BmsStreamReader : IBmsStreamReader
 
             if (delimiterOffset.Index >= 0)
             {
-                cmd.Name = trimmedLine
-                    .Substring(1, delimiterOffset.Index - 1)
+                cmd.Name = trimmedLine[1..delimiterOffset.Index]
                     .Trim()
                     .ToUpperInvariant();
 

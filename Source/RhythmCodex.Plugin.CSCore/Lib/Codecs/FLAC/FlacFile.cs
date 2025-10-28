@@ -223,7 +223,7 @@ public sealed class FlacFile : IFlacFile
 
                 var bufferlength = frame.GetBuffer(ref _overflowBuffer);
                 var bytesToCopy = Math.Min(count - read, bufferlength);
-                _overflowBuffer.Span.Slice(0, bytesToCopy).CopyTo(buffer.AsSpan().Slice(offset));
+                _overflowBuffer.Span[..bytesToCopy].CopyTo(buffer.AsSpan()[offset..]);
                 read += bytesToCopy;
                 offset += bytesToCopy;
 
@@ -241,7 +241,7 @@ public sealed class FlacFile : IFlacFile
         if (_overflowCount != 0 && count > 0)
         {
             var bytesToCopy = Math.Min(count, _overflowCount);
-            _overflowBuffer.Span.Slice(_overflowOffset, bytesToCopy).CopyTo(buffer.Span.Slice(offset));
+            _overflowBuffer.Span.Slice(_overflowOffset, bytesToCopy).CopyTo(buffer.Span[offset..]);
 
             _overflowCount -= bytesToCopy;
             _overflowOffset += bytesToCopy;

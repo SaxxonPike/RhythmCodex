@@ -46,7 +46,7 @@ public class MemoryHeuristicReader(ReadOnlyMemory<byte> bytes) : IHeuristicReade
 
     public int ReadInt()
     {
-        var span = bytes.Span.Slice(_offset);
+        var span = bytes.Span[_offset..];
         _offset += 4;
         return span[0] | (span[1] << 8) | (span[2] << 16) | (span[3] << 24);
     }

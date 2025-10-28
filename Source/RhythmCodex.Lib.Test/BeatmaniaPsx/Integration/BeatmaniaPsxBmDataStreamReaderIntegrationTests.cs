@@ -59,7 +59,7 @@ public class BeatmaniaPsxBmDataStreamReaderIntegrationTests : BaseIntegrationFix
                     File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.bme"), chartStream.ToArray());
                 }
 
-                else if (data.Length >= 4 && data.Slice(data.Length - 4).ToArray().SequenceEqual(new byte[] {0x77, 0x77, 0x77, 0x77}))
+                else if (data.Length >= 4 && data[^4..].ToArray().SequenceEqual(new byte[] {0x77, 0x77, 0x77, 0x77}))
                 {
                     var keyOutFolder = Path.Combine(outputFolder, $"{folderIndex:X4}", $"key_{fileIndex:X4}");
                     if (!Directory.Exists(keyOutFolder))
