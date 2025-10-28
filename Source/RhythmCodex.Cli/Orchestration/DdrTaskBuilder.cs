@@ -128,7 +128,7 @@ public class DdrTaskBuilder(
                 }
                 var decoded = key.Values.Count == 1
                     ? digital573AudioDecrypter.DecryptOld(encoded.Span, key.Values[0])
-                    : digital573AudioDecrypter.DecryptNew(encoded.Span, key.Values);
+                    : digital573AudioDecrypter.DecryptNew(encoded.Span, key);
 
                 using var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
                     ? ddr573AudioNameFinder.GetPath(i!)
