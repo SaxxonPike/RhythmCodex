@@ -156,7 +156,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             var rightVolume = MathF.Sqrt((float)(panning ?? BigRational.OneHalf));
             var leftVolume = MathF.Sqrt(1f - (float)(panning ?? BigRational.OneHalf));
             ChannelState? st = null;
-            if (channel != null && channel >= 0 && channel < 255)
+            if (channel >= 0 && channel < 255)
                 st = state.FirstOrDefault(s => s.Channel == channel);
 
             if (st == null)
@@ -167,8 +167,16 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
 
             st.Sound = sound;
             st.Offset = 0;
-            st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
-            st.RightLength = sound?.Samples[1].Data.Length ?? 0;
+            if (sound is { Samples.Count: >= 2 })
+            {
+                st.LeftLength = sound.Samples[0].Data.Length;
+                st.RightLength = sound.Samples[1].Data.Length;
+            }
+            else
+            {
+                st.LeftLength = 0;
+                st.RightLength = 0;
+            }
             st.LeftVolume = leftVolume * masterVolume;
             st.RightVolume = rightVolume * masterVolume;
             st.Playing = true;
