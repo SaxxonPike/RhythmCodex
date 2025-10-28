@@ -109,7 +109,10 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
 
         // Act.
         var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
-        var archive = decoder.Decode(chunk, new TwinkleDecodeOptions());
+        var archive = decoder.Decode(chunk, new TwinkleDecodeOptions
+        {
+            DoNotConsolidateSamples = true
+        });
         var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, options), 1.0f, true);
 
         // Assert.
@@ -137,25 +140,18 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
 
         foreach (var chunk in chunks.AsParallel())
         {
-            var archive = decoder.Decode(chunk, new TwinkleDecodeOptions());
+            var archive = decoder.Decode(chunk, new TwinkleDecodeOptions
+            {
+                DoNotConsolidateSamples = true
+            });
             if (archive == null)
                 continue;
 
             foreach (var chart in archive.Charts.AsParallel())
             {
                 var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
-                var path = Path.Combine($"twinkle7\\{chunk.Index:D4}_{(int)chart[NumericData.Id]:D2}.wav");
+                var path = Path.Combine("twinkle7", $"{chunk.Index:D4}_{(int)chart[NumericData.Id]:D2}.wav");
                 this.WriteSound(rendered, path);
-                using var diskStream = this.OpenRead(path);
-                var hash = sha.ComputeHash(diskStream);
-                var hashString = Convert.ToHexString(hash);
-                if (hashes.Contains(hashString))
-                {
-                    diskStream.Close();
-                    this.Delete(path);
-                    continue;
-                }
-                hashes.Add(hashString);
             }
         }
     }
@@ -182,7 +178,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
         var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
         var chartWriter = Resolve<IBeatmaniaPc1StreamWriter>();
-        using var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip");
+        using var stream = File.OpenRead(@"/Users/saxxon/iidx7th.zip");
         using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
         var entry = zipStream.Entries.Single();
         using var entryStream = entry.Open();
