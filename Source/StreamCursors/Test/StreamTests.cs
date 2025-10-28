@@ -1,5 +1,5 @@
 using System.Buffers.Binary;
-using FluentAssertions;
+using Shouldly;
 
 namespace Saxxon.StreamCursors;
 
@@ -31,9 +31,9 @@ public class StreamTests : TestFixtureBase
         var observed = new byte[_bytes.Length];
         _stream.Position = 0;
         _stream.Read(observed)
-            .Should().Be(_bytes.Length);
+            .ShouldBe(_bytes.Length);
 
-        observed.Should().Equal(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -43,7 +43,7 @@ public class StreamTests : TestFixtureBase
 
         var observed = _stream.Read(8).ToArray();
 
-        observed.Should().Equal(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class StreamTests : TestFixtureBase
 
         var observed = _stream.Read(16).ToArray();
 
-        observed.Should().Equal(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -64,9 +64,9 @@ public class StreamTests : TestFixtureBase
         var expected = _bytes[0];
 
         _stream.ReadU8(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -77,7 +77,7 @@ public class StreamTests : TestFixtureBase
         expected[0] = val;
 
         _stream.WriteU8(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -88,9 +88,9 @@ public class StreamTests : TestFixtureBase
         var expected = unchecked((sbyte)_bytes[0]);
 
         _stream.ReadS8(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -101,7 +101,7 @@ public class StreamTests : TestFixtureBase
         expected[0] = unchecked((byte)val);
 
         _stream.WriteS8(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -112,9 +112,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadUInt16LittleEndian(_bytes);
 
         _stream.ReadU16L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -125,7 +125,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteUInt16LittleEndian(expected, val);
 
         _stream.WriteU16L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -136,9 +136,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadUInt16BigEndian(_bytes);
 
         _stream.ReadU16B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -149,7 +149,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteUInt16BigEndian(expected, val);
 
         _stream.WriteU16B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -160,9 +160,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadInt16LittleEndian(_bytes);
 
         _stream.ReadS16L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -173,7 +173,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteInt16LittleEndian(expected, val);
 
         _stream.WriteS16L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -184,9 +184,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadInt16BigEndian(_bytes);
 
         _stream.ReadS16B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -197,7 +197,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteInt16BigEndian(expected, val);
 
         _stream.WriteS16B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -208,9 +208,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadUInt32LittleEndian(_bytes);
 
         _stream.ReadU32L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -221,7 +221,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteUInt32LittleEndian(expected, val);
 
         _stream.WriteU32L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -232,9 +232,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadUInt32BigEndian(_bytes);
 
         _stream.ReadU32B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -245,7 +245,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteUInt32BigEndian(expected, val);
 
         _stream.WriteU32B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -256,9 +256,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadInt32LittleEndian(_bytes);
 
         _stream.ReadS32L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -269,7 +269,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteInt32LittleEndian(expected, val);
 
         _stream.WriteS32L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -280,9 +280,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadInt32BigEndian(_bytes);
 
         _stream.ReadS32B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -293,7 +293,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteInt32BigEndian(expected, val);
 
         _stream.WriteS32B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -304,9 +304,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadSingleLittleEndian(_bytes);
 
         _stream.ReadF32L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -317,7 +317,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteSingleLittleEndian(expected, val);
 
         _stream.WriteF32L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -328,9 +328,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadSingleBigEndian(_bytes);
 
         _stream.ReadF32B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -341,7 +341,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteSingleBigEndian(expected, val);
 
         _stream.WriteF32B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -352,9 +352,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadUInt64LittleEndian(_bytes);
 
         _stream.ReadU64L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -365,7 +365,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteUInt64LittleEndian(expected, val);
 
         _stream.WriteU64L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -376,9 +376,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadUInt64BigEndian(_bytes);
 
         _stream.ReadU64B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -389,7 +389,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteUInt64BigEndian(expected, val);
 
         _stream.WriteU64B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -400,9 +400,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadInt64LittleEndian(_bytes);
 
         _stream.ReadS64L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -413,7 +413,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteInt64LittleEndian(expected, val);
 
         _stream.WriteS64L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -424,9 +424,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadInt64BigEndian(_bytes);
 
         _stream.ReadS64B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -437,7 +437,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteInt64BigEndian(expected, val);
 
         _stream.WriteS64B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -448,9 +448,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadDoubleLittleEndian(_bytes);
 
         _stream.ReadF64L(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -461,7 +461,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteDoubleLittleEndian(expected, val);
 
         _stream.WriteF64L(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -472,9 +472,9 @@ public class StreamTests : TestFixtureBase
         var expected = BinaryPrimitives.ReadDoubleBigEndian(_bytes);
 
         _stream.ReadF64B(out var observed)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -485,7 +485,7 @@ public class StreamTests : TestFixtureBase
         BinaryPrimitives.WriteDoubleBigEndian(expected, val);
 
         _stream.WriteF64B(val)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         AssertStream(expected);
     }
@@ -496,9 +496,9 @@ public class StreamTests : TestFixtureBase
     public void Test_Skip_FromBeginning_Seekable(int count)
     {
         _stream.Skip(count)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
-        _stream.Position.Should().Be(count);
+        _stream.Position.ShouldBe(count);
     }
 
     [Test]
@@ -506,11 +506,11 @@ public class StreamTests : TestFixtureBase
     public void Test_Skip_PastEnd_Seekable(int count)
     {
         _stream.Skip(count)
-            .Should().BeSameAs(_stream);
+            .ShouldBeSameAs(_stream);
 
         var expected = Math.Min(count, _stream.Position);
 
-        _stream.Position.Should().Be(expected);
+        _stream.Position.ShouldBe(expected);
     }
 
     [Test]
@@ -521,9 +521,9 @@ public class StreamTests : TestFixtureBase
         var stream = new UnseekableStream(_bytes);
 
         stream.Skip(count)
-            .Should().BeSameAs(stream);
+            .ShouldBeSameAs(stream);
 
-        stream.Position.Should().Be(count);
+        stream.Position.ShouldBe(count);
     }
 
     [Test]
@@ -534,10 +534,10 @@ public class StreamTests : TestFixtureBase
         var stream = new UnseekableStream(_bytes);
 
         stream.Skip(count)
-            .Should().BeSameAs(stream);
+            .ShouldBeSameAs(stream);
 
         var expected = Math.Min(count, stream.Position);
 
-        stream.Position.Should().Be(expected);
+        stream.Position.ShouldBe(expected);
     }
 }

@@ -37,6 +37,6 @@ public class ChunkStreamReaderTests : ChunkStreamBaseTests<ChunkStreamReader, IC
         result.ShouldNotBe(null);
         result.Parameter0.ShouldBe(param0);
         result.Parameter1.ShouldBe(param1);
-        result.Data.Take(data.Length).ShouldBe(data);
+        result.Data.Span[..data.Length].ToArray().ShouldBe(data);
     }
 }

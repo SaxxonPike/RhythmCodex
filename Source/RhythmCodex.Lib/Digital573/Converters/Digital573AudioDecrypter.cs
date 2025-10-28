@@ -1,7 +1,9 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using RhythmCodex.Digital573.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
@@ -57,23 +59,25 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
             0 + Bit(key, 0x1)
         ) ^ (key & 0x5555);
 
-    public Digital573Audio DecryptNew(ReadOnlySpan<byte> input, params int[] key)
+    public Digital573Audio DecryptNew(ReadOnlySpan<byte> input, Digital573AudioKey key)
     {
-        if (key == null)
-            throw new ArgumentNullException(nameof(key));
-        if (key.Length < 3)
-            throw new RhythmCodexException($"Key must have at least 3 values. Found: {key.Length}");
+        ArgumentNullException.ThrowIfNull(key);
+
+        var keyList = key.Values;
+        
+        if (keyList.Count < 3)
+            throw new RhythmCodexException($"Key must have at least 3 values. Found: {keyList.Count}");
 
         var length = input.Length & ~1;
         var output = new byte[length];
 
         var keyBytes = new byte[4];
-        BinaryPrimitives.WriteInt16LittleEndian(keyBytes, unchecked((short)key[0]));
-        BinaryPrimitives.WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)key[1]));
+        BinaryPrimitives.WriteInt16LittleEndian(keyBytes, unchecked((short)keyList[0]));
+        BinaryPrimitives.WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)keyList[1]));
 
-        var key1 = key[0];
-        var key2 = key[1];
-        var key3 = key[2];
+        var key1 = keyList[0];
+        var key2 = keyList[1];
+        var key3 = keyList[2];
 
         for (var i = 0; i < length; i += 2, key3++)
         {
@@ -110,7 +114,7 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         return new Digital573Audio
         {
             Key = keyBytes,
-            Counter = key[2],
+            Counter = keyList[2],
             Data = output
         };
     }

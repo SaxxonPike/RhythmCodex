@@ -1,5 +1,5 @@
 using System.Buffers.Binary;
-using FluentAssertions;
+using Shouldly;
 
 namespace Saxxon.StreamCursors;
 
@@ -31,7 +31,7 @@ public class ByteMemoryTests : TestFixtureBase
 
     private void AssertBytes(byte[] expected)
     {
-        _bytes.Should().Equal(expected);
+        _bytes.ShouldBe(expected);
     }
 
     [Test]
@@ -41,7 +41,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU8(out var observed).Span.SequenceEqual(memory.Span[1..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -51,7 +51,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU8(out var observed).Span.SequenceEqual(memory.Span[1..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS8(out var observed).Span.SequenceEqual(memory.Span[1..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -83,7 +83,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS8(out var observed).Span.SequenceEqual(memory.Span[1..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -105,7 +105,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -115,7 +115,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -137,7 +137,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -147,7 +147,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -169,7 +169,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -179,7 +179,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -201,7 +201,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -211,7 +211,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -233,7 +233,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -243,7 +243,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -265,7 +265,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -275,7 +275,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -297,7 +297,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -307,7 +307,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -329,7 +329,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -339,7 +339,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -361,7 +361,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -371,7 +371,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -393,7 +393,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -403,7 +403,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -425,7 +425,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -435,7 +435,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -457,7 +457,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -467,7 +467,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -489,7 +489,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -499,7 +499,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -521,7 +521,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -531,7 +531,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -553,7 +553,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -563,7 +563,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -585,7 +585,7 @@ public class ByteMemoryTests : TestFixtureBase
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -595,7 +595,7 @@ public class ByteMemoryTests : TestFixtureBase
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
-        observed.Should().Be(expected);
+        observed.ShouldBe(expected);
     }
 
     [Test]
@@ -714,8 +714,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, count).CopyTo(expected);
 
         Assert.That(memory.Read(target.AsSpan(0, count), out var val).Span.SequenceEqual(memory.Span[count..]));
-        target.Should().Equal(expected);
-        val.Should().Be(count);
+        target.ShouldBe(expected);
+        val.ShouldBe(count);
     }
 
     [Test]
@@ -728,8 +728,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, count).CopyTo(expected);
 
         Assert.That(memory.Read(target.AsSpan(0, count), out var val).Span.SequenceEqual(memory.Span[count..]));
-        target.Should().Equal(expected);
-        val.Should().Be(count);
+        target.ShouldBe(expected);
+        val.ShouldBe(count);
     }
 
     [Test]
@@ -742,8 +742,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, count).CopyTo(expected);
 
         Assert.That(memory.Read(target.AsMemory(0, count), out var val).Span.SequenceEqual(memory.Span[count..]));
-        target.Should().Equal(expected);
-        val.Should().Be(count);
+        target.ShouldBe(expected);
+        val.ShouldBe(count);
     }
 
     [Test]
@@ -756,8 +756,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, count).CopyTo(expected);
 
         Assert.That(memory.Read(target.AsMemory(0, count), out var val).Span.SequenceEqual(memory.Span[count..]));
-        target.Should().Equal(expected);
-        val.Should().Be(count);
+        target.ShouldBe(expected);
+        val.ShouldBe(count);
     }
 
     [Test]
@@ -799,8 +799,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, size).CopyTo(expected);
 
         Assert.That(memory.TryRead(target.AsMemory(0, size), out var val).Span.SequenceEqual(memory.Span[size..]));
-        target.Should().Equal(expected);
-        val.Should().Be(size);
+        target.ShouldBe(expected);
+        val.ShouldBe(size);
     }
 
     [Test]
@@ -814,8 +814,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, size).CopyTo(expected);
 
         Assert.That(memory.TryRead(target.AsMemory(0, size), out var val).Span.SequenceEqual(memory.Span[size..]));
-        target.Should().Equal(expected);
-        val.Should().Be(size);
+        target.ShouldBe(expected);
+        val.ShouldBe(size);
     }
 
     [Test]
@@ -829,8 +829,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, size).CopyTo(expected);
 
         Assert.That(memory.TryRead(target.AsSpan(0, size), out var val).Span.SequenceEqual(memory.Span[size..]));
-        target.Should().Equal(expected);
-        val.Should().Be(size);
+        target.ShouldBe(expected);
+        val.ShouldBe(size);
     }
 
     [Test]
@@ -844,8 +844,8 @@ public class ByteMemoryTests : TestFixtureBase
         _bytes.AsMemory(0, size).CopyTo(expected);
 
         Assert.That(memory.TryRead(target.AsSpan(0, size), out var val).Span.SequenceEqual(memory.Span[size..]));
-        target.Should().Equal(expected);
-        val.Should().Be(size);
+        target.ShouldBe(expected);
+        val.ShouldBe(size);
     }
 
     [Test]
@@ -859,8 +859,8 @@ public class ByteMemoryTests : TestFixtureBase
         source.AsMemory().CopyTo(expected);
 
         Assert.That(memory.Write(source.AsSpan(), out var val).Span.SequenceEqual(remainder.Span));
-        _bytes.Should().Equal(expected);
-        val.Should().Be(count);
+        _bytes.ShouldBe(expected);
+        val.ShouldBe(count);
     }
 
     [Test]
@@ -874,8 +874,8 @@ public class ByteMemoryTests : TestFixtureBase
         source.AsMemory().CopyTo(expected);
 
         Assert.That(memory.Write(source.AsMemory(), out var val).Span.SequenceEqual(remainder.Span));
-        _bytes.Should().Equal(expected);
-        val.Should().Be(count);
+        _bytes.ShouldBe(expected);
+        val.ShouldBe(count);
     }
 
     [Test]
@@ -890,8 +890,8 @@ public class ByteMemoryTests : TestFixtureBase
         source.AsMemory(0, size).CopyTo(expected);
 
         Assert.That(memory.TryWrite(source.AsSpan(), out var val).Span.SequenceEqual(remainder.Span));
-        _bytes.Should().Equal(expected);
-        val.Should().Be(size);
+        _bytes.ShouldBe(expected);
+        val.ShouldBe(size);
     }
 
     [Test]
@@ -906,7 +906,7 @@ public class ByteMemoryTests : TestFixtureBase
         source.AsMemory(0, size).CopyTo(expected);
 
         Assert.That(memory.TryWrite(source.AsMemory(), out var val).Span.SequenceEqual(remainder.Span));
-        _bytes.Should().Equal(expected);
-        val.Should().Be(size);
+        _bytes.ShouldBe(expected);
+        val.ShouldBe(size);
     }
 }
