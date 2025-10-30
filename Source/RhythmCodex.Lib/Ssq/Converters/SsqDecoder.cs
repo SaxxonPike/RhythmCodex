@@ -19,7 +19,7 @@ public class SsqDecoder(
     ISsqChunkFilter ssqChunkFilter)
     : ISsqDecoder
 {
-    public List<Chart> Decode(IReadOnlyCollection<SsqChunk> data)
+    public List<Chart> Decode(IEnumerable<SsqChunk> data)
     {
         var chunks = data;
 
@@ -34,70 +34,44 @@ public class SsqDecoder(
             var chart = new Chart
             {
                 Events = ssqEventDecoder.Decode(
-                        timings,
-                        sc.Steps,
-                        triggers,
-                        panelMapperSelector.Select(sc.Steps, info)),
+                    timings,
+                    sc.Steps,
+                    triggers,
+                    panelMapperSelector.Select(sc.Steps, info)),
                 [NumericData.Id] = sc.Id,
                 [StringData.Difficulty] = info.Difficulty,
-                [StringData.Type] = $"{SmGameTypes.Dance}-{info.Type}".ToLowerInvariant()
+                [StringData.Type] = $"{SmGameTypes.Dance}-{info.Type}".ToLowerInvariant(),
+                [NumericData.ColumnCount] = info.PanelCount,
+                [NumericData.SourceRate] = timings.Rate,
+                [NumericData.Rate] = timings.Rate
             };
 
             var firstTiming = timings.Timings.OrderBy(t => t.LinearOffset).First();
             chart[NumericData.LinearOffset] = chart.GetZeroLinearReference(
-                (BigRational) firstTiming.LinearOffset / timings.Rate,
-                (BigRational) firstTiming.MetricOffset / SsqConstants.MeasureLength);
+                (BigRational)firstTiming.LinearOffset / timings.Rate,
+                (BigRational)firstTiming.MetricOffset / SsqConstants.MeasureLength);
 
-            if (meta == null) 
+            if (meta == null)
                 return chart;
 
             chart[StringData.Title] = meta.Text[0];
             chart[StringData.Subtitle] = meta.Text[1];
             chart[StringData.Artist] = meta.Text[2];
 
-            switch (sc.Id)
+            chart[NumericData.PlayLevel] = sc.Id switch
             {
-                case 0x0113:
-                case 0x0114:
-                case 0x0116:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[1];
-                    break;
-                case 0x0213:
-                case 0x0214:
-                case 0x0216:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[2];
-                    break;
-                case 0x0313:
-                case 0x0314:
-                case 0x0316:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[3];
-                    break;
-                case 0x0413:
-                case 0x0414:
-                case 0x0416:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[0];
-                    break;
-                case 0x0613:
-                case 0x0614:
-                case 0x0616:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[4];
-                    break;
-                case 0x0118:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[6];
-                    break;
-                case 0x0218:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[7];
-                    break;
-                case 0x0318:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[8];
-                    break;
-                case 0x0418:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[5];
-                    break;
-                case 0x0618:
-                    chart[NumericData.PlayLevel] = meta.Difficulties[9];
-                    break;
-            }
+                0x0113 or 0x0114 or 0x0116 => meta.Difficulties.Span[1],
+                0x0213 or 0x0214 or 0x0216 => meta.Difficulties.Span[2],
+                0x0313 or 0x0314 or 0x0316 => meta.Difficulties.Span[3],
+                0x0413 or 0x0414 or 0x0416 => meta.Difficulties.Span[0],
+                0x0613 or 0x0614 or 0x0616 => meta.Difficulties.Span[4],
+                0x0118 => meta.Difficulties.Span[6],
+                0x0218 => meta.Difficulties.Span[7],
+                0x0318 => meta.Difficulties.Span[8],
+                0x0418 => meta.Difficulties.Span[5],
+                0x0618 => meta.Difficulties.Span[9],
+                _ => chart[NumericData.PlayLevel]
+            };
 
             return chart;
         });

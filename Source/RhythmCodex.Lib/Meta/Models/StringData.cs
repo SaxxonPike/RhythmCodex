@@ -2,7 +2,7 @@ namespace RhythmCodex.Meta.Models;
 
 public enum StringData
 {
-    Name,
+    Name = 20000,
     Description,
     Difficulty,
     Type,

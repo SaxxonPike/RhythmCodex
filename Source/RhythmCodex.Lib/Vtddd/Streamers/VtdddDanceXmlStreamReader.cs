@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using RhythmCodex.Infrastructure;
@@ -13,17 +14,17 @@ public class VtdddDanceXmlStreamReader : IVtdddDanceXmlStreamReader
     public VtdddDanceDb Read(Stream stream, string chartPrefix)
     {
         var doc = XDocument.Load(stream);
-        var songNodes = doc.Root?.Elements("tracks").SelectMany(e => e.Elements());
-        var songDb = songNodes?.Select((e, i) => DecodeSong(e, i, chartPrefix)).ToList();
+        var songNodes = doc.Root?.Elements("tracks").SelectMany(e => e.Elements()) ?? [];
+        var songDb = songNodes.Select((e, i) => DecodeSong(e, i, chartPrefix)).ToList();
         return new VtdddDanceDb
         {
             Tracks = songDb
         };
     }
 
-    private VtdddDanceDbSong DecodeSong(XElement node, int index, string chartPrefix)
+    private static VtdddDanceDbSong DecodeSong(XElement node, int index, string chartPrefix)
     {
-        var songId = int.Parse(node.Name.LocalName.Replace("song_", string.Empty));
+        var songId = int.Parse(node.Name.LocalName.Replace("song_", string.Empty), NumberStyles.Integer);
         return new VtdddDanceDbSong
         {
             Artist = node.GetString("artist"),
@@ -43,7 +44,7 @@ public class VtdddDanceXmlStreamReader : IVtdddDanceXmlStreamReader
             ChartEasy = $"{chartPrefix}{songId:D2}_0.xml",
             ChartMedium = $"{chartPrefix}{songId:D2}_1.xml",
             ChartHard = $"{chartPrefix}{songId:D2}_2.xml",
-            ChartExpert = $"{chartPrefix}{songId:D2}_3.xml",
+            ChartExpert = $"{chartPrefix}{songId:D2}_3.xml"
         };
     }
 }

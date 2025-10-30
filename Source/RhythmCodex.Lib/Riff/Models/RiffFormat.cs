@@ -2,7 +2,7 @@ using System;
 
 namespace RhythmCodex.Riff.Models;
 
-public class RiffFormat : IRiffFormat
+public class RiffFormat
 {
     public int Format { get; set; }
     public int Channels { get; set; }

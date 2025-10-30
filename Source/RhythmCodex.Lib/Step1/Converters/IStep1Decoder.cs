@@ -6,5 +6,5 @@ namespace RhythmCodex.Step1.Converters;
 
 public interface IStep1Decoder
 {
-    List<Chart> Decode(IReadOnlyCollection<Step1Chunk> data);
+    List<Chart> Decode(IEnumerable<Step1Chunk> data);
 }

@@ -1,7 +1,9 @@
-﻿namespace RhythmCodex.Vtddd.Models;
+﻿using System;
+
+namespace RhythmCodex.Vtddd.Models;
 
 public class VtdddDpoFile
 {
-    public required byte[] Key { get; set; }
-    public required byte[] Data { get; set; }
+    public Memory<byte> Key { get; set; }
+    public Memory<byte> Data { get; set; }
 }

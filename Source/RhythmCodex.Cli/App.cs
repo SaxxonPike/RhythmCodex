@@ -35,13 +35,13 @@ public class App : IApp
         _appProgressTracker = appProgressTracker;
     }
 
-    private string AppName => "RhythmCodex";
+    private static string AppName => "RhythmCodex";
 
-    private string AppVersion =>
+    private static string? AppVersion =>
         typeof(App)
             .GetTypeInfo()
             .Assembly
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
             .InformationalVersion;
 
     /// <inheritdoc />
@@ -103,38 +103,27 @@ public class App : IApp
         {
             _appProgressTracker.Remove(task);
         }
-        _console.WriteLine($"Task complete.");
+        _console.WriteLine("Task complete.");
     }
 
     /// <summary>
     /// Set the logger level, overriding the currently configured level.
     /// </summary>
-    private void SetLogLevel(string logLevel)
-    {
-        switch ((logLevel ?? string.Empty).ToLowerInvariant())
+    private void SetLogLevel(string logLevel) =>
+        _loggerConfigurationSource.VerbosityLevel = logLevel.ToLowerInvariant() switch
         {
-            case "debug":
-                _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Debug;
-                break;
-            case "info":
-                _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Info;
-                break;
-            case "warning":
-                _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Warning;
-                break;
-            case "error":
-                _loggerConfigurationSource.VerbosityLevel = LoggerVerbosityLevel.Error;
-                break;
-        }
-    }
+            "debug" => LoggerVerbosityLevel.Debug,
+            "info" => LoggerVerbosityLevel.Info,
+            "warning" => LoggerVerbosityLevel.Warning,
+            "error" => LoggerVerbosityLevel.Error,
+            _ => _loggerConfigurationSource.VerbosityLevel
+        };
 
     /// <summary>
     /// Compare two strings, ignoring case.
     /// </summary>
-    private static bool InvariantStringMatch(string a, string b)
-    {
-        return string.Equals(a, b, StringComparison.CurrentCultureIgnoreCase);
-    }
+    private static bool InvariantStringMatch(string a, string b) => 
+        string.Equals(a, b, StringComparison.CurrentCultureIgnoreCase);
 
     /// <summary>
     /// Inform the user of parameters for a particular module's command.
@@ -158,7 +147,7 @@ public class App : IApp
         _console.WriteLine();
 
         foreach (var parameter in defaultParameters.Concat(command.Parameters))
-            _console.WriteLine($"{parameter.Name.PadRight(20)}{parameter.Description}");
+            _console.WriteLine($"{parameter.Name,-20}{parameter.Description}");
 
         _console.WriteLine();
         _console.WriteLine("Executing this command with any parameters will perform the action.");
@@ -173,7 +162,7 @@ public class App : IApp
         _console.WriteLine();
 
         foreach (var command in module.Commands.OrderBy(c => c.Name))
-            _console.WriteLine($"{command.Name.PadRight(20)}{command.Description}");
+            _console.WriteLine($"{command.Name,-20}{command.Description}");
 
         _console.WriteLine();
         _console.WriteLine("To learn more about a command:");
@@ -189,7 +178,7 @@ public class App : IApp
         _console.WriteLine();
 
         foreach (var module in _modules)
-            _console.WriteLine($"{module.Name.PadRight(20)}{module.Description}");
+            _console.WriteLine($"{module.Name,-20}{module.Description}");
 
         _console.WriteLine();
         _console.WriteLine("To obtain a list of commands for a module:");

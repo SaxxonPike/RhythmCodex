@@ -11,18 +11,27 @@ namespace RhythmCodex.Beatmania.Converters;
 public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
     : IBeatmaniaPs2KeysoundDecoder
 {
-    public Sound? Decode(BeatmaniaPs2Keysound keysound)
+    public Sound Decode(BeatmaniaPs2Keysound keysound)
     {
-        var samples = keysound.Data.SelectMany(d => vagDecoder.Decode(d).Samples).ToList();
-        var leftRate = keysound.FrequencyLeft == 0 ? null : (int?)keysound.FrequencyLeft;
-        var rightRate = keysound.FrequencyRight == 0 ? null : (int?)keysound.FrequencyRight;
+        var samples = keysound.Data
+            .SelectMany(d => vagDecoder.Decode(d)?.Samples ?? [])
+            .ToList();
+
+        var leftRate = keysound.FrequencyLeft == 0
+            ? null
+            : (int?)keysound.FrequencyLeft;
+
+        var rightRate = keysound.FrequencyRight == 0
+            ? null
+            : (int?)keysound.FrequencyRight;
+
         var left = true;
         foreach (var sample in samples)
         {
             sample[NumericData.Rate] = left ? leftRate : rightRate;
             left = !left;
         }
-            
+
         return new Sound
         {
             Samples = samples,

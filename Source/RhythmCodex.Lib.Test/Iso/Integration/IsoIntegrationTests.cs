@@ -14,7 +14,7 @@ public class IsoIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void TestBoringIso()
     {
-        var data = GetArchiveResource($"Iso.test-iso.zip")
+        var data = GetArchiveResource("Iso.test-iso.zip")
             .First()
             .Value;
         var mem = new MemoryStream(data);
@@ -30,6 +30,6 @@ public class IsoIntegrationTests : BaseIntegrationFixture
         var output = fileReader.ReadBytes((int) file.Length);
         File.WriteAllBytes(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                Path.GetFileName(file.Name)), output);
+                Path.GetFileName(file.Name)!), output);
     }
 }

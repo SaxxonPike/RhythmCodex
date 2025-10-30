@@ -28,7 +28,7 @@ public class Bitmap : Metadata
         Data = new int[width * height];
     }
         
-    public int Width { get; init; }
-    public int Height { get; init; }
-    public int[] Data { get; init; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int[] Data { get; set; }
 }

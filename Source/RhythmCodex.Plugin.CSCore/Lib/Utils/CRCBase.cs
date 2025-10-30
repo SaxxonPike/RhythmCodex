@@ -27,8 +27,8 @@ internal abstract class CRCBase<T> where T : struct
             {
                 if ((crc & (1 << (bits - 1))) != 0)
                 {
-                    crc = ((crc << 1)
-                           ^ poly);
+                    crc = (crc << 1)
+                          ^ poly;
                 }
                 else
                     crc = crc << 1;

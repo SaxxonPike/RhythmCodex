@@ -48,7 +48,7 @@ internal class FlacBitReader : BitReader
     public int ReadUnarySigned()
     {
         var value = ReadUnary();
-        return (int)(value >> 1 ^ -((int)(value & 1)));
+        return (int)(value >> 1 ^ -(int)(value & 1));
     }
 
     #region utf8
@@ -117,7 +117,7 @@ internal class FlacBitReader : BitReader
             }
 
             v <<= 6;
-            v |= (x & 0x3F);
+            v |= x & 0x3F;
         }
 
         result = v;
@@ -183,7 +183,7 @@ internal class FlacBitReader : BitReader
             }
 
             v <<= 6;
-            v |= (x & 0x3F);
+            v |= x & 0x3F;
         }
 
         result = v;

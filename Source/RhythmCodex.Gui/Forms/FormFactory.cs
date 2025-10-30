@@ -95,7 +95,7 @@ public class FormFactory(
         return builtForm;
     }
 
-    private void UpdateProgress(TableLayoutPanel tab)
+    private void UpdateProgress(TableLayoutPanel? tab)
     {
         var statuses = appProgressTracker.GetAll().ToList();
 
@@ -139,13 +139,13 @@ public class FormFactory(
         tab.ResumeLayout();
     }
 
-    private FluentControl CreateMainFormLog()
+    private FluentTable CreateMainFormLog()
     {
-        var table = controlFactory.CreateStandardTable(Ids.ProgressTable, new FluentControl[] { }, false);
+        var table = controlFactory.CreateStandardTable(Ids.ProgressTable, [], false);
         return table;
     }
 
-    private FluentControl CreateMainFormMenu()
+    private FluentMenu CreateMainFormMenu()
     {
         return new FluentMenu
         {
@@ -168,7 +168,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormTabs()
+    private FluentPanel CreateMainFormTabs()
     {
         return new FluentPanel
         {
@@ -184,7 +184,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormTabControl()
+    private FluentTabControl CreateMainFormTabControl()
     {
         return new FluentTabControl
         {
@@ -224,7 +224,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormBmsPage()
+    private FluentPanel CreateMainFormBmsPage()
     {
         return new FluentPanel
         {
@@ -245,7 +245,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormDanceDanceRevolutionPage()
+    private FluentTabControl CreateMainFormDanceDanceRevolutionPage()
     {
         return new FluentTabControl
         {
@@ -302,7 +302,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormDanceDanceRevolutionPcPage()
+    private FluentPanel CreateMainFormDanceDanceRevolutionPcPage()
     {
         return new FluentPanel
         {
@@ -323,7 +323,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormDanceDanceRevolutionCommonPage()
+    private FluentPanel CreateMainFormDanceDanceRevolutionCommonPage()
     {
         return new FluentPanel
         {
@@ -346,7 +346,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormDanceDanceRevolutionXboxPage()
+    private FluentPanel CreateMainFormDanceDanceRevolutionXboxPage()
     {
         return new FluentPanel
         {
@@ -367,7 +367,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormDanceDanceRevolution573Page()
+    private FluentPanel CreateMainFormDanceDanceRevolution573Page()
     {
         return new FluentPanel
         {
@@ -398,7 +398,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormBeatmaniaPage()
+    private FluentTabControl CreateMainFormBeatmaniaPage()
     {
         return new FluentTabControl
         {
@@ -444,7 +444,7 @@ public class FormFactory(
         };
     }
 
-    private FluentControl CreateMainFormBeatmaniaDjmainPage()
+    private FluentPanel CreateMainFormBeatmaniaDjmainPage()
     {
         return new FluentPanel
         {

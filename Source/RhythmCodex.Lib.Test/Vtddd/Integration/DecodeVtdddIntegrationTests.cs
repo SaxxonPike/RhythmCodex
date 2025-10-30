@@ -37,7 +37,7 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
             using var fileStream = File.OpenRead(inFile);
             var dpo = dpoStreamReader.Read(fileStream, (int)fileStream.Length);
             var outFile = Path.Combine(outPath, $"{Path.GetFileName(inFile)}.ogg");
-            File.WriteAllBytes(outFile, dpo.Data);
+            File.WriteAllBytes(outFile, dpo.Data.ToArray());
         }
     }
 
@@ -68,7 +68,7 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
         foreach (var song in db.Tracks)
         {
             var charts = new List<Chart>();
-            var bpm = 145;
+            const int bpm = 145;
             var chartConfig = new[]
             {
                 (song.ChartEasy, SmNotesDifficulties.Easy),
@@ -79,9 +79,6 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
 
             foreach (var (chartFile, chartDifficulty) in chartConfig)
             {
-                if (chartFile == default)
-                    continue;
-
                 var chartPath = Path.Combine(scriptPath!, chartFile);
                 if (!File.Exists(chartPath))
                     continue;
@@ -109,7 +106,7 @@ public class DecodeVtdddIntegrationTests : BaseIntegrationFixture
                 [ChartTag.DisplayBpmTag] = "*"
             };
 
-            var chartSet = new ChartSet()
+            var chartSet = new ChartSet
             {
                 Charts = charts,
                 Metadata = metadata

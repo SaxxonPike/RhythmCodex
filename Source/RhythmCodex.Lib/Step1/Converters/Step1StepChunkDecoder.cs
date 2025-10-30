@@ -1,43 +1,45 @@
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
+using Saxxon.StreamCursors;
 
 namespace RhythmCodex.Step1.Converters;
 
 [Service]
 public class Step1StepChunkDecoder : IStep1StepChunkDecoder
 {
-    public List<Step> Convert(byte[] data)
+    public List<Step> Convert(ReadOnlySpan<byte> data)
     {
         return ConvertInternal(data).ToList();
     }
 
-    private IEnumerable<Step> ConvertInternal(byte[] data)
+    private static List<Step> ConvertInternal(ReadOnlySpan<byte> data)
     {
-        using var mem = new ReadOnlyMemoryStream(data);
-        using var reader = new BinaryReader(mem);
-        // skip metadata
-        reader.ReadInt32();
-                
-        while (mem.Position < mem.Length - 7)
+        var cursor = data.Skip(4);
+        var result = new List<Step>();
+
+        while (cursor.Length >= 8)
         {
-            var metricOffset = reader.ReadInt32();
-            var rawPanels = reader.ReadInt32();
-            if (rawPanels == -1 || rawPanels == 0)
+            cursor = cursor
+                .ReadS32L(out var metricOffset)
+                .ReadS32L(out var rawPanels);
+
+            if (rawPanels is -1 or 0)
                 continue;
-                    
-            yield return new Step
+
+            result.Add(new Step
             {
                 MetricOffset = metricOffset,
                 Panels = unchecked((byte)CollapsePanels(rawPanels))
-            }; 
+            });
         }
+
+        return result;
     }
 
-    private int CollapsePanels(int rawPanels)
+    private static int CollapsePanels(int rawPanels)
     {
         var output = 0;
         var buffer = rawPanels;

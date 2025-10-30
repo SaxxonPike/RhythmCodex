@@ -7,7 +7,7 @@ namespace RhythmCodex.Riff.Converters;
 [Service]
 public class RiffFormatEncoder : IRiffFormatEncoder
 {
-    public IRiffChunk Encode(IRiffFormat format)
+    public RiffChunk Encode(RiffFormat format)
     {
         using var stream = new MemoryStream();
         using var writer = new BinaryWriter(stream);

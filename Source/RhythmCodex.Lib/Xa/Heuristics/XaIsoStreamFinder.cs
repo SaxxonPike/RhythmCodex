@@ -24,6 +24,21 @@ public class XaIsoStreamFinder : IXaIsoStreamFinder
         var streamCount = currentStreams.Max(s => s.Key) + 1;
         var currentStream = 0;
 
+        foreach (var sector in mode2Sectors)
+        {
+            if (sector.IsAudio ?? false)
+                currentStreams[currentStream].Add(sector);
+            else
+                AddCurrentStream();
+
+            currentStream = (currentStream + 1) % streamCount;
+        }
+
+        for (currentStream = 0; currentStream < streamCount; currentStream++)
+            AddCurrentStream();
+
+        return result;
+
         void AddCurrentStream()
         {
             if (currentStreams[currentStream].Count >= 2)
@@ -39,20 +54,5 @@ public class XaIsoStreamFinder : IXaIsoStreamFinder
 
             currentStreams[currentStream].Clear();
         }
-
-        foreach (var sector in mode2Sectors)
-        {
-            if (sector.IsAudio ?? false)
-                currentStreams[currentStream].Add(sector);
-            else
-                AddCurrentStream();
-
-            currentStream = (currentStream + 1) % streamCount;
-        }
-
-        for (currentStream = 0; currentStream < streamCount; currentStream++)
-            AddCurrentStream();
-
-        return result;
     }
 }

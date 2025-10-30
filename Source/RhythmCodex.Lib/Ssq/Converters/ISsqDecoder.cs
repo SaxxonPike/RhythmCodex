@@ -8,5 +8,5 @@ namespace RhythmCodex.Ssq.Converters;
 [PublicAPI]
 public interface ISsqDecoder
 {
-    List<Chart> Decode(IReadOnlyCollection<SsqChunk> data);
+    List<Chart> Decode(IEnumerable<SsqChunk> data);
 }

@@ -15,7 +15,7 @@ public class OggDecoderIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_OGG()
     {
-        var data = GetArchiveResource($"Ogg.example.ogg.zip")
+        var data = GetArchiveResource("Ogg.example.ogg.zip")
             .First()
             .Value;
             

@@ -50,7 +50,7 @@ public static class Reducer
                 }
 
                 count = newCount;
-                result = result.Slice(0, newCount);
+                result = result[..newCount];
                 break;
             }
         }

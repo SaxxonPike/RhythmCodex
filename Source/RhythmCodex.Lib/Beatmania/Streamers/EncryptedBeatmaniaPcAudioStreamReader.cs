@@ -58,27 +58,27 @@ public class EncryptedBeatmaniaPcAudioStreamReader : IEncryptedBeatmaniaPcAudioS
 
         switch (headerId)
         {
-            case @"%eNc":
+            case "%eNc":
                 key = EncryptionKey9;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;
-            case @"%e10":
+            case "%e10":
                 key = EncryptionKey10;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;
-            case @"%e11":
+            case "%e11":
                 key = EncryptionKey11;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;
-            case @"%e12":
+            case "%e12":
                 key = EncryptionKey11;
                 encType = BeatmaniaPcAudioEncryptionType.Partial;
                 break;
-            case @"%hid":
+            case "%hid":
                 key = EncryptionKey11;
                 encType = BeatmaniaPcAudioEncryptionType.Partial;
                 break;
-            case @"%iO0":
+            case "%iO0":
                 key = EncryptionKey16;
                 encType = BeatmaniaPcAudioEncryptionType.Standard;
                 break;
@@ -88,7 +88,7 @@ public class EncryptedBeatmaniaPcAudioStreamReader : IEncryptedBeatmaniaPcAudioS
 
         {
             var filelength = reader.ReadInt32();
-            var fileExtraBytes = (8 - (filelength % 8)) % 8;
+            var fileExtraBytes = (8 - filelength % 8) % 8;
             var data = reader.ReadBytes(filelength + fileExtraBytes);
             reader.ReadBytes((int)(length - data.Length - 8));
             using var encodedDataMem = new ReadOnlyMemoryStream(data);
@@ -101,9 +101,10 @@ public class EncryptedBeatmaniaPcAudioStreamReader : IEncryptedBeatmaniaPcAudioS
     {
         var output = new byte[length];
         var outputIndex = 0;
-        Span<byte> block = stackalloc byte[8];
-        Span<byte> lastBlock = stackalloc byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
-        Span<byte> currentBlock = stackalloc byte[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        Span<byte> buffer = stackalloc byte[24];
+        var block = buffer[..8];
+        var lastBlock = buffer[8..16];
+        var currentBlock = buffer[16..24];
 
         while (source.Position < source.Length)
         {

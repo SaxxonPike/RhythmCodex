@@ -13,7 +13,7 @@ internal sealed class FlacPreScan
     private readonly Stream _stream;
     private bool _isRunning;
 
-    public event EventHandler<FlacPreScanFinishedEventArgs> ScanFinished;
+    public event EventHandler<FlacPreScanFinishedEventArgs>? ScanFinished;
 
     public List<FlacFrameInformation> Frames { get; private set; }
 
@@ -107,7 +107,7 @@ internal sealed class FlacPreScan
             {
                 var ptr = bufferPtr;
                 //for (int i = 0; i < read - FlacConstant.FrameHeaderSize; i++)
-                while ((bufferPtr + read - FlacConstant.FrameHeaderSize) > ptr)
+                while (bufferPtr + read - FlacConstant.FrameHeaderSize > ptr)
                 {
                     if (*ptr++ == 0xFF && (*ptr & 0xF8) == 0xF8) //check sync
                     {
@@ -124,7 +124,7 @@ internal sealed class FlacPreScan
 
                             if (baseHeader != null && baseHeader.IsFormatEqualTo(header))
                             {
-                                frameInfo.StreamOffset = stream.Position - read + ((ptrSafe - 1) - bufferPtr);
+                                frameInfo.StreamOffset = stream.Position - read + (ptrSafe - 1 - bufferPtr);
                                 frameInfo.Header = header;
                                 frames.Add(frameInfo);
 

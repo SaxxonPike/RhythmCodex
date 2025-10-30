@@ -21,7 +21,7 @@ public class ArcTaskBuilder(
         return Build("Extract ARC", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Djmain.Model;
 using RhythmCodex.IoC;
+using Saxxon.StreamCursors;
 
 namespace RhythmCodex.Beatmania.Streamers;
 
@@ -16,31 +17,32 @@ public class BeatmaniaPsxChartEventStreamReader : IBeatmaniaPsxChartEventStreamR
 
     private static IEnumerable<DjmainChartEvent> ReadInternal(Stream stream, int length)
     {
-        var reader = new BinaryReader(stream);
-
         for (var i = 0; i < length / 4; i++)
         {
-            var result = new DjmainChartEvent
-            {
-                Offset = reader.ReadUInt16(),
-                Param0 = reader.ReadByte(),
-                Param1 = reader.ReadByte()
-            };
+            stream
+                .ReadU16L(out var offset)
+                .ReadU8(out var param0)
+                .ReadU8(out var param1);
 
-            if (result.Offset == 0x7FFF)
+            if (offset == 0x7FFF)
                 yield break;
 
-            var isSound = (result.Param0 & 0xF) == 0x1 || (result.Param0 & 0xF) == 0x5;
+            var isSound = (param0 & 0xF) == 0x1 || (param0 & 0xF) == 0x5;
 
             if (isSound)
             {
-                if ((result.Param1 & 0x80) == 0)
+                if ((param1 & 0x80) == 0)
                     continue;
 
-                result.Param1 &= 0x7F;
+                param1 &= 0x7F;
             }
 
-            yield return result;
+            yield return new DjmainChartEvent
+            {
+                Offset = offset,
+                Param0 = param0,
+                Param1 = param1
+            };
         }
     }
 }

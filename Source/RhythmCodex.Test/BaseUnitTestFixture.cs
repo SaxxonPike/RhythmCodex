@@ -50,6 +50,4 @@ public abstract class BaseUnitTestFixture<TSubject, TInterface> : BaseUnitTestFi
 /// </summary>
 /// <typeparam name="TSubject"></typeparam>
 public abstract class BaseUnitTestFixture<TSubject> : BaseUnitTestFixture<TSubject, TSubject>
-    where TSubject : class
-{
-}
+    where TSubject : class;

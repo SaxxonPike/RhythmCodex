@@ -11,6 +11,8 @@ public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventCo
 {
     public List<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(int[] noteCounts)
     {
+        return Do().ToList();
+
         IEnumerable<BeatmaniaPc1Event> Do()
         {
             for (var i = 0; i < 2; i++)
@@ -27,8 +29,6 @@ public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventCo
                 }
             }
         }
-
-        return Do().ToList();
     }
 
     public BeatmaniaPc1Event ConvertToBeatmaniaPc1(TwinkleBeatmaniaChartEvent chartEvent)

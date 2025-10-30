@@ -2,7 +2,7 @@
 
 public enum NumericData
 {
-    LinearOffset,
+    LinearOffset = 10000,
     MetricOffset,
     Bpm,
     Stop,
@@ -42,5 +42,6 @@ public enum NumericData
     Meter,
     NoteCount,
     SourceRate,
-    SourceOffset
+    SourceOffset,
+    ColumnCount
 }

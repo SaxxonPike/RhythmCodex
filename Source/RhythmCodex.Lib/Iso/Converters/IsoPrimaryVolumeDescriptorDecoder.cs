@@ -14,8 +14,8 @@ public class IsoPrimaryVolumeDescriptorDecoder(IIsoDirectoryRecordDecoder isoDir
     {
         return new IsoVolume
         {
-            SystemIdentifier = Encodings.CP437.GetString(data.Slice(8, 32)),
-            VolumeIdentifier = Encodings.CP437.GetString(data.Slice(40, 32)),
+            SystemIdentifier = Encodings.Cp437.GetString(data.Slice(8, 32)),
+            VolumeIdentifier = Encodings.Cp437.GetString(data.Slice(40, 32)),
             SpaceSize = Bitter.ToInt32(data.Slice(80, 8)),
             SetSize = Bitter.ToInt32(data.Slice(120, 4)),
             SequenceNumber = Bitter.ToInt32(data.Slice(124, 4)),
@@ -27,13 +27,13 @@ public class IsoPrimaryVolumeDescriptorDecoder(IIsoDirectoryRecordDecoder isoDir
             OptionalTypeMPathTableLocation = Bitter.ToInt32(data.Slice(152, 4)),
             RootDirectoryRecord =
                 isoDirectoryRecordDecoder.Decode(new MemoryStream(data.Slice(156, 34).ToArray()), true),
-            VolumeSetIdentifier = Encodings.CP437.GetString(data.Slice(190, 128)),
-            PublisherIdentifier = Encodings.CP437.GetString(data.Slice(318, 128)),
-            DataPreparerIdentifier = Encodings.CP437.GetString(data.Slice(446, 128)),
-            ApplicationIdentifier = Encodings.CP437.GetString(data.Slice(574, 128)),
-            CopyrightFileIdentifier = Encodings.CP437.GetString(data.Slice(702, 38)),
-            AbstractFileIdentifier = Encodings.CP437.GetString(data.Slice(740, 36)),
-            BibliographicFileIdentifier = Encodings.CP437.GetString(data.Slice(776, 37)),
+            VolumeSetIdentifier = Encodings.Cp437.GetString(data.Slice(190, 128)),
+            PublisherIdentifier = Encodings.Cp437.GetString(data.Slice(318, 128)),
+            DataPreparerIdentifier = Encodings.Cp437.GetString(data.Slice(446, 128)),
+            ApplicationIdentifier = Encodings.Cp437.GetString(data.Slice(574, 128)),
+            CopyrightFileIdentifier = Encodings.Cp437.GetString(data.Slice(702, 38)),
+            AbstractFileIdentifier = Encodings.Cp437.GetString(data.Slice(740, 36)),
+            BibliographicFileIdentifier = Encodings.Cp437.GetString(data.Slice(776, 37)),
             ApplicationData = data.Slice(883, 512).ToArray()
         };
     }

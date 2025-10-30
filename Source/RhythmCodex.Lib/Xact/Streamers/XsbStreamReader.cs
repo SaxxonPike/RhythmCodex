@@ -59,42 +59,46 @@ public class XsbStreamReader(
         }
 
         var cueNames = Array.Empty<string>();
-        if (result.Header is { CueNameHashTableOffset: > 0, CueNameHashValuesOffset: > 0 })
+        switch (result.Header)
         {
-            var cueHashIds = new short[result.Header.TotalCueCount];
-            mem.Position = result.Header.CueNameHashTableOffset;
-            for (var i = 0; i < result.Header.TotalCueCount; i++)
-                cueHashIds[i] = reader.ReadInt16();
-
-            var cueHashNameOffsets = new int[cues.Count];
-            var cueHashValue = new short[cues.Count];
-            mem.Position = result.Header.CueNameHashValuesOffset;
-            for (var i = 0; i < cues.Count; i++)
+            case { CueNameHashTableOffset: > 0, CueNameHashValuesOffset: > 0 }:
             {
-                cueHashNameOffsets[i] = reader.ReadInt32();
-                cueHashValue[i] = reader.ReadInt16();
-            }
+                var cueHashIds = new short[result.Header.TotalCueCount];
+                mem.Position = result.Header.CueNameHashTableOffset;
+                for (var i = 0; i < result.Header.TotalCueCount; i++)
+                    cueHashIds[i] = reader.ReadInt16();
 
-            cueNames = new string[cues.Count];
-            for (var i = 0; i < cues.Count; i++)
-            {
-                var hashName = new List<byte>();
-                mem.Position = cueHashNameOffsets[i];
-                while (true)
+                var cueHashNameOffsets = new int[cues.Count];
+                var cueHashValue = new short[cues.Count];
+                mem.Position = result.Header.CueNameHashValuesOffset;
+                for (var i = 0; i < cues.Count; i++)
                 {
-                    var b = reader.ReadByte();
-                    if (b == 0x00)
-                        break;
-                    hashName.Add(b);
+                    cueHashNameOffsets[i] = reader.ReadInt32();
+                    cueHashValue[i] = reader.ReadInt16();
                 }
 
-                cueNames[i] = hashName.ToArray().GetString();
+                cueNames = new string[cues.Count];
+                for (var i = 0; i < cues.Count; i++)
+                {
+                    var hashName = new List<byte>();
+                    mem.Position = cueHashNameOffsets[i];
+                    while (true)
+                    {
+                        var b = reader.ReadByte();
+                        if (b == 0x00)
+                            break;
+                        hashName.Add(b);
+                    }
+
+                    cueNames[i] = hashName.ToArray().GetString();
+                }
+
+                break;
             }
-        }
-        else if (result.Header is { CueNamesOffset: > 0, CueNameTableLength: > 0 })
-        {
-            mem.Position = result.Header.CueNamesOffset;
-            cueNames = xsbCueNameTableStreamReader.Read(mem, result.Header.CueNameTableLength).ToArray();
+            case { CueNamesOffset: > 0, CueNameTableLength: > 0 }:
+                mem.Position = result.Header.CueNamesOffset;
+                cueNames = xsbCueNameTableStreamReader.Read(mem, result.Header.CueNameTableLength).ToArray();
+                break;
         }
 
         for (var i = 0; i < cueNames.Length; i++)

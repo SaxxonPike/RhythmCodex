@@ -48,24 +48,24 @@ public class BeatmaniaPsxBmDataStreamReaderIntegrationTests : BaseIntegrationFix
                 var data = folderFile.Data;
                 var extension = "bin";
 
-                if (data.Length >= 4 && data.Skip(data.Length - 4)
+                if (data.Length >= 4 && data[^4..].ToArray()
                         .SequenceEqual(new byte[] {0xFF, 0x7F, 0x00, 0x00}))
                 {
                     extension = "cs5";
                     using var chartStream = new MemoryStream();
-                    var chart = chartDecoder.Decode(chartReader.Read(new MemoryStream(data), data.Length), DjmainChartType.Beatmania);
+                    var chart = chartDecoder.Decode(chartReader.Read(new ReadOnlyMemoryStream(data), data.Length), DjmainChartType.Beatmania);
                     chart.PopulateMetricOffsets();
                     chartWriter.Write(chartStream, chartEncoder.Encode(chart));
                     File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.bme"), chartStream.ToArray());
                 }
 
-                else if (data.Length >= 4 && data.Skip(data.Length - 4).SequenceEqual(new byte[] {0x77, 0x77, 0x77, 0x77}))
+                else if (data.Length >= 4 && data[^4..].ToArray().SequenceEqual(new byte[] {0x77, 0x77, 0x77, 0x77}))
                 {
                     var keyOutFolder = Path.Combine(outputFolder, $"{folderIndex:X4}", $"key_{fileIndex:X4}");
                     if (!Directory.Exists(keyOutFolder))
                         Directory.CreateDirectory(keyOutFolder);
 
-                    using var keyStream = new MemoryStream(data);
+                    using var keyStream = new ReadOnlyMemoryStream(data);
                     var keysounds = keysoundReader.Read(keyStream);
                     var keyIndex = 1;
                 
@@ -82,7 +82,7 @@ public class BeatmaniaPsxBmDataStreamReaderIntegrationTests : BaseIntegrationFix
                         keyIndex++;
                     }
                 }
-                File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.{extension}"), folderFile.Data);
+                File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.{extension}"), folderFile.Data.ToArray());
                 fileIndex++;
             }
 

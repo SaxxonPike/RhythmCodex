@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charting.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -37,122 +38,33 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         public BigRational? SoundIndex { get; set; }
     }
 
-    public Sound Render(IEnumerable<Event> inEvents, IEnumerable<Sound?> inSounds, ChartRendererOptions options)
+    public Sound Render(IEnumerable<Event> events, IEnumerable<Sound> sounds, ChartRendererOptions options)
     {
         var state = new List<ChannelState>();
         var sampleMap = new List<SampleMapping>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
 
-        var events = inEvents.ToList();
-        if (events.Any(ev => ev[NumericData.LinearOffset] == null))
+        var eventList = events.AsCollection();
+        if (eventList.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException("Can't render without all events having linear offsets.");
 
-        var sounds = inSounds
+        var soundList = sounds
             .Select(s =>
                 audioDsp.ApplyResampling(audioDsp.ApplyEffects(s), resamplerProvider.GetBest(), options.SampleRate))
-            .Where(s => s != null)
             .ToArray();
-
-        void MapSample(BigRational? player, BigRational? column, BigRational? soundIndex)
-        {
-            var sample = sampleMap.FirstOrDefault(st => st.Player == player && st.Column == column);
-            if (sample == null)
-            {
-                sample = new SampleMapping();
-                sampleMap.Add(sample);
-            }
-
-            sample.Player = player;
-            sample.Column = column;
-            sample.SoundIndex = soundIndex;
-        }
-
-        void StartUserSample(BigRational? player, BigRational? column)
-        {
-            var sample = sampleMap.FirstOrDefault(sm => sm.Player == player && sm.Column == column);
-            Sound? sound = null;
-            if (sample?.SoundIndex != null)
-                sound = sounds.FirstOrDefault(s => s?[NumericData.Id] == sample.SoundIndex);
-            var channel = sound?[NumericData.Channel];
-            ChannelState? st = null;
-            if (channel != null && channel >= 0 && channel < 255)
-                st = state.FirstOrDefault(s => s.Channel == channel);
-
-            if (st == null)
-            {
-                st = new ChannelState { Channel = channel };
-                state.Add(st);
-            }
-
-            st.Sound = sound;
-            st.Offset = 0;
-            st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
-            st.RightLength = sound?.Samples[1].Data.Length ?? 0;
-            st.LeftVolume = SqrtHalf * masterVolume;
-            st.RightVolume = SqrtHalf * masterVolume;
-            st.Playing = true;
-        }
-
-        void StartBgmSample(BigRational? soundIndex, BigRational? panning = null)
-        {
-            var sound = sounds.FirstOrDefault(s => s?[NumericData.Id] == soundIndex);
-            var channel = sound?[NumericData.Channel];
-            var rightVolume = MathF.Sqrt((float)(panning ?? BigRational.OneHalf));
-            var leftVolume = MathF.Sqrt(1f - (float)(panning ?? BigRational.OneHalf));
-            ChannelState? st = null;
-            if (channel != null && channel >= 0 && channel < 255)
-                st = state.FirstOrDefault(s => s.Channel == channel);
-
-            if (st == null)
-            {
-                st = new ChannelState { Channel = channel };
-                state.Add(st);
-            }
-
-            st.Sound = sound;
-            st.Offset = 0;
-            st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
-            st.RightLength = sound?.Samples[1].Data.Length ?? 0;
-            st.LeftVolume = leftVolume * masterVolume;
-            st.RightVolume = rightVolume * masterVolume;
-            st.Playing = true;
-        }
 
         var mixdownLeft = new List<float>();
         var mixdownRight = new List<float>();
 
-        void Mix()
-        {
-            var finalMixLeft = 0f;
-            var finalMixRight = 0f;
-            foreach (var ch in state)
-            {
-                if (!ch.Playing)
-                    continue;
-
-                if (ch.Sound == null || (ch.Offset >= ch.LeftLength && ch.Offset >= ch.RightLength))
-                {
-                    ch.Playing = false;
-                    continue;
-                }
-
-                if (ch.Offset < ch.LeftLength)
-                    finalMixLeft += ch.Sound.Samples[0].Data.Span[ch.Offset] * ch.LeftVolume;
-                if (ch.Offset < ch.RightLength)
-                    finalMixRight += ch.Sound.Samples[1].Data.Span[ch.Offset] * ch.RightVolume;
-                ch.Offset++;
-            }
-
-            mixdownLeft.Add(finalMixLeft);
-            mixdownRight.Add(finalMixRight);
-        }
-
         var lastSample = 0;
-        var eventTicks = events.GroupBy(ev => ev[NumericData.LinearOffset]).OrderBy(g => g.Key).ToList();
+        var eventTicks = eventList
+            .GroupBy(ev => (BigRational)ev[NumericData.LinearOffset]!)
+            .OrderBy(g => g.Key)
+            .ToList();
 
         foreach (var tick in eventTicks)
         {
-            var nowSample = (int)((tick.Key ?? 0) * options.SampleRate);
+            var nowSample = (int)(tick.Key * options.SampleRate);
             var tickEvents = tick.ToArray();
 
             for (; lastSample < nowSample; lastSample++)
@@ -192,9 +104,108 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             [NumericData.Rate] = options.SampleRate,
             Samples =
             [
-                new Sample() { Data = mixdownLeft.ToArray() },
-                new Sample() { Data = mixdownRight.ToArray() }
+                new Sample { Data = mixdownLeft.ToArray() },
+                new Sample { Data = mixdownRight.ToArray() }
             ]
         };
+
+        void MapSample(BigRational? player, BigRational? column, BigRational? soundIndex)
+        {
+            var sample = sampleMap.FirstOrDefault(st => st.Player == player && st.Column == column);
+            if (sample == null)
+            {
+                sample = new SampleMapping();
+                sampleMap.Add(sample);
+            }
+
+            sample.Player = player;
+            sample.Column = column;
+            sample.SoundIndex = soundIndex;
+        }
+
+        void StartUserSample(BigRational? player, BigRational? column)
+        {
+            var sample = sampleMap.FirstOrDefault(sm => sm.Player == player && sm.Column == column);
+            Sound? sound = null;
+            if (sample?.SoundIndex != null)
+                sound = soundList.FirstOrDefault(s => s?[NumericData.Id] == sample.SoundIndex);
+            var channel = sound?[NumericData.Channel];
+            ChannelState? st = null;
+            if (channel >= 0 && channel < 255)
+                st = state.FirstOrDefault(s => s.Channel == channel);
+
+            if (st == null)
+            {
+                st = new ChannelState { Channel = channel };
+                state.Add(st);
+            }
+
+            st.Sound = sound;
+            st.Offset = 0;
+            st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
+            st.RightLength = sound?.Samples[1].Data.Length ?? 0;
+            st.LeftVolume = SqrtHalf * masterVolume;
+            st.RightVolume = SqrtHalf * masterVolume;
+            st.Playing = true;
+        }
+
+        void StartBgmSample(BigRational? soundIndex, BigRational? panning = null)
+        {
+            var sound = soundList.FirstOrDefault(s => s?[NumericData.Id] == soundIndex);
+            var channel = sound?[NumericData.Channel];
+            var rightVolume = MathF.Sqrt((float)(panning ?? BigRational.OneHalf));
+            var leftVolume = MathF.Sqrt(1f - (float)(panning ?? BigRational.OneHalf));
+            ChannelState? st = null;
+            if (channel >= 0 && channel < 255)
+                st = state.FirstOrDefault(s => s.Channel == channel);
+
+            if (st == null)
+            {
+                st = new ChannelState { Channel = channel };
+                state.Add(st);
+            }
+
+            st.Sound = sound;
+            st.Offset = 0;
+            if (sound is { Samples.Count: >= 2 })
+            {
+                st.LeftLength = sound.Samples[0].Data.Length;
+                st.RightLength = sound.Samples[1].Data.Length;
+            }
+            else
+            {
+                st.LeftLength = 0;
+                st.RightLength = 0;
+            }
+            st.LeftVolume = leftVolume * masterVolume;
+            st.RightVolume = rightVolume * masterVolume;
+            st.Playing = true;
+        }
+
+        void Mix()
+        {
+            var finalMixLeft = 0f;
+            var finalMixRight = 0f;
+            foreach (var ch in state)
+            {
+                if (!ch.Playing)
+                    continue;
+
+                if (ch.Sound == null || (ch.Offset >= ch.LeftLength && ch.Offset >= ch.RightLength))
+                {
+                    ch.Playing = false;
+                    continue;
+                }
+
+                if (ch.Offset < ch.LeftLength)
+                    finalMixLeft += ch.Sound.Samples[0].Data.Span[ch.Offset] * ch.LeftVolume;
+                if (ch.Offset < ch.RightLength)
+                    finalMixRight += ch.Sound.Samples[1].Data.Span[ch.Offset] * ch.RightVolume;
+                ch.Offset++;
+            }
+
+            mixdownLeft.Add(finalMixLeft);
+            mixdownRight.Add(finalMixRight);
+        }
     }
 }

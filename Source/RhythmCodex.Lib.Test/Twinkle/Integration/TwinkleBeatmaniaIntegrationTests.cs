@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Bms.Converters;
@@ -10,6 +13,7 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Twinkle.Converters;
+using RhythmCodex.Twinkle.Model;
 using RhythmCodex.Twinkle.Streamers;
 using RhythmCodex.Wav.Converters;
 using RhythmCodex.Wav.Models;
@@ -18,6 +22,29 @@ namespace RhythmCodex.Twinkle.Integration;
 
 public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
 {
+    [Test]
+    [Explicit("wip")]
+    public void Test0()
+    {
+        using var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\iidx3rd.zip");
+        using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
+
+        var entry = zipStream.Entries.Single();
+        using var entryStream = entry.Open();
+        
+        var chunk = new byte[0x8000000];
+        var remaining = chunk.Length;
+        var offset = 0;
+        
+        while (remaining > 0)
+        {
+            var bread = entryStream.Read(chunk.AsSpan(offset));
+            remaining -= bread;
+            offset += bread;
+        }
+        this.WriteFile(chunk, "twinkle.bin");
+    }
+        
     [Test]
     [Explicit("wip")]
     public void Test1()
@@ -30,7 +57,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         using var entryStream = entry.Open();
         var chunks = streamer.Read(entryStream, entry.Length);
         var chunk = chunks.Skip(1).First();
-        File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data);
+        File.WriteAllBytes(@"c:\users\saxxon\desktop\twinkle.bin", chunk.Data.ToArray());
     }
 
     [Test]
@@ -48,19 +75,19 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
 
         // Act.
         var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
-        var archive = decoder.Decode(chunk);
+        var archive = decoder.Decode(chunk, new TwinkleDecodeOptions());
 
         // Assert.
-        foreach (var sound in archive.Samples.Where(s => s.Samples.Any()))
+        foreach (var sound in archive.Samples.Where(s => s.Samples.Count != 0))
         {
-            this.WriteSound(sound, Path.Combine("bmiidx", $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id], 4)}.wav"));
+            this.WriteSound(sound, Path.Combine("bmiidx", $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 4)}.wav"));
         }
 
         foreach (var chart in archive.Charts)
         {
             chart.PopulateMetricOffsets();
             using var outStream =
-                this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]}.bms"));
+                this.OpenWrite(Path.Combine("bmiidx", $"{(int) chart[NumericData.ByteOffset]!}.bms"));
             bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
             outStream.Flush();
         }
@@ -82,11 +109,14 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
 
         // Act.
         var chunk = streamer.Read(new MemoryStream(data), data.Length, false).First();
-        var archive = decoder.Decode(chunk);
+        var archive = decoder.Decode(chunk, new TwinkleDecodeOptions
+        {
+            DoNotConsolidateSamples = true
+        });
         var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, options), 1.0f, true);
 
         // Assert.
-        this.WriteSound(rendered, Path.Combine($"twinkle.wav"));
+        this.WriteSound(rendered, Path.Combine("twinkle.wav"));
     }
         
     [Test]
@@ -103,18 +133,25 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
         var entry = zipStream.Entries.Single();
         using var entryStream = entry.Open();
+        using var sha = SHA1.Create();
+        var hashes = new ConcurrentBag<string>();
+        
         var chunks = streamer.Read(entryStream, entry.Length, true);
 
         foreach (var chunk in chunks.AsParallel())
         {
-            var archive = decoder.Decode(chunk);
+            var archive = decoder.Decode(chunk, new TwinkleDecodeOptions
+            {
+                DoNotConsolidateSamples = true
+            });
             if (archive == null)
                 continue;
 
             foreach (var chart in archive.Charts.AsParallel())
             {
                 var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
-                this.WriteSound(rendered, Path.Combine("twinkle7", $"{chunk.Index:D4}_{(int) chart[NumericData.Id]!:D2}.wav"));
+                var path = Path.Combine("twinkle7", $"{chunk.Index:D4}_{(int)chart[NumericData.Id]:D2}.wav");
+                this.WriteSound(rendered, path);
             }
         }
     }
@@ -141,7 +178,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         var streamer = Resolve<ITwinkleBeatmaniaStreamReader>();
         var decoder = Resolve<ITwinkleBeatmaniaDecoder>();
         var chartWriter = Resolve<IBeatmaniaPc1StreamWriter>();
-        using var stream = File.OpenRead(@"Z:\Bemani\Beatmania Non-PC\iidx1st.zip");
+        using var stream = File.OpenRead(@"/Users/saxxon/iidx7th.zip");
         using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
         var entry = zipStream.Entries.Single();
         using var entryStream = entry.Open();
@@ -151,7 +188,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         {
             var bpc = decoder.MigrateToBemaniPc(chunk);
             using var mem = new MemoryStream();
-            chartWriter.Write(mem, bpc.Charts);
+            chartWriter.Write(mem, bpc!.Charts);
             mem.Flush();
             this.WriteFile(mem.ToArray(), $"{chunk.Index:D4}.1");
         }

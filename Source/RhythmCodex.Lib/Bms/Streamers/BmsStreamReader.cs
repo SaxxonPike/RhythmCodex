@@ -12,21 +12,21 @@ namespace RhythmCodex.Bms.Streamers;
 [Service]
 public partial class BmsStreamReader : IBmsStreamReader
 {
-    private static readonly char[] Delimiters = [' ', '\t', ':'];
-        
+    private const string Delimiters = " \t:";
+
     public IEnumerable<BmsCommand> Read(Stream stream)
     {
         var text = stream.ReadAllText();
-            
+
         // Remove all comments.
-        text = StarCommentRegex().Replace(text, string.Empty); 
+        text = StarCommentRegex().Replace(text, string.Empty);
         text = SlashSemiColonRegex().Replace(text, string.Empty);
-            
+
         // Parse remaining lines.
         return ConvertLines(text.SplitLines()).ToArray();
     }
 
-    private IEnumerable<BmsCommand> ConvertLines(IEnumerable<string> lines)
+    private static IEnumerable<BmsCommand> ConvertLines(IEnumerable<string> lines)
     {
         foreach (var line in lines)
         {
@@ -37,7 +37,7 @@ public partial class BmsStreamReader : IBmsStreamReader
 
             if (string.IsNullOrEmpty(trimmedLine))
                 continue;
-                
+
             // Lines not starting with # are considered comments.
             if (trimmedLine[0] != '#')
             {
@@ -49,17 +49,23 @@ public partial class BmsStreamReader : IBmsStreamReader
             }
 
             // Determine delimiter.
+            var defaultDelimiter = (Delimiter: '\0', Index: -1);
             var cmd = new BmsCommand();
             var delimiterOffset = Delimiters
-                .Select(d => new {Delimiter = d, Index = trimmedLine.IndexOf(d)})
+                .Select(d => (Delimiter: d, Index: trimmedLine.IndexOf(d)))
                 .Where(kv => kv.Index >= 0)
-                .OrderBy(kv => kv.Index)
-                .FirstOrDefault();
+                .DefaultIfEmpty(defaultDelimiter)
+                .MinBy(kv => kv.Index);
 
-            if (delimiterOffset != null)
+            if (delimiterOffset.Index >= 0)
             {
-                cmd.Name = trimmedLine.Substring(1, delimiterOffset.Index - 1).Trim().ToUpperInvariant();
-                cmd.Value = trimmedLine[(delimiterOffset.Index + 1)..].Trim();
+                cmd.Name = trimmedLine[1..delimiterOffset.Index]
+                    .Trim()
+                    .ToUpperInvariant();
+
+                cmd.Value = trimmedLine[(delimiterOffset.Index + 1)..]
+                    .Trim();
+
                 if (delimiterOffset.Delimiter == ':')
                     cmd.UseColon = true;
             }
@@ -67,7 +73,7 @@ public partial class BmsStreamReader : IBmsStreamReader
             {
                 cmd.Name = trimmedLine[1..].ToUpperInvariant();
             }
-                
+
             yield return cmd;
         }
     }
@@ -75,12 +81,12 @@ public partial class BmsStreamReader : IBmsStreamReader
     /// <summary>
     /// Remove /* and */ comments.
     /// </summary>
-    [GeneratedRegex("\\/\\*(\\*(?!\\/)|[^*])*\\*\\/")]
+    [GeneratedRegex(@"\/\*(\*(?!\/)|[^*])*\*\/")]
     private static partial Regex StarCommentRegex();
-        
+
     /// <summary>
     /// Remove // and ; comments.
     /// </summary>
-    [GeneratedRegex("(\\/\\/|\\;).*$", RegexOptions.Multiline)]
+    [GeneratedRegex(@"(\/\/|\;).*$", RegexOptions.Multiline)]
     private static partial Regex SlashSemiColonRegex();
 }

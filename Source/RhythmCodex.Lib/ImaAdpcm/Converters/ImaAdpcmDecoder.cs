@@ -12,13 +12,12 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
 {
     // Reference: https://github.com/dbry/adpcm-xq/blob/master/adpcm-lib.c
 
-    public List<Sound?> Decode(ImaAdpcmChunk chunk)
+    public Sound Decode(ImaAdpcmChunk chunk)
     {
-        var sounds = new List<Sound?>();
         var buffer = new float[chunk.ChannelSamplesPerFrame];
         var channels = chunk.Channels;
-        var frameSize = (chunk.ChannelSamplesPerFrame * chunk.Channels / 2) + (chunk.Channels * 4);
-        var max = (chunk.Data.Length / frameSize) * frameSize;
+        var frameSize = chunk.ChannelSamplesPerFrame * chunk.Channels / 2 + chunk.Channels * 4;
+        var max = chunk.Data.Length / frameSize * frameSize;
         var output = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToArray();
 
         for (var offset = 0; offset < max; offset += frameSize)
@@ -30,16 +29,14 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                 output[channel].AddRange(buffer);
             }
         }
-            
-        sounds.Add(new Sound
-        {
-            Samples = output.Select(s => new Sample {Data = s.ToArray()}).ToList()
-        });
 
-        return sounds;            
+        return new Sound
+        {
+            Samples = output.Select(s => new Sample { Data = s.ToArray() }).ToList()
+        };
     }
 
-    private int DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, int channelCount)
+    private static int DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, int channelCount)
     {
         var index = channel << 2;
         var sample = ((frame[index] | (frame[index + 1] << 8)) << 16) >> 16;
@@ -52,13 +49,32 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
 
         while (index < max)
         {
+            if (nybbleIndex == 8)
+            {
+                nybbleIndex = 0;
+                channelIndex++;
+                if (channelIndex == channelCount)
+                    channelIndex = 0;
+            }
+
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index]);
+            nybbleIndex++;
+
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
+            nybbleIndex++;
+
+            index++;
+            continue;
+
             float DecodeNybble(int data)
             {
                 var step = ImaAdpcmConstants.StepTable[control];
                 var delta = step >> 3;
 
-                if ((data & 0x01) != 0) delta += (step >> 2);
-                if ((data & 0x02) != 0) delta += (step >> 1);
+                if ((data & 0x01) != 0) delta += step >> 2;
+                if ((data & 0x02) != 0) delta += step >> 1;
                 if ((data & 0x04) != 0) delta += step;
                 if ((data & 0x08) != 0) delta = -delta;
 
@@ -66,7 +82,7 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                     sample = -32768;
                 if (sample > 32767)
                     sample = 32767;
-                
+
                 sample += delta;
                 control += ImaAdpcmConstants.IndexTable[data & 0x7];
                 if (control < 0)
@@ -75,24 +91,6 @@ public class ImaAdpcmDecoder : IImaAdpcmDecoder
                     control = 88;
                 return sample / 32768f;
             }
-
-            if (nybbleIndex == 8)
-            {
-                nybbleIndex = 0;
-                channelIndex++;
-                if (channelIndex == channelCount)
-                    channelIndex = 0;
-            }
-                
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index]);
-            nybbleIndex++;
-
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
-            nybbleIndex++;
-                
-            index++;
         }
 
         return bufferIndex;

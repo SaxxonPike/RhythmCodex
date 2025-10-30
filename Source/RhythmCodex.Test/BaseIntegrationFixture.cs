@@ -77,7 +77,7 @@ public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver
         {
             typeof(ServiceAttribute).Assembly,
             typeof(TSubject).Assembly
-        };
+        }.Distinct();
 
         foreach (var assembly in assemblies)
             builder.RegisterAssemblyTypes(assembly)

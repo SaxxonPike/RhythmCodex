@@ -12,7 +12,7 @@ namespace RhythmCodex.Xbox.Streamers;
 [Service]
 public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXboxIsoStreamReader
 {
-    private string MediaSectorId = "MICROSOFT*XBOX*MEDIA";
+    private const string MediaSectorId = "MICROSOFT*XBOX*MEDIA";
 
     public IEnumerable<XboxIsoFileEntry> Read(Stream stream, long length)
     {
@@ -21,7 +21,7 @@ public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXbox
         var basePosition = stream.Position;
         stream.Position = basePosition + 0x800 * 0x20;
         var mediaSector = reader.ReadBytes(0x800);
-        if (Encodings.CP437.GetString(mediaSector.AsSpan().Slice(0, 20).ToArray()) != MediaSectorId)
+        if (Encodings.Ascii.GetString(mediaSector[..20].ToArray()) != MediaSectorId)
             throw new RhythmCodexException("This doesn't appear to be an Xbox ISO.");
         var mediaInfo = xboxIsoInfoDecoder.Decode(mediaSector);
 
@@ -31,7 +31,7 @@ public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXbox
         return ReadDirectory(reader, "", basePosition).ToList();
     }
 
-    private IEnumerable<XboxIsoFileEntry> ReadDirectory(BinaryReader reader, string path, long basePosition)
+    private static IEnumerable<XboxIsoFileEntry> ReadDirectory(BinaryReader reader, string path, long basePosition)
     {
         var binaryTableLeft = reader.ReadInt16() * 4;
         var binaryTableRight = reader.ReadInt16() * 4;
@@ -44,7 +44,7 @@ public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXbox
         };
 
         var nameLength = reader.ReadByte();
-        entry.FileName = $"{path}{Encodings.UTF8.GetString(reader.ReadBytes(nameLength))}";
+        entry.FileName = $"{path}{Encodings.Utf8.GetString(reader.ReadBytes(nameLength))}";
 
         if (!entry.Attributes.HasFlag(XboxIsoFileAttributes.Directory))
         {

@@ -20,7 +20,7 @@ public class DxtDecoder : IDxtDecoder
             for (var blockY = 0; blockY < blockHeight; blockY++)
             for (var blockX = 0; blockX < blockWidth; blockX++)
             {
-                var srcBlock = src.Slice(8 * (blockY * blockWidth + blockX));
+                var srcBlock = src[(8 * (blockY * blockWidth + blockX))..];
                 var dstBlock = dst.AsSpan(blockY * 4 * width + blockX * 4);
                 DecodeColorBlock(srcBlock, c);
                 if (useAlpha && c[0] <= c[1])
@@ -45,9 +45,9 @@ public class DxtDecoder : IDxtDecoder
             for (var blockY = 0; blockY < blockHeight; blockY++)
             for (var blockX = 0; blockX < blockWidth; blockX++)
             {
-                var srcBlock = src.Slice(16 * (blockY * blockWidth + blockX));
+                var srcBlock = src[(16 * (blockY * blockWidth + blockX))..];
                 var dstBlock = dst.AsSpan(blockY * 4 * width + blockX * 4);
-                DecodeColorBlock(srcBlock.Slice(8), c);
+                DecodeColorBlock(srcBlock[8..], c);
                 ConvertColorBlockWithDiscreteAlpha(srcBlock, dstBlock, c, width);
             }
 
@@ -67,9 +67,9 @@ public class DxtDecoder : IDxtDecoder
             for (var blockY = 0; blockY < blockHeight; blockY++)
             for (var blockX = 0; blockX < blockWidth; blockX++)
             {
-                var srcBlock = src.Slice(16 * (blockY * blockWidth + blockX));
+                var srcBlock = src[(16 * (blockY * blockWidth + blockX))..];
                 var dstBlock = dst.AsSpan(blockY * 4 * width + blockX * 4);
-                DecodeColorBlock(srcBlock.Slice(8), c);
+                DecodeColorBlock(srcBlock[8..], c);
                 ConvertColorBlockWithCompositeAlpha(srcBlock, dstBlock, c, width);
             }
 

@@ -11,5 +11,5 @@ public class TimImage
     public int OriginY { get; set; }
     public int Stride { get; set; }
     public int Height { get; set; }
-    public ReadOnlyMemory<byte> Data { get; set; }
+    public Memory<byte> Data { get; set; }
 }

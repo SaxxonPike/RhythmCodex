@@ -107,7 +107,7 @@ public class Ddr573ImageFileNameHasher : IDdr573ImageFileNameHasher
             "data/spu/system.vas",
             "soft/s573/overlay/bin/dbugtest.olb",
             "soft/s573/overlay/bin/gtest.olb",
-            "soft/s573/overlay/bin/play.olb",
+            "soft/s573/overlay/bin/play.olb"
         };
 
         var knownSongPatterns = new[]

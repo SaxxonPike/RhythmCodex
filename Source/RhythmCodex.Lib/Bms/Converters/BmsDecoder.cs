@@ -44,7 +44,7 @@ public class BmsDecoder : IBmsDecoder
             {"VOLWAV", NumericData.Volume}
         };
 
-    public BmsChart Decode(IReadOnlyCollection<BmsCommand> commands)
+    public BmsChart Decode(IEnumerable<BmsCommand> commands)
     {
         var chart = new Chart
         {
@@ -77,7 +77,7 @@ public class BmsDecoder : IBmsDecoder
         };
     }
 
-    private void AddSingularMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
+    private void AddSingularMetadata(IMetadata chart, IEnumerable<BmsCommand> commandList,
         IDictionary<string, StringData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -89,7 +89,7 @@ public class BmsDecoder : IBmsDecoder
         }
     }
 
-    private void AddSingularMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
+    private void AddSingularMetadata(IMetadata chart, IEnumerable<BmsCommand> commandList,
         IDictionary<string, NumericData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -101,7 +101,7 @@ public class BmsDecoder : IBmsDecoder
         }
     }
 
-    private void AddMultiMetadata(IMetadata chart, IReadOnlyCollection<BmsCommand> commandList,
+    private void AddMultiMetadata(IMetadata chart, IEnumerable<BmsCommand> commandList,
         IDictionary<string, StringData> metadataMap)
     {
         foreach (var kv in metadataMap)
@@ -166,15 +166,6 @@ public class BmsDecoder : IBmsDecoder
             var value = valueMemory.Span;
             if (value[0] == '0' && value[1] == '0')
                 continue;
-
-            void AddEvent(Event ev)
-            {
-                ev[NumericData.MetricOffset] = new BigRational(new BigInteger(measure), new BigInteger(index),
-                    new BigInteger(total));
-                ev[NumericData.SourceData] = Alphabet.DecodeAlphanumeric(valueMemory.Span);
-                ev[NumericData.SourceCommand] = lane;
-                events.Add(ev);
-            }
 
             switch (lane)
             {
@@ -338,6 +329,17 @@ public class BmsDecoder : IBmsDecoder
                     });
                     break;
                 }
+            }
+
+            continue;
+
+            void AddEvent(Event ev)
+            {
+                ev[NumericData.MetricOffset] = new BigRational(new BigInteger(measure), new BigInteger(index),
+                    new BigInteger(total));
+                ev[NumericData.SourceData] = Alphabet.DecodeAlphanumeric(valueMemory.Span);
+                ev[NumericData.SourceCommand] = lane;
+                events.Add(ev);
             }
         }
 

@@ -19,18 +19,11 @@ public class TcbImageDecoder : ITcbImageDecoder
 
         //if (image.Palette.Length > 0x50)
         {
-            var palSpan = Bitter.ToInt32Values(image.Palette);
+            var palSpan = Bitter.ToInt32Values(image.Palette.Span);
             palette = FilterPalette(palSpan);
         }
 
-        int ConvertPixel(int px)
-        {
-            // fill the upper 8 bits with the alpha bit with this one cheap hack
-            px = ((px >> 7) & ~0xFFFFFF) | (px & 0xFFFFFF);
-            // swap red and blue
-            px = (px & ~0xFF00FF) | ((px & 0xFF) << 16) | ((px & 0xFF0000) >> 16);
-            return px;
-        }
+        var imgData = imageData.Span;
 
         switch (image.PaletteType)
         {
@@ -38,7 +31,7 @@ public class TcbImageDecoder : ITcbImageDecoder
             {
                 for (var i = 0; i < pixelCount; i++)
                 {
-                    var pixel = palette[imageData[i]];
+                    var pixel = palette[imgData[i]];
                     resultData[i] = ConvertPixel(pixel);
                 }
                 break;
@@ -48,8 +41,8 @@ public class TcbImageDecoder : ITcbImageDecoder
                 var imageIndex = 0;
                 for (var i = 0; i < pixelCount / 2; i++)
                 {
-                    var image0 = imageData[i] & 0xF;
-                    var image1 = imageData[i] >> 4;
+                    var image0 = imgData[i] & 0xF;
+                    var image1 = imgData[i] >> 4;
                         
                     var pixel = palette[image0];
                     resultData[imageIndex++] = ConvertPixel(pixel);
@@ -65,9 +58,18 @@ public class TcbImageDecoder : ITcbImageDecoder
         }
 
         return result;
+
+        int ConvertPixel(int px)
+        {
+            // fill the upper 8 bits with the alpha bit with this one cheap hack
+            px = ((px >> 7) & ~0xFFFFFF) | (px & 0xFFFFFF);
+            // swap red and blue
+            px = (px & ~0xFF00FF) | ((px & 0xFF) << 16) | ((px & 0xFF0000) >> 16);
+            return px;
+        }
     }
 
-    private int[] FilterPalette(ReadOnlySpan<int> palette)
+    private static int[] FilterPalette(ReadOnlySpan<int> palette)
     {
         var length = palette.Length;
         var result = new int[palette.Length];

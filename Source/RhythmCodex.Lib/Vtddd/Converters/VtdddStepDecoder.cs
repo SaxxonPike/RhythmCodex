@@ -10,23 +10,23 @@ namespace RhythmCodex.Vtddd.Converters;
 [Service]
 public class VtdddStepDecoder : IVtdddStepDecoder
 {
-    public IEnumerable<Event> Decode(VtdddStep step)
+    public IEnumerable<Event> Decode(VtdddStep value)
     {
-        yield return new Event()
+        yield return new Event
         {
-            [NumericData.LinearOffset] = step.Target / (BigRational)1000,
-            [NumericData.Column] = step.Panel,
-            [NumericData.Player] = step.Player,
+            [NumericData.LinearOffset] = value.Target / (BigRational)1000,
+            [NumericData.Column] = value.Panel,
+            [NumericData.Player] = value.Player,
             [FlagData.Note] = true
         };
 
-        if (step.Hold)
+        if (value.Hold)
         {
-            yield return new Event()
+            yield return new Event
             {
-                [NumericData.LinearOffset] = step.End / (BigRational)1000,
-                [NumericData.Column] = step.Panel,
-                [NumericData.Player] = step.Player,
+                [NumericData.LinearOffset] = value.End / (BigRational)1000,
+                [NumericData.Column] = value.Panel,
+                [NumericData.Player] = value.Player,
                 [FlagData.Freeze] = true
             };
         }

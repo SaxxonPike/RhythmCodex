@@ -36,12 +36,13 @@ public class GraphicsTaskBuilder(
     {
         if (Args.Options.ContainsKey("+crop_ddr"))
         {
-            if (bitmap.Width == 512 && bitmap.Height == 256)
-                bitmap = graphicDsp.Snip(bitmap, new Rectangle(0, 0, 320, 200));
-            else if (bitmap.Width == 256 && bitmap.Height == 128)
-                bitmap = graphicDsp.Snip(bitmap, new Rectangle(0, 0, 256, 80));
-            else if (bitmap.Width == 1024 && bitmap.Height == 512)
-                bitmap = graphicDsp.Snip(bitmap, new Rectangle(0, 0, 640, 480));
+            bitmap = bitmap.Width switch
+            {
+                512 when bitmap.Height == 256 => graphicDsp.Snip(bitmap, new Rectangle(0, 0, 320, 200)),
+                256 when bitmap.Height == 128 => graphicDsp.Snip(bitmap, new Rectangle(0, 0, 256, 80)),
+                1024 when bitmap.Height == 512 => graphicDsp.Snip(bitmap, new Rectangle(0, 0, 640, 480)),
+                _ => bitmap
+            };
         }
 
         return bitmap;
@@ -64,22 +65,28 @@ public class GraphicsTaskBuilder(
                 var images = timDecoder.Decode(stream);
                 task.Message = "Decoding TIM.";
 
-                if (images.Count > 1)
+                switch (images.Count)
                 {
-                    var idx = 0;
-                    foreach (var image in images)
+                    case > 1:
                     {
-                        var bitmap = CropImage(image);
-                        using (var outStream = OpenWriteSingle(task, file, i => $"{i}.{idx}.png"))
-                            pngStreamWriter.Write(outStream, bitmap);
-                        idx++;
+                        var idx = 0;
+                        foreach (var image in images)
+                        {
+                            var bitmap = CropImage(image);
+                            using (var outStream = OpenWriteSingle(task, file, i => $"{i}.{idx}.png"))
+                                pngStreamWriter.Write(outStream, bitmap);
+                            idx++;
+                        }
+
+                        break;
                     }
-                }
-                else if (images.Count == 1)
-                {
-                    var bitmap = CropImage(images.Single());
-                    using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
-                    pngStreamWriter.Write(outStream, bitmap);                            
+                    case 1:
+                    {
+                        var bitmap = CropImage(images.Single());
+                        using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
+                        pngStreamWriter.Write(outStream, bitmap);
+                        break;
+                    }
                 }
             });
 
@@ -117,7 +124,7 @@ public class GraphicsTaskBuilder(
         return Build("Decode TGA", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;

@@ -28,7 +28,7 @@ public class FlacMetadataStreamInfo : FlacMetadata
         {
             throw new FlacException(e, FlacLayer.Metadata);
         }
-        const int bytesToRead = (240 / 8) - 16;
+        const int bytesToRead = 240 / 8 - 16;
         var buffer = reader.ReadBytes(bytesToRead);
         if (buffer.Length != bytesToRead)
         {

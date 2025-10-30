@@ -29,12 +29,12 @@ public class BmsSoundLoader(
         { "mp3", mp3Decoder.Decode }
     };
 
-    public List<Sound?> Load(IDictionary<int, string> map, IFileAccessor accessor)
+    public List<Sound> Load(IDictionary<int, string> map, IFileAccessor accessor)
     {
         return LoadInternal(map, accessor).ToList();
     }
 
-    private IEnumerable<Sound?> LoadInternal(IDictionary<int, string> map, IFileAccessor accessor)
+    private IEnumerable<Sound> LoadInternal(IDictionary<int, string> map, IFileAccessor accessor)
     {
         foreach (var kv in map)
         {
@@ -47,7 +47,7 @@ public class BmsSoundLoader(
 
             try
             {
-                decoded = decoder.Decoder(stream);
+                decoded = decoder.Decoder(stream)!;
                 decoded[NumericData.Id] = kv.Key;
             }
             catch

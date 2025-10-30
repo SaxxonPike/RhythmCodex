@@ -17,8 +17,7 @@ public class FluentPanel : FluentControl<Panel>
         result.AutoSizeMode = AutoSizeMode;
 
         var children = BuildChildren(state);
-        if (children != null)
-            result.Controls.AddRange(children.ToArray());
+        result.Controls.AddRange(children.ToArray());
         return result;
     }
 }

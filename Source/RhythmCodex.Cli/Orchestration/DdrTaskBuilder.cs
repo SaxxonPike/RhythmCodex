@@ -60,7 +60,7 @@ public class DdrTaskBuilder(
         return Build("Decode SSQ", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -74,7 +74,7 @@ public class DdrTaskBuilder(
                 var aggregatedInfo = metadataAggregator.Aggregate(charts);
                 var title = Path.GetFileNameWithoutExtension(file.Name);
                 var globalOffset = Args.Options.TryGetValue("-offset", out var option)
-                    ? BigRationalParser.ParseString(option.FirstOrDefault() ?? "0")
+                    ? BigRationalParser.ParseString(option.FirstOrDefault() ?? "0") ?? BigRational.Zero
                     : BigRational.Zero;
 
                 // This is a temporary hack to make building sets easier for right now
@@ -91,7 +91,7 @@ public class DdrTaskBuilder(
                         [StringData.Artist] = aggregatedInfo[StringData.Artist],
                         [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
                         [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
-                        [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
+                        [ChartTag.OffsetTag] = $"{(decimal) (-(aggregatedInfo[NumericData.LinearOffset] ?? 0) + globalOffset)}"
                     },
                     Charts = charts
                 });
@@ -110,7 +110,7 @@ public class DdrTaskBuilder(
         return Build("Decrypt 573 Audio", task =>
         {
             var inputFiles = GetInputFiles(task);
-            if (!inputFiles.Any())
+            if (inputFiles.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -120,18 +120,18 @@ public class DdrTaskBuilder(
             {
                 using var inFile = OpenRead(task, inputFile);
                 var encoded = inFile.ReadAllBytes();
-                var key = digital573AudioKeyProvider.Get(encoded);
+                var key = digital573AudioKeyProvider.Get(encoded.Span);
                 if (key == null)
                 {
                     task.Message = $"Can't find key for {inputFile.Name}";
                     continue;
                 }
-                var decoded = (key.Length == 1)
-                    ? digital573AudioDecrypter.DecryptOld(encoded, key[0])
-                    : digital573AudioDecrypter.DecryptNew(encoded, key);
+                var decoded = key.Values.Count == 1
+                    ? digital573AudioDecrypter.DecryptOld(encoded.Span, key.Values[0])
+                    : digital573AudioDecrypter.DecryptNew(encoded.Span, key);
 
                 using var outFile = OpenWriteSingle(task, inputFile, i => Args.Options.ContainsKey("+name")
-                    ? ddr573AudioNameFinder.GetPath(i)
+                    ? ddr573AudioNameFinder.GetPath(i!)
                     : $"{i}.mp3");
                 decoded.Data.WriteAllBytes(outFile);
                 outFile.Flush();
@@ -146,7 +146,7 @@ public class DdrTaskBuilder(
         return Build("Decode STEP", task =>
         {
             var inputFiles = GetInputFiles(task);
-            if (!inputFiles.Any())
+            if (inputFiles.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -160,7 +160,7 @@ public class DdrTaskBuilder(
                 var aggregatedInfo = metadataAggregator.Aggregate(charts);
                 var title = aggregatedInfo[StringData.Title] ?? Path.GetFileNameWithoutExtension(inputFile.Name);
                 var globalOffset = Args.Options.TryGetValue("-offset", out var option)
-                    ? BigRationalParser.ParseString(option.FirstOrDefault() ?? "0")
+                    ? BigRationalParser.ParseString(option.FirstOrDefault() ?? "0") ?? BigRational.Zero
                     : BigRational.Zero;
                 var encoded = smEncoder.Encode(new ChartSet
                 {
@@ -171,7 +171,7 @@ public class DdrTaskBuilder(
                         [StringData.Artist] = aggregatedInfo[StringData.Artist],
                         [ChartTag.MusicTag] = aggregatedInfo[StringData.Music] ?? $"{title}.ogg",
                         [ChartTag.PreviewTag] = aggregatedInfo[StringData.Music] ?? $"{title}-preview.ogg",
-                        [ChartTag.OffsetTag] = $"{(decimal) (-aggregatedInfo[NumericData.LinearOffset] + globalOffset)}"
+                        [ChartTag.OffsetTag] = $"{(decimal) (-(aggregatedInfo[NumericData.LinearOffset] ?? 0) + globalOffset)}"
                     },
                     Charts = charts
                 });
@@ -190,7 +190,7 @@ public class DdrTaskBuilder(
         return Build("Decode STEP2", task =>
         {
             var inputFiles = GetInputFiles(task);
-            if (!inputFiles.Any())
+            if (inputFiles.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -218,7 +218,7 @@ public class DdrTaskBuilder(
         return Build("Apply SIF metadata", task =>
         {
             var inputFiles = GetInputFiles(task);
-            if (!inputFiles.Any())
+            if (inputFiles.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -232,8 +232,7 @@ public class DdrTaskBuilder(
                 var sif = sifStreamReader.Read(inFile, inFile.Length);
                 var name = Path.GetFileNameWithoutExtension(inputFile.Name);
 
-                if (!sif.KeyValues.ContainsKey("dir"))
-                    sif.KeyValues["dir"] = name;
+                sif.KeyValues.TryAdd("dir", name);
                 sifSmMetadataChanger.Apply(sm, sif);
 
                 smFile.Dispose();

@@ -6,7 +6,8 @@ using RhythmCodex.Vag.Models;
 namespace RhythmCodex.Vag.Streamers;
 
 [Service]
-public class SvagStreamReader(IVagStreamReader vagStreamReader) : ISvagStreamReader
+public class SvagStreamReader(IVagStreamReader vagStreamReader)
+    : ISvagStreamReader
 {
     public SvagContainer Read(Stream stream)
     {

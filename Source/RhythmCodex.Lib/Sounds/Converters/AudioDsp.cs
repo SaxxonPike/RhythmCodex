@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
+using System.Threading.Tasks;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
@@ -13,8 +17,80 @@ namespace RhythmCodex.Sounds.Converters;
 [Service]
 public class AudioDsp : IAudioDsp
 {
-    public Sound? ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)
+    public Sound Mix(IEnumerable<Sound> sounds)
     {
+        var bounced = sounds.Select(ApplyEffects).ToList();
+        var length = bounced.Max(b => b.Samples.Count > 0 ? b.Samples.Max(s => s.Data.Length) : 0);
+        var channels = bounced.Max(b => b.Samples.Count);
+
+        var newSound = new Sound
+        {
+            Samples = Enumerable.Range(0, channels).Select(_ => new Sample
+            {
+                Data = new float[length]
+            }).ToList()
+        };
+
+        newSound.CloneMetadataFrom(bounced.First());
+        newSound[NumericData.Panning] = null;
+        newSound[NumericData.Volume] = null;
+
+        foreach (var bounce in bounced)
+        {
+            for (var c = 0; c < channels; c++)
+            {
+                if (bounce == null)
+                    continue;
+
+                AudioSimd.Mix(newSound.Samples[c].Data.Span, bounce.Samples[c].Data.Span);
+            }
+        }
+
+        return newSound;
+    }
+
+    public byte[] Interleave16Bits(Sound sound)
+    {
+        var sampleCount = sound.Samples.Count;
+        if (sampleCount == 0)
+            return [];
+
+        var maxSampleLength = sound.Samples.Max(s => s.Data.Length);
+        var output = new byte[sampleCount * maxSampleLength * 2];
+
+        Parallel.ForEach(Partitioner.Create(0, sound.Samples.Count), range =>
+        {
+            for (var i = range.Item1; i < range.Item2; i++)
+                AudioSimd.Quantize16(
+                    sound.Samples[i].Data.Span,
+                    MemoryMarshal.Cast<byte, short>(output.AsSpan()),
+                    i,
+                    sampleCount
+                );
+        });
+
+        // for (var i = 0; i < sampleCount; i++)
+        // {
+        //     AudioSimd.Quantize16(
+        //         sound.Samples[i].Data.Span,
+        //         MemoryMarshal.Cast<byte, short>(output.AsSpan()),
+        //         i,
+        //         sampleCount
+        //     );
+        // }
+        
+        return output;
+    }
+
+    public Sound ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)
+    {
+        if (sound.Samples.Count < 1)
+        {
+            var emptyResult = new Sound();
+            emptyResult.CloneMetadataFrom(sound);
+            return emptyResult;
+        }
+
         var newSound = new Sound
         {
             Samples = [..sound.Samples]
@@ -28,10 +104,14 @@ public class AudioDsp : IAudioDsp
         return newSound;
     }
 
-    public Sound? ApplyResampling(Sound? sound, IResampler resampler, BigRational rate)
+    public Sound ApplyResampling(Sound sound, IResampler resampler, BigRational rate)
     {
-        if (sound == null || sound.Samples.Count == 0)
-            return null;
+        if (sound.Samples.Count < 1)
+        {
+            var emptyResult = new Sound();
+            emptyResult.CloneMetadataFrom(sound);
+            return emptyResult;
+        }
 
         if (rate <= BigRational.Zero ||
             sound[NumericData.Rate] == rate ||
@@ -82,11 +162,33 @@ public class AudioDsp : IAudioDsp
         {
             var amp = (float)(target / level);
             foreach (var sample in newSound.Samples)
-                ApplyGain(sample.Data.Span, amp);
+                AudioSimd.Gain(sample.Data.Span, amp);
         }
 
         newSound.CloneMetadataFrom(sound);
         return newSound;
+    }
+
+    public void Normalize(IEnumerable<Sound> sounds, BigRational target, bool cutOnly)
+    {
+        var soundList = sounds.AsList();
+
+        var level = soundList.AsParallel().Select(sound =>
+            sound.Samples.DefaultIfEmpty().Max(s =>
+            {
+                var max = 0f;
+                foreach (var x in s.Data.Span)
+                    max = Math.Max(Math.Abs(x), max);
+                return max;
+            })).DefaultIfEmpty().Max();
+
+        if (level > 0 && level != 1 && (!cutOnly || level > 1))
+        {
+            var amp = (float)(target / level);
+
+            foreach (var sample in soundList.SelectMany(sound => sound.Samples).Distinct().AsParallel())
+                AudioSimd.Gain(sample.Data.Span, amp);
+        }
     }
 
     public Sound IntegerDownsample(Sound sound, int factor)
@@ -123,10 +225,12 @@ public class AudioDsp : IAudioDsp
         return newSound;
     }
 
-    public Sound? ApplyEffects(Sound? sound)
+    public Sound ApplyEffects(Sound sound)
     {
-        if (sound == null || sound.Samples.Count == 0)
-            return null;
+        ArgumentNullException.ThrowIfNull(sound, nameof(sound));
+
+        if (sound.Samples.Count == 0)
+            return sound;
 
         var samples = new List<Sample>(sound.Samples);
         if (samples.Count == 1)
@@ -155,11 +259,12 @@ public class AudioDsp : IAudioDsp
     {
         if (sound == null)
             return;
-        
+
         if (sound[NumericData.Volume].HasValue)
         {
             foreach (var sample in sound.Samples)
-                ApplyGain(sample.Data.Span, sound[NumericData.Volume]!.Value);
+                AudioSimd.Gain(sample.Data.Span, sound[NumericData.Volume]!.Value);
+
             sound[NumericData.Volume] = null;
         }
 
@@ -170,7 +275,7 @@ public class AudioDsp : IAudioDsp
             var right = BigRational.Sqrt(sound[NumericData.Panning]!.Value);
             foreach (var sample in sound.Samples)
             {
-                ApplyGain(sample.Data.Span,
+                AudioSimd.Gain(sample.Data.Span,
                     isLeftPanning ? left : right);
                 isLeftPanning = !isLeftPanning;
             }
@@ -183,57 +288,8 @@ public class AudioDsp : IAudioDsp
     {
         if (sample[NumericData.Volume].HasValue)
         {
-            ApplyGain(sample.Data.Span, sample[NumericData.Volume]!.Value);
+            AudioSimd.Gain(sample.Data.Span, sample[NumericData.Volume]!.Value);
             sample[NumericData.Volume] = null;
         }
-    }
-
-    private static void ApplyGain(Span<float> data, BigRational value)
-    {
-        if (value == BigRational.One)
-            return;
-
-        var amp = (float)value;
-        var cursor = data;
-
-        if (Vector512.IsHardwareAccelerated)
-        {
-            while (cursor.Length >= 16)
-            {
-                var v = Vector512.Create<float>(cursor) * amp;
-                v.CopyTo(cursor);
-                cursor = cursor[16..];
-            }
-        }
-        else if (Vector256.IsHardwareAccelerated)
-        {
-            while (cursor.Length >= 8)
-            {
-                var v = Vector256.Create<float>(cursor) * amp;
-                v.CopyTo(cursor);
-                cursor = cursor[8..];
-            }
-        }
-        else if (Vector128.IsHardwareAccelerated)
-        {
-            while (cursor.Length >= 4)
-            {
-                var v = Vector128.Create<float>(cursor) * amp;
-                v.CopyTo(cursor);
-                cursor = cursor[4..];
-            }
-        }
-        else if (Vector64.IsHardwareAccelerated)
-        {
-            while (cursor.Length >= 2)
-            {
-                var v = Vector64.Create<float>(cursor) * amp;
-                v.CopyTo(cursor);
-                cursor = cursor[2..];
-            }
-        }
-
-        for (var i = 0; i < cursor.Length; i++)
-            cursor[i] *= amp;
     }
 }

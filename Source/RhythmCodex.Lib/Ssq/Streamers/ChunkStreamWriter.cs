@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using RhythmCodex.IoC;
 using RhythmCodex.Ssq.Model;
 
@@ -12,16 +11,10 @@ public class ChunkStreamWriter : IChunkStreamWriter
     {
         var writer = new BinaryWriter(stream);
 
-        if (ssqChunk == null)
-        {
-            writer.Write(0);
-            return;
-        }
-
-        var chunkData = ssqChunk.Data ?? [];
+        var chunkData = ssqChunk.Data;
         var writeLength = ((chunkData.Length + 3) >> 2) << 2;
         var writeData = new byte[writeLength];
-        Array.Copy(chunkData, writeData, chunkData.Length);
+        chunkData.CopyTo(writeData);
 
         var parameter0 = ssqChunk.Parameter0;
         var parameter1 = ssqChunk.Parameter1;
@@ -30,5 +23,11 @@ public class ChunkStreamWriter : IChunkStreamWriter
         writer.Write(parameter0);
         writer.Write(parameter1);
         writer.Write(writeData);
+    }
+
+    public void WriteEnd(Stream stream)
+    {
+        var writer = new BinaryWriter(stream);
+        writer.Write(0);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Psf.Models;
@@ -7,6 +8,6 @@ public class PsfChunk
 {
     public int Version { get; set; }
     public int Crc { get; set; }
-    public byte[] Reserved { get; set; }
-    public byte[] Data { get; set; }
+    public Memory<byte> Reserved { get; set; }
+    public Memory<byte> Data { get; set; }
 }

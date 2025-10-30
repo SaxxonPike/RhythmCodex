@@ -4,26 +4,27 @@ using System.Linq;
 using CSCore.Codecs.FLAC;
 using RhythmCodex.Extensions;
 using RhythmCodex.Flac.Converters;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Meta.Models;
 using RhythmCodex.Plugin.CSCore.Lib.Codecs.FLAC;
 using RhythmCodex.Sounds.Models;
+using Saxxon.StreamCursors;
+using StreamExtensions = RhythmCodex.Infrastructure.StreamExtensions;
 
 namespace RhythmCodex.Plugin.CSCore;
 
 [Service]
 public class FlacDecoder : IFlacDecoder
 {
-    public Sound? Decode(Stream stream)
+    public Sound Decode(Stream stream)
     {
         using var inputStream = new FlacFile(stream);
         var samples = StreamExtensions.ReadAllBytes(inputStream.Read)
-            .AsSpan()
+            .Span
             .Deinterleave(2, inputStream.WaveFormat.Channels)
             .Select(bytes => new Sample
             {
-                Data = bytes.Fuse().Select(s => s / 32768f).ToArray()
+                Data = bytes.CastU16L().Select(s => s / 32768f)
             })
             .ToList();
                 

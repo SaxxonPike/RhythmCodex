@@ -39,7 +39,7 @@ internal sealed class FlacSubFrameLPC : FlacSubFrameBase
 
             //decode the residual
             new FlacResidual(reader, header, data, order);
-            resi.Slice(0, order).CopyTo(dest);
+            resi[..order].CopyTo(dest);
 
             var blockSizeToProcess = header.BlockSize - order;
 

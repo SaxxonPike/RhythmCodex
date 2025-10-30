@@ -5,5 +5,5 @@ namespace RhythmCodex.Riff.Streamers;
 
 public interface IRiffStreamWriter
 {
-    int Write(Stream stream, IRiffContainer container);
+    int Write(Stream stream, RiffContainer container);
 }

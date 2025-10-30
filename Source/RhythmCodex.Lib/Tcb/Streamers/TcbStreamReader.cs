@@ -9,7 +9,7 @@ namespace RhythmCodex.Tcb.Streamers;
 [Service]
 public class TcbStreamReader : ITcbStreamReader
 {
-    public TcbImage Read(Stream stream)
+    public TcbImage? Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
 

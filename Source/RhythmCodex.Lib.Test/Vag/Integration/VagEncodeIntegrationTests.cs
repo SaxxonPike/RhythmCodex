@@ -26,7 +26,7 @@ public class VagEncodeIntegrationTests : BaseIntegrationFixture
             .Value;
 
         var sound = wavDecoder.Decode(new ReadOnlyMemoryStream(data));
-        var decoded = sound.Samples[0].Data.ToArray();
+        var decoded = sound!.Samples[0].Data.ToArray();
         var encoded = new byte[decoded.Length * 16 / 28];
         vagEncoder.Encrypt(decoded, encoded, decoded.Length, new VagState());
         File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "out.vag"), encoded);

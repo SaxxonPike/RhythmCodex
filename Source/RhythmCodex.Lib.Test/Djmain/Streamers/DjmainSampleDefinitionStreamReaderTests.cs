@@ -29,7 +29,8 @@ public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<Djmai
 
         // Assert.
         output.Length.ShouldBe(2);
-        output[0].ShouldBe(new KeyValuePair<int, DjmainSampleInfo>(0, new DjmainSampleInfo
+        output[0].Key.ShouldBe(0);
+        output[0].Value.ShouldBeEquivalentTo(new DjmainSampleInfo
         {
             Channel = 0x12,
             Frequency = 0x5634,
@@ -39,8 +40,9 @@ public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<Djmai
             Offset = 0x785634,
             SampleType = 0x90,
             Flags = 0x12
-        }));
-        output[1].ShouldBe(new KeyValuePair<int, DjmainSampleInfo>(1, new DjmainSampleInfo
+        });
+        output[1].Key.ShouldBe(1);
+        output[1].Value.ShouldBeEquivalentTo(new DjmainSampleInfo
         {
             Channel = 0x34,
             Frequency = 0x7856,
@@ -50,6 +52,6 @@ public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<Djmai
             Offset = 0x907856,
             SampleType = 0x12,
             Flags = 0x34
-        }));
+        });
     }
 }

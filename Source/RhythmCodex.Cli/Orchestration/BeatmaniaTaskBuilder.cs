@@ -61,7 +61,7 @@ public class BeatmaniaTaskBuilder(
         {
             var rate = new BigRational(1000, 1);
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -70,7 +70,7 @@ public class BeatmaniaTaskBuilder(
             if (Args.Options.TryGetValue("rate", out var option))
             {
                 rate = BigRationalParser.ParseString(option.Last())
-                       ?? throw new RhythmCodexException($"Invalid rate.");
+                       ?? throw new RhythmCodexException("Invalid rate.");
             }
 
             ParallelProgress(task, files, file =>
@@ -82,39 +82,20 @@ public class BeatmaniaTaskBuilder(
                     var newChart = beatmaniaPc1ChartDecoder.Decode(c.Data, rate);
                     newChart[NumericData.Id] = c.Index;
 
-                    switch (c.Index)
+                    newChart[NumericData.Difficulty] = c.Index switch
                     {
-                        case 0:
-                        case 6:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.NormalId;
-                            break;
-                        }
-                        case 1:
-                        case 7:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.LightId;
-                            break;
-                        }
-                        case 2:
-                        case 8:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.AnotherId;
-                            break;
-                        }
-                        case 3:
-                        case 9:
-                        {
-                            newChart[NumericData.Difficulty] = BeatmaniaDifficultyConstants.BeginnerId;
-                            break;
-                        }
-                    }
+                        0 or 6 => BeatmaniaDifficultyConstants.NormalId,
+                        1 or 7 => BeatmaniaDifficultyConstants.LightId,
+                        2 or 8 => BeatmaniaDifficultyConstants.AnotherId,
+                        3 or 9 => BeatmaniaDifficultyConstants.BeginnerId,
+                        _ => newChart[NumericData.Difficulty]
+                    };
 
                     newChart[StringData.Title] = Path.GetFileNameWithoutExtension(file.Name);
                     return newChart;
                 }).ToList();
 
-                if (!EnableExportingCharts) 
+                if (!EnableExportingCharts)
                     return;
 
                 foreach (var chart in decoded)
@@ -123,7 +104,7 @@ public class BeatmaniaTaskBuilder(
                     var encoded = bmsEncoder.Encode(chart);
                     using var outStream =
                         OpenWriteMulti(task, file,
-                            _ => $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme");
+                            _ => $"{Alphabet.EncodeNumeric((int)chart[NumericData.Id], 2)}.bme");
                     bmsStreamWriter.Write(outStream, encoded);
                 }
             });
@@ -137,7 +118,7 @@ public class BeatmaniaTaskBuilder(
         return Build("Extract 2DX", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -155,10 +136,11 @@ public class BeatmaniaTaskBuilder(
                     foreach (var sound in sounds)
                     {
                         var decoded = beatmaniaPcAudioDecoder.Decode(sound);
-                        var outSound = audioDsp.ApplyEffects(decoded);
-                        using (var outStream =
-                               OpenWriteMulti(task, file, _ => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav"))
+                        if (decoded != null)
                         {
+                            var outSound = audioDsp.ApplyEffects(decoded);
+                            using var outStream =
+                                OpenWriteMulti(task, file, _ => $"{Alphabet.EncodeAlphanumeric(index, 4)}.wav");
                             var encoded = riffPcm16SoundEncoder.Encode(outSound);
                             riffStreamWriter.Write(outStream, encoded);
                         }
@@ -177,7 +159,7 @@ public class BeatmaniaTaskBuilder(
         return Build("Extract DJMAIN HDD", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -187,7 +169,8 @@ public class BeatmaniaTaskBuilder(
             {
                 var options = new DjmainDecodeOptions
                 {
-                    DisableAudio = !EnableExportingSounds
+                    DisableAudio = !EnableExportingSounds,
+                    DoNotConsolidateSamples = false
                 };
 
                 using var stream = OpenRead(task, file);
@@ -228,7 +211,7 @@ public class BeatmaniaTaskBuilder(
         return Build("Render DJMAIN GST", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -238,7 +221,8 @@ public class BeatmaniaTaskBuilder(
             {
                 var options = new DjmainDecodeOptions
                 {
-                    DoNotConsolidateSamples = true
+                    DoNotConsolidateSamples = true,
+                    DisableAudio = false
                 };
 
                 var renderOptions = new ChartRendererOptions();
@@ -255,7 +239,7 @@ public class BeatmaniaTaskBuilder(
                     {
                         using var outStream = OpenWriteMulti(task, file,
                             _ => Path.Combine(chunkPath,
-                                $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.render.wav"));
+                                $"{Alphabet.EncodeNumeric((int)chart[NumericData.Id], 2)}.render.wav"));
                         var rendered = chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
                         var normalized = audioDsp.Normalize(rendered, 1.0f, true);
                         var encoded = riffPcm16SoundEncoder.Encode(normalized);
@@ -276,22 +260,30 @@ public class BeatmaniaTaskBuilder(
     }
 
     protected void ExportKeysoundedChart(BuiltTask task, InputFile file, string path, string id,
-        ICollection<Chart> charts, ICollection<Sound?> sounds)
+        IEnumerable<Chart> charts, IEnumerable<Sound?> sounds)
     {
-        var usedSamples = charts
+        var chartList = charts.ToList();
+        var soundList = sounds.ToList();
+
+        var usedSamples = chartList
             .SelectMany(chart => usedSamplesCounter.GetUsedSamples(chart.Events))
             .Distinct()
             .ToArray();
 
         if (EnableExportingSounds)
         {
-            foreach (var sound in sounds.Where(s => usedSamples.Contains((int)s[NumericData.Id])))
+            var matchingUsedSamples = soundList
+                .Where(s => usedSamples.Contains((int)s[NumericData.Id]));
+            
+            foreach (var sound in matchingUsedSamples)
             {
-                var outSound = audioDsp.ApplyEffects(audioDsp.ApplyResampling(sound, resamplerProvider.GetBest(), 44100));
+                var outSound = audioDsp
+                    .ApplyEffects(audioDsp.ApplyResampling(sound, resamplerProvider.GetBest(), 44100));
+
                 using var outStream =
                     OpenWriteMulti(task, file,
                         _ => Path.Combine(path,
-                            $"{Alphabet.EncodeAlphanumeric((int) sound[NumericData.Id], 4)}.wav"));
+                            $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 4)}.wav"));
                 var encoded = riffPcm16SoundEncoder.Encode(outSound);
                 riffStreamWriter.Write(outStream, encoded);
             }
@@ -299,7 +291,7 @@ public class BeatmaniaTaskBuilder(
 
         if (EnableExportingCharts)
         {
-            foreach (var chart in charts)
+            foreach (var chart in chartList)
             {
                 chart.PopulateMetricOffsets();
                 chart[StringData.Title] = id;
@@ -307,7 +299,7 @@ public class BeatmaniaTaskBuilder(
                 using var outStream =
                     OpenWriteMulti(task, file,
                         _ => Path.Combine(path,
-                            $"{Alphabet.EncodeNumeric((int) chart[NumericData.Id], 2)}.bme"));
+                            $"{Alphabet.EncodeNumeric((int)chart[NumericData.Id], 2)}.bme"));
                 bmsStreamWriter.Write(outStream, encoded);
             }
         }

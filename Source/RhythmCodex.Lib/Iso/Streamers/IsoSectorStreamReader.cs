@@ -23,7 +23,7 @@ public class IsoSectorStreamReader : IIsoSectorStreamReader
             {
                 stream.Position = i * (long) InputSectorLength;
                 var totalFrame = 150 + i;
-                return ExpandSector(totalFrame / 4500, (totalFrame / 75) % 60, totalFrame % 75,
+                return ExpandSector(totalFrame / 4500, totalFrame / 75 % 60, totalFrame % 75,
                     reader.ReadBytes(InputSectorLength));
             });
         }
@@ -34,7 +34,7 @@ public class IsoSectorStreamReader : IIsoSectorStreamReader
     private byte[] ExpandSector(int minute, int second, int frame, ReadOnlySpan<byte> sector)
     {
         var data = new byte[OutputSectorLength];
-        sector.Slice(0, InputSectorLength).CopyTo(data.AsSpan(0x0010));
+        sector[..InputSectorLength].CopyTo(data.AsSpan(0x0010));
         new byte[]
         {
             0x00, 0xFF, 0xFF, 0xFF,

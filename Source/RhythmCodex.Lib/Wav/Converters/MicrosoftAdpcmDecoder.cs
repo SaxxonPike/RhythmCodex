@@ -12,39 +12,64 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
 {
     // Reference: https://wiki.multimedia.cx/index.php/Microsoft_ADPCM
 
-    public Sound? Decode(ReadOnlySpan<byte> data, IWaveFormat fmtChunk, MicrosoftAdpcmFormat microsoftAdpcmFormat)
+    public Sound Decode(
+        ReadOnlySpan<byte> data,
+        IWaveFormat fmtChunk,
+        MicrosoftAdpcmFormat microsoftAdpcmFormat)
     {
         var channels = fmtChunk.Channels;
         var channelSamplesPerFrame = microsoftAdpcmFormat.SamplesPerBlock;
         var buffer = new float[channelSamplesPerFrame];
         var frameSize = fmtChunk.BlockAlign;
         var max = data.Length / frameSize * frameSize;
-        var output = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToArray();
 
-        // Apply coefficients
-        var coefficients =
-            new int[Math.Max(MicrosoftAdpcmConstants.DefaultCoefficients.Length, microsoftAdpcmFormat.Coefficients.Length)].AsMemory();
-        MicrosoftAdpcmConstants.DefaultCoefficients.AsSpan().CopyTo(coefficients.Span);
-        microsoftAdpcmFormat.Coefficients.AsSpan().CopyTo(coefficients.Span);
+        var output = Enumerable
+            .Range(0, channels)
+            .Select(_ => new List<float>())
+            .ToArray();
+
+        // Apply coefficients.
+        int[] coefficients;
+
+        if (microsoftAdpcmFormat.Coefficients.Count < MicrosoftAdpcmConstants.CoefficientTableMinimumSize)
+        {
+            coefficients = new int[MicrosoftAdpcmConstants.CoefficientTableMinimumSize];
+            MicrosoftAdpcmConstants.CreateCoefficientTable().CopyTo(coefficients);
+            microsoftAdpcmFormat.Coefficients.CopyTo(coefficients);
+        }
+        else
+        {
+            coefficients = microsoftAdpcmFormat.Coefficients.ToArray();
+        }
+
+        // Apply adaptation table.
+        var adaptationTable = MicrosoftAdpcmConstants.CreateAdaptationTable().ToArray();
 
         for (var offset = 0; offset < max; offset += frameSize)
         {
             var mem = data.Slice(offset, frameSize);
             for (var channel = 0; channel < channels; channel++)
             {
-                DecodeFrame(mem, buffer, channel, channels, coefficients.Span);
-                output[channel].AddRange(buffer);
+                var amount = DecodeFrame(mem, buffer, channel, channels, coefficients, adaptationTable);
+                output[channel].AddRange(buffer.AsSpan(0, amount));
             }
         }
 
         return new Sound
         {
-            Samples = output.Select(s => new Sample {Data = s.ToArray()}).ToList()
+            Samples = output
+                .Select(s => new Sample { Data = s.ToArray() })
+                .ToList()
         };
     }
 
-    private int DecodeFrame(ReadOnlySpan<byte> frame, Span<float> buffer, int channel, int channelCount,
-        ReadOnlySpan<int> coefficients)
+    private static int DecodeFrame(
+        ReadOnlySpan<byte> frame,
+        Span<float> buffer,
+        int channel,
+        int channelCount,
+        ReadOnlySpan<int> coefficients,
+        ReadOnlySpan<int> adaptationTable)
     {
         // Read block header.
         var control = frame[channel];
@@ -70,41 +95,42 @@ public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
         // Proces the rest of the samples.
         while (index < max)
         {
-            float DecodeNybble(int data)
+            channelIndex++;
+            if (channelIndex == channelCount)
+                channelIndex = 0;
+
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4, adaptationTable);
+
+            channelIndex++;
+            if (channelIndex == channelCount)
+                channelIndex = 0;
+
+            if (channelIndex == channel)
+                buffer[bufferIndex++] = DecodeNybble(frame[index] & 0xF, adaptationTable);
+
+            index++;
+            continue;
+
+            float DecodeNybble(int data, ReadOnlySpan<int> at)
             {
                 var predictor = (sample1 * coeff1 + sample2 * coeff2) / 256;
-                predictor += ((data & 0x08) != 0 ? (data - 0x10) : data) * delta;
+                predictor += ((data & 0x08) != 0 ? data - 0x10 : data) * delta;
 
                 sample2 = sample1;
-                sample1 = predictor;
-                    
-                if (sample1 < -32768)
-                    sample1 = -32768;
-                if (sample1 > 32767)
-                    sample1 = 32767;
+                sample1 = predictor switch
+                {
+                    < -32768 => -32768,
+                    > 32767 => 32767,
+                    _ => predictor
+                };
 
-                delta = MicrosoftAdpcmConstants.AdaptationTable[data] * delta / 256;
+                delta = at[data] * delta / 256;
                 if (delta < 16)
                     delta = 16;
 
                 return sample1 / 32768f;
             }
-
-            channelIndex++;
-            if (channelIndex == channelCount)
-                channelIndex = 0;
-
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index] >> 4);
-
-            channelIndex++;
-            if (channelIndex == channelCount)
-                channelIndex = 0;
-
-            if (channelIndex == channel)
-                buffer[bufferIndex++] = DecodeNybble(frame[index] & 0xF);
-
-            index++;
         }
 
         return bufferIndex;

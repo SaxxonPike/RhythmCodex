@@ -15,7 +15,7 @@ public class PsxExeHeuristic : IHeuristic
         if (data.Length < 8)
             return null;
 
-        if (Encodings.CP437.GetString(data.Slice(0, 8)) != "PS-X EXE")
+        if (Encodings.Cp437.GetString(data[..8]) != "PS-X EXE")
             return null;
             
         return new HeuristicResult(this);

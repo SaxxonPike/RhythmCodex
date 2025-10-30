@@ -6,47 +6,43 @@ namespace RhythmCodex.Gui.Forms;
 [Service]
 public class FileDialog : IFileDialog
 {
-    public string OpenFile(string fileName, string filter, bool multi)
+    public string? OpenFile(string fileName, string? filter, bool multi)
     {
-        using var ofd = new OpenFileDialog
-        {
-            Filter = filter ?? "All files (*.*)|*.*",
-            Multiselect = multi
-        };
+        using var ofd = new OpenFileDialog();
+        ofd.Filter = filter ?? "All files (*.*)|*.*";
+        ofd.Multiselect = multi;
+        ofd.FileName = fileName;
 
-        if (ofd.FileName != null)
-            ofd.FileName = fileName;
-
-        return ofd.ShowDialog() == DialogResult.OK 
-            ? (multi ? string.Join('|', ofd.FileNames) : ofd.FileName) 
+        return ofd.ShowDialog() == DialogResult.OK
+            ? multi 
+                ? string.Join('|', ofd.FileNames) 
+                : ofd.FileName
             : null;
     }
 
-    public string SaveFile(string fileName, string filter)
+    public string? SaveFile(string fileName, string? filter)
     {
-        using var sfd = new SaveFileDialog
-        {
-            Filter = filter ?? "All files (*.*)|*.*",
-            OverwritePrompt = true
-        };
+        using var sfd = new SaveFileDialog();
+        sfd.Filter = filter ?? "All files (*.*)|*.*";
+        sfd.OverwritePrompt = true;
+        sfd.FileName = fileName;
 
-        if (sfd.FileName != null)
-            sfd.FileName = fileName;
-
-        return sfd.ShowDialog() == DialogResult.OK ? sfd.FileName : null;
+        return sfd.ShowDialog() == DialogResult.OK 
+            ? sfd.FileName 
+            : null;
     }
 
-    public string OpenFolder(string folder)
+    public string? OpenFolder(string? folder)
     {
-        using var fbd = new FolderBrowserDialog
-        {
-            AutoUpgradeEnabled = true,
-            ShowNewFolderButton = true
-        };
+        using var fbd = new FolderBrowserDialog();
+        fbd.AutoUpgradeEnabled = true;
+        fbd.ShowNewFolderButton = true;
 
         if (folder != null)
             fbd.SelectedPath = folder;
 
-        return fbd.ShowDialog() == DialogResult.OK ? fbd.SelectedPath : null;
+        return fbd.ShowDialog() == DialogResult.OK 
+            ? fbd.SelectedPath 
+            : null;
     }
 }

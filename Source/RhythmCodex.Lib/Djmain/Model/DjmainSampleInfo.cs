@@ -3,7 +3,7 @@
 namespace RhythmCodex.Djmain.Model;
 
 [Model]
-public record DjmainSampleInfo
+public class DjmainSampleInfo
 {
     /// <summary>
     /// Channel number assigned to the sample. 0x1E is "any channel".

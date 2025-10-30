@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using AutoFixture;
 using Shouldly;
-using Moq;
 using NUnit.Framework;
 using RhythmCodex.Djmain.Heuristics;
 using RhythmCodex.Djmain.Model;
@@ -11,7 +10,8 @@ using RhythmCodex.Djmain.Model;
 namespace RhythmCodex.Djmain.Streamers;
 
 [TestFixture]
-public class ChunkStreamReaderTests : BaseUnitTestFixture<DjmainChunkStreamReader, IDjmainChunkStreamReader>
+public class ChunkStreamReaderTests 
+    : BaseUnitTestFixture<DjmainChunkStreamReader, IDjmainChunkStreamReader>
 {
     private static byte[] GenerateRandomBytes(int length)
     {
@@ -24,19 +24,26 @@ public class ChunkStreamReaderTests : BaseUnitTestFixture<DjmainChunkStreamReade
         return output;
     }
 
+    private class DjmainHddDescriptionHeuristicStub(Func<byte[], DjmainHddDescription> getter) 
+        : IDjmainHddDescriptionHeuristic
+    {
+        public DjmainHddDescription Get(ReadOnlySpan<byte> chunk) =>
+            getter(chunk.ToArray());
+    }
+
     [Test]
     public void Read_ReadsOnlyWholeChunks()
     {
         // Arrange.
         const int chunkSize = DjmainConstants.ChunkSize;
         var input = GenerateRandomBytes(chunkSize * 3 / 2);
-        Mock<IDjmainHddDescriptionHeuristic>(m =>
-        {
-            m.Setup(x => x.Get(It.IsAny<byte[]>())).Returns(
-                Build<DjmainHddDescription>()
-                    .With(x => x.BytesAreSwapped, false)
-                    .Create());
-        });
+
+        var heuristic = Build<DjmainHddDescription>()
+            .With(x => x.BytesAreSwapped, false)
+            .Create();
+        
+        Mocker.Implement<IDjmainHddDescriptionHeuristic>(
+            new DjmainHddDescriptionHeuristicStub(_ => heuristic));
 
         // Act.
         using var mem = new MemoryStream(input);
@@ -64,14 +71,14 @@ public class ChunkStreamReaderTests : BaseUnitTestFixture<DjmainChunkStreamReade
         // Arrange.
         const int chunkSize = DjmainConstants.ChunkSize;
         var input = GenerateRandomBytes(chunkSize);
-        Mock<IDjmainHddDescriptionHeuristic>(m =>
-        {
-            m.Setup(x => x.Get(It.IsAny<byte[]>())).Returns(
-                Build<DjmainHddDescription>()
-                    .With(x => x.BytesAreSwapped, false)
-                    .Create());
-        });
 
+        var heuristic = Build<DjmainHddDescription>()
+            .With(x => x.BytesAreSwapped, false)
+            .Create();
+
+        Mocker.Implement<IDjmainHddDescriptionHeuristic>(
+            new DjmainHddDescriptionHeuristicStub(_ => heuristic));
+        
         // Act.
         using var mem = new MemoryStream(input);
         var output = Subject.Read(mem);

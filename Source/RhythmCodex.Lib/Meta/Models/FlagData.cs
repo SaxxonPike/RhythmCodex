@@ -2,7 +2,7 @@
 
 public enum FlagData
 {
-    Note,
+    Note = 30000,
     Freeze,
     Mine,
     Shock,

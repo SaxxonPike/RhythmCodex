@@ -1,9 +1,10 @@
-﻿using RhythmCodex.Infrastructure;
+﻿using System;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Xact.Model;
 
 [Model]
 public struct XsbSoundDsp
 {
-    public byte[] ExtraData { get; set; }
+    public Memory<byte> ExtraData { get; set; }
 }

@@ -28,7 +28,7 @@ public class XsbStreamWriter(
         xsbHeaderStreamWriter.Write(mem, header);
 
         // write crc
-        var crc = fcs16Calculator.Calculate(mem.AsMemory().Span.Slice(18));
+        var crc = fcs16Calculator.Calculate(mem.AsSpan(18));
         mem.Position = 8;
         writer.Write(crc);
 

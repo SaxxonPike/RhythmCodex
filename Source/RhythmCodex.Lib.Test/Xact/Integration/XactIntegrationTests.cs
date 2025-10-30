@@ -63,7 +63,7 @@ public class XactIntegrationTests : BaseIntegrationFixture
     public void Test_XWB()
     {
         // Arrange.
-        var data = GetArchiveResource($"Xact.xwb.zip")
+        var data = GetArchiveResource("Xact.xwb.zip")
             .First()
             .Value;
         var reader = Resolve<IXwbStreamReader>();
@@ -86,7 +86,7 @@ public class XactIntegrationTests : BaseIntegrationFixture
             using var outStream = new MemoryStream();
             writer.Write(outStream, encoded);
             outStream.Flush();
-            File.WriteAllBytes(Path.Combine(outFolder, $"{decoded[StringData.Name]}.wav"),
+            File.WriteAllBytes(Path.Combine(outFolder, $"{decoded![StringData.Name]}.wav"),
                 outStream.ToArray());
         }
     }
@@ -127,7 +127,7 @@ public class XactIntegrationTests : BaseIntegrationFixture
                 using var outStream = new MemoryStream();
                 writer.Write(outStream, encoded);
                 outStream.Flush();
-                File.WriteAllBytes(Path.Combine(outFolder, $"{decoded[StringData.Name]}.wav"),
+                File.WriteAllBytes(Path.Combine(outFolder, $"{decoded![StringData.Name]}.wav"),
                     outStream.ToArray());
             }
         }

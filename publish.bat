@@ -1,1 +1,1 @@
-dotnet publish -c Release -f net7.0 -o Release/net7.0 Source/RhythmCodex.Cli/RhythmCodex.Cli.csproj
+dotnet publish -c Release -f net8.0 -o Release/net8.0 Source/RhythmCodex.Cli/RhythmCodex.Cli.csproj

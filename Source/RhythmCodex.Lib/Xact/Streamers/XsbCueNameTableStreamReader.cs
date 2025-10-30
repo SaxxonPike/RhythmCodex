@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
 
@@ -29,7 +28,7 @@ public class XsbCueNameTableStreamReader : IXsbCueNameTableStreamReader
             buffer.Add(b);
         }
             
-        if (buffer.Any())
+        if (buffer.Count != 0)
             result.Add(buffer.ToArray().GetString());
 
         return result;

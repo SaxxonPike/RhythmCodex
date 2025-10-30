@@ -44,7 +44,7 @@ public class IsoPathTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory)
             yield return new IsoPathRecord
             {
                 LocationOfExtent = lba,
-                DirectoryIdentifier = Encodings.CP437.GetString(name),
+                DirectoryIdentifier = Encodings.Cp437.GetString(name),
                 ExtendedAttributeRecordLength = eaLength,
                 ParentDirectoryNumber = parent
             };                    

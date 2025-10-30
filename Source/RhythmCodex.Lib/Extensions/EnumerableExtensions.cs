@@ -10,12 +10,16 @@ namespace RhythmCodex.Extensions;
 [PublicAPI]
 internal static class EnumerableExtensions
 {
+    [DebuggerStepThrough]
+    public static IReadOnlyCollection<T> AsCollection<T>(this IEnumerable<T> enumerable) =>
+        enumerable as IReadOnlyCollection<T> ?? enumerable.ToList();
+
     /// <summary>
     /// Interprets the object as a list, and creates one if it isn't already a list.
     /// </summary>
     [DebuggerStepThrough]
-    public static IList<T> AsList<T>(this IEnumerable<T> enumerable) =>
-        enumerable as IList<T> ?? enumerable.ToList();
+    public static IReadOnlyList<T> AsList<T>(this IEnumerable<T> enumerable) =>
+        enumerable as IReadOnlyList<T> ?? enumerable.ToList();
 
     /// <summary>
     /// Interprets the object as an array, and creates one if it isn't already an array.
@@ -24,14 +28,30 @@ internal static class EnumerableExtensions
     public static T[] AsArray<T>(this IEnumerable<T> enumerable) =>
         enumerable as T[] ?? enumerable.ToArray();
 
-    public static List<T[]> Deinterleave<T>(this Span<T> data, int interleave, int streamCount)
+    [DebuggerStepThrough]
+    public static List<T[]> Deinterleave<T>(this Memory<T> data, int interleave, int streamCount) =>
+        Deinterleave(data.Span, interleave, streamCount);
+
+    [DebuggerStepThrough]
+    public static List<T[]> Deinterleave<T>(this ReadOnlyMemory<T> data, int interleave, int streamCount) =>
+        Deinterleave(data.Span, interleave, streamCount);
+
+    [DebuggerStepThrough]
+    public static List<T[]> Deinterleave<T>(this Span<T> data, int interleave, int streamCount) =>
+        Deinterleave((ReadOnlySpan<T>)data, interleave, streamCount);
+
+    [DebuggerStepThrough]
+    public static List<T[]> Deinterleave<T>(this ReadOnlySpan<T> data, int interleave, int streamCount)
     {
-        if (streamCount < 0)
-            throw new RhythmCodexException($"{nameof(streamCount)} must be greater than or equal to zero.");
-        if (streamCount == 0)
-            return [];
-        if (streamCount == 1)
-            return [[..data]];
+        switch (streamCount)
+        {
+            case < 0:
+                throw new RhythmCodexException($"{nameof(streamCount)} must be greater than or equal to zero.");
+            case 0:
+                return [];
+            case 1:
+                return [[..data]];
+        }
 
         var result = new List<T[]>(streamCount);
         var blockSize = interleave * streamCount;

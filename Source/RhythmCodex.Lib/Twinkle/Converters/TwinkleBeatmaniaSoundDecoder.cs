@@ -10,7 +10,7 @@ namespace RhythmCodex.Twinkle.Converters;
 [Service]
 public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
 {
-    public Sound Decode(TwinkleBeatmaniaSoundDefinition definition, ReadOnlySpan<byte> data)
+    public Sound? Decode(TwinkleBeatmaniaSoundDefinition definition, ReadOnlySpan<byte> data)
     {
         var offset = definition.SampleStart << 1;
         var stereo = (definition.Flags0F & 0x80) != 0;
@@ -34,12 +34,13 @@ public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
             }
         }
 
-        var panning = (float) (definition.Panning - 1) / 0x7E;
-        if (panning < 0)
-            panning = 0;
-        else if (panning > 1)
-            panning = 1;
-            
+        var panning = ((definition.Panning - 1) / (float)0x7E) switch
+        {
+            < 0 => 0f,
+            > 1 => 1f,
+            var x => x
+        };
+
         return new Sound
         {
             [NumericData.Rate] = definition.Frequency,

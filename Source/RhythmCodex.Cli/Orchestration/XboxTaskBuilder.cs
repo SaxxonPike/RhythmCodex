@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using ClientCommon;
+using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.ImaAdpcm.Converters;
 using RhythmCodex.ImaAdpcm.Models;
@@ -35,7 +36,7 @@ public class XboxTaskBuilder(
         {
             var files = GetInputFiles(task);
 
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -45,17 +46,20 @@ public class XboxTaskBuilder(
             {
                 using var stream = OpenRead(task, file);
                 var binFileName = $"{Path.GetFileNameWithoutExtension(file.Name)}.bin";
-                        
+
                 var binFile = Path.Combine(
                     Path.GetDirectoryName(file.Name),
                     binFileName);
 
                 foreach (var entry in xboxHbnStreamReader.Read(stream, OpenRead(task, GetInputFileDirect(binFile))))
                 {
+                    if (string.IsNullOrWhiteSpace(entry.Name))
+                        continue;
+
                     using var outStream =
                         OpenWriteMulti(task, file, _ => entry.Name);
                     var writer = new BinaryWriter(outStream);
-                    writer.Write(entry.Data);
+                    entry.Data.WriteAllBytes(writer.BaseStream);
                     outStream.Flush();
                 }
             });
@@ -81,6 +85,9 @@ public class XboxTaskBuilder(
                 var index = 0;
                 foreach (var entry in xboxIsoStreamReader.Read(stream, stream.Length))
                 {
+                    if (entry.FileName == null)
+                        continue;
+
                     using (var outStream =
                            OpenWriteMulti(task, file, _ => entry.FileName))
                     {
@@ -101,7 +108,7 @@ public class XboxTaskBuilder(
         return Build("Extract XWB", task =>
         {
             var files = GetInputFiles(task);
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 task.Message = "No input files.";
                 return false;
@@ -114,11 +121,11 @@ public class XboxTaskBuilder(
                 foreach (var sound in xwbStreamReader.Read(stream))
                 {
                     var decoded = xwbDecoder.Decode(sound);
-                    var encoded = riffPcm16SoundEncoder.Encode(decoded);
-                    var name = decoded[StringData.Name];
-                    using (var outStream =
-                           OpenWriteSingle(task, file, i => $"{name ?? $"{i}{index:0000}"}.wav"))
+                    if (decoded != null)
                     {
+                        var encoded = riffPcm16SoundEncoder.Encode(decoded);
+                        var name = decoded[StringData.Name];
+                        using var outStream = OpenWriteSingle(task, file, i => $"{name ?? $"{i}{index:0000}"}.wav");
                         riffStreamWriter.Write(outStream, encoded);
                         outStream.Flush();
                     }
@@ -147,7 +154,7 @@ public class XboxTaskBuilder(
                 using var input = OpenRead(task, file);
                 foreach (var entry in xboxSngStreamReader.Read(input))
                 {
-                    if (entry.Song != null)
+                    if (entry.Song.Length > 0)
                     {
                         var sound = imaAdpcmDecoder.Decode(new ImaAdpcmChunk
                         {
@@ -155,7 +162,7 @@ public class XboxTaskBuilder(
                             ChannelSamplesPerFrame = 64,
                             Data = entry.Song,
                             Rate = 44100
-                        }).Single();
+                        });
 
                         var encoded = riffPcm16SoundEncoder.Encode(sound);
                         using var outStream = OpenWriteMulti(task, file, _ => $"{entry.Name}.wav");
@@ -163,7 +170,7 @@ public class XboxTaskBuilder(
                         outStream.Flush();
                     }
 
-                    if (entry.Preview != null)
+                    if (entry.Preview.Length > 0)
                     {
                         var sound = imaAdpcmDecoder.Decode(new ImaAdpcmChunk
                         {
@@ -171,7 +178,7 @@ public class XboxTaskBuilder(
                             ChannelSamplesPerFrame = 64,
                             Data = entry.Preview,
                             Rate = 44100
-                        }).Single();
+                        });
 
                         var encoded = riffPcm16SoundEncoder.Encode(sound);
                         using var outStream = OpenWriteMulti(task, file, _ => $"{entry.Name}-preview.wav");
@@ -204,7 +211,7 @@ public class XboxTaskBuilder(
                     ChannelSamplesPerFrame = 64,
                     Data = GetFile(task, file),
                     Rate = 44100
-                }).Single();
+                });
 
                 var encoded = riffPcm16SoundEncoder.Encode(sound);
                 using var outStream = OpenWriteSingle(task, file, i => $"{i}.wav");

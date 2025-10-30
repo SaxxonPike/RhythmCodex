@@ -37,7 +37,7 @@ internal sealed class FlacSubFrameFixed : FlacSubFrameBase
             {
                 case 0:
                 {
-                    residual.Slice(0, length).CopyTo(destBuffer);
+                    residual[..length].CopyTo(destBuffer);
                     break;
                 }
 

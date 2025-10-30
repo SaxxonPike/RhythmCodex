@@ -10,7 +10,7 @@ public abstract class FluentControl : FluentComponent
 {
     public AnchorStyles Anchor { get; set; }
     public DockStyle Dock { get; set; }
-    public List<FluentControl> Controls { get; set; }
+    public List<FluentControl> Controls { get; set; } = [];
     public abstract Type Type { get; }
     public Padding Padding { get; set; }
     public Font Font { get; set; }
@@ -23,19 +23,19 @@ public abstract class FluentControl : FluentComponent
 
     protected abstract Control OnBuild(FluentState state);
 
-    public virtual Control Build(FluentState state, Control parent = null)
+    public virtual Control Build(FluentState state, Control? parent = null)
     {
         var result = OnBuild(state);
         if (RowSpan != 1 || ColumnSpan != 1)
         {
             state.Callbacks.Add(() =>
             {
-                var p = result?.Parent ?? parent;
-                if (p is TableLayoutPanel tlp)
-                {
-                    tlp.SetRowSpan(result, RowSpan);
-                    tlp.SetColumnSpan(result, ColumnSpan);
-                }
+                var p = result.Parent ?? parent;
+                if (p is not TableLayoutPanel tlp) 
+                    return;
+
+                tlp.SetRowSpan(result, RowSpan);
+                tlp.SetColumnSpan(result, ColumnSpan);
             });
         }
 
@@ -48,7 +48,7 @@ public abstract class FluentControl : FluentComponent
     }
 
     protected Control[] BuildChildren(FluentState state) =>
-        Controls?.Select(c => c?.Build(state)).Where(c => c != null).ToArray();
+        Controls.Select(c => c.Build(state)).ToArray();
 
     protected override void SetDefault(Control control)
     {
@@ -63,9 +63,7 @@ public abstract class FluentControl : FluentComponent
             control.Dock = Dock;
 
         control.Padding = Padding;
-
-        if (Font != null)
-            control.Font = Font;
+        control.Font = Font;
 
         if (MinimumSize != Size.Empty)
             control.MinimumSize = MinimumSize;
@@ -80,13 +78,13 @@ public abstract class FluentControl<TControl> : FluentControl
 {
     public override Type Type => typeof(TControl);
 
-    public Action<FluentContext<FluentControl<TControl>, TControl>> AfterBuild { get; set; }
+    public Action<FluentContext<FluentControl<TControl>, TControl>>? AfterBuild { get; set; }
 
-    public Action OnClick { get; set; }
-    public Action OnEnter { get; set; }
-    public Action OnLeave { get; set; }
+    public Action? OnClick { get; set; }
+    public Action? OnEnter { get; set; }
+    public Action? OnLeave { get; set; }
 
-    public override Control Build(FluentState state, Control parent = null)
+    public override Control Build(FluentState state, Control? parent = null)
     {
         var result = base.Build(state, parent);
         state.Callbacks.Add(() => AfterBuild?.Invoke(
@@ -117,6 +115,6 @@ public abstract class FluentControl<TControl> : FluentControl
 public abstract class FluentControl<TControl, TValue> : FluentControl<TControl>
     where TControl : Control
 {
-    public TValue InitialValue { get; set; }
-    public Action<TControl, TValue> OnChange { get; set; }
+    public TValue? InitialValue { get; set; }
+    public Action<TControl, TValue>? OnChange { get; set; }
 }

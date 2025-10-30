@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charting.Models;
@@ -26,26 +25,26 @@ public class Step1Decoder(
     IStep1ChartInfoDecoder chartInfoDecoder)
     : IStep1Decoder
 {
-    public List<Chart> Decode(IReadOnlyCollection<Step1Chunk> data)
+    public List<Chart> Decode(IEnumerable<Step1Chunk> data)
     {
         return DecodeInternal(data).ToList();
     }
 
-    private IEnumerable<Chart> DecodeInternal(IReadOnlyCollection<Step1Chunk> data)
+    private IEnumerable<Chart> DecodeInternal(IEnumerable<Step1Chunk> data)
     {
-        var chunks = data;
+        var chunks = data.AsCollection();
 
         if (!chunks.Any())
             throw new RhythmCodexException("No chunks to decode.");
 
-        var timings = timingChunkDecoder.Convert(chunks.First().Data);
+        var timings = timingChunkDecoder.Convert(chunks.First().Data.Span);
 
         foreach (var chunk in chunks.Skip(1))
         {
             var timingEvents = timingEventDecoder.Decode(timings);
                 
             // Decode the raw steps.
-            var steps = stepChunkDecoder.Convert(chunk.Data);
+            var steps = stepChunkDecoder.Convert(chunk.Data.Span);
 
             // Old charts store singles charts twice, as if it was a couples chart. So, check for that.
             int? panelCount = null;
@@ -73,7 +72,7 @@ public class Step1Decoder(
             // Convert the steps.
             var stepEvents = stepEventDecoder.Decode(steps, mapper);
             var events = timingEvents.Concat(stepEvents).ToList();
-            var info = chartInfoDecoder.Decode(Bitter.ToInt32(chunk.Data.AsSpan(0)), mapper.PlayerCount, mapper.PanelCount);
+            var info = chartInfoDecoder.Decode(Bitter.ToInt32(chunk.Data), mapper.PlayerCount, mapper.PanelCount);
                 
             // Output metadata.
             var difficulty = info.Difficulty;

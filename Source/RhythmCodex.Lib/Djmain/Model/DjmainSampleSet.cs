@@ -7,7 +7,7 @@ namespace RhythmCodex.Djmain.Model;
 public class DjmainSampleSet
 {
     public int DataOffset { get; set; }
-    public Dictionary<int, DjmainSample> Samples { get; set; }
+    public Dictionary<int, DjmainSample> Samples { get; set; } = new();
         
     public override string ToString() => Json.Serialize(this);
 }

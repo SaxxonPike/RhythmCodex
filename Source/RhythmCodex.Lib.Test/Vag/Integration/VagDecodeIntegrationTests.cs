@@ -17,7 +17,7 @@ public class VagDecodeIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_Xa2()
     {
-        var data = GetArchiveResource($"Vag.xa2.zip")
+        var data = GetArchiveResource("Vag.xa2.zip")
             .First()
             .Value;
 
@@ -35,7 +35,7 @@ public class VagDecodeIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_Svag()
     {
-        var data = GetArchiveResource($"Vag.svag.zip")
+        var data = GetArchiveResource("Vag.svag.zip")
             .First()
             .Value;
 

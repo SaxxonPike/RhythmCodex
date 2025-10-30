@@ -18,7 +18,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
     private static DdrDatabaseEntry? GetOldRecord(DdrPs2MetadataTableEntry item)
     {
         var record = item.Data.Span;
-        var id = Encodings.CP437.GetStringWithoutNulls(record[..5]);
+        var id = Encodings.Cp437.GetStringWithoutNulls(record[..5]);
         if (id == string.Empty)
             return null;
 
@@ -35,7 +35,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
             SonglistOrder = Bitter.ToInt16(record, 0x16),
             UnlockNumber = Bitter.ToInt16(record, 0x18),
             Difficulties = [],
-            Flags = Bitter.ToInt32(record, 0x1C),
+            Flags = Bitter.ToInt32(record, 0x1C)
             // Radar0 = Bitter.ToInt16Array(record, 0x20, 6),
             // Radar1 = Bitter.ToInt16Array(record, 0x2C, 6),
             // Radar2 = Bitter.ToInt16Array(record, 0x38, 6),
@@ -47,7 +47,7 @@ public class DdrPs2DatabaseDecoder : IDdrPs2DatabaseDecoder
     private static DdrDatabaseEntry? GetNewRecord(DdrPs2MetadataTableEntry records)
     {
         var record = records.Data.Span;
-        var id = Encodings.CP437.GetStringWithoutNulls(record.Slice(0x00, 5));
+        var id = Encodings.Cp437.GetStringWithoutNulls(record[..5]);
         var mdbIndex = 0;
         var difficultyOffset = 0;
         int[] difficulties;

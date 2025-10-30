@@ -15,7 +15,7 @@ public class FlacDecoderIntegrationTests : BaseIntegrationFixture
     [Explicit]
     public void Test_Flac()
     {
-        var data = GetArchiveResource($"Flac.example.flac.zip")
+        var data = GetArchiveResource("Flac.example.flac.zip")
             .First()
             .Value;
             
