@@ -26,8 +26,10 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         public int Offset { get; set; }
         public int LeftLength { get; set; }
         public int RightLength { get; set; }
-        public float LeftVolume { get; set; }
-        public float RightVolume { get; set; }
+        public float LeftToLeftVolume { get; set; }
+        public float LeftToRightVolume { get; set; }
+        public float RightToLeftVolume { get; set; }
+        public float RightToRightVolume { get; set; }
         public bool Playing { get; set; }
     }
 
@@ -144,8 +146,8 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             st.Offset = 0;
             st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
             st.RightLength = sound?.Samples[1].Data.Length ?? 0;
-            st.LeftVolume = SqrtHalf * masterVolume;
-            st.RightVolume = SqrtHalf * masterVolume;
+            st.LeftToLeftVolume = st.LeftToRightVolume = st.RightToLeftVolume = st.RightToRightVolume =
+                SqrtHalf * masterVolume;
             st.Playing = true;
         }
 
@@ -153,8 +155,9 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         {
             var sound = soundList.FirstOrDefault(s => s?[NumericData.Id] == soundIndex);
             var channel = sound?[NumericData.Channel];
-            var rightVolume = MathF.Sqrt((float)(panning ?? BigRational.OneHalf));
-            var leftVolume = MathF.Sqrt(1f - (float)(panning ?? BigRational.OneHalf));
+            var rightVolume = Math.Clamp(MathF.Sqrt((float)(panning ?? BigRational.OneHalf)), 0f, 1f);
+            var leftVolume = Math.Clamp(MathF.Sqrt(1f - (float)(panning ?? BigRational.OneHalf)), 0f, 1f);
+
             ChannelState? st = null;
             if (channel >= 0 && channel < 255)
                 st = state.FirstOrDefault(s => s.Channel == channel);
@@ -177,8 +180,11 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                 st.LeftLength = 0;
                 st.RightLength = 0;
             }
-            st.LeftVolume = leftVolume * masterVolume;
-            st.RightVolume = rightVolume * masterVolume;
+
+            st.LeftToLeftVolume = leftVolume * masterVolume;
+            st.LeftToRightVolume = (1 - leftVolume) * masterVolume;
+            st.RightToLeftVolume = (1 - rightVolume) * masterVolume;
+            st.RightToRightVolume = rightVolume * masterVolume;
             st.Playing = true;
         }
 
@@ -197,10 +203,21 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                     continue;
                 }
 
+                var left = ch.Sound.Samples[0].Data.Span;
+                var right = ch.Sound.Samples[1].Data.Span;
+
                 if (ch.Offset < ch.LeftLength)
-                    finalMixLeft += ch.Sound.Samples[0].Data.Span[ch.Offset] * ch.LeftVolume;
+                {
+                    finalMixLeft += left[ch.Offset] * ch.LeftToLeftVolume;
+                    finalMixRight += left[ch.Offset] * ch.LeftToRightVolume;
+                }
+
                 if (ch.Offset < ch.RightLength)
-                    finalMixRight += ch.Sound.Samples[1].Data.Span[ch.Offset] * ch.RightVolume;
+                {
+                    finalMixLeft += right[ch.Offset] * ch.RightToLeftVolume;
+                    finalMixRight += right[ch.Offset] * ch.RightToRightVolume;
+                }
+
                 ch.Offset++;
             }
 

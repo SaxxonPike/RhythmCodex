@@ -14,7 +14,7 @@ public class BeatmaniaPs2NewBgmHeuristic(IVagStreamReader vagStreamReader)
     : IReadableHeuristic<VagChunk>
 {
     public string Description => "BeatmaniaIIDX CS BGM (new)";
-    public string FileExtension => "bmcsbgm2";
+    public string FileExtension => "bmcskey2";
 
     public HeuristicResult? Match(IHeuristicReader reader)
     {

@@ -7,11 +7,14 @@ namespace RhythmCodex.Beatmania.Models;
 [Model]
 public class BeatmaniaPs2Keysound
 {
+    public int Index { get; set; }
     public int SampleNumber { get; set; }
     public int Reserved0 { get; set; }
     public int Channel { get; set; }
     public int Volume { get; set; }
     public int Panning { get; set; }
+    public int VolumeLeft { get; set; }
+    public int VolumeRight { get; set; }
     public int SampleType { get; set; }
     public int FrequencyLeft { get; set; }
     public int FrequencyRight { get; set; }
