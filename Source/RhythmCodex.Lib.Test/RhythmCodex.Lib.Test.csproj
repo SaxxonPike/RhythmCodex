@@ -15,7 +15,6 @@
         <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
         <PackageReference Include="Shouldly" Version="4.3.0" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.10" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RhythmCodex.Lib.Test.Data\RhythmCodex.Test.Data.csproj" />
