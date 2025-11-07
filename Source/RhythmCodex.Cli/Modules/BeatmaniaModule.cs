@@ -26,8 +26,8 @@ public class BeatmaniaModule : ICliModule
     public string Description => "Manipulates Beatmania AC data.";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "decode-djmain-hdd",
@@ -78,7 +78,7 @@ public class BeatmaniaModule : ICliModule
                 }
             }
         }
-    };
+    ];
 
     private ITask RenderDjmainGst(Args args)
     {
