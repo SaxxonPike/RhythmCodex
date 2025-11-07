@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
 using ClientCommon;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
-using RhythmCodex.Xact.Converters;
-using RhythmCodex.Xact.Streamers;
+using RhythmCodex.Sounds.Riff.Converters;
+using RhythmCodex.Sounds.Riff.Streamers;
+using RhythmCodex.Sounds.Xact.Converters;
+using RhythmCodex.Sounds.Xact.Streamers;
 
 namespace XwbExtract;
 

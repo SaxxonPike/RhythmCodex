@@ -3,14 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics;
 using System.Threading.Tasks;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Meta.Models;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
-using RhythmCodex.Sounds.Providers;
+using RhythmCodex.Sounds.Resampler.Providers;
 
 namespace RhythmCodex.Sounds.Converters;
 

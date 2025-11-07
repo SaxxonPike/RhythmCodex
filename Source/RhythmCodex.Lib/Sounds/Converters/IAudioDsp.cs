@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Sounds.Models;
-using RhythmCodex.Sounds.Providers;
+using RhythmCodex.Sounds.Resampler.Providers;
 
 namespace RhythmCodex.Sounds.Converters;
 

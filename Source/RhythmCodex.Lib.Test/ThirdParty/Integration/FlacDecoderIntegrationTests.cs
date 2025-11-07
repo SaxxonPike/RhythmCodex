@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Flac.Converters;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Sounds.Flac.Converters;
+using RhythmCodex.Sounds.Riff.Converters;
+using RhythmCodex.Sounds.Riff.Streamers;
 
 namespace RhythmCodex.ThirdParty.Integration;
 

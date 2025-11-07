@@ -3,6 +3,7 @@ using System.IO.Compression;
 using AutoFixture;
 using AutoFixture.Dsl;
 using JetBrains.Annotations;
+using NUnit.Framework.Internal;
 using RhythmCodex.Data;
 
 namespace RhythmCodex;
@@ -37,6 +38,9 @@ public abstract class BaseTestFixture
         TestContext.Out.WriteLine(
             $"{TestContext.CurrentContext.Test.FullName}: {_stopwatch.ElapsedMilliseconds}ms");
     }
+    
+    public Randomizer Random => 
+        TestContext.CurrentContext.Random;
 
     /// <summary>
     ///     Retrieves an embedded resource by name.

@@ -10,7 +10,6 @@
         <PackageReference Include="AutoFixture" Version="4.18.1" />
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-        <PackageReference Include="Moqzilla" Version="1.1.0" />
         <PackageReference Include="NUnit" Version="4.4.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
         <PackageReference Include="Shouldly" Version="4.3.0" />
@@ -28,9 +27,9 @@
         <ProjectReference Include="..\RhythmCodex.Test\RhythmCodex.Test.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="ImaAdpcm\Converters" />
-        <Folder Include="Ssq" />
-        <Folder Include="Stepmania" />
+        <Folder Include="Sounds.ImaAdpcm\Converters" />
+        <Folder Include="Charts.Ssq\" />
+        <Folder Include="Games.Stepmania\" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="*.DotSettings" />

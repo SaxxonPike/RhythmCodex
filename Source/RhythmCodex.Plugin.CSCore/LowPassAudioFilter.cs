@@ -1,6 +1,6 @@
 ﻿using RhythmCodex.IoC;
 using RhythmCodex.Plugin.CSCore.Lib.DSP;
-using RhythmCodex.Sounds.Providers;
+using RhythmCodex.Sounds.Filter.Providers;
 
 namespace RhythmCodex.Plugin.CSCore;
 

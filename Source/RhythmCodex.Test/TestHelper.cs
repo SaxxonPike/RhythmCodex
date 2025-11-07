@@ -1,15 +1,15 @@
 using JetBrains.Annotations;
-using RhythmCodex.Bms.Converters;
-using RhythmCodex.Bms.Streamers;
-using RhythmCodex.Charting.Models;
+using RhythmCodex.Charts.Bms.Converters;
+using RhythmCodex.Charts.Bms.Streamers;
+using RhythmCodex.Charts.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Meta.Models;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
-using RhythmCodex.Sounds.Providers;
+using RhythmCodex.Sounds.Resampler.Providers;
+using RhythmCodex.Sounds.Riff.Converters;
+using RhythmCodex.Sounds.Riff.Streamers;
 
 namespace RhythmCodex;
 

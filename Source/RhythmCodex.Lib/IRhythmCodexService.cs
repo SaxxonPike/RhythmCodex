@@ -1,5 +1,5 @@
-using RhythmCodex.Arc;
-using RhythmCodex.Beatmania;
+using RhythmCodex.FileSystems.Arc;
+using RhythmCodex.Games.Beatmania;
 
 namespace RhythmCodex;
 

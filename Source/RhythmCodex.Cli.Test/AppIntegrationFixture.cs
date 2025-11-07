@@ -37,7 +37,7 @@ public class AppIntegrationFixture : BaseTestFixture
     {
         var builder = new ContainerBuilder();
 
-        builder.Register(c => new FakeFileSystem(new FileSystem(c.Resolve<ILogger>())))
+        builder.Register(c => new FakeFileSystem(new PhysicalFileSystem(c.Resolve<ILogger>())))
             .AsSelf()
             .AsImplementedInterfaces()
             .SingleInstance();

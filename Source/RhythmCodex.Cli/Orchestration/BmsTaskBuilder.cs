@@ -1,16 +1,16 @@
 ﻿using System.IO;
 using ClientCommon;
-using RhythmCodex.Bms.Converters;
-using RhythmCodex.Bms.Streamers;
+using RhythmCodex.Charts.Bms.Converters;
+using RhythmCodex.Charts.Bms.Streamers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
-using RhythmCodex.Wav.Converters;
-using RhythmCodex.Wav.Models;
+using RhythmCodex.Sounds.Riff.Converters;
+using RhythmCodex.Sounds.Riff.Streamers;
+using RhythmCodex.Sounds.Wav.Converters;
+using RhythmCodex.Sounds.Wav.Models;
 
 namespace RhythmCodex.Cli.Orchestration;
 

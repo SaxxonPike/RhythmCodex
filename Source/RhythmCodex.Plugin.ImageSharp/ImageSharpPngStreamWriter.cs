@@ -1,4 +1,4 @@
-using RhythmCodex.Gdi.Streamers;
+using RhythmCodex.Graphics.Gdi.Streamers;
 using RhythmCodex.Graphics.Models;
 using RhythmCodex.IoC;
 using SixLabors.ImageSharp;

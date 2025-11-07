@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using RhythmCodex.Arc;
-using RhythmCodex.Beatmania;
+using RhythmCodex.FileSystems.Arc;
+using RhythmCodex.Games.Beatmania;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Plugin.DependencyInjection;

@@ -1,7 +1,7 @@
 using System.IO;
 using ClientCommon;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.Compression;
+using RhythmCodex.Compressions.BemaniLz.Processors;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 

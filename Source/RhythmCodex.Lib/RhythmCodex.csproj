@@ -9,15 +9,24 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Digital573\Providers\Digital573AudioKeyDatabase.zip"/>
+        <EmbeddedResource Include="Archs.S573\Providers\Digital573AudioKeyDatabase.zip" />
         <None Remove="Ddr\Processors\DdrMetadata.json"/>
         <None Remove="Ddr\Processors\DdrMetadata.zip"/>
-        <EmbeddedResource Include="Ddr\Processors\DdrMetadata.zip"/>
+        <EmbeddedResource Include="Games.Ddr\Processors\DdrMetadata.zip" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="*.DotSettings" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\StreamCursors\Lib\Saxxon.StreamCursors.csproj" />
+      <Folder Include="Sounds.Flac\" />
+      <Folder Include="Sounds.ImaAdpcm\" />
+      <Folder Include="Sounds.Mp3\" />
+      <Folder Include="Sounds.Ogg\" />
+      <Folder Include="Sounds\" />
+      <Folder Include="Charts.Bmson\" />
+      <Folder Include="FileSystems.Chd\" />
+      <Folder Include="FileSystems.Iso\" />
+      <Folder Include="Charts.Sm\" />
+      <Folder Include="Charts.Ssc\" />
     </ItemGroup>
 </Project>

@@ -1,0 +1,40 @@
+﻿using NUnit.Framework;
+using RhythmCodex.Charts.Ssq.Model;
+using Shouldly;
+
+namespace RhythmCodex.Charts.Ssq.Converters;
+
+[TestFixture]
+public class TriggerChunkDecoderTests : BaseUnitTestFixture<TriggerChunkDecoder, ITriggerChunkDecoder>
+{
+    [Test]
+    public void Convert_DecodesTriggers()
+    {
+        // Arrange.
+        var data = new byte[]
+        {
+            0x03, 0x00, 0x00, 0x00,
+
+            0x00, 0x10, 0x20, 0x30,
+            0x10, 0x20, 0x30, 0x40,
+            0x20, 0x30, 0x40, 0x50,
+
+            0x12, 0x34,
+            0x56, 0x78,
+            0x90, 0x12
+        };
+
+        var expected = new[]
+        {
+            new Trigger {Id = 0x3412, MetricOffset = 0x30201000},
+            new Trigger {Id = 0x7856, MetricOffset = 0x40302010},
+            new Trigger {Id = 0x1290, MetricOffset = 0x50403020}
+        };
+
+        // Act.
+        var result = Subject.Convert(data);
+
+        // Assert.
+        result.ShouldBe(expected);
+    }
+}

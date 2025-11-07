@@ -1,0 +1,29 @@
+using System;
+using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using RhythmCodex.Sounds.Psf.Streamers;
+using Shouldly;
+
+namespace RhythmCodex.Sounds.Psf.Integration;
+
+public class PsfIntegrationTests : BaseIntegrationFixture
+{
+    [Test]
+    [TestCase("ff9")]
+    public void Read_ShouldReturnCorrectData(string name)
+    {
+        // Arrange.
+        var source = GetArchiveResource($"Psf.{name}.zip")
+            .First(f => f.Key.EndsWith(".psf", StringComparison.OrdinalIgnoreCase))
+            .Value;
+        var expected = GetArchiveResource($"Psf.{name}.zip")
+            .First(f => f.Key.EndsWith(".bin", StringComparison.OrdinalIgnoreCase))
+            .Value;
+
+        var reader = Resolve<IPsfStreamReader>();
+        var psf = reader.Read(new MemoryStream(source));
+        psf.Reserved.Length.ShouldBe(0);
+        psf.Data.ToArray().ShouldBeEquivalentTo(expected);
+    }
+}

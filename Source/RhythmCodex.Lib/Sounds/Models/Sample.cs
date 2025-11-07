@@ -1,6 +1,6 @@
 ﻿using System;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Meta.Models;
+using RhythmCodex.Metadatas.Models;
 
 namespace RhythmCodex.Sounds.Models;
 

@@ -1,4 +1,4 @@
-using RhythmCodex.Meta.Models;
+using RhythmCodex.Metadatas.Models;
 
 namespace RhythmCodex.Graphics.Models;
 

@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
 using RhythmCodex.Sounds.Converters;
-using RhythmCodex.Sounds.Providers;
-using RhythmCodex.Wav.Converters;
+using RhythmCodex.Sounds.Resampler.Providers;
+using RhythmCodex.Sounds.Riff.Converters;
+using RhythmCodex.Sounds.Riff.Streamers;
+using RhythmCodex.Sounds.Wav.Converters;
 
 namespace RhythmCodex.Sounds.Integration;
 

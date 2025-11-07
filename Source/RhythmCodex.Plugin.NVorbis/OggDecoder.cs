@@ -4,9 +4,9 @@ using System.Linq;
 using NVorbis;
 using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
-using RhythmCodex.Meta.Models;
-using RhythmCodex.Ogg.Converters;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Ogg.Converters;
 
 namespace RhythmCodex.Plugin.NVorbis;
 

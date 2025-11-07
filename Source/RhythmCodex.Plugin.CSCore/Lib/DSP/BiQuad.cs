@@ -3,7 +3,7 @@
  */
 
 using System;
-using RhythmCodex.Sounds.Providers;
+using RhythmCodex.Sounds.Filter.Providers;
 
 namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 

@@ -2,17 +2,17 @@ using System.Drawing;
 using System.Linq;
 using ClientCommon;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.Dds.Converters;
-using RhythmCodex.Dds.Streamers;
-using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Graphics.Converters;
+using RhythmCodex.Graphics.Dds.Converters;
+using RhythmCodex.Graphics.Dds.Streamers;
+using RhythmCodex.Graphics.Gdi.Streamers;
 using RhythmCodex.Graphics.Models;
+using RhythmCodex.Graphics.Tga.Converters;
+using RhythmCodex.Graphics.Tga.Streamers;
+using RhythmCodex.Graphics.Tim.Converters;
+using RhythmCodex.Graphics.Tim.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Tga.Converters;
-using RhythmCodex.Tga.Streamers;
-using RhythmCodex.Tim.Converters;
-using RhythmCodex.Tim.Streamers;
 
 namespace RhythmCodex.Cli.Orchestration;
 
