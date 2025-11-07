@@ -1,5 +1,6 @@
 using System.IO;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Ddr.S573.Models;
 
 namespace RhythmCodex.Ddr.Streamers;
 

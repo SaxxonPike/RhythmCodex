@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Beatmania.Pc.Models;
 using RhythmCodex.Twinkle.Model;
 
 namespace RhythmCodex.Twinkle.Converters;

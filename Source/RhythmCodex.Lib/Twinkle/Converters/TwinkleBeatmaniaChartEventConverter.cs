@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Beatmania.Pc.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Twinkle.Model;
 

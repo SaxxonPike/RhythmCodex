@@ -1,6 +1,7 @@
 ﻿using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Converters;
+using RhythmCodex.Beatmania.Ps2.Converters;
 using RhythmCodex.Blowfish.Converters;
 
 namespace RhythmCodex.Beatmania.Integration;

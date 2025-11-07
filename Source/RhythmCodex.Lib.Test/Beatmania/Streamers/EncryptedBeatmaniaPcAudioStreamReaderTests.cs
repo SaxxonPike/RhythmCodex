@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Shouldly;
 using NUnit.Framework;
+using RhythmCodex.Beatmania.Pc.Streamers;
 using RhythmCodex.Extensions;
 
 namespace RhythmCodex.Beatmania.Streamers;

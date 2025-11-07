@@ -1,6 +1,7 @@
 using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Ddr.Processors;
+using RhythmCodex.Ddr.S573.Processors;
 
 namespace RhythmCodex.Ddr.Integration;
 

@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Converters;
+using RhythmCodex.Beatmania.Pc.Converters;
+using RhythmCodex.Beatmania.Pc.Streamers;
 using RhythmCodex.Beatmania.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Riff.Converters;

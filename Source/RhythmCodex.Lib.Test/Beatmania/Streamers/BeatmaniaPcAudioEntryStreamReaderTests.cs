@@ -2,6 +2,8 @@ using System.IO;
 using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Beatmania.Pc.Models;
+using RhythmCodex.Beatmania.Pc.Streamers;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Beatmania.Streamers;

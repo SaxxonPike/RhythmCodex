@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Ddr.S573.Models;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Ddr.Streamers;

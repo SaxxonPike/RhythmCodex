@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Models;
+using RhythmCodex.Ddr.Ps2.Models;
 using RhythmCodex.Heuristics;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;

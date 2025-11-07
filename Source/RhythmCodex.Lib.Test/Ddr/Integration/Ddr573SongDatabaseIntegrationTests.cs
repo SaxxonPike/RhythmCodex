@@ -4,6 +4,7 @@ using Shouldly;
 using NUnit.Framework;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Converters;
+using RhythmCodex.Ddr.S573.Converters;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Ddr.Integration;

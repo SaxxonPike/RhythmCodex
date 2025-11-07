@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Beatmania.Converters;
 using RhythmCodex.Beatmania.Models;
+using RhythmCodex.Beatmania.Pc.Converters;
+using RhythmCodex.Beatmania.Pc.Models;
 using RhythmCodex.Charting.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;

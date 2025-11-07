@@ -1,11 +1,12 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Beatmania.Heuristics;
+using RhythmCodex.Beatmania.Ps2.Heuristics;
 using RhythmCodex.Compression;
 using RhythmCodex.Ddr.Converters;
 using RhythmCodex.Ddr.Models;
 using RhythmCodex.Ddr.Processors;
+using RhythmCodex.Ddr.Ps2.Converters;
 using RhythmCodex.Ddr.Streamers;
 using RhythmCodex.Gdi.Streamers;
 using RhythmCodex.Heuristics;
