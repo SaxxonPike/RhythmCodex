@@ -25,10 +25,13 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
 
             var result = new BeatmaniaPs2Keysound
             {
+                Index = i,
                 SampleNumber = hunkReader.ReadInt16(),
                 Reserved0 = hunkReader.ReadInt16(),
                 Channel = hunkReader.ReadByte(),
                 Volume = hunkReader.ReadByte(),
+                VolumeLeft = 0x7F,
+                VolumeRight = 0x7F,
                 Panning = hunkReader.ReadByte(),
                 SampleType = hunkReader.ReadByte(),
                 FrequencyLeft = hunkReader.ReadInt32(),
@@ -43,7 +46,7 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
             {
                 case 2:
                 {
-                    hunkMem.Position = result.OffsetLeft - 61488;
+                    hunkMem.Position = result.OffsetLeft - 0xF030;
                     result.Data = vagStreamReader.Read(hunkMem, 1, 0) is { } chunk
                         ? [chunk]
                         : [];
@@ -51,7 +54,7 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
                 }
                 case 3:
                 {
-                    hunkMem.Position = header[1] + result.OffsetLeft + 16368;
+                    hunkMem.Position = header[1] + result.OffsetLeft + 0x3FF0;
                     result.Data = vagStreamReader.Read(hunkMem, 1, 0) is {} chunk
                         ? [chunk]
                         : [];
@@ -59,9 +62,9 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
                 }
                 case 4:
                 {
-                    hunkMem.Position = result.OffsetLeft - 61488;
+                    hunkMem.Position = result.OffsetLeft - 0xF030;
                     var dataLeft = vagStreamReader.Read(hunkMem, 1, 0);
-                    hunkMem.Position = result.OffsetRight - 61488;
+                    hunkMem.Position = result.OffsetRight - 0xF030;
                     var dataRight = vagStreamReader.Read(hunkMem, 1, 0);
                     result.Data = dataLeft is not null && dataRight is not null
                         ? [dataLeft, dataRight]
