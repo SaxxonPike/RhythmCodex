@@ -70,10 +70,10 @@ public class BeatmaniaPs2NewKeysoundStreamReader(IVagStreamReader vagStreamReade
             {
                 unchecked
                 {
-                    sampleWaveData[i + 0] ^= decryptKey[i + 0];
-                    sampleWaveData[i + 1] ^= decryptKey[i + 1];
-                    sampleWaveData[i + 2] -= decryptKey[i + 2];
-                    sampleWaveData[i + 3] -= decryptKey[i + 3];
+                    sampleWaveData[i + 0] ^= decryptKey[0];
+                    sampleWaveData[i + 1] ^= decryptKey[1];
+                    sampleWaveData[i + 2] -= decryptKey[2];
+                    sampleWaveData[i + 3] -= decryptKey[3];
                 }
             }
         }
@@ -138,7 +138,11 @@ public class BeatmaniaPs2NewKeysoundStreamReader(IVagStreamReader vagStreamReade
             // It turned out to be acceptable, but not accurate.
             //
 
-            var freq = 1536000d / Math.Pow(2, sample.CoarseFreq / 12d - sample.FineFreq / 1531.155d);
+            const double CoarseTuneScale = 12d;
+            const double FineTuneScale = 1531.155d;
+            const double MaxFrequency = 1536000d;
+
+            var freq = MaxFrequency / Math.Pow(2, sample.CoarseFreq / CoarseTuneScale - sample.FineFreq / FineTuneScale);
             var roundedFreq = (int)Math.Round(freq);
 
             return new BeatmaniaPs2Keysound
