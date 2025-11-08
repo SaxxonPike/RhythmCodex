@@ -1,6 +1,5 @@
-using System;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
 using NVorbis;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -22,12 +21,16 @@ public class OggDecoder(IAudioDsp audioDsp) : IOggDecoder
 
         var rawData = new float[reader.TotalSamples];
         reader.ReadSamples(rawData);
-        
-        var result = audioDsp.FloatsToSound(rawData, channels);
-        if (result == null)
-            return null;
 
-        result[NumericData.Rate] = rate;
-        return result;
+        var result = audioDsp.FloatsToSamples(rawData, channels);
+
+        foreach (var sample in result)
+            sample[NumericData.Rate] = rate;
+
+        return new Sound
+        {
+            Samples = result.ToList(),
+            [NumericData.Rate] = rate
+        };
     }
 }

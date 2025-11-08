@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using CSCore.Codecs.FLAC;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -19,18 +20,21 @@ public class FlacDecoder(IAudioDsp audioDsp) : IFlacDecoder
         using var inputStream = new FlacFile(stream);
         var samples = StreamExtensions.ReadAllBytes((StreamExtensions.SpanReadFunc)inputStream.Read);
 
-        var result = audioDsp.BytesToSound(
+        var result = audioDsp.BytesToSamples(
             samples.Span,
             inputStream.WaveFormat.BitsPerSample,
             inputStream.WaveFormat.Channels,
             false
         );
 
-        if (result == null)
-            return null;
+        foreach (var sample in result)
+            sample[NumericData.Rate] = inputStream.WaveFormat.SampleRate;
 
-        result[NumericData.Rate] = inputStream.WaveFormat.SampleRate;
-        return result;
+        return new Sound
+        {
+            Samples = result.ToList(),
+            [NumericData.Rate] = inputStream.WaveFormat.SampleRate
+        };
     }
 
     public Memory<byte> DecodeFrame(Stream stream, int blockSize)

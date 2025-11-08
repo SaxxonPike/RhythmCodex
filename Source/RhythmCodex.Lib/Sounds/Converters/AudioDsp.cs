@@ -72,7 +72,7 @@ public class AudioDsp : IAudioDsp
         return output;
     }
 
-    public Sound? BytesToSound(ReadOnlySpan<byte> inData, int bitsPerSample, int channels, bool bigEndian)
+    public Sample[] BytesToSamples(ReadOnlySpan<byte> inData, int bitsPerSample, int channels, bool bigEndian)
     {
         var inputLength = inData.Length;
         float[] inFloats;
@@ -153,22 +153,19 @@ public class AudioDsp : IAudioDsp
 
         if (channels == 1)
         {
-            return new Sound
-            {
-                Samples =
-                [
-                    new Sample
-                    {
-                        Data = inFloats
-                    }
-                ]
-            };
+            return
+            [
+                new Sample
+                {
+                    Data = inFloats
+                }
+            ];
         }
 
-        return FloatsToSound(inFloats, channels);
+        return FloatsToSamples(inFloats, channels);
     }
 
-    public Sound? FloatsToSound(ReadOnlySpan<float> inFloats, int channels)
+    public Sample[] FloatsToSamples(ReadOnlySpan<float> inFloats, int channels)
     {
         var inputLength = inFloats.Length;
 
@@ -177,51 +174,39 @@ public class AudioDsp : IAudioDsp
             // invalid
             case < 1:
             {
-                return null;
+                return [];
             }
             // mono
             case 1:
             {
-                return new Sound
-                {
-                    Samples =
-                    [
-                        new Sample
-                        {
-                            Data = inFloats.ToArray()
-                        }
-                    ]
-                };
+                return
+                [
+                    new Sample
+                    {
+                        Data = inFloats.ToArray()
+                    }
+                ];
             }
             // stereo (fast)
             case 2:
             {
-                var samples = new List<Sample>();
-
-                for (var c = 0; c < channels; c++)
-                    samples.Add(new Sample { Data = new float[inFloats.Length / channels] });
-
-                var result = new Sound
+                var samples = new Sample[]
                 {
-                    Samples = samples
+                    new() { Data = new float[inFloats.Length / channels] },
+                    new() { Data = new float[inFloats.Length / channels] }
                 };
-                
+
                 AudioSimd.Deinterleave2(inFloats, samples[0].Data.Span, samples[1].Data.Span);
 
-                return result;
+                return samples;
             }
             // all others (interleaved)
             default:
             {
-                var samples = new List<Sample>();
+                var samples = new Sample[channels];
 
                 for (var c = 0; c < channels; c++)
-                    samples.Add(new Sample { Data = new float[inFloats.Length / channels] });
-
-                var result = new Sound
-                {
-                    Samples = samples
-                };
+                    samples[c] = new Sample { Data = new float[inFloats.Length / channels] };
 
                 for (int i = 0, j = 0; i < inputLength; j++)
                 {
@@ -229,7 +214,7 @@ public class AudioDsp : IAudioDsp
                         samples[c].Data.Span[j] = inFloats[i++];
                 }
 
-                return result;
+                return samples;
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using MP3Sharp;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -19,17 +20,20 @@ public class Mp3Decoder(IAudioDsp audioDsp) : IMp3Decoder
         var rate = inputStream.Frequency;
         var data = inputStream.ReadAllBytes();
 
-        var result = audioDsp.BytesToSound(
+        var result = audioDsp.BytesToSamples(
             data.Span,
             16,
             channels,
             false
         );
 
-        if (result == null)
-            return null;
+        foreach (var sample in result)
+            sample[NumericData.Rate] = rate;
 
-        result[NumericData.Rate] = rate;
-        return result;
+        return new Sound
+        {
+            Samples = result.ToList(),
+            [NumericData.Rate] = rate
+        };
     }
 }
