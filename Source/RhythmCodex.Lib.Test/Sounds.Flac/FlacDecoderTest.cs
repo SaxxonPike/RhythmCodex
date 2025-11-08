@@ -7,7 +7,7 @@ using Shouldly;
 namespace RhythmCodex.Sounds.Flac;
 
 [TestFixture]
-public class FlacDecoderTest : BaseUnitTestFixture<FlacDecoder>
+public class FlacDecoderTest : BaseIntegrationFixture<FlacDecoder>
 {
     [Test]
     [TestCase("Flac.example.flac.zip")]

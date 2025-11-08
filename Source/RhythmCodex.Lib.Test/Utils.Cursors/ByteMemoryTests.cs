@@ -7,6 +7,7 @@ using Shouldly;
 
 namespace RhythmCodex.Utils.Cursors;
 
+[Parallelizable(ParallelScope.None)]
 public class ByteMemoryTests : BaseTestFixture
 {
     private byte[] _bytes;

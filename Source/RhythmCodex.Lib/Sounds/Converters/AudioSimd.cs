@@ -107,7 +107,7 @@ internal static class AudioSimd
         for (int i = 0, j = startSample; i < source.Length; i++, j += advanceSamples)
             target[j] = unchecked((short)(Math.Clamp(source[i], -1f, 1f) * 32767f));
     }
-    
+
     public static void Mix(Span<float> target, ReadOnlySpan<float> source)
     {
         var targetCursor = target;
@@ -214,5 +214,73 @@ internal static class AudioSimd
 
         for (var i = 0; i < cursor.Length; i++)
             cursor[i] *= amp;
+    }
+
+    public static void Deinterleave2(ReadOnlySpan<float> data, Span<float> target0, Span<float> target1)
+    {
+        var inCursor = data;
+        var outCursor0 = target0;
+        var outCursor1 = target1;
+
+        if (Vector512.IsHardwareAccelerated)
+        {
+            var shuffle = Vector512.Create(
+                Vector256.Create(0, 2, 4, 6, 8, 10, 12, 14), 
+                Vector256.Create(1, 3, 5, 7, 9, 11, 13, 15)
+            );
+
+            while (inCursor.Length >= 16)
+            {
+                var v = Vector512.Create(inCursor);
+                v = Vector512.ShuffleNative(v, shuffle);
+                v.GetLower().CopyTo(outCursor0);
+                v.GetUpper().CopyTo(outCursor1);
+                inCursor = inCursor[16..];
+                outCursor0 = outCursor0[8..];
+                outCursor1 = outCursor1[8..];
+            }
+        }
+        else if (Vector256.IsHardwareAccelerated)
+        {
+            var shuffle = Vector256.Create(
+                Vector128.Create(0, 2, 4, 6), 
+                Vector128.Create(1, 3, 5, 7)
+            );
+
+            while (inCursor.Length >= 8)
+            {
+                var v = Vector256.Create(inCursor);
+                v = Vector256.ShuffleNative(v, shuffle);
+                v.GetLower().CopyTo(outCursor0);
+                v.GetUpper().CopyTo(outCursor1);
+                inCursor = inCursor[8..];
+                outCursor0 = outCursor0[4..];
+                outCursor1 = outCursor1[4..];
+            }
+        }
+        else if (Vector128.IsHardwareAccelerated)
+        {
+            var shuffle = Vector128.Create(
+                Vector64.Create(0, 2), 
+                Vector64.Create(1, 3)
+            );
+
+            while (inCursor.Length >= 4)
+            {
+                var v = Vector128.Create(inCursor);
+                v = Vector128.ShuffleNative(v, shuffle);
+                v.GetLower().CopyTo(outCursor0);
+                v.GetUpper().CopyTo(outCursor1);
+                inCursor = inCursor[4..];
+                outCursor0 = outCursor0[2..];
+                outCursor1 = outCursor1[2..];
+            } 
+        }
+
+        for (int i = 0, j = 0; i < inCursor.Length - 1; i += 2, j++)
+        {
+            outCursor0[j] = inCursor[i];
+            outCursor1[j] = inCursor[i + 1];
+        }
     }
 }

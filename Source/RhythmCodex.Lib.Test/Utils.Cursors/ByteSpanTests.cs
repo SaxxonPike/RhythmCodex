@@ -8,6 +8,7 @@ using Shouldly;
 namespace RhythmCodex.Utils.Cursors;
 
 [TestFixture]
+[Parallelizable(ParallelScope.None)]
 public class ByteSpanTests : BaseTestFixture
 {
     private byte[] _bytes;

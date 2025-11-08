@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO.Compression;
 using AutoFixture;
 using AutoFixture.Dsl;
@@ -15,13 +16,8 @@ namespace RhythmCodex;
 [PublicAPI]
 public abstract class BaseTestFixture
 {
-    private readonly Lazy<Fixture> _fixture = new(() =>
-    {
-        var fixture = new Fixture();
-        new SupportMutableValueTypesCustomization().Customize(fixture);
-        return fixture;
-    });
-
+    private static readonly ConcurrentDictionary<string, Fixture> _fixtures = [];
+    
     private Stopwatch _stopwatch;
 
     [SetUp]
@@ -37,10 +33,21 @@ public abstract class BaseTestFixture
         _stopwatch.Stop();
         TestContext.Out.WriteLine(
             $"{TestContext.CurrentContext.Test.FullName}: {_stopwatch.ElapsedMilliseconds}ms");
+        _fixtures.Remove(TestContext.CurrentContext.Test.ID, out _);
     }
     
     public Randomizer Random => 
         TestContext.CurrentContext.Random;
+
+    private Fixture GetFixture()
+    {
+        return _fixtures.GetOrAdd(TestContext.CurrentContext.Test.ID, _ =>
+        {
+            var fixture = new Fixture();
+            new SupportMutableValueTypesCustomization().Customize(fixture);
+            return fixture;
+        });
+    }
 
     /// <summary>
     ///     Retrieves an embedded resource by name.
@@ -85,7 +92,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected ICustomizationComposer<T> Build<T>()
     {
-        return _fixture.Value.Build<T>();
+        return GetFixture().Build<T>();
     }
 
     /// <summary>
@@ -93,7 +100,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected T Create<T>()
     {
-        return _fixture.Value.Create<T>();
+        return GetFixture().Create<T>();
     }
 
     /// <summary>
@@ -101,7 +108,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected T[] CreateMany<T>()
     {
-        return _fixture.Value.CreateMany<T>().ToArray();
+        return GetFixture().CreateMany<T>().ToArray();
     }
 
     /// <summary>
@@ -109,7 +116,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected T[] CreateMany<T>(int count)
     {
-        return _fixture.Value.CreateMany<T>(count).ToArray();
+        return GetFixture().CreateMany<T>(count).ToArray();
     }
 
     /// <summary>

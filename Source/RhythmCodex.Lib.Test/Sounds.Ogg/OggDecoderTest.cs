@@ -7,7 +7,7 @@ using Shouldly;
 namespace RhythmCodex.Sounds.Ogg;
 
 [TestFixture]
-public class OggDecoderTest : BaseUnitTestFixture<OggDecoder>
+public class OggDecoderTest : BaseIntegrationFixture<OggDecoder>
 {
     [Test]
     [TestCase("Ogg.example.ogg.zip")]

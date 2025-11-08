@@ -183,18 +183,14 @@ public sealed class FlacFile : IFlacFile
     ///     number of bytes read.
     /// </summary>
     /// <param name="buffer">
-    ///     An array of bytes. When this method returns, the <paramref name="buffer" /> contains the specified
-    ///     byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> +
-    ///     <paramref name="count" /> - 1) replaced by the bytes read from the current source.
+    ///     A span of bytes to read into.
     /// </param>
-    /// <param name="offset">
-    ///     The zero-based byte offset in the <paramref name="buffer" /> at which to begin storing the data
-    ///     read from the current stream.
-    /// </param>
-    /// <param name="count">The maximum number of bytes to read from the current source.</param>
     /// <returns>The total number of bytes read into the buffer.</returns>
-    public int Read(byte[] buffer, int offset, int count)
+    public int Read(Span<byte> buffer)
     {
+        var count = buffer.Length;
+        var offset = 0;
+
         CheckForDisposed();
 
         var read = 0;
@@ -223,7 +219,7 @@ public sealed class FlacFile : IFlacFile
 
                 var bufferlength = frame.GetBuffer(ref _overflowBuffer);
                 var bytesToCopy = Math.Min(count - read, bufferlength);
-                _overflowBuffer.Span[..bytesToCopy].CopyTo(buffer.AsSpan()[offset..]);
+                _overflowBuffer.Span[..bytesToCopy].CopyTo(buffer[offset..]);
                 read += bytesToCopy;
                 offset += bytesToCopy;
 
@@ -236,12 +232,30 @@ public sealed class FlacFile : IFlacFile
         return read;
     }
 
-    private int GetOverflows(Memory<byte> buffer, ref int offset, int count)
+    /// <summary>
+    ///     Reads a sequence of bytes from the <see cref="FlacFile" /> and advances the position within the stream by the
+    ///     number of bytes read.
+    /// </summary>
+    /// <param name="buffer">
+    ///     An array of bytes. When this method returns, the <paramref name="buffer" /> contains the specified
+    ///     byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> +
+    ///     <paramref name="count" /> - 1) replaced by the bytes read from the current source.
+    /// </param>
+    /// <param name="offset">
+    ///     The zero-based byte offset in the <paramref name="buffer" /> at which to begin storing the data
+    ///     read from the current stream.
+    /// </param>
+    /// <param name="count">The maximum number of bytes to read from the current source.</param>
+    /// <returns>The total number of bytes read into the buffer.</returns>
+    public int Read(byte[] buffer, int offset, int count) => 
+        Read(buffer.AsSpan(offset, count));
+
+    private int GetOverflows(Span<byte> buffer, ref int offset, int count)
     {
         if (_overflowCount != 0 && count > 0)
         {
             var bytesToCopy = Math.Min(count, _overflowCount);
-            _overflowBuffer.Span.Slice(_overflowOffset, bytesToCopy).CopyTo(buffer.Span[offset..]);
+            _overflowBuffer.Span.Slice(_overflowOffset, bytesToCopy).CopyTo(buffer[offset..]);
 
             _overflowCount -= bytesToCopy;
             _overflowOffset += bytesToCopy;

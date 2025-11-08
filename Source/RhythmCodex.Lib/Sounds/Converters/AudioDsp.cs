@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,17 +69,179 @@ public class AudioDsp : IAudioDsp
                 );
         });
 
-        // for (var i = 0; i < sampleCount; i++)
-        // {
-        //     AudioSimd.Quantize16(
-        //         sound.Samples[i].Data.Span,
-        //         MemoryMarshal.Cast<byte, short>(output.AsSpan()),
-        //         i,
-        //         sampleCount
-        //     );
-        // }
-        
         return output;
+    }
+
+    public Sound? BytesToSound(ReadOnlySpan<byte> inData, int bitsPerSample, int channels, bool bigEndian)
+    {
+        var inputLength = inData.Length;
+        float[] inFloats;
+
+        if (channels < 1 || bitsPerSample < 8)
+            return null;
+
+        switch (bitsPerSample)
+        {
+            // 8 bit
+            case 8:
+            {
+                inFloats = new float[inputLength];
+                for (var i = 0; i < inputLength; i++)
+                    inFloats[i] = inData[i] / 255f;
+                break;
+            }
+            // 16 bit
+            case 16:
+            {
+                inFloats = new float[inputLength / 2];
+                inputLength = inputLength / 2 * 2;
+                if (!bigEndian)
+                {
+                    for (int i = 0, j = 0; i < inputLength; i += 2, j++)
+                        inFloats[j] = BinaryPrimitives.ReadInt16LittleEndian(inData[i..]) / 32768f;
+                }
+                else
+                {
+                    for (int i = 0, j = 0; i < inputLength; i += 2, j++)
+                        inFloats[j] = BinaryPrimitives.ReadInt16BigEndian(inData[i..]) / 32768f;
+                }
+
+                break;
+            }
+            // 24 bit
+            case 24:
+            {
+                inFloats = new float[inputLength / 3];
+                inputLength = inputLength / 3 * 3;
+                if (!bigEndian)
+                {
+                    for (int i = 0, j = 0; i < inputLength; i += 3, j++)
+                        inFloats[j] = (inData[0] | (inData[1] << 8) | (inData[2] << 16)) / 16777215f;
+                }
+                else
+                {
+                    for (int i = 0, j = 0; i < inputLength; i += 3, j++)
+                        inFloats[j] = (inData[2] | (inData[1] << 8) | (inData[0] << 16)) / 16777215f;
+                }
+
+                break;
+            }
+            // 32 bit
+            case 32:
+            {
+                inFloats = new float[inputLength / 4];
+                inputLength = inputLength / 4 * 4;
+                if (!bigEndian)
+                {
+                    for (int i = 0, j = 0; i < inputLength; i += 4, j++)
+                        inFloats[j] = BinaryPrimitives.ReadInt32LittleEndian(inData[i..]) / (float)int.MaxValue;
+                }
+                else
+                {
+                    for (int i = 0, j = 0; i < inputLength; i += 4, j++)
+                        inFloats[j] = BinaryPrimitives.ReadInt32BigEndian(inData[i..]) / (float)int.MaxValue;
+                }
+
+                break;
+            }
+            // unsupported
+            default:
+            {
+                return null;
+            }
+        }
+
+        if (channels == 1)
+        {
+            return new Sound
+            {
+                Samples =
+                [
+                    new Sample
+                    {
+                        Data = inFloats
+                    }
+                ]
+            };
+        }
+
+        return FloatsToSound(inFloats, channels);
+    }
+
+    public Sound? FloatsToSound(ReadOnlySpan<float> inFloats, int channels)
+    {
+        var inputLength = inFloats.Length;
+
+        switch (channels)
+        {
+            // invalid
+            case < 1:
+            {
+                return null;
+            }
+            // mono
+            case 1:
+            {
+                return new Sound
+                {
+                    Samples =
+                    [
+                        new Sample
+                        {
+                            Data = inFloats.ToArray()
+                        }
+                    ]
+                };
+            }
+            // stereo (fast)
+            case 2:
+            {
+                var samples = new List<Sample>();
+
+                for (var c = 0; c < channels; c++)
+                    samples.Add(new Sample { Data = new float[inFloats.Length / channels] });
+
+                var result = new Sound
+                {
+                    Samples = samples
+                };
+                
+                AudioSimd.Deinterleave2(inFloats, samples[0].Data.Span, samples[1].Data.Span);
+
+                return result;
+            }
+            // all others (interleaved)
+            default:
+            {
+                var samples = new List<Sample>();
+
+                for (var c = 0; c < channels; c++)
+                    samples.Add(new Sample { Data = new float[inFloats.Length / channels] });
+
+                var result = new Sound
+                {
+                    Samples = samples
+                };
+
+                for (int i = 0, j = 0; i < inputLength; j++)
+                {
+                    for (var c = 0; c < channels; c++)
+                        samples[c].Data.Span[j] = inFloats[i++];
+                }
+
+                return result;
+            }
+        }
+    }
+
+    public (float[] A, float[] B) Deinterleave2(
+        Span<float> data
+    )
+    {
+        var outLength = data.Length / 2;
+        var result = (A: new float[outLength], B: new float[outLength]);
+        AudioSimd.Deinterleave2(data, result.A, result.B);
+        return result;
     }
 
     public Sound ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)

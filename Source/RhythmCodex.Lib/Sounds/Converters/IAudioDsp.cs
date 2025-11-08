@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Sounds.Models;
@@ -15,4 +16,7 @@ public interface IAudioDsp
     Sound IntegerDownsample(Sound sound, int factor);
     Sound Mix(IEnumerable<Sound> sound);
     byte[] Interleave16Bits(Sound sound);
+    Sound? BytesToSound(ReadOnlySpan<byte> data, int bitsPerSample, int channels, bool bigEndian);
+    Sound? FloatsToSound(ReadOnlySpan<float> data, int channels);
+    (float[] A, float[] B) Deinterleave2(Span<float> data);
 }

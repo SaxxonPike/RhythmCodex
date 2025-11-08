@@ -7,7 +7,7 @@ using Shouldly;
 namespace RhythmCodex.Sounds.Mp3;
 
 [TestFixture]
-public class Mp3DecoderTest : BaseUnitTestFixture<Mp3Decoder>
+public class Mp3DecoderTest : BaseIntegrationFixture<Mp3Decoder>
 {
     [Test]
     [TestCase("Mp3.example.mp3.zip")]

@@ -15,7 +15,7 @@ public class Digital573AudioKeyProvider : IDigital573AudioKeyProvider
 {
     private readonly Lazy<Dictionary<string, Digital573AudioKey>> _keys = new(() =>
     {
-        var archive = EmbeddedResources.GetArchive("RhythmCodex.Digital573.Providers.Digital573AudioKeyDatabase.zip");
+        var archive = EmbeddedResources.GetArchive($"{typeof(Digital573AudioKeyProvider).Namespace}.Digital573AudioKeyDatabase.zip");
 
         var settings = new DataContractJsonSerializerSettings
         {
