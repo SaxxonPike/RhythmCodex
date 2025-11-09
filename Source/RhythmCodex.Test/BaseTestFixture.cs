@@ -16,7 +16,7 @@ namespace RhythmCodex;
 [PublicAPI]
 public abstract class BaseTestFixture
 {
-    private static readonly ConcurrentDictionary<string, Fixture> _fixtures = [];
+    private static readonly ConcurrentDictionary<string, Fixture> Fixtures = [];
     
     private Stopwatch _stopwatch;
 
@@ -33,7 +33,7 @@ public abstract class BaseTestFixture
         _stopwatch.Stop();
         TestContext.Out.WriteLine(
             $"{TestContext.CurrentContext.Test.FullName}: {_stopwatch.ElapsedMilliseconds}ms");
-        _fixtures.Remove(TestContext.CurrentContext.Test.ID, out _);
+        Fixtures.Remove(TestContext.CurrentContext.Test.ID, out _);
     }
     
     public Randomizer Random => 
@@ -41,7 +41,7 @@ public abstract class BaseTestFixture
 
     private Fixture GetFixture()
     {
-        return _fixtures.GetOrAdd(TestContext.CurrentContext.Test.ID, _ =>
+        return Fixtures.GetOrAdd(TestContext.CurrentContext.Test.ID, _ =>
         {
             var fixture = new Fixture();
             new SupportMutableValueTypesCustomization().Customize(fixture);
