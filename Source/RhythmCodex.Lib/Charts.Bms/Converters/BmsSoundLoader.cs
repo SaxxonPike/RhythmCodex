@@ -5,28 +5,22 @@ using System.Linq;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
-using RhythmCodex.Sounds.Flac.Converters;
 using RhythmCodex.Sounds.Models;
-using RhythmCodex.Sounds.Mp3.Converters;
-using RhythmCodex.Sounds.Ogg.Converters;
-using RhythmCodex.Sounds.Wav.Converters;
+using RhythmCodex.Sounds.Streamers;
 
 namespace RhythmCodex.Charts.Bms.Converters;
 
 [Service]
 public class BmsSoundLoader(
-    IWavDecoder wavDecoder,
-    IMp3Decoder mp3Decoder,
-    IOggDecoder oggDecoder,
-    IFlacDecoder flacDecoder)
-    : IBmsSoundLoader
+    ISoundStreamReader soundStreamReader
+) : IBmsSoundLoader
 {
     private readonly Dictionary<string, Func<Stream, Sound?>> _extensions = new()
     {
-        { "wav", wavDecoder.Decode },
-        { "flac", flacDecoder.Decode },
-        { "ogg", oggDecoder.Decode },
-        { "mp3", mp3Decoder.Decode }
+        { "wav", soundStreamReader.Read },
+        { "flac", soundStreamReader.Read },
+        { "ogg", soundStreamReader.Read },
+        { "mp3", soundStreamReader.Read }
     };
 
     public List<Sound> Load(IDictionary<int, string> map, IFileAccessor accessor)

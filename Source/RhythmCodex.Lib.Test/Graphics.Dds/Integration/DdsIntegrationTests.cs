@@ -4,7 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Graphics.Dds.Converters;
 using RhythmCodex.Graphics.Dds.Streamers;
-using RhythmCodex.Graphics.Gdi.Streamers;
+using RhythmCodex.Graphics.Streamers;
 
 namespace RhythmCodex.Graphics.Dds.Integration;
 

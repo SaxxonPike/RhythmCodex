@@ -1,5 +1,5 @@
-using RhythmCodex.Graphics.Gdi.Streamers;
 using RhythmCodex.Graphics.Models;
+using RhythmCodex.Graphics.Streamers;
 using RhythmCodex.IoC;
 using RhythmCodex.Plugin.Sdl3.Infrastructure;
 using SDL;

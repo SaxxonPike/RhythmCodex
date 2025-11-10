@@ -18,11 +18,7 @@
         <None Remove="*.DotSettings" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Sounds.Flac\" />
       <Folder Include="Sounds.ImaAdpcm\" />
-      <Folder Include="Sounds.Mp3\" />
-      <Folder Include="Sounds.Ogg\" />
-      <Folder Include="Sounds\" />
       <Folder Include="Charts.Bmson\" />
       <Folder Include="FileSystems.Chd\" />
       <Folder Include="FileSystems.Iso\" />

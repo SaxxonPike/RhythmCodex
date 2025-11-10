@@ -7,18 +7,16 @@ using RhythmCodex.Compressions.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.FileSystems.Chd.Model;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Sounds.Flac.Converters;
 
 namespace RhythmCodex.FileSystems.Chd.Streamers;
 
 public class ChdStream : Stream
 {
-    private readonly IFlacDecoder _flacDecoder;
     private readonly ILzmaDecoder _lzmaDecoder;
     private readonly Stream _baseStream;
     private readonly ChdStream? _parent;
 
-    internal ChdStream(IFlacDecoder flacDecoder, ILzmaDecoder lzmaDecoder, Stream baseStream)
+    internal ChdStream(ILzmaDecoder lzmaDecoder, Stream baseStream)
     {
         _reader = new BinaryReader(baseStream);
 
@@ -59,13 +57,12 @@ public class ChdStream : Stream
                 throw new RhythmCodexException("Unrecognized CHD version");
         }
 
-        _flacDecoder = flacDecoder;
         _lzmaDecoder = lzmaDecoder;
         _baseStream = baseStream;
     }
 
-    internal ChdStream(IFlacDecoder flacDecoder, ILzmaDecoder lzmaDecoder, Stream baseStream, ChdStream parent)
-        : this(flacDecoder, lzmaDecoder, baseStream)
+    internal ChdStream(ILzmaDecoder lzmaDecoder, Stream baseStream, ChdStream parent)
+        : this(lzmaDecoder, baseStream)
     {
         _parent = parent;
     }
@@ -282,14 +279,8 @@ public class ChdStream : Stream
         while (flacBlockSize > 2048)
             flacBlockSize /= 2;
 
-        var frame = _flacDecoder
-            .DecodeFrame(_baseStream, (int) flacBlockSize)
-            .Span[..(int) _header.hunkBytes]
-            .ToArray();
-
-        postProcess(frame);
-
-        return frame;
+        // TODO: this (the old FLAC decoder was removed)
+        return Array.Empty<byte>();
 
         void LittleEndianPostProcess(byte[] _)
         {

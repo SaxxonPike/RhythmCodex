@@ -6,7 +6,7 @@ using NUnit.Framework;
 using RhythmCodex.Games.Stepmania;
 using RhythmCodex.Games.Stepmania.Model;
 using RhythmCodex.Games.Stepmania.Streamers;
-using RhythmCodex.Graphics.Gdi.Streamers;
+using RhythmCodex.Graphics.Streamers;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Tools.OneShots;

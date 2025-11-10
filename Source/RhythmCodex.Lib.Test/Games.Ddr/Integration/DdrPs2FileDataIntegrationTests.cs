@@ -13,7 +13,7 @@ using RhythmCodex.Games.Stepmania;
 using RhythmCodex.Games.Stepmania.Converters;
 using RhythmCodex.Games.Stepmania.Model;
 using RhythmCodex.Games.Stepmania.Streamers;
-using RhythmCodex.Graphics.Gdi.Streamers;
+using RhythmCodex.Graphics.Streamers;
 using RhythmCodex.Graphics.Tcb.Converters;
 using RhythmCodex.Graphics.Tcb.Streamers;
 using RhythmCodex.Heuristics;

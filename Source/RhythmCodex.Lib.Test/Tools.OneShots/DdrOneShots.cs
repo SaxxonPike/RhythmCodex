@@ -17,7 +17,7 @@ using RhythmCodex.Games.Stepmania.Model;
 using RhythmCodex.Games.Stepmania.Streamers;
 using RhythmCodex.Graphics.Dds.Converters;
 using RhythmCodex.Graphics.Dds.Streamers;
-using RhythmCodex.Graphics.Gdi.Streamers;
+using RhythmCodex.Graphics.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Riff.Converters;
