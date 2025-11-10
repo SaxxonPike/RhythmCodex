@@ -20,7 +20,7 @@ namespace RhythmCodex.Cli.Orchestration;
 public class GraphicsTaskBuilder(
     IFileSystem fileSystem,
     ILogger logger,
-    IPngStreamWriter pngStreamWriter,
+    IBitmapStreamWriter bitmapStreamWriter,
     ITgaStreamReader tgaStreamReader,
     ITgaDecoder tgaDecoder,
     IGraphicDsp graphicDsp,
@@ -74,7 +74,7 @@ public class GraphicsTaskBuilder(
                         {
                             var bitmap = CropImage(image);
                             using (var outStream = OpenWriteSingle(task, file, i => $"{i}.{idx}.png"))
-                                pngStreamWriter.Write(outStream, bitmap);
+                                bitmapStreamWriter.Write(outStream, bitmap);
                             idx++;
                         }
 
@@ -84,7 +84,7 @@ public class GraphicsTaskBuilder(
                     {
                         var bitmap = CropImage(images.Single());
                         using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
-                        pngStreamWriter.Write(outStream, bitmap);
+                        bitmapStreamWriter.Write(outStream, bitmap);
                         break;
                     }
                 }
@@ -112,7 +112,7 @@ public class GraphicsTaskBuilder(
                 task.Message = "Decoding DDS.";
                 var bitmap = CropImage(ddsBitmapDecoder.Decode(image));
                 using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
-                pngStreamWriter.Write(outStream, bitmap);
+                bitmapStreamWriter.Write(outStream, bitmap);
             });
 
             return true;
@@ -138,7 +138,7 @@ public class GraphicsTaskBuilder(
                 var bitmap = CropImage(tgaDecoder.Decode(image));
 
                 using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
-                pngStreamWriter.Write(outStream, bitmap);
+                bitmapStreamWriter.Write(outStream, bitmap);
             });
 
             return true;
