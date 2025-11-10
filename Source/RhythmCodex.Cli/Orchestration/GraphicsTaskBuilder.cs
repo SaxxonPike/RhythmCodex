@@ -7,8 +7,6 @@ using RhythmCodex.Graphics.Dds.Converters;
 using RhythmCodex.Graphics.Dds.Streamers;
 using RhythmCodex.Graphics.Gdi.Streamers;
 using RhythmCodex.Graphics.Models;
-using RhythmCodex.Graphics.Tga.Converters;
-using RhythmCodex.Graphics.Tga.Streamers;
 using RhythmCodex.Graphics.Tim.Converters;
 using RhythmCodex.Graphics.Tim.Streamers;
 using RhythmCodex.Infrastructure;
@@ -20,9 +18,8 @@ namespace RhythmCodex.Cli.Orchestration;
 public class GraphicsTaskBuilder(
     IFileSystem fileSystem,
     ILogger logger,
+    IBitmapStreamReader bitmapStreamReader,
     IBitmapStreamWriter bitmapStreamWriter,
-    ITgaStreamReader tgaStreamReader,
-    ITgaDecoder tgaDecoder,
     IGraphicDsp graphicDsp,
     IDdsStreamReader ddsStreamReader,
     IDdsBitmapDecoder ddsBitmapDecoder,
@@ -133,9 +130,9 @@ public class GraphicsTaskBuilder(
             ParallelProgress(task, files, file =>
             {
                 using var stream = OpenRead(task, file);
-                var image = tgaStreamReader.Read(stream, (int) stream.Length);
+                var image = bitmapStreamReader.Read(stream);
                 task.Message = "Decoding TGA.";
-                var bitmap = CropImage(tgaDecoder.Decode(image));
+                var bitmap = CropImage(image);
 
                 using var outStream = OpenWriteSingle(task, file, i => $"{i}.png");
                 bitmapStreamWriter.Write(outStream, bitmap);

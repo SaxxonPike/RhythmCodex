@@ -176,7 +176,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
 
         var imageReader = Resolve<ITcbStreamReader>();
         var imageDecoder = Resolve<ITcbImageDecoder>();
-        var pngEncoder = Resolve<IPngStreamWriter>();
+        var pngEncoder = Resolve<IBitmapStreamWriter>();
 
         foreach (var entry in decodedTable)
         {
@@ -207,7 +207,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
         var decomp = Resolve<IBemaniLzDecoder>();
         var imageReader = Resolve<ITcbStreamReader>();
         var imageDecoder = Resolve<ITcbImageDecoder>();
-        var pngEncoder = Resolve<IPngStreamWriter>();
+        var pngEncoder = Resolve<IBitmapStreamWriter>();
             
         for (var i = 0; i < count; i++)
         {
@@ -234,7 +234,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
         //
         // var imageReader = Resolve<ITcbStreamReader>();
         // var imageDecoder = Resolve<ITcbImageDecoder>();
-        // var pngEncoder = Resolve<IPngStreamWriter>();
+        // var pngEncoder = Resolve<IBitmapStreamWriter>();
         //
         // foreach (var entry in decodedTable)
         // {
@@ -259,7 +259,7 @@ public class DdrPs2FileDataIntegrationTests : BaseIntegrationFixture
         var sourceReader = new BinaryReader(source);
         var imageReader = Resolve<ITcbStreamReader>();
         var imageDecoder = Resolve<ITcbImageDecoder>();
-        var pngEncoder = Resolve<IPngStreamWriter>();
+        var pngEncoder = Resolve<IBitmapStreamWriter>();
         var decompressor = Resolve<IBemaniLzDecoder>();
 
         var offset = 0L;

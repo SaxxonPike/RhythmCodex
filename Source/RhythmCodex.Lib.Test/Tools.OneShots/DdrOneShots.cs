@@ -135,7 +135,7 @@ public class DdrOneShots : BaseIntegrationFixture
         var smWriter = Resolve<ISmStreamWriter>();
         var riffEncoder = Resolve<IRiffPcm16SoundEncoder>();
         var riffWriter = Resolve<IRiffStreamWriter>();
-        var pngWriter = Resolve<IPngStreamWriter>();
+        var pngWriter = Resolve<IBitmapStreamWriter>();
 
         using var startupArc = File.OpenRead(startupPath);
         var startupFiles = arcReader.Read(startupArc);

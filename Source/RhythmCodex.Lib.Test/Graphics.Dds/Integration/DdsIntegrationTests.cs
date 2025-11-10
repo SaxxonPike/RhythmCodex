@@ -24,7 +24,7 @@ public class DdsIntegrationTests : BaseIntegrationFixture
 
         var reader = Resolve<IDdsStreamReader>();
         var decoder = Resolve<IDdsBitmapDecoder>();
-        var writer = Resolve<IPngStreamWriter>();
+        var writer = Resolve<IBitmapStreamWriter>();
             
         var inputImage = reader.Read(mem, (int) mem.Length);
         var decodedImage = decoder.Decode(inputImage);
