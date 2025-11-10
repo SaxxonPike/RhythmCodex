@@ -184,13 +184,7 @@ public class TgaDecoder(IGraphicDsp graphicDsp) : ITgaDecoder
                     outputIndex += scanIncrement;
                 }
 
-                return new PaletteBitmap
-                {
-                    Width = tgaImage.Width,
-                    Height = tgaImage.Height,
-                    Data = pixels,
-                    Palette = palette
-                };
+                return new PaletteBitmap(tgaImage.Width, pixels, palette);
             }
             default:
             {

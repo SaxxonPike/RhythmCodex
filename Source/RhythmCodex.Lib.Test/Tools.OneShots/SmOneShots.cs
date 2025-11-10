@@ -6,8 +6,8 @@ using NUnit.Framework;
 using RhythmCodex.Games.Stepmania;
 using RhythmCodex.Games.Stepmania.Model;
 using RhythmCodex.Games.Stepmania.Streamers;
+using RhythmCodex.Graphics.Gdi.Streamers;
 using RhythmCodex.Infrastructure;
-using SixLabors.ImageSharp;
 
 namespace RhythmCodex.Tools.OneShots;
 
@@ -21,6 +21,7 @@ public class SmOneShots : BaseIntegrationFixture
     {
         var smReader = Resolve<ISmStreamReader>();
         var smWriter = Resolve<ISmStreamWriter>();
+        var imageReader = Resolve<IBitmapStreamReader>();
 
         var files = Directory.GetFiles(path, "*.sm", SearchOption.AllDirectories);
         foreach (var file in files)
@@ -30,7 +31,11 @@ public class SmOneShots : BaseIntegrationFixture
                 commands = smReader.Read(stream).ToList();
 
             var smPath = Path.GetDirectoryName(file)!;
-            var images = Directory.GetFiles(smPath, "*.png").ToDictionary(f => f, Image.Load);
+            var images = Directory.GetFiles(smPath, "*.png").ToDictionary(f => f, f =>
+            {
+                using var imageStream = File.OpenRead(f);
+                return imageReader.Read(imageStream);
+            });
             var musics = Directory.GetFiles(smPath, "*.mp3").ToDictionary(f => f, f => new FileInfo(f));
 
             // replace banner

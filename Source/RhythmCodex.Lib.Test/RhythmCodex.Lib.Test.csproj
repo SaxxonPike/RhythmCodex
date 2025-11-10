@@ -13,17 +13,18 @@
         <PackageReference Include="NUnit" Version="4.4.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
         <PackageReference Include="Shouldly" Version="4.3.0" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RhythmCodex.Lib.Test.Data\RhythmCodex.Test.Data.csproj" />
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj" />
-        <ProjectReference Include="..\RhythmCodex.Plugin.ImageSharp\RhythmCodex.Plugin.ImageSharp.csproj" />
+        <ProjectReference Include="..\RhythmCodex.Plugin.DependencyInjection\RhythmCodex.Plugin.DependencyInjection.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj" />
+        <ProjectReference Include="..\RhythmCodex.Plugin.Sdl3\RhythmCodex.Plugin.Sdl3.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj" />
+        <ProjectReference Include="..\RhythmCodex.Plugin.SharpZipLib\RhythmCodex.Plugin.SharpZipLib.csproj" />
         <ProjectReference Include="..\RhythmCodex.Test\RhythmCodex.Test.csproj" />
     </ItemGroup>
     <ItemGroup>

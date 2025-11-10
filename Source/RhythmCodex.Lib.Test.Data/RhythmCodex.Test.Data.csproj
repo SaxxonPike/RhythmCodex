@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
+        <EmbeddedResource Include="**\*.png"/>
         <EmbeddedResource Include="**\*.zip"/>
     </ItemGroup>
     <ItemGroup>

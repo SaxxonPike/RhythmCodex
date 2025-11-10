@@ -4,10 +4,17 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Graphics.Models;
 
 [Model]
-public class PaletteBitmap : Metadata, IPaletteBitmap
+public class PaletteBitmap : Bitmap
 {
-    public int Width { get; set; }
-    public int Height { get; set; }
-    public int[] Data { get; set; } = [];
-    public int[] Palette { get; set; } = [];
+    public PaletteBitmap(int width, int[] data, int[] palette) : base(width, data)
+    {
+        Palette = palette;
+    }
+
+    public PaletteBitmap(int width, int height, int colors) : base(width, height)
+    {
+        Palette = new int[colors];
+    }
+
+    public int[] Palette { get; }
 }

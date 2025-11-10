@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ppy.SDL3-CS" Version="2025.920.0" />
+    <PackageReference Include="ppy.SDL3_image-CS" Version="2025.920.0" />
+    <PackageReference Include="ppy.SDL3_mixer-CS" Version="2025.920.0" />
+  </ItemGroup>
+
+</Project>
