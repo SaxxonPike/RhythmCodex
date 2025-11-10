@@ -34,7 +34,7 @@ public class DjmainDecoder(
             throw new RhythmCodexException("Chunk length must be exactly 16mb (0x1000000 bytes)");
 
         if (chunk.Format == DjmainChunkFormat.Unknown ||
-            !Enum.IsDefined(typeof(DjmainChunkFormat), chunk.Format))
+            !Enum.IsDefined(chunk.Format))
             throw new RhythmCodexException($"{nameof(chunk.Format)} is not recognized");
 
         using var stream = new ReadOnlyMemoryStream(chunk.Data);

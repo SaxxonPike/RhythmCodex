@@ -51,7 +51,8 @@ public class DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatman
                 [NumericData.SourceVolume] = info.Volume,
                 [NumericData.Panning] = beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
                 [NumericData.SourcePanning] = info.Panning,
-                [NumericData.Channel] = info.Channel,
+                [NumericData.Channel] = (info.Channel & 0xF0) != 0 ? null : info.Channel,
+                [NumericData.SourceChannel] = info.Channel,
                 [NumericData.Rate] = beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
                 [NumericData.Id] = def.Key
             };

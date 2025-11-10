@@ -240,7 +240,7 @@ public class BeatmaniaTaskBuilder(
                         using var outStream = OpenWriteMulti(task, file,
                             _ => Path.Combine(chunkPath,
                                 $"{Alphabet.EncodeNumeric((int)chart[NumericData.Id], 2)}.render.wav"));
-                        var rendered = chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
+                        var rendered = chartRenderer.Render(chart, decoded.Samples, renderOptions);
                         var normalized = audioDsp.Normalize(rendered, 1.0f, true);
                         var encoded = riffPcm16SoundEncoder.Encode(normalized);
                         riffStreamWriter.Write(outStream, encoded);

@@ -7,5 +7,5 @@ namespace RhythmCodex.Sounds.Wav.Converters;
 
 public interface IChartRenderer
 {
-    Sound Render(IEnumerable<Event> events, IEnumerable<Sound> sounds, ChartRendererOptions options);
+    Sound Render(Chart chart, IEnumerable<Sound> sounds, ChartRendererOptions options);
 }

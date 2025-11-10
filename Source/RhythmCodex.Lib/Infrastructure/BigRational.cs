@@ -155,10 +155,8 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     }
 
     /// <inheritdoc />
-    public override int GetHashCode()
-    {
-        return unchecked(Numerator.GetHashCode() * 17 + Denominator.GetHashCode());
-    }
+    public override int GetHashCode() => 
+        unchecked(Numerator.GetHashCode() * 17 + Denominator.GetHashCode());
 
     /// <inheritdoc />
     int IComparable.CompareTo(object? obj)

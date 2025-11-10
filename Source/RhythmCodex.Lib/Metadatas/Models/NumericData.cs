@@ -43,5 +43,7 @@ public enum NumericData
     NoteCount,
     SourceRate,
     SourceOffset,
-    ColumnCount
+    ColumnCount,
+    SimultaneousSounds,
+    SourceChannel
 }

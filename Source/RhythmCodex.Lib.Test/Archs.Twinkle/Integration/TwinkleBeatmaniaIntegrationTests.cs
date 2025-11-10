@@ -113,7 +113,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
         {
             DoNotConsolidateSamples = true
         });
-        var rendered = dsp.Normalize(renderer.Render(archive.Charts[1].Events, archive.Samples, options), 1.0f, true);
+        var rendered = dsp.Normalize(renderer.Render(archive!.Charts[1], archive.Samples, options), 1.0f, true);
 
         // Assert.
         this.WriteSound(rendered, Path.Combine("twinkle.wav"));
@@ -149,7 +149,7 @@ public class TwinkleBeatmaniaIntegrationTests : BaseIntegrationFixture
 
             foreach (var chart in archive.Charts.AsParallel())
             {
-                var rendered = dsp.Normalize(renderer.Render(chart.Events, archive.Samples, options), 1.0f, false);
+                var rendered = dsp.Normalize(renderer.Render(chart, archive.Samples, options), 1.0f, false);
                 var path = Path.Combine("twinkle7", $"{chunk.Index:D4}_{(int)chart[NumericData.Id]:D2}.wav");
                 this.WriteSound(rendered, path);
             }

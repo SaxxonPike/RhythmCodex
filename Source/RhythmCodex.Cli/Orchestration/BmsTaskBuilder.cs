@@ -53,7 +53,7 @@ public class BmsTaskBuilder(
                 var decoded = bmsDecoder.Decode(resolved);
                 decoded.Chart.PopulateLinearOffsets();
                 var sounds = bmsSoundLoader.Load(decoded.SoundMap, accessor);
-                var rendered = chartRenderer.Render(decoded.Chart.Events, sounds, options);
+                var rendered = chartRenderer.Render(decoded.Chart, sounds, options);
                 var normalized = audioDsp.Normalize(rendered, 1.0f, true);
 
                 using var outFile = OpenWriteSingle(task, file, i => $"{i}.render.wav");
