@@ -50,7 +50,7 @@ public class DjmainHddDescriptionHeuristic : IDjmainHddDescriptionHeuristic
                 case " GEB07": return DjmainChunkFormat.BeatmaniaSeventh;
                 case " GQ993": return DjmainChunkFormat.BeatmaniaClub;
                 case " GQ858": return DjmainChunkFormat.BeatmaniaComplete;
-                case " GQ988": return DjmainChunkFormat.BeatmaniaComplete2;
+                case "GQ988 ": return DjmainChunkFormat.BeatmaniaComplete2;
                 case " GQA05": return DjmainChunkFormat.BeatmaniaCore;
                 case " GQ995": return DjmainChunkFormat.BeatmaniaDct;
                 case " GCC01": return DjmainChunkFormat.BeatmaniaFinal;
