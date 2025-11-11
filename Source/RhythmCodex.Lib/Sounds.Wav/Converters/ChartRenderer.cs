@@ -47,23 +47,37 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
 
         var soundList = new Dictionary<int, Sound>();
 
+        //
+        // Determine the samples within the map that will be used.
+        //
+
         foreach (var sound in sounds)
         {
             if (sound[NumericData.Id] is not { } id || sound[NumericData.SampleMap] != sampleBankId)
                 continue;
 
             var idKey = (int)id;
-            if (soundList.ContainsKey(idKey))
-                continue;
+            soundList.TryAdd(idKey, sound);
+        }
 
+        //
+        // Preprocess the sounds.
+        //
+
+        foreach (var (key, sound) in soundList.ToList().AsParallel())
+        {
             var processedSound = audioDsp.ApplyResampling(
                 audioDsp.ApplyEffects(sound),
                 resamplerProvider.GetBest(),
                 options.SampleRate
             );
 
-            soundList.Add(idKey, processedSound);
+            soundList[key] = processedSound;
         }
+
+        //
+        // Begin mixdown.
+        //
 
         var mixdownLeft = new List<float>();
         var mixdownRight = new List<float>();
@@ -111,6 +125,9 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         while (state.Any(s => s.Playing))
             Mix();
 
+        if (options.SwapStereo)
+            (mixdownLeft, mixdownRight) = (mixdownRight, mixdownLeft);
+        
         return new Sound
         {
             [NumericData.Rate] = options.SampleRate,

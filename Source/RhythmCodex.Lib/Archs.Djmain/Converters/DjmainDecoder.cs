@@ -58,7 +58,7 @@ public class DjmainDecoder(
         };
     }
 
-    private DjmainChartType GetChartType(DjmainChunkFormat format)
+    private static DjmainChartType GetChartType(DjmainChunkFormat format)
     {
         switch (format)
         {

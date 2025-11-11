@@ -17,6 +17,9 @@ namespace RhythmCodex.Tools.OneShots;
 
 public class DjmainOneShots : BaseIntegrationFixture
 {
+    /// <summary>
+    /// Renders a BMS set from each chunk within a Djmain system HDD.
+    /// </summary>
     [Test]
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st")]
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm2ndmix.zip", "bm1-2nd")]
@@ -70,6 +73,9 @@ public class DjmainOneShots : BaseIntegrationFixture
         Task.WaitAll(tasks.ToArray());
     }
 
+    /// <summary>
+    /// Renders a GST using each chart from each chunk within a Djmain system HDD.
+    /// </summary>
     [Test]
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st")]
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm2ndmix.zip", "bm1-2nd")]
@@ -101,6 +107,11 @@ public class DjmainOneShots : BaseIntegrationFixture
             DoNotConsolidateSamples = true
         };
 
+        var renderOptions = new ChartRendererOptions
+        {
+            SwapStereo = true
+        };
+
         var index = 0;
         var tasks = new List<Task>();
 
@@ -110,33 +121,27 @@ public class DjmainOneShots : BaseIntegrationFixture
 
             var idx = index;
 
-            if (idx == 38)
+            tasks.Add(Task.Run(() =>
             {
-                tasks.Add(Task.Run(() =>
+                if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
+                    return;
+
+                var archive = decoder.Decode(chunk, options);
+
+                foreach (var chart in archive.Charts)
                 {
-                    if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
-                        return;
+                    var id = (int)chart[NumericData.Id]!.Value;
+                    var title = $"{Alphabet.EncodeNumeric(idx, 4)}-{Alphabet.EncodeNumeric(id, 2)}";
+                    var path = Path.Combine(target, $"{title}.wav");
 
-                    var archive = decoder.Decode(chunk, options);
+                    TestContext.Out.WriteLine($"Rendering chart {id} for chunk {idx}");
 
-                    foreach (var chart in archive.Charts)
-                    {
-                        var id = (int)chart[NumericData.Id]!.Value;
-                        var title = $"{Alphabet.EncodeNumeric(idx, 4)}-{Alphabet.EncodeNumeric(id, 2)}";
-                        var path = Path.Combine(target, $"{title}.wav");
-
-                        TestContext.Out.WriteLine($"Rendering chart {id} for chunk {idx}");
-
-                        var rendered = renderer.Render(chart, archive.Samples, new ChartRendererOptions());
-                        var normalized = dsp.Normalize(rendered, 1.0f, true);
-                        this.WriteSound(normalized, path);
-                    }
-                }));
-            }
-            else if (idx > 38)
-            {
-                break;
-            }
+                    var rendered = renderer.Render(chart, archive.Samples, renderOptions);
+                    var normalized = dsp.Normalize(rendered, 1.0f, true);
+                    
+                    this.WriteSound(normalized, path);
+                }
+            }));
 
             index++;
         }

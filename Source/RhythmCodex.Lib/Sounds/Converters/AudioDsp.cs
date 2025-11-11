@@ -78,7 +78,7 @@ public class AudioDsp : IAudioDsp
         float[] inFloats;
 
         if (channels < 1 || bitsPerSample < 8)
-            return null;
+            return [];
 
         switch (bitsPerSample)
         {
@@ -147,7 +147,7 @@ public class AudioDsp : IAudioDsp
             // unsupported
             default:
             {
-                return null;
+                return [];
             }
         }
 
@@ -323,6 +323,9 @@ public class AudioDsp : IAudioDsp
         var level = soundList.AsParallel().Select(sound =>
             sound.Samples.DefaultIfEmpty().Max(s =>
             {
+                if (s?.Data is null)
+                    return 0;
+
                 var max = 0f;
                 foreach (var x in s.Data.Span)
                     max = Math.Max(Math.Abs(x), max);
@@ -407,24 +410,41 @@ public class AudioDsp : IAudioDsp
         if (sound == null)
             return;
 
-        if (sound[NumericData.Volume].HasValue)
+        if (sound[NumericData.Volume] is {} volume)
         {
-            foreach (var sample in sound.Samples)
-                AudioSimd.Gain(sample.Data.Span, sound[NumericData.Volume]!.Value);
+            if (volume != BigRational.One)
+            {
+                foreach (var sample in sound.Samples)
+                {
+                    if (volume == BigRational.Zero)
+                        sample.Data.Span.Clear();
+                    else
+                        AudioSimd.Gain(sample.Data.Span, volume);
+                }
+            }
 
             sound[NumericData.Volume] = null;
         }
 
-        if (sound[NumericData.Panning].HasValue)
+        if (sound[NumericData.Panning] is {} panning)
         {
-            var isLeftPanning = true;
-            var left = BigRational.Sqrt(BigRational.One - sound[NumericData.Panning]!.Value);
-            var right = BigRational.Sqrt(sound[NumericData.Panning]!.Value);
-            foreach (var sample in sound.Samples)
+            if (panning != BigRational.OneHalf)
             {
-                AudioSimd.Gain(sample.Data.Span,
-                    isLeftPanning ? left : right);
-                isLeftPanning = !isLeftPanning;
+                var isLeftPanning = true;
+                var left = BigRational.Sqrt(BigRational.One - panning);
+                var right = BigRational.Sqrt(panning);
+
+                foreach (var sample in sound.Samples)
+                {
+                    var channelPan = isLeftPanning ? left : right;
+                    
+                    if (channelPan == BigRational.Zero)
+                        sample.Data.Span.Clear();
+                    else if (channelPan != BigRational.One)
+                        AudioSimd.Gain(sample.Data.Span, isLeftPanning ? left : right);
+
+                    isLeftPanning = !isLeftPanning;
+                }
             }
 
             sound[NumericData.Panning] = null;
@@ -433,9 +453,13 @@ public class AudioDsp : IAudioDsp
 
     private void ApplyEffectsInternal(Sample sample)
     {
-        if (sample[NumericData.Volume].HasValue)
+        if (sample[NumericData.Volume] is {} volume)
         {
-            AudioSimd.Gain(sample.Data.Span, sample[NumericData.Volume]!.Value);
+            if (volume == BigRational.Zero)
+                sample.Data.Span.Clear();
+            else if (volume != BigRational.One)
+                AudioSimd.Gain(sample.Data.Span, volume);
+
             sample[NumericData.Volume] = null;
         }
     }
