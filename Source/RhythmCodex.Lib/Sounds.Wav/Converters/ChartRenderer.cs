@@ -64,7 +64,8 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         }
 
         //
-        // Preprocess the sounds.
+        // Preprocess the sounds. This will give us a baseline stereo sample that will
+        // scale consistently in volume and panning.
         //
 
         foreach (var (key, sound) in soundList.ToList().AsParallel())
@@ -99,6 +100,10 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             for (; lastSample < nowSample; lastSample++)
                 Mix();
 
+            //
+            // Process sound change events (i.e. the key sound is changed.)
+            //
+
             foreach (var ev in tickEvents.Where(t => t[NumericData.LoadSound] != null))
             {
                 var column = ev[NumericData.Column] ?? BigRational.Zero;
@@ -106,6 +111,10 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                     column += 1000;
                 MapSample(ev[NumericData.Player], column, ev[NumericData.LoadSound]);
             }
+
+            //
+            // Process note events (i.e. the key is actually sounded.)
+            //
 
             foreach (var ev in tickEvents.Where(t => t[FlagData.Note] != null))
             {
@@ -116,6 +125,10 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                     MapSample(ev[NumericData.Player], column, ev[NumericData.SourceData]);
                 StartUserSample(ev[NumericData.Player], column);
             }
+
+            //
+            // Process BGM events.
+            //
 
             foreach (var ev in tick.Where(t => t[NumericData.PlaySound] != null))
             {

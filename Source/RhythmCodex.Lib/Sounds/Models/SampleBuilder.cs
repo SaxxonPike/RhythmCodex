@@ -36,30 +36,44 @@ public sealed class SampleBuilder : Metadata, IDisposable
     /// <summary>
     /// Retrieves sample data.
     /// </summary>
-    public Span<float> AsSpan() =>
-        MemoryMarshal
+    public Span<float> AsSpan()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        return MemoryMarshal
             .Cast<byte, float>(_stream.GetBuffer().AsSpan(0, (int)_stream.Length));
+    }
 
     /// <summary>
     /// Retrieves sample data.
     /// </summary>
-    public Span<float> AsSpan(int offset) =>
-        MemoryMarshal
+    public Span<float> AsSpan(int offset)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        return MemoryMarshal
             .Cast<byte, float>(_stream.GetBuffer().AsSpan(0, (int)_stream.Length))[offset..];
+    }
 
     /// <summary>
     /// Retrieves sample data.
     /// </summary>
-    public Span<float> AsSpan(int offset, int length) =>
-        MemoryMarshal
+    public Span<float> AsSpan(int offset, int length)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        return MemoryMarshal
             .Cast<byte, float>(_stream.GetBuffer().AsSpan(0, (int)_stream.Length))
             .Slice(offset, length);
+    }
 
     /// <summary>
     /// Replaces sample data with the specified value.
     /// </summary>
     public void Fill(float value)
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         if (value == 0)
             AsSpan().Clear();
         else
@@ -71,6 +85,8 @@ public sealed class SampleBuilder : Metadata, IDisposable
     /// </summary>
     public void Append(float value)
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         Span<float> span = stackalloc float[1];
         span[0] = value;
         _stream.Write(MemoryMarshal.Cast<float, byte>(span));
@@ -79,14 +95,20 @@ public sealed class SampleBuilder : Metadata, IDisposable
     /// <summary>
     /// Appends a span of values to the end of the sample data.
     /// </summary>
-    public void Append(ReadOnlySpan<float> data) =>
+    public void Append(ReadOnlySpan<float> data)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         _stream.Write(MemoryMarshal.Cast<float, byte>(data));
+    }
 
     /// <summary>
     /// Clears sample data.
     /// </summary>
     public void Clear()
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         _stream.Position = 0;
         _stream.SetLength(0);
     }
@@ -94,14 +116,25 @@ public sealed class SampleBuilder : Metadata, IDisposable
     /// <summary>
     /// Sets the length of the sample data in floats.
     /// </summary>
-    public void SetLength(int length) =>
+    public void SetLength(int length)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         _stream.SetLength(length * sizeof(float));
+    }
 
     /// <summary>
     /// Length of the sample data in floats.
     /// </summary>
-    public int Length =>
-        (int)(_stream.Length / sizeof(float));
+    public int Length
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
+            return (int)(_stream.Length / sizeof(float));
+        }
+    }
 
     /// <summary>
     /// Copies the sample data and metadata to a new <see cref="Sample"/>.
@@ -111,6 +144,8 @@ public sealed class SampleBuilder : Metadata, IDisposable
     /// </param>
     public Sample ToSample(int? maxLength = null)
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         var result = new Sample
         {
             Data = (maxLength == null ? AsSpan() : AsSpan(0, maxLength.Value)).ToArray()
@@ -127,6 +162,7 @@ public sealed class SampleBuilder : Metadata, IDisposable
             return;
 
         _disposed = true;
+        _stream.SetLength(0);
         _stream.Dispose();
     }
 }
