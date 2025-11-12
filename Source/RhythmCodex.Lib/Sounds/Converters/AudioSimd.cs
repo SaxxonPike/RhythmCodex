@@ -167,12 +167,11 @@ internal static class AudioSimd
             targetCursor[i] += sourceCursor[i];
     }
 
-    public static void Gain(Span<float> data, BigRational value)
+    public static void Gain(Span<float> data, float amp)
     {
-        if (value == BigRational.One)
+        if (amp == 1)
             return;
 
-        var amp = (float)value;
         var cursor = data;
 
         if (Vector512.IsHardwareAccelerated)

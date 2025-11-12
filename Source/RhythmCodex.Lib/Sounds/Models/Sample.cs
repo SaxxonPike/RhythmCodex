@@ -7,7 +7,7 @@ namespace RhythmCodex.Sounds.Models;
 [Model]
 public class Sample : Metadata
 {
-    public Memory<float> Data { get; set; }
+    public ReadOnlyMemory<float> Data { get; set; }
         
     public Sample Clone()
     {

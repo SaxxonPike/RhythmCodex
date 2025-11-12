@@ -17,23 +17,18 @@ namespace RhythmCodex.Sounds.Converters;
 [Service]
 public class AudioDsp : IAudioDsp
 {
+    private static readonly BigRational Sqrt2 = BigRational.Sqrt(2);
+    
     public Sound Mix(IEnumerable<Sound> sounds)
     {
         var bounced = sounds.Select(ApplyEffects).ToList();
         var length = bounced.Max(b => b.Samples.Count > 0 ? b.Samples.Max(s => s.Data.Length) : 0);
         var channels = bounced.Max(b => b.Samples.Count);
 
-        var newSound = new Sound
-        {
-            Samples = Enumerable.Range(0, channels).Select(_ => new Sample
-            {
-                Data = new float[length]
-            }).ToList()
-        };
-
-        newSound.CloneMetadataFrom(bounced.First());
-        newSound[NumericData.Panning] = null;
-        newSound[NumericData.Volume] = null;
+        using var builder = new SoundBuilder(channels, length);
+        builder.CloneMetadataFrom(bounced.First());
+        builder[NumericData.Panning] = null;
+        builder[NumericData.Volume] = null;
 
         foreach (var bounce in bounced)
         {
@@ -42,11 +37,11 @@ public class AudioDsp : IAudioDsp
                 if (bounce == null)
                     continue;
 
-                AudioSimd.Mix(newSound.Samples[c].Data.Span, bounce.Samples[c].Data.Span);
+                AudioSimd.Mix(builder.Samples[c].AsSpan(), bounce.Samples[c].Data.Span);
             }
         }
 
-        return newSound;
+        return builder.ToSound();
     }
 
     public byte[] Interleave16Bits(Sound sound)
@@ -190,31 +185,36 @@ public class AudioDsp : IAudioDsp
             // stereo (fast)
             case 2:
             {
+                var left = new float[inFloats.Length / channels];
+                var right = new float[left.Length];
+
                 var samples = new Sample[]
                 {
-                    new() { Data = new float[inFloats.Length / channels] },
-                    new() { Data = new float[inFloats.Length / channels] }
+                    new() { Data = left },
+                    new() { Data = right }
                 };
 
-                AudioSimd.Deinterleave2(inFloats, samples[0].Data.Span, samples[1].Data.Span);
+                AudioSimd.Deinterleave2(inFloats, left, right);
 
                 return samples;
             }
             // all others (interleaved)
             default:
             {
-                var samples = new Sample[channels];
-
+                var samples = new float[channels][];
                 for (var c = 0; c < channels; c++)
-                    samples[c] = new Sample { Data = new float[inFloats.Length / channels] };
+                    samples[c] = new float[inFloats.Length / channels];
 
                 for (int i = 0, j = 0; i < inputLength; j++)
                 {
                     for (var c = 0; c < channels; c++)
-                        samples[c].Data.Span[j] = inFloats[i++];
+                        samples[c][j] = inFloats[i++];
                 }
 
-                return samples;
+                return samples.Select(s => new Sample()
+                {
+                    Data = s
+                }).ToArray();
             }
         }
     }
@@ -227,28 +227,6 @@ public class AudioDsp : IAudioDsp
         var result = (A: new float[outLength], B: new float[outLength]);
         AudioSimd.Deinterleave2(data, result.A, result.B);
         return result;
-    }
-
-    public Sound ApplyPanVolume(Sound sound, BigRational volume, BigRational panning)
-    {
-        if (sound.Samples.Count < 1)
-        {
-            var emptyResult = new Sound();
-            emptyResult.CloneMetadataFrom(sound);
-            return emptyResult;
-        }
-
-        var newSound = new Sound
-        {
-            Samples = [..sound.Samples]
-        };
-
-        newSound.CloneMetadataFrom(sound);
-        newSound[NumericData.Volume] = volume;
-        newSound[NumericData.Panning] = panning;
-
-        ApplyEffectsInternal(newSound);
-        return newSound;
     }
 
     public Sound ApplyResampling(Sound sound, IResampler resampler, BigRational rate)
@@ -290,13 +268,14 @@ public class AudioDsp : IAudioDsp
         return result;
     }
 
+    private static void ApplyGain(SoundBuilder sound, float amp)
+    {
+        foreach (var sample in sound.Samples)
+            AudioSimd.Gain(sample.AsSpan(), amp);
+    }
+
     public Sound Normalize(Sound sound, BigRational target, bool cutOnly)
     {
-        var newSound = new Sound
-        {
-            Samples = [..sound.Samples]
-        };
-
         var level = sound.Samples.Max(s =>
         {
             var max = 0f;
@@ -305,40 +284,13 @@ public class AudioDsp : IAudioDsp
             return max;
         });
 
-        if (level is > 0 and (< 1 or > 1) && (!cutOnly || level > 1))
-        {
-            var amp = (float)(target / level);
-            foreach (var sample in newSound.Samples)
-                AudioSimd.Gain(sample.Data.Span, amp);
-        }
+        if (level is <= 0 or >= 1 and <= 1 || (cutOnly && !(level > 1))) 
+            return sound;
 
-        newSound.CloneMetadataFrom(sound);
-        return newSound;
-    }
-
-    public void Normalize(IEnumerable<Sound> sounds, BigRational target, bool cutOnly)
-    {
-        var soundList = sounds.AsList();
-
-        var level = soundList.AsParallel().Select(sound =>
-            sound.Samples.DefaultIfEmpty().Max(s =>
-            {
-                if (s?.Data is null)
-                    return 0;
-
-                var max = 0f;
-                foreach (var x in s.Data.Span)
-                    max = Math.Max(Math.Abs(x), max);
-                return max;
-            })).DefaultIfEmpty().Max();
-
-        if (level > 0 && level != 1 && (!cutOnly || level > 1))
-        {
-            var amp = (float)(target / level);
-
-            foreach (var sample in soundList.SelectMany(sound => sound.Samples).Distinct().AsParallel())
-                AudioSimd.Gain(sample.Data.Span, amp);
-        }
+        using var newSound = SoundBuilder.FromSound(sound);
+        var amp = (float)(target / level);
+        ApplyGain(newSound, amp);
+        return newSound.ToSound();
     }
 
     public Sound IntegerDownsample(Sound sound, int factor)
@@ -382,83 +334,70 @@ public class AudioDsp : IAudioDsp
         if (sound.Samples.Count == 0)
             return sound;
 
-        var samples = new List<Sample>(sound.Samples);
-        if (samples.Count == 1)
-            samples.Add(samples[0]);
-
-        var result = new Sound
-        {
-            Samples = samples.Select(s =>
-            {
-                var sample = new Sample
-                {
-                    Data = s.Data.ToArray()
-                };
-                sample.CloneMetadataFrom(s);
-                ApplyEffectsInternal(sample);
-                return sample;
-            }).ToList()
-        };
-
-        result.CloneMetadataFrom(sound);
-        ApplyEffectsInternal(result);
-        return result;
+        var builder = SoundBuilder.FromSound(sound, Math.Max(sound.Samples.Count, 2));
+        ApplyEffectsInternal(builder);
+        return builder.ToSound();
     }
 
-    private static void ApplyEffectsInternal(Sound? sound)
+    private static void ApplyEffectsInternal(SoundBuilder sound)
     {
-        if (sound == null)
-            return;
+        foreach (var s in sound.Samples)
+            ApplyEffectsInternal(s);
 
-        if (sound[NumericData.Volume] is {} volume)
+        if (sound[NumericData.Volume] is { } volume)
         {
             if (volume != BigRational.One)
             {
                 foreach (var sample in sound.Samples)
                 {
                     if (volume == BigRational.Zero)
-                        sample.Data.Span.Clear();
+                        sample.Fill(0);
                     else
-                        AudioSimd.Gain(sample.Data.Span, volume);
+                        AudioSimd.Gain(sample.AsSpan(), (float)volume);
                 }
             }
 
             sound[NumericData.Volume] = null;
         }
 
-        if (sound[NumericData.Panning] is {} panning)
+        if (sound[NumericData.Panning] is { } panning)
         {
-            if (panning != BigRational.OneHalf)
+            var isLeftPanning = true;
+            
+            //
+            // Circular panning will cause hard pans to be 1.0, but center to be 1/sqrt(2).
+            // We want center panned things to be at unity, so multiplying by sqrt(2) should
+            // fix that. This will however cause hard panned things to exceed 1.0 as far as
+            // gain.
+            //
+
+            var left = (float)(BigRational.Sqrt(BigRational.One - panning) * Sqrt2);
+            var right = (float)(BigRational.Sqrt(panning) * Sqrt2);
+
+            foreach (var sample in sound.Samples)
             {
-                var isLeftPanning = true;
-                var left = BigRational.Sqrt(BigRational.One - panning);
-                var right = BigRational.Sqrt(panning);
+                var channelPan = isLeftPanning ? left : right;
 
-                foreach (var sample in sound.Samples)
-                {
-                    var channelPan = isLeftPanning ? left : right;
-                    
-                    if (channelPan == BigRational.Zero)
-                        sample.Data.Span.Clear();
-                    else if (channelPan != BigRational.One)
-                        AudioSimd.Gain(sample.Data.Span, isLeftPanning ? left : right);
+                if (channelPan == BigRational.Zero)
+                    sample.Fill(0);
+                else if (channelPan != BigRational.One)
+                    AudioSimd.Gain(sample.AsSpan(), isLeftPanning ? left : right);
 
-                    isLeftPanning = !isLeftPanning;
-                }
+                isLeftPanning = !isLeftPanning;
             }
 
             sound[NumericData.Panning] = null;
         }
     }
 
-    private void ApplyEffectsInternal(Sample sample)
+    private static void ApplyEffectsInternal(SampleBuilder sample)
     {
-        if (sample[NumericData.Volume] is {} volume)
+        if (sample[NumericData.Volume] is { } volume)
         {
             if (volume == BigRational.Zero)
-                sample.Data.Span.Clear();
+                sample.Fill(0);
             else if (volume != BigRational.One)
-                AudioSimd.Gain(sample.Data.Span, volume);
+                AudioSimd.Gain(sample.AsSpan(), (float)volume);
 
             sample[NumericData.Volume] = null;
         }

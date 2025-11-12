@@ -24,7 +24,7 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
         const int channels = 2;
 
         var states = Enumerable.Range(0, channels).Select(_ => new XaState()).ToList();
-        var samples = Enumerable.Range(0, channels).Select(_ => new List<float>()).ToList();
+        var samples = Enumerable.Range(0, channels).Select(_ => new SampleBuilder()).ToList();
 
         using (var mem = new ReadOnlyMemoryStream(chunk.Data))
         using (var reader = new BinaryReader(mem))
@@ -35,14 +35,14 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
                 for (var c = 0; c < 8; c++)
                 {
                     DecodeFrame(frame, buffer, c, states[c % channels]);
-                    samples[c % channels].AddRange(buffer);
+                    samples[c % channels].Append(buffer);
                 }
             }
         }
 
         sounds.Add(new Sound
         {
-            Samples = samples.Select(s => new Sample {Data = s.ToArray()}).ToList()
+            Samples = samples.Select(s => s.ToSample()).ToList()
         });
 
         return sounds;

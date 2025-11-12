@@ -1,5 +1,6 @@
 using System;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Sounds.Converters;
 
 namespace RhythmCodex.Archs.Twinkle.Model;
 
@@ -16,10 +17,12 @@ public static class TwinkleConstants
 
         var result = new BigRational[256];
         var max = BigRational.One;
+        var step = Decibels.ToFactor(4.5d / 16d);
+
         for (var i = 0; i < 256; i++)
         {
             result[i] = max;
-            max /= new BigRational(Math.Pow(10.0f, 4.5f / 16f / 20.0f));
+            max /= step;
         }
 
         return result;

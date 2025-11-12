@@ -51,10 +51,10 @@ public class SoundStreamReader : ISoundStreamReader
                 //
 
                 var channel = 0;
-                var samples = new List<List<float>>();
+                var samples = new List<SampleBuilder>();
 
                 for (var i = 0; i < spec.channels; i++)
-                    samples.Add([]);
+                    samples.Add(new SampleBuilder());
                 
                 Span<float> buffer = stackalloc float[4096 * spec.channels];
                 var bufferSizeBytes = sizeof(float) * buffer.Length;
@@ -71,7 +71,7 @@ public class SoundStreamReader : ISoundStreamReader
 
                         for (var i = 0; i < actualRead; i++)
                         {
-                            samples[channel++].Add(buffer[i]);
+                            samples[channel++].Append(buffer[i]);
                             if (channel >= spec.channels)
                                 channel = 0;
                         }
@@ -89,10 +89,7 @@ public class SoundStreamReader : ISoundStreamReader
 
                 for (var i = 0; i < spec.channels; i++)
                 {
-                    result.Samples.Add(new Sample
-                    {
-                        Data = samples[i].ToArray()
-                    });
+                    result.Samples.Add(samples[i].ToSample());
                 }
 
                 return result;

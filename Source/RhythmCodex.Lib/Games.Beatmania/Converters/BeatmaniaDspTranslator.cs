@@ -2,6 +2,7 @@ using System;
 using RhythmCodex.Archs.Djmain;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Sounds.Converters;
 
 namespace RhythmCodex.Games.Beatmania.Converters;
 
@@ -10,7 +11,7 @@ public class BeatmaniaDspTranslator : IBeatmaniaDspTranslator
 {
     public BigRational GetFirebeatVolume(int volume)
     {
-        return new BigRational(Math.Pow(10.0f, -36.0f * volume / 144f / 20.0f));
+        return new BigRational(Decibels.ToFactor(-36.0d * volume / 144d));
     }
         
     public BigRational GetLinearVolume(int volume)
@@ -22,7 +23,7 @@ public class BeatmaniaDspTranslator : IBeatmaniaDspTranslator
 
     public BigRational GetDjmainVolume(int volume)
     {
-        return new BigRational(Math.Pow(10.0f, -36.0f * volume / 64f / 20.0f));
+        return new BigRational(Decibels.ToFactor(-36.0d * volume / 64d));
     }
 
     public BigRational GetBm2dxPanning(int panning)

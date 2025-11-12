@@ -79,8 +79,8 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         // Begin mixdown.
         //
 
-        var mixdownLeft = new List<float>();
-        var mixdownRight = new List<float>();
+        using var mixdownLeft = new SampleBuilder();
+        using var mixdownRight = new SampleBuilder();
 
         var lastSample = 0;
         var eventTicks = eventList
@@ -125,17 +125,12 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         while (state.Any(s => s.Playing))
             Mix();
 
-        if (options.SwapStereo)
-            (mixdownLeft, mixdownRight) = (mixdownRight, mixdownLeft);
-        
         return new Sound
         {
             [NumericData.Rate] = options.SampleRate,
-            Samples =
-            [
-                new Sample { Data = mixdownLeft.ToArray() },
-                new Sample { Data = mixdownRight.ToArray() }
-            ]
+            Samples = options.SwapStereo
+                ? [mixdownRight.ToSample(), mixdownLeft.ToSample()]
+                : [mixdownLeft.ToSample(), mixdownRight.ToSample()]
         };
 
         void MapSample(BigRational? player, BigRational? column, BigRational? soundIndex)
@@ -286,8 +281,8 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                 ch.Offset++;
             }
 
-            mixdownLeft.Add(finalMixLeft);
-            mixdownRight.Add(finalMixRight);
+            mixdownLeft.Append(finalMixLeft);
+            mixdownRight.Append(finalMixRight);
         }
     }
 }
