@@ -149,19 +149,6 @@ public abstract class BiQuad : IFilterContext
     }
 
     /// <summary>
-    /// Processes a single <paramref name="input"/> sample and returns the result.
-    /// </summary>
-    /// <param name="input">The input sample to process.</param>
-    /// <returns>The result of the processed <paramref name="input"/> sample.</returns>
-    public float Process(float input)
-    {
-        var o = input * A0 + Z1;
-        Z1 = input * A1 + Z2 - B1 * o;
-        Z2 = input * A2 - B2 * o;
-        return (float)o;
-    }
-
-    /// <summary>
     /// Processes multiple <paramref name="input"/> samples.
     /// </summary>
     /// <param name="input">The input samples to process.</param>
@@ -170,7 +157,13 @@ public abstract class BiQuad : IFilterContext
     {
         var result = new float[input.Length];
         for (var i = 0; i < input.Length; i++)
-            result[i] = Process(input[i]);
+        {
+            var iv = input[i];
+            var o = iv * A0 + Z1;
+            Z1 = iv * A1 + Z2 - B1 * o;
+            Z2 = iv * A2 - B2 * o;
+            result[i] = (float)o;
+        }
         return result;
     }
 
