@@ -37,15 +37,18 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
     {
         var sampleBankId = chart[NumericData.SampleMap];
 
-        var state = new List<ChannelState>();
+        var state = new HashSet<ChannelState>();
         var sampleMap = new Dictionary<(int Player, int Column), int>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
+        var bgmVolume = (float)(options.BgmVolume ?? BigRational.One);
+        var keyVolume = (float)(options.KeyVolume ?? BigRational.One);
 
         var eventList = chart.Events.AsCollection();
         if (eventList.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException("Can't render without all events having linear offsets.");
 
         var soundList = new Dictionary<int, Sound>();
+        var statesToRemove = new HashSet<ChannelState>();
 
         //
         // Determine the samples within the map that will be used.
@@ -118,12 +121,11 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             {
                 StartBgmSample(ev[NumericData.PlaySound], ev[NumericData.Panning]);
             }
-
-            state.RemoveAll(s => !s.Playing);
         }
 
-        while (state.Any(s => s.Playing))
-            Mix();
+        while (Mix())
+        {
+        }
 
         return new Sound
         {
@@ -200,7 +202,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             st.Offset = 0;
             st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
             st.RightLength = sound?.Samples[1].Data.Length ?? 0;
-            st.LeftToLeftVolume = st.RightToRightVolume = SqrtHalf * masterVolume;
+            st.LeftToLeftVolume = st.RightToRightVolume = SqrtHalf * masterVolume * keyVolume;
             st.RightToLeftVolume = st.LeftToRightVolume = 0;
             st.Playing = true;
         }
@@ -241,24 +243,29 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                 st.RightLength = 0;
             }
 
-            st.LeftToLeftVolume = leftVolume * masterVolume;
-            st.LeftToRightVolume = (1 - leftVolume) * masterVolume;
-            st.RightToLeftVolume = (1 - rightVolume) * masterVolume;
-            st.RightToRightVolume = rightVolume * masterVolume;
+            st.LeftToLeftVolume = leftVolume * masterVolume * bgmVolume;
+            st.LeftToRightVolume = (1 - leftVolume) * masterVolume * bgmVolume;
+            st.RightToLeftVolume = (1 - rightVolume) * masterVolume * bgmVolume;
+            st.RightToRightVolume = rightVolume * masterVolume * bgmVolume;
             st.Playing = true;
         }
 
-        void Mix()
+        bool Mix()
         {
             var finalMixLeft = 0f;
             var finalMixRight = 0f;
+
             foreach (var ch in state)
             {
                 if (!ch.Playing)
+                {
+                    statesToRemove.Add(ch);
                     continue;
+                }
 
                 if (ch.Sound == null || (ch.Offset >= ch.LeftLength && ch.Offset >= ch.RightLength))
                 {
+                    statesToRemove.Add(ch);
                     ch.Playing = false;
                     continue;
                 }
@@ -283,6 +290,11 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
 
             mixdownLeft.Append(finalMixLeft);
             mixdownRight.Append(finalMixRight);
+
+            foreach (var ch in statesToRemove)
+                state.Remove(ch);
+
+            return state.Count > 0;
         }
     }
 }
