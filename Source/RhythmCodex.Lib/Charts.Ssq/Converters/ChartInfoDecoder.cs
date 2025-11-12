@@ -1,5 +1,5 @@
-﻿using RhythmCodex.Charts.Ssq.Model;
-using RhythmCodex.Games.Stepmania.Model;
+﻿using RhythmCodex.Charts.Sm.Model;
+using RhythmCodex.Charts.Ssq.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Games.Stepmania;
-using RhythmCodex.Games.Stepmania.Model;
-using RhythmCodex.Games.Stepmania.Streamers;
+using RhythmCodex.Charts.Sm;
+using RhythmCodex.Charts.Sm.Model;
+using RhythmCodex.Charts.Sm.Streamers;
 using RhythmCodex.Graphics.Streamers;
 using RhythmCodex.Infrastructure;
 

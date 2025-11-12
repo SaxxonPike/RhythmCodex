@@ -1,7 +1,8 @@
 using System.Linq;
+using RhythmCodex.Charts.Models;
+using RhythmCodex.Charts.Sm;
+using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.Games.Ddr.Models;
-using RhythmCodex.Games.Stepmania;
-using RhythmCodex.Games.Stepmania.Model;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using RhythmCodex.Games.Stepmania.Converters;
-using RhythmCodex.Games.Stepmania.Model;
+using RhythmCodex.Charts.Sm.Converters;
+using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Sif.Models;
 

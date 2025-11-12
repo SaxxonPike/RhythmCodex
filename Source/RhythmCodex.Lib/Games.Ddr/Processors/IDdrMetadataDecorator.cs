@@ -1,5 +1,6 @@
+using RhythmCodex.Charts.Models;
+using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.Games.Ddr.Models;
-using RhythmCodex.Games.Stepmania.Model;
 
 namespace RhythmCodex.Games.Ddr.Processors;
 

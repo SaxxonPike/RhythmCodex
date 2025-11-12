@@ -2,7 +2,8 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Games.Stepmania.Model;
+using RhythmCodex.Charts.Sm.Model;
+using RhythmCodex.Charts.Sm.Streamers;
 using Shouldly;
 
 namespace RhythmCodex.Games.Stepmania.Streamers;

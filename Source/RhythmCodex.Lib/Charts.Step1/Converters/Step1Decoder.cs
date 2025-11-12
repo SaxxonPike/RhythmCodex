@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charts.Models;
+using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.Charts.Ssq;
 using RhythmCodex.Charts.Ssq.Converters;
 using RhythmCodex.Charts.Ssq.Mappers;
 using RhythmCodex.Charts.Ssq.Model;
 using RhythmCodex.Charts.Step1.Models;
 using RhythmCodex.Extensions;
-using RhythmCodex.Games.Stepmania.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;

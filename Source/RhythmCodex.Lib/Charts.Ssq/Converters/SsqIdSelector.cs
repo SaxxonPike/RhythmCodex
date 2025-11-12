@@ -1,5 +1,5 @@
 using RhythmCodex.Charts.Models;
-using RhythmCodex.Games.Stepmania.Model;
+using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 

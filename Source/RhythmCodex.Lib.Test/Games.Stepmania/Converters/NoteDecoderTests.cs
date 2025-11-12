@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Games.Stepmania.Model;
+using RhythmCodex.Charts.Sm.Converters;
+using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using Shouldly;

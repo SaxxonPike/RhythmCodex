@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using NUnit.Framework;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;

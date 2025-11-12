@@ -1,4 +1,6 @@
 ﻿using NUnit.Framework;
+using RhythmCodex.Charts.Sm;
+using RhythmCodex.Charts.Sm.Converters;
 using RhythmCodex.Metadatas.Models;
 using Shouldly;
 
