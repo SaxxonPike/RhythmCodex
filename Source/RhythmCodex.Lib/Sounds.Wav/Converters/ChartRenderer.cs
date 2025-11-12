@@ -37,7 +37,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
     {
         var sampleBankId = chart[NumericData.SampleMap];
 
-        var state = new HashSet<ChannelState>();
+        var state = new List<ChannelState>();
         var sampleMap = new Dictionary<(int Player, int Column), int>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
         var bgmVolume = (float)(options.BgmVolume ?? BigRational.One);
@@ -48,7 +48,6 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             throw new RhythmCodexException("Can't render without all events having linear offsets.");
 
         var soundList = new Dictionary<int, Sound>();
-        var statesToRemove = new HashSet<ChannelState>();
 
         //
         // Determine the samples within the map that will be used.
@@ -171,9 +170,14 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
 
                 if (state.Count(x => x.Channel == channelInt) >= limit)
                 {
-                    st = state.First(x => x.Channel == channelInt);
-                    state.Remove(st);
-                    state.Add(st);
+                    var stIdx = state.FindIndex(x => x.Channel == channelInt);
+
+                    if (stIdx >= 0)
+                    {
+                        st = state[stIdx];
+                        state.RemoveAt(stIdx);
+                        state.Add(st);
+                    }
                 }
 
                 if (st != null)
@@ -185,9 +189,14 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             {
                 if (state.Count(x => x.Sound == sound) >= limit)
                 {
-                    st = state.First(x => x.Sound == sound);
-                    state.Remove(st);
-                    state.Add(st);
+                    var stIdx = state.FindIndex(x => x.Sound == sound);
+
+                    if (stIdx >= 0)
+                    {
+                        st = state[stIdx];
+                        state.RemoveAt(stIdx);
+                        state.Add(st);
+                    }
                 }
 
                 if (st != null)
@@ -268,18 +277,14 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             var finalMixLeft = 0f;
             var finalMixRight = 0f;
 
-            foreach (var ch in state)
+            for (var stateIndex = 0; stateIndex < state.Count; stateIndex++)
             {
-                if (!ch.Playing)
-                {
-                    statesToRemove.Add(ch);
-                    continue;
-                }
+                var ch = state[stateIndex];
 
-                if (ch.Sound == null || (ch.Offset >= ch.LeftLength && ch.Offset >= ch.RightLength))
+                if (!ch.Playing || ch.Sound == null || (ch.Offset >= ch.LeftLength && ch.Offset >= ch.RightLength))
                 {
-                    statesToRemove.Add(ch);
-                    ch.Playing = false;
+                    state.RemoveAt(stateIndex);
+                    stateIndex--;
                     continue;
                 }
 
@@ -303,9 +308,6 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
 
             mixdownLeft.Append(finalMixLeft);
             mixdownRight.Append(finalMixRight);
-
-            foreach (var ch in statesToRemove)
-                state.Remove(ch);
 
             return state.Count > 0;
         }

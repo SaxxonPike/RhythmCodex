@@ -139,7 +139,7 @@ public class DjmainOneShots : BaseIntegrationFixture
                     var rendered = renderer.Render(chart, archive.Samples, renderOptions);
                     var normalized = dsp.Normalize(rendered, 1.0f, true);
                     
-                    this.WriteSound(normalized, path);
+                    //this.WriteSound(normalized, path);
                 }
             }));
 
