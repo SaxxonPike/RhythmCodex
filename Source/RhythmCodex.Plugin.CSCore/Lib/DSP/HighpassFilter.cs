@@ -3,12 +3,14 @@
  */
 
 using System;
+using JetBrains.Annotations;
 
 namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 
 /// <summary>
 /// Used to apply a highpass-filter to a signal.
 /// </summary>
+[PublicAPI]
 public class HighpassFilter : BiQuad
 {
     /// <summary>

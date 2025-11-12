@@ -3,12 +3,14 @@
  */
 
 using System;
+using JetBrains.Annotations;
 
 namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 
 /// <summary>
 /// Used to apply a notch-filter to a signal.
 /// </summary>
+[PublicAPI]
 public class NotchFilter : BiQuad
 {
     /// <summary>
