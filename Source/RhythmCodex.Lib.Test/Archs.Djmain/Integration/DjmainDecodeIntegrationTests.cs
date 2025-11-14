@@ -79,7 +79,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
     {
         // Arrange.
         var subject = Resolve<IDjmainChartDecoder>();
-        var expectedPanning = Math.Max(0, (param0 >> 4) - 1);
+        var expectedPanning = 0xE - Math.Max(0, (param0 >> 4) - 1);
         var offset = Create<ushort>();
         var param1 = Create<byte>();
         var data = new[]
