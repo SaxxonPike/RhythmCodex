@@ -11,24 +11,27 @@ public class TwinkleBeatmaniaChartDecoder : ITwinkleBeatmaniaChartDecoder
 {
     public List<TwinkleBeatmaniaChartEvent> Decode(ReadOnlySpan<byte> data)
     {
-        var result = new List<TwinkleBeatmaniaChartEvent>();
+        var result = new List<TwinkleBeatmaniaChartEvent>(data.Length / 4);
         var noteCountMode = true;
 
         for (var i = 0; i < data.Length; i += 4)
         {
+            var item = data.Slice(i, 4);
+
             if (noteCountMode)
             {
-                if (data[i + 0x03] == 0 || data[i + 0x03] == 1)
+                if (item[0x03] <= 1)
                     continue;
                 noteCountMode = false;
             }
 
-            var offset = Bitter.ToInt16S(data, i);
+            var offset = Bitter.ToInt16S(item);
             if (offset == 0x7FFF)
                 break;
-                
-            var value = data[i + 0x02];
-            var command = data[i + 0x03];
+
+            var value = item[0x02];
+            var command = item[0x03];
+
             result.Add(new TwinkleBeatmaniaChartEvent
             {
                 Offset = (ushort)offset,
@@ -46,9 +49,12 @@ public class TwinkleBeatmaniaChartDecoder : ITwinkleBeatmaniaChartDecoder
 
         for (var i = 0; i < data.Length; i += 4)
         {
-            if (data[i + 0x03] != 0 && data[i + 0x03] != 1)
+            var item = data.Slice(i, 4);
+
+            if (item[0x03] >= 2)
                 return result;
-            result[data[i + 0x03]] += data[i + 0x02];
+
+            result[item[0x03]] += item[0x02];
         }
 
         return result;

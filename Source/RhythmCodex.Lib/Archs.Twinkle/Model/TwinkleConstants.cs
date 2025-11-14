@@ -10,6 +10,8 @@ public static class TwinkleConstants
     // test1: 598186
     public static BigRational BeatmaniaRate => new(598186, 10000);
 
+    public const int ChunkSize = 0x1A00000;
+
     private static readonly Lazy<BigRational[]> VolumeTableLazy = new(() =>
     {
         // This algorithm is based on the one written into MAME:

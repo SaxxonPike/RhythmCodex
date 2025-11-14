@@ -11,14 +11,14 @@ namespace RhythmCodex.Archs.Twinkle.Streamers;
 [Service]
 public class TwinkleBeatmaniaStreamReader : ITwinkleBeatmaniaStreamReader
 {
-    private const int ChunkLength = 0x1A00000;
+    private const int ChunkSize = TwinkleConstants.ChunkSize;
     private const int DataStart = 0x8000000;
 
     public IEnumerable<TwinkleBeatmaniaChunk> Read(Stream stream, long length, bool skipHeader = true)
     {
         var index = 0;
         var reader = new BinaryReader(stream);
-        var actualLength = length / ChunkLength * ChunkLength;
+        var actualLength = length / ChunkSize * ChunkSize;
 
         if (skipHeader)
             stream.SkipBytes(DataStart);
@@ -26,7 +26,7 @@ public class TwinkleBeatmaniaStreamReader : ITwinkleBeatmaniaStreamReader
         var offset = 0L;
         while (offset < actualLength)
         {
-            var data = reader.ReadBytes(ChunkLength);
+            var data = reader.ReadBytes(ChunkSize);
             data.AsSpan().Swap16();
 
             yield return new TwinkleBeatmaniaChunk
@@ -36,7 +36,7 @@ public class TwinkleBeatmaniaStreamReader : ITwinkleBeatmaniaStreamReader
                 Offset = offset
             };
 
-            offset += ChunkLength;
+            offset += ChunkSize;
             index++;
         }
     }
