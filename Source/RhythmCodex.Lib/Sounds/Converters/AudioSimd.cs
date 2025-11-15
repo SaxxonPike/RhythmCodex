@@ -118,7 +118,7 @@ internal static class AudioSimd
         {
             while (maxLength >= 16)
             {
-                var v = Vector512.Create<float>(targetCursor);
+                var v = Vector512.Create(targetCursor);
                 v += Vector512.Create(sourceCursor);
                 v.CopyTo(targetCursor);
                 targetCursor = targetCursor[16..];
@@ -130,7 +130,7 @@ internal static class AudioSimd
         {
             while (maxLength >= 8)
             {
-                var v = Vector256.Create<float>(targetCursor);
+                var v = Vector256.Create(targetCursor);
                 v += Vector256.Create(sourceCursor);
                 v.CopyTo(targetCursor);
                 targetCursor = targetCursor[8..];
@@ -142,7 +142,7 @@ internal static class AudioSimd
         {
             while (maxLength >= 4)
             {
-                var v = Vector128.Create<float>(targetCursor);
+                var v = Vector128.Create(targetCursor);
                 v += Vector128.Create(sourceCursor);
                 v.CopyTo(targetCursor);
                 targetCursor = targetCursor[4..];
@@ -154,7 +154,7 @@ internal static class AudioSimd
         {
             while (maxLength >= 2)
             {
-                var v = Vector64.Create<float>(targetCursor);
+                var v = Vector64.Create(targetCursor);
                 v += Vector64.Create(sourceCursor);
                 v.CopyTo(targetCursor);
                 targetCursor = targetCursor[2..];
@@ -178,7 +178,7 @@ internal static class AudioSimd
         {
             while (cursor.Length >= 16)
             {
-                var v = Vector512.Create<float>(cursor) * amp;
+                var v = Vector512.Create(cursor) * amp;
                 v.CopyTo(cursor);
                 cursor = cursor[16..];
             }
@@ -187,7 +187,7 @@ internal static class AudioSimd
         {
             while (cursor.Length >= 8)
             {
-                var v = Vector256.Create<float>(cursor) * amp;
+                var v = Vector256.Create(cursor) * amp;
                 v.CopyTo(cursor);
                 cursor = cursor[8..];
             }
@@ -196,7 +196,7 @@ internal static class AudioSimd
         {
             while (cursor.Length >= 4)
             {
-                var v = Vector128.Create<float>(cursor) * amp;
+                var v = Vector128.Create(cursor) * amp;
                 v.CopyTo(cursor);
                 cursor = cursor[4..];
             }
@@ -205,7 +205,7 @@ internal static class AudioSimd
         {
             while (cursor.Length >= 2)
             {
-                var v = Vector64.Create<float>(cursor) * amp;
+                var v = Vector64.Create(cursor) * amp;
                 v.CopyTo(cursor);
                 cursor = cursor[2..];
             }
