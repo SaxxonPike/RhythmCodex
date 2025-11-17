@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -18,7 +17,7 @@ namespace RhythmCodex.Sounds.Converters;
 public class AudioDsp : IAudioDsp
 {
     private static readonly BigRational Sqrt2 = BigRational.Sqrt(2);
-    
+
     public Sound Mix(IEnumerable<Sound> sounds)
     {
         var bounced = sounds.Select(ApplyEffects).ToList();
@@ -57,8 +56,8 @@ public class AudioDsp : IAudioDsp
         {
             for (var i = range.Item1; i < range.Item2; i++)
                 AudioSimd.Quantize16(
-                    sound.Samples[i].Data.Span,
                     MemoryMarshal.Cast<byte, short>(output.AsSpan()),
+                    sound.Samples[i].Data.Span,
                     i,
                     sampleCount
                 );
@@ -211,22 +210,12 @@ public class AudioDsp : IAudioDsp
                         samples[c][j] = inFloats[i++];
                 }
 
-                return samples.Select(s => new Sample()
+                return samples.Select(s => new Sample
                 {
                     Data = s
                 }).ToArray();
             }
         }
-    }
-
-    public (float[] A, float[] B) Deinterleave2(
-        Span<float> data
-    )
-    {
-        var outLength = data.Length / 2;
-        var result = (A: new float[outLength], B: new float[outLength]);
-        AudioSimd.Deinterleave2(data, result.A, result.B);
-        return result;
     }
 
     public Sound ApplyResampling(Sound sound, IResampler resampler, BigRational rate)
@@ -284,7 +273,7 @@ public class AudioDsp : IAudioDsp
             return max;
         });
 
-        if (level is <= 0 or >= 1 and <= 1 || (cutOnly && !(level > 1))) 
+        if (level is <= 0 or >= 1 and <= 1 || (cutOnly && !(level > 1)))
             return sound;
 
         using var newSound = SoundBuilder.FromSound(sound);
@@ -329,7 +318,7 @@ public class AudioDsp : IAudioDsp
 
     public Sound ApplyEffects(Sound sound)
     {
-        ArgumentNullException.ThrowIfNull(sound, nameof(sound));
+        ArgumentNullException.ThrowIfNull(sound);
 
         if (sound.Samples.Count == 0)
             return sound;
@@ -363,7 +352,7 @@ public class AudioDsp : IAudioDsp
         if (sound[NumericData.Panning] is { } panning)
         {
             var isLeftPanning = true;
-            
+
             //
             // Circular panning will cause hard pans to be 1.0, but center to be 1/sqrt(2).
             // We want center panned things to be at unity, so multiplying by sqrt(2) should

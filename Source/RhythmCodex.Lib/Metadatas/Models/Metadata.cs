@@ -80,8 +80,16 @@ public class Metadata : IMetadata
         set => this[type.ToString()] = value;
     }
 
-    public bool MetadataEquals(Metadata other)
+    public bool IsMetadataEmpty =>
+        _stringDatas is not { Count: > 0 } &&
+        _flagDatas is not { Count: > 0 } &&
+        _numericDatas is not { Count: > 0 };
+
+    public bool MetadataEquals(Metadata? other)
     {
+        if (other == null || other.IsMetadataEmpty)
+            return IsMetadataEmpty;
+
         var myStrings = _stringDatas ?? [];
         var myFlags = _flagDatas ?? [];
         var myNumbers = _numericDatas ?? [];
@@ -121,8 +129,11 @@ public class Metadata : IMetadata
         _flagDatas = metadata._flagDatas;
     }
 
-    public void CopyTo(IMetadata other)
+    public void CopyMetadataTo(IMetadata? other)
     {
+        if (other == null)
+            return;
+
         foreach (var kv in _stringDatas ?? [])
             other[kv.Key] = kv.Value;
         foreach (var kv in _numericDatas ?? [])

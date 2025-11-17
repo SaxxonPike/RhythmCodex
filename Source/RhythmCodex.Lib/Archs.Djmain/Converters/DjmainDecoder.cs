@@ -133,8 +133,7 @@ public class DjmainDecoder(
                 var samples = DecodeSamples(stream, format, kv.Value, chartData);
                 var decodedSamples = soundDecoder.Decode(samples);
                 if (!options.DoNotConsolidateSamples)
-                    soundConsolidator.Consolidate(decodedSamples.Values,
-                        decodedCharts.SelectMany(dc => dc.Value?.Events ?? Enumerable.Empty<Event>()));
+                    soundConsolidator.Consolidate(decodedSamples.Values, decodedCharts.Values);
 
                 foreach (var sample in decodedSamples.Where(s => s.Value.Samples.Count != 0))
                 {

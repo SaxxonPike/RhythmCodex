@@ -17,9 +17,10 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
 
     private record struct MatchedSound(int A, int B);
 
-    public void Consolidate(IEnumerable<Sound> inSounds, IEnumerable<Event> inEvents)
+    public void Consolidate(IEnumerable<Sound> inSounds, IEnumerable<Chart> inCharts)
     {
-        var events = inEvents.AsList();
+        var charts = inCharts.AsList();
+        var events = charts.SelectMany(s => s.Events).ToList();
         var sounds = inSounds.AsList();
         var matches = new List<MatchedSound>();
 
@@ -30,7 +31,7 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             .Distinct()
             .ToList();
 
-        // Get all the times a sample is played.
+        // Get all the times a sample is played in BGM only.
         var played = events
             .Where(e => e[NumericData.PlaySound] != null && !loaded.Contains(e[NumericData.PlaySound]))
             .Select(e =>
@@ -62,11 +63,13 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             for (var j = i + 1; j < groups.Count; j++)
             {
                 if (Compare(groups[i].Value, groups[j].Value))
+                {
                     matches.Add(new MatchedSound
                     {
                         A = groups[i].Key,
                         B = groups[j].Key
                     });
+                }
             }
         }
 
@@ -87,14 +90,15 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             doneMatch.Add(match.B);
 
             var mix = audioDsp.Mix([soundA, soundB]);
-            soundA.Samples.Clear();
-
-            foreach (var sample in soundB.Samples)
-                soundA.Samples.Add(sample);
-            soundB.Samples.Clear();
+            soundA.ReplaceNoCopy(mix);
+            soundB.ClearSamples();
 
             soundA[NumericData.Panning] = soundB[NumericData.Panning] = mix[NumericData.Panning];
             soundA[NumericData.Volume] = soundB[NumericData.Volume] = mix[NumericData.Volume];
+
+            // Remove events related to now-removed sound B.
+            foreach (var chart in charts)
+                chart.Events.RemoveAll(e => e[NumericData.PlaySound] == match.B);
         }
 
         return;
@@ -105,14 +109,7 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             if (a.Count != b.Count)
                 return false;
 
-            for (var i = 0; i < a.Count; i++)
-            {
-                if (a[i].Offset != b[i].Offset ||
-                    a[i].Panning != 1 - b[i].Panning)
-                    return false;
-            }
-
-            return true;
+            return !a.Where((t, i) => t.Offset != b[i].Offset || t.Panning != 1 - b[i].Panning).Any();
         }
     }
 }

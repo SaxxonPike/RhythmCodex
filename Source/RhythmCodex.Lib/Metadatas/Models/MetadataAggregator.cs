@@ -10,7 +10,7 @@ public class MetadataAggregator : IMetadataAggregator
     {
         var result = new Metadata();
         foreach (var metadata in metadatas)
-            metadata.CopyTo(result);
+            metadata.CopyMetadataTo(result);
         return result;
     }
 }

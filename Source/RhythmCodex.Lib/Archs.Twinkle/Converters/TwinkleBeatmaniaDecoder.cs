@@ -92,8 +92,7 @@ public class TwinkleBeatmaniaDecoder(
         }
 
         if (!options.DoNotConsolidateSamples)
-            soundConsolidator.Consolidate(sounds,
-                charts.SelectMany(dc => dc.Events));
+            soundConsolidator.Consolidate(sounds, charts);
 
         return new TwinkleArchive
         {
