@@ -101,6 +101,16 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     public static BigRational OneHalf { get; } = new(BigInteger.One, 2);
 
     /// <summary>
+    ///     A pre-initialized BigRational with the value of Sqrt(2).
+    /// </summary>
+    public static BigRational Sqrt2 { get; } = Sqrt(2);
+
+    /// <summary>
+    ///     A pre-initialized BigRational with the value of Isqrt(2).
+    /// </summary>
+    public static BigRational Isqrt2 { get; } = Isqrt(2);
+
+    /// <summary>
     ///     Gets a number that indicates the sign (negative, positive, or zero) of the current BigRational object.
     /// </summary>
     public int Sign => Numerator.Sign;
