@@ -16,6 +16,11 @@ public sealed class SoundBuilder : Metadata, IDisposable
     private readonly SampleBuilder[] _sampleBuilders;
 
     /// <summary>
+    /// An optional replacement function for handling the application of DSP effects.
+    /// </summary>
+    public Action<Sound>? ApplyEffectsHandler { get; set; }
+
+    /// <summary>
     /// Creates a <see cref="SoundBuilder"/> using a copy of samples and metadata from a <see cref="Sound"/>.
     /// </summary>
     /// <param name="sound">
@@ -32,6 +37,7 @@ public sealed class SoundBuilder : Metadata, IDisposable
 
         var result = new SoundBuilder(builders);
         result.CloneMetadataFrom(sound);
+        result.ApplyEffectsHandler = sound.ApplyEffectsHandler;
 
         if (resultChannels > 0)
         {
@@ -121,7 +127,8 @@ public sealed class SoundBuilder : Metadata, IDisposable
 
         var result = new Sound
         {
-            Samples = _sampleBuilders.Select(b => b.ToSample()).ToList()
+            Samples = _sampleBuilders.Select(b => b.ToSample()).ToList(),
+            ApplyEffectsHandler = ApplyEffectsHandler
         };
 
         result.CloneMetadataFrom(this);

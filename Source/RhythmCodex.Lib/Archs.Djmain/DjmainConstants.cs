@@ -25,7 +25,8 @@ public static class DjmainConstants
         0x3A5B,
         0x2A5D,
         0x13D3,
-        0x12B4
+        0x12B4,
+        0x0000
     };
     
     //

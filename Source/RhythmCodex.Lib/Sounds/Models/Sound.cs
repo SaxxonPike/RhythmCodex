@@ -19,7 +19,12 @@ public class Sound : Metadata
     /// Samples contained within the sound.
     /// </summary>
     public List<Sample> Samples { get; set; } = [];
-
+    
+    /// <summary>
+    /// An optional replacement function for handling the application of DSP effects.
+    /// </summary>
+    public Action<Sound>? ApplyEffectsHandler { get; set; }
+    
     /// <summary>
     /// Creates a clone of this sound, allocating new copies of the sample data.
     /// </summary>
@@ -75,4 +80,23 @@ public class Sound : Metadata
             hc.AddBytes(MemoryMarshal.Cast<float, byte>(sample.Data.Span));
         return hc.ToHashCode();
     }
+
+    /// <summary>
+    /// Clone sample data until the sample count is at least 2.
+    /// </summary>
+    public void EnsureStereo()
+    {
+        if (Samples.Count == 0)
+        {
+            Samples.Add(new Sample());
+            Samples.Add(new Sample());
+            return;
+        }
+
+        while (Samples.Count < 2)
+        {
+            Samples.Add(Samples[0].Clone());
+        }
+    }
+    
 }

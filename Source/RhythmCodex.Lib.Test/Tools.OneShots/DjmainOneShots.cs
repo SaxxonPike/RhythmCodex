@@ -126,14 +126,6 @@ public class DjmainOneShots : BaseIntegrationFixture
                 if (IsCanceled)
                     return;
 
-                // var header = chunk.Data[..0x20000].ToArray();
-                // header.Swap16();
-                
-                // this.WriteFile(
-                //     header,
-                //     Path.Combine(target, $"{Alphabet.EncodeNumeric(idx, 4)}.header")
-                // );
-
                 var archive = decoder.Decode(chunk, options);
                 
                 foreach (var chart in archive.Charts)
