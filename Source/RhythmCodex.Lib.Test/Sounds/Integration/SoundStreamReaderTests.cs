@@ -28,7 +28,7 @@ public class SoundStreamReaderTests : BaseIntegrationFixture<SoundStreamReader>
             using var mem = new MemoryStream(value);
             Sound? sound = null;
             Assert.DoesNotThrow(() => { Subject.Read(mem); });
-            TestContext.Out.WriteLine(sound);
+            Log.WriteLine(sound);
         }
     }
 }

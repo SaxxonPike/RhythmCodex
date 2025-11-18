@@ -29,7 +29,7 @@ public class Step1DecodeIntegrationTests : BaseIntegrationFixture
 
         foreach (var chart in charts)
         {
-            TestContext.Out.WriteLine(
+            Log.WriteLine(
                 $"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
         }
     }
@@ -46,14 +46,14 @@ public class Step1DecodeIntegrationTests : BaseIntegrationFixture
 
         foreach (var file in files)
         {
-            TestContext.Out.WriteLine(file);
+            Log.WriteLine(file);
             var data = File.ReadAllBytes(file);
             var chunk = streamReader.Read(new MemoryStream(data));
             var charts = decoder.Decode(chunk);
 
             foreach (var chart in charts)
             {
-                TestContext.Out.WriteLine(
+                Log.WriteLine(
                     $"{chart[StringData.Difficulty]} {chart[StringData.Type]} {chart[StringData.Description]}");
             }
         }

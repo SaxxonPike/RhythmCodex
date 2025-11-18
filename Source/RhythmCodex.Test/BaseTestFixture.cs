@@ -17,7 +17,8 @@ namespace RhythmCodex;
 public abstract class BaseTestFixture
 {
     private static readonly ConcurrentDictionary<string, Fixture> Fixtures = [];
-    
+    private static readonly ConcurrentDictionary<string, HashSet<Task>> AsyncTasks = [];
+
     private Stopwatch _stopwatch;
 
     [SetUp]
@@ -30,23 +31,43 @@ public abstract class BaseTestFixture
     [TearDown]
     public void __Teardown()
     {
+        if (AsyncTasks.Remove(TestContext.CurrentContext.Test.ID, out var tasks) && tasks.Count > 0)
+        {
+            Task.WaitAll(tasks);
+            var taskExceptions = tasks.Where(t => t.IsFaulted).Select(t => t.Exception!).ToList();
+            if (taskExceptions.Count > 0)
+                throw new AggregateException(taskExceptions);
+        }
+
         _stopwatch.Stop();
-        TestContext.Out.WriteLine(
+        Log.WriteLine(
             $"{TestContext.CurrentContext.Test.FullName}: {_stopwatch.ElapsedMilliseconds}ms");
         Fixtures.Remove(TestContext.CurrentContext.Test.ID, out _);
     }
-    
-    public Randomizer Random => 
+
+    public static Randomizer Random =>
         TestContext.CurrentContext.Random;
 
-    private Fixture GetFixture()
-    {
-        return Fixtures.GetOrAdd(TestContext.CurrentContext.Test.ID, _ =>
+    public static TextWriter Log =>
+        TestContext.Progress;
+
+    public bool IsCanceled =>
+        TestContext.CurrentContext.CancellationToken.IsCancellationRequested;
+
+    private HashSet<Task> GetAsyncTasks() =>
+        AsyncTasks.GetOrAdd(TestContext.CurrentContext.Test.ID, _ => []);
+
+    private Fixture GetFixture() =>
+        Fixtures.GetOrAdd(TestContext.CurrentContext.Test.ID, _ =>
         {
             var fixture = new Fixture();
             new SupportMutableValueTypesCustomization().Customize(fixture);
             return fixture;
         });
+
+    protected void RunAsync(Action action)
+    {
+        GetAsyncTasks().Add(Task.Run(action));
     }
 
     /// <summary>

@@ -43,16 +43,16 @@ public class TwinkleOneShots : BaseIntegrationFixture
 
         foreach (var chunk in streamer.Read(entryStream, entry.Length, true))
         {
-            if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
+            if (IsCanceled)
                 break;
 
             var idx = index;
 
-            TestContext.Progress.WriteLine($"Working on chunk {idx}");
+            Log.WriteLine($"Working on chunk {idx}");
 
             tasks.Add(Task.Run(() =>
             {
-                if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
+                if (IsCanceled)
                     return;
 
                 var archive = decoder.Decode(chunk, options);
@@ -67,7 +67,7 @@ public class TwinkleOneShots : BaseIntegrationFixture
             index++;
         }
 
-        TestContext.Progress.WriteLine($"Waiting for processing to finish");
+        Log.WriteLine($"Waiting for processing to finish");
 
         Task.WaitAll(tasks);
     }

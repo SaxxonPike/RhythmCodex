@@ -51,7 +51,7 @@ public class DjmainOneShots : BaseIntegrationFixture
 
         foreach (var chunk in streamer.Read(entryStream))
         {
-            TestContext.Out.WriteLine($"Working on chunk {index}");
+            Log.WriteLine($"Working on chunk {index}");
 
             var idx = index;
 
@@ -60,7 +60,7 @@ public class DjmainOneShots : BaseIntegrationFixture
                 var archive = decoder.Decode(chunk, options);
                 if (archive != null)
                 {
-                    TestContext.Out.WriteLine($"Writing set for chunk {idx}");
+                    Log.WriteLine($"Writing set for chunk {idx}");
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
                     this.WriteSet(archive.Charts, archive.Samples, basePath, title);
@@ -96,6 +96,7 @@ public class DjmainOneShots : BaseIntegrationFixture
         var decoder = Resolve<IDjmainDecoder>();
         var renderer = Resolve<IChartRenderer>();
         var dsp = Resolve<IAudioDsp>();
+        var hashes = new HashSet<int>();
 
         using var stream = File.OpenRead(source);
         using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
@@ -113,39 +114,48 @@ public class DjmainOneShots : BaseIntegrationFixture
         };
 
         var index = 0;
-        var tasks = new List<Task>();
 
         foreach (var chunk in streamer.Read(entryStream))
         {
-            TestContext.Out.WriteLine($"Working on chunk {index}");
+            Log.WriteLine($"Working on chunk {index}");
 
             var idx = index;
 
-            tasks.Add(Task.Run(() =>
+            RunAsync(() =>
             {
-                if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
+                if (IsCanceled)
                     return;
 
-                var archive = decoder.Decode(chunk, options);
+                // var header = chunk.Data[..0x20000].ToArray();
+                // header.Swap16();
+                
+                // this.WriteFile(
+                //     header,
+                //     Path.Combine(target, $"{Alphabet.EncodeNumeric(idx, 4)}.header")
+                // );
 
+                var archive = decoder.Decode(chunk, options);
+                
                 foreach (var chart in archive.Charts)
                 {
                     var id = (int)chart[NumericData.Id]!.Value;
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}-{Alphabet.EncodeNumeric(id, 2)}";
                     var path = Path.Combine(target, $"{title}.wav");
 
-                    TestContext.Out.WriteLine($"Rendering chart {id} for chunk {idx}");
+                    Log.WriteLine($"Rendering chart {id} for chunk {idx}");
 
                     var rendered = renderer.Render(chart, archive.Samples, renderOptions);
+                    var renderedHash = rendered.CalculateSampleHash();
+
+                    if (!hashes.Add(renderedHash))
+                        continue;
+
                     var normalized = dsp.Normalize(rendered, 1.0f, true);
-                    
-                    //this.WriteSound(normalized, path);
+                    this.WriteSound(normalized, path);
                 }
-            }));
+            });
 
             index++;
         }
-
-        Task.WaitAll(tasks.ToArray());
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Archs.Djmain.Streamers;
@@ -11,34 +9,20 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
 {
     public Memory<byte> ReadDpcm(Stream stream)
     {
-        return ReadDpcmStream(stream).ToArray();
-    }
-
-    public Memory<byte> ReadPcm16(Stream stream)
-    {
-        return DecodePcm16Stream(stream).ToArray();
-    }
-
-    public Memory<byte> ReadPcm8(Stream stream)
-    {
-        return DecodePcm8Stream(stream).ToArray();
-    }
-
-    private static IEnumerable<byte> ReadDpcmStream(Stream stream)
-    {
         const int marker = DjmainConstants.DpcmEndMarker;
         var buffer = marker;
+        var mem = new MemoryStream();
 
         for (var i = 0; i < 4; i++)
             Fetch();
 
         while (buffer != marker)
         {
-            yield return unchecked((byte) buffer);
+            mem.WriteByte(unchecked((byte)buffer));
             Fetch();
         }
 
-        yield break;
+        return mem.GetBuffer().AsMemory(0, (int)mem.Length);
 
         void Fetch()
         {
@@ -50,11 +34,12 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
         }
     }
 
-    private static IEnumerable<byte> DecodePcm16Stream(Stream stream)
+    public Memory<byte> ReadPcm16(Stream stream)
     {
         const long marker = DjmainConstants.Pcm16EndMarker;
         var buffer0 = marker;
         var buffer1 = marker;
+        var mem = new MemoryStream();
 
         // Preload buffer.
         for (var i = 0; i < 8; i++)
@@ -63,12 +48,12 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
         // Load sample.
         while (buffer0 != marker || buffer1 != marker)
         {
-            yield return unchecked((byte) buffer0);
-            yield return unchecked((byte) (buffer0 >> 8));
+            mem.WriteByte(unchecked((byte)buffer0));
+            mem.WriteByte(unchecked((byte)(buffer0 >> 8)));
             Fetch();
         }
 
-        yield break;
+        return mem.GetBuffer().AsMemory(0, (int)mem.Length);
 
         void Fetch()
         {
@@ -78,19 +63,20 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
             var newByte = stream.ReadByte();
             if (newByte == -1)
                 newByte = 0x00;
-            buffer1 |= (long) newByte << 48;
+            buffer1 |= (long)newByte << 48;
 
             newByte = stream.ReadByte();
             if (newByte == -1)
                 newByte = 0x80;
-            buffer1 |= (long) newByte << 56;
+            buffer1 |= (long)newByte << 56;
         }
     }
 
-    private static IEnumerable<byte> DecodePcm8Stream(Stream stream)
+    public Memory<byte> ReadPcm8(Stream stream)
     {
         const long marker = DjmainConstants.Pcm8EndMarker;
         var buffer = marker;
+        var mem = new MemoryStream();
 
         // Preload buffer.
         for (var i = 0; i < 8; i++)
@@ -99,11 +85,11 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
         // Load sample.
         while (buffer != marker)
         {
-            yield return unchecked((byte) buffer);
+            mem.WriteByte(unchecked((byte)buffer));
             Fetch();
         }
 
-        yield break;
+        return mem.GetBuffer().AsMemory(0, (int)mem.Length);
 
         void Fetch()
         {

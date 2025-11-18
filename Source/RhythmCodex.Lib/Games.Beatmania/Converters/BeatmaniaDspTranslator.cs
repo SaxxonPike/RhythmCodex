@@ -26,15 +26,12 @@ public class BeatmaniaDspTranslator : IBeatmaniaDspTranslator
 
     public BigRational GetDjmainVolume(int volume)
     {
-        //
-        // Source:
-        // https://github.com/mamedev/mame/blob/master/src/devices/sound/k054539.cpp
-        //
-
-        const double referenceGain = -36.0d;
-        const double referenceValue = 0x40;
-
-        return new BigRational(Decibels.ToFactor(referenceGain * volume / referenceValue));
+        return volume switch
+        {
+            < 0 => 1,
+            > 0x7E => 0,
+            _ => DjmainConstants.VolumeRom.Span[volume] / (double)0x7FFF
+        };
     }
 
     public BigRational GetBm2dxPanning(int panning)

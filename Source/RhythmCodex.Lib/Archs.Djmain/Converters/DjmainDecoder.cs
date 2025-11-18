@@ -111,7 +111,6 @@ public class DjmainDecoder(
             var chart = chartDecoder.Decode(x.Value, GetChartType(chunkFormat));
             chart[NumericData.Id] = x.Key;
             chart[NumericData.SampleMap] = chartSoundMap[x.Key];
-            chart[NumericData.ByteOffset] = x.Key;
             djmainChartMetadataDecoder.AddMetadata(chart, chunkFormat, x.Key);
             return chart;
         });
@@ -132,14 +131,15 @@ public class DjmainDecoder(
                     .ToList();
                 var samples = DecodeSamples(stream, format, kv.Value, chartData);
                 var decodedSamples = soundDecoder.Decode(samples);
-                if (!options.DoNotConsolidateSamples)
-                    soundConsolidator.Consolidate(decodedSamples.Values, decodedCharts.Values);
-
+                
                 foreach (var sample in decodedSamples.Where(s => s.Value.Samples.Count != 0))
                 {
                     var s = sample.Value;
                     s[NumericData.SampleMap] = kv.Key;
                 }
+
+                if (!options.DoNotConsolidateSamples)
+                    soundConsolidator.Consolidate(decodedSamples.Values, decodedCharts.Values);
 
                 foreach (var discardedSample in decodedSamples
                              .Where(s => s.Value.Samples.Count == 0)

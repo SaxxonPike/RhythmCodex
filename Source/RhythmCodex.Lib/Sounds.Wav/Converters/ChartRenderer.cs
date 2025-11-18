@@ -38,7 +38,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         var sampleBankId = chart[NumericData.SampleMap];
 
         var state = new List<ChannelState>();
-        var sampleMap = new Dictionary<(int Player, int Column), int>();
+        var sampleMap = new Dictionary<(int Player, int Column, bool Scratch), int>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
         var bgmVolume = (float)(options.BgmVolume ?? BigRational.One);
         var keyVolume = (float)(options.KeyVolume ?? BigRational.One);
@@ -104,12 +104,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             //
 
             foreach (var ev in tickEvents.Where(t => t[NumericData.LoadSound] != null))
-            {
-                var column = ev[NumericData.Column] ?? BigRational.Zero;
-                if (ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true)
-                    column += 1000;
-                MapSample(ev[NumericData.Player], column, ev[NumericData.LoadSound]);
-            }
+                MapSample(ev, ev[NumericData.LoadSound]);
 
             //
             // Process note events (i.e. the key is actually sounded.)
@@ -117,12 +112,9 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
 
             foreach (var ev in tickEvents.Where(t => t[FlagData.Note] != null))
             {
-                var column = ev[NumericData.Column] ?? BigRational.Zero;
-                if (ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true)
-                    column += 1000;
                 if (options.UseSourceDataForSamples && ev[NumericData.SourceData] != null)
-                    MapSample(ev[NumericData.Player], column, ev[NumericData.SourceData]);
-                StartUserSample(ev[NumericData.Player], column);
+                    MapSample(ev, ev[NumericData.SourceData]);
+                StartUserSample(ev);
             }
 
             //
@@ -130,9 +122,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             //
 
             foreach (var ev in tick.Where(t => t[NumericData.PlaySound] != null))
-            {
                 StartBgmSample(ev[NumericData.PlaySound], ev[NumericData.Panning]);
-            }
         }
 
         while (Mix())
@@ -147,22 +137,41 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                 : [mixdownLeft.ToSample(), mixdownRight.ToSample()]
         };
 
-        void MapSample(BigRational? player, BigRational? column, BigRational? soundIndex)
+        (int Player, int Column, bool Scratch)? GetMapKey(Event? ev)
         {
-            var playerInt = (int)(player ?? -1);
-            var columnInt = (int)(column ?? -1);
-            var soundInt = (int)(soundIndex ?? -1);
+            if (ev?[NumericData.Player] is not { } player)
+                return null;
+            
+            var isScratch = ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true;
 
-            if (soundInt >= 0)
-                sampleMap[(playerInt, columnInt)] = soundInt;
+            if (ev[NumericData.Column] is not { } column)
+            {
+                // Scratches are permitted to have no column metadata.
+
+                if (!isScratch)
+                    return null;
+
+                column = 0;
+            }
+
+            return ((int)player, (int)column, isScratch);
+        }
+
+        void MapSample(Event? ev, BigRational? soundIndex)
+        {
+            if (GetMapKey(ev) is not { } key)
+                return;
+
+            if (soundIndex is not { } soundIndexVal)
+                sampleMap.Remove(key);
             else
-                sampleMap.Remove((playerInt, columnInt));
+                sampleMap[key] = (int)soundIndexVal;
         }
 
         ChannelState SetupSoundChannel(Sound? sound)
         {
             ChannelState? st = null;
-            var limit = Math.Max(1, (int)(sound?[NumericData.SimultaneousSounds] ?? 1));
+            var limit = Math.Max(1, (int)(sound?[NumericData.SimultaneousSounds] ?? BigRational.One));
 
             if (sound?[NumericData.Channel] is { } channel)
             {
@@ -209,13 +218,13 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             return st;
         }
 
-        void StartUserSample(BigRational? player, BigRational? column)
+        void StartUserSample(Event ev)
         {
-            var playerInt = (int)(player ?? -1);
-            var columnInt = (int)(column ?? -1);
+            if (GetMapKey(ev) is not { } key)
+                return;
 
             Sound? sound = null;
-            if (sampleMap.TryGetValue((playerInt, columnInt), out var sample))
+            if (sampleMap.TryGetValue(key, out var sample))
                 soundList.TryGetValue(sample, out sound);
 
             var st = SetupSoundChannel(sound);

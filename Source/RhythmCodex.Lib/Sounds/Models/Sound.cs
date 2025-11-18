@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
@@ -62,4 +64,15 @@ public class Sound : Metadata
     /// </summary>
     public void ClearSamples() =>
         Samples.Clear();
+
+    /// <summary>
+    /// Generates a hash code of all sample data.
+    /// </summary>
+    public int CalculateSampleHash()
+    {
+        var hc = new HashCode();
+        foreach (var sample in Samples)
+            hc.AddBytes(MemoryMarshal.Cast<float, byte>(sample.Data.Span));
+        return hc.ToHashCode();
+    }
 }
