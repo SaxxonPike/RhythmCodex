@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Buffers.Binary;
+using System.Runtime.Intrinsics;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Archs.Djmain.Converters;
 
+/// <inheritdoc />
 [Service]
 public class DjmainAudioDecoder : IDjmainAudioDecoder
 {
+    /// <summary>
+    /// Delta values for 4-bit DPCM mode.
+    /// </summary>
     private static readonly int[] DpcmTable =
     [
         0x00, 0x01, 0x02, 0x04,
@@ -14,60 +20,80 @@ public class DjmainAudioDecoder : IDjmainAudioDecoder
         0xF8, 0xFC, 0xFE, 0xFF
     ];
 
+    /// <inheritdoc />
     public float[] DecodeDpcm(ReadOnlySpan<byte> data)
     {
+        //
+        // Each byte contains two 4-bit values which correspond to the DPCM table.
+        // These are delta values applied to an 8-bit accumulator. The lower 4 bits
+        // are processed before the upper 4 bits.
+        //
+
         var result = new float[data.Length * 2];
-        var inCursor = data;
-        var outCursor = result.AsSpan();
-        
+        var inIndex = 0;
+        var outIndex = 0;
         var accumulator = 0x00;
 
-        while (inCursor.Length >= 1)
+        while (outIndex < result.Length)
         {
-            accumulator = (accumulator + DpcmTable[inCursor[0] & 0xF]) & 0xFF;
-            outCursor[0] = ((accumulator ^ 0x80) - 0x80) / 128f;
-            accumulator = (accumulator + DpcmTable[inCursor[0] >> 4]) & 0xFF;
-            outCursor[1] = ((accumulator ^ 0x80) - 0x80) / 128f;
-            inCursor = inCursor[1..];
-            outCursor = outCursor[2..];
+            var inByte = data[inIndex++];
+
+            accumulator = (accumulator + DpcmTable[inByte & 0xF]) & 0xFF;
+            result[outIndex++] = ((accumulator ^ 0x80) - 0x80) / 128f;
+
+            accumulator = (accumulator + DpcmTable[inByte >> 4]) & 0xFF;
+            result[outIndex++] = ((accumulator ^ 0x80) - 0x80) / 128f;
         }
 
         return result;
     }
 
+    /// <inheritdoc />
     public float[] DecodePcm8(ReadOnlySpan<byte> data)
     {
-        var result = new float[data.Length];
-        var inCursor = data;
-        var outCursor = result.AsSpan();
+        //
+        // 8-bit data is signed.
+        //
 
-        while (inCursor.Length >= 1)
+        var result = new float[data.Length];
+        var outCursor = result.AsSpan();
+        var index = 0;
+
+        while (index < result.Length)
         {
-            outCursor[0] = ((inCursor[0] ^ 0x80) - 0x80) / 128f;
-            inCursor = inCursor[1..];
-            outCursor = outCursor[1..];
+            outCursor[index] = ((data[index] ^ 0x80) - 0x80) / 128f;
+            index++;
         }
 
         return result;
     }
 
+    /// <inheritdoc />
     public float[] DecodePcm16(ReadOnlySpan<byte> data)
     {
+        //
+        // 16-bit data is signed, little endian.
+        //
+
         var result = new float[(data.Length + 1) / 2];
-        var inCursor = data;
-        var outCursor = result.AsSpan();
+        var inIndex = 0;
+        var inLimit = data.Length & ~1;
+        var outIndex = 0;
 
-        while (inCursor.Length > 0)
+        while (inIndex < inLimit)
         {
-            var low = inCursor[0];
-            var high = inCursor.Length > 1 ? inCursor[1] : 0;
-            outCursor[0] = (((low | (high << 8)) << 16) >> 16) / 32768f;
+            result[outIndex++] = BinaryPrimitives.ReadInt16LittleEndian(data[inIndex..]) / 32768f;
+            inIndex += 2;
+        }
 
-            if (inCursor.Length < 2)
-                break;
-
-            inCursor = inCursor[2..];
-            outCursor = outCursor[1..];
+        //
+        // In the event of a partial final sample, the last byte is treated as the lower 8 bits
+        // and the upper 8 bits are set to zero.
+        // 
+        
+        if (outIndex < result.Length)
+        {
+            result[outIndex] = data[inIndex] / 32768f;
         }
 
         return result;
