@@ -55,8 +55,8 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
     public void DecodePcm16_DecodesData()
     {
         // Arrange.
-        var data = new byte[] {0x12, 0x34, 0x56, 0x78};
-        var expected = new[] {0x3412 / 32768f, 0x7856 / 32768f};
+        var data = new byte[] { 0x12, 0x34, 0x56, 0x78, 0xFF, 0xFF };
+        var expected = new[] { 0x3412 / 32768f, 0x7856 / 32768f, -1 / 32768f };
 
         // Act.
         var result = Subject.DecodePcm16(data);
@@ -83,8 +83,13 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
     public void DecodePcm8_DecodesData()
     {
         // Arrange.
-        var data = new byte[] {0x12, 0x34, 0x56, 0x78};
-        var expected = data.Select(v => ((v ^ 0x80) - 0x80) / 128f).ToArray();
+        var data = new byte[256];
+        for (var i = 0; i < 256; i++)
+            data[i] = (byte)i;
+
+        var expected = data
+            .Select(v => (((v << 24) ^ (1 << 31)) >> 24) / 128f)
+            .ToArray();
 
         // Act.
         var result = Subject.DecodePcm8(data);

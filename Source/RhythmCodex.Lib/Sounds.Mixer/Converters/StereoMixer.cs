@@ -83,6 +83,9 @@ public abstract class StereoMixer : IStereoMixer
         Span<float> right = stackalloc float[8192];
 
         var result = new SoundBuilder(2);
+
+        result.CloneMetadataFrom(sound);
+        
         var state = new MixState
         {
             Sound = sound,
@@ -96,6 +99,8 @@ public abstract class StereoMixer : IStereoMixer
                 break;
             result.Samples[0].Append(left[..mixed]);
             result.Samples[1].Append(right[..mixed]);
+            left.Clear();
+            right.Clear();
             state = nextState;
         }
 

@@ -142,6 +142,13 @@ public class Metadata : IMetadata
             other[kv.Key] = kv.Value;
     }
 
+    public void ClearMetadata()
+    {
+        _stringDatas?.Clear();
+        _numericDatas?.Clear();
+        _flagDatas?.Clear();
+    }
+
     public override string ToString()
     {
         var output = new Dictionary<string, string>();

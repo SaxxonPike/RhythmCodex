@@ -112,6 +112,7 @@ public class DjmainDecoder(
             chart[NumericData.Id] = x.Key;
             chart[NumericData.SampleMap] = chartSoundMap[x.Key];
             chart[NumericData.PriorityChannels] = 8;
+            chart[NumericData.ByteOffset] = x.Key;
             djmainChartMetadataDecoder.AddMetadata(chart, chunkFormat, x.Key);
             return chart;
         });

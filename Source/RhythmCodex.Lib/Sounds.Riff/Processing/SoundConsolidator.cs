@@ -93,8 +93,8 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             soundA.ReplaceNoCopy(mix);
             soundB.ClearSamples();
 
-            soundA[NumericData.Panning] = soundB[NumericData.Panning] = mix[NumericData.Panning];
-            soundA[NumericData.Volume] = soundB[NumericData.Volume] = mix[NumericData.Volume];
+            soundA[NumericData.Panning] = soundB[NumericData.Panning] = null;
+            soundA[NumericData.Volume] = soundB[NumericData.Volume] = null;
 
             // Remove events related to now-removed sound B.
             foreach (var chart in charts)

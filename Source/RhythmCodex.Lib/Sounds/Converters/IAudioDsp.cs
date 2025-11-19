@@ -45,23 +45,6 @@ public interface IAudioDsp
     /// <param name="data">
     /// Data to convert.
     /// </param>
-    /// <param name="bitsPerSample">
-    /// Bits per sample. Works in multiples of 8. (4-bit support is not guaranteed.)
-    /// </param>
-    /// <param name="channels">
-    /// Number of audio channels to deinterleave.
-    /// </param>
-    /// <param name="bigEndian">
-    /// If true, the audio data is treated as big endian when bit depth is 16 or greater.
-    /// </param>
-    Sample[] BytesToSamples(ReadOnlySpan<byte> data, int bitsPerSample, int channels, bool bigEndian);
-    
-    /// <summary>
-    /// Deinterleaves and converts raw sample data.
-    /// </summary>
-    /// <param name="data">
-    /// Data to convert.
-    /// </param>
     /// <param name="channels">
     /// Number of audio channels to deinterleave.
     /// </param>

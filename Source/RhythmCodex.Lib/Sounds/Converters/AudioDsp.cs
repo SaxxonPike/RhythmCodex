@@ -66,99 +66,6 @@ public class AudioDsp : IAudioDsp
         return output;
     }
 
-    public Sample[] BytesToSamples(ReadOnlySpan<byte> inData, int bitsPerSample, int channels, bool bigEndian)
-    {
-        var inputLength = inData.Length;
-        float[] inFloats;
-
-        if (channels < 1 || bitsPerSample < 8)
-            return [];
-
-        switch (bitsPerSample)
-        {
-            // 8 bit
-            case 8:
-            {
-                inFloats = new float[inputLength];
-                for (var i = 0; i < inputLength; i++)
-                    inFloats[i] = inData[i] / 255f;
-                break;
-            }
-            // 16 bit
-            case 16:
-            {
-                inFloats = new float[inputLength / 2];
-                inputLength = inputLength / 2 * 2;
-                if (!bigEndian)
-                {
-                    for (int i = 0, j = 0; i < inputLength; i += 2, j++)
-                        inFloats[j] = BinaryPrimitives.ReadInt16LittleEndian(inData[i..]) / 32768f;
-                }
-                else
-                {
-                    for (int i = 0, j = 0; i < inputLength; i += 2, j++)
-                        inFloats[j] = BinaryPrimitives.ReadInt16BigEndian(inData[i..]) / 32768f;
-                }
-
-                break;
-            }
-            // 24 bit
-            case 24:
-            {
-                inFloats = new float[inputLength / 3];
-                inputLength = inputLength / 3 * 3;
-                if (!bigEndian)
-                {
-                    for (int i = 0, j = 0; i < inputLength; i += 3, j++)
-                        inFloats[j] = (inData[0] | (inData[1] << 8) | (inData[2] << 16)) / 16777215f;
-                }
-                else
-                {
-                    for (int i = 0, j = 0; i < inputLength; i += 3, j++)
-                        inFloats[j] = (inData[2] | (inData[1] << 8) | (inData[0] << 16)) / 16777215f;
-                }
-
-                break;
-            }
-            // 32 bit
-            case 32:
-            {
-                inFloats = new float[inputLength / 4];
-                inputLength = inputLength / 4 * 4;
-                if (!bigEndian)
-                {
-                    for (int i = 0, j = 0; i < inputLength; i += 4, j++)
-                        inFloats[j] = BinaryPrimitives.ReadInt32LittleEndian(inData[i..]) / (float)int.MaxValue;
-                }
-                else
-                {
-                    for (int i = 0, j = 0; i < inputLength; i += 4, j++)
-                        inFloats[j] = BinaryPrimitives.ReadInt32BigEndian(inData[i..]) / (float)int.MaxValue;
-                }
-
-                break;
-            }
-            // unsupported
-            default:
-            {
-                return [];
-            }
-        }
-
-        if (channels == 1)
-        {
-            return
-            [
-                new Sample
-                {
-                    Data = inFloats
-                }
-            ];
-        }
-
-        return FloatsToSamples(inFloats, channels);
-    }
-
     public Sample[] FloatsToSamples(ReadOnlySpan<float> inFloats, int channels)
     {
         var inputLength = inFloats.Length;
@@ -309,11 +216,16 @@ public class AudioDsp : IAudioDsp
         if (sound.Samples.Count == 0)
             return sound;
 
-        var mixdown = (sound.Mixer != null ? sound.Mixer().MixDown(sound, null) : sound) ?? sound;
+        var mixdown = sound;
+        
+        if (sound.Mixer != null)
+            mixdown = sound.Mixer().MixDown(sound, null) ?? mixdown;
 
-        var builder = SoundBuilder.FromSound(mixdown, Math.Max(sound.Samples.Count, 2));
+        var builder = SoundBuilder.FromSound(mixdown, Math.Max(mixdown.Samples.Count, 2));
         ApplyEffectsInternal(builder);
         return builder.ToSound();
+
+        return mixdown;
     }
 
     private static void ApplyEffectsInternal(SoundBuilder sound)

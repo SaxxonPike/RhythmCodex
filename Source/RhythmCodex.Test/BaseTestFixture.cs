@@ -67,10 +67,14 @@ public abstract class BaseTestFixture
 
     protected void RunAsync(Action action)
     {
+#if FALSE
         if (Debugger.IsAttached)
             action();
         else
             GetAsyncTasks().Add(Task.Run(action));
+#else
+        action();
+#endif
     }
 
     /// <summary>

@@ -55,7 +55,7 @@ public class DjmainOneShots : BaseIntegrationFixture
 
             var idx = index;
 
-            tasks.Add(Task.Run(() =>
+            RunAsync(() =>
             {
                 var archive = decoder.Decode(chunk, options);
                 if (archive != null)
@@ -65,7 +65,7 @@ public class DjmainOneShots : BaseIntegrationFixture
                     var basePath = Path.Combine(target, title);
                     this.WriteSet(archive.Charts, archive.Samples, basePath, title);
                 }
-            }));
+            });
 
             index++;
         }

@@ -20,12 +20,12 @@ public class Sound : Metadata
     /// Samples contained within the sound.
     /// </summary>
     public List<Sample> Samples { get; set; } = [];
-    
+
     /// <summary>
     /// Allows using a custom mixer for the sound. If left null, default mixing will be used.
     /// </summary>
     public Func<IStereoMixer>? Mixer { get; set; }
-    
+
     /// <summary>
     /// Creates a clone of this sound, allocating new copies of the sample data.
     /// </summary>
@@ -51,7 +51,7 @@ public class Sound : Metadata
             Samples = samples.ToList(),
             Mixer = Mixer
         };
-        
+
         clone.CloneMetadataFrom(this);
         return clone;
     }
@@ -62,7 +62,9 @@ public class Sound : Metadata
     public void ReplaceWithCopy(Sound other)
     {
         Samples.Clear();
+        ClearMetadata();
         CloneMetadataFrom(other);
+        Mixer = other.Mixer;
 
         foreach (var sample in other.Samples)
             Samples.Add(sample.Clone());
@@ -75,10 +77,11 @@ public class Sound : Metadata
     public void ReplaceNoCopy(Sound other)
     {
         Samples.Clear();
+        ClearMetadata();
         CloneMetadataFrom(other);
+        Mixer = other.Mixer;
 
-        foreach (var sample in other.Samples)
-            Samples.Add(sample);
+        Samples.AddRange(other.Samples);
     }
 
     /// <summary>
@@ -115,5 +118,4 @@ public class Sound : Metadata
             Samples.Add(Samples[0].Clone());
         }
     }
-    
 }

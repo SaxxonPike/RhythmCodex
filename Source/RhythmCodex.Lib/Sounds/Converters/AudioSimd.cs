@@ -1,5 +1,8 @@
 using System;
+using System.Numerics;
 using System.Runtime.Intrinsics;
+using RhythmCodex.Sounds.Models;
+using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace RhythmCodex.Sounds.Converters;
 
@@ -55,7 +58,8 @@ internal static class AudioSimd
                 source = source[16..];
             }
         }
-        else if (Vector256.IsHardwareAccelerated)
+
+        if (Vector256.IsHardwareAccelerated)
         {
             var minusOne = Vector256.Create<float>(-1f);
 
@@ -80,7 +84,8 @@ internal static class AudioSimd
                 source = source[8..];
             }
         }
-        else if (Vector128.IsHardwareAccelerated)
+
+        if (Vector128.IsHardwareAccelerated)
         {
             var minusOne = Vector128.Create<float>(-1f);
 
@@ -131,7 +136,8 @@ internal static class AudioSimd
                 maxLength -= 16;
             }
         }
-        else if (Vector256.IsHardwareAccelerated)
+
+        if (Vector256.IsHardwareAccelerated)
         {
             while (maxLength >= 8)
             {
@@ -143,7 +149,8 @@ internal static class AudioSimd
                 maxLength -= 8;
             }
         }
-        else if (Vector128.IsHardwareAccelerated)
+
+        if (Vector128.IsHardwareAccelerated)
         {
             while (maxLength >= 4)
             {
@@ -155,7 +162,8 @@ internal static class AudioSimd
                 maxLength -= 4;
             }
         }
-        else if (Vector64.IsHardwareAccelerated)
+
+        if (Vector64.IsHardwareAccelerated)
         {
             while (maxLength >= 2)
             {
@@ -261,7 +269,8 @@ internal static class AudioSimd
                 cursor = cursor[16..];
             }
         }
-        else if (Vector256.IsHardwareAccelerated)
+
+        if (Vector256.IsHardwareAccelerated)
         {
             while (cursor.Length >= 8)
             {
@@ -270,7 +279,8 @@ internal static class AudioSimd
                 cursor = cursor[8..];
             }
         }
-        else if (Vector128.IsHardwareAccelerated)
+
+        if (Vector128.IsHardwareAccelerated)
         {
             while (cursor.Length >= 4)
             {
@@ -279,7 +289,8 @@ internal static class AudioSimd
                 cursor = cursor[4..];
             }
         }
-        else if (Vector64.IsHardwareAccelerated)
+
+        if (Vector64.IsHardwareAccelerated)
         {
             while (cursor.Length >= 2)
             {
@@ -291,6 +302,127 @@ internal static class AudioSimd
 
         for (var i = 0; i < cursor.Length; i++)
             cursor[i] *= amp;
+    }
+
+    /// <summary>
+    /// Converts signed 8-bit audio to floats.
+    /// </summary>
+    public static void Raw8ToFloats(
+        ReadOnlySpan<byte> source,
+        Span<float> target,
+        AudioSign audioSign
+    )
+    {
+        var inMax = Math.Min(source.Length, target.Length);
+        var inCursor = source[..inMax];
+        var outCursor = target[..inMax];
+        var sign = audioSign switch
+        {
+            AudioSign.Unsigned => 1 << 31,
+            _ => 0
+        };
+        const float midpoint = 0x80;
+
+        if (Vector<int>.IsSupported && Vector<float>.IsSupported && Vector<int>.Count == Vector<float>.Count)
+        {
+            var blockSize = Vector<int>.Count;
+            Span<int> inBuffer = stackalloc int[blockSize];
+            var vecSign = Vector.Create(sign);
+            var vecMidpoint = Vector.Create(midpoint);
+
+            while (inCursor.Length >= blockSize)
+            {
+                for (var i = 0; i < blockSize; i++)
+                    inBuffer[i] = inCursor[i];
+                inCursor = inCursor[blockSize..];
+
+                var v = Vector.ConvertToSingle(
+                    ((Vector.Create(inBuffer) << 24) ^ vecSign) >> 24
+                ) / vecMidpoint;
+
+                v.StoreUnsafe(ref outCursor[0]);
+                outCursor = outCursor[blockSize..];
+            }
+        }
+
+        //
+        // Fallback.
+        //
+
+        for (var i = 0; i < inCursor.Length; i++)
+            outCursor[i] = (((inCursor[i] ^ sign) << 24) >> 24) / 128f;
+    }
+
+    /// <summary>
+    /// Converts signed 16-bit audio to floats.
+    /// </summary>
+    public static void Raw16ToFloats(
+        ReadOnlySpan<byte> source,
+        Span<float> target,
+        AudioSign audioSign,
+        AudioEndian endian
+    )
+    {
+        var inMax = Math.Min(source.Length / 2, target.Length);
+        var inCursor = source[..(inMax * 2)];
+        var outCursor = target[..inMax];
+        var sign = audioSign switch
+        {
+            AudioSign.Unsigned => 1 << 31,
+            _ => 0
+        };
+        const float midpoint = 0x8000;
+
+        if (Vector<int>.IsSupported && Vector<float>.IsSupported && Vector<int>.Count == Vector<float>.Count)
+        {
+            var blockSize = Vector<int>.Count;
+            var inByteSize = blockSize * 2;
+
+            Span<int> inBuffer = stackalloc int[blockSize];
+            var vecSign = Vector.Create(sign);
+            var vecMidpoint = Vector.Create(midpoint);
+
+            while (inCursor.Length >= inByteSize)
+            {
+                switch (endian)
+                {
+                    case AudioEndian.Big:
+                        for (int i = 0, j = 0; i < blockSize; i++, j += 2)
+                            inBuffer[i] = ReadInt16BigEndian(inCursor[j..]);
+                        break;
+                    case AudioEndian.Little:
+                    default:
+                        for (int i = 0, j = 0; i < blockSize; i++, j += 2)
+                            inBuffer[i] = ReadInt16LittleEndian(inCursor[j..]);
+                        break;
+                }
+
+                inCursor = inCursor[inByteSize..];
+
+                var v0 = ((Vector.Create(inBuffer) << 16) ^ vecSign) >> 16;
+                var v1 = Vector.ConvertToSingle(v0) / vecMidpoint;
+
+                v1.StoreUnsafe(ref outCursor[0]);
+                outCursor = outCursor[blockSize..];
+            }
+        }
+
+        //
+        // Fallback.
+        //
+
+        switch (endian)
+        {
+            case AudioEndian.Big:
+                for (int i = 0, j = 0; j < inCursor.Length; i++, j += 2)
+                    outCursor[i] = (((ReadInt16BigEndian(inCursor[j..]) << 16) ^ sign) >> 16) / midpoint;
+                break;
+            case AudioEndian.Little:
+            default:
+                for (int i = 0, j = 0; j < inCursor.Length; i++, j += 2)
+                    outCursor[i] = (((ReadInt16LittleEndian(inCursor[j..]) << 16) ^ sign) >> 16) / midpoint;
+                break;
+        }
     }
 
     /// <summary>
@@ -320,7 +452,8 @@ internal static class AudioSimd
                 outCursor1 = outCursor1[8..];
             }
         }
-        else if (Vector256.IsHardwareAccelerated)
+
+        if (Vector256.IsHardwareAccelerated)
         {
             var shuffle = Vector256.Create(
                 Vector128.Create(0, 2, 4, 6),
@@ -338,7 +471,8 @@ internal static class AudioSimd
                 outCursor1 = outCursor1[4..];
             }
         }
-        else if (Vector128.IsHardwareAccelerated)
+
+        if (Vector128.IsHardwareAccelerated)
         {
             var shuffle = Vector128.Create(
                 Vector64.Create(0, 2),

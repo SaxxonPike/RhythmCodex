@@ -2,6 +2,8 @@
 using System.Buffers.Binary;
 using System.Runtime.Intrinsics;
 using RhythmCodex.IoC;
+using RhythmCodex.Sounds.Converters;
+using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Archs.Djmain.Converters;
 
@@ -29,6 +31,7 @@ public class DjmainAudioDecoder : IDjmainAudioDecoder
         // are processed before the upper 4 bits.
         //
 
+        var table = DpcmTable.AsSpan();
         var result = new float[data.Length * 2];
         var inIndex = 0;
         var outIndex = 0;
@@ -38,10 +41,10 @@ public class DjmainAudioDecoder : IDjmainAudioDecoder
         {
             var inByte = data[inIndex++];
 
-            accumulator = (accumulator + DpcmTable[inByte & 0xF]) & 0xFF;
+            accumulator = (accumulator + table[inByte & 0xF]) & 0xFF;
             result[outIndex++] = ((accumulator ^ 0x80) - 0x80) / 128f;
 
-            accumulator = (accumulator + DpcmTable[inByte >> 4]) & 0xFF;
+            accumulator = (accumulator + table[inByte >> 4]) & 0xFF;
             result[outIndex++] = ((accumulator ^ 0x80) - 0x80) / 128f;
         }
 
@@ -51,50 +54,24 @@ public class DjmainAudioDecoder : IDjmainAudioDecoder
     /// <inheritdoc />
     public float[] DecodePcm8(ReadOnlySpan<byte> data)
     {
-        //
-        // 8-bit data is signed.
-        //
-
         var result = new float[data.Length];
-        var outCursor = result.AsSpan();
-        var index = 0;
-
-        while (index < result.Length)
-        {
-            outCursor[index] = ((data[index] ^ 0x80) - 0x80) / 128f;
-            index++;
-        }
-
+        AudioSimd.Raw8ToFloats(data, result, AudioSign.Signed);
         return result;
     }
 
     /// <inheritdoc />
     public float[] DecodePcm16(ReadOnlySpan<byte> data)
     {
-        //
-        // 16-bit data is signed, little endian.
-        //
-
         var result = new float[(data.Length + 1) / 2];
-        var inIndex = 0;
-        var inLimit = data.Length & ~1;
-        var outIndex = 0;
-
-        while (inIndex < inLimit)
-        {
-            result[outIndex++] = BinaryPrimitives.ReadInt16LittleEndian(data[inIndex..]) / 32768f;
-            inIndex += 2;
-        }
+        AudioSimd.Raw16ToFloats(data, result, AudioSign.Signed, AudioEndian.Little);
 
         //
         // In the event of a partial final sample, the last byte is treated as the lower 8 bits
         // and the upper 8 bits are set to zero.
         // 
-        
-        if (outIndex < result.Length)
-        {
-            result[outIndex] = data[inIndex] / 32768f;
-        }
+
+        if ((data.Length & 1) != 0)
+            result[^1] = data[^1] / 32768f;
 
         return result;
     }
