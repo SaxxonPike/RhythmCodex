@@ -17,13 +17,15 @@ using RhythmCodex.Sounds.Wav.Models;
 namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
-public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvider)
-    : IChartRenderer
+public class ChartRenderer(
+    IAudioDsp audioDsp, 
+    IResamplerProvider resamplerProvider,
+    IDefaultStereoMixer defaultStereoMixer
+) : IChartRenderer
 {
     public Sound Render(Chart chart, IEnumerable<Sound> sounds, ChartRendererOptions options)
     {
         var sampleBankId = chart[NumericData.SampleMap];
-        var mixer = options.Mixer ?? new DefaultStereoMixer();
         var states = new Dictionary<int, List<MixState>>();
         var sampleMap = new Dictionary<(int Player, int Column, bool Scratch), int>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
@@ -195,7 +197,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             if (!states.TryGetValue(channel, out var channelStates))
                 states[channel] = channelStates = [];
 
-            if (channelStates.Count >= maxConcurrent)
+            while (channelStates.Count >= maxConcurrent)
                 channelStates.RemoveAt(0);
         }
 
@@ -217,10 +219,10 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         // Sets a sound up for playback.
         //
 
-        void PlaySound(Sound? sound, Event? ev)
+        void PlaySound(Sound? sound, Event? ev, bool reserve)
         {
-            var channel = sound?[NumericData.Channel] is { } soundChannel
-                ? (int)soundChannel
+            var channel = reserve
+                ? sound?[NumericData.Channel] is { } soundChannel ? (int)soundChannel : -1
                 : -1;
 
             if (channel >= 0)
@@ -243,7 +245,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             if (sampleMap.TryGetValue(key, out var sample))
                 soundList.TryGetValue(sample, out sound);
 
-            PlaySound(sound, ev);
+            PlaySound(sound, ev, true);
         }
 
         //
@@ -257,7 +259,7 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             if (ev[NumericData.PlaySound] is { } soundIndex)
                 soundList.TryGetValue((int)soundIndex, out sound);
 
-            PlaySound(sound, ev);
+            PlaySound(sound, ev, false);
         }
 
         //
@@ -284,23 +286,38 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             if (maxMixSize < 1)
                 return 0;
 
+            var maxMixed = 0;
             using var leftMem = MemoryPool<float>.Shared.Rent(maxMixSize);
             using var rightMem = MemoryPool<float>.Shared.Rent(maxMixSize);
+            
+            var leftSpan = leftMem.Memory.Span[..maxMixSize];
+            var rightSpan = rightMem.Memory.Span[..maxMixSize];
+            
+            //
+            // Buffers must be cleared because this memory is recycled.
+            //
+
+            leftSpan.Clear();
+            rightSpan.Clear();
 
             foreach (var (_, channelStates) in states)
             {
                 for (var i = 0; i < channelStates.Count; i++)
                 {
-                    var (newState, mixed) = mixer.Mix(leftMem.Memory.Span, rightMem.Memory.Span, channelStates[i]);
+                    var cs = channelStates[i];
+                    if (cs.Sound?.Mixer?.Invoke() is not { } mixer)
+                        mixer = defaultStereoMixer;
+                    var (newState, mixed) = mixer.Mix(leftSpan, rightSpan, cs);
                     if (mixed > 0)
                         channelStates[i] = newState;
                     else
                         channelStates.RemoveAt(i--);
+                    maxMixed = Math.Max(maxMixed, mixed);
                 }
             }
 
-            mixdownLeft.Append(leftMem.Memory.Span[..maxMixSize]);
-            mixdownRight.Append(rightMem.Memory.Span[..maxMixSize]);
+            mixdownLeft.Append(leftSpan);
+            mixdownRight.Append(rightSpan);
 
             return maxMixSize;
         }

@@ -30,4 +30,18 @@ public class Sample : Metadata
         clone.CloneMetadataFrom(this);
         return clone;
     }
+
+    /// <summary>
+    /// Creates a clone of the sample that uses the specified data. The data is not copied.  
+    /// </summary>
+    public Sample CloneWithData(ReadOnlyMemory<float> data)
+    {
+        var clone = new Sample
+        {
+            Data = data
+        };
+
+        clone.CloneMetadataFrom(this);
+        return clone;
+    }
 }

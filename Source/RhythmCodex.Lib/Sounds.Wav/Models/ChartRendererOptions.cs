@@ -13,5 +13,4 @@ public class ChartRendererOptions
     public bool SwapStereo { get; set; }
     public bool UseSourceDataForSamples { get; set; }
     public bool LinearPanning { get; set; }
-    public IStereoMixer? Mixer { get; set; }
 }

@@ -1,4 +1,5 @@
 using System;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Mixer.Models;
 using RhythmCodex.Sounds.Models;
 
@@ -10,7 +11,7 @@ namespace RhythmCodex.Sounds.Mixer.Converters;
 public interface IStereoMixer
 {
     /// <summary>
-    /// Performs a stereo mixdown of sound data.
+    /// Performs a stereo mixdown of sound data to a buffer.
     /// </summary>
     /// <param name="outLeft">
     /// Buffer to mix the left channel into.
@@ -32,4 +33,18 @@ public interface IStereoMixer
     (MixState State, int Mixed) Mix(Span<float> outLeft,
         Span<float> outRight,
         MixState state);
+
+    /// <summary>
+    /// Performs a stereo mixdown of a sound.
+    /// </summary>
+    /// <param name="sound">
+    /// Sound to mix down.
+    /// </param>
+    /// <param name="metadata">
+    /// Supplemental metadata to include. Some mixers use this info.
+    /// </param>
+    /// <returns>
+    /// The mixed sound.
+    /// </returns>
+    Sound? MixDown(Sound? sound, Metadata? metadata);
 }

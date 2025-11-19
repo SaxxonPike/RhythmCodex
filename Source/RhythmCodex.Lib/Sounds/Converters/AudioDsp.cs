@@ -222,8 +222,7 @@ public class AudioDsp : IAudioDsp
     {
         if (sound.Samples.Count < 1)
         {
-            var emptyResult = new Sound();
-            emptyResult.CloneMetadataFrom(sound);
+            var emptyResult = sound.CloneWithSamples([]);
             return emptyResult;
         }
 
@@ -236,23 +235,15 @@ public class AudioDsp : IAudioDsp
             return sound;
 
         var targetRate = (float)(double)rate;
-        var samples = new List<Sample>(sound.Samples);
-        var result = new Sound
-        {
-            Samples = samples.Select(s =>
-            {
-                var sourceRate = (float)(double)(s[NumericData.Rate] ?? sound[NumericData.Rate])!;
-                var sample = new Sample
-                {
-                    Data = resampler.Resample(s.Data.Span, sourceRate, targetRate)
-                };
-                sample.CloneMetadataFrom(s);
-                sample[NumericData.Rate] = rate;
-                return sample;
-            }).ToList()
-        };
 
-        result.CloneMetadataFrom(sound);
+        var result = sound.CloneWithSamples(sound.Samples.Select(s =>
+        {
+            var sourceRate = (float)(double)(s[NumericData.Rate] ?? sound[NumericData.Rate])!;
+            var sample = s.CloneWithData(resampler.Resample(s.Data.Span, sourceRate, targetRate));
+            sample[NumericData.Rate] = rate;
+            return sample;
+        }));
+
         result[NumericData.Rate] = rate;
         return result;
     }
@@ -284,32 +275,27 @@ public class AudioDsp : IAudioDsp
 
     public Sound IntegerDownsample(Sound sound, int factor)
     {
-        var newSound = new Sound
+        var newSound = sound.CloneWithSamples(sound.Samples.Select(s =>
         {
-            Samples = sound.Samples.Select(s =>
+            var rate = s[NumericData.Rate] ?? sound[NumericData.Rate] ??
+                throw new RhythmCodexException("Can't downsample without a source rate.");
+            var length = s.Data.Length / factor;
+            var data = new float[length];
+            var sample = s.CloneWithData(data);
+            sample[NumericData.Rate] = rate / factor;
+            var cursor = data.AsSpan();
+            var offset = 0;
+            for (var i = 0; i < length; i++)
             {
-                var rate = s[NumericData.Rate] ?? sound[NumericData.Rate] ??
-                    throw new RhythmCodexException("Can't downsample without a source rate.");
-                var sample = new Sample();
-                sample.CloneMetadataFrom(s);
-                s[NumericData.Rate] = rate / factor;
-                var length = s.Data.Length / factor;
-                var data = new float[length];
-                sample.Data = data;
-                var cursor = data.AsSpan();
-                var offset = 0;
-                for (var i = 0; i < length; i++)
-                {
-                    var buffer = data[offset++];
-                    for (var j = 1; j < factor; j++)
-                        buffer += data[offset++];
-                    cursor[0] = buffer / factor;
-                    cursor = cursor[1..];
-                }
+                var buffer = data[offset++];
+                for (var j = 1; j < factor; j++)
+                    buffer += data[offset++];
+                cursor[0] = buffer / factor;
+                cursor = cursor[1..];
+            }
 
-                return sample;
-            }).ToList()
-        };
+            return sample;
+        }));
 
         newSound.CloneMetadataFrom(sound);
         newSound[NumericData.Rate] /= factor;
@@ -323,7 +309,9 @@ public class AudioDsp : IAudioDsp
         if (sound.Samples.Count == 0)
             return sound;
 
-        var builder = SoundBuilder.FromSound(sound, Math.Max(sound.Samples.Count, 2));
+        var mixdown = (sound.Mixer != null ? sound.Mixer().MixDown(sound, null) : sound) ?? sound;
+
+        var builder = SoundBuilder.FromSound(mixdown, Math.Max(sound.Samples.Count, 2));
         ApplyEffectsInternal(builder);
         return builder.ToSound();
     }

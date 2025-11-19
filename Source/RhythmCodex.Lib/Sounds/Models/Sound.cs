@@ -33,9 +33,25 @@ public class Sound : Metadata
     {
         var clone = new Sound
         {
-            Samples = Samples.Select(s => s.Clone()).ToList()
+            Samples = Samples.Select(s => s.Clone()).ToList(),
+            Mixer = Mixer
         };
 
+        clone.CloneMetadataFrom(this);
+        return clone;
+    }
+
+    /// <summary>
+    /// Creates a clone of this sound, setting the new samples collection to the specified data.
+    /// </summary>
+    public Sound CloneWithSamples(IEnumerable<Sample> samples)
+    {
+        var clone = new Sound
+        {
+            Samples = samples.ToList(),
+            Mixer = Mixer
+        };
+        
         clone.CloneMetadataFrom(this);
         return clone;
     }

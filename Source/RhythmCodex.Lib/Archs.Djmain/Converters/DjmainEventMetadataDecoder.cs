@@ -30,6 +30,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
             {
                 ev[NumericData.Panning] = 1 - new BigRational(Math.Max(param0 - 1, 0), 14);
                 ev[NumericData.PlaySound] = param1 - 1;
+                ev[NumericData.SourcePanning] = param0;
                 break;
             }
 
