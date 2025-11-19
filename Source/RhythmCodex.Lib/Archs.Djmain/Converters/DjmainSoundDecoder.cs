@@ -49,7 +49,7 @@ public class DjmainSoundDecoder(
                     break;
             }
 
-            yield return new Sound
+            var result = new Sound
             {
                 Samples = [sample],
                 Mixer = () => djmainMixer,
@@ -57,12 +57,30 @@ public class DjmainSoundDecoder(
                 [NumericData.SourceVolume] = info.Volume,
                 [NumericData.Panning] = beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
                 [NumericData.SourcePanning] = info.Panning,
-                [NumericData.Channel] = (info.Channel & 0xF) == 0xF ? null : info.Channel & 0xF,
-                [NumericData.SimultaneousSounds] = 1 + (info.Channel >> 4),
                 [NumericData.SourceChannel] = info.Channel,
                 [NumericData.Rate] = beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
                 [NumericData.Id] = def.Key
             };
+
+            //
+            // Channels 0x00-0x07 are explicitly played on a single channel.
+            //
+
+            if (info.Channel < 0x08)
+                result[NumericData.Channel] = info.Channel;
+
+            //
+            // Channels 0x10-0x1F indicate a priority system instead.
+            //
+
+            else if (info.Channel is >= 0x10 and <= 0x1F)
+                result[NumericData.Priority] = 0x20 - info.Channel;
+            
+            //
+            // Channel 0x20 indicates a deleted/muted sound.
+            //
+            
+            yield return result;
         }
     }
 }

@@ -18,19 +18,26 @@ namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
 public class ChartRenderer(
-    IAudioDsp audioDsp, 
+    IAudioDsp audioDsp,
     IResamplerProvider resamplerProvider,
     IDefaultStereoMixer defaultStereoMixer
 ) : IChartRenderer
 {
+    enum ChannelType
+    {
+        Free,
+        Explicit,
+        Priority
+    }
+
     public Sound Render(Chart chart, IEnumerable<Sound> sounds, ChartRendererOptions options)
     {
+        var priorityChannelsInUse = 0;
         var sampleBankId = chart[NumericData.SampleMap];
-        var states = new Dictionary<int, List<MixState>>();
+        var channels = new List<(ChannelType Type, int Tag, MixState State)>();
         var sampleMap = new Dictionary<(int Player, int Column, bool Scratch), int>();
-        var masterVolume = (float)(options.Volume ?? BigRational.One);
-        var bgmVolume = (float)(options.BgmVolume ?? BigRational.One);
-        var keyVolume = (float)(options.KeyVolume ?? BigRational.One);
+
+        var maxPriorityChannels = (int)(chart[NumericData.PriorityChannels] ?? int.MaxValue);
 
         var eventList = chart.Events.AsCollection();
         if (eventList.Any(ev => ev[NumericData.LinearOffset] == null))
@@ -169,66 +176,77 @@ public class ChartRenderer(
         }
 
         //
-        // Enqueues mix state for a sound.
-        //
-
-        void EnqueueState(int channel, Sound? sound, Event? eventData)
-        {
-            if (!states.TryGetValue(channel, out var channelStates))
-                states[channel] = channelStates = [];
-
-            channelStates.Add(new MixState
-            {
-                Sound = sound,
-                SampleOffset = 0,
-                EventData = eventData
-            });
-        }
-
-        //
-        // Reserves a playback channel.
-        //
-
-        void ReserveChannel(int channel, int maxConcurrent)
-        {
-            if (maxConcurrent < 1)
-                return;
-
-            if (!states.TryGetValue(channel, out var channelStates))
-                states[channel] = channelStates = [];
-
-            while (channelStates.Count >= maxConcurrent)
-                channelStates.RemoveAt(0);
-        }
-
-        //
-        // Reserves necessary playback channels for a sound.
-        //
-
-        void ReserveChannels(Sound? sound)
-        {
-            if (sound == null)
-                return;
-
-            if (sound[NumericData.Channel] is { } soundChannel &&
-                sound[NumericData.SimultaneousSounds] is { } soundConcurrent)
-                ReserveChannel((int)soundChannel, (int)soundConcurrent);
-        }
-
-        //
         // Sets a sound up for playback.
         //
 
-        void PlaySound(Sound? sound, Event? ev, bool reserve)
+        void PlaySound(Sound? sound, Event? ev)
         {
-            var channel = reserve
-                ? sound?[NumericData.Channel] is { } soundChannel ? (int)soundChannel : -1
-                : -1;
+            if (sound?[NumericData.Channel] is { } soundChannel)
+            {
+                //
+                // Explicit sound channel gets playback replaced.
+                //
 
-            if (channel >= 0)
-                ReserveChannels(sound);
+                var channelIndex = (int)soundChannel;
 
-            EnqueueState(channel, sound, ev);
+                for (var i = 0; i < channels.Count; i++)
+                {
+                    if (channels[i].Type != ChannelType.Explicit || channels[i].Tag != channelIndex)
+                        continue;
+
+                    channels.RemoveAt(i);
+                    break;
+                }
+
+                channels.Add((ChannelType.Explicit, channelIndex, new MixState
+                {
+                    Sound = sound,
+                    EventData = ev
+                }));
+            }
+            else if (sound?[NumericData.Priority] is { } soundPriority)
+            {
+                //
+                // Priority sound channel attempts to find another sound equal or lower priority number to replace.
+                //
+
+                var priorityValue = (int)soundPriority;
+                
+                if (priorityChannelsInUse >= maxPriorityChannels)
+                {
+                    for (var i = 0; i < channels.Count; i++)
+                    {
+                        if (channels[i].Type != ChannelType.Priority || channels[i].Tag > priorityValue) 
+                            continue;
+
+                        channels.RemoveAt(i);
+                        priorityChannelsInUse--;
+                        break;
+                    }
+
+                    if (priorityChannelsInUse >= maxPriorityChannels)
+                        return;
+                }
+
+                priorityChannelsInUse++;
+                channels.Add((ChannelType.Priority, priorityValue, new MixState
+                {
+                    Sound = sound,
+                    EventData = ev
+                }));
+            }
+            else
+            {
+                //
+                // Free channels always play.
+                //
+
+                channels.Add((ChannelType.Free, 0, new MixState
+                {
+                    Sound = sound,
+                    EventData = ev
+                }));
+            }
         }
 
         //
@@ -245,7 +263,7 @@ public class ChartRenderer(
             if (sampleMap.TryGetValue(key, out var sample))
                 soundList.TryGetValue(sample, out sound);
 
-            PlaySound(sound, ev, true);
+            PlaySound(sound, ev);
         }
 
         //
@@ -259,7 +277,7 @@ public class ChartRenderer(
             if (ev[NumericData.PlaySound] is { } soundIndex)
                 soundList.TryGetValue((int)soundIndex, out sound);
 
-            PlaySound(sound, ev, false);
+            PlaySound(sound, ev);
         }
 
         //
@@ -268,9 +286,8 @@ public class ChartRenderer(
 
         int MixRemaining()
         {
-            var max = states
-                .SelectMany(s => s.Value
-                    .Select(cs => cs.GetMaxLength()))
+            var max = channels
+                .Select(x => x.State.GetMaxLength())
                 .DefaultIfEmpty(0)
                 .Max();
 
@@ -289,10 +306,10 @@ public class ChartRenderer(
             var maxMixed = 0;
             using var leftMem = MemoryPool<float>.Shared.Rent(maxMixSize);
             using var rightMem = MemoryPool<float>.Shared.Rent(maxMixSize);
-            
+
             var leftSpan = leftMem.Memory.Span[..maxMixSize];
             var rightSpan = rightMem.Memory.Span[..maxMixSize];
-            
+
             //
             // Buffers must be cleared because this memory is recycled.
             //
@@ -300,20 +317,31 @@ public class ChartRenderer(
             leftSpan.Clear();
             rightSpan.Clear();
 
-            foreach (var (_, channelStates) in states)
+            //
+            // Render the fixed channels.
+            //
+
+            for (var i = 0; i < channels.Count; i++)
             {
-                for (var i = 0; i < channelStates.Count; i++)
+                var (type, tag, state) = channels[i];
+
+                if (state.Sound?.Mixer?.Invoke() is not { } mixer)
+                    mixer = defaultStereoMixer;
+
+                var (newState, mixed) = mixer.Mix(leftSpan, rightSpan, state);
+
+                if (mixed > 0)
                 {
-                    var cs = channelStates[i];
-                    if (cs.Sound?.Mixer?.Invoke() is not { } mixer)
-                        mixer = defaultStereoMixer;
-                    var (newState, mixed) = mixer.Mix(leftSpan, rightSpan, cs);
-                    if (mixed > 0)
-                        channelStates[i] = newState;
-                    else
-                        channelStates.RemoveAt(i--);
-                    maxMixed = Math.Max(maxMixed, mixed);
+                    channels[i] = (type, tag, newState);
                 }
+                else
+                {
+                    channels.RemoveAt(i--);
+                    if (type == ChannelType.Priority)
+                        priorityChannelsInUse--;
+                }
+
+                maxMixed = Math.Max(maxMixed, mixed);
             }
 
             mixdownLeft.Append(leftSpan);

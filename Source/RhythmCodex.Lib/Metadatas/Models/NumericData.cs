@@ -45,5 +45,7 @@ public enum NumericData
     SourceOffset,
     ColumnCount,
     SimultaneousSounds,
-    SourceChannel
+    SourceChannel,
+    PriorityChannels,
+    Priority
 }
