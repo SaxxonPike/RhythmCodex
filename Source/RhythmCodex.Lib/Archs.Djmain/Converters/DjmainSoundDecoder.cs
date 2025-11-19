@@ -12,45 +12,16 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
-    : IDjmainSoundDecoder
+public class DjmainSoundDecoder(
+    IDjmainAudioDecoder djmainAudioDecoder, 
+    IBeatmaniaDspTranslator beatmaniaDspTranslator,
+    IDjmainMixer djmainMixer
+) : IDjmainSoundDecoder
 {
     public Dictionary<int, Sound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
     {
         return DecodeInternal(samples)
             .ToDictionary(s => (int)s[NumericData.Id]!.Value, s => s);
-    }
-
-    private static void ApplyEffects(Sound sound)
-    {
-        sound.EnsureStereo();
-
-        var leftData = sound.Samples[0].Data.ToArray();
-        var rightData = sound.Samples[1].Data.ToArray();
-
-        var volVal = (int)(sound[NumericData.SourceVolume] ?? 0) switch
-        {
-            <= 0x00 => 1,
-            >= 0x7F => 0,
-            var x => DjmainConstants.VolumeRom.Span[x] / (double)0x7FFF
-        };
-
-        var panIdx = Math.Clamp(((int)(sound[NumericData.SourcePanning] ?? 0x8) & 0xF) - 1, 0x0, 0xE);
-
-        var leftVolVal = DjmainConstants.PanRom.Span[panIdx] / (double)0x7FFF;
-        var rightVolVal = DjmainConstants.PanRom.Span[0xE - panIdx] / (double)0x7FFF;
-
-        AudioSimd.Gain(leftData, (float)(leftVolVal * volVal));
-        AudioSimd.Gain(rightData, (float)(rightVolVal * volVal));
-
-        sound.Samples[0].Data = leftData;
-        sound.Samples[1].Data = rightData;
-        sound.Samples[0][NumericData.Volume] = null;
-        sound.Samples[1][NumericData.Volume] = null;
-        sound.Samples[0][NumericData.Panning] = null;
-        sound.Samples[1][NumericData.Panning] = null;
-        sound[NumericData.Volume] = null;
-        sound[NumericData.Panning] = null;
     }
 
     private IEnumerable<Sound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
@@ -81,15 +52,16 @@ public class DjmainSoundDecoder(IDjmainAudioDecoder djmainAudioDecoder, IBeatman
             yield return new Sound
             {
                 Samples = [sample],
+                Mixer = () => djmainMixer,
                 [NumericData.Volume] = beatmaniaDspTranslator.GetDjmainVolume(info.Volume),
                 [NumericData.SourceVolume] = info.Volume,
                 [NumericData.Panning] = beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
                 [NumericData.SourcePanning] = info.Panning,
-                [NumericData.Channel] = (info.Channel & 0xF0) != 0 ? null : info.Channel,
+                [NumericData.Channel] = info.Channel & 0xF,
+                [NumericData.SimultaneousSounds] = 1 + (info.Channel >> 4),
                 [NumericData.SourceChannel] = info.Channel,
                 [NumericData.Rate] = beatmaniaDspTranslator.GetDjmainRate(info.Frequency),
-                [NumericData.Id] = def.Key,
-                ApplyEffectsHandler = ApplyEffects
+                [NumericData.Id] = def.Key
             };
         }
     }

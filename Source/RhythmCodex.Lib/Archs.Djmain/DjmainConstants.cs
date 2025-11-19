@@ -162,7 +162,8 @@ public static class DjmainConstants
         0x0001,
         0x0001,
         0x0001,
-        0x0001
+        0x0001,
+        0x0000
     };
 
     public const int ChunkSize = 0x1000000;

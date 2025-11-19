@@ -323,8 +323,6 @@ public class AudioDsp : IAudioDsp
         if (sound.Samples.Count == 0)
             return sound;
 
-        sound.ApplyEffectsHandler?.Invoke(sound);
-
         var builder = SoundBuilder.FromSound(sound, Math.Max(sound.Samples.Count, 2));
         ApplyEffectsInternal(builder);
         return builder.ToSound();

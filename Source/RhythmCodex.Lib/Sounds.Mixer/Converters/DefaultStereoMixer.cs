@@ -1,81 +1,16 @@
 using System;
-using JetBrains.Annotations;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
-using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Mixer.Models;
 using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Sounds.Mixer.Converters;
 
-[PublicAPI]
-public class DefaultStereoMixer : IStereoMixer
+[Service]
+public class DefaultStereoMixer : StereoMixer, IDefaultStereoMixer
 {
-    public MixState? Mix(
-        Span<float> outLeft,
-        Span<float> outRight,
-        MixState state
-    )
-    {
-        var leftSample = state.Sound?.Samples.Count switch
-        {
-            null or 0 => null,
-            _ => state.Sound.Samples[0]
-        };
-
-        var rightSample = state.Sound?.Samples.Count switch
-        {
-            null or 0 => null,
-            1 => state.Sound.Samples[0],
-            _ => state.Sound.Samples[1]
-        };
-
-        var leftData = leftSample == null || state.SampleOffset >= leftSample.Data.Length
-            ? ReadOnlySpan<float>.Empty
-            : leftSample.Data.Span[state.SampleOffset..];
-
-        var rightData = rightSample == null || state.SampleOffset >= rightSample.Data.Length
-            ? ReadOnlySpan<float>.Empty
-            : rightSample.Data.Span[state.SampleOffset..];
-
-        if (leftData.Length == 0 && rightData.Length == 0)
-            return null;
-
-        var balance = state.Balance ?? new MixBalance(
-            Sample: GetSampleMix(leftSample, rightSample, state),
-            Master: GetMasterMix(state)
-        );
-
-        var masterMixSize = Math.Min(outLeft.Length, outRight.Length);
-        var leftMixSize = Math.Min(masterMixSize, leftData.Length);
-        var rightMixSize = Math.Min(masterMixSize, rightData.Length);
-
-        if (leftMixSize > 0)
-        {
-            AudioSimd.MixGain(outLeft, 1, leftData,
-                (float)(balance.Sample.FromLeft.ToLeft * balance.Master.FromLeft.ToLeft));
-
-            AudioSimd.MixGain(outLeft, 1, leftData,
-                (float)(balance.Sample.FromLeft.ToRight * balance.Master.FromLeft.ToRight));
-        }
-
-        if (rightMixSize > 0)
-        {
-            AudioSimd.MixGain(outLeft, 1, rightData,
-                (float)(balance.Sample.FromRight.ToLeft * balance.Master.FromRight.ToLeft));
-
-            AudioSimd.MixGain(outLeft, 1, rightData,
-                (float)(balance.Sample.FromRight.ToRight * balance.Master.FromRight.ToRight));
-        }
-
-        return state with
-        {
-            Balance = balance,
-            SampleOffset = state.SampleOffset + Math.Max(leftMixSize, rightMixSize)
-        };
-    }
-
-    protected virtual MixAmount GetSampleMix(Sample? left, Sample? right, MixState state)
+    protected override MixAmount GetSampleMix(Sample? left, Sample? right, MixState state)
     {
         var leftPanning = (double)(left?[NumericData.Panning] ?? BigRational.Zero);
         var rightPanning = (double)(right?[NumericData.Panning] ?? BigRational.One);
@@ -95,7 +30,7 @@ public class DefaultStereoMixer : IStereoMixer
         );
     }
 
-    protected virtual MixAmount GetMasterMix(MixState state)
+    protected override MixAmount GetMasterMix(MixState state)
     {
         var volume = (double)(
             state.EventData?[NumericData.Volume] ??

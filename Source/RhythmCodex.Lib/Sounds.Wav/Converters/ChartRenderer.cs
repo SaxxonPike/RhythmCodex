@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charts.Models;
@@ -7,6 +8,8 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
+using RhythmCodex.Sounds.Mixer.Converters;
+using RhythmCodex.Sounds.Mixer.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Resampler.Providers;
 using RhythmCodex.Sounds.Wav.Models;
@@ -17,27 +20,11 @@ namespace RhythmCodex.Sounds.Wav.Converters;
 public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvider)
     : IChartRenderer
 {
-    private const float SqrtHalf = 0.70710677f;
-
-    private class ChannelState
-    {
-        public int? Channel { get; set; }
-        public Sound? Sound { get; set; }
-        public int Offset { get; set; }
-        public int LeftLength { get; set; }
-        public int RightLength { get; set; }
-        public float LeftToLeftVolume { get; set; }
-        public float LeftToRightVolume { get; set; }
-        public float RightToLeftVolume { get; set; }
-        public float RightToRightVolume { get; set; }
-        public bool Playing { get; set; }
-    }
-
     public Sound Render(Chart chart, IEnumerable<Sound> sounds, ChartRendererOptions options)
     {
         var sampleBankId = chart[NumericData.SampleMap];
-
-        var state = new List<ChannelState>();
+        var mixer = options.Mixer ?? new DefaultStereoMixer();
+        var states = new Dictionary<int, List<MixState>>();
         var sampleMap = new Dictionary<(int Player, int Column, bool Scratch), int>();
         var masterVolume = (float)(options.Volume ?? BigRational.One);
         var bgmVolume = (float)(options.BgmVolume ?? BigRational.One);
@@ -63,14 +50,13 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         }
 
         //
-        // Preprocess the sounds. This will give us a baseline stereo sample that will
-        // scale consistently in volume and panning.
+        // Preprocess the sounds. This is required to use the Mixer.
         //
 
         foreach (var (key, sound) in soundList.ToList().AsParallel())
         {
             var processedSound = audioDsp.ApplyResampling(
-                audioDsp.ApplyEffects(sound),
+                sound,
                 resamplerProvider.GetBest(),
                 options.SampleRate
             );
@@ -94,27 +80,29 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
         foreach (var tick in eventTicks)
         {
             var nowSample = (int)(tick.Key * options.SampleRate);
-            var tickEvents = tick.ToArray();
 
-            for (; lastSample < nowSample; lastSample++)
-                Mix();
+            if (nowSample > lastSample)
+            {
+                Mix(nowSample - lastSample);
+                lastSample = nowSample;
+            }
 
             //
             // Process sound change events (i.e. the key sound is changed.)
             //
 
-            foreach (var ev in tickEvents.Where(t => t[NumericData.LoadSound] != null))
+            foreach (var ev in tick.Where(t => t[NumericData.LoadSound] != null))
                 MapSample(ev, ev[NumericData.LoadSound]);
 
             //
             // Process note events (i.e. the key is actually sounded.)
             //
 
-            foreach (var ev in tickEvents.Where(t => t[FlagData.Note] != null))
+            foreach (var ev in tick.Where(t => t[FlagData.Note] != null))
             {
                 if (options.UseSourceDataForSamples && ev[NumericData.SourceData] != null)
                     MapSample(ev, ev[NumericData.SourceData]);
-                StartUserSample(ev);
+                PlayMappedSound(ev);
             }
 
             //
@@ -122,12 +110,14 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             //
 
             foreach (var ev in tick.Where(t => t[NumericData.PlaySound] != null))
-                StartBgmSample(ev[NumericData.PlaySound], ev[NumericData.Panning]);
+                PlayBgmSound(ev);
         }
 
-        while (Mix())
-        {
-        }
+        //
+        // Finish rendering.
+        //
+
+        MixRemaining();
 
         return new Sound
         {
@@ -137,11 +127,15 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                 : [mixdownLeft.ToSample(), mixdownRight.ToSample()]
         };
 
+        //
+        // Extracts column info from event metadata.
+        //
+
         (int Player, int Column, bool Scratch)? GetMapKey(Event? ev)
         {
             if (ev?[NumericData.Player] is not { } player)
                 return null;
-            
+
             var isScratch = ev[FlagData.Scratch] == true || ev[FlagData.FreeZone] == true;
 
             if (ev[NumericData.Column] is not { } column)
@@ -157,6 +151,10 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             return ((int)player, (int)column, isScratch);
         }
 
+        //
+        // Sets the key sound for a column.
+        //
+
         void MapSample(Event? ev, BigRational? soundIndex)
         {
             if (GetMapKey(ev) is not { } key)
@@ -168,57 +166,75 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
                 sampleMap[key] = (int)soundIndexVal;
         }
 
-        ChannelState SetupSoundChannel(Sound? sound)
+        //
+        // Enqueues mix state for a sound.
+        //
+
+        void EnqueueState(int channel, Sound? sound, Event? eventData)
         {
-            ChannelState? st = null;
-            var limit = Math.Max(1, (int)(sound?[NumericData.SimultaneousSounds] ?? BigRational.One));
+            if (!states.TryGetValue(channel, out var channelStates))
+                states[channel] = channelStates = [];
 
-            if (sound?[NumericData.Channel] is { } channel)
+            channelStates.Add(new MixState
             {
-                var channelInt = (int)channel;
-
-                if (state.Count(x => x.Channel == channelInt) >= limit)
-                {
-                    var stIdx = state.FindIndex(x => x.Channel == channelInt);
-
-                    if (stIdx >= 0)
-                    {
-                        st = state[stIdx];
-                        state.RemoveAt(stIdx);
-                        state.Add(st);
-                    }
-                }
-
-                if (st != null)
-                    return st;
-
-                st = new ChannelState { Channel = (int)channel };
-            }
-            else
-            {
-                if (state.Count(x => x.Sound == sound) >= limit)
-                {
-                    var stIdx = state.FindIndex(x => x.Sound == sound);
-
-                    if (stIdx >= 0)
-                    {
-                        st = state[stIdx];
-                        state.RemoveAt(stIdx);
-                        state.Add(st);
-                    }
-                }
-
-                if (st != null)
-                    return st;
-
-                st = new ChannelState();
-            }
-
-            state.Add(st);
-            return st;
+                Sound = sound,
+                SampleOffset = 0,
+                EventData = eventData
+            });
         }
 
-        void StartUserSample(Event ev)
+        //
+        // Reserves a playback channel.
+        //
+
+        void ReserveChannel(int channel, int maxConcurrent)
+        {
+            if (maxConcurrent < 1)
+                return;
+
+            if (!states.TryGetValue(channel, out var channelStates))
+                states[channel] = channelStates = [];
+
+            if (channelStates.Count >= maxConcurrent)
+                channelStates.RemoveAt(0);
+        }
+
+        //
+        // Reserves necessary playback channels for a sound.
+        //
+
+        void ReserveChannels(Sound? sound)
+        {
+            if (sound == null)
+                return;
+
+            if (sound[NumericData.Channel] is { } soundChannel &&
+                sound[NumericData.SimultaneousSounds] is { } soundConcurrent)
+                ReserveChannel((int)soundChannel, (int)soundConcurrent);
+        }
+
+        //
+        // Sets a sound up for playback.
+        //
+
+        void PlaySound(Sound? sound, Event? ev)
+        {
+            var channel = sound?[NumericData.Channel] is { } soundChannel
+                ? (int)soundChannel
+                : -1;
+
+            if (channel >= 0)
+                ReserveChannels(sound);
+
+            EnqueueState(channel, sound, ev);
+        }
+
+        //
+        // Sets a sound up for playback. Column data from the event
+        // is used to determine which sound to play.
+        //
+
+        void PlayMappedSound(Event ev)
         {
             if (GetMapKey(ev) is not { } key)
                 return;
@@ -227,98 +243,66 @@ public class ChartRenderer(IAudioDsp audioDsp, IResamplerProvider resamplerProvi
             if (sampleMap.TryGetValue(key, out var sample))
                 soundList.TryGetValue(sample, out sound);
 
-            var st = SetupSoundChannel(sound);
-
-            st.Sound = sound;
-            st.Offset = 0;
-            st.LeftLength = sound?.Samples[0].Data.Length ?? 0;
-            st.RightLength = sound?.Samples[1].Data.Length ?? 0;
-            st.LeftToLeftVolume = st.RightToRightVolume = SqrtHalf * masterVolume * keyVolume;
-            st.RightToLeftVolume = st.LeftToRightVolume = 0;
-            st.Playing = true;
+            PlaySound(sound, ev);
         }
 
-        void StartBgmSample(BigRational? soundIndex, BigRational? panning = null)
+        //
+        // Sets a sound up for playback. A value from the event is
+        // directly used to determine which sound to play.
+        //
+
+        void PlayBgmSound(Event ev)
         {
             Sound? sound = null;
-            if (soundIndex.HasValue)
-                soundList.TryGetValue((int)soundIndex.Value, out sound);
+            if (ev[NumericData.PlaySound] is { } soundIndex)
+                soundList.TryGetValue((int)soundIndex, out sound);
 
-            var panningValue = (float)(panning ?? BigRational.OneHalf);
-            float rightVolume, leftVolume;
-
-            if (options.LinearPanning)
-            {
-                rightVolume = Math.Clamp(panningValue, 0f, 1f) * 2;
-                leftVolume = (1 - Math.Clamp(panningValue, 0f, 1f)) * 2;
-            }
-            else
-            {
-                rightVolume = Math.Clamp(MathF.Sqrt(panningValue), 0f, 1f);
-                leftVolume = Math.Clamp(MathF.Sqrt(1f - panningValue), 0f, 1f);
-            }
-
-            var st = SetupSoundChannel(sound);
-
-            st.Sound = sound;
-            st.Offset = 0;
-
-            if (sound is { Samples.Count: >= 2 })
-            {
-                st.LeftLength = sound.Samples[0].Data.Length;
-                st.RightLength = sound.Samples[1].Data.Length;
-            }
-            else
-            {
-                st.LeftLength = 0;
-                st.RightLength = 0;
-            }
-
-            st.LeftToLeftVolume = leftVolume * masterVolume * bgmVolume;
-            st.LeftToRightVolume = (1 - leftVolume) * masterVolume * bgmVolume;
-            st.RightToLeftVolume = (1 - rightVolume) * masterVolume * bgmVolume;
-            st.RightToRightVolume = rightVolume * masterVolume * bgmVolume;
-            st.Playing = true;
+            PlaySound(sound, ev);
         }
 
-        bool Mix()
+        //
+        // Mix all currently playing sounds until there is no more data.
+        //
+
+        int MixRemaining()
         {
-            var finalMixLeft = 0f;
-            var finalMixRight = 0f;
+            var max = states
+                .SelectMany(s => s.Value
+                    .Select(cs => cs.GetMaxLength()))
+                .DefaultIfEmpty(0)
+                .Max();
 
-            for (var stateIndex = 0; stateIndex < state.Count; stateIndex++)
+            return Mix(max);
+        }
+
+        //
+        // Mix all currently playing sounds.
+        //
+
+        int Mix(int maxMixSize)
+        {
+            if (maxMixSize < 1)
+                return 0;
+
+            using var leftMem = MemoryPool<float>.Shared.Rent(maxMixSize);
+            using var rightMem = MemoryPool<float>.Shared.Rent(maxMixSize);
+
+            foreach (var (_, channelStates) in states)
             {
-                var ch = state[stateIndex];
-
-                if (!ch.Playing || ch.Sound == null || (ch.Offset >= ch.LeftLength && ch.Offset >= ch.RightLength))
+                for (var i = 0; i < channelStates.Count; i++)
                 {
-                    state.RemoveAt(stateIndex);
-                    stateIndex--;
-                    continue;
+                    var (newState, mixed) = mixer.Mix(leftMem.Memory.Span, rightMem.Memory.Span, channelStates[i]);
+                    if (mixed > 0)
+                        channelStates[i] = newState;
+                    else
+                        channelStates.RemoveAt(i--);
                 }
-
-                var left = ch.Sound.Samples[0].Data.Span;
-                var right = ch.Sound.Samples[1].Data.Span;
-
-                if (ch.Offset < ch.LeftLength)
-                {
-                    finalMixLeft += left[ch.Offset] * ch.LeftToLeftVolume;
-                    finalMixRight += left[ch.Offset] * ch.LeftToRightVolume;
-                }
-
-                if (ch.Offset < ch.RightLength)
-                {
-                    finalMixLeft += right[ch.Offset] * ch.RightToLeftVolume;
-                    finalMixRight += right[ch.Offset] * ch.RightToRightVolume;
-                }
-
-                ch.Offset++;
             }
 
-            mixdownLeft.Append(finalMixLeft);
-            mixdownRight.Append(finalMixRight);
+            mixdownLeft.Append(leftMem.Memory.Span[..maxMixSize]);
+            mixdownRight.Append(rightMem.Memory.Span[..maxMixSize]);
 
-            return state.Count > 0;
+            return maxMixSize;
         }
     }
 }

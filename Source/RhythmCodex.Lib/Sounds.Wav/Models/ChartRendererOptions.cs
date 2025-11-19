@@ -1,4 +1,5 @@
 ﻿using RhythmCodex.Infrastructure;
+using RhythmCodex.Sounds.Mixer.Converters;
 
 namespace RhythmCodex.Sounds.Wav.Models;
 
@@ -12,4 +13,5 @@ public class ChartRendererOptions
     public bool SwapStereo { get; set; }
     public bool UseSourceDataForSamples { get; set; }
     public bool LinearPanning { get; set; }
+    public IStereoMixer? Mixer { get; set; }
 }

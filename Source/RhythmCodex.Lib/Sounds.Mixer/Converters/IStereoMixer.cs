@@ -29,7 +29,7 @@ public interface IStereoMixer
     /// The sampling rate of the input and output must match. This is not checked,
     /// and doing so anyway will produce unexpected results.
     /// </remarks>
-    MixState? Mix(Span<float> outLeft,
+    (MixState State, int Mixed) Mix(Span<float> outLeft,
         Span<float> outRight,
         MixState state);
 }

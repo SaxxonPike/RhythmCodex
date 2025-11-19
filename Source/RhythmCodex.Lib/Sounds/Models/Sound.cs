@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.Mixer.Converters;
 
 namespace RhythmCodex.Sounds.Models;
 
@@ -21,9 +22,9 @@ public class Sound : Metadata
     public List<Sample> Samples { get; set; } = [];
     
     /// <summary>
-    /// An optional replacement function for handling the application of DSP effects.
+    /// Allows using a custom mixer for the sound. If left null, default mixing will be used.
     /// </summary>
-    public Action<Sound>? ApplyEffectsHandler { get; set; }
+    public Func<IStereoMixer>? Mixer { get; set; }
     
     /// <summary>
     /// Creates a clone of this sound, allocating new copies of the sample data.
