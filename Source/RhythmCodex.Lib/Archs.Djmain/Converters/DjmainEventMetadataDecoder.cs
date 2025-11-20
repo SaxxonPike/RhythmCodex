@@ -152,7 +152,9 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
             case DjmainEventType.SoundSelect:
                 ev[NumericData.Column] = param0;
                 ev[NumericData.Player] = 0;
-                ev[FlagData.Note] = true;
+
+                if (command == DjmainEventType.Marker && ev[FlagData.Measure] != true)
+                    ev[FlagData.Note] = true;
 
                 if (command == DjmainEventType.SoundSelect)
                     ev[NumericData.LoadSound] = param1 - 1;

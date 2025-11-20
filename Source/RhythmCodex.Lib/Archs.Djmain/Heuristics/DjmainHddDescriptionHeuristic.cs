@@ -54,6 +54,9 @@ public class DjmainHddDescriptionHeuristic : IDjmainHddDescriptionHeuristic
                 case " GQA05": return DjmainChunkFormat.BeatmaniaCore;
                 case " GQ995": return DjmainChunkFormat.BeatmaniaDct;
                 case " GCC01": return DjmainChunkFormat.BeatmaniaFinal;
+                case " GQ803": return DjmainChunkFormat.Popn1;
+                case " GQ831": return DjmainChunkFormat.Popn2;
+                case " GQ980": return DjmainChunkFormat.Popn3;
                 default: return DjmainChunkFormat.Unknown;
             }
         }

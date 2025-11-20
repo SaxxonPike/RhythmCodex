@@ -19,6 +19,7 @@ public class DjmainOffsetProvider : IDjmainOffsetProvider
                 return [0, 0, 0, 1, 1, 1];
             case DjmainChunkFormat.BeatmaniaFirst:
             case DjmainChunkFormat.BeatmaniaSecond:
+            case DjmainChunkFormat.Popn1:
                 return [0];
             default:
                 return [0, 0, 0];
@@ -39,6 +40,8 @@ public class DjmainOffsetProvider : IDjmainOffsetProvider
                 return [0x000400, 0xF02000, 0xF03000];
             case DjmainChunkFormat.BeatmaniaFinal:
                 return [0x002000, 0x006000, 0x00A000, 0x00E000, 0x012000, 0x016000];
+            case DjmainChunkFormat.Popn1:
+                return [0x000800];
             default:
                 return [0x000800, 0xF02000, 0xF03000];
         }
@@ -68,6 +71,8 @@ public class DjmainOffsetProvider : IDjmainOffsetProvider
                 return [0x000000, 0x000200];
             case DjmainChunkFormat.BeatmaniaFinal:
                 return [0x000000, 0x001000];
+            case DjmainChunkFormat.Popn1:
+                return [0x000000];
             default:
                 return [0x000000, 0x000400];
         }

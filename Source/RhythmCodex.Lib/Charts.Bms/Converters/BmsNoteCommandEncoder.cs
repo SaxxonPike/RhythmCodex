@@ -18,13 +18,13 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
         BigRational measureLength, int quantize)
     {
         // round up and multiply for longer measures (100% minimoo-G would be a nightmare otherwise)
-        var maxQ = Math.Max(quantize, (int) ((measureLength + BigRational.OneHalf).GetWholePart() * quantize));
+        var maxQ = Math.Max(quantize, (int)((measureLength + BigRational.OneHalf).GetWholePart() * quantize));
         var q = quantizer.GetQuantization(events.Select(e => e.Offset), BigInteger.One, maxQ);
 
-        var buffer = Enumerable.Range(0, q).Select(_ => (BigRational?) null).ToArray();
+        var buffer = Enumerable.Range(0, q).Select(_ => (BigRational?)null).ToArray();
         foreach (var ev in events)
         {
-            var i = (int) (ev.Offset * q);
+            var i = (int)(ev.Offset * q);
             buffer[i] = ev.Value;
         }
 
@@ -35,7 +35,7 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
         return builder.ToString();
     }
 
-    public List<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events)
+    public List<BmsEvent> TranslateNoteEvents(IEnumerable<Event> events, BmsChartType chartType)
     {
         return Do().ToList();
 
@@ -109,42 +109,72 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
 
             string? GetLane(IMetadata ev, bool isFreeze)
             {
-                if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 0)
-                    return isFreeze ? "51" : "11";
-                if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 1)
-                    return isFreeze ? "52" : "12";
-                if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 2)
-                    return isFreeze ? "53" : "13";
-                if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 3)
-                    return isFreeze ? "54" : "14";
-                if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 4)
-                    return isFreeze ? "55" : "15";
-                if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 5)
-                    return isFreeze ? "58" : "18";
-                if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 6)
-                    return isFreeze ? "59" : "19";
-                if (ev[NumericData.Player] == 0 && ev[FlagData.Scratch] == true)
-                    return isFreeze ? "56" : "16";
-                if (ev[NumericData.Player] == 0 && ev[FlagData.FreeZone] == true)
-                    return "17";
-                if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 0)
-                    return isFreeze ? "61" : "21";
-                if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 1)
-                    return isFreeze ? "62" : "22";
-                if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 2)
-                    return isFreeze ? "63" : "23";
-                if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 3)
-                    return isFreeze ? "64" : "24";
-                if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 4)
-                    return isFreeze ? "65" : "25";
-                if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 5)
-                    return isFreeze ? "68" : "28";
-                if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 6)
-                    return isFreeze ? "69" : "29";
-                if (ev[NumericData.Player] == 1 && ev[FlagData.Scratch] == true)
-                    return isFreeze ? "66" : "26";
-                if (ev[NumericData.Player] == 1 && ev[FlagData.FreeZone] == true)
-                    return "27";
+                switch (chartType)
+                {
+                    case BmsChartType.Beatmania:
+                    {
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 0)
+                            return isFreeze ? "51" : "11";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 1)
+                            return isFreeze ? "52" : "12";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 2)
+                            return isFreeze ? "53" : "13";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 3)
+                            return isFreeze ? "54" : "14";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 4)
+                            return isFreeze ? "55" : "15";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 5)
+                            return isFreeze ? "58" : "18";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 6)
+                            return isFreeze ? "59" : "19";
+                        if (ev[NumericData.Player] == 0 && ev[FlagData.Scratch] == true)
+                            return isFreeze ? "56" : "16";
+                        if (ev[NumericData.Player] == 0 && ev[FlagData.FreeZone] == true)
+                            return "17";
+                        if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 0)
+                            return isFreeze ? "61" : "21";
+                        if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 1)
+                            return isFreeze ? "62" : "22";
+                        if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 2)
+                            return isFreeze ? "63" : "23";
+                        if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 3)
+                            return isFreeze ? "64" : "24";
+                        if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 4)
+                            return isFreeze ? "65" : "25";
+                        if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 5)
+                            return isFreeze ? "68" : "28";
+                        if (ev[NumericData.Player] == 1 && ev[NumericData.Column] == 6)
+                            return isFreeze ? "69" : "29";
+                        if (ev[NumericData.Player] == 1 && ev[FlagData.Scratch] == true)
+                            return isFreeze ? "66" : "26";
+                        if (ev[NumericData.Player] == 1 && ev[FlagData.FreeZone] == true)
+                            return "27";
+                        break;
+                    }
+                    case BmsChartType.Popn:
+                    {
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 0)
+                            return isFreeze ? "51" : "11";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 1)
+                            return isFreeze ? "52" : "12";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 2)
+                            return isFreeze ? "53" : "13";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 3)
+                            return isFreeze ? "54" : "14";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 4)
+                            return isFreeze ? "55" : "15";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 5)
+                            return isFreeze ? "62" : "22";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 6)
+                            return isFreeze ? "63" : "23";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 7)
+                            return isFreeze ? "64" : "24";
+                        if (ev[NumericData.Player] == 0 && ev[NumericData.Column] == 8)
+                            return isFreeze ? "65" : "25";
+                        break;
+                    }
+                }
+
                 return null;
             }
         }

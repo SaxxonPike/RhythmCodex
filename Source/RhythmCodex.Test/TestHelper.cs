@@ -83,7 +83,7 @@ public static class TestHelper
         }
 
         public void WriteSet(IEnumerable<Chart> charts, IEnumerable<Sound> sounds,
-            string outPath, string title)
+            string outPath, string title, BmsChartType chartType)
         {
             var bmsWriter = resolver.Resolve<IBmsStreamWriter>();
             var bmsEncoder = resolver.Resolve<IBmsEncoder>();
@@ -148,7 +148,8 @@ public static class TestHelper
                             return null;
 
                         return fileName;
-                    }
+                    },
+                    ChartType = chartType
                 }));
 
                 outStream.Flush();

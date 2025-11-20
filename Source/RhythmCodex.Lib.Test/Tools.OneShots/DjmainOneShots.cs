@@ -7,6 +7,7 @@ using NUnit.Framework;
 using RhythmCodex.Archs.Djmain.Converters;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Archs.Djmain.Streamers;
+using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
@@ -21,20 +22,23 @@ public class DjmainOneShots : BaseIntegrationFixture
     /// Renders a BMS set from each chunk within a Djmain system HDD.
     /// </summary>
     [Test]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm2ndmix.zip", "bm1-2nd")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm3rdmix.zip", "bm1-3rd")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm4thmix.zip", "bm1-4th")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm5thmix.zip", "bm1-5th")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm6thmix.zip", "bm1-6th")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm7thmix.zip", "bm1-7th")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmclubmx.zip", "bm1-club")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompmx.zip", "bm1-comp")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompm2.zip", "bm1-comp2")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcorerm.zip", "bm1-core")]
-    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmfinal.zip", "bm1-final")]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm2ndmix.zip", "bm1-2nd", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm3rdmix.zip", "bm1-3rd", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm4thmix.zip", "bm1-4th", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm5thmix.zip", "bm1-5th", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm6thmix.zip", "bm1-6th", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm7thmix.zip", "bm1-7th", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmclubmx.zip", "bm1-club", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompmx.zip", "bm1-comp", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompm2.zip", "bm1-comp2", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcorerm.zip", "bm1-core", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmfinal.zip", "bm1-final", BmsChartType.Beatmania)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn1.zip", "popn1", BmsChartType.Popn)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn2.zip", "popn2", BmsChartType.Popn)]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn3.zip", "popn3", BmsChartType.Popn)]
     [Explicit]
-    public void ExtractBms(string source, string target)
+    public void ExtractBms(string source, string target, BmsChartType chartType)
     {
         var streamer = Resolve<IDjmainChunkStreamReader>();
         var decoder = Resolve<IDjmainDecoder>();
@@ -63,7 +67,7 @@ public class DjmainOneShots : BaseIntegrationFixture
                     Log.WriteLine($"Writing set for chunk {idx}");
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
-                    this.WriteSet(archive.Charts, archive.Samples, basePath, title);
+                    this.WriteSet(archive.Charts, archive.Samples, basePath, title, chartType);
                 }
             });
 
@@ -89,6 +93,9 @@ public class DjmainOneShots : BaseIntegrationFixture
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompm2.zip", "bm1-comp2")]
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcorerm.zip", "bm1-core")]
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmfinal.zip", "bm1-final")]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn1.zip", "popn1")]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn2.zip", "popn2")]
+    [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn3.zip", "popn3")]
     [Explicit]
     public void RenderGst(string source, string target)
     {

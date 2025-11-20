@@ -199,7 +199,7 @@ public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEnc
         // Notes
 
         var noteEvents = bmsNoteCommandEncoder
-            .TranslateNoteEvents(chartEvents)
+            .TranslateNoteEvents(chartEvents, options!.ChartType)
             ;
 
         foreach (var ev in GetCommands(noteEvents, 960, i => Alphabet.EncodeAlphanumeric(

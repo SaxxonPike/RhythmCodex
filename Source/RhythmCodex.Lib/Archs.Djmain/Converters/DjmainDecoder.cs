@@ -50,7 +50,7 @@ public class DjmainDecoder(
         // There may still be charts, however.
         //
 
-        if (chunk.Data.Span[..0x010].SequenceEqual(chunk.Data.Span[0x3F0..0x400]))
+        if (chunk.Data.Span[..0x080].SequenceEqual(chunk.Data.Span[0x380..0x400]))
             skipSounds = true;
 
         var chartSoundMap = offsetProvider.GetSampleChartMap(chunk.Format)
