@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Extensions;
@@ -57,6 +58,12 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             .ToDictionary(g => g.Key, g => g.ToList())
             .ToList();
 
+        // Keep track of the first event for each sound.
+        var firstEvents = events
+            .Where(e => e[NumericData.PlaySound] != null)
+            .GroupBy(e => e[NumericData.PlaySound]!.Value)
+            .ToDictionary(g => (int)g.Key, g => g.First());
+
         // Compare every sample's played times to every other sample's played times.
         for (var i = 0; i < groups.Count; i++)
         {
@@ -89,12 +96,12 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             doneMatch.Add(match.A);
             doneMatch.Add(match.B);
 
+            ApplySourceData(soundA);
+            ApplySourceData(soundB);
+
             var mix = audioDsp.Mix([soundA, soundB]);
             soundA.ReplaceNoCopy(mix);
             soundB.ClearSamples();
-
-            soundA[NumericData.Panning] = soundB[NumericData.Panning] = null;
-            soundA[NumericData.Volume] = soundB[NumericData.Volume] = null;
 
             // Remove events related to now-removed sound B.
             foreach (var chart in charts)
@@ -104,12 +111,33 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
         return;
 
         // Evaluate if two samples should be combined based on panning and play time.
-        bool Compare(IList<PlayedEvent> a, IList<PlayedEvent> b)
+        bool Compare(List<PlayedEvent> a, List<PlayedEvent> b)
         {
             if (a.Count != b.Count)
                 return false;
 
-            return !a.Where((t, i) => t.Offset != b[i].Offset || t.Panning != 1 - b[i].Panning).Any();
+            if (a.Where((t, i) => t.Offset != b[i].Offset || t.Panning == b[i].Panning).Any())
+                return false;
+
+            Debug.WriteLine("Combined");
+
+            return true;
+        }
+
+        // A fix for games that set panning in BGM.
+        void ApplySourceData(Sound? sound)
+        {
+            if (sound?[NumericData.Id] is not { } soundId)
+                return;
+
+            if (!firstEvents.TryGetValue((int)soundId, out var e))
+                return;
+
+            if (e[NumericData.SourcePanning] is { } eventPanning)
+                sound[NumericData.SourcePanning] = eventPanning;
+
+            if (e[NumericData.SourceVolume] is { } eventVolume)
+                sound[NumericData.SourceVolume] = eventVolume;
         }
     }
 }

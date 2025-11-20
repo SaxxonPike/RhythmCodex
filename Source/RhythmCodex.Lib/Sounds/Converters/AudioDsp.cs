@@ -18,9 +18,9 @@ public class AudioDsp : IAudioDsp
 {
     private static readonly BigRational Sqrt2 = BigRational.Sqrt(2);
 
-    public Sound Mix(IEnumerable<Sound> sounds)
+    public Sound Mix(IEnumerable<Sound> sounds, Metadata? mixerMetadata = null)
     {
-        var bounced = sounds.Select(ApplyEffects).ToList();
+        var bounced = sounds.Select(sound => ApplyEffects(sound, mixerMetadata)).ToList();
         var length = bounced.Max(b => b.Samples.Count > 0 ? b.Samples.Max(s => s.Data.Length) : 0);
         var channels = bounced.Max(b => b.Samples.Count);
 
@@ -209,7 +209,7 @@ public class AudioDsp : IAudioDsp
         return newSound;
     }
 
-    public Sound ApplyEffects(Sound sound)
+    public Sound ApplyEffects(Sound sound, Metadata? mixerMetadata = null)
     {
         ArgumentNullException.ThrowIfNull(sound);
 
@@ -217,15 +217,13 @@ public class AudioDsp : IAudioDsp
             return sound;
 
         var mixdown = sound;
-        
+
         if (sound.Mixer != null)
-            mixdown = sound.Mixer().MixDown(sound, null) ?? mixdown;
+            mixdown = sound.Mixer().MixDown(sound, mixerMetadata) ?? mixdown;
 
         var builder = SoundBuilder.FromSound(mixdown, Math.Max(mixdown.Samples.Count, 2));
         ApplyEffectsInternal(builder);
         return builder.ToSound();
-
-        return mixdown;
     }
 
     private static void ApplyEffectsInternal(SoundBuilder sound)

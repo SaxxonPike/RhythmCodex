@@ -27,14 +27,17 @@ public class DjmainSampleDecoder(
         IEnumerable<KeyValuePair<int, DjmainSampleInfo>> infos,
         int sampleOffset)
     {
-        foreach (var (key, props) in infos)
+        foreach (var (key, props) in infos.OrderBy(x => x.Key))
         {
             if (props.Frequency == 0)
                 continue;
-
-            // There's fuckery in some of the samples. This addresses a specific anomaly in the input
-            // data where the whole line is 0x0A repeated.
+            
+            // This is a failsafe for data reaching the end of a sample table.
             if (props is { Frequency: 0x0A0A, Channel: 0x0A, Panning: 0x0A, Volume: 0x0A })
+                continue;
+
+            // A likewise problem with 0x4F.
+            if (props is { Frequency: 0x4F4F, Channel: 0x4F, Panning: 0x4F, Volume: 0x4F })
                 continue;
 
             stream.Position = sampleOffset + props.Offset;

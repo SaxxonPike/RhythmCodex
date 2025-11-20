@@ -13,9 +13,6 @@ public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<Djmai
     [Test]
     public void Read_ShouldReadAllDefinitions()
     {
-        // Arrange.
-        Mock<IDjmainConfiguration>().Setup(x => x.MaxSampleDefinitions).Returns(3);
-
         var data = new byte[]
         {
             0x12, 0x34, 0x56, 0x78, 0x90, 0x12, 0x34, 0x56, 0x78, 0x90, 0x12,
@@ -24,7 +21,7 @@ public class DjmainSampleDefinitionStreamReaderTests : BaseUnitTestFixture<Djmai
 
         // Act.
         using var mem = new MemoryStream(data);
-        var output = Subject.Read(mem).ToArray();
+        var output = Subject.Read(mem, data.Length).ToArray();
 
         // Assert.
         output.Length.ShouldBe(2);

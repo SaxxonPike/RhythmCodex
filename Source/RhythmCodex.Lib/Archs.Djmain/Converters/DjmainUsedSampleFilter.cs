@@ -1,17 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Archs.Djmain.Model;
+using RhythmCodex.Extensions;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainUsedSampleFilter : IDjmainUsedSampleFilter
+public class DjmainUsedSampleFilter(IDjmainChartDecoder chartDecoder)
+    : IDjmainUsedSampleFilter
 {
     public Dictionary<int, DjmainSampleInfo> Filter(IDictionary<int, DjmainSampleInfo> samples,
-        IEnumerable<DjmainChartEvent> events)
+        IEnumerable<DjmainChartEvent> inEvents)
     {
-        return events
+        var events = inEvents.AsList();
+        var skip = chartDecoder.GetFirstEventOffset(events);
+
+        return events.Skip(skip)
             .Where(IsNote)
             .Select(ev => ev.Param1 - 1)
             .Distinct()

@@ -8,13 +8,13 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainSampleInfoStreamWriter(IDjmainConfiguration djmainConfiguration)
+public class DjmainSampleInfoStreamWriter
     : IDjmainSampleInfoStreamWriter
 {
-    public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions)
+    public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions, int size)
     {
         var count = Math.Max(0,
-            Math.Min(definitions.Any() ? definitions.Max(d => d.Key) + 1 : 0, djmainConfiguration.MaxSampleDefinitions));
+            Math.Min(definitions.Any() ? definitions.Max(d => d.Key) + 1 : 0, size / 11));
 
         var writer = new BinaryWriter(stream);
 

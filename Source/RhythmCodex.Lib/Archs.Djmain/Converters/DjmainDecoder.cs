@@ -40,21 +40,43 @@ public class DjmainDecoder(
         using var stream = new ReadOnlyMemoryStream(chunk.Data);
         var swappedStream = new ByteSwappedReadStream(stream);
 
+        var skipSounds = false;
+
+        Span<byte> emptyBlockCheck = stackalloc byte[0x10];
+        emptyBlockCheck.Fill(chunk.Data.Span[0]);
+
+        //
+        // This is a failsafe to prevent trying to load sound tables full of nothing.
+        // There may still be charts, however.
+        //
+
+        if (chunk.Data.Span[..0x010].SequenceEqual(chunk.Data.Span[0x3F0..0x400]))
+            skipSounds = true;
+
         var chartSoundMap = offsetProvider.GetSampleChartMap(chunk.Format)
             .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
             .ToDictionary(kv => kv.Key, kv => kv.Value);
         var rawCharts = ExtractCharts(stream, chunk.Format);
         var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format);
-        var sounds = options.DisableAudio
-            ? new Dictionary<int, IEnumerable<KeyValuePair<int, Sound>>>()
-            : DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts, options)
-                .ToDictionary(kv => kv.Key, kv => kv.Value.Select(s => s));
+        var soundOutput = !skipSounds && !options.DisableAudio
+            ? DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts, options)
+            : [];
 
         return new DjmainArchive
         {
-            RawCharts = rawCharts.ToDictionary(kv => kv.Key, kv => kv.Value),
-            Charts = decodedCharts.Select(c => c.Value).ToList(),
-            Samples = sounds.SelectMany(s => s.Value).Select(s => s.Value).ToList()
+            Id = chunk.Id,
+            RawCharts = rawCharts
+                .ToDictionary(kv => kv.Key, kv => kv.Value),
+            Charts = decodedCharts
+                .Select(c => c.Value)
+                .ToList(),
+            Samples = soundOutput
+                .SelectMany(s => s.Value.Sounds)
+                .Select(s => s.Value)
+                .ToList(),
+            SampleInfos = soundOutput
+                .ToDictionary(s => s.Key, s => s.Value.Raw
+                    .ToDictionary(i => i.Key, i => i.Value.Info))
         };
     }
 
@@ -117,7 +139,7 @@ public class DjmainDecoder(
             return chart;
         });
 
-    private Dictionary<int, Dictionary<int, Sound>> DecodeSounds(Stream stream,
+    private Dictionary<int, (Dictionary<int, Sound> Sounds, Dictionary<int, DjmainSample> Raw)> DecodeSounds(Stream stream,
         DjmainChunkFormat format,
         Dictionary<int, int> chartSoundMap,
         Dictionary<int, List<DjmainChartEvent>> charts,
@@ -140,22 +162,25 @@ public class DjmainDecoder(
                     s[NumericData.SampleMap] = kv.Key;
                 }
 
-                if (!options.DoNotConsolidateSamples)
-                    soundConsolidator.Consolidate(decodedSamples.Values, decodedCharts.Values);
+                if (!options.DoNotConsolidateSamples && decodedSamples.Count != 0)
+                    soundConsolidator.Consolidate(
+                        decodedSamples.Values,
+                        decodedCharts.Values.Where(v => v[NumericData.SampleMap] == kv.Key)
+                    );
 
                 foreach (var discardedSample in decodedSamples
                              .Where(s => s.Value.Samples.Count == 0)
                              .ToList())
                     decodedSamples.Remove(discardedSample.Key);
 
-                return decodedSamples;
+                return (decodedSamples, samples);
             });
 
     private Dictionary<int, DjmainSample> DecodeSamples(Stream stream, DjmainChunkFormat format,
         int sampleMapOffset, IEnumerable<DjmainChartEvent> events)
     {
         stream.Position = sampleMapOffset;
-        var infos = sampleInfoStreamReader.Read(stream);
+        var infos = sampleInfoStreamReader.Read(stream, offsetProvider.GetSampleMapMaxSize(format));
         var filteredInfos = usedSampleFilter.Filter(infos, events);
         return sampleDecoder.Decode(stream, filteredInfos, offsetProvider.GetSoundOffset(format));
     }

@@ -15,5 +15,7 @@ public class DjmainArchive
 
     public Dictionary<int, List<DjmainChartEvent>> RawCharts { get; set; } = new();
 
+    public Dictionary<int, Dictionary<int, DjmainSampleInfo>> SampleInfos { get; set; } = new();
+
     public override string ToString() => Json.Serialize(this);
 }

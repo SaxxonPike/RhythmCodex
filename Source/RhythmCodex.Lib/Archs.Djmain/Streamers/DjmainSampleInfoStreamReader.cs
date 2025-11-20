@@ -1,47 +1,48 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Archs.Djmain.Model;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainSampleInfoStreamReader(IDjmainConfiguration djmainConfiguration) : IDjmainSampleInfoStreamReader
+public class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
 {
-    public Dictionary<int, DjmainSampleInfo> Read(Stream stream)
+    public Dictionary<int, DjmainSampleInfo> Read(Stream stream, int maxSize)
     {
-        return ReadInternal(stream).ToDictionary(kv => kv.Key, kv => kv.Value);
+        return ReadInternal(stream, maxSize).ToDictionary(kv => kv.Key, kv => kv.Value);
     }
 
-    private IEnumerable<KeyValuePair<int, DjmainSampleInfo>> ReadInternal(Stream stream)
+    private IEnumerable<KeyValuePair<int, DjmainSampleInfo>> ReadInternal(Stream stream, int maxSize)
     {
-        var buffer = new byte[11];
+        var resultList = new Dictionary<int, DjmainSampleInfo>();
+        var maxDefs = maxSize / 11;
+        Span<byte> buffer = stackalloc byte[11];
 
-        using var mem = new ReadOnlyMemoryStream(buffer);
-        var reader = new BinaryReader(mem);
-
-        for (var i = 0; i < djmainConfiguration.MaxSampleDefinitions; i++)
+        for (var i = 0; i < maxDefs; i++)
         {
-            reader.BaseStream.Position = 0;
-
-            var bytesRead = stream.Read(buffer, 0, 11);
+            var bytesRead = stream.Read(buffer);
             if (bytesRead < 11)
-                yield break;
+                break;
 
             var result = new DjmainSampleInfo
             {
-                Channel = reader.ReadByte(),
-                Frequency = reader.ReadUInt16(),
-                ReverbVolume = reader.ReadByte(),
-                Volume = reader.ReadByte(),
-                Panning = reader.ReadByte(),
-                Offset = reader.ReadUInt16() | ((uint) reader.ReadByte() << 16),
-                SampleType = reader.ReadByte(),
-                Flags = reader.ReadByte()
+                Channel = buffer[0],
+                Frequency = BinaryPrimitives.ReadUInt16LittleEndian(buffer[1..]),
+                ReverbVolume = buffer[3],
+                Volume = buffer[4],
+                Panning = buffer[5],
+                Offset = BinaryPrimitives.ReadUInt16LittleEndian(buffer[6..]) | ((uint) buffer[8] << 16),
+                SampleType = buffer[9],
+                Flags = buffer[10]
             };
-            yield return new KeyValuePair<int, DjmainSampleInfo>(i, result);
+
+            resultList.Add(i, result);
         }
+
+        return resultList;
     }
 }

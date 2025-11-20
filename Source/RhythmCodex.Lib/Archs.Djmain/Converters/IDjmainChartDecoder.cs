@@ -7,4 +7,5 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 public interface IDjmainChartDecoder
 {
     Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType);
+    int GetFirstEventOffset(IEnumerable<DjmainChartEvent> events);
 }

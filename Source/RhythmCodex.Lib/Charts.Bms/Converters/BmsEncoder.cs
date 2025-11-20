@@ -31,12 +31,12 @@ public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEnc
             {NumericData.PlayLevel, "PLAYLEVEL"}
         };
 
-    public List<BmsCommand> Encode(Chart chart)
+    public List<BmsCommand> Encode(Chart chart, BmsEncoderOptions? options = null)
     {
-        return EncodeInternal(chart).ToList();
+        return EncodeInternal(chart, options ?? new BmsEncoderOptions()).ToList();
     }
 
-    private IEnumerable<BmsCommand> EncodeInternal(Chart inputChart)
+    private IEnumerable<BmsCommand> EncodeInternal(Chart inputChart, BmsEncoderOptions options)
     {
         if (inputChart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException("Metric offsets must all be populated in order to export to BMS.");
@@ -70,6 +70,28 @@ public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEnc
                 };
         }
 
+        // Player count (PLAYER)
+
+        if (inputChart["PLAYER"] is null)
+        {
+            var playerCount = chartEvents
+                .Where(ev => ev[NumericData.Player] != null &&
+                             (ev[NumericData.LoadSound] != null || ev[NumericData.PlaySound] != null))
+                .Select(ev => (int)ev[NumericData.Player]!.Value)
+                .Distinct()
+                .Count();
+
+            yield return new BmsCommand
+            {
+                Name = "PLAYER",
+                Value = playerCount switch
+                {
+                    < 2 => "1",
+                    _ => "3"
+                }
+            };
+        }
+        
         // Sample definitions (WAVxx)
 
         var usedSamples = chartEvents
@@ -97,11 +119,21 @@ public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEnc
             if (kv.Key < 0)
                 continue;
 
-            yield return new BmsCommand
+            string? wavName;
+
+            if (options?.WavNameTransformer is { } transformer)
+                wavName = transformer.Invoke(kv.Key);
+            else
+                wavName = $"{Alphabet.EncodeAlphanumeric(kv.Key, 4)}.WAV";
+
+            if (wavName != null)
             {
-                Name = $"WAV{Alphabet.EncodeAlphanumeric(kv.Value, 2)}",
-                Value = $"{Alphabet.EncodeAlphanumeric(kv.Key, 4)}.WAV"
-            };
+                yield return new BmsCommand
+                {
+                    Name = $"WAV{Alphabet.EncodeAlphanumeric(kv.Value, 2)}",
+                    Value = wavName
+                };
+            }
         }
 
         // BPM definitions (for BPM and xxx08:)
@@ -161,9 +193,7 @@ public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEnc
                      i => Alphabet.EncodeNumeric(
                          i == null
                              ? 0
-                             : bpmMap.TryGetValue(i.Value, out var value)
-                                 ? value
-                                 : 0, 2)))
+                             : bpmMap.GetValueOrDefault(i.Value, 0), 2)))
             yield return ev;
 
         // Notes

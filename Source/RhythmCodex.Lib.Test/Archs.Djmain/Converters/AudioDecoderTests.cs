@@ -85,10 +85,10 @@ public class AudioDecoderTests : BaseUnitTestFixture<DjmainAudioDecoder, IDjmain
         // Arrange.
         var data = new byte[256];
         for (var i = 0; i < 256; i++)
-            data[i] = (byte)i;
+            data[i] = unchecked((byte)i);
 
         var expected = data
-            .Select(v => (((v << 24) ^ (1 << 31)) >> 24) / 128f)
+            .Select(v => ((v << 24) >> 24) / 128f)
             .ToArray();
 
         // Act.

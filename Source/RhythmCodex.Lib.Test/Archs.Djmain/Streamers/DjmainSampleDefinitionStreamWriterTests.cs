@@ -15,8 +15,6 @@ public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<Djmai
     public void Write_WritesSampleDefinitions()
     {
         // Arrange.
-        Mock<IDjmainConfiguration>().Setup(x => x.MaxSampleDefinitions).Returns(3);
-
         var input = new[]
         {
             new DjmainSampleInfo
@@ -55,7 +53,7 @@ public class DjmainSampleDefinitionStreamWriterTests : BaseUnitTestFixture<Djmai
 
         using var mem = new MemoryStream();
         // Act.
-        Subject.Write(mem, pairs);
+        Subject.Write(mem, pairs, expected.Length);
 
         // Assert.
         var output = mem.ToArray();

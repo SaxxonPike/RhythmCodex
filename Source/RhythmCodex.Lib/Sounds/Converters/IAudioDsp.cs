@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Resampler.Providers;
 
@@ -14,7 +15,7 @@ public interface IAudioDsp
     /// <summary>
     /// Applies gain and panning effects.
     /// </summary>
-    Sound ApplyEffects(Sound sound);
+    Sound ApplyEffects(Sound sound, Metadata? mixerMetadata = null);
     
     /// <summary>
     /// Resamples audio data to a new sampling rate using the specified resampler.
@@ -32,7 +33,7 @@ public interface IAudioDsp
     /// Mixes audio data into a new sound, applying gain and panning effects as necessary before mixing. Resampling
     /// is not performed - the input should share the same sampling rate.
     /// </summary>
-    Sound Mix(IEnumerable<Sound> sound);
+    Sound Mix(IEnumerable<Sound> sound, Metadata? mixerMetadata = null);
 
     /// <summary>
     /// Mixes down and interleaves sound's sample data as 16-bit values.

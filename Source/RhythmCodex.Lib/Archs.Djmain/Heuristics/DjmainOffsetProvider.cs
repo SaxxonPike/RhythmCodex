@@ -73,6 +73,24 @@ public class DjmainOffsetProvider : IDjmainOffsetProvider
         }
     }
 
+    public int GetSampleMapMaxSize(DjmainChunkFormat format)
+    {
+        switch (format)
+        {
+            case DjmainChunkFormat.Unknown:
+                throw new RhythmCodexException("Can't get sample map offsets for unknown format.");
+            case DjmainChunkFormat.BeatmaniaFirst:
+            case DjmainChunkFormat.BeatmaniaSecond:
+            case DjmainChunkFormat.BeatmaniaThird:
+            case DjmainChunkFormat.BeatmaniaComplete:
+                return 0x0400;
+            case DjmainChunkFormat.BeatmaniaFinal:
+                return 0x0B00;
+            default:
+                return 0x0800;
+        }
+    }
+
     public List<string> GetChartNames(DjmainChunkFormat format)
     {
         switch (format)

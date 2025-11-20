@@ -2,6 +2,7 @@
 using System.Linq;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Charts.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -19,20 +20,16 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
         };
     }
 
-    private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType)
+    public int GetFirstEventOffset(IEnumerable<DjmainChartEvent> inEvents) => 
+        inEvents.TakeWhile(e => e.Offset == 0 && (e.Param0 & 0xF) == 0).Count();
+
+    private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> inEvents, DjmainChartType chartType)
     {
-        var noteCount = true;
+        var events = inEvents.AsList();
+        var eventStart = GetFirstEventOffset(events);
 
-        foreach (var ev in events)
+        foreach (var ev in events.Skip(eventStart))
         {
-            var command = ev.Param0 & 0xF;
-
-            if (noteCount)
-                if (ev.Offset != 0 || command != 0)
-                    noteCount = false;
-                else
-                    continue;
-
             var offset = new BigRational(ev.Offset, 58);
             var newEv = new Event
             {

@@ -6,5 +6,5 @@ namespace RhythmCodex.Archs.Djmain.Streamers;
 
 public interface IDjmainSampleInfoStreamReader
 {
-    Dictionary<int, DjmainSampleInfo> Read(Stream stream);
+    Dictionary<int, DjmainSampleInfo> Read(Stream stream, int maxSize);
 }

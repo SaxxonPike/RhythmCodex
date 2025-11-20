@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using JetBrains.Annotations;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Charts.Bms.Streamers;
@@ -89,20 +90,42 @@ public static class TestHelper
             var resampler = resolver.Resolve<IResamplerProvider>().GetBest();
 
             var soundList = sounds.ToList();
+            var soundHashFileMap = new ConcurrentDictionary<int, string>();
+            var soundMap = new Dictionary<(int SampleMap, int Index), int>();
 
-            foreach (var sound in soundList.Where(s => s.Samples.Any()).AsParallel())
+            foreach (var sound in soundList.Where(s => s.Samples.Count != 0).AsParallel())
             {
                 foreach (var sample in sound.Samples)
                 {
-                    var sourceRate = (float)(double)(sample[NumericData.Rate] ?? sound[NumericData.Rate]);
+                    var sourceRate = (float)(double)(sample[NumericData.Rate] ?? sound[NumericData.Rate])!;
+                    if (sourceRate < 4000)
+                        continue;
+
                     var resampled = resampler.Resample(sample.Data.Span, sourceRate, 44100);
                     sample.Data = resampled;
                     sample[NumericData.Rate] = 44100;
                 }
 
                 sound[NumericData.Rate] = 44100;
-                WriteSound(resolver, sound,
-                    Path.Combine(outPath, $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id], 4)}.wav"));
+
+                soundHashFileMap.AddOrUpdate(sound.CalculateSampleHash(),
+                    h =>
+                    {
+                        var fileName = string.Format("{0}{1}.wav",
+                            Alphabet.EncodeAlphanumeric((int)(sound[NumericData.SampleMap] ?? 0), 1),
+                            Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 3)
+                        );
+
+                        WriteSound(resolver, sound, Path.Combine(outPath, fileName));
+                        soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);
+                        return fileName;
+                    },
+                    (h, val) =>
+                    {
+                        soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);
+                        return val;
+                    }
+                );
             }
 
             foreach (var chart in charts.AsParallel())
@@ -110,8 +133,24 @@ public static class TestHelper
                 chart.PopulateMetricOffsets();
                 chart[StringData.Title] = title;
                 using var outStream = OpenWrite(resolver,
-                    Path.Combine(outPath, $"@{Alphabet.EncodeHex((int)chart[NumericData.ByteOffset], 7)}.bms"));
-                bmsWriter.Write(outStream, bmsEncoder.Encode(chart));
+                    Path.Combine(outPath,
+                        string.Format("@{0}{1}.bms",
+                            Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1),
+                            Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)
+                        )));
+
+                bmsWriter.Write(outStream, bmsEncoder.Encode(chart, new BmsEncoderOptions
+                {
+                    WavNameTransformer = i =>
+                    {
+                        if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
+                            !soundHashFileMap.TryGetValue(sm, out var fileName))
+                            return null;
+
+                        return fileName;
+                    }
+                }));
+
                 outStream.Flush();
             }
         }

@@ -127,7 +127,7 @@ public class DjmainOneShots : BaseIntegrationFixture
                     return;
 
                 var archive = decoder.Decode(chunk, options);
-                
+
                 foreach (var chart in archive.Charts)
                 {
                     var id = (int)chart[NumericData.Id]!.Value;
