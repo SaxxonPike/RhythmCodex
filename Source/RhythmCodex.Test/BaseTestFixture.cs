@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO.Compression;
 using AutoFixture;
 using AutoFixture.Dsl;
 using JetBrains.Annotations;
+using NUnit.Framework.Internal;
 using RhythmCodex.Data;
 
 namespace RhythmCodex;
@@ -14,12 +16,8 @@ namespace RhythmCodex;
 [PublicAPI]
 public abstract class BaseTestFixture
 {
-    private readonly Lazy<Fixture> _fixture = new(() =>
-    {
-        var fixture = new Fixture();
-        new SupportMutableValueTypesCustomization().Customize(fixture);
-        return fixture;
-    });
+    private static readonly ConcurrentDictionary<string, Fixture> Fixtures = [];
+    private static readonly ConcurrentDictionary<string, HashSet<Task>> AsyncTasks = [];
 
     private Stopwatch _stopwatch;
 
@@ -33,9 +31,46 @@ public abstract class BaseTestFixture
     [TearDown]
     public void __Teardown()
     {
+        if (AsyncTasks.Remove(TestContext.CurrentContext.Test.ID, out var tasks) && tasks.Count > 0)
+        {
+            Task.WaitAll(tasks);
+            var taskExceptions = tasks.Where(t => t.IsFaulted).Select(t => t.Exception!).ToList();
+            if (taskExceptions.Count > 0)
+                throw new AggregateException(taskExceptions);
+        }
+
         _stopwatch.Stop();
-        TestContext.Out.WriteLine(
+        Log.WriteLine(
             $"{TestContext.CurrentContext.Test.FullName}: {_stopwatch.ElapsedMilliseconds}ms");
+        Fixtures.Remove(TestContext.CurrentContext.Test.ID, out _);
+    }
+
+    public static Randomizer Random =>
+        TestContext.CurrentContext.Random;
+
+    public static TextWriter Log =>
+        TestContext.Progress;
+
+    public bool IsCanceled =>
+        TestContext.CurrentContext.CancellationToken.IsCancellationRequested;
+
+    private HashSet<Task> GetAsyncTasks() =>
+        AsyncTasks.GetOrAdd(TestContext.CurrentContext.Test.ID, _ => []);
+
+    private Fixture GetFixture() =>
+        Fixtures.GetOrAdd(TestContext.CurrentContext.Test.ID, _ =>
+        {
+            var fixture = new Fixture();
+            new SupportMutableValueTypesCustomization().Customize(fixture);
+            return fixture;
+        });
+
+    protected void RunAsync(Action action)
+    {
+        if (Debugger.IsAttached)
+            action();
+        else
+            GetAsyncTasks().Add(Task.Run(action));
     }
 
     /// <summary>
@@ -81,7 +116,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected ICustomizationComposer<T> Build<T>()
     {
-        return _fixture.Value.Build<T>();
+        return GetFixture().Build<T>();
     }
 
     /// <summary>
@@ -89,7 +124,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected T Create<T>()
     {
-        return _fixture.Value.Create<T>();
+        return GetFixture().Create<T>();
     }
 
     /// <summary>
@@ -97,7 +132,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected T[] CreateMany<T>()
     {
-        return _fixture.Value.CreateMany<T>().ToArray();
+        return GetFixture().CreateMany<T>().ToArray();
     }
 
     /// <summary>
@@ -105,7 +140,7 @@ public abstract class BaseTestFixture
     /// </summary>
     protected T[] CreateMany<T>(int count)
     {
-        return _fixture.Value.CreateMany<T>(count).ToArray();
+        return GetFixture().CreateMany<T>(count).ToArray();
     }
 
     /// <summary>

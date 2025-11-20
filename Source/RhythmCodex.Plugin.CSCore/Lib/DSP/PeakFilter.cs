@@ -3,12 +3,14 @@
  */
 
 using System;
+using JetBrains.Annotations;
 
 namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 
 /// <summary>
-/// Used to apply an peak-filter to a signal.
+/// Used to apply a peak-filter to a signal.
 /// </summary>
+[PublicAPI]
 public class PeakFilter : BiQuad
 {
     /// <summary>

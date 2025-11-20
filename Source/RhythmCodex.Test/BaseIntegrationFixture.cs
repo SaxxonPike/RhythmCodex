@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 using Autofac;
 using JetBrains.Annotations;
 using RhythmCodex.Infrastructure;
@@ -10,9 +11,10 @@ namespace RhythmCodex;
 [PublicAPI]
 public class BaseIntegrationFixture : BaseTestFixture, IResolver
 {
-    private readonly Lazy<IContainer> _container = new(BuildContainer);
+    private static readonly ConcurrentDictionary<string, IContainer> Containers = [];
 
-    private IContainer Container => _container.Value;
+    private IContainer Container =>
+        Containers.GetOrAdd(TestContext.CurrentContext.Test.ID, _ => BuildContainer());
 
     private static IContainer BuildContainer()
     {
@@ -21,12 +23,16 @@ public class BaseIntegrationFixture : BaseTestFixture, IResolver
         builder.RegisterModule<TestAutofacModule>();
         builder.RegisterInstance(new TestConsole())
             .As<IConsole>();
-        builder.Register(_ => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
+        builder.Register(_ => new LoggerConfigurationSource { VerbosityLevel = LoggerVerbosityLevel.Debug })
             .As<ILoggerConfigurationSource>();
         builder.RegisterType<TextWriterLogger>().As<ILogger>();
 
         return builder.Build();
     }
+
+    [TearDown]
+    public void __TearDownContainer() =>
+        Containers.Remove(TestContext.CurrentContext.Test.ID, out _);
 
     /// <summary>
     ///     Gets an object from the container of the specified type.
@@ -35,16 +41,16 @@ public class BaseIntegrationFixture : BaseTestFixture, IResolver
         where TObject : notnull
     {
         return Container.Resolve<TObject>();
-    }        
-        
+    }
+
     TObject IResolver.Resolve<TObject>() => Resolve<TObject>();
 }
-    
+
 /// <summary>
 ///     Base test fixture for all integration tests that use a simple container.
 /// </summary>
 [PublicAPI]
-public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver 
+public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver
     where TSubject : notnull
 {
     private readonly Lazy<IContainer> _container;
@@ -66,10 +72,10 @@ public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver
     private static IContainer BuildContainer()
     {
         var builder = new ContainerBuilder();
-            
+
         builder.RegisterInstance(new TestConsole())
             .As<IConsole>();
-        builder.Register(_ => new LoggerConfigurationSource {VerbosityLevel = LoggerVerbosityLevel.Debug})
+        builder.Register(_ => new LoggerConfigurationSource { VerbosityLevel = LoggerVerbosityLevel.Debug })
             .As<ILoggerConfigurationSource>();
         builder.RegisterType<TextWriterLogger>().As<ILogger>();
 

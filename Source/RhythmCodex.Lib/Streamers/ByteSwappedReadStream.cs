@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.IO;
 using RhythmCodex.IoC;
 
@@ -91,16 +92,20 @@ public class ByteSwappedReadStream : Stream
                 return total;
 
             // Read pairs of bytes at once.
-            var inBuffer = new byte[c & ~1];
-            var i = 0;
-            _baseStream.ReadAtLeast(inBuffer.AsSpan(), inBuffer.Length, false);
-            while (c > 1)
+            if (c >= 2)
             {
-                buffer[o++] = inBuffer[i + 1];
-                buffer[o++] = inBuffer[i];
-                i += 2;
-                c -= 2;
-                total += 2;
+                var inBufferRent = MemoryPool<byte>.Shared.Rent(c & ~1);
+                var inBuffer = inBufferRent.Memory.Span[..(c & ~1)];
+                var i = 0;
+                _baseStream.ReadAtLeast(inBuffer, inBuffer.Length, false);
+                while (c > 1)
+                {
+                    buffer[o++] = inBuffer[i + 1];
+                    buffer[o++] = inBuffer[i];
+                    i += 2;
+                    c -= 2;
+                    total += 2;
+                }
             }
 
             // If any data remains, read it normally.

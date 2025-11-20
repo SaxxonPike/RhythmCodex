@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ApplicationIcon/>
         <OutputTypeEx>exe</OutputTypeEx>
         <StartupObject/>
@@ -18,8 +18,6 @@
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
         <ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj"/>
         <ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj"/>
-        <ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj"/>
-        <ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj"/>
         <ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj"/>
     </ItemGroup>
     <ItemGroup>

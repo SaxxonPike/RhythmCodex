@@ -3,7 +3,8 @@
  */
 
 using System;
-using RhythmCodex.Sounds.Providers;
+using System.Runtime.Intrinsics;
+using RhythmCodex.Sounds.Filter.Providers;
 
 namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 
@@ -16,34 +17,42 @@ public abstract class BiQuad : IFilterContext
     /// The a0 value.
     /// </summary>
     protected double A0;
+
     /// <summary>
     /// The a1 value.
     /// </summary>
     protected double A1;
+
     /// <summary>
     /// The a2 value.
     /// </summary>
     protected double A2;
+
     /// <summary>
     /// The b1 value.
     /// </summary>
     protected double B1;
+
     /// <summary>
     /// The b2 value.
     /// </summary>
     protected double B2;
+
     /// <summary>
     /// The q value.
     /// </summary>
     private double _q;
+
     /// <summary>
     /// The gain value in dB.
     /// </summary>
     private double _gainDb;
+
     /// <summary>
     /// The z1 value.
     /// </summary>
     protected double Z1;
+
     /// <summary>
     /// The z2 value.
     /// </summary>
@@ -62,8 +71,10 @@ public abstract class BiQuad : IFilterContext
         {
             if (SampleRate < value * 2)
             {
-                throw new ArgumentOutOfRangeException(nameof(value), "The samplerate has to be bigger than 2 * frequency.");
+                throw new ArgumentOutOfRangeException(nameof(value),
+                    "The samplerate has to be bigger than 2 * frequency.");
             }
+
             _frequency = value;
             CalculateBiQuadCoefficients();
         }
@@ -86,6 +97,7 @@ public abstract class BiQuad : IFilterContext
             {
                 throw new ArgumentOutOfRangeException(nameof(value));
             }
+
             _q = value;
             CalculateBiQuadCoefficients();
         }
@@ -149,19 +161,6 @@ public abstract class BiQuad : IFilterContext
     }
 
     /// <summary>
-    /// Processes a single <paramref name="input"/> sample and returns the result.
-    /// </summary>
-    /// <param name="input">The input sample to process.</param>
-    /// <returns>The result of the processed <paramref name="input"/> sample.</returns>
-    public float Process(float input)
-    {
-        var o = input * A0 + Z1;
-        Z1 = input * A1 + Z2 - B1 * o;
-        Z2 = input * A2 - B2 * o;
-        return (float)o;
-    }
-
-    /// <summary>
     /// Processes multiple <paramref name="input"/> samples.
     /// </summary>
     /// <param name="input">The input samples to process.</param>
@@ -169,8 +168,21 @@ public abstract class BiQuad : IFilterContext
     public float[] Process(ReadOnlySpan<float> input)
     {
         var result = new float[input.Length];
+        var a = Vector128.Create(A1, A2);
+        var b = Vector128.Create(B1, B2);
+        var z = Vector128.Create(Z1, Z2);
+        
         for (var i = 0; i < input.Length; i++)
-            result[i] = Process(input[i]);
+        {
+            var iv = (double)input[i];
+            var o = iv * A0 + z[0];
+            z = iv * a - b * o + Vector128.CreateScalar(z[1]);
+            result[i] = (float)o;
+        }
+
+        Z1 = z[0];
+        Z2 = z[1];
+
         return result;
     }
 

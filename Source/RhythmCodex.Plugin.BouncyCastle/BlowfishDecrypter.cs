@@ -2,7 +2,7 @@ using System;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
-using RhythmCodex.Blowfish.Converters;
+using RhythmCodex.Encryptions.Blowfish.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 

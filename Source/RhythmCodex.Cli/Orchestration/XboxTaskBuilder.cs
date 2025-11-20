@@ -1,18 +1,18 @@
 using System.IO;
 using System.Linq;
 using ClientCommon;
+using RhythmCodex.Archs.Xbox.Streamers;
 using RhythmCodex.Cli.Helpers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.ImaAdpcm.Converters;
-using RhythmCodex.ImaAdpcm.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Meta.Models;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
-using RhythmCodex.Xact.Converters;
-using RhythmCodex.Xact.Streamers;
-using RhythmCodex.Xbox.Streamers;
+using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.ImaAdpcm.Converters;
+using RhythmCodex.Sounds.ImaAdpcm.Models;
+using RhythmCodex.Sounds.Riff.Converters;
+using RhythmCodex.Sounds.Riff.Streamers;
+using RhythmCodex.Sounds.Xact.Converters;
+using RhythmCodex.Sounds.Xact.Streamers;
 
 namespace RhythmCodex.Cli.Orchestration;
 

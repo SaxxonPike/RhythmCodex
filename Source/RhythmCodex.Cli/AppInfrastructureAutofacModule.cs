@@ -22,7 +22,7 @@ internal class AppInfrastructureAutofacModule : Module
             .AsImplementedInterfaces()
             .AsSelf()
             .SingleInstance();
-        builder.RegisterType<FileSystem>()
+        builder.RegisterType<PhysicalFileSystem>()
             .AsImplementedInterfaces()
             .AsSelf()
             .SingleInstance();

@@ -2,29 +2,29 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ClientCommon;
-using RhythmCodex.Beatmania.Converters;
-using RhythmCodex.Beatmania.Models;
-using RhythmCodex.Beatmania.Streamers;
-using RhythmCodex.Bms.Converters;
-using RhythmCodex.Bms.Streamers;
-using RhythmCodex.Charting.Models;
+using RhythmCodex.Archs.Djmain;
+using RhythmCodex.Archs.Djmain.Converters;
+using RhythmCodex.Archs.Djmain.Model;
+using RhythmCodex.Archs.Djmain.Streamers;
+using RhythmCodex.Charts.Bms.Converters;
+using RhythmCodex.Charts.Bms.Streamers;
+using RhythmCodex.Charts.Models;
+using RhythmCodex.Charts.Statistics;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.Djmain;
-using RhythmCodex.Djmain.Converters;
-using RhythmCodex.Djmain.Model;
-using RhythmCodex.Djmain.Streamers;
 using RhythmCodex.Extensions;
+using RhythmCodex.Games.Beatmania.Models;
+using RhythmCodex.Games.Beatmania.Pc.Converters;
+using RhythmCodex.Games.Beatmania.Pc.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Meta.Models;
-using RhythmCodex.Riff.Converters;
-using RhythmCodex.Riff.Streamers;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
-using RhythmCodex.Sounds.Providers;
-using RhythmCodex.Statistics;
-using RhythmCodex.Wav.Converters;
-using RhythmCodex.Wav.Models;
+using RhythmCodex.Sounds.Resampler.Providers;
+using RhythmCodex.Sounds.Riff.Converters;
+using RhythmCodex.Sounds.Riff.Streamers;
+using RhythmCodex.Sounds.Wav.Converters;
+using RhythmCodex.Sounds.Wav.Models;
 
 namespace RhythmCodex.Cli.Orchestration;
 
@@ -240,7 +240,7 @@ public class BeatmaniaTaskBuilder(
                         using var outStream = OpenWriteMulti(task, file,
                             _ => Path.Combine(chunkPath,
                                 $"{Alphabet.EncodeNumeric((int)chart[NumericData.Id], 2)}.render.wav"));
-                        var rendered = chartRenderer.Render(chart.Events, decoded.Samples, renderOptions);
+                        var rendered = chartRenderer.Render(chart, decoded.Samples, renderOptions);
                         var normalized = audioDsp.Normalize(rendered, 1.0f, true);
                         var encoded = riffPcm16SoundEncoder.Encode(normalized);
                         riffStreamWriter.Write(outStream, encoded);

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>RhythmCodex</RootNamespace>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
@@ -10,28 +10,28 @@
         <PackageReference Include="AutoFixture" Version="4.18.1" />
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-        <PackageReference Include="Moqzilla" Version="1.1.0" />
         <PackageReference Include="NUnit" Version="4.4.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
+        <PackageReference Include="ppy.SDL3-CS" Version="2025.920.0" />
+        <PackageReference Include="ppy.SDL3_image-CS" Version="2025.920.0" />
+        <PackageReference Include="ppy.SDL3_mixer-CS" Version="2025.920.0" />
         <PackageReference Include="Shouldly" Version="4.3.0" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.10" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RhythmCodex.Lib.Test.Data\RhythmCodex.Test.Data.csproj" />
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.BouncyCastle\RhythmCodex.Plugin.BouncyCastle.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.CSCore\RhythmCodex.Plugin.CSCore.csproj" />
-        <ProjectReference Include="..\RhythmCodex.Plugin.ImageSharp\RhythmCodex.Plugin.ImageSharp.csproj" />
-        <ProjectReference Include="..\RhythmCodex.Plugin.MP3Sharp\RhythmCodex.Plugin.MP3Sharp.csproj" />
-        <ProjectReference Include="..\RhythmCodex.Plugin.NVorbis\RhythmCodex.Plugin.NVorbis.csproj" />
+        <ProjectReference Include="..\RhythmCodex.Plugin.DependencyInjection\RhythmCodex.Plugin.DependencyInjection.csproj" />
+        <ProjectReference Include="..\RhythmCodex.Plugin.Sdl3\RhythmCodex.Plugin.Sdl3.csproj" />
         <ProjectReference Include="..\RhythmCodex.Plugin.SevenZip\RhythmCodex.Plugin.SevenZip.csproj" />
+        <ProjectReference Include="..\RhythmCodex.Plugin.SharpZipLib\RhythmCodex.Plugin.SharpZipLib.csproj" />
         <ProjectReference Include="..\RhythmCodex.Test\RhythmCodex.Test.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="ImaAdpcm\Converters" />
-        <Folder Include="Ssq" />
-        <Folder Include="Stepmania" />
+        <Folder Include="Sounds.ImaAdpcm\Converters" />
+        <Folder Include="Charts.Ssq\" />
+        <Folder Include="Games.Stepmania\" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="*.DotSettings" />

@@ -1,5 +1,5 @@
 using ICSharpCode.SharpZipLib.Lzw;
-using RhythmCodex.Compression;
+using RhythmCodex.Compressions.Lzw.Processors;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Plugin.SharpZipLib;

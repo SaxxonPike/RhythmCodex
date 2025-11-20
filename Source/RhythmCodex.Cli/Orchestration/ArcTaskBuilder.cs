@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using ClientCommon;
-using RhythmCodex.Arc.Streamers;
 using RhythmCodex.Cli.Orchestration.Infrastructure;
-using RhythmCodex.Compression;
+using RhythmCodex.FileSystems.Arc.Processors;
+using RhythmCodex.FileSystems.Arc.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 

@@ -43,6 +43,35 @@ public static class StreamExtensions
 
         return offset;
     }
+    
+    public delegate int SpanReadFunc(Span<byte> buffer);
+    
+    public static Memory<byte> ReadAllBytes(SpanReadFunc readFunc)
+    {
+        byte[]? buffer = null;
+        var ms = new MemoryStream();
+
+        try
+        {
+            buffer = ArrayPool<byte>.Shared.Rent(MaxBufferSize);
+
+            while (true)
+            {
+                var actualBytesRead = readFunc(buffer);
+                if (actualBytesRead < 1)
+                    break;
+
+                ms.Write(buffer.AsSpan(0, actualBytesRead));
+            }
+
+            return ms.GetBuffer().AsMemory(0, (int)ms.Length);
+        }
+        finally
+        {
+            if (buffer != null)
+                ArrayPool<byte>.Shared.Return(buffer);
+        }
+    }
 
     public static Memory<byte> ReadAllBytes(Func<byte[], int, int, int> readFunc)
     {
@@ -73,7 +102,7 @@ public static class StreamExtensions
 
     public static Memory<byte> ReadAllBytes(this Stream stream)
     {
-        return ReadAllBytes(stream.Read);
+        return ReadAllBytes((SpanReadFunc)stream.Read);
     }
 
     public static IEnumerable<string> ReadAllLines(this Stream source)

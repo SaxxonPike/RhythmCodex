@@ -1,0 +1,21 @@
+using System;
+using RhythmCodex.IoC;
+using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Vag.Models;
+
+namespace RhythmCodex.Sounds.Vag.Converters;
+
+[Service]
+public class SvagDecoder(IVagDecoder vagDecoder) : ISvagDecoder
+{
+    public Sound Decode(SvagContainer container)
+    {
+        ArgumentNullException.ThrowIfNull(container, nameof(container));
+        ArgumentNullException.ThrowIfNull(container.VagChunk, nameof(container.VagChunk));
+
+        var decoded = vagDecoder.Decode(container.VagChunk);
+        decoded[NumericData.Rate] = container.SampleRate;
+        return decoded;
+    }
+}
