@@ -43,6 +43,9 @@ public class BaseIntegrationFixture : BaseTestFixture, IResolver
         return Container.Resolve<TObject>();
     }
 
+    public virtual bool OutputFileFilter(string filename) =>
+        true;
+
     TObject IResolver.Resolve<TObject>() => Resolve<TObject>();
 }
 
@@ -94,6 +97,9 @@ public class BaseIntegrationFixture<TSubject> : BaseTestFixture, IResolver
 
         return builder.Build();
     }
+
+    public virtual bool OutputFileFilter(string filename) =>
+        true;
 
     /// <summary>
     ///     Gets an object from the container of the specified type.

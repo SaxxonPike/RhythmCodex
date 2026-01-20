@@ -27,6 +27,9 @@ public static class TestHelper
 
         public void WriteSound(Sound? decoded, string outFileName)
         {
+            if (!resolver.OutputFileFilter(outFileName))
+                return;
+            
             var encoder = resolver.Resolve<IRiffPcm16SoundEncoder>();
             var writer = resolver.Resolve<IRiffStreamWriter>();
             var dsp = resolver.Resolve<IAudioDsp>();
@@ -44,16 +47,25 @@ public static class TestHelper
 
         public void WriteFile(byte[] data, string outFileName)
         {
+            if (!resolver.OutputFileFilter(outFileName))
+                return;
+            
             WriteFile(resolver, data.AsSpan(), outFileName);
         }
 
         public void WriteFile(ReadOnlyMemory<byte> data, string outFileName)
         {
+            if (!resolver.OutputFileFilter(outFileName))
+                return;
+            
             WriteFile(resolver, data.Span, outFileName);
         }
 
         public void WriteFile(ReadOnlySpan<byte> data, string outFileName)
         {
+            if (!resolver.OutputFileFilter(outFileName))
+                return;
+            
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
             CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
             using var stream = File.OpenWrite(outPath);
@@ -63,6 +75,9 @@ public static class TestHelper
 
         public Stream OpenWrite(string outFileName)
         {
+            if (!resolver.OutputFileFilter(outFileName))
+                return null!;
+            
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
             CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
             return File.Open(outPath, FileMode.Create, FileAccess.ReadWrite);
@@ -78,6 +93,9 @@ public static class TestHelper
 
         public void Delete(string fileName)
         {
+            if (!resolver.OutputFileFilter(fileName))
+                return;
+            
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
             File.Delete(path);
         }
@@ -95,6 +113,8 @@ public static class TestHelper
 
             foreach (var sound in soundList.Where(s => s.Samples.Count != 0).AsParallel())
             {
+                // Perform resampling.
+
                 foreach (var sample in sound.Samples)
                 {
                     var sourceRate = (float)(double)(sample[NumericData.Rate] ?? sound[NumericData.Rate])!;
@@ -132,12 +152,17 @@ public static class TestHelper
             {
                 chart.PopulateMetricOffsets();
                 chart[StringData.Title] = title;
-                using var outStream = OpenWrite(resolver,
-                    Path.Combine(outPath,
-                        string.Format("@{0}{1}.bms",
-                            Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1),
-                            Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)
-                        )));
+
+                var chartPath = Path.Combine(outPath,
+                    string.Format("@{0}{1}.bms",
+                        Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1),
+                        Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)
+                    ));
+                
+                if (!resolver.OutputFileFilter(chartPath))
+                    continue;
+
+                using var outStream = OpenWrite(resolver, chartPath);
 
                 bmsWriter.Write(outStream, bmsEncoder.Encode(chart, new BmsEncoderOptions
                 {

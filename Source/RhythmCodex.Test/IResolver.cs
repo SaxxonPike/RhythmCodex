@@ -6,4 +6,5 @@ namespace RhythmCodex;
 public interface IResolver
 {
     T Resolve<T>() where T : notnull;
+    bool OutputFileFilter(string filename);
 }
