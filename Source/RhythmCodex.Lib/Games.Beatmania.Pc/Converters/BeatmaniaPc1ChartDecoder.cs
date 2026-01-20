@@ -96,6 +96,11 @@ public class BeatmaniaPc1ChartDecoder : IBeatmaniaPc1ChartDecoder
                 {
                     var result = GetNewEvent(ev);
                     result[NumericData.PlaySound] = ev.Value;
+                    if (ev.Parameter1 != 0)
+                    {
+                        result[NumericData.SourcePanning] = ev.Parameter1;
+                        result[NumericData.Panning] = ((ev.Parameter1 & 0xF) - 1) / (double)0xE;
+                    }
                     yield return result;
                     break;
                 }

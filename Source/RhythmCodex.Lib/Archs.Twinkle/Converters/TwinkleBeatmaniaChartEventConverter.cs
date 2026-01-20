@@ -35,12 +35,28 @@ public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventCo
 
     public BeatmaniaPc1Event ConvertToBeatmaniaPc1(TwinkleBeatmaniaChartEvent chartEvent)
     {
+        int offset = chartEvent.Offset;
+        var param0 = (byte)(chartEvent.Param & 0xF);
+        var param1 = (byte)(chartEvent.Param >> 4);
+        short value = chartEvent.Value;
+
+        switch ((BeatmaniaPc1EventType)param0)
+        {
+            case BeatmaniaPc1EventType.Bpm:
+            {
+                // The format here is different to IIDX PC.
+                value |= unchecked((short)(param1 << 8));
+                param1 = 1;
+                break;
+            }
+        }
+
         return new BeatmaniaPc1Event
         {
-            LinearOffset = chartEvent.Offset,
-            Parameter0 = (byte) (chartEvent.Param & 0xF),
-            Parameter1 = (byte) (chartEvent.Param >> 4),
-            Value = chartEvent.Value
+            LinearOffset = offset,
+            Parameter0 = param0,
+            Parameter1 = param1,
+            Value = value
         };
     }
 }
