@@ -12,22 +12,4 @@ public class BmsonFile
     [JsonPropertyName("stop_events")] public List<BmsonStopEvent> StopEvents { get; set; } = [];
     [JsonPropertyName("sound_channels")] public List<BmsonSoundChannel> SoundChannels { get; set; } = [];
     [JsonPropertyName("bga")] public BmsonBga Bga { get; set; } = new();
-    //
-    // public static BmsonFile? Load(ReadOnlySpan<byte> content) =>
-    //     content.Length == 0
-    //         ? null 
-    //         : JsonSerializer.Deserialize<BmsonFile>(content);
-    //
-    // public static BmsonFile? Load(ReadOnlySpan<char> content) =>
-    //     content.Length == 0
-    //         ? null 
-    //         : JsonSerializer.Deserialize<BmsonFile>(content);
-    //
-    // public static BmsonFile? Load(Stream stream) =>
-    //     stream is { CanSeek: true, Length: 0 }
-    //         ? null 
-    //         : JsonSerializer.Deserialize<BmsonFile>(stream);
-    //
-    // public void Save(Stream stream) =>
-    //     JsonSerializer.Serialize(stream, this);
 }
