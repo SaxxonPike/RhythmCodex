@@ -6,12 +6,8 @@ namespace RhythmCodex.Archs.Twinkle.Model;
 
 public static class TwinkleConstants
 {
-    // The original guesses at this rate were 59.8248hz and 59.8186hz.
-    // That second rate was very close to a clean divisor for a 15x NTSC (53.693175mhz)
-    // clock. I do not know if this is correct, but output files suggest that this
-    // really is the chart tick rate.
-
-    public static BigRational BeatmaniaRate => new(53693175, 897600);
+    // rate for "263p" video mode
+    public static BigRational BeatmaniaRate => new(48681812, 263 * 3094);
 
     public const int ChunkSize = 0x1A00000;
 
