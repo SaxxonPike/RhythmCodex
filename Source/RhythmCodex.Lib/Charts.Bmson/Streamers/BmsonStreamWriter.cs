@@ -10,6 +10,9 @@ public class BmsonStreamWriter : IBmsonStreamWriter
 {
     public void Write(Stream target, BmsonFile file)
     {
-        JsonSerializer.Serialize(target, file);
+        JsonSerializer.Serialize(target, file, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
     }
 }

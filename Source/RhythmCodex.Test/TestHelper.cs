@@ -2,6 +2,8 @@ using System.Collections.Concurrent;
 using JetBrains.Annotations;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Charts.Bms.Streamers;
+using RhythmCodex.Charts.Bmson.Converters;
+using RhythmCodex.Charts.Bmson.Streamers;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
@@ -29,7 +31,7 @@ public static class TestHelper
         {
             if (!resolver.OutputFileFilter(outFileName))
                 return;
-            
+
             var encoder = resolver.Resolve<IRiffPcm16SoundEncoder>();
             var writer = resolver.Resolve<IRiffStreamWriter>();
             var dsp = resolver.Resolve<IAudioDsp>();
@@ -49,7 +51,7 @@ public static class TestHelper
         {
             if (!resolver.OutputFileFilter(outFileName))
                 return;
-            
+
             WriteFile(resolver, data.AsSpan(), outFileName);
         }
 
@@ -57,7 +59,7 @@ public static class TestHelper
         {
             if (!resolver.OutputFileFilter(outFileName))
                 return;
-            
+
             WriteFile(resolver, data.Span, outFileName);
         }
 
@@ -65,7 +67,7 @@ public static class TestHelper
         {
             if (!resolver.OutputFileFilter(outFileName))
                 return;
-            
+
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
             CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
             using var stream = File.OpenWrite(outPath);
@@ -77,7 +79,7 @@ public static class TestHelper
         {
             if (!resolver.OutputFileFilter(outFileName))
                 return null!;
-            
+
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
             CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
             return File.Open(outPath, FileMode.Create, FileAccess.ReadWrite);
@@ -95,7 +97,7 @@ public static class TestHelper
         {
             if (!resolver.OutputFileFilter(fileName))
                 return;
-            
+
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
             File.Delete(path);
         }
@@ -103,8 +105,12 @@ public static class TestHelper
         public void WriteSet(IEnumerable<Chart> charts, IEnumerable<Sound> sounds,
             string outPath, string title, BmsChartType chartType)
         {
-            var bmsWriter = resolver.Resolve<IBmsStreamWriter>();
-            var bmsEncoder = resolver.Resolve<IBmsEncoder>();
+            // var bmsWriter = resolver.Resolve<IBmsStreamWriter>();
+            // var bmsEncoder = resolver.Resolve<IBmsEncoder>();
+
+            var bmsonWriter = resolver.Resolve<IBmsonStreamWriter>();
+            var bmsonEncoder = resolver.Resolve<IBmsonChartConverter>();
+
             var resampler = resolver.Resolve<IResamplerProvider>().GetBest();
 
             var soundList = sounds.ToList();
@@ -128,13 +134,12 @@ public static class TestHelper
 
                 sound[NumericData.Rate] = 44100;
 
-                soundHashFileMap.AddOrUpdate(sound.CalculateSampleHash(),
+                soundHashFileMap.AddOrUpdate(sound.CalculateSampleHash() ^ sound.CalculateSourceVolumePanHash(),
                     h =>
                     {
-                        var fileName = string.Format("{0}{1}.wav",
-                            Alphabet.EncodeAlphanumeric((int)(sound[NumericData.SampleMap] ?? 0), 1),
-                            Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 3)
-                        );
+                        var fileName =
+                            $"{Alphabet.EncodeAlphanumeric((int)(sound[NumericData.SampleMap] ?? 0), 1)}" +
+                            $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 3)}.wav";
 
                         WriteSound(resolver, sound, Path.Combine(outPath, fileName));
                         soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);
@@ -150,21 +155,23 @@ public static class TestHelper
 
             foreach (var chart in charts.AsParallel())
             {
-                chart.PopulateMetricOffsets();
+                chart.PopulateMetricOffsets(normalizeMeasures: false);
                 chart[StringData.Title] = title;
 
+                // var chartPath = Path.Combine(outPath,
+                //     $"@{Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1)}" +
+                //     $"{Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)}.bms");
+
                 var chartPath = Path.Combine(outPath,
-                    string.Format("@{0}{1}.bms",
-                        Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1),
-                        Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)
-                    ));
-                
+                    $"@{Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1)}" +
+                    $"{Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)}.bmson");
+
                 if (!resolver.OutputFileFilter(chartPath))
                     continue;
 
                 using var outStream = OpenWrite(resolver, chartPath);
 
-                bmsWriter.Write(outStream, bmsEncoder.Encode(chart, new BmsEncoderOptions
+                var exported = bmsonEncoder.Export(chart, new BmsonEncoderOptions
                 {
                     WavNameTransformer = i =>
                     {
@@ -175,7 +182,22 @@ public static class TestHelper
                         return fileName;
                     },
                     ChartType = chartType
-                }));
+                });
+                
+                bmsonWriter.Write(outStream, exported);
+
+                // bmsWriter.Write(outStream, bmsEncoder.Encode(chart, new BmsEncoderOptions
+                // {
+                //     WavNameTransformer = i =>
+                //     {
+                //         if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
+                //             !soundHashFileMap.TryGetValue(sm, out var fileName))
+                //             return null;
+                //
+                //         return fileName;
+                //     },
+                //     ChartType = chartType
+                // }));
 
                 outStream.Flush();
             }
