@@ -9,6 +9,13 @@ namespace RhythmCodex.Games.Beatmania.Converters;
 [Service]
 public class BeatmaniaDspTranslator : IBeatmaniaDspTranslator
 {
+    public BigRational GetTwinkleVolume(int volume)
+    {
+        const double referenceGain = -4.5d;
+        const double referenceValue = 0x10;
+        return new BigRational(Decibels.ToFactor(referenceGain * volume / referenceValue));
+    }
+    
     public BigRational GetFirebeatVolume(int volume)
     {
         const double referenceGain = -36.0d;
