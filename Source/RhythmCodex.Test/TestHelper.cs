@@ -27,7 +27,7 @@ public static class TestHelper
                 Directory.CreateDirectory(path);
         }
 
-        public void WriteSound(Sound? decoded, string outFileName)
+        public void WriteSound(Sound? decoded, string outFileName, float gain = 1)
         {
             if (!resolver.OutputFileFilter(outFileName))
                 return;
@@ -40,7 +40,15 @@ public static class TestHelper
 
             CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
 
-            var encoded = encoder.Encode(dsp.ApplyEffects(decoded));
+            var rendered = dsp.ApplyEffects(decoded);
+            
+            rendered = dsp.ApplyEffects(rendered, new Metadata
+            {
+                [NumericData.Volume] = gain
+            });
+
+            var encoded = encoder.Encode(rendered);
+
             using var outStream = new MemoryStream();
             writer.Write(outStream, encoded);
             outStream.Flush();
@@ -121,27 +129,32 @@ public static class TestHelper
             {
                 // Perform resampling.
 
-                foreach (var sample in sound.Samples)
-                {
-                    var sourceRate = (float)(double)(sample[NumericData.Rate] ?? sound[NumericData.Rate])!;
-                    if (sourceRate < 4000)
-                        continue;
-
-                    var resampled = resampler.Resample(sample.Data.Span, sourceRate, 44100);
-                    sample.Data = resampled;
-                    sample[NumericData.Rate] = 44100;
-                }
-
-                sound[NumericData.Rate] = 44100;
+                // foreach (var sample in sound.Samples)
+                // {
+                //     var sourceRate = (float)(double)(sample[NumericData.Rate] ?? sound[NumericData.Rate])!;
+                //     if (sourceRate < 4000)
+                //         continue;
+                //
+                //     if (sourceRate < 44100)
+                //     {
+                //         var resampled = resampler.Resample(sample.Data.Span, sourceRate, 44100);
+                //         sample.Data = resampled;
+                //         sample[NumericData.Rate] = 44100;
+                //     }
+                // }
+                //
+                // sound[NumericData.Rate] = sound.Samples
+                //     .Select(s => s[NumericData.Rate])
+                //     .FirstOrDefault(r => r != null);
 
                 soundHashFileMap.AddOrUpdate(sound.CalculateSampleHash() ^ sound.CalculateSourceVolumePanHash(),
                     h =>
                     {
-                        var fileName =
-                            $"{Alphabet.EncodeAlphanumeric((int)(sound[NumericData.SampleMap] ?? 0), 1)}" +
-                            $"{Alphabet.EncodeAlphanumeric((int)sound[NumericData.Id]!, 3)}.wav";
+                        var fileNameId = (int)(sound[NumericData.SampleMap] ?? 0) * 1000 +
+                                         (int)sound[NumericData.Id]!;
+                        var fileName = $"{Alphabet.EncodeNumeric(fileNameId, 4)}.wav";
 
-                        WriteSound(resolver, sound, Path.Combine(outPath, fileName));
+                        WriteSound(resolver, sound, Path.Combine(outPath, fileName), 0.7f);
                         soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);
                         return fileName;
                     },
