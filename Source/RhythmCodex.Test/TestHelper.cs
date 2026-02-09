@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using JetBrains.Annotations;
 using RhythmCodex.Charts.Bms.Converters;
-using RhythmCodex.Charts.Bms.Streamers;
 using RhythmCodex.Charts.Bmson.Converters;
 using RhythmCodex.Charts.Bmson.Streamers;
 using RhythmCodex.Charts.Models;
@@ -38,7 +37,7 @@ public static class TestHelper
 
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
 
-            CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
+            resolver.CreateDirectory(Path.GetDirectoryName(outPath)!);
 
             var rendered = dsp.ApplyEffects(decoded);
             
@@ -60,7 +59,7 @@ public static class TestHelper
             if (!resolver.OutputFileFilter(outFileName))
                 return;
 
-            WriteFile(resolver, data.AsSpan(), outFileName);
+            resolver.WriteFile(data.AsSpan(), outFileName);
         }
 
         public void WriteFile(ReadOnlyMemory<byte> data, string outFileName)
@@ -68,7 +67,7 @@ public static class TestHelper
             if (!resolver.OutputFileFilter(outFileName))
                 return;
 
-            WriteFile(resolver, data.Span, outFileName);
+            resolver.WriteFile(data.Span, outFileName);
         }
 
         public void WriteFile(ReadOnlySpan<byte> data, string outFileName)
@@ -77,7 +76,7 @@ public static class TestHelper
                 return;
 
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
-            CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
+            resolver.CreateDirectory(Path.GetDirectoryName(outPath)!);
             using var stream = File.OpenWrite(outPath);
             stream.Write(data);
             stream.Flush();
@@ -89,7 +88,7 @@ public static class TestHelper
                 return null!;
 
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
-            CreateDirectory(resolver, Path.GetDirectoryName(outPath)!);
+            resolver.CreateDirectory(Path.GetDirectoryName(outPath)!);
             return File.Open(outPath, FileMode.Create, FileAccess.ReadWrite);
         }
 
@@ -154,7 +153,7 @@ public static class TestHelper
                                          (int)sound[NumericData.Id]!;
                         var fileName = $"{Alphabet.EncodeNumeric(fileNameId, 4)}.wav";
 
-                        WriteSound(resolver, sound, Path.Combine(outPath, fileName), 0.7f);
+                        resolver.WriteSound(sound, Path.Combine(outPath, fileName), 0.7f);
                         soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);
                         return fileName;
                     },
@@ -168,6 +167,27 @@ public static class TestHelper
 
             foreach (var chart in charts.AsParallel())
             {
+                var usedCols = chart.Events
+                    .Where(ev => ev[FlagData.Note] == true)
+                    .Select(ev => (Column: ev[NumericData.Column], Player: ev[NumericData.Player]))
+                    .Where(ev => ev is { Column: not null, Player: not null })
+                    .Distinct()
+                    .ToList();
+
+                var playerCount = usedCols.Select(x => x.Player).Distinct().Count();
+                var colCount = usedCols.Select(x => x.Column).Distinct().Count();
+
+                var modeHint = (chartType, playerCount, colCount) switch
+                {
+                    (BmsChartType.Beatmania, 2, > 6) => "beat-14k",
+                    (BmsChartType.Beatmania, 1, > 0) => "beat-5k",
+                    (BmsChartType.Beatmania, 2, > 0) => "beat-10k",
+                    (BmsChartType.Beatmania, _, > 0) => "beat-7k",
+                    (BmsChartType.Popn, _, > 5) => "popn-9k",
+                    (BmsChartType.Popn, _, > 0) => "popn-5k",
+                    _ => null
+                };
+                
                 chart.PopulateMetricOffsets(normalizeMeasures: false);
                 chart[StringData.Title] = title;
 
@@ -182,7 +202,7 @@ public static class TestHelper
                 if (!resolver.OutputFileFilter(chartPath))
                     continue;
 
-                using var outStream = OpenWrite(resolver, chartPath);
+                using var outStream = resolver.OpenWrite(chartPath);
 
                 var exported = bmsonEncoder.Export(chart, new BmsonEncoderOptions
                 {
@@ -194,7 +214,8 @@ public static class TestHelper
 
                         return fileName;
                     },
-                    ChartType = chartType
+                    ChartType = chartType,
+                    ModeHint = modeHint
                 });
                 
                 bmsonWriter.Write(outStream, exported);

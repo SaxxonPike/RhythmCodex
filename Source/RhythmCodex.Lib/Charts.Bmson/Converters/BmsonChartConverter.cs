@@ -36,7 +36,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                 Artist = chart[StringData.Artist],
                 SubArtists = chart[StringData.Subartist] is { } subArtist ? [subArtist] : null,
                 Genre = chart[StringData.Genre],
-                ModeHint = chart[StringData.Type],
+                ModeHint = options.ModeHint ?? chart[StringData.Type],
                 ChartName = chart[StringData.Description],
                 Level = (long?)chart[NumericData.PlayLevel] ?? 0,
                 InitBpm = (double)bpm,
