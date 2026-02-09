@@ -67,6 +67,7 @@ public class DjmainOneShots : BaseIntegrationFixture
                     Log.WriteLine($"Writing set for chunk {idx}");
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
+                    
                     this.WriteSet(archive.Charts, archive.Samples, basePath, title, chartType);
                 }
             });
