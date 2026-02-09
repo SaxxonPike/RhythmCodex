@@ -72,7 +72,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                 BmsChartType.Popn => columnId switch
                 {
                     < 0 or > 8 => 0,
-                    _ => columnId
+                    _ => columnId + 1
                 },
                 _ => 0
             };
@@ -101,24 +101,24 @@ public class BmsonChartConverter : IBmsonChartConverter
 
             if (ev[FlagData.Note] != true)
             {
-                var loadSoundId = (int)(ev[NumericData.LoadSound] ?? 0);
-                if (loadSoundId > 0)
+                var loadSoundId = (int)(ev[NumericData.LoadSound] ?? -1);
+                if (loadSoundId >= 0)
                     sounds[(playerId, columnId, scratch)] = loadSoundId;
             }
 
-            var playSoundId = (int)(ev[NumericData.PlaySound] ?? 0);
+            var playSoundId = (int)(ev[NumericData.PlaySound] ?? -1);
 
             var soundFile = string.Empty;
 
-            if (playSoundId > 0 || ev[FlagData.Note] == true)
+            if (playSoundId >= 0 || ev[FlagData.Note] == true)
             {
                 var freeze = lane != 0 && ev[FlagData.Freeze] == true;
 
-                var targetSoundId = playSoundId > 0
+                var targetSoundId = playSoundId >= 0
                     ? playSoundId
                     : sounds.GetValueOrDefault((playerId, columnId, scratch), 0);
 
-                if (targetSoundId > 0)
+                if (targetSoundId >= 0)
                 {
                     if (!soundNames.TryGetValue(targetSoundId, out soundFile))
                     {
@@ -152,7 +152,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                 if (freeze)
                     freezes[(playerId, columnId, scratch)] = note;
 
-                soundChannel?.Notes.Add(note);
+                soundChannel.Notes.Add(note);
             }
         }
 
