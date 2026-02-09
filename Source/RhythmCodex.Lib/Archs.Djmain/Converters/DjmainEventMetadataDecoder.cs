@@ -10,7 +10,7 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 [Service]
 public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 {
-    private void SetCommon(Event ev, DjmainEventType command, int param0, int param1)
+    private void SetCommon(Event ev, DjmainEventType command, int param0, int param1, bool swapStereo)
     {
         switch (command)
         {
@@ -28,7 +28,9 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 
             case DjmainEventType.Bgm:
             {
-                ev[NumericData.Panning] = 1 - new BigRational(Math.Max(param0 - 1, 0), 14);
+                ev[NumericData.Panning] = swapStereo
+                    ? 1 - new BigRational(Math.Max(param0 - 1, 0), 14)
+                    : new BigRational(Math.Max(param0 - 1, 0), 14);
                 ev[NumericData.PlaySound] = param1 - 1;
                 ev[NumericData.SourcePanning] = param0;
                 break;
@@ -68,7 +70,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
         }
     }
 
-    public void AddBeatmaniaMetadata(Event ev, DjmainChartEvent ce)
+    public void AddBeatmaniaMetadata(Event ev, DjmainChartEvent ce, bool swapStereo)
     {
         var command = (DjmainEventType) (ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;
@@ -132,12 +134,12 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
                 break;
 
             default:
-                SetCommon(ev, command, param0, param1);
+                SetCommon(ev, command, param0, param1, swapStereo);
                 break;
         }
     }
 
-    public void AddPopnMetadata(Event ev, DjmainChartEvent ce)
+    public void AddPopnMetadata(Event ev, DjmainChartEvent ce, bool swapStereo)
     {
         var command = (DjmainEventType) (ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;
@@ -162,7 +164,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
                 break;
 
             default:
-                SetCommon(ev, command, param0, param1);
+                SetCommon(ev, command, param0, param1, swapStereo);
                 break;
         }
     }

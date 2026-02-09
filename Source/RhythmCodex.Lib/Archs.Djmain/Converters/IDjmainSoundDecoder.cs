@@ -6,5 +6,5 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 
 public interface IDjmainSoundDecoder
 {
-    Dictionary<int, Sound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples);
+    Dictionary<int, Sound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples, bool swapStereo);
 }

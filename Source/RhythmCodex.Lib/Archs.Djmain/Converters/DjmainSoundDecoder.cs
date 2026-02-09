@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Games.Beatmania.Converters;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
-using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Archs.Djmain.Converters;
@@ -18,13 +16,13 @@ public class DjmainSoundDecoder(
     IDjmainMixer djmainMixer
 ) : IDjmainSoundDecoder
 {
-    public Dictionary<int, Sound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
+    public Dictionary<int, Sound> Decode(IEnumerable<KeyValuePair<int, DjmainSample>> samples, bool swapStereo)
     {
-        return DecodeInternal(samples)
+        return DecodeInternal(samples, swapStereo)
             .ToDictionary(s => (int)s[NumericData.Id]!.Value, s => s);
     }
 
-    private IEnumerable<Sound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples)
+    private IEnumerable<Sound> DecodeInternal(IEnumerable<KeyValuePair<int, DjmainSample>> samples, bool swapStereo)
     {
         foreach (var def in samples)
         {
@@ -55,7 +53,7 @@ public class DjmainSoundDecoder(
                 Mixer = () => djmainMixer,
                 [NumericData.Volume] = beatmaniaDspTranslator.GetDjmainVolume(info.Volume),
                 [NumericData.SourceVolume] = info.Volume,
-                [NumericData.Panning] = beatmaniaDspTranslator.GetDjmainPanning(info.Panning),
+                [NumericData.Panning] = beatmaniaDspTranslator.GetDjmainPanning(info.Panning, swapStereo),
                 [NumericData.SourcePanning] = info.Panning,
                 [NumericData.SourceChannel] = info.Channel,
                 [NumericData.Rate] = beatmaniaDspTranslator.GetDjmainRate(info.Frequency),

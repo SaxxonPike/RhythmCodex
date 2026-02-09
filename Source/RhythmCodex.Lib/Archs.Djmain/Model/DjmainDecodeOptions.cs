@@ -7,4 +7,5 @@ public class DjmainDecodeOptions
 {
     public bool DisableAudio { get; init; }
     public bool DoNotConsolidateSamples { get; init; }
+    public bool SwapStereo { get; init; } = true;
 }

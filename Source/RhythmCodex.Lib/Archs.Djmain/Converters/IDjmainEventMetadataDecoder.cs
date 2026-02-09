@@ -5,6 +5,6 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 
 public interface IDjmainEventMetadataDecoder
 {
-    void AddBeatmaniaMetadata(Event ev, DjmainChartEvent ce);
-    void AddPopnMetadata(Event ev, DjmainChartEvent ce);
+    void AddBeatmaniaMetadata(Event ev, DjmainChartEvent ce, bool swapStereo);
+    void AddPopnMetadata(Event ev, DjmainChartEvent ce, bool swapStereo);
 }
