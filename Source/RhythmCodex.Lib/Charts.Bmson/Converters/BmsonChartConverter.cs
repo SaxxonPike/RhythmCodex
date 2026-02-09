@@ -116,7 +116,7 @@ public class BmsonChartConverter : IBmsonChartConverter
 
                 var targetSoundId = playSoundId >= 0
                     ? playSoundId
-                    : sounds.GetValueOrDefault((playerId, columnId, scratch), 0);
+                    : sounds.GetValueOrDefault((playerId, columnId, scratch), -1);
 
                 if (targetSoundId >= 0)
                 {
