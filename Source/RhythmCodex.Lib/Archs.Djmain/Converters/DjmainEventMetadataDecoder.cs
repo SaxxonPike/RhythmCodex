@@ -10,7 +10,7 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 [Service]
 public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 {
-    private void SetCommon(Event ev, DjmainEventType command, int param0, int param1)
+    private void SetCommon(Event ev, DjmainEventType command, int param0, int param1, bool reversePan)
     {
         switch (command)
         {
@@ -28,7 +28,9 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 
             case DjmainEventType.Bgm:
             {
-                ev[NumericData.Panning] = 1 - new BigRational(Math.Max(param0 - 1, 0), 14);
+                ev[NumericData.Panning] = reversePan
+                    ? 1 - new BigRational(Math.Max(param0 - 1, 0), 14)
+                    : new BigRational(Math.Max(param0 - 1, 0), 14);
                 ev[NumericData.PlaySound] = param1 - 1;
                 ev[NumericData.SourcePanning] = param0;
                 break;
@@ -70,7 +72,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 
     public void AddBeatmaniaMetadata(Event ev, DjmainChartEvent ce)
     {
-        var command = (DjmainEventType) (ce.Param0 & 0xF);
+        var command = (DjmainEventType)(ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;
         var param1 = ce.Param1;
 
@@ -81,7 +83,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
         {
             case DjmainEventType.Marker:
             case DjmainEventType.SoundSelect:
-                switch ((DjmainBeatmaniaColumnType) param0)
+                switch ((DjmainBeatmaniaColumnType)param0)
                 {
                     case DjmainBeatmaniaColumnType.Player0Scratch:
                     case DjmainBeatmaniaColumnType.Player1Scratch:
@@ -132,14 +134,14 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
                 break;
 
             default:
-                SetCommon(ev, command, param0, param1);
+                SetCommon(ev, command, param0, param1, true);
                 break;
         }
     }
 
     public void AddPopnMetadata(Event ev, DjmainChartEvent ce)
     {
-        var command = (DjmainEventType) (ce.Param0 & 0xF);
+        var command = (DjmainEventType)(ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;
         var param1 = ce.Param1;
 
@@ -162,7 +164,7 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
                 break;
 
             default:
-                SetCommon(ev, command, param0, param1);
+                SetCommon(ev, command, param0, param1, false);
                 break;
         }
     }

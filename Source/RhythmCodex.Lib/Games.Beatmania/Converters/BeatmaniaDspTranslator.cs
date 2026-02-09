@@ -54,8 +54,10 @@ public class BeatmaniaDspTranslator : IBeatmaniaDspTranslator
         if (panning < 0x1)
             panning = 0x1;
 
-        // Djmain swaps its stereo channels.
-        return new BigRational(0xE - (panning - 1), 0xE);
+        // Djmain may swap its stereo channels.
+        return (panning & 0x80) != 0x00
+            ? new BigRational(0xE - (panning - 1), 0xE)
+            : new BigRational(panning - 1, 0xE);
     }
 
     public BigRational GetDjmainRate(int rate)
