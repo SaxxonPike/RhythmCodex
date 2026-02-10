@@ -2,7 +2,6 @@ using System;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using RhythmCodex.Sounds.Models;
-using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace RhythmCodex.Sounds.Converters;
 

@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
@@ -36,7 +35,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16LittleEndian(memory.Span);
+        val = ReadUInt16LittleEndian(memory.Span);
         return memory[2..];
     }
 
@@ -45,7 +44,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16LittleEndian(memory.Span);
+        val = ReadInt16LittleEndian(memory.Span);
         return memory[2..];
     }
 
@@ -54,7 +53,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16BigEndian(memory.Span);
+        val = ReadUInt16BigEndian(memory.Span);
         return memory[2..];
     }
 
@@ -63,7 +62,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16BigEndian(memory.Span);
+        val = ReadInt16BigEndian(memory.Span);
         return memory[2..];
     }
 
@@ -72,7 +71,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32LittleEndian(memory.Span);
+        val = ReadUInt32LittleEndian(memory.Span);
         return memory[4..];
     }
 
@@ -81,7 +80,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32LittleEndian(memory.Span);
+        val = ReadInt32LittleEndian(memory.Span);
         return memory[4..];
     }
 
@@ -90,7 +89,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32BigEndian(memory.Span);
+        val = ReadUInt32BigEndian(memory.Span);
         return memory[4..];
     }
 
@@ -99,7 +98,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32BigEndian(memory.Span);
+        val = ReadInt32BigEndian(memory.Span);
         return memory[4..];
     }
 
@@ -108,7 +107,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleLittleEndian(memory.Span);
+        val = ReadSingleLittleEndian(memory.Span);
         return memory[4..];
     }
 
@@ -117,7 +116,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleBigEndian(memory.Span);
+        val = ReadSingleBigEndian(memory.Span);
         return memory[4..];
     }
 
@@ -126,7 +125,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64LittleEndian(memory.Span);
+        val = ReadUInt64LittleEndian(memory.Span);
         return memory[8..];
     }
 
@@ -135,7 +134,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64LittleEndian(memory.Span);
+        val = ReadInt64LittleEndian(memory.Span);
         return memory[8..];
     }
 
@@ -144,7 +143,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64BigEndian(memory.Span);
+        val = ReadUInt64BigEndian(memory.Span);
         return memory[8..];
     }
 
@@ -153,7 +152,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64BigEndian(memory.Span);
+        val = ReadInt64BigEndian(memory.Span);
         return memory[8..];
     }
 
@@ -162,7 +161,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleLittleEndian(memory.Span);
+        val = ReadDoubleLittleEndian(memory.Span);
         return memory[8..];
     }
 
@@ -171,7 +170,7 @@ public static class ByteMemoryExtensions
         this ReadOnlyMemory<byte> memory,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleBigEndian(memory.Span);
+        val = ReadDoubleBigEndian(memory.Span);
         return memory[8..];
     }
 
@@ -314,7 +313,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16LittleEndian(memory.Span);
+        val = ReadUInt16LittleEndian(memory.Span);
         return memory[2..];
     }
 
@@ -323,7 +322,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         ushort val)
     {
-        BinaryPrimitives.WriteUInt16LittleEndian(memory.Span, val);
+        WriteUInt16LittleEndian(memory.Span, val);
         return memory[2..];
     }
 
@@ -332,7 +331,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16LittleEndian(memory.Span);
+        val = ReadInt16LittleEndian(memory.Span);
         return memory[2..];
     }
 
@@ -341,7 +340,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         short val)
     {
-        BinaryPrimitives.WriteInt16LittleEndian(memory.Span, val);
+        WriteInt16LittleEndian(memory.Span, val);
         return memory[2..];
     }
 
@@ -350,7 +349,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16BigEndian(memory.Span);
+        val = ReadUInt16BigEndian(memory.Span);
         return memory[2..];
     }
 
@@ -359,7 +358,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         ushort val)
     {
-        BinaryPrimitives.WriteUInt16BigEndian(memory.Span, val);
+        WriteUInt16BigEndian(memory.Span, val);
         return memory[2..];
     }
 
@@ -368,7 +367,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16BigEndian(memory.Span);
+        val = ReadInt16BigEndian(memory.Span);
         return memory[2..];
     }
 
@@ -377,7 +376,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         short val)
     {
-        BinaryPrimitives.WriteInt16BigEndian(memory.Span, val);
+        WriteInt16BigEndian(memory.Span, val);
         return memory[2..];
     }
 
@@ -386,7 +385,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32LittleEndian(memory.Span);
+        val = ReadUInt32LittleEndian(memory.Span);
         return memory[4..];
     }
 
@@ -395,7 +394,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         uint val)
     {
-        BinaryPrimitives.WriteUInt32LittleEndian(memory.Span, val);
+        WriteUInt32LittleEndian(memory.Span, val);
         return memory[4..];
     }
 
@@ -404,7 +403,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32LittleEndian(memory.Span);
+        val = ReadInt32LittleEndian(memory.Span);
         return memory[4..];
     }
 
@@ -413,7 +412,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         int val)
     {
-        BinaryPrimitives.WriteInt32LittleEndian(memory.Span, val);
+        WriteInt32LittleEndian(memory.Span, val);
         return memory[4..];
     }
 
@@ -422,7 +421,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32BigEndian(memory.Span);
+        val = ReadUInt32BigEndian(memory.Span);
         return memory[4..];
     }
 
@@ -431,7 +430,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         uint val)
     {
-        BinaryPrimitives.WriteUInt32BigEndian(memory.Span, val);
+        WriteUInt32BigEndian(memory.Span, val);
         return memory[4..];
     }
 
@@ -440,7 +439,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32BigEndian(memory.Span);
+        val = ReadInt32BigEndian(memory.Span);
         return memory[4..];
     }
 
@@ -449,7 +448,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         int val)
     {
-        BinaryPrimitives.WriteInt32BigEndian(memory.Span, val);
+        WriteInt32BigEndian(memory.Span, val);
         return memory[4..];
     }
 
@@ -458,7 +457,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleLittleEndian(memory.Span);
+        val = ReadSingleLittleEndian(memory.Span);
         return memory[4..];
     }
 
@@ -467,7 +466,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         float val)
     {
-        BinaryPrimitives.WriteSingleLittleEndian(memory.Span, val);
+        WriteSingleLittleEndian(memory.Span, val);
         return memory[4..];
     }
 
@@ -476,7 +475,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleBigEndian(memory.Span);
+        val = ReadSingleBigEndian(memory.Span);
         return memory[4..];
     }
 
@@ -485,7 +484,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         float val)
     {
-        BinaryPrimitives.WriteSingleBigEndian(memory.Span, val);
+        WriteSingleBigEndian(memory.Span, val);
         return memory[4..];
     }
 
@@ -494,7 +493,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64LittleEndian(memory.Span);
+        val = ReadUInt64LittleEndian(memory.Span);
         return memory[8..];
     }
 
@@ -503,7 +502,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         ulong val)
     {
-        BinaryPrimitives.WriteUInt64LittleEndian(memory.Span, val);
+        WriteUInt64LittleEndian(memory.Span, val);
         return memory[8..];
     }
 
@@ -512,7 +511,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64LittleEndian(memory.Span);
+        val = ReadInt64LittleEndian(memory.Span);
         return memory[8..];
     }
 
@@ -521,7 +520,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         long val)
     {
-        BinaryPrimitives.WriteInt64LittleEndian(memory.Span, val);
+        WriteInt64LittleEndian(memory.Span, val);
         return memory[8..];
     }
 
@@ -530,7 +529,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64BigEndian(memory.Span);
+        val = ReadUInt64BigEndian(memory.Span);
         return memory[8..];
     }
 
@@ -539,7 +538,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         ulong val)
     {
-        BinaryPrimitives.WriteUInt64BigEndian(memory.Span, val);
+        WriteUInt64BigEndian(memory.Span, val);
         return memory[8..];
     }
 
@@ -548,7 +547,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64BigEndian(memory.Span);
+        val = ReadInt64BigEndian(memory.Span);
         return memory[8..];
     }
 
@@ -557,7 +556,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         long val)
     {
-        BinaryPrimitives.WriteInt64BigEndian(memory.Span, val);
+        WriteInt64BigEndian(memory.Span, val);
         return memory[8..];
     }
 
@@ -566,7 +565,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleLittleEndian(memory.Span);
+        val = ReadDoubleLittleEndian(memory.Span);
         return memory[8..];
     }
 
@@ -575,7 +574,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         double val)
     {
-        BinaryPrimitives.WriteDoubleLittleEndian(memory.Span, val);
+        WriteDoubleLittleEndian(memory.Span, val);
         return memory[8..];
     }
 
@@ -584,7 +583,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleBigEndian(memory.Span);
+        val = ReadDoubleBigEndian(memory.Span);
         return memory[8..];
     }
 
@@ -593,7 +592,7 @@ public static class ByteMemoryExtensions
         this Memory<byte> memory,
         double val)
     {
-        BinaryPrimitives.WriteDoubleBigEndian(memory.Span, val);
+        WriteDoubleBigEndian(memory.Span, val);
         return memory[8..];
     }
 

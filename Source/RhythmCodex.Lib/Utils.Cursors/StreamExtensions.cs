@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using System.Buffers.Binary;
 using System.Diagnostics;
 using System.IO;
 using JetBrains.Annotations;
@@ -73,7 +72,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[2];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+        val = ReadUInt16LittleEndian(buffer);
         return stream;
     }
 
@@ -83,7 +82,7 @@ public static class StreamExtensions
         ushort val)
     {
         Span<byte> buffer = stackalloc byte[2];
-        BinaryPrimitives.WriteUInt16LittleEndian(buffer, val);
+        WriteUInt16LittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -95,7 +94,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[2];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadUInt16BigEndian(buffer);
+        val = ReadUInt16BigEndian(buffer);
         return stream;
     }
 
@@ -105,7 +104,7 @@ public static class StreamExtensions
         ushort val)
     {
         Span<byte> buffer = stackalloc byte[2];
-        BinaryPrimitives.WriteUInt16BigEndian(buffer, val);
+        WriteUInt16BigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -117,7 +116,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[2];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadInt16LittleEndian(buffer);
+        val = ReadInt16LittleEndian(buffer);
         return stream;
     }
 
@@ -127,7 +126,7 @@ public static class StreamExtensions
         short val)
     {
         Span<byte> buffer = stackalloc byte[2];
-        BinaryPrimitives.WriteInt16LittleEndian(buffer, val);
+        WriteInt16LittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -139,7 +138,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[2];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadInt16BigEndian(buffer);
+        val = ReadInt16BigEndian(buffer);
         return stream;
     }
 
@@ -149,7 +148,7 @@ public static class StreamExtensions
         short val)
     {
         Span<byte> buffer = stackalloc byte[2];
-        BinaryPrimitives.WriteInt16BigEndian(buffer, val);
+        WriteInt16BigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -161,7 +160,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[4];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadUInt32LittleEndian(buffer);
+        val = ReadUInt32LittleEndian(buffer);
         return stream;
     }
 
@@ -171,7 +170,7 @@ public static class StreamExtensions
         uint val)
     {
         Span<byte> buffer = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32LittleEndian(buffer, val);
+        WriteUInt32LittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -183,7 +182,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[4];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadUInt32BigEndian(buffer);
+        val = ReadUInt32BigEndian(buffer);
         return stream;
     }
 
@@ -193,7 +192,7 @@ public static class StreamExtensions
         uint val)
     {
         Span<byte> buffer = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(buffer, val);
+        WriteUInt32BigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -205,7 +204,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[4];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadInt32LittleEndian(buffer);
+        val = ReadInt32LittleEndian(buffer);
         return stream;
     }
 
@@ -215,7 +214,7 @@ public static class StreamExtensions
         int val)
     {
         Span<byte> buffer = stackalloc byte[4];
-        BinaryPrimitives.WriteInt32LittleEndian(buffer, val);
+        WriteInt32LittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -227,7 +226,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[4];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadInt32BigEndian(buffer);
+        val = ReadInt32BigEndian(buffer);
         return stream;
     }
 
@@ -237,7 +236,7 @@ public static class StreamExtensions
         int val)
     {
         Span<byte> buffer = stackalloc byte[4];
-        BinaryPrimitives.WriteInt32BigEndian(buffer, val);
+        WriteInt32BigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -249,7 +248,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[4];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadSingleLittleEndian(buffer);
+        val = ReadSingleLittleEndian(buffer);
         return stream;
     }
 
@@ -259,7 +258,7 @@ public static class StreamExtensions
         float val)
     {
         Span<byte> buffer = stackalloc byte[4];
-        BinaryPrimitives.WriteSingleLittleEndian(buffer, val);
+        WriteSingleLittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -271,7 +270,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[4];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadSingleBigEndian(buffer);
+        val = ReadSingleBigEndian(buffer);
         return stream;
     }
 
@@ -281,7 +280,7 @@ public static class StreamExtensions
         float val)
     {
         Span<byte> buffer = stackalloc byte[4];
-        BinaryPrimitives.WriteSingleBigEndian(buffer, val);
+        WriteSingleBigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -293,7 +292,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[8];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadUInt64LittleEndian(buffer);
+        val = ReadUInt64LittleEndian(buffer);
         return stream;
     }
 
@@ -303,7 +302,7 @@ public static class StreamExtensions
         ulong val)
     {
         Span<byte> buffer = stackalloc byte[8];
-        BinaryPrimitives.WriteUInt64LittleEndian(buffer, val);
+        WriteUInt64LittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -315,7 +314,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[8];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadUInt64BigEndian(buffer);
+        val = ReadUInt64BigEndian(buffer);
         return stream;
     }
 
@@ -325,7 +324,7 @@ public static class StreamExtensions
         ulong val)
     {
         Span<byte> buffer = stackalloc byte[8];
-        BinaryPrimitives.WriteUInt64BigEndian(buffer, val);
+        WriteUInt64BigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -337,7 +336,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[8];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadInt64LittleEndian(buffer);
+        val = ReadInt64LittleEndian(buffer);
         return stream;
     }
 
@@ -347,7 +346,7 @@ public static class StreamExtensions
         long val)
     {
         Span<byte> buffer = stackalloc byte[8];
-        BinaryPrimitives.WriteInt64LittleEndian(buffer, val);
+        WriteInt64LittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -359,7 +358,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[8];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadInt64BigEndian(buffer);
+        val = ReadInt64BigEndian(buffer);
         return stream;
     }
 
@@ -369,7 +368,7 @@ public static class StreamExtensions
         long val)
     {
         Span<byte> buffer = stackalloc byte[8];
-        BinaryPrimitives.WriteInt64BigEndian(buffer, val);
+        WriteInt64BigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -381,7 +380,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[8];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadDoubleLittleEndian(buffer);
+        val = ReadDoubleLittleEndian(buffer);
         return stream;
     }
 
@@ -391,7 +390,7 @@ public static class StreamExtensions
         double val)
     {
         Span<byte> buffer = stackalloc byte[8];
-        BinaryPrimitives.WriteDoubleLittleEndian(buffer, val);
+        WriteDoubleLittleEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }
@@ -403,7 +402,7 @@ public static class StreamExtensions
     {
         Span<byte> buffer = stackalloc byte[8];
         stream.ReadExactly(buffer);
-        val = BinaryPrimitives.ReadDoubleBigEndian(buffer);
+        val = ReadDoubleBigEndian(buffer);
         return stream;
     }
 
@@ -413,7 +412,7 @@ public static class StreamExtensions
         double val)
     {
         Span<byte> buffer = stackalloc byte[8];
-        BinaryPrimitives.WriteDoubleBigEndian(buffer, val);
+        WriteDoubleBigEndian(buffer, val);
         stream.Write(buffer);
         return stream;
     }

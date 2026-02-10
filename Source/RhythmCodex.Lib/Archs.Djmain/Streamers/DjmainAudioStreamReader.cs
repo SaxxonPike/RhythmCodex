@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using RhythmCodex.IoC;
-using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
