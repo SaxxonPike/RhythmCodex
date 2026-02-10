@@ -31,21 +31,31 @@ public class DjmainSampleDecoder(
         {
             if (props.Frequency == 0)
                 continue;
-            
-            // This is a failsafe for data reaching the end of a sample table.
-            if (props is { Frequency: 0x0A0A, Channel: 0x0A, Panning: 0x0A, Volume: 0x0A })
-                continue;
 
-            // A likewise problem with 0x4F.
-            if (props is { Frequency: 0x4F4F, Channel: 0x4F, Panning: 0x4F, Volume: 0x4F })
+            //
+            // This is a failsafe for data reaching the end of a sample table.
+            // Sample tables don't really have a known length. There is some known
+            // "dummy" data values.
+            //
+            if (props is
+                { Frequency: 0x0A0A, Channel: 0x0A, Panning: 0x0A, Volume: 0x0A } or
+                { Frequency: 0x4F4F, Channel: 0x4F, Panning: 0x4F, Volume: 0x4F })
                 continue;
 
             stream.Position = sampleOffset + props.Offset;
+            var sampleData = GetSampleData();
+
+            //
+            // Discard empty samples.
+            //
+
+            if (sampleData.Span.IndexOfAnyExcept((byte)0x00) < 0)
+                sampleData = Memory<byte>.Empty;
 
             yield return new KeyValuePair<int, DjmainSample>(key,
                 new DjmainSample
                 {
-                    Data = GetSampleData(),
+                    Data = sampleData,
                     Info = props
                 });
 
