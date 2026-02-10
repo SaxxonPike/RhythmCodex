@@ -87,7 +87,7 @@ public class FirebeatDecoder(
                 Channel = 0xFF,
                 Flag01 = 0x00,
                 Frequency = 0xAC44,
-                Volume = 0x01,
+                Volume = 0x00,
                 Panning = 0x40,
                 SampleOffset = BeatmaniaBgmOffset / 2,
                 SampleLength = (j - BeatmaniaBgmOffset + 4) / 2,
