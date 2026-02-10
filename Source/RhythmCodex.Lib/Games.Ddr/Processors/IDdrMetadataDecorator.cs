@@ -1,5 +1,4 @@
 using RhythmCodex.Charts.Models;
-using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.Games.Ddr.Models;
 
 namespace RhythmCodex.Games.Ddr.Processors;
