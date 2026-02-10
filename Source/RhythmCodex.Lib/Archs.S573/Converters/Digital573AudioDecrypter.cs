@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using RhythmCodex.Archs.S573.Models;
 using RhythmCodex.Infrastructure;
@@ -70,8 +69,8 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         var output = new byte[length];
 
         var keyBytes = new byte[4];
-        BinaryPrimitives.WriteInt16LittleEndian(keyBytes, unchecked((short)keyList[0]));
-        BinaryPrimitives.WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)keyList[1]));
+        WriteInt16LittleEndian(keyBytes, unchecked((short)keyList[0]));
+        WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)keyList[1]));
 
         var key1 = keyList[0];
         var key2 = keyList[1];
@@ -87,7 +86,7 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
                 3, 1, 2, 0
             );
 
-            var v = DecryptCommon(BinaryPrimitives.ReadUInt16LittleEndian(input[i..]), m);
+            var v = DecryptCommon(ReadUInt16LittleEndian(input[i..]), m);
 
             v ^= BitSwap16(
                 key3,
@@ -97,7 +96,7 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
                 1, 6, 0, 7
             );
 
-            BinaryPrimitives.WriteUInt16BigEndian(output.AsSpan(i), unchecked((ushort)v));
+            WriteUInt16BigEndian(output.AsSpan(i), unchecked((ushort)v));
 
             if ((Bit(key1, 14) ^ Bit(key1, 15)) != 0)
                 key2 = ((key2 << 1) | (key2 >> 15)) & 0xFFFF;
@@ -123,14 +122,14 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         var output = new byte[length];
 
         var keyBytes = new byte[4];
-        BinaryPrimitives.WriteInt32LittleEndian(keyBytes, key);
+        WriteInt32LittleEndian(keyBytes, key);
 
         var key1 = key;
 
         for (var i = 0; i < length; i += 2)
         {
-            var v = DecryptCommon(BinaryPrimitives.ReadUInt16LittleEndian(data[i..]), key1);
-            BinaryPrimitives.WriteUInt16BigEndian(output.AsSpan(i), unchecked((ushort)v));
+            var v = DecryptCommon(ReadUInt16LittleEndian(data[i..]), key1);
+            WriteUInt16BigEndian(output.AsSpan(i), unchecked((ushort)v));
             key1 = ((key1 << 1) | (key1 >> 15)) & 0xFFFF;
         }
 

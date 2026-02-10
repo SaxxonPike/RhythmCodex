@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -106,7 +105,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU16L()
     {
-        var expected = BinaryPrimitives.ReadUInt16LittleEndian(_bytes);
+        var expected = ReadUInt16LittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -116,7 +115,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU16L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadUInt16LittleEndian(_bytes);
+        var expected = ReadUInt16LittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -129,7 +128,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextUShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteUInt16LittleEndian(expected, val);
+        WriteUInt16LittleEndian(expected, val);
 
         Assert.That(memory.WriteU16L(val).Span.SequenceEqual(memory.Span[2..]));
         AssertBytes(expected);
@@ -138,7 +137,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU16B()
     {
-        var expected = BinaryPrimitives.ReadUInt16BigEndian(_bytes);
+        var expected = ReadUInt16BigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -148,7 +147,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU16B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadUInt16BigEndian(_bytes);
+        var expected = ReadUInt16BigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -161,7 +160,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextUShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteUInt16BigEndian(expected, val);
+        WriteUInt16BigEndian(expected, val);
 
         Assert.That(memory.WriteU16B(val).Span.SequenceEqual(memory.Span[2..]));
         AssertBytes(expected);
@@ -170,7 +169,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS16L()
     {
-        var expected = BinaryPrimitives.ReadInt16LittleEndian(_bytes);
+        var expected = ReadInt16LittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -180,7 +179,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS16L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadInt16LittleEndian(_bytes);
+        var expected = ReadInt16LittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16L(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -193,7 +192,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteInt16LittleEndian(expected, val);
+        WriteInt16LittleEndian(expected, val);
 
         Assert.That(memory.WriteS16L(val).Span.SequenceEqual(memory.Span[2..]));
         AssertBytes(expected);
@@ -202,7 +201,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS16B()
     {
-        var expected = BinaryPrimitives.ReadInt16BigEndian(_bytes);
+        var expected = ReadInt16BigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -212,7 +211,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS16B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadInt16BigEndian(_bytes);
+        var expected = ReadInt16BigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS16B(out var observed).Span.SequenceEqual(memory.Span[2..]));
@@ -225,7 +224,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteInt16BigEndian(expected, val);
+        WriteInt16BigEndian(expected, val);
 
         Assert.That(memory.WriteS16B(val).Span.SequenceEqual(memory.Span[2..]));
         AssertBytes(expected);
@@ -234,7 +233,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU32L()
     {
-        var expected = BinaryPrimitives.ReadUInt32LittleEndian(_bytes);
+        var expected = ReadUInt32LittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -244,7 +243,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU32L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadUInt32LittleEndian(_bytes);
+        var expected = ReadUInt32LittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -257,7 +256,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextUShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteUInt32LittleEndian(expected, val);
+        WriteUInt32LittleEndian(expected, val);
 
         Assert.That(memory.WriteU32L(val).Span.SequenceEqual(memory.Span[4..]));
         AssertBytes(expected);
@@ -266,7 +265,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU32B()
     {
-        var expected = BinaryPrimitives.ReadUInt32BigEndian(_bytes);
+        var expected = ReadUInt32BigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -276,7 +275,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU32B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadUInt32BigEndian(_bytes);
+        var expected = ReadUInt32BigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -289,7 +288,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextUShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteUInt32BigEndian(expected, val);
+        WriteUInt32BigEndian(expected, val);
 
         Assert.That(memory.WriteU32B(val).Span.SequenceEqual(memory.Span[4..]));
         AssertBytes(expected);
@@ -298,7 +297,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS32L()
     {
-        var expected = BinaryPrimitives.ReadInt32LittleEndian(_bytes);
+        var expected = ReadInt32LittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -308,7 +307,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS32L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadInt32LittleEndian(_bytes);
+        var expected = ReadInt32LittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -321,7 +320,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteInt32LittleEndian(expected, val);
+        WriteInt32LittleEndian(expected, val);
 
         Assert.That(memory.WriteS32L(val).Span.SequenceEqual(memory.Span[4..]));
         AssertBytes(expected);
@@ -330,7 +329,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS32B()
     {
-        var expected = BinaryPrimitives.ReadInt32BigEndian(_bytes);
+        var expected = ReadInt32BigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -340,7 +339,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS32B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadInt32BigEndian(_bytes);
+        var expected = ReadInt32BigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -353,7 +352,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteInt32BigEndian(expected, val);
+        WriteInt32BigEndian(expected, val);
 
         Assert.That(memory.WriteS32B(val).Span.SequenceEqual(memory.Span[4..]));
         AssertBytes(expected);
@@ -362,7 +361,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF32L()
     {
-        var expected = BinaryPrimitives.ReadSingleLittleEndian(_bytes);
+        var expected = ReadSingleLittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -372,7 +371,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF32L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadSingleLittleEndian(_bytes);
+        var expected = ReadSingleLittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32L(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -385,7 +384,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteSingleLittleEndian(expected, val);
+        WriteSingleLittleEndian(expected, val);
 
         Assert.That(memory.WriteF32L(val).Span.SequenceEqual(memory.Span[4..]));
         AssertBytes(expected);
@@ -394,7 +393,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF32B()
     {
-        var expected = BinaryPrimitives.ReadSingleBigEndian(_bytes);
+        var expected = ReadSingleBigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -404,7 +403,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF32B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadSingleBigEndian(_bytes);
+        var expected = ReadSingleBigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF32B(out var observed).Span.SequenceEqual(memory.Span[4..]));
@@ -417,7 +416,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteSingleBigEndian(expected, val);
+        WriteSingleBigEndian(expected, val);
 
         Assert.That(memory.WriteF32B(val).Span.SequenceEqual(memory.Span[4..]));
         AssertBytes(expected);
@@ -426,7 +425,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU64L()
     {
-        var expected = BinaryPrimitives.ReadUInt64LittleEndian(_bytes);
+        var expected = ReadUInt64LittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -436,7 +435,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU64L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadUInt64LittleEndian(_bytes);
+        var expected = ReadUInt64LittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -449,7 +448,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextUShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteUInt64LittleEndian(expected, val);
+        WriteUInt64LittleEndian(expected, val);
 
         Assert.That(memory.WriteU64L(val).Span.SequenceEqual(memory.Span[8..]));
         AssertBytes(expected);
@@ -458,7 +457,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU64B()
     {
-        var expected = BinaryPrimitives.ReadUInt64BigEndian(_bytes);
+        var expected = ReadUInt64BigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -468,7 +467,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadU64B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadUInt64BigEndian(_bytes);
+        var expected = ReadUInt64BigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadU64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -481,7 +480,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextUShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteUInt64BigEndian(expected, val);
+        WriteUInt64BigEndian(expected, val);
 
         Assert.That(memory.WriteU64B(val).Span.SequenceEqual(memory.Span[8..]));
         AssertBytes(expected);
@@ -490,7 +489,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS64L()
     {
-        var expected = BinaryPrimitives.ReadInt64LittleEndian(_bytes);
+        var expected = ReadInt64LittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -500,7 +499,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS64L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadInt64LittleEndian(_bytes);
+        var expected = ReadInt64LittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -513,7 +512,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteInt64LittleEndian(expected, val);
+        WriteInt64LittleEndian(expected, val);
 
         Assert.That(memory.WriteS64L(val).Span.SequenceEqual(memory.Span[8..]));
         AssertBytes(expected);
@@ -522,7 +521,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS64B()
     {
-        var expected = BinaryPrimitives.ReadInt64BigEndian(_bytes);
+        var expected = ReadInt64BigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -532,7 +531,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadS64B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadInt64BigEndian(_bytes);
+        var expected = ReadInt64BigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadS64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -545,7 +544,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteInt64BigEndian(expected, val);
+        WriteInt64BigEndian(expected, val);
 
         Assert.That(memory.WriteS64B(val).Span.SequenceEqual(memory.Span[8..]));
         AssertBytes(expected);
@@ -554,7 +553,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF64L()
     {
-        var expected = BinaryPrimitives.ReadDoubleLittleEndian(_bytes);
+        var expected = ReadDoubleLittleEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -564,7 +563,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF64L_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadDoubleLittleEndian(_bytes);
+        var expected = ReadDoubleLittleEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64L(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -577,7 +576,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteDoubleLittleEndian(expected, val);
+        WriteDoubleLittleEndian(expected, val);
 
         Assert.That(memory.WriteF64L(val).Span.SequenceEqual(memory.Span[8..]));
         AssertBytes(expected);
@@ -586,7 +585,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF64B()
     {
-        var expected = BinaryPrimitives.ReadDoubleBigEndian(_bytes);
+        var expected = ReadDoubleBigEndian(_bytes);
         var memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -596,7 +595,7 @@ public class ByteMemoryTests : BaseTestFixture
     [Test]
     public void Test_ReadF64B_ReadOnly()
     {
-        var expected = BinaryPrimitives.ReadDoubleBigEndian(_bytes);
+        var expected = ReadDoubleBigEndian(_bytes);
         ReadOnlyMemory<byte> memory = _bytes.AsMemory();
 
         Assert.That(memory.ReadF64B(out var observed).Span.SequenceEqual(memory.Span[8..]));
@@ -609,7 +608,7 @@ public class ByteMemoryTests : BaseTestFixture
         var val = Random.NextShort();
         var memory = _bytes.AsMemory();
         var expected = _bytes.ToArray();
-        BinaryPrimitives.WriteDoubleBigEndian(expected, val);
+        WriteDoubleBigEndian(expected, val);
 
         Assert.That(memory.WriteF64B(val).Span.SequenceEqual(memory.Span[8..]));
         AssertBytes(expected);

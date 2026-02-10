@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
@@ -36,7 +35,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16LittleEndian(span);
+        val = ReadUInt16LittleEndian(span);
         return span[2..];
     }
 
@@ -45,7 +44,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16LittleEndian(span);
+        val = ReadInt16LittleEndian(span);
         return span[2..];
     }
 
@@ -54,7 +53,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16BigEndian(span);
+        val = ReadUInt16BigEndian(span);
         return span[2..];
     }
 
@@ -63,7 +62,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16BigEndian(span);
+        val = ReadInt16BigEndian(span);
         return span[2..];
     }
 
@@ -72,7 +71,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32LittleEndian(span);
+        val = ReadUInt32LittleEndian(span);
         return span[4..];
     }
 
@@ -81,7 +80,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32LittleEndian(span);
+        val = ReadInt32LittleEndian(span);
         return span[4..];
     }
 
@@ -90,7 +89,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32BigEndian(span);
+        val = ReadUInt32BigEndian(span);
         return span[4..];
     }
 
@@ -99,7 +98,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32BigEndian(span);
+        val = ReadInt32BigEndian(span);
         return span[4..];
     }
 
@@ -108,7 +107,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleLittleEndian(span);
+        val = ReadSingleLittleEndian(span);
         return span[4..];
     }
 
@@ -117,7 +116,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleBigEndian(span);
+        val = ReadSingleBigEndian(span);
         return span[4..];
     }
 
@@ -126,7 +125,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64LittleEndian(span);
+        val = ReadUInt64LittleEndian(span);
         return span[8..];
     }
 
@@ -135,7 +134,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64LittleEndian(span);
+        val = ReadInt64LittleEndian(span);
         return span[8..];
     }
 
@@ -144,7 +143,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64BigEndian(span);
+        val = ReadUInt64BigEndian(span);
         return span[8..];
     }
 
@@ -153,7 +152,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64BigEndian(span);
+        val = ReadInt64BigEndian(span);
         return span[8..];
     }
 
@@ -162,7 +161,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleLittleEndian(span);
+        val = ReadDoubleLittleEndian(span);
         return span[8..];
     }
 
@@ -171,7 +170,7 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleBigEndian(span);
+        val = ReadDoubleBigEndian(span);
         return span[8..];
     }
 
@@ -314,7 +313,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16LittleEndian(span);
+        val = ReadUInt16LittleEndian(span);
         return span[2..];
     }
 
@@ -323,7 +322,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         ushort val)
     {
-        BinaryPrimitives.WriteUInt16LittleEndian(span, val);
+        WriteUInt16LittleEndian(span, val);
         return span[2..];
     }
 
@@ -332,7 +331,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16LittleEndian(span);
+        val = ReadInt16LittleEndian(span);
         return span[2..];
     }
 
@@ -341,7 +340,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         short val)
     {
-        BinaryPrimitives.WriteInt16LittleEndian(span, val);
+        WriteInt16LittleEndian(span, val);
         return span[2..];
     }
 
@@ -350,7 +349,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out ushort val)
     {
-        val = BinaryPrimitives.ReadUInt16BigEndian(span);
+        val = ReadUInt16BigEndian(span);
         return span[2..];
     }
 
@@ -359,7 +358,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         ushort val)
     {
-        BinaryPrimitives.WriteUInt16BigEndian(span, val);
+        WriteUInt16BigEndian(span, val);
         return span[2..];
     }
 
@@ -368,7 +367,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out short val)
     {
-        val = BinaryPrimitives.ReadInt16BigEndian(span);
+        val = ReadInt16BigEndian(span);
         return span[2..];
     }
 
@@ -377,7 +376,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         short val)
     {
-        BinaryPrimitives.WriteInt16BigEndian(span, val);
+        WriteInt16BigEndian(span, val);
         return span[2..];
     }
 
@@ -386,7 +385,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32LittleEndian(span);
+        val = ReadUInt32LittleEndian(span);
         return span[4..];
     }
 
@@ -395,7 +394,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         uint val)
     {
-        BinaryPrimitives.WriteUInt32LittleEndian(span, val);
+        WriteUInt32LittleEndian(span, val);
         return span[4..];
     }
 
@@ -404,7 +403,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32LittleEndian(span);
+        val = ReadInt32LittleEndian(span);
         return span[4..];
     }
 
@@ -413,7 +412,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         int val)
     {
-        BinaryPrimitives.WriteInt32LittleEndian(span, val);
+        WriteInt32LittleEndian(span, val);
         return span[4..];
     }
 
@@ -422,7 +421,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out uint val)
     {
-        val = BinaryPrimitives.ReadUInt32BigEndian(span);
+        val = ReadUInt32BigEndian(span);
         return span[4..];
     }
 
@@ -431,7 +430,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         uint val)
     {
-        BinaryPrimitives.WriteUInt32BigEndian(span, val);
+        WriteUInt32BigEndian(span, val);
         return span[4..];
     }
 
@@ -440,7 +439,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out int val)
     {
-        val = BinaryPrimitives.ReadInt32BigEndian(span);
+        val = ReadInt32BigEndian(span);
         return span[4..];
     }
 
@@ -449,7 +448,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         int val)
     {
-        BinaryPrimitives.WriteInt32BigEndian(span, val);
+        WriteInt32BigEndian(span, val);
         return span[4..];
     }
 
@@ -458,7 +457,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleLittleEndian(span);
+        val = ReadSingleLittleEndian(span);
         return span[4..];
     }
 
@@ -467,7 +466,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         float val)
     {
-        BinaryPrimitives.WriteSingleLittleEndian(span, val);
+        WriteSingleLittleEndian(span, val);
         return span[4..];
     }
 
@@ -476,7 +475,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out float val)
     {
-        val = BinaryPrimitives.ReadSingleBigEndian(span);
+        val = ReadSingleBigEndian(span);
         return span[4..];
     }
 
@@ -485,7 +484,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         float val)
     {
-        BinaryPrimitives.WriteSingleBigEndian(span, val);
+        WriteSingleBigEndian(span, val);
         return span[4..];
     }
 
@@ -494,7 +493,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64LittleEndian(span);
+        val = ReadUInt64LittleEndian(span);
         return span[8..];
     }
 
@@ -503,7 +502,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         ulong val)
     {
-        BinaryPrimitives.WriteUInt64LittleEndian(span, val);
+        WriteUInt64LittleEndian(span, val);
         return span[8..];
     }
 
@@ -512,7 +511,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64LittleEndian(span);
+        val = ReadInt64LittleEndian(span);
         return span[8..];
     }
 
@@ -521,7 +520,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         long val)
     {
-        BinaryPrimitives.WriteInt64LittleEndian(span, val);
+        WriteInt64LittleEndian(span, val);
         return span[8..];
     }
 
@@ -530,7 +529,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out ulong val)
     {
-        val = BinaryPrimitives.ReadUInt64BigEndian(span);
+        val = ReadUInt64BigEndian(span);
         return span[8..];
     }
 
@@ -539,7 +538,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         ulong val)
     {
-        BinaryPrimitives.WriteUInt64BigEndian(span, val);
+        WriteUInt64BigEndian(span, val);
         return span[8..];
     }
 
@@ -548,7 +547,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out long val)
     {
-        val = BinaryPrimitives.ReadInt64BigEndian(span);
+        val = ReadInt64BigEndian(span);
         return span[8..];
     }
 
@@ -557,7 +556,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         long val)
     {
-        BinaryPrimitives.WriteInt64BigEndian(span, val);
+        WriteInt64BigEndian(span, val);
         return span[8..];
     }
 
@@ -566,7 +565,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleLittleEndian(span);
+        val = ReadDoubleLittleEndian(span);
         return span[8..];
     }
 
@@ -575,7 +574,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         double val)
     {
-        BinaryPrimitives.WriteDoubleLittleEndian(span, val);
+        WriteDoubleLittleEndian(span, val);
         return span[8..];
     }
 
@@ -584,7 +583,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         out double val)
     {
-        val = BinaryPrimitives.ReadDoubleBigEndian(span);
+        val = ReadDoubleBigEndian(span);
         return span[8..];
     }
 
@@ -593,7 +592,7 @@ public static class ByteSpanExtensions
         this Span<byte> span,
         double val)
     {
-        BinaryPrimitives.WriteDoubleBigEndian(span, val);
+        WriteDoubleBigEndian(span, val);
         return span[8..];
     }
 
@@ -745,7 +744,7 @@ public static class ByteSpanExtensions
     {
         var output = new ushort[span.Length / 2];
         for (int i = 0, j = 0; i < output.Length; i++, j += 2)
-            output[i] = BinaryPrimitives.ReadUInt16LittleEndian(span[j..]);
+            output[i] = ReadUInt16LittleEndian(span[j..]);
         return output;
     }
 
@@ -760,7 +759,7 @@ public static class ByteSpanExtensions
     {
         var output = new ushort[span.Length / 2];
         for (int i = 0, j = 0; i < output.Length; i++, j += 2)
-            output[i] = BinaryPrimitives.ReadUInt16BigEndian(span[j..]);
+            output[i] = ReadUInt16BigEndian(span[j..]);
         return output;
     }
 
@@ -775,7 +774,7 @@ public static class ByteSpanExtensions
     {
         var output = new short[span.Length / 2];
         for (int i = 0, j = 0; i < output.Length; i++, j += 2)
-            output[i] = BinaryPrimitives.ReadInt16LittleEndian(span[j..]);
+            output[i] = ReadInt16LittleEndian(span[j..]);
         return output;
     }
 
@@ -790,7 +789,7 @@ public static class ByteSpanExtensions
     {
         var output = new short[span.Length / 2];
         for (int i = 0, j = 0; i < output.Length; i++, j += 2)
-            output[i] = BinaryPrimitives.ReadInt16BigEndian(span[j..]);
+            output[i] = ReadInt16BigEndian(span[j..]);
         return output;
     }
 
@@ -805,7 +804,7 @@ public static class ByteSpanExtensions
     {
         var output = new uint[span.Length / 4];
         for (int i = 0, j = 0; i < output.Length; i++, j += 4)
-            output[i] = BinaryPrimitives.ReadUInt32LittleEndian(span[j..]);
+            output[i] = ReadUInt32LittleEndian(span[j..]);
         return output;
     }
 
@@ -820,7 +819,7 @@ public static class ByteSpanExtensions
     {
         var output = new uint[span.Length / 4];
         for (int i = 0, j = 0; i < output.Length; i++, j += 4)
-            output[i] = BinaryPrimitives.ReadUInt32BigEndian(span[j..]);
+            output[i] = ReadUInt32BigEndian(span[j..]);
         return output;
     }
 
@@ -835,7 +834,7 @@ public static class ByteSpanExtensions
     {
         var output = new int[span.Length / 4];
         for (int i = 0, j = 0; i < output.Length; i++, j += 4)
-            output[i] = BinaryPrimitives.ReadInt32LittleEndian(span[j..]);
+            output[i] = ReadInt32LittleEndian(span[j..]);
         return output;
     }
 
@@ -850,7 +849,7 @@ public static class ByteSpanExtensions
     {
         var output = new int[span.Length / 4];
         for (int i = 0, j = 0; i < output.Length; i++, j += 4)
-            output[i] = BinaryPrimitives.ReadInt32BigEndian(span[j..]);
+            output[i] = ReadInt32BigEndian(span[j..]);
         return output;
     }
 
@@ -865,7 +864,7 @@ public static class ByteSpanExtensions
     {
         var output = new float[span.Length / 4];
         for (int i = 0, j = 0; i < output.Length; i++, j += 4)
-            output[i] = BinaryPrimitives.ReadSingleLittleEndian(span[j..]);
+            output[i] = ReadSingleLittleEndian(span[j..]);
         return output;
     }
 
@@ -880,7 +879,7 @@ public static class ByteSpanExtensions
     {
         var output = new float[span.Length / 4];
         for (int i = 0, j = 0; i < output.Length; i++, j += 4)
-            output[i] = BinaryPrimitives.ReadSingleBigEndian(span[j..]);
+            output[i] = ReadSingleBigEndian(span[j..]);
         return output;
     }
 
@@ -895,7 +894,7 @@ public static class ByteSpanExtensions
     {
         var output = new ulong[span.Length / 8];
         for (int i = 0, j = 0; i < output.Length; i++, j += 8)
-            output[i] = BinaryPrimitives.ReadUInt64LittleEndian(span[j..]);
+            output[i] = ReadUInt64LittleEndian(span[j..]);
         return output;
     }
 
@@ -910,7 +909,7 @@ public static class ByteSpanExtensions
     {
         var output = new ulong[span.Length / 8];
         for (int i = 0, j = 0; i < output.Length; i++, j += 8)
-            output[i] = BinaryPrimitives.ReadUInt64BigEndian(span[j..]);
+            output[i] = ReadUInt64BigEndian(span[j..]);
         return output;
     }
 
@@ -925,7 +924,7 @@ public static class ByteSpanExtensions
     {
         var output = new long[span.Length / 8];
         for (int i = 0, j = 0; i < output.Length; i++, j += 8)
-            output[i] = BinaryPrimitives.ReadInt64LittleEndian(span[j..]);
+            output[i] = ReadInt64LittleEndian(span[j..]);
         return output;
     }
 
@@ -940,7 +939,7 @@ public static class ByteSpanExtensions
     {
         var output = new long[span.Length / 8];
         for (int i = 0, j = 0; i < output.Length; i++, j += 8)
-            output[i] = BinaryPrimitives.ReadInt64BigEndian(span[j..]);
+            output[i] = ReadInt64BigEndian(span[j..]);
         return output;
     }
 
@@ -955,7 +954,7 @@ public static class ByteSpanExtensions
     {
         var output = new double[span.Length / 8];
         for (int i = 0, j = 0; i < output.Length; i++, j += 8)
-            output[i] = BinaryPrimitives.ReadDoubleLittleEndian(span[j..]);
+            output[i] = ReadDoubleLittleEndian(span[j..]);
         return output;
     }
 
@@ -970,7 +969,7 @@ public static class ByteSpanExtensions
     {
         var output = new double[span.Length / 8];
         for (int i = 0, j = 0; i < output.Length; i++, j += 8)
-            output[i] = BinaryPrimitives.ReadDoubleBigEndian(span[j..]);
+            output[i] = ReadDoubleBigEndian(span[j..]);
         return output;
     }
 
@@ -985,7 +984,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 2];
         for (int i = 0, j = 0; i < output.Length; i += 2, j++)
-            BinaryPrimitives.WriteUInt16LittleEndian(output.AsSpan(i), span[j]);
+            WriteUInt16LittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1000,7 +999,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 2];
         for (int i = 0, j = 0; i < output.Length; i += 2, j++)
-            BinaryPrimitives.WriteInt16LittleEndian(output.AsSpan(i), span[j]);
+            WriteInt16LittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1015,7 +1014,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 4];
         for (int i = 0, j = 0; i < output.Length; i += 4, j++)
-            BinaryPrimitives.WriteUInt32LittleEndian(output.AsSpan(i), span[j]);
+            WriteUInt32LittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1030,7 +1029,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 4];
         for (int i = 0, j = 0; i < output.Length; i += 4, j++)
-            BinaryPrimitives.WriteInt32LittleEndian(output.AsSpan(i), span[j]);
+            WriteInt32LittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1045,7 +1044,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 4];
         for (int i = 0, j = 0; i < output.Length; i += 4, j++)
-            BinaryPrimitives.WriteSingleLittleEndian(output.AsSpan(i), span[j]);
+            WriteSingleLittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1060,7 +1059,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 8];
         for (int i = 0, j = 0; i < output.Length; i += 8, j++)
-            BinaryPrimitives.WriteUInt64LittleEndian(output.AsSpan(i), span[j]);
+            WriteUInt64LittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1075,7 +1074,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 8];
         for (int i = 0, j = 0; i < output.Length; i += 8, j++)
-            BinaryPrimitives.WriteInt64LittleEndian(output.AsSpan(i), span[j]);
+            WriteInt64LittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1090,7 +1089,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 8];
         for (int i = 0, j = 0; i < output.Length; i += 8, j++)
-            BinaryPrimitives.WriteDoubleLittleEndian(output.AsSpan(i), span[j]);
+            WriteDoubleLittleEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1105,7 +1104,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 2];
         for (int i = 0, j = 0; i < output.Length; i += 2, j++)
-            BinaryPrimitives.WriteUInt16BigEndian(output.AsSpan(i), span[j]);
+            WriteUInt16BigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1120,7 +1119,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 2];
         for (int i = 0, j = 0; i < output.Length; i += 2, j++)
-            BinaryPrimitives.WriteInt16BigEndian(output.AsSpan(i), span[j]);
+            WriteInt16BigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1135,7 +1134,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 4];
         for (int i = 0, j = 0; i < output.Length; i += 4, j++)
-            BinaryPrimitives.WriteUInt32BigEndian(output.AsSpan(i), span[j]);
+            WriteUInt32BigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1150,7 +1149,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 4];
         for (int i = 0, j = 0; i < output.Length; i += 4, j++)
-            BinaryPrimitives.WriteInt32BigEndian(output.AsSpan(i), span[j]);
+            WriteInt32BigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1165,7 +1164,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 4];
         for (int i = 0, j = 0; i < output.Length; i += 4, j++)
-            BinaryPrimitives.WriteSingleBigEndian(output.AsSpan(i), span[j]);
+            WriteSingleBigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1180,7 +1179,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 8];
         for (int i = 0, j = 0; i < output.Length; i += 8, j++)
-            BinaryPrimitives.WriteUInt64BigEndian(output.AsSpan(i), span[j]);
+            WriteUInt64BigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1195,7 +1194,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 8];
         for (int i = 0, j = 0; i < output.Length; i += 8, j++)
-            BinaryPrimitives.WriteInt64BigEndian(output.AsSpan(i), span[j]);
+            WriteInt64BigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
@@ -1210,7 +1209,7 @@ public static class ByteSpanExtensions
     {
         var output = new byte[span.Length * 8];
         for (int i = 0, j = 0; i < output.Length; i += 8, j++)
-            BinaryPrimitives.WriteDoubleBigEndian(output.AsSpan(i), span[j]);
+            WriteDoubleBigEndian(output.AsSpan(i), span[j]);
         return output;
     }
 
