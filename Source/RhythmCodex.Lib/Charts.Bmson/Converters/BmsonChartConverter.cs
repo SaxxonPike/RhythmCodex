@@ -21,12 +21,12 @@ public class BmsonChartConverter : IBmsonChartConverter
             throw new RhythmCodexException("Metric offsets must all be populated in order to export to BMSON.");
 
         var orderedEvents = chart.Events
-            .OrderBy(x => x[NumericData.MetricOffset])
+            .OrderBy(x => x[NumericData.MetricOffset] ?? 0)
+            .ThenBy(x => x[NumericData.SourceIndex] ?? 0)
             .ToList();
 
         var bpm = orderedEvents
             .Where(x => x[NumericData.Bpm] != null)
-            .OrderBy(x => x[NumericData.MetricOffset])
             .Select(x => x[NumericData.Bpm])
             .FirstOrDefault() ?? chart[NumericData.Bpm] ?? 120;
 
@@ -48,8 +48,8 @@ public class BmsonChartConverter : IBmsonChartConverter
             }
         };
         
-        var sounds = new Dictionary<(int player, int column, bool scratch, bool footPedal), int>();
-        var freezes = new Dictionary<(int player, int column, bool scratch, bool footPedal), BmsonNote>();
+        var sounds = new Dictionary<(int player, int column), int>();
+        var freezes = new Dictionary<(int player, int column), BmsonNote>();
         var soundChannels = new Dictionary<int, BmsonSoundChannel>();
         var soundNames = new Dictionary<int, string>();
 
@@ -112,11 +112,11 @@ public class BmsonChartConverter : IBmsonChartConverter
                 });
             }
 
-            if (ev[FlagData.Note] != true)
+            if (ev[FlagData.Note] != true && lane > 0)
             {
                 var loadSoundId = (int)(ev[NumericData.LoadSound] ?? -1);
                 if (loadSoundId >= 0)
-                    sounds[(playerId, columnId, scratch, footPedal)] = loadSoundId;
+                    sounds[(playerId, lane)] = loadSoundId;
             }
 
             var playSoundId = (int)(ev[NumericData.PlaySound] ?? -1);
@@ -129,7 +129,7 @@ public class BmsonChartConverter : IBmsonChartConverter
 
                 var targetSoundId = playSoundId >= 0
                     ? playSoundId
-                    : sounds.GetValueOrDefault((playerId, columnId, scratch, footPedal), -1);
+                    : sounds.GetValueOrDefault((playerId, lane), -1);
 
                 if (targetSoundId >= 0)
                 {
@@ -151,7 +151,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                     result.SoundChannels.Add(soundChannel);
                 }
 
-                if (lane != 0 && freezes.Remove((playerId, columnId, scratch, footPedal), out var freezeStartNote))
+                if (lane != 0 && freezes.Remove((playerId, lane), out var freezeStartNote))
                     freezeStartNote.Length = y - freezeStartNote.Y;
 
                 var note = new BmsonNote
@@ -163,7 +163,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                 };
 
                 if (freeze)
-                    freezes[(playerId, columnId, scratch, footPedal)] = note;
+                    freezes[(playerId, lane)] = note;
 
                 soundChannel.Notes.Add(note);
             }

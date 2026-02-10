@@ -30,6 +30,7 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
 
         var resultEvents = new List<Event>();
         var soundSelected = new Dictionary<int, int>();
+        var idx = 0;
 
         foreach (var ev in eventList)
         {
@@ -175,6 +176,7 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
             toAdd[NumericData.SourceCommand] = ev.Type;
             toAdd[NumericData.SourcePlayer] = ev.Player;
             toAdd[NumericData.LinearOffset] = new BigRational(ev.Tick, 1000);
+            toAdd[NumericData.SourceIndex] = idx++;
 
             resultEvents.Add(toAdd);
         }

@@ -48,5 +48,6 @@ public enum NumericData
     SourceChannel,
     PriorityChannels,
     Priority,
-    SourcePlayer
+    SourcePlayer,
+    SourceIndex
 }
