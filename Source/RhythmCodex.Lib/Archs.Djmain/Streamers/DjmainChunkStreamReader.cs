@@ -15,7 +15,6 @@ public class DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDes
     public IEnumerable<DjmainChunk> Read(Stream stream)
     {
         const int length = DjmainConstants.ChunkSize;
-        var buffer = new byte[length];
         var id = 0;
         DjmainHddDescription? format = null;
 
@@ -27,14 +26,12 @@ public class DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDes
 
             while (offset < length)
             {
-                var bytesRead = stream.Read(buffer, offset, length - offset);
+                var bytesRead = stream.Read(output.AsSpan(offset));
                 if (bytesRead == 0)
                     yield break;
 
                 offset += bytesRead;
             }
-
-            buffer.AsSpan(0, length).CopyTo(output);
 
             format ??= djmainHddDescriptionHeuristic.Get(output);
 
