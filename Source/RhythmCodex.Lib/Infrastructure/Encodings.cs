@@ -14,21 +14,24 @@ public static class Encodings
     public static readonly Encoding Utf8 = Encoding.UTF8;
     public static readonly Encoding Ascii = Encoding.ASCII;
 
-    public static string GetString(this Encoding encoding, ReadOnlySpan<byte> bytes) =>
-        encoding.GetString(bytes.ToArray());
-
-    public static string GetStringWithoutNulls(this Encoding encoding, ReadOnlySpan<byte> bytes)
+    extension(Encoding encoding)
     {
-        var input = new List<byte>();
-        var length = bytes.Length;
-        var offset = 0;
-        while (offset < length)
+        public string GetString(ReadOnlySpan<byte> bytes) =>
+            encoding.GetString(bytes.ToArray());
+
+        public string GetStringWithoutNulls(ReadOnlySpan<byte> bytes)
         {
-            var b = bytes[offset++];
-            if (b == 0)
-                break;
-            input.Add(b);
+            var input = new List<byte>();
+            var length = bytes.Length;
+            var offset = 0;
+            while (offset < length)
+            {
+                var b = bytes[offset++];
+                if (b == 0)
+                    break;
+                input.Add(b);
+            }
+            return encoding.GetString(input.ToArray());
         }
-        return encoding.GetString(input.ToArray());
     }
 }

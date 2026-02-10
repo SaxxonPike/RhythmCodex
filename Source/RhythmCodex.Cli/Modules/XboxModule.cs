@@ -26,8 +26,8 @@ public class XboxModule : ICliModule
     public string Description => "Handles conversion of Xbox native media.";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "decode-xst",
@@ -58,7 +58,7 @@ public class XboxModule : ICliModule
             Description = "Extracts files using an HBN index.",
             TaskFactory = ExtractHbn
         }
-    };
+    ];
 
     private ITask DecodeAdpcm(Args args)
     {

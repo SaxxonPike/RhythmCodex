@@ -28,23 +28,23 @@ public class SsqCliModule : ICliModule
     public string Description => "Handles SSQ format operations.";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "decode",
             Description = "Decodes an SSQ file.",
             TaskFactory = Decode,
-            Parameters = new[]
-            {
+            Parameters =
+            [
                 new CommandParameter
                 {
                     Name = "-offset",
                     Description = "Global offset to add to output #OFFSET tag."
                 }
-            }
+            ]
         }
-    };
+    ];
 
     /// <summary>
     /// Perform the DECODE command.
