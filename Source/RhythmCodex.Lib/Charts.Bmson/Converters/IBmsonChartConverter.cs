@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Charts.Bmson.Model;
 using RhythmCodex.Charts.Models;
 

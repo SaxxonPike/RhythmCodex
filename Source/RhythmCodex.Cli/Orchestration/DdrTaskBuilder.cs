@@ -8,7 +8,6 @@ using RhythmCodex.Archs.S573.Providers;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Charts.Sm;
 using RhythmCodex.Charts.Sm.Converters;
-using RhythmCodex.Charts.Sm.Model;
 using RhythmCodex.Charts.Sm.Streamers;
 using RhythmCodex.Charts.Ssq.Converters;
 using RhythmCodex.Charts.Ssq.Streamers;

@@ -1,5 +1,4 @@
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Metadatas.Models;
 
 namespace RhythmCodex.Graphics.Models;
 
