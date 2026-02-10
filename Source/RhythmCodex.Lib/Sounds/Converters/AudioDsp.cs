@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.Mixer.Converters;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Resampler.Providers;
 
 namespace RhythmCodex.Sounds.Converters;
 
 [Service]
-public class AudioDsp : IAudioDsp
+public class AudioDsp(IDefaultStereoMixer defaultStereoMixer) : IAudioDsp
 {
     private static readonly BigRational Sqrt2 = BigRational.Sqrt(2);
 
@@ -219,6 +220,8 @@ public class AudioDsp : IAudioDsp
 
         if (sound.Mixer != null)
             mixdown = sound.Mixer().MixDown(sound, mixerMetadata) ?? mixdown;
+        else
+            mixdown = defaultStereoMixer.MixDown(sound, mixerMetadata) ?? mixdown;
 
         var builder = SoundBuilder.FromSound(mixdown, Math.Max(mixdown.Samples.Count, 2));
         ApplyEffectsInternal(builder);

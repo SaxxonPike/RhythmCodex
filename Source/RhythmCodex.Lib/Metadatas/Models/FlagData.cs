@@ -13,5 +13,6 @@ public enum FlagData
     Roll,
     Lift,
     Fake,
-    FreezeEnd
+    FreezeEnd,
+    FootPedal
 }

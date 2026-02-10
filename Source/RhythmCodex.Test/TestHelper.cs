@@ -177,7 +177,7 @@ public static class TestHelper
                 var playerCount = usedCols.Select(x => x.Player).Distinct().Count();
                 var colCount = usedCols.Select(x => x.Column).Distinct().Count();
 
-                var modeHint = (chartType, playerCount, colCount) switch
+                var modeHint = chart[StringData.Type] ?? (chartType, playerCount, colCount) switch
                 {
                     (BmsChartType.Beatmania, 2, > 6) => "beat-14k",
                     (BmsChartType.Beatmania, 1, > 0) => "beat-5k",
@@ -187,6 +187,9 @@ public static class TestHelper
                     (BmsChartType.Popn, _, > 0) => "popn-5k",
                     _ => null
                 };
+
+                if (chart.Events.Any(e => e[FlagData.Note] == true && e[FlagData.FootPedal] == true))
+                    modeHint = $"{modeHint}-fp";
                 
                 chart.PopulateMetricOffsets(normalizeMeasures: false);
                 chart[StringData.Title] = title;

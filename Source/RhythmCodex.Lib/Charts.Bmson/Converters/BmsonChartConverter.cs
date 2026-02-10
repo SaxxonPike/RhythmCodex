@@ -46,8 +46,8 @@ public class BmsonChartConverter : IBmsonChartConverter
         
         // if (chart.Events.All(ev => ev[FlagData.Measure] != true))
 
-        var sounds = new Dictionary<(int player, int column, bool scratch), int>();
-        var freezes = new Dictionary<(int player, int column, bool scratch), BmsonNote>();
+        var sounds = new Dictionary<(int player, int column, bool scratch, bool footPedal), int>();
+        var freezes = new Dictionary<(int player, int column, bool scratch, bool footPedal), BmsonNote>();
         var soundChannels = new Dictionary<int, BmsonSoundChannel>();
         var soundNames = new Dictionary<int, string>();
 
@@ -57,17 +57,28 @@ public class BmsonChartConverter : IBmsonChartConverter
             var playerId = (int)(ev[NumericData.Player] ?? -1);
             var columnId = (int)(ev[NumericData.Column] ?? -1);
             var scratch = (ev[FlagData.Scratch] ?? false) || (ev[FlagData.FreeZone] ?? false);
+            var footPedal = ev[FlagData.FootPedal] ?? false;
 
             var lane = options.ChartType switch
             {
-                BmsChartType.Beatmania => (playerId, columnId, scratch) switch
+                BmsChartType.Beatmania => (playerId, columnId, scratch, footPedal) switch
                 {
-                    (> 1 or < 0, _, _) => 0,
-                    (_, < 0 or > 7, false) => 0,
-                    (1, _, true) => 16,
-                    (1, _, _) => columnId + 9,
-                    (0, _, true) => 8,
-                    (0, _, _) => columnId + 1
+                    // Invalid player
+                    (> 1 or < 0, _, _, _) => 0,
+                    // Invalid key
+                    (_, < 0 or > 7, false, false) => 0,
+                    // 2P scratch
+                    (1, _, true, _) => 16,
+                    // 2P footpedal
+                    (1, _, _, true) => 14,
+                    // 2P key
+                    (1, _, _, _) => columnId + 9,
+                    // 1P scratch
+                    (0, _, true, _) => 8,
+                    // 1P footpedal
+                    (0, _, _, true) => 6,
+                    // 1P key
+                    (0, _, _, _) => columnId + 1
                 },
                 BmsChartType.Popn => columnId switch
                 {
@@ -103,7 +114,7 @@ public class BmsonChartConverter : IBmsonChartConverter
             {
                 var loadSoundId = (int)(ev[NumericData.LoadSound] ?? -1);
                 if (loadSoundId >= 0)
-                    sounds[(playerId, columnId, scratch)] = loadSoundId;
+                    sounds[(playerId, columnId, scratch, footPedal)] = loadSoundId;
             }
 
             var playSoundId = (int)(ev[NumericData.PlaySound] ?? -1);
@@ -116,7 +127,7 @@ public class BmsonChartConverter : IBmsonChartConverter
 
                 var targetSoundId = playSoundId >= 0
                     ? playSoundId
-                    : sounds.GetValueOrDefault((playerId, columnId, scratch), -1);
+                    : sounds.GetValueOrDefault((playerId, columnId, scratch, footPedal), -1);
 
                 if (targetSoundId >= 0)
                 {
@@ -138,7 +149,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                     result.SoundChannels.Add(soundChannel);
                 }
 
-                if (lane != 0 && freezes.Remove((playerId, columnId, scratch), out var freezeStartNote))
+                if (lane != 0 && freezes.Remove((playerId, columnId, scratch, footPedal), out var freezeStartNote))
                     freezeStartNote.Length = y - freezeStartNote.Y;
 
                 var note = new BmsonNote
@@ -150,7 +161,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                 };
 
                 if (freeze)
-                    freezes[(playerId, columnId, scratch)] = note;
+                    freezes[(playerId, columnId, scratch, footPedal)] = note;
 
                 soundChannel.Notes.Add(note);
             }
