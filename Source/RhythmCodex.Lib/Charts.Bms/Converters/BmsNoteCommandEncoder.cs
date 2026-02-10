@@ -57,7 +57,7 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
                 if (ev[FlagData.Note] != true)
                 {
                     if (ev[NumericData.LoadSound] != null)
-                        sounds[(playerId, columnId, scratch)] = ev[NumericData.LoadSound] ?? 0;
+                        sounds[(playerId, columnId, scratch)] = ev[NumericData.LoadSound]!.Value;
 
                     if (ev[NumericData.PlaySound] != null)
                     {
@@ -66,7 +66,7 @@ public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncode
                             Lane = "01",
                             Offset = offset,
                             Measure = measure,
-                            Value = ev[NumericData.PlaySound] ?? 0
+                            Value = ev[NumericData.PlaySound]!.Value
                         };
                     }
                 }

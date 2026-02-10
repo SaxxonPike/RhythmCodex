@@ -47,5 +47,6 @@ public enum NumericData
     SimultaneousSounds,
     SourceChannel,
     PriorityChannels,
-    Priority
+    Priority,
+    SourcePlayer
 }
