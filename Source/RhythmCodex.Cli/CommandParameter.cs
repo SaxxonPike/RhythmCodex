@@ -1,10 +1,10 @@
 ﻿namespace RhythmCodex.Cli;
 
 /// <inheritdoc />
-public class CommandParameter : ICommandParameter
+public record CommandParameter : ICommandParameter
 {
     /// <inheritdoc />
-    public string Name { get; init; }
+    public required string Name { get; init; }
     /// <inheritdoc />
-    public string Description { get; init; }
+    public required string Description { get; init; }
 }

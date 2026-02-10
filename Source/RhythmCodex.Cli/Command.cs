@@ -9,14 +9,14 @@ namespace RhythmCodex.Cli;
 public class Command : ICommand
 {
     /// <inheritdoc />
-    public string Name { get; init; }
+    public required string Name { get; init; }
 
     /// <inheritdoc />
     public IEnumerable<ICommandParameter> Parameters { get; init; } = 
         Array.Empty<ICommandParameter>();
 
     /// <inheritdoc />
-    public string Description { get; init; }
+    public required string Description { get; init; }
 
     /// <inheritdoc />
     public Func<Args, ITask> TaskFactory { get; init; } = 
