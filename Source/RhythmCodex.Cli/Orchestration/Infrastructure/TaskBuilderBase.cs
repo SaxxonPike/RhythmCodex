@@ -13,7 +13,7 @@ public abstract class TaskBuilderBase<TTask>(
     ILogger logger)
     where TTask : TaskBuilderBase<TTask>
 {
-    protected Args Args { get; private set; }
+    protected Args? Args { get; private set; }
     private ILogger Logger { get; } = logger;
 
     protected void ParallelProgress<T>(BuiltTask task, ICollection<T> items, Action<T> action)
@@ -26,7 +26,7 @@ public abstract class TaskBuilderBase<TTask>(
         }
     }
 
-    protected ITask Build(string name, Func<BuiltTask, bool> task)
+    protected ITask Build(string name, Func<BuiltTask?, bool> task)
     {
         ArgumentNullException.ThrowIfNull(task, nameof(task));
         
@@ -123,7 +123,7 @@ public abstract class TaskBuilderBase<TTask>(
                     return new InputFile(
                         sf,
                         () => fileSystem.OpenRead(sf),
-                        f => fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf), f)),
+                        f => fileSystem.OpenRead(Path.Combine(Path.GetDirectoryName(sf)!, f)),
                         s => s.Dispose())
                     {
                         Length = info.Length
@@ -158,10 +158,10 @@ public abstract class TaskBuilderBase<TTask>(
 
         var path = GetOutputFolder(inputFile.Name);
         var newName = generateName(Path.GetFileNameWithoutExtension(inputFile.Name));
-        var newPath = Path.Combine(path, newName);
+        var newPath = Path.Combine(path!, newName!);
         var newDirectory = Path.GetDirectoryName(newPath);
         task.Message = $"Writing {newPath}";
-        fileSystem.CreateDirectory(newDirectory);
+        fileSystem.CreateDirectory(newDirectory!);
         return fileSystem.OpenWrite(newPath);
     }
 
@@ -170,12 +170,12 @@ public abstract class TaskBuilderBase<TTask>(
         if (fileSystem == null)
             throw new RhythmCodexException("Filesystem is not defined.");
         var baseName = Path.GetFileNameWithoutExtension(inputFile.Name);
-        var path = Path.Combine(GetOutputFolder(inputFile.Name), baseName);
+        var path = Path.Combine(GetOutputFolder(inputFile.Name)!, baseName);
         var newName = generateName(baseName);
         var newPath = Path.Combine(path, newName);
         var newDirectory = Path.GetDirectoryName(newPath);
         task.Message = $"Writing {newPath}";
-        fileSystem.CreateDirectory(newDirectory);
+        fileSystem.CreateDirectory(newDirectory!);
         return fileSystem.OpenWrite(newPath);
     }
 

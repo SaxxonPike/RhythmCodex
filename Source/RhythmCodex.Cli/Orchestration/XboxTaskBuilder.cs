@@ -48,7 +48,7 @@ public class XboxTaskBuilder(
                 var binFileName = $"{Path.GetFileNameWithoutExtension(file.Name)}.bin";
 
                 var binFile = Path.Combine(
-                    Path.GetDirectoryName(file.Name),
+                    Path.GetDirectoryName(file.Name)!,
                     binFileName);
 
                 foreach (var entry in xboxHbnStreamReader.Read(stream, OpenRead(task, GetInputFileDirect(binFile))))
