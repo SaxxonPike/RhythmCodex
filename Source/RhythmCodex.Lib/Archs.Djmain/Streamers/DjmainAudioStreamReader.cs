@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using RhythmCodex.IoC;
+using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
@@ -57,18 +58,17 @@ public class DjmainAudioStreamReader : IDjmainAudioStreamReader
 
         void Fetch()
         {
+            Span<byte> inBuffer = stackalloc byte[2];
             buffer0 = ((buffer0 >> 16) & 0xFFFFFFFFFFFF) | (buffer1 << 48);
             buffer1 = (buffer1 >> 16) & 0xFFFFFFFFFFFF;
 
-            var newByte = stream.ReadByte();
-            if (newByte == -1)
-                newByte = 0x00;
-            buffer1 |= (long)newByte << 48;
+            if (stream.ReadAtLeast(inBuffer, 2, false) < 2)
+            {
+                inBuffer[0] = 0x00;
+                inBuffer[1] = 0x80;
+            }
 
-            newByte = stream.ReadByte();
-            if (newByte == -1)
-                newByte = 0x80;
-            buffer1 |= (long)newByte << 56;
+            buffer1 |= (long)ReadUInt16LittleEndian(inBuffer) << 48;
         }
     }
 
