@@ -20,7 +20,11 @@ public class BmsonChartConverter : IBmsonChartConverter
         if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException("Metric offsets must all be populated in order to export to BMSON.");
 
-        var bpm = chart.Events
+        var orderedEvents = chart.Events
+            .OrderBy(x => x[NumericData.MetricOffset])
+            .ToList();
+
+        var bpm = orderedEvents
             .Where(x => x[NumericData.Bpm] != null)
             .OrderBy(x => x[NumericData.MetricOffset])
             .Select(x => x[NumericData.Bpm])
@@ -44,14 +48,12 @@ public class BmsonChartConverter : IBmsonChartConverter
             }
         };
         
-        // if (chart.Events.All(ev => ev[FlagData.Measure] != true))
-
         var sounds = new Dictionary<(int player, int column, bool scratch, bool footPedal), int>();
         var freezes = new Dictionary<(int player, int column, bool scratch, bool footPedal), BmsonNote>();
         var soundChannels = new Dictionary<int, BmsonSoundChannel>();
         var soundNames = new Dictionary<int, string>();
 
-        foreach (var ev in chart.Events)
+        foreach (var ev in orderedEvents)
         {
             var y = (long)Math.Round((double)(ev[NumericData.MetricOffset] * 4 * result.Info.Resolution)!);
             var playerId = (int)(ev[NumericData.Player] ?? -1);
