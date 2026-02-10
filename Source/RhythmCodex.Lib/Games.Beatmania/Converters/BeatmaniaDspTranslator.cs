@@ -16,10 +16,11 @@ public class BeatmaniaDspTranslator : IBeatmaniaDspTranslator
     
     public BigRational GetFirebeatVolume(int volume)
     {
-        const double referenceGain = -36.0d;
-        const double referenceValue = 0x90;
-
-        return new BigRational(Decibels.ToFactor(referenceGain * volume / referenceValue));
+        const double referenceGain = -48.0d;
+        const double referenceValue = 0x80;
+        
+        var result = new BigRational(Decibels.ToFactor(referenceGain * volume / referenceValue));
+        return result;
     }
         
     public BigRational GetLinearVolume(int volume)
