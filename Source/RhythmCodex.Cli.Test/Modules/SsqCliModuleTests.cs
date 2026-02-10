@@ -24,7 +24,7 @@ public class SsqCliModuleTests : AppIntegrationFixture
         FileSystem.WriteAllBytes(inputFileName, inputFile);
 
         var subject = AppContainer.Resolve<SsqCliModule>();
-        var parsedArgs = AppContainer.Resolve<ArgParser>().Parse(new[] {inputFileName});
+        var parsedArgs = AppContainer.Resolve<ArgParser>().Parse([inputFileName]);
 
         // Act.
         Action act = () => subject

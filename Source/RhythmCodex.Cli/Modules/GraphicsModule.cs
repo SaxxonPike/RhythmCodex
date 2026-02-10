@@ -26,8 +26,8 @@ public class GraphicsModule : ICliModule
     public string Description => "Handles conversion of standard graphics formats.";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "decode-dds",
@@ -46,7 +46,7 @@ public class GraphicsModule : ICliModule
             Description = "Decodes a TIM image.",
             TaskFactory = DecodeTim
         }
-    };
+    ];
 
     private ITask DecodeTim(Args args)
     {

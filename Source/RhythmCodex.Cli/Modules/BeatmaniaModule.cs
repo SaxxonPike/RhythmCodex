@@ -33,8 +33,8 @@ public class BeatmaniaModule : ICliModule
             Name = "decode-djmain-hdd",
             Description = "Extracts and decodes BMS files from a DJMAIN hard drive image.",
             TaskFactory = DecodeDjmainHdd,
-            Parameters = new[]
-            {
+            Parameters =
+            [
                 new CommandParameter
                 {
                     Name = "+noaudio",
@@ -50,7 +50,7 @@ public class BeatmaniaModule : ICliModule
                     Name = "+raw",
                     Description = "Enable saving the original encoded chart."
                 }
-            }
+            ]
         },
         new Command
         {
@@ -69,14 +69,14 @@ public class BeatmaniaModule : ICliModule
             Name = "decode-1",
             Description = "Decode a .1 file chart set.",
             TaskFactory = Decode1,
-            Parameters = new[]
-            {
+            Parameters =
+            [
                 new CommandParameter
                 {
                     Name = "-rate",
                     Description = "Ticks per second. Pre-GOLD uses 59.94. GOLD uses 60.94. Default is 1000."
                 }
-            }
+            ]
         }
     ];
 

@@ -29,15 +29,15 @@ public class Step2CliModule : ICliModule
     public string Description => "Decodes the STEP2 format. (1stMix)";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "decode",
             Description = "Decodes a STEP2 file.",
             TaskFactory = Decode
         }
-    };
+    ];
 
     /// <summary>
     /// Perform the DECODE command.

@@ -12,258 +12,207 @@ public static class ByteMemoryExtensions
 
     #region ReadOnlyMemory
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadU8(
-        this ReadOnlyMemory<byte> memory,
-        out byte val)
+    extension(ReadOnlyMemory<byte> memory)
     {
-        val = memory.Span[0];
-        return memory[1..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadU8(out byte val)
+        {
+            val = memory.Span[0];
+            return memory[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadS8(
-        this ReadOnlyMemory<byte> memory,
-        out sbyte val)
-    {
-        val = MemoryMarshal.Cast<byte, sbyte>(memory.Span)[0];
-        return memory[1..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadS8(out sbyte val)
+        {
+            val = MemoryMarshal.Cast<byte, sbyte>(memory.Span)[0];
+            return memory[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadU16L(
-        this ReadOnlyMemory<byte> memory,
-        out ushort val)
-    {
-        val = ReadUInt16LittleEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadU16L(out ushort val)
+        {
+            val = ReadUInt16LittleEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadS16L(
-        this ReadOnlyMemory<byte> memory,
-        out short val)
-    {
-        val = ReadInt16LittleEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadS16L(out short val)
+        {
+            val = ReadInt16LittleEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadU16B(
-        this ReadOnlyMemory<byte> memory,
-        out ushort val)
-    {
-        val = ReadUInt16BigEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadU16B(out ushort val)
+        {
+            val = ReadUInt16BigEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadS16B(
-        this ReadOnlyMemory<byte> memory,
-        out short val)
-    {
-        val = ReadInt16BigEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadS16B(out short val)
+        {
+            val = ReadInt16BigEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadU32L(
-        this ReadOnlyMemory<byte> memory,
-        out uint val)
-    {
-        val = ReadUInt32LittleEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadU32L(out uint val)
+        {
+            val = ReadUInt32LittleEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadS32L(
-        this ReadOnlyMemory<byte> memory,
-        out int val)
-    {
-        val = ReadInt32LittleEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadS32L(out int val)
+        {
+            val = ReadInt32LittleEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadU32B(
-        this ReadOnlyMemory<byte> memory,
-        out uint val)
-    {
-        val = ReadUInt32BigEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadU32B(out uint val)
+        {
+            val = ReadUInt32BigEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadS32B(
-        this ReadOnlyMemory<byte> memory,
-        out int val)
-    {
-        val = ReadInt32BigEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadS32B(out int val)
+        {
+            val = ReadInt32BigEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadF32L(
-        this ReadOnlyMemory<byte> memory,
-        out float val)
-    {
-        val = ReadSingleLittleEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadF32L(out float val)
+        {
+            val = ReadSingleLittleEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadF32B(
-        this ReadOnlyMemory<byte> memory,
-        out float val)
-    {
-        val = ReadSingleBigEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadF32B(out float val)
+        {
+            val = ReadSingleBigEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadU64L(
-        this ReadOnlyMemory<byte> memory,
-        out ulong val)
-    {
-        val = ReadUInt64LittleEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadU64L(out ulong val)
+        {
+            val = ReadUInt64LittleEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadS64L(
-        this ReadOnlyMemory<byte> memory,
-        out long val)
-    {
-        val = ReadInt64LittleEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadS64L(out long val)
+        {
+            val = ReadInt64LittleEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadU64B(
-        this ReadOnlyMemory<byte> memory,
-        out ulong val)
-    {
-        val = ReadUInt64BigEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadU64B(out ulong val)
+        {
+            val = ReadUInt64BigEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadS64B(
-        this ReadOnlyMemory<byte> memory,
-        out long val)
-    {
-        val = ReadInt64BigEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadS64B(out long val)
+        {
+            val = ReadInt64BigEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadF64L(
-        this ReadOnlyMemory<byte> memory,
-        out double val)
-    {
-        val = ReadDoubleLittleEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadF64L(out double val)
+        {
+            val = ReadDoubleLittleEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> ReadF64B(
-        this ReadOnlyMemory<byte> memory,
-        out double val)
-    {
-        val = ReadDoubleBigEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> ReadF64B(out double val)
+        {
+            val = ReadDoubleBigEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> Skip(
-        this ReadOnlyMemory<byte> memory,
-        [NonNegativeValue] int count)
-    {
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> Skip([NonNegativeValue] int count)
+        {
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> Extract(
-        this ReadOnlyMemory<byte> memory,
-        [NonNegativeValue] int count,
-        out ReadOnlyMemory<byte> val)
-    {
-        val = memory[..count];
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> Extract([NonNegativeValue] int count,
+            out ReadOnlyMemory<byte> val)
+        {
+            val = memory[..count];
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> TryExtract(
-        this ReadOnlyMemory<byte> memory,
-        int count,
-        out ReadOnlyMemory<byte> val)
-    {
-        val = memory[..Math.Min(memory.Length, count)];
-        return memory[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> TryExtract(int count,
+            out ReadOnlyMemory<byte> val)
+        {
+            val = memory[..Math.Min(memory.Length, count)];
+            return memory[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> Read(
-        this ReadOnlyMemory<byte> memory,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = memory[..count].ToArray();
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> Read([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = memory[..count].ToArray();
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> Read(
-        this ReadOnlyMemory<byte> memory,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..count].Span.CopyTo(target);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> Read(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..count].Span.CopyTo(target);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> Read(
-        this ReadOnlyMemory<byte> memory,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..count].CopyTo(target);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> Read(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..count].CopyTo(target);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> TryRead(
-        this ReadOnlyMemory<byte> memory,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = memory[..Math.Min(memory.Length, count)].ToArray();
-        return memory[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> TryRead([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = memory[..Math.Min(memory.Length, count)].ToArray();
+            return memory[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> TryRead(
-        this ReadOnlyMemory<byte> memory,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..Math.Min(memory.Length, count)].Span.CopyTo(target);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> TryRead(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..Math.Min(memory.Length, count)].Span.CopyTo(target);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlyMemory<byte> TryRead(
-        this ReadOnlyMemory<byte> memory,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..Math.Min(memory.Length, count)].CopyTo(target);
-        return memory[count..];
+        [DebuggerStepThrough]
+        public ReadOnlyMemory<byte> TryRead(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..Math.Min(memory.Length, count)].CopyTo(target);
+            return memory[count..];
+        }
     }
 
     #endregion
@@ -272,464 +221,369 @@ public static class ByteMemoryExtensions
 
     #region Memory
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU8(
-        this Memory<byte> memory,
-        out byte val)
+    extension(Memory<byte> memory)
     {
-        val = memory.Span[0];
-        return memory[1..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU8(out byte val)
+        {
+            val = memory.Span[0];
+            return memory[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU8(
-        this Memory<byte> memory,
-        byte val)
-    {
-        memory.Span[0] = val;
-        return memory[1..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU8(byte val)
+        {
+            memory.Span[0] = val;
+            return memory[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS8(
-        this Memory<byte> memory,
-        out sbyte val)
-    {
-        val = MemoryMarshal.Cast<byte, sbyte>(memory.Span)[0];
-        return memory[1..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS8(out sbyte val)
+        {
+            val = MemoryMarshal.Cast<byte, sbyte>(memory.Span)[0];
+            return memory[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS8(
-        this Memory<byte> memory,
-        sbyte val)
-    {
-        MemoryMarshal.Cast<byte, sbyte>(memory.Span)[0] = val;
-        return memory[1..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS8(sbyte val)
+        {
+            MemoryMarshal.Cast<byte, sbyte>(memory.Span)[0] = val;
+            return memory[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU16L(
-        this Memory<byte> memory,
-        out ushort val)
-    {
-        val = ReadUInt16LittleEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU16L(out ushort val)
+        {
+            val = ReadUInt16LittleEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU16L(
-        this Memory<byte> memory,
-        ushort val)
-    {
-        WriteUInt16LittleEndian(memory.Span, val);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU16L(ushort val)
+        {
+            WriteUInt16LittleEndian(memory.Span, val);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS16L(
-        this Memory<byte> memory,
-        out short val)
-    {
-        val = ReadInt16LittleEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS16L(out short val)
+        {
+            val = ReadInt16LittleEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS16L(
-        this Memory<byte> memory,
-        short val)
-    {
-        WriteInt16LittleEndian(memory.Span, val);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS16L(short val)
+        {
+            WriteInt16LittleEndian(memory.Span, val);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU16B(
-        this Memory<byte> memory,
-        out ushort val)
-    {
-        val = ReadUInt16BigEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU16B(out ushort val)
+        {
+            val = ReadUInt16BigEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU16B(
-        this Memory<byte> memory,
-        ushort val)
-    {
-        WriteUInt16BigEndian(memory.Span, val);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU16B(ushort val)
+        {
+            WriteUInt16BigEndian(memory.Span, val);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS16B(
-        this Memory<byte> memory,
-        out short val)
-    {
-        val = ReadInt16BigEndian(memory.Span);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS16B(out short val)
+        {
+            val = ReadInt16BigEndian(memory.Span);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS16B(
-        this Memory<byte> memory,
-        short val)
-    {
-        WriteInt16BigEndian(memory.Span, val);
-        return memory[2..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS16B(short val)
+        {
+            WriteInt16BigEndian(memory.Span, val);
+            return memory[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU32L(
-        this Memory<byte> memory,
-        out uint val)
-    {
-        val = ReadUInt32LittleEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU32L(out uint val)
+        {
+            val = ReadUInt32LittleEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU32L(
-        this Memory<byte> memory,
-        uint val)
-    {
-        WriteUInt32LittleEndian(memory.Span, val);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU32L(uint val)
+        {
+            WriteUInt32LittleEndian(memory.Span, val);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS32L(
-        this Memory<byte> memory,
-        out int val)
-    {
-        val = ReadInt32LittleEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS32L(out int val)
+        {
+            val = ReadInt32LittleEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS32L(
-        this Memory<byte> memory,
-        int val)
-    {
-        WriteInt32LittleEndian(memory.Span, val);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS32L(int val)
+        {
+            WriteInt32LittleEndian(memory.Span, val);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU32B(
-        this Memory<byte> memory,
-        out uint val)
-    {
-        val = ReadUInt32BigEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU32B(out uint val)
+        {
+            val = ReadUInt32BigEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU32B(
-        this Memory<byte> memory,
-        uint val)
-    {
-        WriteUInt32BigEndian(memory.Span, val);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU32B(uint val)
+        {
+            WriteUInt32BigEndian(memory.Span, val);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS32B(
-        this Memory<byte> memory,
-        out int val)
-    {
-        val = ReadInt32BigEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS32B(out int val)
+        {
+            val = ReadInt32BigEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS32B(
-        this Memory<byte> memory,
-        int val)
-    {
-        WriteInt32BigEndian(memory.Span, val);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS32B(int val)
+        {
+            WriteInt32BigEndian(memory.Span, val);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF32L(
-        this Memory<byte> memory,
-        out float val)
-    {
-        val = ReadSingleLittleEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF32L(out float val)
+        {
+            val = ReadSingleLittleEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF32L(
-        this Memory<byte> memory,
-        float val)
-    {
-        WriteSingleLittleEndian(memory.Span, val);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF32L(float val)
+        {
+            WriteSingleLittleEndian(memory.Span, val);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF32B(
-        this Memory<byte> memory,
-        out float val)
-    {
-        val = ReadSingleBigEndian(memory.Span);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF32B(out float val)
+        {
+            val = ReadSingleBigEndian(memory.Span);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF32B(
-        this Memory<byte> memory,
-        float val)
-    {
-        WriteSingleBigEndian(memory.Span, val);
-        return memory[4..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF32B(float val)
+        {
+            WriteSingleBigEndian(memory.Span, val);
+            return memory[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU64L(
-        this Memory<byte> memory,
-        out ulong val)
-    {
-        val = ReadUInt64LittleEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU64L(out ulong val)
+        {
+            val = ReadUInt64LittleEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU64L(
-        this Memory<byte> memory,
-        ulong val)
-    {
-        WriteUInt64LittleEndian(memory.Span, val);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU64L(ulong val)
+        {
+            WriteUInt64LittleEndian(memory.Span, val);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS64L(
-        this Memory<byte> memory,
-        out long val)
-    {
-        val = ReadInt64LittleEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS64L(out long val)
+        {
+            val = ReadInt64LittleEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS64L(
-        this Memory<byte> memory,
-        long val)
-    {
-        WriteInt64LittleEndian(memory.Span, val);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS64L(long val)
+        {
+            WriteInt64LittleEndian(memory.Span, val);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU64B(
-        this Memory<byte> memory,
-        out ulong val)
-    {
-        val = ReadUInt64BigEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU64B(out ulong val)
+        {
+            val = ReadUInt64BigEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU64B(
-        this Memory<byte> memory,
-        ulong val)
-    {
-        WriteUInt64BigEndian(memory.Span, val);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU64B(ulong val)
+        {
+            WriteUInt64BigEndian(memory.Span, val);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS64B(
-        this Memory<byte> memory,
-        out long val)
-    {
-        val = ReadInt64BigEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS64B(out long val)
+        {
+            val = ReadInt64BigEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS64B(
-        this Memory<byte> memory,
-        long val)
-    {
-        WriteInt64BigEndian(memory.Span, val);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS64B(long val)
+        {
+            WriteInt64BigEndian(memory.Span, val);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF64L(
-        this Memory<byte> memory,
-        out double val)
-    {
-        val = ReadDoubleLittleEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF64L(out double val)
+        {
+            val = ReadDoubleLittleEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF64L(
-        this Memory<byte> memory,
-        double val)
-    {
-        WriteDoubleLittleEndian(memory.Span, val);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF64L(double val)
+        {
+            WriteDoubleLittleEndian(memory.Span, val);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF64B(
-        this Memory<byte> memory,
-        out double val)
-    {
-        val = ReadDoubleBigEndian(memory.Span);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF64B(out double val)
+        {
+            val = ReadDoubleBigEndian(memory.Span);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF64B(
-        this Memory<byte> memory,
-        double val)
-    {
-        WriteDoubleBigEndian(memory.Span, val);
-        return memory[8..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF64B(double val)
+        {
+            WriteDoubleBigEndian(memory.Span, val);
+            return memory[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Skip(
-        this Memory<byte> memory,
-        [NonNegativeValue] int count)
-    {
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> Skip([NonNegativeValue] int count)
+        {
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Extract(
-        this Memory<byte> memory,
-        [NonNegativeValue] int count,
-        out Memory<byte> val)
-    {
-        val = memory[..count];
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> Extract([NonNegativeValue] int count,
+            out Memory<byte> val)
+        {
+            val = memory[..count];
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryExtract(
-        this Memory<byte> memory,
-        int count,
-        out Memory<byte> val)
-    {
-        val = memory[..Math.Min(memory.Length, count)];
-        return memory[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> TryExtract(int count,
+            out Memory<byte> val)
+        {
+            val = memory[..Math.Min(memory.Length, count)];
+            return memory[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Read(
-        this Memory<byte> memory,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = memory[..count].ToArray();
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> Read([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = memory[..count].ToArray();
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Read(
-        this Memory<byte> memory,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..count].Span.CopyTo(target);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> Read(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..count].Span.CopyTo(target);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Read(
-        this Memory<byte> memory,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..count].CopyTo(target);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> Read(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..count].CopyTo(target);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryRead(
-        this Memory<byte> memory,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = memory[..Math.Min(memory.Length, count)].ToArray();
-        return memory[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> TryRead([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = memory[..Math.Min(memory.Length, count)].ToArray();
+            return memory[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryRead(
-        this Memory<byte> memory,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..Math.Min(memory.Length, count)].Span.CopyTo(target);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> TryRead(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..Math.Min(memory.Length, count)].Span.CopyTo(target);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryRead(
-        this Memory<byte> memory,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        memory[..Math.Min(memory.Length, count)].CopyTo(target);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> TryRead(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            memory[..Math.Min(memory.Length, count)].CopyTo(target);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Write(
-        this Memory<byte> memory,
-        ReadOnlySpan<byte> val,
-        out int count)
-    {
-        count = val.Length;
-        val.CopyTo(memory.Span);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> Write(ReadOnlySpan<byte> val,
+            out int count)
+        {
+            count = val.Length;
+            val.CopyTo(memory.Span);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Write(
-        this Memory<byte> memory,
-        ReadOnlyMemory<byte> val,
-        out int count)
-    {
-        count = val.Length;
-        val.CopyTo(memory);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> Write(ReadOnlyMemory<byte> val,
+            out int count)
+        {
+            count = val.Length;
+            val.CopyTo(memory);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryWrite(
-        this Memory<byte> memory,
-        ReadOnlySpan<byte> val,
-        out int count)
-    {
-        count = Math.Min(memory.Length, val.Length);
-        val[..count].CopyTo(memory.Span);
-        return memory[count..];
-    }
+        [DebuggerStepThrough]
+        public Memory<byte> TryWrite(ReadOnlySpan<byte> val,
+            out int count)
+        {
+            count = Math.Min(memory.Length, val.Length);
+            val[..count].CopyTo(memory.Span);
+            return memory[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryWrite(
-        this Memory<byte> memory,
-        ReadOnlyMemory<byte> val,
-        out int count)
-    {
-        count = Math.Min(memory.Length, val.Length);
-        val[..count].CopyTo(memory);
-        return memory[count..];
+        [DebuggerStepThrough]
+        public Memory<byte> TryWrite(ReadOnlyMemory<byte> val,
+            out int count)
+        {
+            count = Math.Min(memory.Length, val.Length);
+            val[..count].CopyTo(memory);
+            return memory[count..];
+        }
     }
 
     #endregion

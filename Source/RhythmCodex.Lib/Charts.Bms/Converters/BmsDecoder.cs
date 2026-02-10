@@ -147,14 +147,14 @@ public class BmsDecoder : IBmsDecoder
         {
             case 0x02:
             {
-                return new[]
-                {
+                return
+                [
                     new Event
                     {
                         [NumericData.MeasureLength] = BigRationalParser.ParseString(command.Value),
                         [NumericData.MetricOffset] = measure
                     }
-                };
+                ];
             }
         }
 

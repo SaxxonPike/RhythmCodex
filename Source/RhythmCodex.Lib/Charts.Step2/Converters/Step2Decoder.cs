@@ -33,7 +33,7 @@ public class Step2Decoder(IStep2EventMapper step2EventMapper) : IStep2Decoder
                     {
                         [NumericData.Player] = step.Player,
                         [NumericData.Column] = panel,
-                        [NumericData.SourceColumn] = step2EventMapper.Map(new[]{panel}),
+                        [NumericData.SourceColumn] = step2EventMapper.Map([panel]),
                         [FlagData.Note] = true,
                         [NumericData.MetricOffset] = new BigRational(step.MetricOffset, 64),
                         [NumericData.SourceOffset] = step.MetricOffset
