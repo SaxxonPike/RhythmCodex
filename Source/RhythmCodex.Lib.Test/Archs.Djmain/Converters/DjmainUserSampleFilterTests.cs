@@ -42,7 +42,7 @@ public class DjmainUserSampleFilterTests : BaseUnitTestFixture<DjmainUsedSampleF
         {
             Build<DjmainChartEvent>()
                 .With(x => x.Param0, (byte)command)
-                .With(x => x.Param1, allIds.First() + 1)
+                .With(x => x.Param1, unchecked(allIds.First() + 1))
                 .Create()
         };
 
