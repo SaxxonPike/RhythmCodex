@@ -2,7 +2,6 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using RhythmCodex.Archs.Djmain.Converters;
 using RhythmCodex.Archs.Djmain.Model;
@@ -59,7 +58,6 @@ public class DjmainOneShots : BaseIntegrationFixture
         };
 
         var index = 0;
-        var tasks = new List<Task>();
 
         foreach (var chunk in streamer.Read(entryStream))
         {
@@ -83,7 +81,7 @@ public class DjmainOneShots : BaseIntegrationFixture
             index++;
         }
 
-        Task.WaitAll(tasks.ToArray());
+        WaitForAsyncTasks();
     }
 
     /// <summary>
@@ -152,5 +150,7 @@ public class DjmainOneShots : BaseIntegrationFixture
 
             index++;
         }
+
+        WaitForAsyncTasks();
     }
 }

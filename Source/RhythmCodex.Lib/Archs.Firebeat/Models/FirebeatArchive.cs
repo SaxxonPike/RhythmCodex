@@ -13,9 +13,9 @@ public class FirebeatArchive
 
     public List<Sound> Samples { get; set; } = [];
 
-    public Dictionary<int, List<FirebeatChartEvent>> RawCharts { get; set; } = new();
+    public List<FirebeatChart> RawCharts { get; set; } = [];
 
-    public Dictionary<int, FirebeatSampleInfo> RawSampleInfos { get; set; } = new();
+    public Dictionary<int, FirebeatSampleInfo> RawSampleInfos { get; set; } = [];
 
     public override string ToString() => Json.Serialize(this);
 }

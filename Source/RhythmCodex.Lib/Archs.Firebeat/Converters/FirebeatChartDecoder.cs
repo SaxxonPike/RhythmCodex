@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using RhythmCodex.Archs.Firebeat.Models;
 using RhythmCodex.Charts.Models;
@@ -18,12 +17,12 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
         var eventList = events.AsList();
 
         //
-        // Some charts have variants that are selected based on how
+        // Some charts have performances that are selected based on how
         // well the player is playing at the time. This logic should
         // always choose the set where the player is performing perfectly.
         //
 
-        var maxVariant = eventList
+        var maxPerformance = eventList
             .Select(x => (x.Player & 0xFE) >> 1)
             .DefaultIfEmpty(0)
             .Max();
@@ -32,142 +31,161 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
         var soundSelected = new Dictionary<int, int>();
         var idx = 0;
 
+        var performanceFilter = 0;
+
         foreach (var ev in eventList)
         {
             Event? toAdd = null;
 
-            var variant = (ev.Player & 0xFE) >> 1;
+            var performance = (ev.Player & 0xFE) >> 1;
+            var player = ev.Player & 1;
 
-            if (variant == 0 || variant == maxVariant)
+            switch (ev.Type)
             {
-                switch (ev.Type)
+                case 0xFF:
+                    continue;
+
+                case 0x00:
                 {
-                    case 0xFF:
-                        continue;
+                    // marker
 
-                    case 0x00:
-                    {
-                        // marker
-
-                        var column = ev.Data & 0x000F;
-
-                        toAdd = new Event
-                        {
-                            [NumericData.Player] = ev.Player & 1,
-                            [FlagData.Note] = true
-                        };
-
-                        MapColumn(toAdd, column);
-
+                    if (performance != performanceFilter)
                         break;
-                    }
-                    case 0x02:
+
+                    var column = ev.Data & 0x000F;
+
+                    toAdd = new Event
                     {
-                        // sound select
+                        [NumericData.Player] = player,
+                        [FlagData.Note] = true
+                    };
 
-                        var column = (ev.Data & 0x0F00) >> 8;
-                        var program = ev.Data & 0x00FF;
+                    MapColumn(toAdd, column);
 
-                        soundSelected[column] = program;
+                    break;
+                }
+                case 0x02:
+                {
+                    // sound select
 
-                        toAdd = new Event
-                        {
-                            [NumericData.Player] = ev.Player & 1,
-                            [NumericData.LoadSound] = program
-                        };
-
-                        MapColumn(toAdd, column);
-
+                    if (performance != performanceFilter)
                         break;
-                    }
-                    case 0x04:
+
+                    var column = (ev.Data & 0x0F00) >> 8;
+                    var program = ev.Data & 0x00FF;
+
+                    soundSelected[column] = program;
+
+                    toAdd = new Event
                     {
-                        // tempo
+                        [NumericData.Player] = player,
+                        [NumericData.LoadSound] = program >= 1 ? program : -1
+                    };
 
-                        toAdd = new Event
-                        {
-                            [NumericData.Bpm] = ev.Data
-                        };
+                    MapColumn(toAdd, column);
 
-                        break;
-                    }
-                    case 0x06:
+                    break;
+                }
+                case 0x04:
+                {
+                    // tempo
+
+                    toAdd = new Event
                     {
-                        // end of song
+                        [NumericData.Bpm] = ev.Data
+                    };
 
-                        toAdd = new Event
-                        {
-                            [FlagData.End] = true
-                        };
+                    break;
+                }
+                case 0x06:
+                {
+                    // end of song
 
-                        break;
-                    }
-                    case 0x07:
+                    toAdd = new Event
                     {
-                        // bgm
+                        [FlagData.End] = true
+                    };
 
-                        var program = ev.Data & 0x00FF;
+                    break;
+                }
+                case 0x07:
+                {
+                    // bgm
 
-                        toAdd = new Event
-                        {
-                            [NumericData.PlaySound] = program
-                        };
-
+                    if (performance != performanceFilter)
                         break;
-                    }
-                    case 0x08:
+
+                    var program = ev.Data & 0x00FF;
+
+                    toAdd = new Event
                     {
-                        // judgement
+                        [NumericData.PlaySound] = program >= 1 ? program : -1
+                    };
 
-                        var judgeNumber = (ev.Data & 0xF000) >> 12;
-                        var judgeTiming = (ev.Data & 0x0FF0) >> 4;
+                    break;
+                }
+                case 0x08:
+                {
+                    // judgement
 
-                        toAdd = new Event
-                        {
-                            [NumericData.JudgeNumber] = judgeNumber,
-                            [NumericData.JudgeTiming] = judgeTiming
-                        };
+                    var judgeNumber = (ev.Data & 0xF000) >> 12;
+                    var judgeTiming = (ev.Data & 0x0FF0) >> 4;
 
-                        break;
-                    }
-                    case 0x09 or 0x0A:
+                    toAdd = new Event
                     {
-                        // judgement/tutorial related
+                        [NumericData.JudgeNumber] = judgeNumber,
+                        [NumericData.JudgeTiming] = judgeTiming,
+                        [NumericData.Player] = player,
+                    };
 
-                        break;
-                    }
-                    case 0x0B or 0x0D:
+                    break;
+                }
+                case 0x09 or 0x0A:
+                {
+                    // judgement/tutorial related
+
+                    break;
+                }
+                case 0x0B:
+                {
+                    // unknown
+                    break;
+                }
+                case 0x0C:
+                {
+                    // measure
+
+                    toAdd = new Event
                     {
-                        // unknown
-                        break;
-                    }
-                    case 0x0C:
+                        [FlagData.Measure] = true
+                    };
+
+                    break;
+                }
+                case 0x0D:
+                {
+                    // performance filter
+
+                    if (performance == 0)
+                        performanceFilter = maxPerformance;
+                    else if (performance == maxPerformance)
+                        performanceFilter = 0;
+
+                    break;
+                }
+                case 0x0E:
+                {
+                    toAdd = new Event
                     {
-                        // measure
+                        [NumericData.PlaySound] = 0
+                    };
 
-                        toAdd = new Event
-                        {
-                            [FlagData.Measure] = true
-                        };
-
-                        break;
-                    }
-                    case 0x0E:
-                    {
-                        var program = ev.Data & 0x00FF;
-
-                        toAdd = new Event
-                        {
-                            [NumericData.PlaySound] = 0
-                        };
-
-                        break;
-                    }
-                    default:
-                    {
-                        // marker
-                        break;
-                    }
+                    break;
+                }
+                default:
+                {
+                    // marker
+                    break;
                 }
             }
 
