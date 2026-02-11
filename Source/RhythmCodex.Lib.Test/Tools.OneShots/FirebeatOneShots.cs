@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using NUnit.Framework;
 using RhythmCodex.Archs.Firebeat.Converters;
 using RhythmCodex.Archs.Firebeat.Models;
@@ -20,11 +20,11 @@ public class FirebeatOneShots : BaseIntegrationFixture
 {
     private static object[][] Paths => new object[][]
     {
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii.zip", "bm3-1st", BmsChartType.Beatmania],
+        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii.zip", "bm3-1st", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii6thappend.zip", "bm3-6th", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii7thappend.zip", "bm3-7th", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiicore.zip", "bm3-core", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiifinal.zip", "bm3-final", BmsChartType.Beatmania]
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiifinal.zip", "bm3-final", BmsChartType.Beatmania]
     };
 
     /// <summary>
@@ -46,7 +46,6 @@ public class FirebeatOneShots : BaseIntegrationFixture
         var options = new FirebeatDecodeOptions();
 
         var index = 0;
-        var tasks = new List<Task>();
 
         foreach (var chunk in streamer.Read(entryStream))
         {
@@ -63,6 +62,12 @@ public class FirebeatOneShots : BaseIntegrationFixture
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
 
+                    foreach (var rawChart in archive.RawCharts)
+                    {
+                        this.WriteFile(Encoding.UTF8.GetBytes(Json.Serialize(rawChart)),
+                            Path.Combine(basePath, $"_{rawChart.Id:X4}.json"));
+                    }
+                    
                     this.WriteSet(archive.Charts, archive.Samples, basePath, title, chartType);
                 }
             });
@@ -70,7 +75,7 @@ public class FirebeatOneShots : BaseIntegrationFixture
             index++;
         }
 
-        Task.WaitAll(tasks.ToArray());
+        WaitForAsyncTasks();
     }
 
     /// <summary>
@@ -141,5 +146,7 @@ public class FirebeatOneShots : BaseIntegrationFixture
 
             index++;
         }
+
+        WaitForAsyncTasks();
     }
 }

@@ -66,7 +66,7 @@ public class FirebeatDecoder(
         {
             Id = chunk.Id,
             Charts = outCharts,
-            RawCharts = charts.ToDictionary(c => c.Id, c => c.Events),
+            RawCharts = charts,
             RawSampleInfos = sampleInfos,
             Samples = outSounds.Values.ToList()
         };

@@ -77,6 +77,7 @@ public static class TestHelper
 
             var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), outFileName);
             resolver.CreateDirectory(Path.GetDirectoryName(outPath)!);
+            resolver.Delete(outPath);
             using var stream = File.OpenWrite(outPath);
             stream.Write(data);
             stream.Flush();
