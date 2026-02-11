@@ -62,11 +62,11 @@ public class FirebeatOneShots : BaseIntegrationFixture
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
 
-                    foreach (var rawChart in archive.RawCharts)
-                    {
-                        this.WriteFile(Encoding.UTF8.GetBytes(Json.Serialize(rawChart)),
-                            Path.Combine(basePath, $"_{rawChart.Id:X4}.json"));
-                    }
+                    // foreach (var rawChart in archive.RawCharts)
+                    // {
+                    //     this.WriteFile(Encoding.UTF8.GetBytes(Json.Serialize(rawChart)),
+                    //         Path.Combine(basePath, $"@raw.{rawChart.Id:X4}.json"));
+                    // }
                     
                     this.WriteSet(archive.Charts, archive.Samples, basePath, title, chartType);
                 }
