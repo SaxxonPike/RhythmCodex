@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
 using NUnit.Framework;
 using RhythmCodex.Archs.Firebeat.Converters;
 using RhythmCodex.Archs.Firebeat.Models;
@@ -20,11 +20,11 @@ public class FirebeatOneShots : BaseIntegrationFixture
 {
     private static object[][] Paths => new object[][]
     {
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii.zip", "bm3-1st", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii.zip", "bm3-1st", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii6thappend.zip", "bm3-6th", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii7thappend.zip", "bm3-7th", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiicore.zip", "bm3-core", BmsChartType.Beatmania],
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiifinal.zip", "bm3-final", BmsChartType.Beatmania]
+        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiifinal.zip", "bm3-final", BmsChartType.Beatmania]
     };
 
     /// <summary>
@@ -49,7 +49,7 @@ public class FirebeatOneShots : BaseIntegrationFixture
 
         foreach (var chunk in streamer.Read(entryStream))
         {
-            Log.WriteLine($"Working on chunk {index}");
+            // Log.WriteLine($"Working on chunk {index}");
 
             var idx = index;
 
@@ -58,17 +58,35 @@ public class FirebeatOneShots : BaseIntegrationFixture
                 var archive = decoder.Decode(chunk, options);
                 if (archive != null)
                 {
-                    Log.WriteLine($"Writing set for chunk {idx}");
+                    // Log.WriteLine($"Writing set for chunk {idx}");
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
 
+                    // var raw = archive.Chunk.Data.Span;
+                    
                     // foreach (var rawChart in archive.RawCharts)
                     // {
                     //     this.WriteFile(Encoding.UTF8.GetBytes(Json.Serialize(rawChart)),
                     //         Path.Combine(basePath, $"@raw.{rawChart.Id:X4}.json"));
                     // }
                     
-                    this.WriteSet(archive.Charts, archive.Samples, basePath, title, chartType);
+                    // this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
+
+                    Log.WriteLine(JsonSerializer.Serialize(new
+                    {
+                        Idx = idx,
+                        Bpm = archive.RawCharts
+                            .SelectMany(c => new[] { c.Header.MinBpm, c.Header.MaxBpm })
+                            .Distinct()
+                            .ToHashSet(),
+                        NoteCounts = archive.RawCharts
+                            .ToDictionary(
+                                c => c.Id,
+                                c => new[] { c.Header.MaxNoteCount1p, c.Header.MaxNoteCount2p }
+                            )
+                    }));
+
+                    //this.WriteSet(archive.Charts, archive.Samples, idx, basePath, title, chartType);
                 }
             });
 

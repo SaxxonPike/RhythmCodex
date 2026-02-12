@@ -68,7 +68,7 @@ public class TwinkleOneShots : BaseIntegrationFixture
                 var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                 var basePath = Path.Combine(target, title);
 
-                this.WriteSet(archive.Charts, archive.Samples, basePath, title, BmsChartType.Beatmania);
+                this.WriteSet(archive.Charts, archive.Samples, idx, basePath, title, BmsChartType.Beatmania);
             }));
 
             index++;

@@ -16,6 +16,22 @@ public class FirebeatSoundDecoder(
     IBeatmaniaDspTranslator beatmaniaDspTranslator)
     : IFirebeatSoundDecoder
 {
+    public ReadOnlySpan<byte> TrimAudio(ReadOnlySpan<byte> data)
+    {
+        for (var j = data.Length - 4; j >= 0; j -= 4)
+        {
+            var val = ReadUInt32LittleEndian(data[j..]);
+
+            if (val is 0x80008000u or 0x00800080u or 0x0A0A0A0Au or 0x00000000u)
+                continue;
+
+            return data[..j];
+        }
+
+        return data;
+    }
+
+
     public Dictionary<int, Sound> Decode(
         IEnumerable<KeyValuePair<int, FirebeatSample>> samples
     )
@@ -25,7 +41,7 @@ public class FirebeatSoundDecoder(
             x =>
             {
                 var info = x.Value.Info;
-                var data = x.Value.Data.Span;
+                var data = TrimAudio(x.Value.Data.Span);
                 var isStereo = (info.Flag0F & FirebeatSampleFlag0F.Stereo) != 0;
                 var resultSamples = new List<Sample>();
 
