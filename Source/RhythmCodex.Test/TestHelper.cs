@@ -111,7 +111,7 @@ public static class TestHelper
         }
 
         public void WriteSet(IEnumerable<Chart> charts, IEnumerable<Sound> sounds,
-            string outPath, string title, BmsChartType chartType)
+            int chartSetId, string outPath, string title, BmsChartType chartType)
         {
             // var bmsWriter = resolver.Resolve<IBmsStreamWriter>();
             // var bmsEncoder = resolver.Resolve<IBmsEncoder>();
@@ -150,9 +150,10 @@ public static class TestHelper
                 soundHashFileMap.AddOrUpdate(sound.CalculateSampleHash() ^ sound.CalculateSourceVolumePanHash(),
                     h =>
                     {
-                        var fileNameId = (int)(sound[NumericData.SampleMap] ?? 0) * 1000 +
-                                         (int)sound[NumericData.Id]!;
-                        var fileName = $"{Alphabet.EncodeNumeric(fileNameId, 4)}.wav";
+                        var fileName = Path.Combine(
+                            $"{chartSetId:D4}{(int)(sound[NumericData.SampleMap] ?? 0):D2}",
+                            $"{(int)sound[NumericData.Id]!:D4}.wav"
+                        );
 
                         resolver.WriteSound(sound, Path.Combine(outPath, fileName), 0.7f);
                         soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);

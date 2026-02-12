@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
 using RhythmCodex.Archs.Firebeat.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -64,7 +66,7 @@ public class FirebeatDecoder(
 
         return new FirebeatArchive
         {
-            Id = chunk.Id,
+            Chunk = chunk,
             Charts = outCharts,
             RawCharts = charts,
             RawSampleInfos = sampleInfos,
@@ -72,36 +74,27 @@ public class FirebeatDecoder(
         };
     }
 
-    private static FirebeatSampleInfo? GetBeatmaniaBgmInfo(ReadOnlySpan<byte> data)
+    private FirebeatSampleInfo? GetBeatmaniaBgmInfo(ReadOnlySpan<byte> data)
     {
-        for (var j = data.Length - 4; j >= BeatmaniaBgmOffset + 4; j -= 4)
+        var bgmData = soundDecoder.TrimAudio(data[BeatmaniaBgmOffset..]);
+
+        return new FirebeatSampleInfo
         {
-            if (data[j] == 0x00 &&
-                data[j + 1] == 0x80 &&
-                data[j + 2] == 0x00 &&
-                data[j + 3] == 0x80)
-                continue;
-
-            return new FirebeatSampleInfo
-            {
-                Channel = 0xFF,
-                Flag01 = 0x00,
-                Frequency = 0xAC44,
-                Volume = 0x00,
-                Panning = 0x40,
-                SampleOffset = BeatmaniaBgmOffset / 2,
-                SampleLength = (j - BeatmaniaBgmOffset + 4) / 2,
-                Value0C = 0x0000,
-                Flag0E = 0x07,
-                Flag0F = FirebeatSampleFlag0F.Stereo,
-                SizeInBlocks = 0
-            };
-        }
-
-        return null;
+            Channel = 0xFF,
+            Flag01 = 0x00,
+            Frequency = 0xAC44,
+            Volume = 0x00,
+            Panning = 0x40,
+            SampleOffset = BeatmaniaBgmOffset / 2,
+            SampleLength = bgmData.Length / 2,
+            Value0C = 0x0000,
+            Flag0E = 0x07,
+            Flag0F = FirebeatSampleFlag0F.Stereo,
+            SizeInBlocks = 0
+        };
     }
 
-    private static Dictionary<int, FirebeatSampleInfo> ExtractBeatmaniaSampleInfos(ReadOnlySpan<byte> data)
+    private Dictionary<int, FirebeatSampleInfo> ExtractBeatmaniaSampleInfos(ReadOnlySpan<byte> data)
     {
         var offset = BeatmaniaSampleInfoOffset;
         var sampleInfos = new Dictionary<int, FirebeatSampleInfo>();
@@ -186,8 +179,23 @@ public class FirebeatDecoder(
             // Read the header.
             //
 
-            var header = data.Slice(offset, 0x20);
+            var headerData = data.Slice(offset, 0x20);
             offset += 0x20;
+
+            var header = new FirebeatBeatmaniaChartHeader
+            {
+                MaxNoteCount1p = ReadInt16BigEndian(headerData),
+                MaxNoteCount2p = ReadInt16BigEndian(headerData[0x02..]),
+                MinNoteCount1p = ReadInt16BigEndian(headerData[0x04..]),
+                MinNoteCount2p = ReadInt16BigEndian(headerData[0x06..]),
+                MaxBpm = ReadInt16BigEndian(headerData[0x08..]),
+                MinBpm = ReadInt16BigEndian(headerData[0x0A..]),
+                Unk0C = ReadInt16BigEndian(headerData[0x0C..]),
+                Flags0E = (FirebeatBeatmaniaChartHeaderFlags0E)ReadInt16BigEndian(headerData[0x0E..]),
+                Flags10 = (FirebeatBeatmaniaChartHeaderFlags10)ReadInt16BigEndian(headerData[0x10..])
+            };
+
+            Debug.WriteLine(JsonSerializer.Serialize(header));
 
             //
             // The first two bytes of event data will always be zero, followed by a non-zero byte.
@@ -199,11 +207,17 @@ public class FirebeatDecoder(
                 firstEvent[1] != 0 ||
                 firstEvent[2] == 0)
                 continue;
-            
-            if (header[0x1C] != 0x00 ||
-                header[0x1D] != 0x00 ||
-                header[0x1E] != 0x00 ||
-                header[0x1F] != 0x00)
+
+            if (header.MaxNoteCount1p < header.MinNoteCount1p ||
+                header.MaxNoteCount2p < header.MinNoteCount2p ||
+                header.MaxBpm < header.MinBpm ||
+                header.MaxNoteCount1p < 0 ||
+                header.MaxNoteCount2p < 0 ||
+                header.MinNoteCount1p < 0 ||
+                header.MinNoteCount2p < 0 ||
+                header.Unk0C < 0 ||
+                header.Flags0E < 0 ||
+                header.Flags10 < 0)
                 continue;
 
             //
@@ -251,7 +265,7 @@ public class FirebeatDecoder(
                 {
                     Id = id,
                     Offset = chartOffset,
-                    Header = header.ToArray(),
+                    Header = header,
                     Events = events
                 });
             }

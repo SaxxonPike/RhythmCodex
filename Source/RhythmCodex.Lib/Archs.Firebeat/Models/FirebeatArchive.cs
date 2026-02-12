@@ -7,8 +7,10 @@ namespace RhythmCodex.Archs.Firebeat.Models;
 
 public class FirebeatArchive
 {
-    public int Id { get; set; }
+    public FirebeatChunk Chunk { get; set; }
 
+    public int Id => Chunk.Id;
+    
     public List<Chart> Charts { get; set; } = [];
 
     public List<Sound> Samples { get; set; } = [];

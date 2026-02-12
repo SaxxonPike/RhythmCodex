@@ -8,6 +8,6 @@ public class FirebeatChart
 {
     public int Id { get; set; }
     public int Offset { get; set; }
-    public byte[] Header { get; set; } = [];
+    public FirebeatBeatmaniaChartHeader Header { get; set; } = new();
     public List<FirebeatChartEvent> Events { get; set; } = [];
 }
