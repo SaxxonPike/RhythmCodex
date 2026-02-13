@@ -22,16 +22,8 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
         // always choose the set where the player is performing perfectly.
         //
 
-        var maxPerformance = eventList
-            .Select(x => (x.Player & 0xFE) >> 1)
-            .DefaultIfEmpty(0)
-            .Max();
-
         var resultEvents = new List<Event>();
-        var soundSelected = new Dictionary<int, int>();
         var idx = 0;
-
-        var performanceFilter = 0;
 
         foreach (var ev in eventList)
         {
@@ -49,13 +41,11 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
                 {
                     // marker
 
-                    if (performance != performanceFilter)
-                        break;
-
                     var column = ev.Data & 0x000F;
 
                     toAdd = new Event
                     {
+                        [NumericData.SourceColumn] = column,
                         [NumericData.Player] = player,
                         [FlagData.Note] = true
                     };
@@ -68,16 +58,13 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
                 {
                     // sound select
 
-                    if (performance != performanceFilter)
-                        break;
-
                     var column = (ev.Data & 0x0F00) >> 8;
                     var program = ev.Data & 0x00FF;
 
-                    soundSelected[column] = program;
-
                     toAdd = new Event
                     {
+                        [NumericData.SourceSound] = program,
+                        [NumericData.SourceColumn] = column,
                         [NumericData.Player] = player,
                         [NumericData.LoadSound] = program >= 1 ? program : -1
                     };
@@ -112,13 +99,11 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
                 {
                     // bgm
 
-                    if (performance != performanceFilter)
-                        break;
-
                     var program = ev.Data & 0x00FF;
 
                     toAdd = new Event
                     {
+                        [NumericData.SourceSound] = program,
                         [NumericData.PlaySound] = program >= 1 ? program : -1
                     };
 
@@ -166,11 +151,6 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
                 {
                     // performance filter
 
-                    if (performance == 0)
-                        performanceFilter = maxPerformance;
-                    else if (performance == maxPerformance)
-                        performanceFilter = 0;
-
                     break;
                 }
                 case 0x0E:
@@ -195,6 +175,9 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
             toAdd[NumericData.SourcePlayer] = ev.Player;
             toAdd[NumericData.LinearOffset] = new BigRational(ev.Tick, 1000);
             toAdd[NumericData.SourceIndex] = idx++;
+            
+            if (performance != 0)
+                toAdd[NumericData.Performance] = performance;
 
             resultEvents.Add(toAdd);
         }

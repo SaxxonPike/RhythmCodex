@@ -5,7 +5,6 @@ using RhythmCodex.Charts.Bmson.Converters;
 using RhythmCodex.Charts.Bmson.Streamers;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Extensions;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
@@ -40,7 +39,7 @@ public static class TestHelper
             resolver.CreateDirectory(Path.GetDirectoryName(outPath)!);
 
             var rendered = dsp.ApplyEffects(decoded);
-            
+
             rendered = dsp.ApplyEffects(rendered, new Metadata
             {
                 [NumericData.Volume] = gain
@@ -192,7 +191,7 @@ public static class TestHelper
 
                 if (chart.Events.Any(e => e[FlagData.Note] == true && e[FlagData.FootPedal] == true))
                     modeHint = $"{modeHint}-fp";
-                
+
                 chart.PopulateMetricOffsets(normalizeMeasures: false);
                 chart[StringData.Title] = title;
 
@@ -200,45 +199,57 @@ public static class TestHelper
                 //     $"@{Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1)}" +
                 //     $"{Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)}.bms");
 
-                var chartPath = Path.Combine(outPath,
-                    $"@{Alphabet.EncodeAlphanumeric((int)(chart[NumericData.SampleMap] ?? 0), 1)}" +
-                    $"{Alphabet.EncodeHex((int)chart[NumericData.Id]!, 3)}.bmson");
+                var performances = chart.Events
+                    .Select(x => x[NumericData.Performance])
+                    .Where(x => x != null)
+                    .DefaultIfEmpty()
+                    .Distinct()
+                    .ToList();
 
-                if (!resolver.OutputFileFilter(chartPath))
-                    continue;
-
-                using var outStream = resolver.OpenWrite(chartPath);
-
-                var exported = bmsonEncoder.Export(chart, new BmsonEncoderOptions
+                foreach (var performance in performances)
                 {
-                    WavNameTransformer = i =>
+                    var chartPath = Path.Combine(outPath,
+                        $"{(int)(chart[NumericData.SampleMap] ?? 0):D2}" +
+                        $"{(int)(chart[NumericData.Id] ?? 0):D2}" +
+                        $"{(int)(performance ?? 0):D2}.bmson");
+
+                    if (!resolver.OutputFileFilter(chartPath))
+                        continue;
+
+                    using var outStream = resolver.OpenWrite(chartPath);
+
+                    var exported = bmsonEncoder.Export(chart, new BmsonEncoderOptions
                     {
-                        if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
-                            !soundHashFileMap.TryGetValue(sm, out var fileName))
-                            return null;
+                        WavNameTransformer = i =>
+                        {
+                            if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
+                                !soundHashFileMap.TryGetValue(sm, out var fileName))
+                                return null;
 
-                        return fileName;
-                    },
-                    ChartType = chartType,
-                    ModeHint = modeHint
-                });
-                
-                bmsonWriter.Write(outStream, exported);
+                            return fileName;
+                        },
+                        ChartType = chartType,
+                        ModeHint = modeHint,
+                        Performance = (int)(performance ?? 0)
+                    });
 
-                // bmsWriter.Write(outStream, bmsEncoder.Encode(chart, new BmsEncoderOptions
-                // {
-                //     WavNameTransformer = i =>
-                //     {
-                //         if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
-                //             !soundHashFileMap.TryGetValue(sm, out var fileName))
-                //             return null;
-                //
-                //         return fileName;
-                //     },
-                //     ChartType = chartType
-                // }));
+                    bmsonWriter.Write(outStream, exported);
 
-                outStream.Flush();
+                    // bmsWriter.Write(outStream, bmsEncoder.Encode(chart, new BmsEncoderOptions
+                    // {
+                    //     WavNameTransformer = i =>
+                    //     {
+                    //         if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
+                    //             !soundHashFileMap.TryGetValue(sm, out var fileName))
+                    //             return null;
+                    //
+                    //         return fileName;
+                    //     },
+                    //     ChartType = chartType
+                    // }));
+
+                    outStream.Flush();
+                }
             }
         }
     }
