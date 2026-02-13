@@ -8,4 +8,5 @@ public class BmsonEncoderOptions
     public Func<int, string?>? WavNameTransformer { get; set; }
     public BmsChartType ChartType { get; set; }
     public string? ModeHint { get; set; }
+    public int Performance { get; set; }
 }

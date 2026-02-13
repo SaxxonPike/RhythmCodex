@@ -58,35 +58,35 @@ public class FirebeatOneShots : BaseIntegrationFixture
                 var archive = decoder.Decode(chunk, options);
                 if (archive != null)
                 {
-                    // Log.WriteLine($"Writing set for chunk {idx}");
+                    Log.WriteLine($"Writing set for chunk {idx}");
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
 
                     // var raw = archive.Chunk.Data.Span;
-                    
+
                     // foreach (var rawChart in archive.RawCharts)
                     // {
                     //     this.WriteFile(Encoding.UTF8.GetBytes(Json.Serialize(rawChart)),
                     //         Path.Combine(basePath, $"@raw.{rawChart.Id:X4}.json"));
                     // }
-                    
+
                     // this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
 
-                    Log.WriteLine(JsonSerializer.Serialize(new
-                    {
-                        Idx = idx,
-                        Bpm = archive.RawCharts
-                            .SelectMany(c => new[] { c.Header.MinBpm, c.Header.MaxBpm })
-                            .Distinct()
-                            .ToHashSet(),
-                        NoteCounts = archive.RawCharts
-                            .ToDictionary(
-                                c => c.Id,
-                                c => new[] { c.Header.MaxNoteCount1p, c.Header.MaxNoteCount2p }
-                            )
-                    }));
+                    // Log.WriteLine(JsonSerializer.Serialize(new
+                    // {
+                    //     Idx = idx,
+                    //     Bpm = archive.RawCharts
+                    //         .SelectMany(c => new[] { c.Header.MinBpm, c.Header.MaxBpm })
+                    //         .Distinct()
+                    //         .ToHashSet(),
+                    //     NoteCounts = archive.RawCharts
+                    //         .ToDictionary(
+                    //             c => c.Id,
+                    //             c => new[] { c.Header.MaxNoteCount1p, c.Header.MaxNoteCount2p }
+                    //         )
+                    // }));
 
-                    //this.WriteSet(archive.Charts, archive.Samples, idx, basePath, title, chartType);
+                    this.WriteSet(archive.Charts, archive.Samples, idx, basePath, title, chartType);
                 }
             });
 

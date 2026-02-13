@@ -59,6 +59,11 @@ public class BmsonChartConverter : IBmsonChartConverter
 
         foreach (var ev in orderedEvents)
         {
+            if (ev[NumericData.Performance] != null &&
+                ev[NumericData.Performance] != 0 &&
+                ev[NumericData.Performance] != options.Performance)
+                continue;
+            
             var y = (long)Math.Round((double)(ev[NumericData.MetricOffset] * 4 * result.Info.Resolution)!);
             var playerId = (int)(ev[NumericData.Player] ?? -1);
             var columnId = (int)(ev[NumericData.Column] ?? -1);
