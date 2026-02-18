@@ -9,9 +9,6 @@ using RhythmCodex.Archs.Firebeat.Models;
 using RhythmCodex.Archs.Firebeat.Streamers;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Metadatas.Models;
-using RhythmCodex.Sounds.Converters;
-using RhythmCodex.Sounds.Wav.Converters;
 using RhythmCodex.Sounds.Wav.Models;
 
 namespace RhythmCodex.Tools.OneShots;
@@ -22,7 +19,7 @@ public class FirebeatOneShots : BaseIntegrationFixture
     {
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii.zip", "bm3-1st", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii6thappend.zip", "bm3-6th", BmsChartType.Beatmania],
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii7thappend.zip", "bm3-7th", BmsChartType.Beatmania],
+        //["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iii7thappend.zip", "bm3-7th", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiicore.zip", "bm3-core", BmsChartType.Beatmania],
         ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iiifinal.zip", "bm3-final", BmsChartType.Beatmania]
     };
@@ -35,6 +32,10 @@ public class FirebeatOneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target, BmsChartType chartType)
     {
+        bool extractAudio = true;
+        bool extractCharts = true;
+        bool extractRawBlock = false;
+
         var streamer = Resolve<IFirebeatChunkStreamReader>();
         var decoder = Resolve<IFirebeatDecoder>();
 
@@ -49,7 +50,7 @@ public class FirebeatOneShots : BaseIntegrationFixture
 
         foreach (var chunk in streamer.Read(entryStream))
         {
-            // Log.WriteLine($"Working on chunk {index}");
+            SetProgress($"Working on chunk {index}");
 
             var idx = index;
 
@@ -58,35 +59,36 @@ public class FirebeatOneShots : BaseIntegrationFixture
                 var archive = decoder.Decode(chunk, options);
                 if (archive != null)
                 {
-                    Log.WriteLine($"Writing set for chunk {idx}");
+                    SetProgress($"Writing set for chunk {idx}");
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
 
-                    // var raw = archive.Chunk.Data.Span;
+                    if (extractRawBlock)
+                        this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
 
-                    // foreach (var rawChart in archive.RawCharts)
-                    // {
-                    //     this.WriteFile(Encoding.UTF8.GetBytes(Json.Serialize(rawChart)),
-                    //         Path.Combine(basePath, $"@raw.{rawChart.Id:X4}.json"));
-                    // }
+                    Log.WriteLine(JsonSerializer.Serialize(new
+                    {
+                        Idx = idx,
+                        Bpm = archive.RawCharts
+                            .SelectMany(c => new[] { c.Header.MinBpm, c.Header.MaxBpm })
+                            .Distinct()
+                            .ToHashSet(),
+                        NoteCounts = archive.RawCharts
+                            .ToDictionary(
+                                c => c.Id,
+                                c => new[] { c.Header.MaxNoteCount1p, c.Header.MaxNoteCount2p }
+                            )
+                    }));
 
-                    // this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
-
-                    // Log.WriteLine(JsonSerializer.Serialize(new
-                    // {
-                    //     Idx = idx,
-                    //     Bpm = archive.RawCharts
-                    //         .SelectMany(c => new[] { c.Header.MinBpm, c.Header.MaxBpm })
-                    //         .Distinct()
-                    //         .ToHashSet(),
-                    //     NoteCounts = archive.RawCharts
-                    //         .ToDictionary(
-                    //             c => c.Id,
-                    //             c => new[] { c.Header.MaxNoteCount1p, c.Header.MaxNoteCount2p }
-                    //         )
-                    // }));
-
-                    this.WriteSet(archive.Charts, archive.Samples, idx, basePath, title, chartType);
+                    this.WriteSet(new TestHelper.WriteSetConfig
+                    {
+                        Charts = archive.Charts,
+                        Sounds = archive.Samples,
+                        ChartSetId = idx,
+                        OutPath = basePath,
+                        Title = title,
+                        ChartType = chartType
+                    });
                 }
             });
 
@@ -106,8 +108,6 @@ public class FirebeatOneShots : BaseIntegrationFixture
     {
         var streamer = Resolve<IFirebeatChunkStreamReader>();
         var decoder = Resolve<IFirebeatDecoder>();
-        var renderer = Resolve<IChartRenderer>();
-        var dsp = Resolve<IAudioDsp>();
         var hashes = new HashSet<int>();
 
         using var stream = File.OpenRead(source);
@@ -143,23 +143,19 @@ public class FirebeatOneShots : BaseIntegrationFixture
                 if (archive == null)
                     return;
 
-                foreach (var chart in archive.Charts)
+                Log.WriteLine($"Rendering for chunk {idx}");
+
+                this.RenderSet(new TestHelper.RenderSetConfig
                 {
-                    var id = (int)chart[NumericData.Id]!.Value;
-                    var title = $"{Alphabet.EncodeNumeric(idx, 4)}-{Alphabet.EncodeNumeric(id, 2)}";
-                    var path = Path.Combine(target, $"{title}.wav");
-
-                    Log.WriteLine($"Rendering chart {id} for chunk {idx}");
-
-                    var rendered = renderer.Render(chart, archive.Samples, renderOptions);
-                    var renderedHash = rendered.CalculateSampleHash();
-
-                    if (!hashes.Add(renderedHash))
-                        continue;
-
-                    var normalized = dsp.Normalize(rendered, 1.0f, true);
-                    this.WriteSound(normalized, path);
-                }
+                    Charts = archive.Charts,
+                    Sounds = archive.Samples,
+                    RenderOptions = renderOptions,
+                    ChartSetId = idx,
+                    OutPath = target,
+                    Title = $"{idx:D4}",
+                    Hashes = hashes,
+                    FirstOnly = true
+                });
             });
 
             index++;

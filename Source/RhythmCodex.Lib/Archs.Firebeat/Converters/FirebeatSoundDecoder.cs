@@ -111,7 +111,7 @@ public class FirebeatSoundDecoder(
                     [NumericData.SourceVolume] = info.Volume,
                     [NumericData.Panning] = Math.Clamp(info.Panning, (byte)0x00, (byte)0x7F) / 127f,
                     [NumericData.SourcePanning] = info.Panning,
-                    [NumericData.Channel] = info.Channel,
+                    [NumericData.Channel] = info.Channel < 0xFF ? info.Channel : null,
                     [NumericData.SampleMap] = 0,
                     [NumericData.Id] = x.Key
                 };

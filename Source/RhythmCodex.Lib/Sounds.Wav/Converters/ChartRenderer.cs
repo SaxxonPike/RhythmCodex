@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charts.Models;
-using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -39,7 +38,18 @@ public class ChartRenderer(
 
         var maxPriorityChannels = (int)(chart[NumericData.PriorityChannels] ?? int.MaxValue);
 
-        var eventList = chart.Events.AsCollection();
+        var renderPerformance = chart.Events
+            .Select(e => (int)(e[NumericData.Performance] ?? 0))
+            .Where(p => p > 0)
+            .DefaultIfEmpty(0)
+            .Min();
+
+        var eventList = chart.Events
+            .Where(e => e[NumericData.Performance] == null ||
+                        e[NumericData.Performance] == 0 ||
+                        e[NumericData.Performance] == renderPerformance)
+            .ToList();
+
         if (eventList.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException("Can't render without all events having linear offsets.");
 
@@ -211,12 +221,12 @@ public class ChartRenderer(
                 //
 
                 var priorityValue = (int)soundPriority;
-                
+
                 if (priorityChannelsInUse >= maxPriorityChannels)
                 {
                     for (var i = 0; i < channels.Count; i++)
                     {
-                        if (channels[i].Type != ChannelType.Priority || channels[i].Tag > priorityValue) 
+                        if (channels[i].Type != ChannelType.Priority || channels[i].Tag > priorityValue)
                             continue;
 
                         channels.RemoveAt(i);

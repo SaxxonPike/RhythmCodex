@@ -8,9 +8,6 @@ using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Archs.Djmain.Streamers;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Infrastructure;
-using RhythmCodex.Metadatas.Models;
-using RhythmCodex.Sounds.Converters;
-using RhythmCodex.Sounds.Wav.Converters;
 using RhythmCodex.Sounds.Wav.Models;
 
 namespace RhythmCodex.Tools.OneShots;
@@ -19,21 +16,21 @@ public class DjmainOneShots : BaseIntegrationFixture
 {
     private static object[][] Paths => new object[][]
     {
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm2ndmix.zip", "bm1-2nd", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm3rdmix.zip", "bm1-3rd", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm4thmix.zip", "bm1-4th", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm5thmix.zip", "bm1-5th", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm6thmix.zip", "bm1-6th", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm7thmix.zip", "bm1-7th", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmclubmx.zip", "bm1-club", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompmx.zip", "bm1-comp", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompm2.zip", "bm1-comp2", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcorerm.zip", "bm1-core", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm2ndmix.zip", "bm1-2nd", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm3rdmix.zip", "bm1-3rd", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm4thmix.zip", "bm1-4th", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm5thmix.zip", "bm1-5th", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm6thmix.zip", "bm1-6th", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm7thmix.zip", "bm1-7th", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmclubmx.zip", "bm1-club", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompmx.zip", "bm1-comp", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompm2.zip", "bm1-comp2", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcorerm.zip", "bm1-core", BmsChartType.Beatmania],
         ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmfinal.zip", "bm1-final", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn1.zip", "popn1", BmsChartType.Popn],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn2.zip", "popn2", BmsChartType.Popn],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn3.zip", "popn3", BmsChartType.Popn]
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn1.zip", "popn1", BmsChartType.Popn],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn2.zip", "popn2", BmsChartType.Popn],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn3.zip", "popn3", BmsChartType.Popn]
     };
     
     /// <summary>
@@ -61,7 +58,7 @@ public class DjmainOneShots : BaseIntegrationFixture
 
         foreach (var chunk in streamer.Read(entryStream))
         {
-            Log.WriteLine($"Working on chunk {index}");
+            SetProgress($"Working on chunk {index}");
 
             var idx = index;
 
@@ -70,15 +67,25 @@ public class DjmainOneShots : BaseIntegrationFixture
                 var archive = decoder.Decode(chunk, options);
                 if (archive != null)
                 {
-                    Log.WriteLine($"Writing set for chunk {idx}");
+                    SetProgress($"Writing set for chunk {idx}");
                     var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                     var basePath = Path.Combine(target, title);
-                    
-                    this.WriteSet(archive.Charts, archive.Samples, idx, basePath, title, chartType);
+
+                    this.WriteSet(new TestHelper.WriteSetConfig
+                    {
+                        Charts = archive.Charts,
+                        Sounds = archive.Samples,
+                        ChartSetId = idx,
+                        OutPath = basePath,
+                        Title = title,
+                        ChartType = chartType
+                    });
                 }
             });
 
             index++;
+
+            Yield();
         }
 
         WaitForAsyncTasks();
@@ -94,8 +101,6 @@ public class DjmainOneShots : BaseIntegrationFixture
     {
         var streamer = Resolve<IDjmainChunkStreamReader>();
         var decoder = Resolve<IDjmainDecoder>();
-        var renderer = Resolve<IChartRenderer>();
-        var dsp = Resolve<IAudioDsp>();
         var hashes = new HashSet<int>();
 
         using var stream = File.OpenRead(source);
@@ -129,23 +134,21 @@ public class DjmainOneShots : BaseIntegrationFixture
 
                 var archive = decoder.Decode(chunk, options);
 
-                foreach (var chart in archive.Charts)
+                if (archive == null)
+                    return;
+
+                Log.WriteLine($"Rendering for chunk {idx}");
+
+                this.RenderSet(new TestHelper.RenderSetConfig
                 {
-                    var id = (int)chart[NumericData.Id]!.Value;
-                    var title = $"{Alphabet.EncodeNumeric(idx, 4)}-{Alphabet.EncodeNumeric(id, 2)}";
-                    var path = Path.Combine(target, $"{title}.wav");
-
-                    Log.WriteLine($"Rendering chart {id} for chunk {idx}");
-
-                    var rendered = renderer.Render(chart, archive.Samples, renderOptions);
-                    var renderedHash = rendered.CalculateSampleHash();
-
-                    if (!hashes.Add(renderedHash))
-                        continue;
-
-                    var normalized = dsp.Normalize(rendered, 1.0f, true);
-                    this.WriteSound(normalized, path);
-                }
+                    Charts = archive.Charts,
+                    Sounds = archive.Samples,
+                    RenderOptions = renderOptions,
+                    ChartSetId = idx,
+                    OutPath = target,
+                    Title = $"{idx:D4}",
+                    Hashes = hashes
+                });
             });
 
             index++;

@@ -65,6 +65,11 @@ public abstract class BaseTestFixture
             return fixture;
         });
 
+    protected static void Yield()
+    {
+        Task.Yield().GetAwaiter().GetResult();
+    }
+    
     protected static void RunAsync(Action action)
     {
         if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
@@ -189,5 +194,13 @@ public abstract class BaseTestFixture
     protected static T[] ManyOf<T>(IEnumerable<T> items, int count, bool unique = false)
     {
         return ManyOf(items.ToArray(), count, unique);
+    }
+
+    /// <summary>
+    /// Indicates progress of a test to the runner.
+    /// </summary>
+    protected static void SetProgress(string progress)
+    {
+        TestContext.Progress.WriteLine(progress);
     }
 }
