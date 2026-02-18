@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using RhythmCodex.Archs.Firebeat.Models;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Extensions;
@@ -185,7 +184,8 @@ public class FirebeatChartDecoder : IFirebeatChartDecoder
         return new Chart
         {
             Events = resultEvents,
-            [NumericData.Rate] = new BigRational(1000, 1)
+            [NumericData.Rate] = new BigRational(1000, 1),
+            [NumericData.SampleMap] = 0
         };
 
         static void MapColumn(Event toAdd, int column)

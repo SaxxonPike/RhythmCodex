@@ -80,7 +80,7 @@ public class FirebeatDecoder(
 
         return new FirebeatSampleInfo
         {
-            Channel = 0xFF,
+            Channel = 0xFE, // Note: not FF! Some songs double-play the BGM.
             Flag01 = 0x00,
             Frequency = 0xAC44,
             Volume = 0x00,
