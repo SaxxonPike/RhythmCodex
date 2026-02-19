@@ -32,9 +32,10 @@ public class FirebeatOneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target, BmsChartType chartType)
     {
-        bool extractAudio = true;
-        bool extractCharts = true;
-        bool extractRawBlock = false;
+        const bool extractAudio = true;
+        const bool extractCharts = true;
+        const bool extractRawBlock = false;
+        const bool logChartInfo = true;
 
         var streamer = Resolve<IFirebeatChunkStreamReader>();
         var decoder = Resolve<IFirebeatDecoder>();
@@ -50,22 +51,22 @@ public class FirebeatOneShots : BaseIntegrationFixture
 
         foreach (var chunk in streamer.Read(entryStream))
         {
-            SetProgress($"Working on chunk {index}");
+            Log.WriteLine($"Working on chunk {index}");
 
             var idx = index;
 
             RunAsync(() =>
             {
                 var archive = decoder.Decode(chunk, options);
-                if (archive != null)
+
+                var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
+                var basePath = Path.Combine(target, title);
+
+                if (extractRawBlock)
+                    this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
+
+                if (logChartInfo)
                 {
-                    SetProgress($"Writing set for chunk {idx}");
-                    var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
-                    var basePath = Path.Combine(target, title);
-
-                    if (extractRawBlock)
-                        this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
-
                     Log.WriteLine(JsonSerializer.Serialize(new
                     {
                         Idx = idx,
@@ -79,17 +80,19 @@ public class FirebeatOneShots : BaseIntegrationFixture
                                 c => new[] { c.Header.MaxNoteCount1p, c.Header.MaxNoteCount2p }
                             )
                     }));
-
-                    this.WriteSet(new TestHelper.WriteSetConfig
-                    {
-                        Charts = archive.Charts,
-                        Sounds = archive.Samples,
-                        ChartSetId = idx,
-                        OutPath = basePath,
-                        Title = title,
-                        ChartType = chartType
-                    });
                 }
+
+                this.WriteSet(new TestHelper.WriteSetConfig
+                {
+                    Charts = archive.Charts,
+                    Sounds = archive.Samples,
+                    ChartSetId = idx,
+                    OutPath = basePath,
+                    Title = title,
+                    ChartType = chartType,
+                    WriteCharts = extractCharts,
+                    WriteSounds = extractAudio
+                });
             });
 
             index++;

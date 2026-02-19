@@ -37,13 +37,16 @@ public class FirebeatDecoder(
     private const int TrashSectorSize = 0x200;
     private const int TrashSectorOffset = BeatmaniaBgmOffset - TrashSectorSize;
 
-    public FirebeatArchive? Decode(FirebeatChunk chunk, FirebeatDecodeOptions options)
+    public FirebeatArchive Decode(FirebeatChunk chunk, FirebeatDecodeOptions options)
     {
         var charts = ExtractBeatmaniaCharts(chunk.Data.Span);
 
         if (charts.Count < 1)
         {
-            return null;
+            return new FirebeatArchive
+            {
+                Chunk = chunk
+            };
         }
 
         var sampleInfos = ExtractBeatmaniaSampleInfos(chunk.Data.Span);
