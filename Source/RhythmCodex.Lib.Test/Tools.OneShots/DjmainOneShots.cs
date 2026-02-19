@@ -16,7 +16,7 @@ public class DjmainOneShots : BaseIntegrationFixture
 {
     private static object[][] Paths => new object[][]
     {
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st", BmsChartType.Beatmania],
+        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm1stmix.zip", "bm1-1st", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm2ndmix.zip", "bm1-2nd", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm3rdmix.zip", "bm1-3rd", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bm4thmix.zip", "bm1-4th", BmsChartType.Beatmania],
@@ -27,12 +27,12 @@ public class DjmainOneShots : BaseIntegrationFixture
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompmx.zip", "bm1-comp", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcompm2.zip", "bm1-comp2", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmcorerm.zip", "bm1-core", BmsChartType.Beatmania],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmfinal.zip", "bm1-final", BmsChartType.Beatmania],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/bmfinal.zip", "bm1-final", BmsChartType.Beatmania],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn1.zip", "popn1", BmsChartType.Popn],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn2.zip", "popn2", BmsChartType.Popn],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Popn Non-PC/popn3.zip", "popn3", BmsChartType.Popn]
     };
-    
+
     /// <summary>
     /// Renders a BMS set from each chunk within a Djmain system HDD.
     /// </summary>
@@ -41,6 +41,10 @@ public class DjmainOneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target, BmsChartType chartType)
     {
+        const bool extractAudio = true;
+        const bool extractCharts = true;
+        const bool extractRawBlock = false;
+
         var streamer = Resolve<IDjmainChunkStreamReader>();
         var decoder = Resolve<IDjmainDecoder>();
 
@@ -58,34 +62,36 @@ public class DjmainOneShots : BaseIntegrationFixture
 
         foreach (var chunk in streamer.Read(entryStream))
         {
-            SetProgress($"Working on chunk {index}");
+            Log.WriteLine($"Working on chunk {index}");
 
             var idx = index;
 
             RunAsync(() =>
             {
                 var archive = decoder.Decode(chunk, options);
-                if (archive != null)
-                {
-                    SetProgress($"Writing set for chunk {idx}");
-                    var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
-                    var basePath = Path.Combine(target, title);
 
-                    this.WriteSet(new TestHelper.WriteSetConfig
-                    {
-                        Charts = archive.Charts,
-                        Sounds = archive.Samples,
-                        ChartSetId = idx,
-                        OutPath = basePath,
-                        Title = title,
-                        ChartType = chartType
-                    });
-                }
+                Log.WriteLine($"Writing set for chunk {idx}");
+
+                var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
+                var basePath = Path.Combine(target, title);
+
+                if (extractRawBlock)
+                    this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
+
+                this.WriteSet(new TestHelper.WriteSetConfig
+                {
+                    Charts = archive.Charts,
+                    Sounds = archive.Samples,
+                    ChartSetId = idx,
+                    OutPath = basePath,
+                    Title = title,
+                    ChartType = chartType,
+                    WriteCharts = extractCharts,
+                    WriteSounds = extractAudio
+                });
             });
 
             index++;
-
-            Yield();
         }
 
         WaitForAsyncTasks();
@@ -133,9 +139,6 @@ public class DjmainOneShots : BaseIntegrationFixture
                     return;
 
                 var archive = decoder.Decode(chunk, options);
-
-                if (archive == null)
-                    return;
 
                 Log.WriteLine($"Rendering for chunk {idx}");
 

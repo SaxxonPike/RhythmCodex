@@ -18,9 +18,16 @@ public abstract class BaseTestFixture
 {
     private static readonly ConcurrentDictionary<string, Fixture> Fixtures = [];
     private static readonly ConcurrentDictionary<string, HashSet<Task>> AsyncTasks = [];
+    private static SemaphoreSlim AsyncSemaphore = new SemaphoreSlim(Environment.ProcessorCount);
 
     private Stopwatch _stopwatch;
 
+    [OneTimeTearDown]
+    public void __OneTimeTearDown()
+    {
+        AsyncSemaphore.Dispose();
+    }
+    
     [SetUp]
     public void __Setup()
     {
@@ -65,20 +72,23 @@ public abstract class BaseTestFixture
             return fixture;
         });
 
-    protected static void Yield()
-    {
-        Task.Yield().GetAwaiter().GetResult();
-    }
-    
     protected static void RunAsync(Action action)
     {
         if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
             return;
 
         if (Debugger.IsAttached)
+        {
             action();
-        else
-            GetAsyncTasks().Add(Task.Run(action, TestContext.CurrentContext.CancellationToken));
+            return;
+        }
+
+        AsyncSemaphore.Wait();
+        GetAsyncTasks().Add(Task.Run(() =>
+        {
+            action();
+            AsyncSemaphore.Release();
+        }, TestContext.CurrentContext.CancellationToken));
     }
 
     protected static void WaitForAsyncTasks()
@@ -194,13 +204,5 @@ public abstract class BaseTestFixture
     protected static T[] ManyOf<T>(IEnumerable<T> items, int count, bool unique = false)
     {
         return ManyOf(items.ToArray(), count, unique);
-    }
-
-    /// <summary>
-    /// Indicates progress of a test to the runner.
-    /// </summary>
-    protected static void SetProgress(string progress)
-    {
-        TestContext.Progress.WriteLine(progress);
     }
 }

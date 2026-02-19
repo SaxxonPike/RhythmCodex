@@ -37,7 +37,7 @@ public class DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDes
 
             if (format.BytesAreSwapped)
                 output.AsSpan().Swap16();
-                
+
             yield return new DjmainChunk
             {
                 Format = format.Format,
@@ -46,5 +46,4 @@ public class DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDes
             };
         }
     }
-
 }

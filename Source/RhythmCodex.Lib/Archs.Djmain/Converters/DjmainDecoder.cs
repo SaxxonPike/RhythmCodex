@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using RhythmCodex.Archs.Djmain.Heuristics;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Archs.Djmain.Streamers;
 using RhythmCodex.Charts.Models;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -38,7 +40,6 @@ public class DjmainDecoder(
             throw new RhythmCodexException($"{nameof(chunk.Format)} is not recognized");
 
         using var stream = new ReadOnlyMemoryStream(chunk.Data);
-        var swappedStream = new ByteSwappedReadStream(stream);
 
         var skipSounds = false;
 
@@ -58,12 +59,24 @@ public class DjmainDecoder(
             .ToDictionary(kv => kv.Key, kv => kv.Value);
         var rawCharts = ExtractCharts(stream, chunk.Format);
         var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format, options.SwapStereo);
+        
+        //
+        // Sound data uses byte swapped blocks.
+        //
+
+        using var swappedMemOwner = MemoryPool<byte>.Shared.Rent(chunk.Data.Length);
+        var swappedMem = swappedMemOwner.Memory[..chunk.Data.Length];
+        chunk.Data.Span.CopyTo(swappedMem.Span);
+        swappedMem.Span.Swap16();
+        using var swappedStream = new ReadOnlyMemoryStream(swappedMem);
+
         var soundOutput = !skipSounds && !options.DisableAudio
             ? DecodeSounds(swappedStream, chunk.Format, chartSoundMap, rawCharts, decodedCharts, options)
             : [];
 
         return new DjmainArchive
         {
+            Chunk = chunk,
             Id = chunk.Id,
             RawCharts = rawCharts
                 .ToDictionary(kv => kv.Key, kv => kv.Value),
