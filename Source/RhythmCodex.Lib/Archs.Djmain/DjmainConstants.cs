@@ -33,6 +33,9 @@ public static class DjmainConstants
     // Source:
     // https://github.com/furrtek/SiliconRE/blob/master/Konami/054539/hdl/romb.mem
     //
+    // This table matches the following expression:
+    // y = Math.Pow(2.0, -x / 8.0);
+    //
 
     public static readonly ReadOnlyMemory<int> VolumeRom = new[]
     {
