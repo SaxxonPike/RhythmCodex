@@ -185,7 +185,7 @@ public class DdrOneShots : BaseIntegrationFixture
             using var arcFileStream = !enableGraphics || !File.Exists(arcFileName) ? null : File.OpenRead(arcFileName);
             var arc = arcFileStream == null ? null : arcReader.Read(arcFileStream);
             var arcJacket = arc?.SingleOrDefault(x =>
-                x.Name?.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries).Last()
+                x.Name?.Split(['/'], StringSplitOptions.RemoveEmptyEntries).Last()
                     .Equals($"{metadata.BaseName}_jk.dds", StringComparison.OrdinalIgnoreCase) ?? false);
             using var ddsStream = arcJacket == null
                 ? null

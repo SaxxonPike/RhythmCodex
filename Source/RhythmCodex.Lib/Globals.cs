@@ -1,0 +1,1 @@
+global using static System.Buffers.Binary.BinaryPrimitives;

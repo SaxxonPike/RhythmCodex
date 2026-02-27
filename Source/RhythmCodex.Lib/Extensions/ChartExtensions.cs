@@ -87,7 +87,7 @@ public static class ChartExtensions
         }
     }
 
-    public static void PopulateMetricOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
+    public static void PopulateMetricOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null, bool normalizeMeasures = true)
     {
         if (chart.Events.Any(ev => ev[NumericData.LinearOffset] == null))
             throw new RhythmCodexException($"All events must have a {nameof(NumericData.LinearOffset)}.");
@@ -125,7 +125,8 @@ public static class ChartExtensions
             }
         }
 
-        NormalizeMetricOffsets(chart);
+        if (normalizeMeasures)
+            NormalizeMetricOffsets(chart);
     }
 
     public static void PopulateLinearOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)

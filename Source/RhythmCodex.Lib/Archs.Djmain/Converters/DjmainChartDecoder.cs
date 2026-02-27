@@ -12,18 +12,19 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 [Service]
 public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataDecoder) : IDjmainChartDecoder
 {
-    public Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType)
+    public Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType, bool swapStereo)
     {
         return new Chart
         {
-            Events = DecodeEvents(events, chartType).ToList()
+            Events = DecodeEvents(events, chartType, swapStereo).ToList()
         };
     }
 
     public int GetFirstEventOffset(IEnumerable<DjmainChartEvent> inEvents) => 
         inEvents.TakeWhile(e => e.Offset == 0 && (e.Param0 & 0xF) == 0).Count();
 
-    private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> inEvents, DjmainChartType chartType)
+    private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> inEvents, DjmainChartType chartType,
+        bool swapStereo)
     {
         var events = inEvents.AsList();
         var eventStart = GetFirstEventOffset(events);
@@ -42,10 +43,10 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
             switch (chartType)
             {
                 case DjmainChartType.Beatmania:
-                    djmainEventMetadataDecoder.AddBeatmaniaMetadata(newEv, ev);
+                    djmainEventMetadataDecoder.AddBeatmaniaMetadata(newEv, ev, swapStereo);
                     break;
                 case DjmainChartType.Popn:
-                    djmainEventMetadataDecoder.AddPopnMetadata(newEv, ev);
+                    djmainEventMetadataDecoder.AddPopnMetadata(newEv, ev, swapStereo);
                     break;
             }
 

@@ -18,9 +18,16 @@ public abstract class BaseTestFixture
 {
     private static readonly ConcurrentDictionary<string, Fixture> Fixtures = [];
     private static readonly ConcurrentDictionary<string, HashSet<Task>> AsyncTasks = [];
+    private static SemaphoreSlim AsyncSemaphore = new SemaphoreSlim(Environment.ProcessorCount);
 
     private Stopwatch _stopwatch;
 
+    [OneTimeTearDown]
+    public void __OneTimeTearDown()
+    {
+        AsyncSemaphore.Dispose();
+    }
+    
     [SetUp]
     public void __Setup()
     {
@@ -33,7 +40,7 @@ public abstract class BaseTestFixture
     {
         if (AsyncTasks.Remove(TestContext.CurrentContext.Test.ID, out var tasks) && tasks.Count > 0)
         {
-            Task.WaitAll(tasks);
+            Task.WaitAll(tasks, TestContext.CurrentContext.CancellationToken);
             var taskExceptions = tasks.Where(t => t.IsFaulted).Select(t => t.Exception!).ToList();
             if (taskExceptions.Count > 0)
                 throw new AggregateException(taskExceptions);
@@ -51,13 +58,13 @@ public abstract class BaseTestFixture
     public static TextWriter Log =>
         TestContext.Progress;
 
-    public bool IsCanceled =>
+    public static bool IsCanceled =>
         TestContext.CurrentContext.CancellationToken.IsCancellationRequested;
 
-    private HashSet<Task> GetAsyncTasks() =>
+    private static HashSet<Task> GetAsyncTasks() =>
         AsyncTasks.GetOrAdd(TestContext.CurrentContext.Test.ID, _ => []);
 
-    private Fixture GetFixture() =>
+    private static Fixture GetFixture() =>
         Fixtures.GetOrAdd(TestContext.CurrentContext.Test.ID, _ =>
         {
             var fixture = new Fixture();
@@ -65,12 +72,28 @@ public abstract class BaseTestFixture
             return fixture;
         });
 
-    protected void RunAsync(Action action)
+    protected static void RunAsync(Action action)
     {
+        if (TestContext.CurrentContext.CancellationToken.IsCancellationRequested)
+            return;
+
         if (Debugger.IsAttached)
+        {
             action();
-        else
-            GetAsyncTasks().Add(Task.Run(action));
+            return;
+        }
+
+        AsyncSemaphore.Wait();
+        GetAsyncTasks().Add(Task.Run(() =>
+        {
+            action();
+            AsyncSemaphore.Release();
+        }, TestContext.CurrentContext.CancellationToken));
+    }
+
+    protected static void WaitForAsyncTasks()
+    {
+        Task.WaitAll(GetAsyncTasks(), TestContext.CurrentContext.CancellationToken);
     }
 
     /// <summary>
@@ -114,7 +137,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Gets an AutoFixture builder which can be used to customize a created object.
     /// </summary>
-    protected ICustomizationComposer<T> Build<T>()
+    protected static ICustomizationComposer<T> Build<T>()
     {
         return GetFixture().Build<T>();
     }
@@ -122,7 +145,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Creates an object of the specified type with randomized properties.
     /// </summary>
-    protected T Create<T>()
+    protected static T Create<T>()
     {
         return GetFixture().Create<T>();
     }
@@ -130,7 +153,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Creates many objects of the specified type all with randomized properties.
     /// </summary>
-    protected T[] CreateMany<T>()
+    protected static T[] CreateMany<T>()
     {
         return GetFixture().CreateMany<T>().ToArray();
     }
@@ -138,7 +161,7 @@ public abstract class BaseTestFixture
     /// <summary>
     ///     Creates a specified number of objects of the specified type all with randomized properties.
     /// </summary>
-    protected T[] CreateMany<T>(int count)
+    protected static T[] CreateMany<T>(int count)
     {
         return GetFixture().CreateMany<T>(count).ToArray();
     }

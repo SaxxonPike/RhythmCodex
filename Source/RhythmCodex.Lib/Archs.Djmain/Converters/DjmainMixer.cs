@@ -34,22 +34,32 @@ public class DjmainMixer : StereoMixer, IDjmainMixer
         // data, but BGM events can override. The BGM panning value is stereo-flipped. In the event
         // that panning data is missing altogether, default to center (0x8).
         //
-        
+
         int panTableRaw;
 
         if (state.EventData?[NumericData.SourcePanning] is { } bgmPanning)
+        {
             panTableRaw = 0x10 - ((int)bgmPanning & 0xF);
+        }
         else if (state.Sound?[NumericData.SourcePanning] is { } soundPanning)
-            panTableRaw = (int)soundPanning & 0xF;
+        {
+            panTableRaw = (int)soundPanning;
+
+            if ((panTableRaw & 0x80) == 0)
+                panTableRaw = 0x10 - panTableRaw;
+            panTableRaw &= 0xF;
+        }
         else
+        {
             panTableRaw = 0x8;
+        }
 
         var panTabIdx = Math.Clamp(panTableRaw, 0x1, 0xF) - 1;
 
         //
         // Normalize the table values to range 0.0-1.0.
         //
-        
+
         var finalVol = DjmainConstants.VolumeRom.Span[volTabIdx] / (double)0x7FFF;
         var finalPanLeft = DjmainConstants.PanRom.Span[panTabIdx] / (double)0x7FFF;
         var finalPanRight = DjmainConstants.PanRom.Span[0xE - panTabIdx] / (double)0x7FFF;

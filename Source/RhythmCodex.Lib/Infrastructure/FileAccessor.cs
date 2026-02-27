@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using RhythmCodex.Extensions;
 using RhythmCodex.Infrastructure.Models;
 
 namespace RhythmCodex.Infrastructure;
@@ -15,11 +16,13 @@ public class FileAccessor(string basePath) : IFileAccessor
 
     public ExtensionMatchedFile GetFileNameByExtension(string name, IEnumerable<string> extensions)
     {
+        var extList = extensions.AsList();
+
         if (name == null)
             throw new RhythmCodexException("File name cannot be null.");
 
         var path = Path.Combine(basePath, name);
-        foreach (var e in extensions)
+        foreach (var e in extList)
         {
             if (path.EndsWith($".{e}", StringComparison.InvariantCultureIgnoreCase))
                 return new ExtensionMatchedFile
@@ -29,10 +32,11 @@ public class FileAccessor(string basePath) : IFileAccessor
                 };
         }
 
-        foreach (var e in extensions)
+        foreach (var e in extList)
         {
             var newPath = $"{Path.Combine(basePath, Path.GetDirectoryName(path) ?? ".", Path.GetFileNameWithoutExtension(path))}.{e}";
             var newName = $"{Path.Combine(Path.GetDirectoryName(name) ?? "", Path.GetFileNameWithoutExtension(path))}.{e}";
+
             if (File.Exists(newPath))
                 return new ExtensionMatchedFile
                 {

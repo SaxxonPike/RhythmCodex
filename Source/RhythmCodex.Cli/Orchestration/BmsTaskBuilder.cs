@@ -47,7 +47,7 @@ public class BmsTaskBuilder(
             ParallelProgress(task, files, file =>
             {
                 using var stream = OpenRead(task, file);
-                var accessor = new FileAccessor(Path.GetDirectoryName(file.Name));
+                var accessor = new FileAccessor(Path.GetDirectoryName(file.Name)!);
                 var commands = bmsStreamReader.Read(stream);
                 var resolved = bmsRandomResolver.Resolve(commands);
                 var decoded = bmsDecoder.Decode(resolved);

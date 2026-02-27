@@ -7,6 +7,7 @@ using NUnit.Framework;
 using RhythmCodex.Archs.Twinkle.Converters;
 using RhythmCodex.Archs.Twinkle.Model;
 using RhythmCodex.Archs.Twinkle.Streamers;
+using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Tools.OneShots;
@@ -14,6 +15,11 @@ namespace RhythmCodex.Tools.OneShots;
 [TestFixture]
 public class TwinkleOneShots : BaseIntegrationFixture
 {
+    // public override bool OutputFileFilter(string filename)
+    // {
+    //     return !filename.EndsWith(".wav", StringComparison.OrdinalIgnoreCase);
+    // }
+
     [Test]
     [Explicit("This is a tool, not a test.")]
     [TestCase(@"/Volumes/RidgeportHDD/User Data/Bemani/Beatmania Non-PC/iidx1st.zip", "bm2dx-1st")]
@@ -61,7 +67,16 @@ public class TwinkleOneShots : BaseIntegrationFixture
 
                 var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
                 var basePath = Path.Combine(target, title);
-                //this.WriteSet(archive.Charts, archive.Samples, basePath, title);
+
+                this.WriteSet(new TestHelper.WriteSetConfig
+                {
+                    Charts = archive.Charts,
+                    Sounds = archive.Samples,
+                    ChartSetId = idx,
+                    OutPath = basePath,
+                    Title = title,
+                    ChartType = BmsChartType.Beatmania
+                });
             }));
 
             index++;

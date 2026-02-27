@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Archs.Djmain.Converters;
 using RhythmCodex.Archs.Djmain.Model;
@@ -53,7 +52,7 @@ public class BeatmaniaPsxBmDataStreamReaderIntegrationTests : BaseIntegrationFix
                 {
                     extension = "cs5";
                     using var chartStream = new MemoryStream();
-                    var chart = chartDecoder.Decode(chartReader.Read(new ReadOnlyMemoryStream(data), data.Length), DjmainChartType.Beatmania);
+                    var chart = chartDecoder.Decode(chartReader.Read(new ReadOnlyMemoryStream(data), data.Length), DjmainChartType.Beatmania, true);
                     chart.PopulateMetricOffsets();
                     chartWriter.Write(chartStream, chartEncoder.Encode(chart));
                     File.WriteAllBytes(Path.Combine(outputFolder, $"{folderIndex:X4}", $"{fileIndex:X4}.bme"), chartStream.ToArray());

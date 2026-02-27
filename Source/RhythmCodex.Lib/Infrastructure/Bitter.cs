@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using JetBrains.Annotations;
 
 namespace RhythmCodex.Infrastructure;
@@ -14,33 +13,33 @@ public static class Bitter
             output[i] = ToInt16(span, offset + i * 2);
         return output;
     }
-    
+
     public static short ToInt16(ReadOnlySpan<byte> span) =>
-        BinaryPrimitives.ReadInt16LittleEndian(span);
+        ReadInt16LittleEndian(span);
 
     public static short ToInt16(ReadOnlyMemory<byte> mem) =>
-        BinaryPrimitives.ReadInt16LittleEndian(mem.Span);
+        ReadInt16LittleEndian(mem.Span);
 
     public static short ToInt16(ReadOnlySpan<byte> span, int offset) =>
-        BinaryPrimitives.ReadInt16LittleEndian(span[offset..]);
+        ReadInt16LittleEndian(span[offset..]);
 
     public static short ToInt16(ReadOnlyMemory<byte> mem, int offset) =>
-        BinaryPrimitives.ReadInt16LittleEndian(mem.Span[offset..]);
+        ReadInt16LittleEndian(mem.Span[offset..]);
 
     public static short ToInt16(byte lsb, byte msb) =>
         unchecked((short)(lsb | (msb << 8)));
 
     public static short ToInt16S(ReadOnlySpan<byte> span) =>
-        BinaryPrimitives.ReadInt16BigEndian(span);
+        ReadInt16BigEndian(span);
 
     public static short ToInt16S(ReadOnlyMemory<byte> mem) =>
-        BinaryPrimitives.ReadInt16BigEndian(mem.Span);
+        ReadInt16BigEndian(mem.Span);
 
     public static short ToInt16S(ReadOnlySpan<byte> span, int offset) =>
-        BinaryPrimitives.ReadInt16BigEndian(span[offset..]);
+        ReadInt16BigEndian(span[offset..]);
 
     public static short ToInt16S(ReadOnlyMemory<byte> mem, int offset) =>
-        BinaryPrimitives.ReadInt16BigEndian(mem.Span[offset..]);
+        ReadInt16BigEndian(mem.Span[offset..]);
 
     public static int ToInt24(ReadOnlySpan<byte> span) =>
         ToInt24(span[0], span[1], span[2]);
@@ -58,63 +57,63 @@ public static class Bitter
         ToInt24S(span[offset..]);
 
     public static int ToInt32(ReadOnlySpan<byte> span) =>
-        BinaryPrimitives.ReadInt32LittleEndian(span);
+        ReadInt32LittleEndian(span);
 
     public static int ToInt32(ReadOnlyMemory<byte> mem) =>
-        BinaryPrimitives.ReadInt32LittleEndian(mem.Span);
+        ReadInt32LittleEndian(mem.Span);
 
     public static int ToInt32(byte[] arr) =>
-        BinaryPrimitives.ReadInt32LittleEndian(arr.AsSpan());
+        ReadInt32LittleEndian(arr.AsSpan());
 
     public static int ToInt32(ReadOnlySpan<byte> span, int offset) =>
-        BinaryPrimitives.ReadInt32LittleEndian(span[offset..]);
+        ReadInt32LittleEndian(span[offset..]);
 
     public static int ToInt32(ReadOnlyMemory<byte> mem, int offset) =>
-        BinaryPrimitives.ReadInt32LittleEndian(mem.Span[offset..]);
+        ReadInt32LittleEndian(mem.Span[offset..]);
 
     public static int ToInt32(byte[] arr, int offset) =>
-        BinaryPrimitives.ReadInt32LittleEndian(arr.AsSpan(offset));
+        ReadInt32LittleEndian(arr.AsSpan(offset));
 
     public static int ToInt32(byte lsb, byte b, byte c, byte msb) =>
         lsb | (b << 8) | (c << 16) | (msb << 24);
 
     public static int ToInt32S(ReadOnlySpan<byte> span) =>
-        BinaryPrimitives.ReadInt32BigEndian(span);
+        ReadInt32BigEndian(span);
 
     public static int ToInt32S(ReadOnlySpan<byte> span, int offset) =>
-        BinaryPrimitives.ReadInt32BigEndian(span[offset..]);
+        ReadInt32BigEndian(span[offset..]);
 
     public static float ToFloat(ReadOnlySpan<byte> span) =>
-        BinaryPrimitives.ReadSingleLittleEndian(span);
-        
+        ReadSingleLittleEndian(span);
+
     public static float ToFloat(ReadOnlySpan<byte> span, int offset) =>
-        BinaryPrimitives.ReadSingleLittleEndian(span[offset..]);
-        
+        ReadSingleLittleEndian(span[offset..]);
+
     public static int[] ToInt16Values(ReadOnlySpan<byte> bytes)
     {
         var result = new int[bytes.Length / sizeof(short)];
         for (int i = 0, j = 0; j < bytes.Length; i++, j += sizeof(short))
-            result[i] = BinaryPrimitives.ReadInt16LittleEndian(bytes[j..]);
+            result[i] = ReadInt16LittleEndian(bytes[j..]);
         return result;
     }
 
     public static void ToInt16Values(ReadOnlySpan<byte> bytes, Span<short> result)
     {
         for (int i = 0, j = 0; j < bytes.Length; i++, j += sizeof(short))
-            result[i] = BinaryPrimitives.ReadInt16LittleEndian(bytes[j..]);
+            result[i] = ReadInt16LittleEndian(bytes[j..]);
     }
 
     public static int[] ToInt32Values(ReadOnlySpan<byte> bytes)
     {
         var result = new int[bytes.Length / sizeof(int)];
         for (int i = 0, j = 0; j < bytes.Length; i++, j += sizeof(int))
-            result[i] = BinaryPrimitives.ReadInt32LittleEndian(bytes[j..]);
+            result[i] = ReadInt32LittleEndian(bytes[j..]);
         return result;
     }
-    
+
     public static void ToInt32Values(ReadOnlySpan<byte> bytes, Span<int> result)
     {
         for (int i = 0, j = 0; j < bytes.Length; i++, j += sizeof(int))
-            result[i] = BinaryPrimitives.ReadInt32LittleEndian(bytes[j..]);
+            result[i] = ReadInt32LittleEndian(bytes[j..]);
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.IoC;
 
@@ -13,10 +11,10 @@ public class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
 {
     public Dictionary<int, DjmainSampleInfo> Read(Stream stream, int maxSize)
     {
-        return ReadInternal(stream, maxSize).ToDictionary(kv => kv.Key, kv => kv.Value);
+        return ReadInternal(stream, maxSize);
     }
 
-    private IEnumerable<KeyValuePair<int, DjmainSampleInfo>> ReadInternal(Stream stream, int maxSize)
+    private static Dictionary<int, DjmainSampleInfo> ReadInternal(Stream stream, int maxSize)
     {
         var resultList = new Dictionary<int, DjmainSampleInfo>();
         var maxDefs = maxSize / 11;
@@ -31,11 +29,11 @@ public class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
             var result = new DjmainSampleInfo
             {
                 Channel = buffer[0],
-                Frequency = BinaryPrimitives.ReadUInt16LittleEndian(buffer[1..]),
+                Frequency = ReadUInt16LittleEndian(buffer[1..]),
                 ReverbVolume = buffer[3],
                 Volume = buffer[4],
                 Panning = buffer[5],
-                Offset = BinaryPrimitives.ReadUInt16LittleEndian(buffer[6..]) | ((uint) buffer[8] << 16),
+                Offset = ReadUInt16LittleEndian(buffer[6..]) | ((uint) buffer[8] << 16),
                 SampleType = buffer[9],
                 Flags = buffer[10]
             };

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Buffers.Binary;
-using System.Runtime.Intrinsics;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;

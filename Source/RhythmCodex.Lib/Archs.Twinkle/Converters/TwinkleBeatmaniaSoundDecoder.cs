@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using RhythmCodex.Archs.Twinkle.Model;
+using RhythmCodex.Games.Beatmania.Converters;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
@@ -8,7 +9,9 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Archs.Twinkle.Converters;
 
 [Service]
-public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
+public class TwinkleBeatmaniaSoundDecoder(
+    IBeatmaniaDspTranslator beatmaniaDspTranslator) 
+    : ITwinkleBeatmaniaSoundDecoder
 {
     public Sound? Decode(TwinkleBeatmaniaSoundDefinition definition, ReadOnlySpan<byte> data)
     {
@@ -45,7 +48,7 @@ public class TwinkleBeatmaniaSoundDecoder : ITwinkleBeatmaniaSoundDecoder
         {
             [NumericData.Rate] = definition.Frequency,
             [NumericData.SourceRate] = definition.Frequency,
-            [NumericData.Volume] = TwinkleConstants.VolumeTable[definition.Volume],
+            [NumericData.Volume] = beatmaniaDspTranslator.GetTwinkleVolume(definition.Volume),
             [NumericData.SourceVolume] = definition.Volume,
             [NumericData.Panning] = panning,
             [NumericData.SourcePanning] = definition.Panning,

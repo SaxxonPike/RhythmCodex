@@ -31,6 +31,7 @@ public class ArcIntegrationTests : BaseIntegrationFixture
     }
 
     [Test]
+    [Explicit("writes to the desktop")]
     public void ReadAndWriteGenerateSameFile()
     {
         var reader = Resolve<IArcStreamReader>();
@@ -53,7 +54,7 @@ public class ArcIntegrationTests : BaseIntegrationFixture
     }
 
     [Test]
-    [Explicit("this writes to the desktop, don't bother with this one")]
+    [Explicit("writes to the desktop")]
     public void DecryptTheWholeDamnUniverse()
     {
         var reader = Resolve<IArcStreamReader>();

@@ -72,10 +72,12 @@ public class FakeFileSystem(IFileSystem fileSystem) : IFileSystem
     }
 
     /// <inheritdoc />
-    public IEnumerable<string> GetFileNames(string path, string pattern, bool recursive = false)
-    {
-        return _files.Where(f => f.Key.StartsWith(path, StringComparison.OrdinalIgnoreCase)).Select(f => f.Key);
-    }
+    public IEnumerable<string> GetFileNames(string? path, string pattern, bool recursive = false) =>
+        path == null 
+            ? [] 
+            : _files
+                .Where(f => f.Key.StartsWith(path, StringComparison.OrdinalIgnoreCase))
+                .Select(f => f.Key);
 
     /// <inheritdoc />
     public IEnumerable<string> GetDirectoryNames(string path)
@@ -86,7 +88,7 @@ public class FakeFileSystem(IFileSystem fileSystem) : IFileSystem
     /// <inheritdoc />
     public string GetDirectory(string path)
     {
-        return fileSystem.GetDirectory(path);
+        return fileSystem.GetDirectory(path)!;
     }
 
     /// <inheritdoc />

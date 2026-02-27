@@ -9,7 +9,7 @@ public sealed class InputFile : IDisposable
     private readonly Func<Stream> _open;
     private readonly Func<string, Stream> _openRelated;
     private readonly Action<Stream> _dispose;
-    private Stream _openedStream;
+    private Stream? _openedStream;
 
     internal InputFile(string name, Func<Stream> open, Func<string, Stream> openRelated, Action<Stream> dispose)
     {

@@ -26,8 +26,8 @@ public class BemaniLzModule : ICliModule
     public string Description => "Compress and decompress data using the Bemani LZ algorithm.";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "compress",
@@ -40,7 +40,7 @@ public class BemaniLzModule : ICliModule
             Description = "Decompress a file with Bemani LZ.",
             TaskFactory = DecompressBemaniLz
         }
-    };
+    ];
 
     private ITask CompressBemaniLz(Args args)
     {

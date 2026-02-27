@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Graphics.Tim.Converters;
@@ -42,7 +41,7 @@ public class TimDataDecoder : ITimDataDecoder
 
         for (var i = 0; i < size; i++)
         {
-            result[i] = BinaryPrimitives.ReadUInt16LittleEndian(data[sourceIdx..]);
+            result[i] = ReadUInt16LittleEndian(data[sourceIdx..]);
             sourceIdx += 2;
         }
 

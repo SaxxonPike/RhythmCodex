@@ -26,21 +26,21 @@ public class DdrModule : ICliModule
     public string Description => "Manipulates DDR AC data.";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "extract-573-flash",
             Description = "Extracts files from a 573 GAME (and optionally additionally CARD) image.",
             TaskFactory = Extract573Flash,
-            Parameters = new []
-            {
+            Parameters =
+            [
                 new CommandParameter
                 {
                     Description = "Decryption key for MDB.",
                     Name = "k"
                 }
-            }
+            ]
         },
         new Command
         {
@@ -54,7 +54,7 @@ public class DdrModule : ICliModule
             Description = "Decrypts Digital 573 audio.",
             TaskFactory = Decrypt573Audio
         }
-    };
+    ];
 
     private ITask ApplySif(Args args)
     {

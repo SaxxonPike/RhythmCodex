@@ -28,23 +28,23 @@ public class Step1CliModule : ICliModule
     public string Description => "Encodes and decodes the STEP format. (2nd-3rdPlus, SoloBass)";
 
     /// <inheritdoc />
-    public IEnumerable<ICommand> Commands => new ICommand[]
-    {
+    public IEnumerable<ICommand> Commands =>
+    [
         new Command
         {
             Name = "decode",
             Description = "Decodes a STEP file.",
             TaskFactory = Decode,
-            Parameters = new[]
-            {
+            Parameters =
+            [
                 new CommandParameter
                 {
                     Name = "-offset",
                     Description = "Global offset to add to output #OFFSET tag."
                 }
-            }
+            ]
         }
-    };
+    ];
 
     /// <summary>
     /// Perform the DECODE command.

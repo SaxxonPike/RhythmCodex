@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using NUnit.Framework;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Charts.Ssq.Converters;
@@ -15,13 +14,14 @@ namespace RhythmCodex.Charts.Ssq.Integration
             var chart = new Chart
             {
                 [StringData.Difficulty] = "Medium",
-                Events = new List<Event>
-                {
+                Events =
+                [
                     new()
                     {
                         [NumericData.MetricOffset] = 0,
                         [NumericData.Bpm] = 120
                     },
+
                     new()
                     {
                         [NumericData.MetricOffset] = 1,
@@ -29,6 +29,7 @@ namespace RhythmCodex.Charts.Ssq.Integration
                         [NumericData.Column] = 0,
                         [NumericData.Player] = 0
                     },
+
                     new()
                     {
                         [NumericData.MetricOffset] = 1.25,
@@ -36,6 +37,7 @@ namespace RhythmCodex.Charts.Ssq.Integration
                         [NumericData.Column] = 1,
                         [NumericData.Player] = 0
                     },
+
                     new()
                     {
                         [NumericData.MetricOffset] = 1.5,
@@ -43,6 +45,7 @@ namespace RhythmCodex.Charts.Ssq.Integration
                         [NumericData.Column] = 2,
                         [NumericData.Player] = 0
                     },
+
                     new()
                     {
                         [NumericData.MetricOffset] = 1.75,
@@ -50,17 +53,19 @@ namespace RhythmCodex.Charts.Ssq.Integration
                         [NumericData.Column] = 3,
                         [NumericData.Player] = 0
                     },
+
                     new()
                     {
                         [NumericData.MetricOffset] = 2,
                         [FlagData.Note] = true,
                         [NumericData.Column] = 0,
                         [NumericData.Player] = 0
-                    },
-                }
+                    }
+
+                ]
             };
 
-            var observed = Subject.Encode(new[] {chart});
+            var observed = Subject.Encode([chart]);
 
             var reversed = Resolve<ISsqDecoder>().Decode(observed);
 

@@ -12,10 +12,10 @@ public class AppAutofacModule<TFromAssembly> : Module
     /// <summary>
     /// A single type from each assembly that needs to be auto-loaded.
     /// </summary>
-    private static readonly IEnumerable<Type> IocTypes = new[]
-    {
+    private static readonly IEnumerable<Type> IocTypes =
+    [
         typeof(TFromAssembly)    // RhythmCodex.Cli
-    };
+    ];
 
     /// <inheritdoc />
     protected override void Load(ContainerBuilder builder)

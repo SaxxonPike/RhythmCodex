@@ -93,7 +93,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, Create<DjmainChartType>());
+        var output = subject.Decode(data, Create<DjmainChartType>(), true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -121,7 +121,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, Create<DjmainChartType>());
+        var output = subject.Decode(data, Create<DjmainChartType>(), true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -149,7 +149,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania);
+        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -178,7 +178,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania);
+        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -215,7 +215,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania);
+        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -253,7 +253,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania);
+        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -283,7 +283,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania);
+        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -314,7 +314,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania);
+        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -353,7 +353,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, Create<DjmainChartType>());
+        var output = subject.Decode(data, Create<DjmainChartType>(), true);
 
         // Assert.
         output.Events.Count.ShouldBe(1);

@@ -17,8 +17,8 @@ public class SmEncoder(
     ITimedCommandStringEncoder timedCommandStringEncoder)
     : ISmEncoder
 {
-    private static readonly IEnumerable<string> TagsToEncode = new[]
-    {
+    private static readonly IEnumerable<string> TagsToEncode =
+    [
         ChartTag.TitleTag,
         ChartTag.ArtistTag,
         ChartTag.SubTitleTag,
@@ -39,7 +39,7 @@ public class SmEncoder(
         ChartTag.BgChangesTag,
         ChartTag.FgChangesTag,
         ChartTag.PreviewTag
-    };
+    ];
 
     private List<string> GetDefault(string name, ChartSet chartSet)
     {

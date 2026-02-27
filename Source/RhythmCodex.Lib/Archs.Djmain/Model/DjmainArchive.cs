@@ -7,6 +7,8 @@ namespace RhythmCodex.Archs.Djmain.Model;
 
 public class DjmainArchive
 {
+    public DjmainChunk Chunk { get; set; }
+    
     public int Id { get; set; }
 
     public List<Chart> Charts { get; set; } = [];

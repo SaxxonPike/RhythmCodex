@@ -6,5 +6,6 @@ namespace RhythmCodex.Archs.Twinkle.Model;
 public class TwinkleDecodeOptions
 {
     public bool DisableAudio { get; set; }
+    public bool DisableCharts { get; set; }
     public bool DoNotConsolidateSamples { get; set; }
 }
