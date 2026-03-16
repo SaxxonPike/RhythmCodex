@@ -38,6 +38,8 @@ public class DjmainOffsetProvider : IDjmainOffsetProvider
             case DjmainChunkFormat.BeatmaniaThird:
             case DjmainChunkFormat.BeatmaniaComplete:
                 return [0x000400, 0xF02000, 0xF03000];
+            case DjmainChunkFormat.BeatmaniaSeventh:
+                return [0x000800, 0xF02000, 0xF04000];
             case DjmainChunkFormat.BeatmaniaFinal:
                 return [0x002000, 0x006000, 0x00A000, 0x00E000, 0x012000, 0x016000];
             case DjmainChunkFormat.Popn1:

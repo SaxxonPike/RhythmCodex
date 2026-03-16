@@ -23,7 +23,7 @@ public abstract class BaseTestFixture
     private Stopwatch _stopwatch;
 
     [OneTimeTearDown]
-    public void __OneTimeTearDown()
+    public static void __OneTimeTearDown()
     {
         AsyncSemaphore.Dispose();
     }
