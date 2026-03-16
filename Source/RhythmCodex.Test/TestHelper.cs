@@ -342,4 +342,15 @@ public static class TestHelper
             resolver.WriteSetCharts(config, soundResult);
         }
     }
+
+    public static Stream ToStream(this IEnumerable<string> lines)
+    {
+        var stream = new MemoryStream();
+        using var writer = new StreamWriter(stream, leaveOpen: true);
+        foreach (var line in lines)
+            writer.WriteLine(line);
+        writer.Flush();
+        stream.Position = 0;
+        return stream;
+    }
 }

@@ -13,7 +13,7 @@ public class CdSectorOnDiskCollection(int total, Func<int, Memory<byte>> read) :
     private class OnDiskCdSector(int number, Func<int, Memory<byte>> read) : ICdSector
     {
         public int Number { get; } = number;
-        public Memory<byte> Data => read(Number);
+        public ReadOnlyMemory<byte> Data => read(Number);
     }
 
     public IEnumerator<ICdSector> GetEnumerator() => 

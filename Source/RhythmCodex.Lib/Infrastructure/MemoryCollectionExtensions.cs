@@ -6,7 +6,7 @@ namespace RhythmCodex.Infrastructure;
 
 public static class MemoryCollectionExtensions
 {
-    public static Memory<T> Combine<T>(this IEnumerable<Memory<T>> enumerable)
+    public static Memory<T> Combine<T>(this IEnumerable<ReadOnlyMemory<T>> enumerable)
     {
         var all = enumerable.ToArray();
         if (all.Length < 1)

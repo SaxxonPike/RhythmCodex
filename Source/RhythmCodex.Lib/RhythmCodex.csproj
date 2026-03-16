@@ -20,8 +20,6 @@
     <ItemGroup>
       <Folder Include="Sounds.ImaAdpcm\" />
       <Folder Include="FileSystems.Chd\" />
-      <Folder Include="FileSystems.Iso\" />
       <Folder Include="Charts.Sm\" />
-      <Folder Include="Charts.Ssc\" />
     </ItemGroup>
 </Project>
