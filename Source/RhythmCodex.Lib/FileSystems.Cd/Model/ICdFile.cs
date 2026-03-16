@@ -7,4 +7,5 @@ public interface ICdFile
     string? Name { get; }
     long Length { get; }
     Stream Open();
+    Stream OpenRaw();
 }

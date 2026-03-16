@@ -63,7 +63,7 @@ public class XaDecodeIntegrationTests : BaseIntegrationFixture
         var writer = Resolve<IRiffStreamWriter>();
         var streamFinder = Resolve<IXaIsoStreamFinder>();
             
-        var streams = streamFinder.Find(isoReader
+        var streams = streamFinder.FindMode2(isoReader
             .Read(new MemoryStream(data), data.Length, true)
             .Select(s => isoInfoDecoder.Decode(s)));
 

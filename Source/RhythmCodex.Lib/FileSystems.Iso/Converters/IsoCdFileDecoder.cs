@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.FileSystems.Iso.Model;
@@ -34,33 +36,43 @@ public class IsoCdFileDecoder(
         {
             var pathLba = volume.TypeLPathTableLocation;
             var pathTable = isoPathTableDecoder.Decode(cdSectors.SkipWhile(cds => cds.Number != pathLba));
-                
+
             foreach (var path in pathTable)
             {
                 var directory =
                     isoDirectoryTableDecoder.Decode(
                         cdSectors.SkipWhile(cds => cds.Number != path.LocationOfExtent));
+
                 foreach (var entry in directory)
                 {
                     if (entry.Flags.HasFlag(IsoFileFlags.Directory))
                         continue;
-                        
-                    yield return new CdFile(() =>
-                        isoSectorStreamFactory.Open(
-                            cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent), entry.DataLength))
+
+                    yield return new CdFile(OpenFormatted, OpenRaw)
                     {
                         Name = GetPath(pathTable, entry, path),
                         Length = entry.DataLength
                     };
+
+                    continue;
+
+                    Stream OpenRaw() =>
+                        isoSectorStreamFactory.OpenRaw(cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent),
+                            (entry.DataLength + 2047) / 2048 * 2352);
+
+                    Stream OpenFormatted() =>
+                        isoSectorStreamFactory.Open(cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent),
+                            entry.DataLength);
                 }
             }
         }
     }
 
-    private string GetPath(IList<IsoPathRecord> pathRecords, IsoDirectoryRecord directoryRecord, IsoPathRecord pathRecord)
+    private string GetPath(IList<IsoPathRecord> pathRecords, IsoDirectoryRecord directoryRecord,
+        IsoPathRecord pathRecord)
     {
         var currentPath = pathRecord;
-        var output = new List<string> {directoryRecord.Identifier};
+        var output = new List<string> { directoryRecord.Identifier };
 
         while (currentPath.ParentDirectoryNumber != 0)
         {

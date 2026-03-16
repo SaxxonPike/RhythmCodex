@@ -5,6 +5,7 @@ using System.Linq;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.Sounds.Vag.Models;
 using RhythmCodex.Sounds.Xa.Models;
 
 namespace RhythmCodex.Sounds.Xa.Converters;
@@ -14,14 +15,15 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
 {
     // Reference: https://github.com/kode54/vgmstream/blob/master/src/coding/xa_decoder.c
 
-    private static readonly int[] K0 = [0, 60, 115, 98, 122];
-    private static readonly int[] K1 = [0, 0, -52, -55, -60];
+    private static readonly int[] K0 = VagCoefficients.Coeff0;
+    private static readonly int[] K1 = VagCoefficients.Coeff1;
 
     public List<Sound?> Decode(XaChunk chunk)
     {
         var sounds = new List<Sound?>();
-        var buffer = new float[28];
-        const int channels = 2;
+        Span<float> buffer = stackalloc float[28];
+        //const int channels = 2;
+        var channels = chunk.Channels;
 
         var states = Enumerable.Range(0, channels).Select(_ => new XaState()).ToList();
         var samples = Enumerable.Range(0, channels).Select(_ => new SampleBuilder()).ToList();
@@ -34,8 +36,9 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
                 var frame = reader.ReadBytes(0x80);
                 for (var c = 0; c < 8; c++)
                 {
-                    DecodeFrame(frame, buffer, c, states[c % channels]);
-                    samples[c % channels].Append(buffer);
+                    var ch = c % channels;
+                    DecodeFrame(frame, buffer, c, states[ch]);
+                    samples[ch].Append(buffer);
                 }
             }
         }

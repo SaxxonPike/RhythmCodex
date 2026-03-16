@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Archs.Psx.Converters;
+using RhythmCodex.Extensions;
+using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.FileSystems.Cd.Streamers;
 using RhythmCodex.FileSystems.Cue.Processors;
 using RhythmCodex.FileSystems.Cue.Streamers;
@@ -82,33 +85,61 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         //
         // Determine where MCHDATA.PAK is located on the disc and load it.
+        // Because this is XA data, it should be loaded raw here to be processed.
         //
 
         Log.WriteLine("Loading MCHDATA.PAK");
-        using var mchDataPak = cdFiles.Single(f => f.Name == "./MCHDATA.PAK;1").Open();
-        var mchDataMem = new MemoryStream();
-        mchDataPak.CopyTo(bmDataMem);
-
+        var mchDataCdFile = cdFiles.Single(f => f.Name == "./MCHDATA.PAK;1");
+        using var mchDataPak = mchDataCdFile.OpenRaw();
+        var modeTemp = new byte[0x10];
+        mchDataPak.ReadExactly(modeTemp);
+        var mchMode = modeTemp[0x0F];
+        
         //
-        // Decode XA BGM.
+        // Decode XA BGM. The data could be either MODE 1 or MODE 2. These require
+        // different methods of splitting.
         //
 
-        var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
+        List<XaChunk> xaChunks = [];
+
+        switch (mchMode)
+        {
+            case 1:
+            {
+                using var mchDataPak2 = mchDataCdFile.Open();
+                var mchDataBytes = new byte[mchDataPak2.Length];
+                mchDataPak2.ReadExactly(mchDataBytes);
+                xaChunks.AddRange(mchDataBytes.Deinterleave(0x800, 4)
+                    .Select(block => new XaChunk { Data = block, Rate = 37800, Channels = 1 }));
+
+                break;
+            }
+            case 2:
+            {
+                mchDataPak.Position = 0;
+                var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
+                var isoSectorStreamReader = Resolve<IsoSectorStreamReader>();
+                var mchDataReader = isoSectorStreamReader.Read(mchDataPak, (int)mchDataPak.Length, true);
+                var streamFinder = Resolve<IXaIsoStreamFinder>();
+                var mchDataSectors = mchDataReader
+                    .Select(s =>
+                    {
+                        var decodedInfo = isoInfoDecoder.Decode(s);
+                        return decodedInfo;
+                    });
+
+                xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors));
+                break;
+            }
+        }
+
         var decoder = Resolve<IXaDecoder>();
         var encoder = Resolve<IRiffPcm16SoundEncoder>();
         var writer = Resolve<IRiffStreamWriter>();
-        var streamFinder = Resolve<IXaIsoStreamFinder>();
-            
-        var streams = streamFinder.Find(sectors
-            .Select(s =>
-            {
-                var decodedInfo = isoInfoDecoder.Decode(s);
-                return decodedInfo;
-            }));
 
         var index = 0;
-            
-        foreach (var xa in streams)
+
+        foreach (var xa in xaChunks)
         {
             var decoded = decoder.Decode(xa);
 

@@ -8,6 +8,9 @@ public class CdSector : ICdSector
 
     public static CdSector Empty(int number, int sectorSize) =>
         new() { Number = number, Data = EmptyData.Value[..sectorSize] };
+    
+    public static CdSector FromMemory(int number, ReadOnlyMemory<byte> memory) =>
+        new() { Number = number, Data = memory };
 
     public int Number { get; init; }
     public ReadOnlyMemory<byte> Data { get; init; }
