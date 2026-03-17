@@ -25,12 +25,12 @@ public class BmPs1OneShots : BaseIntegrationFixture
 {
     private static object[][] Paths => new object[][]
     {
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-eu.cue", "ps1-bm-eu"],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-eu.cue", "ps1-bm-eu"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-jp-disc1.cue", "ps1-bm-jp-disc1"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-jp-disc2.cue", "ps1-bm-jp-disc2"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm3rd.cue", "ps1-bm3rd"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm3rd-mini.cue", "ps1-bm3rd-mini"],
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm4th.cue", "ps1-bm4th"],
+        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm4th.cue", "ps1-bm4th"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm5th.cue", "ps1-bm5th"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm6th.cue", "ps1-bm6th"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmbest.cue", "ps1-bmbest"],
@@ -94,7 +94,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
         var modeTemp = new byte[0x10];
         mchDataPak.ReadExactly(modeTemp);
         var mchMode = modeTemp[0x0F];
-        
+
         //
         // Decode XA BGM. The data could be either MODE 1 or MODE 2. These require
         // different methods of splitting.
@@ -119,14 +119,18 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 mchDataPak.Position = 0;
                 var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
                 var isoSectorStreamReader = Resolve<IsoSectorStreamReader>();
-                var mchDataReader = isoSectorStreamReader.Read(mchDataPak, (int)mchDataPak.Length, true);
+
+                var mchDataReader = isoSectorStreamReader.Read(
+                    mchDataPak,
+                    (int)mchDataPak.Length,
+                    false,
+                    true,
+                    mchMode
+                );
+
                 var streamFinder = Resolve<IXaIsoStreamFinder>();
                 var mchDataSectors = mchDataReader
-                    .Select(s =>
-                    {
-                        var decodedInfo = isoInfoDecoder.Decode(s);
-                        return decodedInfo;
-                    });
+                    .Select(isoInfoDecoder.Decode);
 
                 xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors));
                 break;

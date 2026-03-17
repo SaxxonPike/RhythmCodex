@@ -17,10 +17,11 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
         return FindInternal(sectors).ToList();
     }
         
-    private List<IsoSectorInfo> FindInternal(IEnumerable<IsoSectorInfo> sectors)
+    private static List<IsoSectorInfo> FindInternal(IEnumerable<IsoSectorInfo> sectors)
     {
         var result = new List<IsoSectorInfo>();
-        var mode1Sectors = sectors.Where(s => s.Mode == 1).ToList();
+        var mode1Sectors = sectors.Where(s => s.Mode == 1 ||
+                                              s is { Mode: 2, Form: 1 }).ToList();
         var currentMinute = 0;
         var currentSecond = 2;
         var currentFrame = 16;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -12,7 +11,7 @@ namespace RhythmCodex.FileSystems.Cue.Processors;
 
 public class CueCdSectors(CueFile cue, Func<string, Stream> openFile) : IEnumerable<ICdSector>, IDisposable
 {
-    private List<(int Start, string FileName, int BytesPerSector, string Type)> _trackRanges = [];
+    private List<(int Start, string FileName, int BytesPerSector, string? Type)> _trackRanges = [];
     private readonly Dictionary<string, Stream> _streams = [];
     private readonly Dictionary<int, WeakReference<ICdSector>> _sectorCache = [];
     private readonly Mutex _mutex = new();
@@ -31,7 +30,7 @@ public class CueCdSectors(CueFile cue, Func<string, Stream> openFile) : IEnumera
             Start: track.Indices[1] + track.Pregap,
             FileName: track.FileName!,
             BytesPerSector: track.StoredBytesPerSector,
-            Type: track.Type!
+            track.Type
         )).ToList();
     }
 
@@ -42,7 +41,7 @@ public class CueCdSectors(CueFile cue, Func<string, Stream> openFile) : IEnumera
         var track = _trackRanges.FirstOrDefault(x => x.Start <= sectorNumber);
 
         if (track.FileName == null!)
-            return (null, 0, 0);
+            return default;
 
         if (_streams.TryGetValue(track.FileName, out var stream))
             return (stream, track.BytesPerSector, sectorNumber - track.Start);
@@ -59,6 +58,10 @@ public class CueCdSectors(CueFile cue, Func<string, Stream> openFile) : IEnumera
         if (stream == null || start * size > stream.Length - size)
             return null;
 
+        //
+        // Position the stream accordingly and read the sector data.
+        //
+
         stream.Position = start * size;
         var buffer = new byte[size];
 
@@ -69,6 +72,7 @@ public class CueCdSectors(CueFile cue, Func<string, Stream> openFile) : IEnumera
         };
 
         stream.ReadExactly(buffer.AsSpan());
+
         return sector;
     }
 

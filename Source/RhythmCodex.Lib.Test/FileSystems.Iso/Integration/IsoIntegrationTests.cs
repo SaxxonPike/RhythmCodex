@@ -22,7 +22,7 @@ public class IsoIntegrationTests : BaseIntegrationFixture
         var reader = Resolve<IIsoSectorStreamReader>();
         var decoder = Resolve<IIsoCdFileDecoder>();
 
-        var sectors = reader.Read(mem, (int) mem.Length, true);
+        var sectors = reader.Read(mem, (int) mem.Length, true, false, 1);
         var files = decoder.Decode(sectors);
         var file = files.First();
         using var stream = file.Open();

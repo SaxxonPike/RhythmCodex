@@ -13,7 +13,7 @@ public class CdSectorStreamReader : ICdSectorStreamReader
         if (keepOnDisk)
         {
             var reader = new BinaryReader(stream);
-            return new CdSectorOnDiskCollection((int)(length / sectorLength), i =>
+            return new DeferredCdSectorCollection((int)(length / sectorLength), i =>
             {
                 stream.Position = i * (long) sectorLength;
                 return reader.ReadBytes(sectorLength);

@@ -6,5 +6,5 @@ namespace RhythmCodex.Sounds.Xa.Heuristics;
 
 public interface IXaIsoStreamFinder
 {
-    List<XaChunk> FindMode2(IEnumerable<IsoSectorInfo> sectors);
+    IEnumerable<XaChunk> FindMode2(IEnumerable<IsoSectorInfo> sectors);
 }
