@@ -56,15 +56,15 @@ public class XaDecodeIntegrationTests : BaseIntegrationFixture
     {
         var data = File.ReadAllBytes(@"\\tamarat\Games\PS1\Beatmania Gotta Mix 2 Append.img");
 
-        var isoReader = Resolve<ICdSectorStreamReader>();
+        var isoReader = Resolve<ICdSectorCollectionFactory>();
         var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
         var decoder = Resolve<IXaDecoder>();
         var encoder = Resolve<IRiffPcm16SoundEncoder>();
         var writer = Resolve<IRiffStreamWriter>();
-        var streamFinder = Resolve<IXaIsoStreamFinder>();
+        var streamFinder = Resolve<IXaCdStreamFinder>();
             
         var streams = streamFinder.FindMode2(isoReader
-            .Read(new MemoryStream(data), data.Length, true)
+            .Read(new MemoryStream(data), data.Length)
             .Select(s => isoInfoDecoder.Decode(s)));
 
         var index = 0;

@@ -19,15 +19,15 @@ public class IsoIntegrationTests : BaseIntegrationFixture
             .Value;
         var mem = new MemoryStream(data);
 
-        var reader = Resolve<IIsoSectorStreamReader>();
+        var reader = Resolve<IIsoSectorCollectionFactory>();
         var decoder = Resolve<IIsoCdFileDecoder>();
 
-        var sectors = reader.Read(mem, (int) mem.Length, true, false, 1);
+        var sectors = reader.Read(mem, mem.Length);
         var files = decoder.Decode(sectors);
         var file = files.First();
         using var stream = file.Open();
         var fileReader = new BinaryReader(stream);
-        var output = fileReader.ReadBytes((int) file.Length);
+        var output = fileReader.ReadBytes((int)file.Length);
         File.WriteAllBytes(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 Path.GetFileName(file.Name)!), output);

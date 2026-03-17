@@ -4,7 +4,7 @@ using RhythmCodex.FileSystems.Cd.Model;
 
 namespace RhythmCodex.FileSystems.Cd.Streamers;
 
-public interface ICdSectorStreamReader
+public interface ICdSectorCollectionFactory
 {
-    IEnumerable<ICdSector> Read(Stream stream, long length, bool keepOnDisk, int sectorLength = 2352);
+    IEnumerable<ICdSector> Read(Stream stream, long length);
 }

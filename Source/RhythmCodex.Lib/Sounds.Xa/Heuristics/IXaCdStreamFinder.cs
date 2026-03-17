@@ -4,7 +4,7 @@ using RhythmCodex.Sounds.Xa.Models;
 
 namespace RhythmCodex.Sounds.Xa.Heuristics;
 
-public interface IXaIsoStreamFinder
+public interface IXaCdStreamFinder
 {
     IEnumerable<XaChunk> FindMode2(IEnumerable<IsoSectorInfo> sectors);
 }

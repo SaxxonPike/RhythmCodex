@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.FileSystems.Cd.Streamers;
 
 [NotService]
-public class CdSectorStream(IReadOnlyList<ICdSector> sectors) : Stream
+public class CdSectorStream(ICdSectorCollection sectors) : Stream
 {
     private int _sectorOffset;
     private int _sectorIndex;

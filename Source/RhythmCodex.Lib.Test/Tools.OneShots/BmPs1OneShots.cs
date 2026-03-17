@@ -95,13 +95,12 @@ public class BmPs1OneShots : BaseIntegrationFixture
         for (var i = 0; i < bmDataPak.Length - 0x7FF; i += 0x800)
         {
             bmDataPak.Position = i;
-            
+
             if (bmDataPak.Position == 0x1388000)
             {
-                
             }
 
-            
+
             bmDataPak.ReadExactly(bmDataTemp);
             if (ReadInt32LittleEndian(bmDataTemp) == ReadInt32LittleEndian(bmDataTemp[8..]) &&
                 ReadInt32LittleEndian(bmDataTemp) is > 0 and < 32768 &&
@@ -114,7 +113,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 bmDataPakFiles.AddRange(bmDataPakStreamReader.ReadEntries(bmDataPak, bmDataPakDirectory));
             }
         }
-        
+
         for (var i = 0; i < bmDataPakFiles.Count; i++)
             this.WriteFile(bmDataPakFiles[i], Path.Combine(outfolder, $"bmdata{i:000}.bin"));
 
@@ -129,6 +128,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
         var modeTemp = new byte[0x10];
         mchDataPak.ReadExactly(modeTemp);
         var mchMode = modeTemp[0x0F];
+        mchDataPak.Position = 0;
 
         //
         // Decode XA BGM. The data could be either MODE 1 or MODE 2. These require
@@ -137,32 +137,25 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         List<XaChunk> xaChunks = [];
 
+        var isoSectorsFactory = Resolve<IIsoSectorCollectionFactory>();
+        var cdSectorsFactory = Resolve<ICdSectorCollectionFactory>();
+        var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
+        var streamFinder = Resolve<IXaCdStreamFinder>();
+
         switch (mchMode)
         {
             case 1:
             {
-                using var mchDataPak2 = mchDataCdFile.Open();
-                var mchDataBytes = new byte[mchDataPak2.Length];
-                mchDataPak2.ReadExactly(mchDataBytes);
+                var mchDataSectors = isoSectorsFactory.Read(mchDataPak, mchDataPak.Length);
+                var mchDataBytes = new byte[mchDataSectors.Length];
+
                 xaChunks.AddRange(mchDataBytes.Deinterleave(0x800, 4)
                     .Select(block => new XaChunk { Data = block, Rate = 37800, Channels = 2 }));
                 break;
             }
             case 2:
             {
-                mchDataPak.Position = 0;
-                var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
-                var isoSectorStreamReader = Resolve<IIsoSectorStreamReader>();
-
-                var mchDataReader = isoSectorStreamReader.Read(
-                    mchDataPak,
-                    (int)mchDataPak.Length,
-                    false,
-                    true,
-                    mchMode
-                );
-
-                var streamFinder = Resolve<IXaIsoStreamFinder>();
+                var mchDataReader = cdSectorsFactory.Read(mchDataPak, mchDataPak.Length);
                 var mchDataSectors = mchDataReader
                     .Select(x =>
                     {
