@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Archs.Psx.Converters;
+using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Extensions;
 using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.FileSystems.Cd.Streamers;
@@ -30,14 +31,14 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-jp-disc2.cue", "ps1-bm-jp-disc2"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm3rd.cue", "ps1-bm3rd"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm3rd-mini.cue", "ps1-bm3rd-mini"],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm4th.cue", "ps1-bm4th"],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm4th.cue", "ps1-bm4th"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm5th.cue", "ps1-bm5th"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm6th.cue", "ps1-bm6th"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmbest.cue", "ps1-bmbest"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmclub.cue", "ps1-bmclub"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmdct.cue", "ps1-bmdct"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta.cue", "ps1-bmgotta"],
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta2.cue", "ps1-bmgotta2"],
+        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta2.cue", "ps1-bmgotta2"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmsot.cue", "ps1-bmsot"]
     };
 
@@ -74,14 +75,48 @@ public class BmPs1OneShots : BaseIntegrationFixture
         foreach (var file in cdFiles)
             Log.WriteLine($"    {file.Name}");
 
+        var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa");
+
         //
         // Determine where BMDATA.PAK is located on the disc and load it.
         //
 
         Log.WriteLine("Loading BMDATA.PAK");
         using var bmDataPak = cdFiles.Single(f => f.Name == "./BMDATA.PAK;1").Open();
-        var bmDataMem = new MemoryStream();
-        bmDataPak.CopyTo(bmDataMem);
+
+        //
+        // Decode BMDATA.PAK.
+        //
+
+        var bmDataPakStreamReader = Resolve<IBmDataPakStreamReader>();
+        Span<byte> bmDataTemp = stackalloc byte[16];
+        var bmDataPakFiles = new List<ReadOnlyMemory<byte>>();
+
+        for (var i = 0; i < bmDataPak.Length - 0x7FF; i += 0x800)
+        {
+            bmDataPak.Position = i;
+            
+            if (bmDataPak.Position == 0x1388000)
+            {
+                
+            }
+
+            
+            bmDataPak.ReadExactly(bmDataTemp);
+            if (ReadInt32LittleEndian(bmDataTemp) == ReadInt32LittleEndian(bmDataTemp[8..]) &&
+                ReadInt32LittleEndian(bmDataTemp) is > 0 and < 32768 &&
+                ReadInt32LittleEndian(bmDataTemp[4..]) is > 0 and < 1024 &&
+                ReadInt32LittleEndian(bmDataTemp[8..]) is > 0 and < 32768 &&
+                ReadInt32LittleEndian(bmDataTemp[12..]) > 0)
+            {
+                bmDataPak.Position = i;
+                var bmDataPakDirectory = bmDataPakStreamReader.ReadDirectory(bmDataPak);
+                bmDataPakFiles.AddRange(bmDataPakStreamReader.ReadEntries(bmDataPak, bmDataPakDirectory));
+            }
+        }
+        
+        for (var i = 0; i < bmDataPakFiles.Count; i++)
+            this.WriteFile(bmDataPakFiles[i], Path.Combine(outfolder, $"bmdata{i:000}.bin"));
 
         //
         // Determine where MCHDATA.PAK is located on the disc and load it.
@@ -110,15 +145,14 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 var mchDataBytes = new byte[mchDataPak2.Length];
                 mchDataPak2.ReadExactly(mchDataBytes);
                 xaChunks.AddRange(mchDataBytes.Deinterleave(0x800, 4)
-                    .Select(block => new XaChunk { Data = block, Rate = 37800, Channels = 1 }));
-
+                    .Select(block => new XaChunk { Data = block, Rate = 37800, Channels = 2 }));
                 break;
             }
             case 2:
             {
                 mchDataPak.Position = 0;
                 var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
-                var isoSectorStreamReader = Resolve<IsoSectorStreamReader>();
+                var isoSectorStreamReader = Resolve<IIsoSectorStreamReader>();
 
                 var mchDataReader = isoSectorStreamReader.Read(
                     mchDataPak,
@@ -130,7 +164,15 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
                 var streamFinder = Resolve<IXaIsoStreamFinder>();
                 var mchDataSectors = mchDataReader
-                    .Select(isoInfoDecoder.Decode);
+                    .Select(x =>
+                    {
+                        // var newData = x.Data.ToArray();
+                        // newData[0x0F] = 0x02;
+                        // newData[0x12] |= 0x20;
+                        // var info = isoInfoDecoder.Decode(x.Number, x.Data);
+                        // return info;
+                        return isoInfoDecoder.Decode(x);
+                    });
 
                 xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors));
                 break;
@@ -151,14 +193,13 @@ public class BmPs1OneShots : BaseIntegrationFixture
             {
                 sound![NumericData.Rate] = xa.Rate;
                 var encoded = encoder.Encode(sound);
-                var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa");
                 if (!Directory.Exists(outfolder))
                     Directory.CreateDirectory(outfolder);
 
                 using var outStream = new MemoryStream();
                 writer.Write(outStream, encoded);
                 outStream.Flush();
-                File.WriteAllBytes(Path.Combine(outfolder, $"{index:000}.wav"), outStream.ToArray());
+                File.WriteAllBytes(Path.Combine(outfolder, $"mchdata{index:000}.wav"), outStream.ToArray());
                 index++;
             }
         }

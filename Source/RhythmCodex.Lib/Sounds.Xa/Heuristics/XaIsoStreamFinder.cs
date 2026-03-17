@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using RhythmCodex.FileSystems.Iso.Model;
 using RhythmCodex.Infrastructure;
@@ -13,7 +14,8 @@ public class XaIsoStreamFinder : IXaIsoStreamFinder
     public IEnumerable<XaChunk> FindMode2(IEnumerable<IsoSectorInfo> sectors)
     {
         var mode2Sectors = sectors
-            .Where(s => s.Mode == 2);
+            .Where(s => s.Mode == 2)
+            .ToList();
 
         var currentStreams = new Dictionary<int, List<IsoSectorInfo>>();
 
@@ -29,9 +31,6 @@ public class XaIsoStreamFinder : IXaIsoStreamFinder
 
             if (sector.IsAudio ?? false)
                 currentStream.Add(sector);
-
-            else if (CreateChunk(currentStream) is { } chunk)
-                yield return chunk;
         }
 
         foreach (var (_, val) in currentStreams)
