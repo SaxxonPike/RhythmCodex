@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Vag.Models;
@@ -27,19 +25,17 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
 
         var states = Enumerable.Range(0, channels).Select(_ => new XaState()).ToList();
         var samples = Enumerable.Range(0, channels).Select(_ => new SampleBuilder()).ToList();
+        var data = chunk.Data.Span;
 
-        using (var mem = new ReadOnlyMemoryStream(chunk.Data))
-        using (var reader = new BinaryReader(mem))
+        for (var offset = 0; offset < data.Length - 0x7F; offset += 0x80)
         {
-            for (var offset = 0; offset < mem.Length - 0x7F; offset += 0x80)
+            var frame = data.Slice(offset, 0x80);
+
+            for (var c = 0; c < 8; c++)
             {
-                var frame = reader.ReadBytes(0x80);
-                for (var c = 0; c < 8; c++)
-                {
-                    var ch = c % channels;
-                    DecodeFrame(frame, buffer, c, states[ch]);
-                    samples[ch].Append(buffer);
-                }
+                var ch = c % channels;
+                DecodeFrame(frame, buffer, c, states[ch]);
+                samples[ch].Append(buffer);
             }
         }
 
@@ -63,7 +59,7 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
         var k1 = K1[filter];
         var p1 = state.Prev1;
         var p2 = state.Prev2;
-        var dataBuffer = new int[28];
+        Span<byte> dataBuffer = new byte[28];
         xaFrameSplitter.Get4BitData(frame, dataBuffer, channel);
 
         for (var i = 0; i < 28; i++)
@@ -81,7 +77,6 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
             buffer[i] = p0 / 32768f;
             p2 = p1;
             p1 = p0;
-            i++;
         }
 
         state.Prev1 = p1;

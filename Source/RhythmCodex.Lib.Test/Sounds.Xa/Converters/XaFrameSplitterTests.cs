@@ -91,9 +91,9 @@ public class XaFrameSplitterTests : BaseUnitTestFixture<XaFrameSplitter, IXaFram
     [TestCaseSource(nameof(Frame1Data))]
     public void Get4BitData_ShouldRetrieveCorrectDataStreams(byte[] frame, int channel, int expectedStatus, byte[] expectedData)
     {
-        var buffer = new int[28];
+        var buffer = new byte[28];
         Subject.GetStatus(frame, channel).ShouldBe(expectedStatus);
         Subject.Get4BitData(frame, buffer, channel);
-        buffer.Select(b => (byte)b).ShouldBe(expectedData);
+        buffer.ShouldBe(expectedData);
     }
 }
