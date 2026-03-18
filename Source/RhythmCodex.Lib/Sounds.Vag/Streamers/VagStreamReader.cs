@@ -58,6 +58,7 @@ public class VagStreamReader : IVagStreamReader
                         blank = true;
                     }
 
+                    output.Write(cursor[..0x10]);
                     cursor = cursor[0x10..];
                 }
             }

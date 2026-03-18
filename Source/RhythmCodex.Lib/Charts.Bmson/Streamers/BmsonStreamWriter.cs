@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using RhythmCodex.Charts.Bmson.Model;
 using RhythmCodex.IoC;
 
@@ -12,7 +13,8 @@ public class BmsonStreamWriter : IBmsonStreamWriter
     {
         JsonSerializer.Serialize(target, file, new JsonSerializerOptions
         {
-            WriteIndented = true
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         });
     }
 }

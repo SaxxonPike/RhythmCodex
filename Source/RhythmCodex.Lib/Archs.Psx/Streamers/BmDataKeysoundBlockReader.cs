@@ -43,6 +43,8 @@ public class BmDataKeysoundBlockReader : IBmDataKeysoundBlockReader
         var address = ReadInt32BigEndian(patchHeader);
         var length = ReadInt32BigEndian(patchHeader[4..]);
         var data = new byte[length];
+        
+        stream.ReadExactly(data);
 
         return new BmDataKeysoundBlockPatch
         {

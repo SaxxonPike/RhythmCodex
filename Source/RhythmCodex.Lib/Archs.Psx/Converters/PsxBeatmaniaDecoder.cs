@@ -3,17 +3,31 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Archs.Djmain.Converters;
+using RhythmCodex.Archs.Djmain.Model;
+using RhythmCodex.Archs.Djmain.Streamers;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Archs.Psx.Streamers;
+using RhythmCodex.Charts.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
 [Service]
-public sealed class PsxBeatmaniaDecoder(IBmDataStreamReader bmDataStreamReader)
-    : IPsxBeatmaniaDecoder
+public sealed class PsxBeatmaniaDecoder(
+    IBmDataStreamReader bmDataStreamReader,
+    IDjmainChartEventStreamReader chartEventStreamReader,
+    IDjmainChartDecoder djmainChartDecoder
+) : IPsxBeatmaniaDecoder
 {
+    public Chart DecodeChart(Stream source)
+    {
+        var events = chartEventStreamReader.Read(source);
+        var chart = djmainChartDecoder.Decode(events, DjmainChartType.Beatmania, false);
+        return chart;
+    }
+
     public List<BmDataFile> DecodeBmData(Stream source, long length)
     {
         using var memOwner = MemoryPool<byte>.Shared.Rent((int)length);
@@ -23,6 +37,7 @@ public sealed class PsxBeatmaniaDecoder(IBmDataStreamReader bmDataStreamReader)
 
         Span<byte> temp = stackalloc byte[16];
         var files = new List<BmDataFile>();
+        var fileIdx = 0;
 
         for (var i = 0; i < pak.Length - 0x7FF; i += 0x800)
         {
@@ -41,9 +56,11 @@ public sealed class PsxBeatmaniaDecoder(IBmDataStreamReader bmDataStreamReader)
                     pak.Position = i;
                     var bmDataPakDirectory = bmDataStreamReader.ReadDirectory(pak);
                     var bmFiles = bmDataStreamReader.ReadEntries(pak, bmDataPakDirectory);
-                    files.AddRange(bmFiles.Select((x, i) => CreateFile(x, i) with
+                    files.AddRange(bmFiles.Select((x, idx) => CreateFile(x) with
                     {
-                        Group = i
+                        Index = fileIdx++,
+                        Group = i,
+                        GroupIndex = idx
                     }));
                 }
                 catch
@@ -56,7 +73,7 @@ public sealed class PsxBeatmaniaDecoder(IBmDataStreamReader bmDataStreamReader)
         return files;
     }
 
-    private static BmDataFile CreateFile(ReadOnlyMemory<byte> data, int index)
+    private static BmDataFile CreateFile(ReadOnlyMemory<byte> data)
     {
         var span = data.Span;
         var type = BmDataPakEntryType.Unknown;
@@ -81,7 +98,6 @@ public sealed class PsxBeatmaniaDecoder(IBmDataStreamReader bmDataStreamReader)
 
         return new BmDataFile
         {
-            Index = index,
             Data = data,
             Type = type
         };

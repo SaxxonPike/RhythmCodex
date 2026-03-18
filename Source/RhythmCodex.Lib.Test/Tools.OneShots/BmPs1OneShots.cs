@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using RhythmCodex.Archs.Djmain.Converters;
+using RhythmCodex.Archs.Djmain.Streamers;
 using RhythmCodex.Archs.Psx.Converters;
+using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Archs.Psx.Streamers;
+using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.FileSystems.Cd.Streamers;
 using RhythmCodex.FileSystems.Cue.Processors;
 using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Riff.Converters;
 using RhythmCodex.Sounds.Riff.Streamers;
@@ -34,8 +40,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmclub.cue", "ps1-bmclub"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmdct.cue", "ps1-bmdct"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta.cue", "ps1-bmgotta"],
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta2.cue", "ps1-bmgotta2"],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmsot.cue", "ps1-bmsot"]
+        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta2.cue", "ps1-bmgotta2"],
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmsot.cue", "ps1-bmsot"]
     };
 
     /// <summary>
@@ -46,8 +52,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target)
     {
-        // const bool extractAudio = true;
-        // const bool extractCharts = true;
+        const bool extractAudio = true;
+        const bool extractCharts = true;
         // const bool extractRawBlock = false;
 
         //
@@ -87,8 +93,82 @@ public class BmPs1OneShots : BaseIntegrationFixture
         var psxBeatmaniaDecoder = Resolve<IPsxBeatmaniaDecoder>();
         var bmDataPakFiles = psxBeatmaniaDecoder.DecodeBmData(bmDataPak, bmDataPak.Length);
 
-        // for (var i = 0; i < bmDataPakFiles.Count; i++)
-        //     this.WriteFile(bmDataPakFiles[i], Path.Combine(outfolder, $"bmdata{i:000}.bin"));
+        if (extractCharts)
+        {
+            //
+            // Convert charts.
+            //
+
+            var bmDataCharts = bmDataPakFiles
+                .Where(f => f.Type == BmDataPakEntryType.Chart)
+                .Select(f =>
+                {
+                    using var chartStream = new ReadOnlyMemoryStream(f.Data);
+                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
+                    chart[NumericData.Id] = f.Index;
+                    return chart;
+                });
+
+            //
+            // Save charts.
+            //
+
+            foreach (var chart in bmDataCharts)
+            {
+                var chartId = $"{(int)chart[NumericData.Id]!.Value:d4}";
+
+                this.WriteSetCharts(new TestHelper.WriteSetConfig
+                {
+                    Charts = [chart],
+                    ChartSetId = 0,
+                    OutPath = Path.Combine(target),
+                    ChartType = BmsChartType.Beatmania,
+                    RemapSounds = false,
+                    Title = chartId
+                });
+            }
+        }
+
+        if (extractAudio)
+        {
+            //
+            // Convert keysound folders.
+            //
+
+            var bmDataKeysoundBlockReader = Resolve<IBmDataKeysoundBlockReader>();
+            var bmDataKeysoundBlockDecoder = Resolve<IBmDataKeysoundBlockDecoder>();
+            var bmDataKeysoundDecoder = Resolve<IBmDataKeysoundDecoder>();
+
+            var bmDataKeysoundSets = bmDataPakFiles
+                .Where(f => f.Type == BmDataPakEntryType.Keysound)
+                .Select(f =>
+                {
+                    var keysoundBlockStream = new ReadOnlyMemoryStream(f.Data);
+                    var keysoundBlock = bmDataKeysoundBlockReader.Read(keysoundBlockStream);
+                    var keysounds = bmDataKeysoundBlockDecoder.Decode(keysoundBlock);
+
+                    return (
+                        f.Index,
+                        Sounds: keysounds.Select(x =>
+                        {
+                            var sound = bmDataKeysoundDecoder.Decode(x);
+                            sound[NumericData.Id] = x.Index;
+                            return sound;
+                        }).ToList()
+                    );
+                });
+
+            foreach (var keysoundSet in bmDataKeysoundSets)
+            {
+                this.WriteSetSounds(new TestHelper.WriteSetConfig
+                {
+                    Sounds = keysoundSet.Sounds,
+                    OutPath = Path.Combine(target, $"{keysoundSet.Index:d4}"),
+                    RemapSounds = false,
+                    ResampleSounds = false
+                });
+            }
+        }
 
         //
         // Determine where MCHDATA.PAK is located on the disc and load it.

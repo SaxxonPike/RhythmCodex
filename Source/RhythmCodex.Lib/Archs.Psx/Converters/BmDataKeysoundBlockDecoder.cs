@@ -15,25 +15,24 @@ public class BmDataKeysoundBlockDecoder(IVagStreamReader vagStreamReader)
     {
         //
         // The keysound block consists of patches that are applied to
-        // a 512 kilobyte address space.
+        // an address space.
         //
 
-        var ram = new byte[0x80000];
+        var ram = new byte[0x200000];
 
         foreach (var patch in block.Patches)
             patch.Data.Span.CopyTo(ram.AsSpan(patch.Address));
 
         //
-        // Once applied, parse the keysound table. Since the table
-        // is 2 kilobytes, and an entry is 16 bytes, we have 128 entries.
+        // Once applied, parse the keysound table.
         //
 
-        const int count = 128;
+        const int count = 256;
         var infos = new Dictionary<int, BmDataKeysoundInfo>();
 
         for (var i = 0; i < count; i++)
         {
-            var bytes = ram.AsSpan(0x800 + (i << 4), 16);
+            var bytes = ram.AsSpan(i << 4, 16);
 
             var info = new BmDataKeysoundInfo
             {
@@ -75,7 +74,7 @@ public class BmDataKeysoundBlockDecoder(IVagStreamReader vagStreamReader)
             {
                 result.Add(new BmDataKeysound
                 {
-                    Index = id,
+                    Index = id + 2,
                     Info = info,
                     Data = audio.Data
                 });

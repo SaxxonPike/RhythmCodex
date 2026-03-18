@@ -34,17 +34,18 @@ public static class TestHelper
 
     public class WriteSetConfig
     {
-        public IEnumerable<Chart> Charts { get; set; }
-        public IEnumerable<Sound> Sounds { get; set; }
+        public IEnumerable<Chart> Charts { get; set; } = [];
+        public IEnumerable<Sound> Sounds { get; set; } = [];
         public int ChartSetId { get; set; }
         public required string OutPath { get; set; }
-        public required string Title { get; set; }
+        public string? Title { get; set; }
         public BmsChartType ChartType { get; set; }
         public bool WriteBms { get; set; }
         public bool WriteBmson { get; set; } = true;
         public bool WriteSounds { get; set; } = true;
         public bool WriteCharts { get; set; } = true;
         public bool ResampleSounds { get; set; }
+        public bool RemapSounds { get; set; } = true;
     }
 
     private class WriteSetSoundsResult
@@ -183,7 +184,13 @@ public static class TestHelper
             }
         }
 
-        private WriteSetSoundsResult WriteSetSounds(WriteSetConfig config)
+        public Dictionary<(int SampleMap, int Index), string> WriteSetSounds(WriteSetConfig config)
+        {
+            var result = resolver.WriteSetSoundsInternal(config);
+            return result.Map.ToDictionary(k => k.Key, k => result.HashMap[k.Value]);
+        }
+
+        private WriteSetSoundsResult WriteSetSoundsInternal(WriteSetConfig config)
         {
             var soundHashFileMap = new ConcurrentDictionary<int, string>();
             var soundMap = new Dictionary<(int SampleMap, int Index), int>();
@@ -243,7 +250,10 @@ public static class TestHelper
             };
         }
 
-        private void WriteSetCharts(WriteSetConfig config, WriteSetSoundsResult soundsResult)
+        public void WriteSetCharts(WriteSetConfig config) => 
+            resolver.WriteSetChartsInternal(config, new WriteSetSoundsResult());
+
+        private void WriteSetChartsInternal(WriteSetConfig config, WriteSetSoundsResult soundsResult)
         {
             var soundMap = soundsResult.Map;
             var soundHashFileMap = soundsResult.HashMap;
@@ -275,7 +285,9 @@ public static class TestHelper
                     modeHint = $"{modeHint}-fp";
 
                 chart.PopulateMetricOffsets(normalizeMeasures: false);
-                chart[StringData.Title] = config.Title;
+
+                if (config.Title != null)
+                    chart[StringData.Title] = config.Title;
 
                 var performances = config.WriteCharts
                     ? chart.Events
@@ -307,11 +319,14 @@ public static class TestHelper
                         {
                             WavNameTransformer = i =>
                             {
-                                if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
-                                    !soundHashFileMap.TryGetValue(sm, out var fileName))
+                                string? fileName = null;
+
+                                if (config.RemapSounds &&
+                                    (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
+                                     !soundHashFileMap.TryGetValue(sm, out fileName)))
                                     return null;
 
-                                return fileName;
+                                return fileName ?? $"{i:D4}.wav";
                             },
                             ChartType = config.ChartType,
                             ModeHint = modeHint,
@@ -330,11 +345,14 @@ public static class TestHelper
                         {
                             WavNameTransformer = i =>
                             {
-                                if (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
-                                    !soundHashFileMap.TryGetValue(sm, out var fileName))
+                                string? fileName = null;
+
+                                if (config.RemapSounds &&
+                                    (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
+                                     !soundHashFileMap.TryGetValue(sm, out fileName)))
                                     return null;
 
-                                return fileName;
+                                return fileName ?? $"{i:D4}.wav";
                             },
                             ChartType = config.ChartType
                         }));
@@ -347,8 +365,8 @@ public static class TestHelper
 
         public void WriteSet(WriteSetConfig config)
         {
-            var soundResult = resolver.WriteSetSounds(config);
-            resolver.WriteSetCharts(config, soundResult);
+            var soundResult = resolver.WriteSetSoundsInternal(config);
+            resolver.WriteSetChartsInternal(config, soundResult);
         }
     }
 
