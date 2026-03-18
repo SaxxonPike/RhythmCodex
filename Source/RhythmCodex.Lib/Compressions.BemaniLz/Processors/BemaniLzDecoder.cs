@@ -15,12 +15,12 @@ public class BemaniLzDecoder(ILogger logger) : IBemaniLzDecoder
     {
         var mem = new MemoryStream();
         var writer = new BinaryWriter(mem);
+        Span<byte> buffer = stackalloc byte[BufferSize];
 
         try
         {
             var reader = new BinaryReader(source);
 
-            var buffer = new byte[BufferSize];
             var bufferOffset = 0;
             var control = 0; // used as flags
             var distance = 0; // used as a byte-distance

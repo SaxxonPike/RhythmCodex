@@ -62,7 +62,7 @@ public class IsoCdFileDecoder(
 
                         return isoSectorStreamFactory.OpenRaw(
                             cdSectors.GetRange(extentSector),
-                            (entry.DataLength + 2047) / 2048 * 2352);
+                            (entry.DataLength + CdSector.CookedSectorSize - 1) / CdSector.CookedSectorSize * 2352);
                     }
 
                     Stream OpenFormatted()

@@ -34,12 +34,12 @@ public class VagStreamReader : IVagStreamReader
     {
         var ended = false;
         var total = channels * interleave;
-        var block = new byte[total];
+        var block = total <= short.MaxValue ? stackalloc byte[total] : new byte[total];
         var output = new MemoryStream();
 
         while (!ended)
         {
-            var cursor = block.AsSpan();
+            var cursor = block;
             stream.ReadAtLeast(cursor, total, false);
 
             for (var c = 0; c < channels; c++)

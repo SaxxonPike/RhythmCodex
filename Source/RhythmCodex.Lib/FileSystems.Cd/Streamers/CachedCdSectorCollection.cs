@@ -6,6 +6,9 @@ using RhythmCodex.FileSystems.Cd.Model;
 
 namespace RhythmCodex.FileSystems.Cd.Streamers;
 
+/// <summary>
+/// Wraps a cache around a collection of CD sectors.
+/// </summary>
 public class CachedCdSectorCollection(ICdSectorCollection sectors)
     : ICdSectorCollection
 {

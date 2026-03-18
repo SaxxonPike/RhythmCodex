@@ -59,7 +59,7 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
         var k1 = K1[filter];
         var p1 = state.Prev1;
         var p2 = state.Prev2;
-        Span<byte> dataBuffer = new byte[28];
+        Span<byte> dataBuffer = stackalloc byte[28];
         xaFrameSplitter.Get4BitData(frame, dataBuffer, channel);
 
         for (var i = 0; i < 28; i++)

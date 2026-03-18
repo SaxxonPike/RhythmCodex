@@ -1,14 +1,16 @@
 using System;
+using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.FileSystems.Cd.Model;
 
 public class CdSector : ICdSector
 {
-    private static readonly Lazy<ReadOnlyMemory<byte>> EmptyData = new(() => new byte[2352]);
+    public const int RawSectorSize = 2352;
+    public const int CookedSectorSize = 2048;
 
     public static CdSector Empty(int number, int sectorSize) =>
-        new() { Number = number, Data = EmptyData.Value[..sectorSize] };
-    
+        new() { Number = number, Data = ZeroMemory.MemoryInstance(sectorSize) };
+
     public static CdSector FromMemory(int number, ReadOnlyMemory<byte> memory) =>
         new() { Number = number, Data = memory };
 

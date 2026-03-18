@@ -15,7 +15,7 @@ public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
             Number = sector.Number,
             Data = sector.Data,
             UserDataOffset = 0, 
-            UserDataLength = 2352
+            UserDataLength = CdSector.RawSectorSize
         };
 
         var data = sector.Data.Span;
@@ -45,7 +45,7 @@ public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
         {
             case 0x01:
                 result.UserDataOffset = 16;
-                result.UserDataLength = 2048;
+                result.UserDataLength = CdSector.CookedSectorSize;
                 result.EdcOffset = 2064;
                 result.EccOffset = 2072;
                 break;
@@ -98,7 +98,7 @@ public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
                 switch (result.Form ?? 1)
                 {
                     case 1:
-                        result.UserDataLength = 2048;
+                        result.UserDataLength = CdSector.CookedSectorSize;
                         result.EdcOffset = 2072;
                         result.EccOffset = 2076;
                         break;

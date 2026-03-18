@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Psx.Streamers;
 
 [Service]
-public class BmDataPakStreamReader : IBmDataPakStreamReader
+public sealed class BmDataPakStreamReader : IBmDataPakStreamReader
 {
     public List<BmDataPakEntry> ReadDirectory(Stream stream)
     {

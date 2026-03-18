@@ -17,14 +17,12 @@ public class VagEncrypter : IVagEncrypter
         var inOffset = 0;
         var outOffset = 0;
         var maxOffset = length - 27;
-        var frameDiff = new double[filterCount * magnitudeCount];
-        var frameDiffSpan = frameDiff.AsSpan();
-        var workBuffer = new byte[16 * filterCount * magnitudeCount];
-        var workBufferSpan = workBuffer.AsSpan();
-        var last0Buffer = new int[filterCount * magnitudeCount];
-        var last1Buffer = new int[filterCount * magnitudeCount];
-        var filterMagnitude = new int[filterCount];
-        var inputSampleBuffer = new int[28];
+        Span<double> frameDiff = stackalloc double[filterCount * magnitudeCount];
+        Span<byte> workBuffer = stackalloc byte[16 * filterCount * magnitudeCount];
+        Span<int> last0Buffer = stackalloc int[filterCount * magnitudeCount];
+        Span<int> last1Buffer = stackalloc int[filterCount * magnitudeCount];
+        Span<int> filterMagnitude = stackalloc int[filterCount];
+        Span<int> inputSampleBuffer = stackalloc int[28];
         var lastOutOffset = -16;
 
         while (inOffset < maxOffset)
@@ -32,11 +30,11 @@ public class VagEncrypter : IVagEncrypter
             var inBuffer = input[inOffset..];
             var outBuffer = output[outOffset..];
 
-            workBufferSpan.Clear();
-            frameDiffSpan.Clear();
+            workBuffer.Clear();
+            frameDiff.Clear();
 
             for (var index = 0; index < 28; index++)
-                inputSampleBuffer[index] = (int) (inBuffer[index] * 32768f);
+                inputSampleBuffer[index] = (int)(inBuffer[index] * 32768f);
 
             for (var filter = 0; filter < filterCount; filter++)
             {
@@ -49,7 +47,7 @@ public class VagEncrypter : IVagEncrypter
                     var workBufferIndex = diffIndex * 16;
                     var last0 = statePrev0;
                     var last1 = statePrev1;
-                    workBuffer[workBufferIndex] = unchecked((byte) (magnitude | (filter << 4)));
+                    workBuffer[workBufferIndex] = unchecked((byte)(magnitude | (filter << 4)));
                     for (var index = 0; index < 28; index++)
                     {
                         var filter0 = last0 * coeff0;
@@ -71,7 +69,7 @@ public class VagEncrypter : IVagEncrypter
 
                         var shift = (index & 1) << 2;
                         var workIndex = 2 + (index >> 1);
-                        workBuffer[workBufferIndex + workIndex] |= unchecked((byte) (nybble << shift));
+                        workBuffer[workBufferIndex + workIndex] |= unchecked((byte)(nybble << shift));
 
                         last1 = last0;
                         last0 = encodedSample;
@@ -101,15 +99,15 @@ public class VagEncrypter : IVagEncrypter
             }
 
             // Write out the best frame.
-            workBufferSpan.Slice(bestFrameDiffIndex * 16, 16).CopyTo(outBuffer);
-                
+            workBuffer.Slice(bestFrameDiffIndex * 16, 16).CopyTo(outBuffer);
+
             // If the frame is empty, write out 0x0C for filter/magnitude.
             if ((outBuffer[0] & 0xF0) == 0x00)
             {
                 var isEmptyFrame = true;
                 for (var i = 2; i < 16; i++)
                 {
-                    if (outBuffer[i] == 0) 
+                    if (outBuffer[i] == 0)
                         continue;
 
                     isEmptyFrame = false;
@@ -119,7 +117,7 @@ public class VagEncrypter : IVagEncrypter
                 if (isEmptyFrame)
                     outBuffer[0] = 0x0C;
             }
-                
+
             statePrev1 = last1Buffer[bestFrameDiffIndex];
             statePrev0 = last0Buffer[bestFrameDiffIndex];
             lastOutOffset = outOffset;

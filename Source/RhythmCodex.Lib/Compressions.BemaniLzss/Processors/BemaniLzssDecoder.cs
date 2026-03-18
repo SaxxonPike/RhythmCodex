@@ -16,7 +16,7 @@ public class BemaniLzssDecoder : IBemaniLzssDecoder
         using var mem = new MemoryStream();
         var writer = new BinaryWriter(mem);
         var reader = new BinaryReader(source);
-        var buffer = new byte[BufferSize];
+        Span<byte> buffer = stackalloc byte[BufferSize];
         var bufferOffset = 0;
 
         var control = 0;

@@ -23,7 +23,7 @@ public class BemaniLzss2Decoder : IBemaniLzss2Decoder
 
     private Memory<byte> Decompress(Stream source, int length, int decompLength, BemaniLzss2Properties props)
     {
-        var ring = new byte[props.RingBufferSize];
+        Span<byte> ring = stackalloc byte[props.RingBufferSize];
         var ringPos = props.RingBufferOffset;
         var controlWord = 1;
         var controlBitsLeft = 0;

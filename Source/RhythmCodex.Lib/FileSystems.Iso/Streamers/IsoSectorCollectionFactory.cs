@@ -7,12 +7,12 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.FileSystems.Iso.Streamers;
 
 [Service]
-public sealed class IsoSectorCollectionFactory(IIsoSectorExpander isoSectorExpander)
+public sealed class IsoSectorCollectionFactory(IIsoSectorConverter isoSectorConverter)
     : IIsoSectorCollectionFactory
 {
     public ICdSectorCollection Create(Stream stream, long length)
     {
-        var collection = new IsoCdSectorCollection(stream, isoSectorExpander);
+        var collection = new IsoCdSectorCollection(stream, isoSectorConverter);
         return new CachedCdSectorCollection(collection);
     }
 }

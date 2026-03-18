@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.FileSystems.Cd.Model;
+using RhythmCodex.FileSystems.Iso.Helpers;
 using RhythmCodex.FileSystems.Iso.Processors;
 
 namespace RhythmCodex.FileSystems.Iso.Streamers;
 
-public sealed class IsoCdSectorCollection(Stream stream, IIsoSectorExpander isoSectorExpander)
+public sealed class IsoCdSectorCollection(Stream stream, IIsoSectorConverter isoSectorConverter)
     : ICdSectorCollection
 {
-    private sealed class IsoCdSector(int number, Stream stream, IIsoSectorExpander isoSectorExpander) : ICdSector
+    private sealed class IsoCdSector(int number, Stream stream, IIsoSectorConverter isoSectorConverter) : ICdSector
     {
         public int Number { get; } = number;
 
@@ -19,27 +20,27 @@ public sealed class IsoCdSectorCollection(Stream stream, IIsoSectorExpander isoS
         {
             get
             {
-                Span<byte> data = stackalloc byte[2048];
-                stream.Position = (long)Number * 2048;
+                Span<byte> data = stackalloc byte[CdSector.CookedSectorSize];
+                stream.Position = (long)Number * CdSector.CookedSectorSize;
                 stream.ReadExactly(data);
-                return isoSectorExpander.Expand2048To2352(Number / 4500, Number / 75 % 60, Number % 75, 1, data);
+                return isoSectorConverter.ConvertCookedToRawSector(Number, data);
             }
         }
     }
 
     public IEnumerator<ICdSector> GetEnumerator() =>
         Enumerable.Range(0, Count)
-            .Select(i => new IsoCdSector(i, stream, isoSectorExpander))
+            .Select(i => new IsoCdSector(i, stream, isoSectorConverter))
             .GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() =>
         GetEnumerator();
 
     public int Count =>
-        (int)(stream.Length / 2048);
+        (int)(stream.Length / CdSector.CookedSectorSize);
 
     public ICdSector this[int index] =>
-        new IsoCdSector(index, stream, isoSectorExpander);
+        new IsoCdSector(index, stream, isoSectorConverter);
 
-    public long Length => Count * 2352;
+    public long Length => Count * CdSector.RawSectorSize;
 }

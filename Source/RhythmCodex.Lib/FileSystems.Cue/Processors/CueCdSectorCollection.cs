@@ -143,5 +143,5 @@ public class CueCdSectorCollection(CueFile cue, Func<string, Stream> openFile) :
     public ICdSector this[int index] =>
         GetOrCacheSector(index)!;
 
-    public long Length => Count * 2352L;
+    public long Length => Count * (long)CdSector.RawSectorSize;
 }
