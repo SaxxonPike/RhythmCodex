@@ -64,7 +64,7 @@ public class XaDecodeIntegrationTests : BaseIntegrationFixture
         var streamFinder = Resolve<IXaCdStreamFinder>();
             
         var streams = streamFinder.FindMode2(isoReader
-            .Read(new MemoryStream(data), data.Length)
+            .Create(new MemoryStream(data), data.Length)
             .Select(s => isoInfoDecoder.Decode(s)));
 
         var index = 0;

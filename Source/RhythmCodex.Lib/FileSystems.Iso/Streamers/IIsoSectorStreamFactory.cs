@@ -6,8 +6,8 @@ namespace RhythmCodex.FileSystems.Iso.Streamers;
 
 public interface IIsoSectorStreamFactory
 {
-    Stream Open(IEnumerable<ICdSector> sectors);
-    Stream Open(IEnumerable<ICdSector> sectors, long length);
-    Stream OpenRaw(IEnumerable<ICdSector> sectors);
-    Stream OpenRaw(IEnumerable<ICdSector> sectors, long length);
+    Stream Open(ICdSectorCollection sectors);
+    Stream Open(ICdSectorCollection sectors, long length);
+    Stream OpenRaw(ICdSectorCollection sectors);
+    Stream OpenRaw(ICdSectorCollection sectors, long length);
 }

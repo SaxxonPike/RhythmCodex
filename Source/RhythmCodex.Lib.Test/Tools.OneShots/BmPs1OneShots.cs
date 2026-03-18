@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Archs.Psx.Converters;
 using RhythmCodex.Archs.Psx.Streamers;
-using RhythmCodex.Extensions;
-using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.FileSystems.Cd.Streamers;
 using RhythmCodex.FileSystems.Cue.Processors;
 using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
-using RhythmCodex.FileSystems.Iso.Streamers;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Riff.Converters;
 using RhythmCodex.Sounds.Riff.Streamers;
@@ -38,8 +34,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmclub.cue", "ps1-bmclub"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmdct.cue", "ps1-bmdct"],
         // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta.cue", "ps1-bmgotta"],
-        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta2.cue", "ps1-bmgotta2"],
-        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmsot.cue", "ps1-bmsot"]
+        // ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta2.cue", "ps1-bmgotta2"],
+        ["/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmsot.cue", "ps1-bmsot"]
     };
 
     /// <summary>
@@ -66,7 +62,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
         var track = cue.Tracks.Single();
         track.FileType.ShouldBe("BINARY");
 
-        using var sectors = new CueCdSectors(cue, f => File.OpenRead(Path.Combine(cueFolder!, f)));
+        using var sectors = new CueCdSectorCollection(cue, f => File.OpenRead(Path.Combine(cueFolder!, f)));
         var cdFileDecoder = Resolve<IIsoCdFileDecoder>();
 
         var cdFiles = cdFileDecoder.Decode(sectors);
@@ -75,7 +71,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
         foreach (var file in cdFiles)
             Log.WriteLine($"    {file.Name}");
 
-        var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xa");
+        var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), target);
 
         //
         // Determine where BMDATA.PAK is located on the disc and load it.
@@ -96,21 +92,25 @@ public class BmPs1OneShots : BaseIntegrationFixture
         {
             bmDataPak.Position = i;
 
-            if (bmDataPak.Position == 0x1388000)
-            {
-            }
-
-
             bmDataPak.ReadExactly(bmDataTemp);
+
             if (ReadInt32LittleEndian(bmDataTemp) == ReadInt32LittleEndian(bmDataTemp[8..]) &&
                 ReadInt32LittleEndian(bmDataTemp) is > 0 and < 32768 &&
                 ReadInt32LittleEndian(bmDataTemp[4..]) is > 0 and < 1024 &&
                 ReadInt32LittleEndian(bmDataTemp[8..]) is > 0 and < 32768 &&
                 ReadInt32LittleEndian(bmDataTemp[12..]) > 0)
             {
-                bmDataPak.Position = i;
-                var bmDataPakDirectory = bmDataPakStreamReader.ReadDirectory(bmDataPak);
-                bmDataPakFiles.AddRange(bmDataPakStreamReader.ReadEntries(bmDataPak, bmDataPakDirectory));
+                try
+                {
+                    bmDataPak.Position = i;
+                    var bmDataPakDirectory = bmDataPakStreamReader.ReadDirectory(bmDataPak);
+                    var bmFiles = bmDataPakStreamReader.ReadEntries(bmDataPak, bmDataPakDirectory);
+                    bmDataPakFiles.AddRange(bmFiles);
+                }
+                catch
+                {
+                    // No action taken.
+                }
             }
         }
 
@@ -131,43 +131,39 @@ public class BmPs1OneShots : BaseIntegrationFixture
         mchDataPak.Position = 0;
 
         //
-        // Decode XA BGM. The data could be either MODE 1 or MODE 2. These require
-        // different methods of splitting.
+        // Decode XA BGM.
         //
 
         List<XaChunk> xaChunks = [];
 
-        var isoSectorsFactory = Resolve<IIsoSectorCollectionFactory>();
         var cdSectorsFactory = Resolve<ICdSectorCollectionFactory>();
         var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
         var streamFinder = Resolve<IXaCdStreamFinder>();
 
         switch (mchMode)
         {
-            case 1:
-            {
-                var mchDataSectors = isoSectorsFactory.Read(mchDataPak, mchDataPak.Length);
-                var mchDataBytes = new byte[mchDataSectors.Length];
-
-                xaChunks.AddRange(mchDataBytes.Deinterleave(0x800, 4)
-                    .Select(block => new XaChunk { Data = block, Rate = 37800, Channels = 2 }));
-                break;
-            }
+            // case 1:
+            // {
+            //     using var mchDataMode1 = mchDataCdFile.Open();
+            //     var mchData = new byte[mchDataMode1.Length];
+            //     mchDataMode1.ReadExactly(mchData);
+            //
+            //     xaChunks.AddRange(mchData.Deinterleave(0x800, 4)
+            //         .Select(block => new XaChunk { Data = block, Rate = 37800, Channels = 2 }));
+            //     break;
+            // }
             case 2:
             {
-                var mchDataReader = cdSectorsFactory.Read(mchDataPak, mchDataPak.Length);
-                var mchDataSectors = mchDataReader
-                    .Select(x =>
-                    {
-                        // var newData = x.Data.ToArray();
-                        // newData[0x0F] = 0x02;
-                        // newData[0x12] |= 0x20;
-                        // var info = isoInfoDecoder.Decode(x.Number, x.Data);
-                        // return info;
-                        return isoInfoDecoder.Decode(x);
-                    });
+                var mchDataReader = cdSectorsFactory.Create(mchDataPak, mchDataPak.Length);
+                var mchDataSectors = mchDataReader.Select(isoInfoDecoder.Decode);
 
                 xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors));
+                break;
+            }
+            default:
+            {
+                Log.WriteLine("MCHDATA.PAK must be MODE2 in order to be extracted.");
+                Log.WriteLine("You might be using a rip that makes it MODE1, which corrupts the audio data.");
                 break;
             }
         }

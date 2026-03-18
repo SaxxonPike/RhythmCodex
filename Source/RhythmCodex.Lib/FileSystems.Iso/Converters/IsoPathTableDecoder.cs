@@ -12,12 +12,12 @@ namespace RhythmCodex.FileSystems.Iso.Converters;
 [Service]
 public class IsoPathTableDecoder(IIsoSectorStreamFactory isoSectorStreamFactory) : IIsoPathTableDecoder
 {
-    public List<IsoPathRecord> Decode(IEnumerable<ICdSector> sectors)
+    public List<IsoPathRecord> Decode(ICdSectorCollection sectors)
     {
         return DecodeInternal(sectors).ToList();
     }
 
-    private IEnumerable<IsoPathRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
+    private IEnumerable<IsoPathRecord> DecodeInternal(ICdSectorCollection sectors)
     {
         using var stream = isoSectorStreamFactory.Open(sectors);
         var reader = new BinaryReader(stream);

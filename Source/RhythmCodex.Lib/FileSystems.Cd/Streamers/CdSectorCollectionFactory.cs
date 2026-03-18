@@ -8,7 +8,7 @@ namespace RhythmCodex.FileSystems.Cd.Streamers;
 [Service]
 public class CdSectorCollectionFactory : ICdSectorCollectionFactory
 {
-    public IEnumerable<ICdSector> Read(Stream stream, long length)
+    public ICdSectorCollection Create(Stream stream, long length)
     {
         var collection = new StreamCdSectorCollection(stream, length);
         return new CachedCdSectorCollection(collection);

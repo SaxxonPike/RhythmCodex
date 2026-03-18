@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.FileSystems.Iso.Converters;
@@ -14,39 +13,22 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
     private sealed class IsoSectorStream : Stream
     {
         private readonly IIsoSectorInfoDecoder _isoSectorInfoDecoder;
-        private int _offset;
+        private readonly long _length;
+        private readonly bool _raw;
+        private readonly ICdSectorCollection _sectors;
+        private IsoSectorInfo? _currentSector;
         private long _position;
-        private IEnumerator<ICdSector> _sectorEnumerator;
-        private IsoSectorInfo _currentSector;
-        private long _remaining;
-        private readonly long? _length;
-        private bool _raw;
-        private IEnumerable<ICdSector> _sectors;
 
         public IsoSectorStream(
-            IEnumerable<ICdSector> sectors,
+            ICdSectorCollection sectors,
             IIsoSectorInfoDecoder isoSectorInfoDecoder,
             long? length,
             bool raw)
         {
             _isoSectorInfoDecoder = isoSectorInfoDecoder;
             _sectors = sectors;
-            _length = length;
+            _length = length ?? sectors.Count * (_raw ? 2352 : 2048);
             _raw = raw;
-
-            Reset();
-        }
-
-        private void Reset()
-        {
-            _position = 0;
-            _sectorEnumerator = _sectors.GetEnumerator();
-            _sectorEnumerator.MoveNext();
-
-            _currentSector = _isoSectorInfoDecoder
-                .Decode(_sectorEnumerator.Current);
-
-            _remaining = _length ?? long.MaxValue;
         }
 
         private void Skip(long offset)
@@ -70,19 +52,26 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
         {
         }
 
+        private (IsoSectorInfo? Info, int Offset, ReadOnlyMemory<byte> Data) GetSector()
+        {
+            var sectorSize = _raw ? 2352 : 2048;
+            var sector = (int)_position / sectorSize;
+
+            if (_currentSector == null || sector != _currentSector.Number)
+            {
+                var nextSector = _sectors[sector];
+                _currentSector = _isoSectorInfoDecoder.Decode(nextSector);
+            }
+
+            var data = _raw ? _currentSector.Data : _currentSector.UserData;
+            return (_currentSector, (int)(_position - sector * sectorSize), data);
+        }
+
         public override int ReadByte()
         {
-            var sector = _raw ? _currentSector.Data.Span : _currentSector.UserData.Span;
-            var result = sector[_offset++];
+            var (_, offset, data) = GetSector();
+            var result = data.Span[offset];
             _position++;
-
-            if (_offset < sector.Length)
-                return result;
-
-            _offset -= sector.Length;
-            _sectorEnumerator.MoveNext();
-            _currentSector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current);
-
             return result;
         }
 
@@ -91,29 +80,31 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
 
         public override int Read(Span<byte> buffer)
         {
-            var offset = 0;
             var count = buffer.Length;
-            var remaining = Math.Min(count, _remaining);
+            var remaining = Math.Min(count, _length - _position);
             var result = 0;
-            var sector = _raw ? _currentSector.Data.Span : _currentSector.UserData.Span;
+            var (sector, inOffset, data) = GetSector();
+            var sectorData = data.Span;
+            var outOffset = 0;
 
             while (remaining > 0)
             {
-                buffer[offset] = sector[_offset];
-                offset++;
-                _offset++;
-                _position++;
-                if (_offset >= sector.Length)
-                {
-                    _offset -= sector.Length;
-                    _sectorEnumerator.MoveNext();
-                    _currentSector = _isoSectorInfoDecoder.Decode(_sectorEnumerator.Current);
-                    sector = _raw ? _currentSector.Data.Span : _currentSector.UserData.Span;
-                }
+                var src = sectorData[inOffset..];
+                var dst = buffer[outOffset..];
+                var len = (int)Math.Min(src.Length, remaining);
 
-                remaining--;
-                _remaining--;
-                result++;
+                src[..len].CopyTo(dst);
+
+                _position += len;
+                remaining -= len;
+                result += len;
+                outOffset += len;
+
+                if (remaining <= 0)
+                    break;
+
+                (sector, inOffset, data) = GetSector();
+                sectorData = data.Span;
             }
 
             return result;
@@ -121,42 +112,14 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            var target = origin switch
+            _position = origin switch
             {
                 SeekOrigin.Begin => offset,
                 SeekOrigin.Current => _position + offset,
-                SeekOrigin.End => throw new NotSupportedException(),
+                SeekOrigin.End => _length - offset,
                 _ => throw new ArgumentOutOfRangeException(nameof(origin), origin, null)
             };
 
-            //
-            // First, see if the target is within the current sector.
-            //
-
-            var sectorTarget = target - _position + _offset;
-            if (sectorTarget >= 0 && sectorTarget < _currentSector.UserData.Length)
-            {
-                _offset = (int)sectorTarget;
-                _position = target;
-                return _position;
-            }
-
-            //
-            // If the target is ahead in the stream, skip the difference.
-            //
-
-            if (target >= _position)
-            {
-                Skip(target - _position);
-                return _position;
-            }
-
-            //
-            // Rewinding is not possible, so we have to reset the enumerator.
-            //
-
-            Reset();
-            Skip(target);
             return _position;
         }
 
@@ -166,37 +129,31 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
         public override bool CanRead => true;
         public override bool CanSeek => false;
         public override bool CanWrite => false;
-        public override long Length => _length ?? throw new NotSupportedException();
+        public override long Length => _length;
 
         public override long Position
         {
             get => _position;
             set => Seek(value, SeekOrigin.Begin);
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            _sectorEnumerator.Dispose();
-            base.Dispose(disposing);
-        }
     }
 
-    public Stream Open(IEnumerable<ICdSector> sectors)
+    public Stream Open(ICdSectorCollection sectors)
     {
         return new IsoSectorStream(sectors, isoSectorInfoDecoder, null, false);
     }
 
-    public Stream Open(IEnumerable<ICdSector> sectors, long length)
+    public Stream Open(ICdSectorCollection sectors, long length)
     {
         return new IsoSectorStream(sectors, isoSectorInfoDecoder, length, false);
     }
 
-    public Stream OpenRaw(IEnumerable<ICdSector> sectors)
+    public Stream OpenRaw(ICdSectorCollection sectors)
     {
         return new IsoSectorStream(sectors, isoSectorInfoDecoder, null, true);
     }
 
-    public Stream OpenRaw(IEnumerable<ICdSector> sectors, long length)
+    public Stream OpenRaw(ICdSectorCollection sectors, long length)
     {
         return new IsoSectorStream(sectors, isoSectorInfoDecoder, length, true);
     }

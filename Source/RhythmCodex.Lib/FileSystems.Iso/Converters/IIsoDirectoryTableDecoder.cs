@@ -6,5 +6,5 @@ namespace RhythmCodex.FileSystems.Iso.Converters;
 
 public interface IIsoDirectoryTableDecoder
 {
-    List<IsoDirectoryRecord> Decode(IEnumerable<ICdSector> cdSectors);
+    List<IsoDirectoryRecord> Decode(ICdSectorCollection cdSectors);
 }

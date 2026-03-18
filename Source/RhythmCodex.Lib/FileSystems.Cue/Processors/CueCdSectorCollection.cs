@@ -9,7 +9,7 @@ using RhythmCodex.FileSystems.Cue.Model;
 
 namespace RhythmCodex.FileSystems.Cue.Processors;
 
-public class CueCdSectors(CueFile cue, Func<string, Stream> openFile) : IEnumerable<ICdSector>, IDisposable
+public class CueCdSectorCollection(CueFile cue, Func<string, Stream> openFile) : ICdSectorCollection, IDisposable
 {
     private List<(int Start, string FileName, int BytesPerSector, string? Type)> _trackRanges = [];
     private readonly Dictionary<string, Stream> _streams = [];
@@ -129,36 +129,19 @@ public class CueCdSectors(CueFile cue, Func<string, Stream> openFile) : IEnumera
             stream.Dispose();
     }
 
-    private sealed class Enumerator(CueCdSectors owner) : IEnumerator<ICdSector>
-    {
-        private ICdSector? _current;
-        private int _sectorNumber = -1;
+    public IEnumerator<ICdSector> GetEnumerator() =>
+        Enumerable
+            .Range(0, 360000)
+            .Select(GetOrCacheSector)
+            .TakeWhile(x => x != null)
+            .GetEnumerator()!;
 
-        public void Dispose()
-        {
-        }
-
-        public bool MoveNext()
-        {
-            if (_sectorNumber >= 0 && _current == null)
-                return false;
-
-            _sectorNumber++;
-            _current = owner.GetOrCacheSector(_sectorNumber);
-            return _current != null;
-        }
-
-        public void Reset()
-        {
-            _current = null;
-            _sectorNumber = -1;
-        }
-
-        ICdSector IEnumerator<ICdSector>.Current => _current!;
-
-        object IEnumerator.Current => _current!;
-    }
-
-    public IEnumerator<ICdSector> GetEnumerator() => new Enumerator(this);
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public int Count => 360000;
+
+    public ICdSector this[int index] =>
+        GetOrCacheSector(index)!;
+
+    public long Length => Count * 2352L;
 }

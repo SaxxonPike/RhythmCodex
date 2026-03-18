@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.FileSystems.Cd.Helpers;
 using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.FileSystems.Iso.Model;
 using RhythmCodex.FileSystems.Iso.Streamers;
@@ -21,12 +21,12 @@ public class IsoCdFileDecoder(
     IIsoDirectoryTableDecoder isoDirectoryTableDecoder)
     : IIsoCdFileDecoder
 {
-    public List<ICdFile> Decode(IEnumerable<ICdSector> cdSectors)
+    public List<ICdFile> Decode(ICdSectorCollection cdSectors)
     {
         return DecodeInternal(cdSectors).ToList();
     }
 
-    private IEnumerable<ICdFile> DecodeInternal(IEnumerable<ICdSector> cdSectors)
+    private IEnumerable<ICdFile> DecodeInternal(ICdSectorCollection cdSectors)
     {
         var sectorInfos = isoDescriptorSectorFinder
             .Find(cdSectors.Select(isoSectorInfoDecoder.Decode));
@@ -35,13 +35,13 @@ public class IsoCdFileDecoder(
         foreach (var volume in storageMediums.Volumes)
         {
             var pathLba = volume.TypeLPathTableLocation;
-            var pathTable = isoPathTableDecoder.Decode(cdSectors.SkipWhile(cds => cds.Number != pathLba));
+            var pathSector = cdSectors.TakeWhile(cds => cds.Number != pathLba).Count();
+            var pathTable = isoPathTableDecoder.Decode(cdSectors.GetRange(pathSector));
 
             foreach (var path in pathTable)
             {
-                var directory =
-                    isoDirectoryTableDecoder.Decode(
-                        cdSectors.SkipWhile(cds => cds.Number != path.LocationOfExtent));
+                var directorySector = cdSectors.TakeWhile(cds => cds.Number != path.LocationOfExtent).Count();
+                var directory = isoDirectoryTableDecoder.Decode(cdSectors.GetRange(directorySector));
 
                 foreach (var entry in directory)
                 {
@@ -56,19 +56,29 @@ public class IsoCdFileDecoder(
 
                     continue;
 
-                    Stream OpenRaw() =>
-                        isoSectorStreamFactory.OpenRaw(cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent),
-                            (entry.DataLength + 2047) / 2048 * 2352);
+                    Stream OpenRaw()
+                    {
+                        var extentSector = cdSectors.TakeWhile(cds => cds.Number != entry.LocationOfExtent).Count();
 
-                    Stream OpenFormatted() =>
-                        isoSectorStreamFactory.Open(cdSectors.SkipWhile(cds => cds.Number != entry.LocationOfExtent),
+                        return isoSectorStreamFactory.OpenRaw(
+                            cdSectors.GetRange(extentSector),
+                            (entry.DataLength + 2047) / 2048 * 2352);
+                    }
+
+                    Stream OpenFormatted()
+                    {
+                        var extentSector = cdSectors.TakeWhile(cds => cds.Number != entry.LocationOfExtent).Count();
+
+                        return isoSectorStreamFactory.Open(
+                            cdSectors.GetRange(extentSector),
                             entry.DataLength);
+                    }
                 }
             }
         }
     }
 
-    private string GetPath(IList<IsoPathRecord> pathRecords, IsoDirectoryRecord directoryRecord,
+    private static string GetPath(IList<IsoPathRecord> pathRecords, IsoDirectoryRecord directoryRecord,
         IsoPathRecord pathRecord)
     {
         var currentPath = pathRecord;

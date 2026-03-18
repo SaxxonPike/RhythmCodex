@@ -6,5 +6,5 @@ namespace RhythmCodex.FileSystems.Cd.Streamers;
 
 public interface ICdSectorCollectionFactory
 {
-    IEnumerable<ICdSector> Read(Stream stream, long length);
+    ICdSectorCollection Create(Stream stream, long length);
 }

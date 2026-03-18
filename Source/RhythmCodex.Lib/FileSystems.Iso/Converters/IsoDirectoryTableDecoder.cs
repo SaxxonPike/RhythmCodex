@@ -13,12 +13,12 @@ public class IsoDirectoryTableDecoder(
     IIsoDirectoryRecordDecoder isoDirectoryRecordDecoder)
     : IIsoDirectoryTableDecoder
 {
-    public List<IsoDirectoryRecord> Decode(IEnumerable<ICdSector> sectors)
+    public List<IsoDirectoryRecord> Decode(ICdSectorCollection sectors)
     {
         return DecodeInternal(sectors).ToList();
     }
 
-    private IEnumerable<IsoDirectoryRecord> DecodeInternal(IEnumerable<ICdSector> sectors)
+    private IEnumerable<IsoDirectoryRecord> DecodeInternal(ICdSectorCollection sectors)
     {
         using var stream = isoSectorStreamFactory.Open(sectors);
         while (true)
