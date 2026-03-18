@@ -6,9 +6,11 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Archs.Psx.Streamers;
 
+/// <inheritdoc />
 [Service]
-public sealed class BmDataPakStreamReader : IBmDataPakStreamReader
+public sealed class BmDataStreamReader : IBmDataStreamReader
 {
+    /// <inheritdoc />
     public List<BmDataPakEntry> ReadDirectory(Stream stream)
     {
         var baseOffset = stream.Position;
@@ -39,6 +41,7 @@ public sealed class BmDataPakStreamReader : IBmDataPakStreamReader
         return result;
     }
 
+    /// <inheritdoc />
     public IEnumerable<ReadOnlyMemory<byte>> ReadEntries(Stream stream, IEnumerable<BmDataPakEntry> entries)
     {
         foreach (var entry in entries)

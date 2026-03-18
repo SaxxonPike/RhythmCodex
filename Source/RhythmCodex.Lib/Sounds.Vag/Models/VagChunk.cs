@@ -6,7 +6,7 @@ namespace RhythmCodex.Sounds.Vag.Models;
 [Model]
 public class VagChunk
 {
-    public Memory<byte> Data { get; set; }
+    public ReadOnlyMemory<byte> Data { get; set; }
     public int Channels { get; set; }
     public int Interleave { get; set; }
     public long? Length { get; set; }

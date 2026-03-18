@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Archs.Psx.Streamers;
+using RhythmCodex.Archs.Psx.Converters;
 using RhythmCodex.FileSystems.Cd.Streamers;
 using RhythmCodex.FileSystems.Cue.Processors;
 using RhythmCodex.FileSystems.Cue.Streamers;
@@ -84,38 +84,11 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Decode BMDATA.PAK.
         //
 
-        var bmDataPakStreamReader = Resolve<IBmDataPakStreamReader>();
-        Span<byte> bmDataTemp = stackalloc byte[16];
-        var bmDataPakFiles = new List<ReadOnlyMemory<byte>>();
+        var psxBeatmaniaDecoder = Resolve<IPsxBeatmaniaDecoder>();
+        var bmDataPakFiles = psxBeatmaniaDecoder.DecodeBmData(bmDataPak, bmDataPak.Length);
 
-        for (var i = 0; i < bmDataPak.Length - 0x7FF; i += 0x800)
-        {
-            bmDataPak.Position = i;
-
-            bmDataPak.ReadExactly(bmDataTemp);
-
-            if (ReadInt32LittleEndian(bmDataTemp) == ReadInt32LittleEndian(bmDataTemp[8..]) &&
-                ReadInt32LittleEndian(bmDataTemp) is > 0 and < 32768 &&
-                ReadInt32LittleEndian(bmDataTemp[4..]) is > 0 and < 1024 &&
-                ReadInt32LittleEndian(bmDataTemp[8..]) is > 0 and < 32768 &&
-                ReadInt32LittleEndian(bmDataTemp[12..]) > 0)
-            {
-                try
-                {
-                    bmDataPak.Position = i;
-                    var bmDataPakDirectory = bmDataPakStreamReader.ReadDirectory(bmDataPak);
-                    var bmFiles = bmDataPakStreamReader.ReadEntries(bmDataPak, bmDataPakDirectory);
-                    bmDataPakFiles.AddRange(bmFiles);
-                }
-                catch
-                {
-                    // No action taken.
-                }
-            }
-        }
-
-        for (var i = 0; i < bmDataPakFiles.Count; i++)
-            this.WriteFile(bmDataPakFiles[i], Path.Combine(outfolder, $"bmdata{i:000}.bin"));
+        // for (var i = 0; i < bmDataPakFiles.Count; i++)
+        //     this.WriteFile(bmDataPakFiles[i], Path.Combine(outfolder, $"bmdata{i:000}.bin"));
 
         //
         // Determine where MCHDATA.PAK is located on the disc and load it.
