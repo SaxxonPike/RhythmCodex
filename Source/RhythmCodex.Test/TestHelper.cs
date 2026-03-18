@@ -89,6 +89,9 @@ public static class TestHelper
             File.WriteAllBytes(outPath, outStream.ToArray());
         }
 
+        /// <summary>
+        /// Writes a file to the desktop.
+        /// </summary>
         public void WriteFile(byte[] data, string outFileName)
         {
             if (!resolver.OutputFileFilter(outFileName))
@@ -97,6 +100,9 @@ public static class TestHelper
             resolver.WriteFile(data.AsSpan(), outFileName);
         }
 
+        /// <summary>
+        /// Writes a file to the desktop.
+        /// </summary>
         public void WriteFile(ReadOnlyMemory<byte> data, string outFileName)
         {
             if (!resolver.OutputFileFilter(outFileName))
@@ -105,6 +111,9 @@ public static class TestHelper
             resolver.WriteFile(data.Span, outFileName);
         }
 
+        /// <summary>
+        /// Writes a file to the desktop.
+        /// </summary>
         public void WriteFile(ReadOnlySpan<byte> data, string outFileName)
         {
             if (!resolver.OutputFileFilter(outFileName))

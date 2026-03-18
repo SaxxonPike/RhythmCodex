@@ -18,6 +18,6 @@ public class ChdIntegrationTests : BaseIntegrationFixture
         chd.Position = 0;
         var reader = new BinaryReader(chd);
         var output = reader.ReadBytes(0x2000000);
-        File.WriteAllBytes(@"c:\users\saxxon\desktop\chd.bin", output);
+        this.WriteFile(output, "chd.bin");
     }
 }
