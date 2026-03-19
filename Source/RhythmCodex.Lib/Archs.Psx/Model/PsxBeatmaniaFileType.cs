@@ -1,8 +1,10 @@
 namespace RhythmCodex.Archs.Psx.Model;
 
-public enum BmDataPakEntryType
+public enum PsxBeatmaniaFileType
 {
     Unknown,
     Chart,
-    Keysound
+    Keysound,
+    Kst,
+    Dat3
 }

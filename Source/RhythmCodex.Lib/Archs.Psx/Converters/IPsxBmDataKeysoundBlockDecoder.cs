@@ -3,7 +3,7 @@ using RhythmCodex.Archs.Psx.Model;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
-public interface IBmDataKeysoundBlockDecoder
+public interface IPsxBmDataKeysoundBlockDecoder
 {
-    List<BmDataKeysound> Decode(BmDataKeysoundBlock block);
+    List<PsxBmDataKeysound> Decode(PsxBmDataKeysoundBlock block);
 }

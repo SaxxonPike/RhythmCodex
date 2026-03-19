@@ -7,10 +7,12 @@ using RhythmCodex.Sounds.Vag.Models;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
+/// <inheritdoc />
 [Service]
-public class BmDataKeysoundDecoder(IVagDecoder vagDecoder) : IBmDataKeysoundDecoder
+public class PsxBmDataKeysoundDecoder(IVagDecoder vagDecoder) : IPsxBmDataKeysoundDecoder
 {
-    public Sound Decode(BmDataKeysound keysound)
+    /// <inheritdoc />
+    public Sound Decode(PsxBmDataKeysound keysound)
     {
         var sound = vagDecoder.Decode(new VagChunk
         {

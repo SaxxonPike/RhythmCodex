@@ -3,7 +3,7 @@ using RhythmCodex.Archs.Psx.Model;
 
 namespace RhythmCodex.Archs.Psx.Streamers;
 
-public interface IBmDataKeysoundBlockReader
+public interface IPsxBmDataKeysoundBlockReader
 {
-    BmDataKeysoundBlock Read(Stream stream);
+    PsxBmDataKeysoundBlock Read(Stream stream);
 }

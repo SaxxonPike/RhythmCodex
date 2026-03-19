@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Archs.Psx.Model;
@@ -9,5 +8,6 @@ namespace RhythmCodex.Archs.Psx.Converters;
 public interface IPsxBeatmaniaDecoder
 {
     Chart DecodeChart(Stream source);
-    List<BmDataFile> DecodeBmData(Stream source, long length);
+    List<PsxBmDataFile> DecodeBmData(Stream source, long length);
+    List<PsxSysDataFile> DecodeSysData(Stream source, long length);
 }

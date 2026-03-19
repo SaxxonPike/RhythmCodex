@@ -1,6 +1,6 @@
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class BmDataKeysoundInfo
+public class PsxBmDataKeysoundInfo
 {
     //
     // ref: struct WAVE_W

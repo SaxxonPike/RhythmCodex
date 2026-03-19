@@ -14,13 +14,15 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
+/// <inheritdoc />
 [Service]
 public sealed class PsxBeatmaniaDecoder(
-    IBmDataStreamReader bmDataStreamReader,
+    IPsxBmDataStreamReader psxBmDataStreamReader,
     IDjmainChartEventStreamReader chartEventStreamReader,
     IDjmainChartDecoder djmainChartDecoder
 ) : IPsxBeatmaniaDecoder
 {
+    /// <inheritdoc />
     public Chart DecodeChart(Stream source)
     {
         var events = chartEventStreamReader.Read(source);
@@ -28,7 +30,8 @@ public sealed class PsxBeatmaniaDecoder(
         return chart;
     }
 
-    public List<BmDataFile> DecodeBmData(Stream source, long length)
+    /// <inheritdoc />
+    public List<PsxBmDataFile> DecodeBmData(Stream source, long length)
     {
         using var memOwner = MemoryPool<byte>.Shared.Rent((int)length);
         var mem = memOwner.Memory[..(int)length];
@@ -36,7 +39,7 @@ public sealed class PsxBeatmaniaDecoder(
         using var pak = new ReadOnlyMemoryStream(mem);
 
         Span<byte> temp = stackalloc byte[16];
-        var files = new List<BmDataFile>();
+        var files = new List<PsxBmDataFile>();
         var fileIdx = 0;
 
         for (var i = 0; i < pak.Length - 0x7FF; i += 0x800)
@@ -54,8 +57,8 @@ public sealed class PsxBeatmaniaDecoder(
                 try
                 {
                     pak.Position = i;
-                    var bmDataPakDirectory = bmDataStreamReader.ReadDirectory(pak);
-                    var bmFiles = bmDataStreamReader.ReadEntries(pak, bmDataPakDirectory);
+                    var bmDataPakDirectory = psxBmDataStreamReader.ReadDirectory(pak);
+                    var bmFiles = psxBmDataStreamReader.ReadEntries(pak, bmDataPakDirectory);
                     files.AddRange(bmFiles.Select((x, idx) => CreateFile(x) with
                     {
                         Index = fileIdx++,
@@ -73,33 +76,71 @@ public sealed class PsxBeatmaniaDecoder(
         return files;
     }
 
-    private static BmDataFile CreateFile(ReadOnlyMemory<byte> data)
+    /// <summary>
+    /// Returns true if the data is a note chart.
+    /// </summary>
+    private static bool DetectChart(ReadOnlySpan<byte> span) =>
+        span.Length >= 4 &&
+        (span.Length & 3) == 0 &&
+        ReadInt32LittleEndian(span[^4..]) == 0x00007FFF;
+
+    /// <summary>
+    /// Returns true if the data is a keysound block.
+    /// </summary>
+    private static bool DetectKeysound(ReadOnlySpan<byte> span) =>
+        span.Length >= 16 &&
+        (span.Length & 7) == 0 &&
+        ReadInt32BigEndian(span) < 0x1000 &&
+        ReadInt32BigEndian(span) >= 0x0800 &&
+        ReadInt32BigEndian(span) != 0 &&
+        (ReadInt32BigEndian(span[4..]) & 7) == 0 &&
+        ReadInt32BigEndian(span[4..]) != 0 &&
+        span[8..16].IndexOfAnyExcept((byte)0x00) < 0;
+
+    /// <summary>
+    /// Returns true if the data is a keysound table.
+    /// </summary>
+    private static bool DetectKst(ReadOnlySpan<byte> span) =>
+        span.Length >= 4 &&
+        (span.Length & 3) == 0 &&
+        ReadInt32BigEndian(span[^4..]) == 0x0000FFFE;
+
+    /// <summary>
+    /// Returns true if the data is a DAT3 file.
+    /// </summary>
+    private static bool DetectDat3(ReadOnlySpan<byte> span) =>
+        span.Length >= 4 &&
+        (span.Length & 3) == 0 &&
+        ReadInt32LittleEndian(span[^4..]) == 0x00000001;
+
+    /// <summary>
+    /// Determines the type of the data and returns a <see cref="PsxBmDataFile"/>
+    /// populated with the detected type.
+    /// </summary>
+    private static PsxBmDataFile CreateFile(ReadOnlyMemory<byte> data)
     {
         var span = data.Span;
-        var type = BmDataPakEntryType.Unknown;
+        var type = PsxBeatmaniaFileType.Unknown;
 
-        if (span.Length >= 4 &&
-            (span.Length & 3) == 0 &&
-            ReadInt32LittleEndian(span[^4..]) == 0x00007FFF)
-        {
-            type = BmDataPakEntryType.Chart;
-        }
-        else if (span.Length >= 16 &&
-                 (span.Length & 7) == 0 &&
-                 ReadInt32BigEndian(span) < 0x1000 &&
-                 ReadInt32BigEndian(span) >= 0x0800 &&
-                 ReadInt32BigEndian(span) != 0 &&
-                 (ReadInt32BigEndian(span[4..]) & 7) == 0 &&
-                 ReadInt32BigEndian(span[4..]) != 0 &&
-                 span[8..16].IndexOfAnyExcept((byte)0x00) < 0)
-        {
-            type = BmDataPakEntryType.Keysound;
-        }
+        if (DetectChart(span))
+            type = PsxBeatmaniaFileType.Chart;
+        else if (DetectKeysound(span))
+            type = PsxBeatmaniaFileType.Keysound;
+        else if (DetectKst(span))
+            type = PsxBeatmaniaFileType.Kst;
+        else if (DetectDat3(span))
+            type = PsxBeatmaniaFileType.Dat3;
 
-        return new BmDataFile
+        return new PsxBmDataFile
         {
             Data = data,
             Type = type
         };
+    }
+
+    /// <inheritdoc />
+    public List<PsxSysDataFile> DecodeSysData(Stream source, long length)
+    {
+        return [];
     }
 }

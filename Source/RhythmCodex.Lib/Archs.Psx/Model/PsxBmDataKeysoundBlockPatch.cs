@@ -2,7 +2,7 @@ using System;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class BmDataKeysoundBlockPatch
+public class PsxBmDataKeysoundBlockPatch
 {
     public int Address { get; set; }
     public int Length { get; set; }

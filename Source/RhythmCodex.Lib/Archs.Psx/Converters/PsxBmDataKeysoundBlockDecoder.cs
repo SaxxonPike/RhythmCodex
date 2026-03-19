@@ -7,11 +7,13 @@ using RhythmCodex.Sounds.Vag.Streamers;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
+/// <inheritdoc />
 [Service]
-public class BmDataKeysoundBlockDecoder(IVagStreamReader vagStreamReader)
-    : IBmDataKeysoundBlockDecoder
+public class PsxBmDataKeysoundBlockDecoder(IVagStreamReader vagStreamReader)
+    : IPsxBmDataKeysoundBlockDecoder
 {
-    public List<BmDataKeysound> Decode(BmDataKeysoundBlock block)
+    /// <inheritdoc />
+    public List<PsxBmDataKeysound> Decode(PsxBmDataKeysoundBlock block)
     {
         //
         // The keysound block consists of patches that are applied to
@@ -28,13 +30,13 @@ public class BmDataKeysoundBlockDecoder(IVagStreamReader vagStreamReader)
         //
 
         const int count = 256;
-        var infos = new Dictionary<int, BmDataKeysoundInfo>();
+        var infos = new Dictionary<int, PsxBmDataKeysoundInfo>();
 
         for (var i = 0; i < count; i++)
         {
             var bytes = ram.AsSpan(i << 4, 16);
 
-            var info = new BmDataKeysoundInfo
+            var info = new PsxBmDataKeysoundInfo
             {
                 Offset = ReadInt32LittleEndian(bytes),
                 Note = bytes[0x4],
@@ -62,7 +64,7 @@ public class BmDataKeysoundBlockDecoder(IVagStreamReader vagStreamReader)
         // audio chunk.
         //
 
-        var result = new List<BmDataKeysound>();
+        var result = new List<PsxBmDataKeysound>();
         using var ramStream = new MemoryStream(ram);
 
         foreach (var (id, info) in infos)
@@ -72,7 +74,7 @@ public class BmDataKeysoundBlockDecoder(IVagStreamReader vagStreamReader)
 
             if (audio != null)
             {
-                result.Add(new BmDataKeysound
+                result.Add(new PsxBmDataKeysound
                 {
                     Index = id + 2,
                     Info = info,

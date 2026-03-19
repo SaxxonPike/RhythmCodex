@@ -71,6 +71,20 @@ public class BmPs1OneShots : BaseIntegrationFixture
             Log.WriteLine($"    {file.Name}");
 
         var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), target);
+        var psxBeatmaniaDecoder = Resolve<IPsxBeatmaniaDecoder>();
+
+        //
+        // Determine where SYSDATA.PAK is located on the disc and load it.
+        //
+
+        Log.WriteLine("Loading SYSDATA.PAK");
+        using var sysDataPak = cdFiles.Single(f => f.Name == "./SYSDATA.PAK;1").Open();
+        
+        //
+        // Decode SYSDATA.PAK.
+        //
+
+        var sysDataPakFiles = psxBeatmaniaDecoder.DecodeSysData(sysDataPak, sysDataPak.Length);
 
         //
         // Determine where BMDATA.PAK is located on the disc and load it.
@@ -83,7 +97,6 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Decode BMDATA.PAK.
         //
 
-        var psxBeatmaniaDecoder = Resolve<IPsxBeatmaniaDecoder>();
         var bmDataPakFiles = psxBeatmaniaDecoder.DecodeBmData(bmDataPak, bmDataPak.Length);
 
         if (extractCharts)
@@ -93,7 +106,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
             //
 
             var bmDataCharts = bmDataPakFiles
-                .Where(f => f.Type == BmDataPakEntryType.Chart)
+                .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
                 .Select(f =>
                 {
                     using var chartStream = new ReadOnlyMemoryStream(f.Data);
@@ -128,12 +141,12 @@ public class BmPs1OneShots : BaseIntegrationFixture
             // Convert keysound folders.
             //
 
-            var bmDataKeysoundBlockReader = Resolve<IBmDataKeysoundBlockReader>();
-            var bmDataKeysoundBlockDecoder = Resolve<IBmDataKeysoundBlockDecoder>();
-            var bmDataKeysoundDecoder = Resolve<IBmDataKeysoundDecoder>();
+            var bmDataKeysoundBlockReader = Resolve<IPsxBmDataKeysoundBlockReader>();
+            var bmDataKeysoundBlockDecoder = Resolve<IPsxBmDataKeysoundBlockDecoder>();
+            var bmDataKeysoundDecoder = Resolve<IPsxBmDataKeysoundDecoder>();
 
             var bmDataKeysoundSets = bmDataPakFiles
-                .Where(f => f.Type == BmDataPakEntryType.Keysound)
+                .Where(f => f.Type == PsxBeatmaniaFileType.Keysound)
                 .Select(f =>
                 {
                     var keysoundBlockStream = new ReadOnlyMemoryStream(f.Data);

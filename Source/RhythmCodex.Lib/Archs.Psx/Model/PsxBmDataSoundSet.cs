@@ -3,7 +3,7 @@ using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class BmDataSoundSet
+public class PsxBmDataSoundSet
 {
     public List<Sound> Sounds { get; set; } = [];
 }

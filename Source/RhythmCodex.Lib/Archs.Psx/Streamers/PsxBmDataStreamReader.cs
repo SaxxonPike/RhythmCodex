@@ -8,10 +8,10 @@ namespace RhythmCodex.Archs.Psx.Streamers;
 
 /// <inheritdoc />
 [Service]
-public sealed class BmDataStreamReader : IBmDataStreamReader
+public sealed class PsxBmDataStreamReader : IPsxBmDataStreamReader
 {
     /// <inheritdoc />
-    public List<BmDataPakEntry> ReadDirectory(Stream stream)
+    public List<PsxBmDataPakEntry> ReadDirectory(Stream stream)
     {
         var baseOffset = stream.Position;
 
@@ -23,13 +23,13 @@ public sealed class BmDataStreamReader : IBmDataStreamReader
         var dict = new byte[dictCount * 8];
         stream.ReadExactly(dict);
 
-        var result = new List<BmDataPakEntry>();
+        var result = new List<PsxBmDataPakEntry>();
         for (var i = 0; i < dictCount; i++)
         {
             var entryData = dict.AsSpan(i << 3, 8);
             var offset = ReadInt32LittleEndian(entryData) * 0x800;
 
-            result.Add(new BmDataPakEntry
+            result.Add(new PsxBmDataPakEntry
             {
                 Index = i,
                 Length = ReadInt32LittleEndian(entryData[4..]),
@@ -42,7 +42,7 @@ public sealed class BmDataStreamReader : IBmDataStreamReader
     }
 
     /// <inheritdoc />
-    public IEnumerable<ReadOnlyMemory<byte>> ReadEntries(Stream stream, IEnumerable<BmDataPakEntry> entries)
+    public IEnumerable<ReadOnlyMemory<byte>> ReadEntries(Stream stream, IEnumerable<PsxBmDataPakEntry> entries)
     {
         foreach (var entry in entries)
         {
