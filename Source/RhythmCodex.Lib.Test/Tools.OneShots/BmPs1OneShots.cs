@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Archs.Djmain.Converters;
-using RhythmCodex.Archs.Djmain.Streamers;
 using RhythmCodex.Archs.Psx.Converters;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Archs.Psx.Streamers;
@@ -195,16 +193,6 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         switch (mchMode)
         {
-            // case 1:
-            // {
-            //     using var mchDataMode1 = mchDataCdFile.Open();
-            //     var mchData = new byte[mchDataMode1.Length];
-            //     mchDataMode1.ReadExactly(mchData);
-            //
-            //     xaChunks.AddRange(mchData.Deinterleave(0x800, 4)
-            //         .Select(block => new XaChunk { Data = block, Rate = 37800, Channels = 2 }));
-            //     break;
-            // }
             case 2:
             {
                 var mchDataReader = cdSectorsFactory.Create(mchDataPak, mchDataPak.Length);
@@ -245,41 +233,5 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 index++;
             }
         }
-
-        // foreach (var chunk in streamer.Read(entryStream))
-        // {
-        //     Log.WriteLine($"Working on chunk {index}");
-        //
-        //     var idx = index;
-        //
-        //     RunAsync(() =>
-        //     {
-        //         var archive = decoder.Decode(chunk, options);
-        //
-        //         Log.WriteLine($"Writing set for chunk {idx}");
-        //
-        //         var title = $"{Alphabet.EncodeNumeric(idx, 4)}";
-        //         var basePath = Path.Combine(target, title);
-        //
-        //         if (extractRawBlock)
-        //             this.WriteFile(archive.Chunk.Data, Path.Combine(basePath, $"{title}.bin"));
-        //
-        //         this.WriteSet(new TestHelper.WriteSetConfig
-        //         {
-        //             Charts = archive.Charts,
-        //             Sounds = archive.Samples,
-        //             ChartSetId = idx,
-        //             OutPath = basePath,
-        //             Title = title,
-        //             ChartType = chartType,
-        //             WriteCharts = extractCharts,
-        //             WriteSounds = extractAudio
-        //         });
-        //     });
-        //
-        //     index++;
-        // }
-        //
-        // WaitForAsyncTasks();
     }
 }
