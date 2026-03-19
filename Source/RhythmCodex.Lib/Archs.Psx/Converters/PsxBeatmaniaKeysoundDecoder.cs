@@ -9,10 +9,10 @@ namespace RhythmCodex.Archs.Psx.Converters;
 
 /// <inheritdoc />
 [Service]
-public class PsxBmDataKeysoundDecoder(IVagDecoder vagDecoder) : IPsxBmDataKeysoundDecoder
+public class PsxBeatmaniaKeysoundDecoder(IVagDecoder vagDecoder) : IPsxBeatmaniaKeysoundDecoder
 {
     /// <inheritdoc />
-    public Sound Decode(PsxBmDataKeysound keysound)
+    public Sound Decode(PsxBeatmaniaKeysound keysound)
     {
         var sound = vagDecoder.Decode(new VagChunk
         {

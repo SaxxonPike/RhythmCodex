@@ -1,6 +1,6 @@
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class PsxBmDataPakEntry
+public class PsxBeatmaniaFileEntry
 {
     public int Index { get; set; }
     public int Offset { get; set; }

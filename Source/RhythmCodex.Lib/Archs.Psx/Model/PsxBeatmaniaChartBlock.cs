@@ -1,5 +1,5 @@
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class PsxBmDataChartBlock
+public class PsxBeatmaniaChartBlock
 {
 }

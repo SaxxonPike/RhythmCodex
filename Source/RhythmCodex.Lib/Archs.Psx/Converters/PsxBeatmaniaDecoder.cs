@@ -17,7 +17,7 @@ namespace RhythmCodex.Archs.Psx.Converters;
 /// <inheritdoc />
 [Service]
 public sealed class PsxBeatmaniaDecoder(
-    IPsxBmDataStreamReader psxBmDataStreamReader,
+    IPsxBeatmaniaFileStreamReader psxBeatmaniaFileStreamReader,
     IDjmainChartEventStreamReader chartEventStreamReader,
     IDjmainChartDecoder djmainChartDecoder
 ) : IPsxBeatmaniaDecoder
@@ -31,7 +31,7 @@ public sealed class PsxBeatmaniaDecoder(
     }
 
     /// <inheritdoc />
-    public List<PsxBmDataFile> DecodeBmData(Stream source, long length)
+    public List<PsxBeatmaniaFile> DecodeBmData(Stream source, long length)
     {
         using var memOwner = MemoryPool<byte>.Shared.Rent((int)length);
         var mem = memOwner.Memory[..(int)length];
@@ -39,7 +39,7 @@ public sealed class PsxBeatmaniaDecoder(
         using var pak = new ReadOnlyMemoryStream(mem);
 
         Span<byte> temp = stackalloc byte[16];
-        var files = new List<PsxBmDataFile>();
+        var files = new List<PsxBeatmaniaFile>();
         var fileIdx = 0;
 
         for (var i = 0; i < pak.Length - 0x7FF; i += 0x800)
@@ -57,8 +57,8 @@ public sealed class PsxBeatmaniaDecoder(
                 try
                 {
                     pak.Position = i;
-                    var bmDataPakDirectory = psxBmDataStreamReader.ReadDirectory(pak);
-                    var bmFiles = psxBmDataStreamReader.ReadEntries(pak, bmDataPakDirectory);
+                    var bmDataPakDirectory = psxBeatmaniaFileStreamReader.ReadDirectory(pak);
+                    var bmFiles = psxBeatmaniaFileStreamReader.ReadEntries(pak, bmDataPakDirectory);
                     files.AddRange(bmFiles.Select((x, idx) => CreateFile(x) with
                     {
                         Index = fileIdx++,
@@ -103,21 +103,22 @@ public sealed class PsxBeatmaniaDecoder(
     private static bool DetectKst(ReadOnlySpan<byte> span) =>
         span.Length >= 4 &&
         (span.Length & 3) == 0 &&
-        ReadInt32BigEndian(span[^4..]) == 0x0000FFFE;
+        ReadInt32BigEndian(span[^4..]) == 0x0000FEFF;
 
     /// <summary>
     /// Returns true if the data is a DAT3 file.
     /// </summary>
     private static bool DetectDat3(ReadOnlySpan<byte> span) =>
-        span.Length >= 4 &&
+        span.Length >= 8 &&
         (span.Length & 3) == 0 &&
-        ReadInt32LittleEndian(span[^4..]) == 0x00000001;
+        ReadInt32LittleEndian(span[^8..]) == 0x00000001 &&
+        ReadInt32LittleEndian(span[^4..]) == 0x00000000;
 
     /// <summary>
-    /// Determines the type of the data and returns a <see cref="PsxBmDataFile"/>
+    /// Determines the type of the data and returns a <see cref="PsxBeatmaniaFile"/>
     /// populated with the detected type.
     /// </summary>
-    private static PsxBmDataFile CreateFile(ReadOnlyMemory<byte> data)
+    private static PsxBeatmaniaFile CreateFile(ReadOnlyMemory<byte> data)
     {
         var span = data.Span;
         var type = PsxBeatmaniaFileType.Unknown;
@@ -131,7 +132,7 @@ public sealed class PsxBeatmaniaDecoder(
         else if (DetectDat3(span))
             type = PsxBeatmaniaFileType.Dat3;
 
-        return new PsxBmDataFile
+        return new PsxBeatmaniaFile
         {
             Data = data,
             Type = type
@@ -139,7 +140,7 @@ public sealed class PsxBeatmaniaDecoder(
     }
 
     /// <inheritdoc />
-    public List<PsxSysDataFile> DecodeSysData(Stream source, long length)
+    public List<PsxBeatmaniaSysFile> DecodeSysData(Stream source, long length)
     {
         return [];
     }

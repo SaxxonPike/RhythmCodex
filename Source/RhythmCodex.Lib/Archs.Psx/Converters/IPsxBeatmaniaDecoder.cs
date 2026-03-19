@@ -8,6 +8,6 @@ namespace RhythmCodex.Archs.Psx.Converters;
 public interface IPsxBeatmaniaDecoder
 {
     Chart DecodeChart(Stream source);
-    List<PsxBmDataFile> DecodeBmData(Stream source, long length);
-    List<PsxSysDataFile> DecodeSysData(Stream source, long length);
+    List<PsxBeatmaniaFile> DecodeBmData(Stream source, long length);
+    List<PsxBeatmaniaSysFile> DecodeSysData(Stream source, long length);
 }

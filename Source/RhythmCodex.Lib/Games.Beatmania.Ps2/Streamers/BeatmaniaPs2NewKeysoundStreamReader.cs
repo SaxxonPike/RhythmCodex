@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Models;
@@ -10,11 +11,11 @@ using RhythmCodex.Sounds.Vag.Streamers;
 namespace RhythmCodex.Games.Beatmania.Ps2.Streamers;
 
 [Service]
-public class BeatmaniaPs2NewKeysoundStreamReader(IVagStreamReader vagStreamReader)
+public class BeatmaniaPs2NewKeysoundStreamReader(
+    IVagStreamReader vagStreamReader,
+    IBeatmaniaPs2FrequencyConverter frequencyConverter)
     : IBeatmaniaPs2NewKeysoundStreamReader
 {
-    private readonly IVagStreamReader _vagStreamReader = vagStreamReader;
-
     public BeatmaniaPs2KeysoundSet Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
@@ -126,24 +127,8 @@ public class BeatmaniaPs2NewKeysoundStreamReader(IVagStreamReader vagStreamReade
                 }
             }
 
-            //
-            // Source: "trust me bro."
-            // It took forever to discover this is treated as a two-part frequency calculation:
-            // a coarse-tuning (unsure the range) and fine-tuning (00-7F). An octave is represented
-            // as 12 coarse steps (like the chromatic scale on a piano). The fine-tuning is then an
-            // adjustment on top of that, which has a range of about 3 coarse steps over 127 values.
-            // The final constant was brute forced and comes out to a value close to 1/255*6 if I
-            // adjust to {coarse=0x3E, fine=0x44} -> ~44100. The old lookup table was empirically built:
-            // compare exact frequencies from the old format to the new format for songs that were revived.
-            // It turned out to be acceptable, but not accurate.
-            //
 
-            const double CoarseTuneScale = 12d;
-            const double FineTuneScale = 1531.155d;
-            const double MaxFrequency = 1536000d;
-
-            var freq = MaxFrequency / Math.Pow(2, sample.CoarseFreq / CoarseTuneScale - sample.FineFreq / FineTuneScale);
-            var roundedFreq = (int)Math.Round(freq);
+            var roundedFreq = (int)Math.Round(frequencyConverter.Convert(sample.CoarseFreq, sample.FineFreq));
 
             return new BeatmaniaPs2Keysound
             {

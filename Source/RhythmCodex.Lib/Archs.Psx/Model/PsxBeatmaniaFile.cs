@@ -2,7 +2,7 @@ using System;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
-public record PsxBmDataFile
+public sealed record PsxBeatmaniaFile
 {
     public int Index { get; set; }
     public int Group { get; set; }

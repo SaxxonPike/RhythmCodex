@@ -7,17 +7,17 @@ namespace RhythmCodex.Archs.Psx.Streamers;
 
 /// <inheritdoc />
 [Service]
-public class PsxBmDataKeysoundBlockReader : IPsxBmDataKeysoundBlockReader
+public class PsxMgsSoundBankBlockReader : IPsxMgsSoundBankBlockReader
 {
     /// <inheritdoc />
-    public PsxBmDataKeysoundBlock Read(Stream stream)
+    public PsxMgsSoundBankBlock Read(Stream stream)
     {
         //
         // There are two patches in a block. The first describes the keysounds,
         // and the second contains the audio.
         //
 
-        return new PsxBmDataKeysoundBlock
+        return new PsxMgsSoundBankBlock
         {
             Patches =
             [
@@ -30,7 +30,7 @@ public class PsxBmDataKeysoundBlockReader : IPsxBmDataKeysoundBlockReader
     /// <summary>
     /// Reads one patch from the block.
     /// </summary>
-    private static PsxBmDataKeysoundBlockPatch ReadPatch(Stream stream)
+    private static PsxMgsSoundBankBlockPatch ReadPatch(Stream stream)
     {
         Span<byte> patchHeader = stackalloc byte[0x10];
 
@@ -46,7 +46,7 @@ public class PsxBmDataKeysoundBlockReader : IPsxBmDataKeysoundBlockReader
         
         stream.ReadExactly(data);
 
-        return new PsxBmDataKeysoundBlockPatch
+        return new PsxMgsSoundBankBlockPatch
         {
             Address = address,
             Length = length,

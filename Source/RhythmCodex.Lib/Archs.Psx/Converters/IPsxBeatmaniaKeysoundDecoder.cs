@@ -3,7 +3,7 @@ using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
-public interface IPsxBmDataKeysoundDecoder
+public interface IPsxBeatmaniaKeysoundDecoder
 {
-    Sound Decode(PsxBmDataKeysound keysound);
+    Sound Decode(PsxBeatmaniaKeysound keysound);
 }

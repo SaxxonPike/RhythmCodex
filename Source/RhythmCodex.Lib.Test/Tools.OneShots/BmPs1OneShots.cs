@@ -45,9 +45,9 @@ public class BmPs1OneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target)
     {
-        const bool extractAudio = true;
-        const bool extractCharts = true;
-        // const bool extractRawBlock = false;
+        const bool extractAudio = false;
+        const bool extractCharts = false;
+        const bool extractRawBlock = true;
 
         //
         // Load in the CUE/BIN files.
@@ -141,9 +141,9 @@ public class BmPs1OneShots : BaseIntegrationFixture
             // Convert keysound folders.
             //
 
-            var bmDataKeysoundBlockReader = Resolve<IPsxBmDataKeysoundBlockReader>();
-            var bmDataKeysoundBlockDecoder = Resolve<IPsxBmDataKeysoundBlockDecoder>();
-            var bmDataKeysoundDecoder = Resolve<IPsxBmDataKeysoundDecoder>();
+            var bmDataKeysoundBlockReader = Resolve<IPsxMgsSoundBankBlockReader>();
+            var bmDataKeysoundBlockDecoder = Resolve<IPsxMgsSoundBankDecoder>();
+            var bmDataKeysoundDecoder = Resolve<IPsxBeatmaniaKeysoundDecoder>();
 
             var bmDataKeysoundSets = bmDataPakFiles
                 .Where(f => f.Type == PsxBeatmaniaFileType.Keysound)
@@ -176,6 +176,27 @@ public class BmPs1OneShots : BaseIntegrationFixture
             }
         }
 
+        if (extractRawBlock)
+        {
+            //
+            // Extract raw files.
+            //
+
+            foreach (var file in bmDataPakFiles)
+            {
+                var extension = file.Type switch
+                {
+                    PsxBeatmaniaFileType.Chart => "cs5",
+                    PsxBeatmaniaFileType.Keysound => "ksb",
+                    PsxBeatmaniaFileType.Kst => "kst",
+                    PsxBeatmaniaFileType.Dat3 => "dat3",
+                    _ => "bin"
+                };
+
+                this.WriteFile(file.Data.Span, Path.Combine(target, $"{file.Index:d4}.{extension}"));
+            }
+        }
+
         //
         // Determine where MCHDATA.PAK is located on the disc and load it.
         // Because this is XA data, it should be loaded raw here to be processed.
@@ -193,52 +214,55 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Decode XA BGM.
         //
 
-        List<XaChunk> xaChunks = [];
-
-        var cdSectorsFactory = Resolve<ICdSectorCollectionFactory>();
-        var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
-        var streamFinder = Resolve<IXaCdStreamFinder>();
-
-        switch (mchMode)
+        if (extractAudio)
         {
-            case 2:
-            {
-                var mchDataReader = cdSectorsFactory.Create(mchDataPak, mchDataPak.Length);
-                var mchDataSectors = mchDataReader.Select(isoInfoDecoder.Decode);
+            List<XaChunk> xaChunks = [];
 
-                xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors));
-                break;
+            var cdSectorsFactory = Resolve<ICdSectorCollectionFactory>();
+            var isoInfoDecoder = Resolve<IIsoSectorInfoDecoder>();
+            var streamFinder = Resolve<IXaCdStreamFinder>();
+
+            switch (mchMode)
+            {
+                case 2:
+                {
+                    var mchDataReader = cdSectorsFactory.Create(mchDataPak, mchDataPak.Length);
+                    var mchDataSectors = mchDataReader.Select(isoInfoDecoder.Decode);
+
+                    xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors));
+                    break;
+                }
+                default:
+                {
+                    Log.WriteLine("MCHDATA.PAK must be MODE2 in order to be extracted.");
+                    Log.WriteLine("You might be using a rip that makes it MODE1, which corrupts the audio data.");
+                    break;
+                }
             }
-            default:
+
+            var decoder = Resolve<IXaDecoder>();
+            var encoder = Resolve<IRiffPcm16SoundEncoder>();
+            var writer = Resolve<IRiffStreamWriter>();
+
+            var index = 0;
+
+            foreach (var xa in xaChunks)
             {
-                Log.WriteLine("MCHDATA.PAK must be MODE2 in order to be extracted.");
-                Log.WriteLine("You might be using a rip that makes it MODE1, which corrupts the audio data.");
-                break;
-            }
-        }
+                var decoded = decoder.Decode(xa);
 
-        var decoder = Resolve<IXaDecoder>();
-        var encoder = Resolve<IRiffPcm16SoundEncoder>();
-        var writer = Resolve<IRiffStreamWriter>();
+                foreach (var sound in decoded)
+                {
+                    sound![NumericData.Rate] = xa.Rate;
+                    var encoded = encoder.Encode(sound);
+                    if (!Directory.Exists(outfolder))
+                        Directory.CreateDirectory(outfolder);
 
-        var index = 0;
-
-        foreach (var xa in xaChunks)
-        {
-            var decoded = decoder.Decode(xa);
-
-            foreach (var sound in decoded)
-            {
-                sound![NumericData.Rate] = xa.Rate;
-                var encoded = encoder.Encode(sound);
-                if (!Directory.Exists(outfolder))
-                    Directory.CreateDirectory(outfolder);
-
-                using var outStream = new MemoryStream();
-                writer.Write(outStream, encoded);
-                outStream.Flush();
-                File.WriteAllBytes(Path.Combine(outfolder, $"mchdata{index:000}.wav"), outStream.ToArray());
-                index++;
+                    using var outStream = new MemoryStream();
+                    writer.Write(outStream, encoded);
+                    outStream.Flush();
+                    File.WriteAllBytes(Path.Combine(outfolder, $"mchdata{index:000}.wav"), outStream.ToArray());
+                    index++;
+                }
             }
         }
     }
