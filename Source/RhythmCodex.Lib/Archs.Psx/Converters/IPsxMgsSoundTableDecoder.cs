@@ -3,7 +3,7 @@ using RhythmCodex.Archs.Psx.Model;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
-public interface IPsxMgsSoundBankDecoder
+public interface IPsxMgsSoundTableDecoder
 {
-    List<PsxMgsSoundBankEntryWithData> Decode(PsxMgsSoundBankBlock block);
+    List<PsxMgsSoundScript> Decode(PsxMgsSoundTableBlock block);
 }

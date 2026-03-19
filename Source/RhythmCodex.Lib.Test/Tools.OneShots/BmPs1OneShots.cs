@@ -13,6 +13,7 @@ using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Riff.Converters;
 using RhythmCodex.Sounds.Riff.Streamers;
 using RhythmCodex.Sounds.Xa.Converters;
@@ -155,12 +156,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
                     return (
                         f.Index,
-                        Sounds: keysounds.Select(x =>
-                        {
-                            var sound = bmDataKeysoundDecoder.Decode(x);
-                            sound[NumericData.Id] = x.Index;
-                            return sound;
-                        }).ToList()
+                        Sounds: new List<Sound>()
                     );
                 });
 

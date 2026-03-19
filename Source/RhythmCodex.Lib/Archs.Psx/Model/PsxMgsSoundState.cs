@@ -67,7 +67,7 @@ public class PsxMgsSoundState
     public byte Trehs { get; set; }
     public ushort Snos { get; set; }
     public short Ptps { get; set; }
-    public uint DecVol { get; set; }
+    public int DecVol { get; set; }
     public short Tund { get; set; }
     public ushort Tmpd { get; set; } = 1;
     public byte Tmp { get; set; } = 255;

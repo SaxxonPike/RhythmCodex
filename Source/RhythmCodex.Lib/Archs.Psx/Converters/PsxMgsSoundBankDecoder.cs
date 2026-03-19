@@ -13,7 +13,7 @@ public class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
     : IPsxMgsSoundBankDecoder
 {
     /// <inheritdoc />
-    public List<PsxBeatmaniaKeysound> Decode(PsxMgsSoundBankBlock block)
+    public List<PsxMgsSoundBankEntryWithData> Decode(PsxMgsSoundBankBlock block)
     {
         //
         // The keysound block consists of patches that are applied to
@@ -64,7 +64,7 @@ public class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
         // audio chunk.
         //
 
-        var result = new List<PsxBeatmaniaKeysound>();
+        var result = new List<PsxMgsSoundBankEntryWithData>();
         using var ramStream = new MemoryStream(ram);
 
         foreach (var (id, info) in infos)
@@ -74,10 +74,10 @@ public class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
 
             if (audio != null)
             {
-                result.Add(new PsxBeatmaniaKeysound
+                result.Add(new PsxMgsSoundBankEntryWithData
                 {
                     Index = id + 2,
-                    Info = info,
+                    Entry = info,
                     Data = audio.Data
                 });
             }

@@ -22,7 +22,7 @@ public enum PsxMgsSoundTablePacketType
     SetDetune = 0x60,
     SetVibrato = 0x61,
     ChangeVibrato = 0x62,
-    SetRandom = 0x63,
+    SetRdm = 0x63,
     SetSwp = 0x64,
     SetSws = 0x65,
     SetPor = 0x66,

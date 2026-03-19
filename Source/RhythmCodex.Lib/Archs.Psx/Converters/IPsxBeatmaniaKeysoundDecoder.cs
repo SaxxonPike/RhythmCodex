@@ -5,5 +5,5 @@ namespace RhythmCodex.Archs.Psx.Converters;
 
 public interface IPsxBeatmaniaKeysoundDecoder
 {
-    Sound Decode(PsxBeatmaniaKeysound keysound);
+    Sound Decode(PsxMgsSound keysound);
 }

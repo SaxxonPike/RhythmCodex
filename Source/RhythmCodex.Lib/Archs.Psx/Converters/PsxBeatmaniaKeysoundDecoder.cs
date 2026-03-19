@@ -12,7 +12,7 @@ namespace RhythmCodex.Archs.Psx.Converters;
 public class PsxBeatmaniaKeysoundDecoder(IVagDecoder vagDecoder) : IPsxBeatmaniaKeysoundDecoder
 {
     /// <inheritdoc />
-    public Sound Decode(PsxBeatmaniaKeysound keysound)
+    public Sound Decode(PsxMgsSound keysound)
     {
         var sound = vagDecoder.Decode(new VagChunk
         {
