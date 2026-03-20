@@ -46,9 +46,9 @@ public class BmPs1OneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target)
     {
-        const bool extractAudio = false;
-        const bool extractCharts = false;
-        const bool extractRawBlock = true;
+        const bool extractAudio = true;
+        const bool extractCharts = true;
+        const bool extractRawBlock = false;
 
         //
         // Load in the CUE/BIN files.
@@ -73,6 +73,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), target);
         var psxBeatmaniaDecoder = Resolve<IPsxBeatmaniaDecoder>();
+        var psxBeatmaniaSongGrouper = Resolve<IPsxBeatmaniaSongGrouper>();
 
         //
         // Determine where SYSDATA.PAK is located on the disc and load it.
@@ -80,7 +81,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         Log.WriteLine("Loading SYSDATA.PAK");
         using var sysDataPak = cdFiles.Single(f => f.Name == "./SYSDATA.PAK;1").Open();
-        
+
         //
         // Decode SYSDATA.PAK.
         //
@@ -99,76 +100,80 @@ public class BmPs1OneShots : BaseIntegrationFixture
         //
 
         var bmDataPakFiles = psxBeatmaniaDecoder.DecodeBmData(bmDataPak, bmDataPak.Length);
+        var bmDataGroups = psxBeatmaniaSongGrouper.GroupFiles(bmDataPakFiles);
 
-        if (extractCharts)
+        foreach (var songGroup in bmDataGroups)
         {
-            //
-            // Convert charts.
-            //
-
-            var bmDataCharts = bmDataPakFiles
-                .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
-                .Select(f =>
-                {
-                    using var chartStream = new ReadOnlyMemoryStream(f.Data);
-                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
-                    chart[NumericData.Id] = f.Index;
-                    return chart;
-                });
-
-            //
-            // Save charts.
-            //
-
-            foreach (var chart in bmDataCharts)
+            if (extractCharts)
             {
-                var chartId = $"{(int)chart[NumericData.Id]!.Value:d4}";
+                //
+                // Convert charts.
+                //
 
-                this.WriteSetCharts(new TestHelper.WriteSetConfig
+                var bmDataCharts = bmDataPakFiles
+                    .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
+                    .Select(f =>
+                    {
+                        using var chartStream = new ReadOnlyMemoryStream(f.Data);
+                        var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
+                        chart[NumericData.Id] = f.Index;
+                        return chart;
+                    });
+
+                //
+                // Save charts.
+                //
+
+                foreach (var chart in bmDataCharts)
                 {
-                    Charts = [chart],
-                    ChartSetId = 0,
-                    OutPath = Path.Combine(target),
-                    ChartType = BmsChartType.Beatmania,
-                    RemapSounds = false,
-                    Title = chartId
-                });
+                    var chartId = $"{(int)chart[NumericData.Id]!:d4}";
+
+                    this.WriteSetCharts(new TestHelper.WriteSetConfig
+                    {
+                        Charts = [chart],
+                        ChartSetId = 0,
+                        OutPath = Path.Combine(target),
+                        ChartType = BmsChartType.Beatmania,
+                        RemapSounds = false,
+                        Title = chartId
+                    });
+                }
             }
-        }
 
-        if (extractAudio)
-        {
-            //
-            // Convert keysound folders.
-            //
-
-            var bmDataKeysoundBlockReader = Resolve<IPsxMgsSoundBankBlockReader>();
-            var bmDataKeysoundBlockDecoder = Resolve<IPsxMgsSoundBankDecoder>();
-            var bmDataKeysoundDecoder = Resolve<IPsxBeatmaniaKeysoundDecoder>();
-
-            var bmDataKeysoundSets = bmDataPakFiles
-                .Where(f => f.Type == PsxBeatmaniaFileType.Keysound)
-                .Select(f =>
-                {
-                    var keysoundBlockStream = new ReadOnlyMemoryStream(f.Data);
-                    var keysoundBlock = bmDataKeysoundBlockReader.Read(keysoundBlockStream);
-                    var keysounds = bmDataKeysoundBlockDecoder.Decode(keysoundBlock);
-
-                    return (
-                        f.Index,
-                        Sounds: new List<Sound>()
-                    );
-                });
-
-            foreach (var keysoundSet in bmDataKeysoundSets)
+            if (extractAudio)
             {
-                this.WriteSetSounds(new TestHelper.WriteSetConfig
+                //
+                // Convert keysound folders.
+                //
+
+                var bmDataKeysoundBlockReader = Resolve<IPsxMgsSoundBankBlockReader>();
+                var bmDataKeysoundBlockDecoder = Resolve<IPsxMgsSoundBankDecoder>();
+                var bmDataKeysoundDecoder = Resolve<IPsxBeatmaniaKeysoundDecoder>();
+
+                var bmDataKeysoundSets = bmDataPakFiles
+                    .Where(f => f.Type == PsxBeatmaniaFileType.Keysound)
+                    .Select(f =>
+                    {
+                        var keysoundBlockStream = new ReadOnlyMemoryStream(f.Data);
+                        var keysoundBlock = bmDataKeysoundBlockReader.Read(keysoundBlockStream);
+                        var keysounds = bmDataKeysoundBlockDecoder.Decode(keysoundBlock);
+
+                        return (
+                            f.Index,
+                            Sounds: new List<Sound>()
+                        );
+                    });
+
+                foreach (var keysoundSet in bmDataKeysoundSets)
                 {
-                    Sounds = keysoundSet.Sounds,
-                    OutPath = Path.Combine(target, $"{keysoundSet.Index:d4}"),
-                    RemapSounds = false,
-                    ResampleSounds = false
-                });
+                    this.WriteSetSounds(new TestHelper.WriteSetConfig
+                    {
+                        Sounds = keysoundSet.Sounds,
+                        OutPath = Path.Combine(target, $"{keysoundSet.Index:d4}"),
+                        RemapSounds = false,
+                        ResampleSounds = false
+                    });
+                }
             }
         }
 

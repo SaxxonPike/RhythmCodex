@@ -62,6 +62,7 @@ public class BeatmaniaPsxBmDataStreamReader(ILogger logger) : IBeatmaniaPsxBmDat
             offset += maxSize;
 
             var files = new List<BeatmaniaPsxFile>();
+            var idx = 0;
             using (var mem = new ReadOnlyMemoryStream(buffer))
             using (var memReader = new BinaryReader(mem))
             {
@@ -70,6 +71,7 @@ public class BeatmaniaPsxBmDataStreamReader(ILogger logger) : IBeatmaniaPsxBmDat
                     mem.Position = entry.Offset * 0x800;
                     files.Add(new BeatmaniaPsxFile
                     {
+                        Index = idx++,
                         Data = memReader.ReadBytes(entry.Length)
                     });
                 }
