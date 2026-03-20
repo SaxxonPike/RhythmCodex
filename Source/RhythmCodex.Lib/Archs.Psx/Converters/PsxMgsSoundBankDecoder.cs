@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Streamers;
@@ -30,6 +31,7 @@ public class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
         //
 
         const int count = 256;
+        var firstIndex = block.Patches.Min(x => x.Address) / 16;
         var infos = new Dictionary<int, PsxMgsSoundBankEntry>();
 
         for (var i = 0; i < count; i++)
@@ -76,7 +78,7 @@ public class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
             {
                 result.Add(new PsxMgsSoundBankEntryWithData
                 {
-                    Index = id + 2,
+                    Index = id,
                     Entry = info,
                     Data = audio.Data
                 });

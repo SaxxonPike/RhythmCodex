@@ -2,7 +2,7 @@ using System;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
-public sealed class PsxMgsSound
+public record PsxMgsSound
 {
     public int Index { get; set; }
     public required PsxMgsSoundScript Script { get; set; }

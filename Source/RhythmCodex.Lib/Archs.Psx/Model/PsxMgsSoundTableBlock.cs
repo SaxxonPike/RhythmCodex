@@ -2,7 +2,9 @@ using System;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class PsxMgsSoundTableBlock
+public record PsxMgsSoundTableBlock
 {
-    public ReadOnlyMemory<byte> Data { get; set; }
+    public ReadOnlyMemory<byte> Header { get; set; }
+    public ReadOnlyMemory<byte> Table { get; set; }
+    public ReadOnlyMemory<byte> Scripts { get; set; }
 }

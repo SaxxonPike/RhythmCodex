@@ -2,7 +2,7 @@ using System;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class PsxMgsSoundBankEntryWithData
+public record PsxMgsSoundBankEntryWithData
 {
     public int Index { get; set; }
     public required PsxMgsSoundBankEntry Entry { get; set; }

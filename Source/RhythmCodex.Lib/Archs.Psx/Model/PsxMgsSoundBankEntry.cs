@@ -1,6 +1,6 @@
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class PsxMgsSoundBankEntry
+public record PsxMgsSoundBankEntry
 {
     //
     // ref: struct WAVE_W

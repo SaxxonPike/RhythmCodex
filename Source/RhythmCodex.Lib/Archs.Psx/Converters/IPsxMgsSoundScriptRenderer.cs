@@ -6,5 +6,5 @@ namespace RhythmCodex.Archs.Psx.Converters;
 
 public interface IPsxMgsSoundScriptRenderer
 {
-    Sound Render(PsxMgsSoundScript script, List<PsxMgsSoundBankEntryWithData> soundBank, int track);
+    Sound Render(PsxMgsSoundScript script, List<PsxMgsSoundBankEntryWithData> soundBank, int track, int sampleRate);
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
-public class PsxMgsSoundTable
+public record PsxMgsSoundTable
 {
     public List<PsxMgsSoundScript> Scripts { get; set; } = [];
 }

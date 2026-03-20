@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.IoC;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Archs.Psx.Converters;
@@ -15,7 +16,8 @@ public sealed class PsxMgsDecoder(
 {
     public List<Sound> DecodeSounds(
         PsxMgsSoundBankBlock soundBank,
-        PsxMgsSoundTableBlock soundTable
+        PsxMgsSoundTableBlock soundTable,
+        int sampleRate
     )
     {
         var bankEntries = psxMgsSoundBankDecoder
@@ -25,11 +27,14 @@ public sealed class PsxMgsDecoder(
             .Decode(soundTable);
 
         return tableEntries
+            .Where(te => te.Channels.Count > 0)
             .Select(te =>
             {
-                var sound = psxMgsSoundScriptRenderer.Render(te, bankEntries, 1);
+                var sound = psxMgsSoundScriptRenderer.Render(te, bankEntries, 1, sampleRate);
+                sound[NumericData.Id] = te.Index;
                 return sound;
             })
+            .Where(s => s.Samples.Count > 0 && s.Samples.Any(x => x.Data.Length > 0))
             .ToList();
     }
 }

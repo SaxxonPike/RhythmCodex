@@ -99,18 +99,25 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Decode BMDATA.PAK.
         //
 
+        var psxMgsSoundBankBlockReader = Resolve<IPsxMgsSoundBankBlockReader>();
+        var psxMgsSoundTableBlockReader = Resolve<IPsxMgsSoundTableReader>();
+        var bmDataKeysoundBlockDecoder = Resolve<IPsxMgsSoundBankDecoder>();
+        var bmDataKeysoundDecoder = Resolve<IPsxBeatmaniaKeysoundDecoder>();
+        var mgsDecoder = Resolve<IPsxMgsDecoder>();
         var bmDataPakFiles = psxBeatmaniaDecoder.DecodeBmData(bmDataPak, bmDataPak.Length);
         var bmDataGroups = psxBeatmaniaSongGrouper.GroupFiles(bmDataPakFiles);
 
         foreach (var songGroup in bmDataGroups)
         {
+            var groupPath = Path.Combine(target, $"{songGroup.Index:d4}");
+
             if (extractCharts)
             {
                 //
                 // Convert charts.
                 //
 
-                var bmDataCharts = bmDataPakFiles
+                var bmDataCharts = songGroup.Files
                     .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
                     .Select(f =>
                     {
@@ -131,8 +138,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     this.WriteSetCharts(new TestHelper.WriteSetConfig
                     {
                         Charts = [chart],
-                        ChartSetId = 0,
-                        OutPath = Path.Combine(target),
+                        OutPath = groupPath,
                         ChartType = BmsChartType.Beatmania,
                         RemapSounds = false,
                         Title = chartId
@@ -146,21 +152,31 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 // Convert keysound folders.
                 //
 
-                var bmDataKeysoundBlockReader = Resolve<IPsxMgsSoundBankBlockReader>();
-                var bmDataKeysoundBlockDecoder = Resolve<IPsxMgsSoundBankDecoder>();
-                var bmDataKeysoundDecoder = Resolve<IPsxBeatmaniaKeysoundDecoder>();
+                var soundBankBlocks = songGroup.Files
+                    .Where(x => x.Type == PsxBeatmaniaFileType.Keysound)
+                    .Select((x, i) => (
+                        Index: i,
+                        Bank: psxMgsSoundBankBlockReader.Read(new ReadOnlyMemoryStream(x.Data))
+                    ))
+                    .ToList();
 
-                var bmDataKeysoundSets = bmDataPakFiles
-                    .Where(f => f.Type == PsxBeatmaniaFileType.Keysound)
+                var soundTableMap = songGroup.Files
+                    .Where(x => x.Type == PsxBeatmaniaFileType.Kst)
+                    .Select((x, i) => (
+                        Index: i,
+                        Table: psxMgsSoundTableBlockReader.Read(new ReadOnlyMemoryStream(x.Data)),
+                        soundBankBlocks[i % soundBankBlocks.Count].Bank
+                    ))
+                    .ToList();
+
+                var bmDataKeysoundSets = soundTableMap
                     .Select(f =>
                     {
-                        var keysoundBlockStream = new ReadOnlyMemoryStream(f.Data);
-                        var keysoundBlock = bmDataKeysoundBlockReader.Read(keysoundBlockStream);
-                        var keysounds = bmDataKeysoundBlockDecoder.Decode(keysoundBlock);
+                        var sounds = mgsDecoder.DecodeSounds(f.Bank, f.Table, 44100);
 
                         return (
                             f.Index,
-                            Sounds: new List<Sound>()
+                            Sounds: sounds
                         );
                     });
 
@@ -169,7 +185,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     this.WriteSetSounds(new TestHelper.WriteSetConfig
                     {
                         Sounds = keysoundSet.Sounds,
-                        OutPath = Path.Combine(target, $"{keysoundSet.Index:d4}"),
+                        OutPath = groupPath,
                         RemapSounds = false,
                         ResampleSounds = false
                     });
