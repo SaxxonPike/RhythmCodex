@@ -1,11 +1,14 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.IoC;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Vag.Converters;
+using RhythmCodex.Sounds.Vag.Models;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
@@ -54,8 +57,10 @@ public class PsxMgsSoundScriptRenderer(
         int sampleRate)
     {
         Sample? sourceSample = null;
-        var sourceSampleOffset = 0;
+        var sourceSampleOffset = 0f;
         var sourceSampleRate = 0f;
+        var sourceFineTune = 0;
+        var sourceTranspose = 0;
         var sampleId = -1;
         var resolution = 1f;
 
@@ -73,6 +78,7 @@ public class PsxMgsSoundScriptRenderer(
         var targetNote = 0f;
         var notePortTime = 0f;
         var playedNote = 0;
+        var pendingSilence = 0;
 
         var setSample = false;
         var ad = 0;
@@ -160,7 +166,7 @@ public class PsxMgsSoundScriptRenderer(
                 {
                     finished = true;
                     procMs = Math.Max(panningFadeTime, volumeFadeTime);
-                    continue;
+                    break;
                 }
                 case var data1 when (int)data1 >= 0x80:
                 {
@@ -171,7 +177,7 @@ public class PsxMgsSoundScriptRenderer(
                 {
                     noteOn = true;
                     procMs += packet.Data2 * 10 * resolution;
-                    playedNote = (packet.Data1 << 8);
+                    playedNote = packet.Data1;
                     break;
                 }
             }
@@ -179,42 +185,110 @@ public class PsxMgsSoundScriptRenderer(
             if (procMs <= 0)
                 continue;
 
+            //
+            // If the sample has changed, convert it.
+            //
+
             if (setSample)
             {
                 setSample = false;
                 sample = soundBank.FirstOrDefault(x => x.Index == sampleId);
+                sourceFineTune = unchecked((sbyte)(sample?.Entry.Tune ?? 0));
+                sourceTranspose = unchecked((sbyte)(sample?.Entry.Note ?? 0));
+                sourceSampleOffset = 0;
+
+                sourceSample = sample == null
+                    ? null
+                    : vagSplitter
+                        .Split(new VagChunk { Channels = 1, Data = sample.Data })
+                        .FirstOrDefault();
             }
+
+            //
+            // Starting frequency is calculated at note-on.
+            //
 
             if (!lastNoteOn && noteOn)
             {
-                var actualNote = ((playedNote + transpose) << 8) + detune;
-                sourceSampleRate = CalculateFrequency(playedNote, transpose, detune);
+                sourceSampleRate = CalculateFrequency(
+                    playedNote,
+                    transpose + sourceTranspose,
+                    detune + sourceFineTune
+                );
             }
 
+            //
+            // Determine how many wave samples will be generated.
+            //
+
+            var sampleCount = (int)MathF.Truncate(sampleRate * 1000 / procMs);
+            using var buffer = MemoryPool<float>.Shared.Rent(sampleCount);
+            var sampleFloats = buffer.Memory.Span[..sampleCount];
+            var sourceSampleSpan = sourceSample != null ? sourceSample.Data.Span : [];
+
+            //
+            // Populate the output.
+            //
+
+            if (sourceSample != null && pendingSilence > 0)
+            {
+                using var silenceBuffer = MemoryPool<float>.Shared.Rent(pendingSilence);
+                silenceBuffer.Memory.Span[..pendingSilence].Clear();
+                result.Append(silenceBuffer.Memory.Span[..pendingSilence]);
+                pendingSilence = 0;
+            }
+
+            var populatedSampleCount = 0;
+
+            for (var i = 0; i < sampleCount; i++)
+            {
+                var sourceSampleOffsetInt = (int)MathF.Truncate(sourceSampleOffset);
+                if (sourceSampleOffsetInt >= sourceSampleSpan.Length)
+                {
+                    pendingSilence += sampleCount - i;
+                    populatedSampleCount = i;
+                    break;
+                }
+
+                sampleFloats[i] = sourceSampleSpan[sourceSampleOffsetInt];
+                sourceSampleOffset += sourceSampleRate / sampleRate;
+            }
+
+            result.Append(sampleFloats[..populatedSampleCount]);
             lastNoteOn = noteOn;
             procMs = 0;
         }
 
+        result[NumericData.Id] = sampleId;
         return result.ToSample();
     }
 
     private float CalculateFrequency(int note, int macro, int micro)
     {
-        var noteTune = note + (macro << 8) + unchecked((sbyte)micro);
-        var fineTune = unchecked((byte)noteTune);
-        var coarseTune = (noteTune >> 8) + macro;
-        coarseTune &= 0x7F;
+        //
+        // Determine the coarse and fine-tune components.
+        //
 
-        var freqs = freqTbl.Value.Span;
-        var toneScale = freqs[coarseTune + 1] - freqs[coarseTune];
+        var noteTune = ((note + macro) << 8) + (micro << 1);
+        var adjustedTune = noteTune;
+        var fineTune = unchecked((byte)adjustedTune);
+        var coarseTune = (adjustedTune >> 8) & 0x7F;
 
-        if ((toneScale & 0x8000) != 0)
+        //
+        // Use linear interpolation to convert the fine-tune value to whole cycles.
+        //
+
+        var coarseFreqTable = freqTbl.Value.Span;
+        float coarseTuneCycles = coarseFreqTable[coarseTune];
+        var toneScale = coarseFreqTable[coarseTune + 1] - coarseTuneCycles;
+
+        if (toneScale < 0)
             toneScale = 0xC9;
 
-        float coarseTuneCycles = freqs[coarseTune];
         var fineTuneCycles = fineTune / 128f * toneScale;
         var totalCycles = Math.Clamp(MathF.Round(coarseTuneCycles + fineTuneCycles), 0, 16384f);
 
-        return 44100f * totalCycles / 0x1000;
+        var result = 44100f * totalCycles / 0x1000;
+        return result;
     }
 }
