@@ -182,9 +182,6 @@ public class PsxMgsSoundScriptRenderer(
                 }
             }
 
-            if (procMs <= 0)
-                continue;
-
             //
             // If the sample has changed, convert it.
             //
@@ -221,7 +218,7 @@ public class PsxMgsSoundScriptRenderer(
             // Determine how many wave samples will be generated.
             //
 
-            var sampleCount = (int)MathF.Truncate(sampleRate * 1000 / procMs);
+            var sampleCount = (int)MathF.Truncate(sampleRate * procMs / 1000);
             using var buffer = MemoryPool<float>.Shared.Rent(sampleCount);
             var sampleFloats = buffer.Memory.Span[..sampleCount];
             var sourceSampleSpan = sourceSample != null ? sourceSample.Data.Span : [];
@@ -230,33 +227,37 @@ public class PsxMgsSoundScriptRenderer(
             // Populate the output.
             //
 
-            if (sourceSample != null && pendingSilence > 0)
+            if (sourceSampleOffset < sourceSampleSpan.Length)
             {
-                using var silenceBuffer = MemoryPool<float>.Shared.Rent(pendingSilence);
-                silenceBuffer.Memory.Span[..pendingSilence].Clear();
-                result.Append(silenceBuffer.Memory.Span[..pendingSilence]);
-                pendingSilence = 0;
-            }
-
-            var populatedSampleCount = 0;
-
-            for (var i = 0; i < sampleCount; i++)
-            {
-                var sourceSampleOffsetInt = (int)MathF.Truncate(sourceSampleOffset);
-                if (sourceSampleOffsetInt >= sourceSampleSpan.Length)
+                if (sourceSample != null && pendingSilence > 0)
                 {
-                    pendingSilence += sampleCount - i;
-                    populatedSampleCount = i;
-                    break;
+                    using var silenceBuffer = MemoryPool<float>.Shared.Rent(pendingSilence);
+                    silenceBuffer.Memory.Span[..pendingSilence].Clear();
+                    result.Append(silenceBuffer.Memory.Span[..pendingSilence]);
+                    pendingSilence = 0;
                 }
 
-                sampleFloats[i] = sourceSampleSpan[sourceSampleOffsetInt];
-                sourceSampleOffset += sourceSampleRate / sampleRate;
+                var populatedSampleCount = sampleCount;
+
+                for (var i = 0; i < sampleCount; i++)
+                {
+                    var sourceSampleOffsetInt = (int)MathF.Truncate(sourceSampleOffset);
+                    if (sourceSampleOffsetInt >= sourceSampleSpan.Length)
+                    {
+                        pendingSilence += sampleCount - i;
+                        populatedSampleCount = i;
+                        break;
+                    }
+
+                    sampleFloats[i] = sourceSampleSpan[sourceSampleOffsetInt];
+                    sourceSampleOffset += sourceSampleRate / sampleRate;
+                }
+
+                result.Append(sampleFloats[..populatedSampleCount]);
+                lastNoteOn = noteOn;
             }
 
-            result.Append(sampleFloats[..populatedSampleCount]);
-            lastNoteOn = noteOn;
-            procMs = 0;
+            procMs -= sampleCount * 1000f / sampleRate;
         }
 
         result[NumericData.Id] = sampleId;

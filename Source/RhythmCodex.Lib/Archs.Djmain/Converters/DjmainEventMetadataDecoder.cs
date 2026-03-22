@@ -10,6 +10,12 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 [Service]
 public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 {
+    private void SetSourceCommandAndData(Event ev, int param0, int param1)
+    {
+        ev[NumericData.SourceCommand] = param0;
+        ev[NumericData.SourceData] = param1;
+    }
+
     private void SetCommon(Event ev, DjmainEventType command, int param0, int param1, bool swapStereo)
     {
         switch (command)
@@ -72,18 +78,17 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 
     public void AddBeatmaniaMetadata(Event ev, DjmainChartEvent ce, bool swapStereo)
     {
-        var command = (DjmainEventType) (ce.Param0 & 0xF);
+        var command = (DjmainEventType)(ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;
         var param1 = ce.Param1;
 
-        ev[NumericData.SourceCommand] = ce.Param0;
-        ev[NumericData.SourceData] = ce.Param1;
+        SetSourceCommandAndData(ev, ce.Param0, ce.Param1);
 
         switch (command)
         {
             case DjmainEventType.Marker:
             case DjmainEventType.SoundSelect:
-                switch ((DjmainBeatmaniaColumnType) param0)
+                switch ((DjmainBeatmaniaColumnType)param0)
                 {
                     case DjmainBeatmaniaColumnType.Player0Scratch:
                     case DjmainBeatmaniaColumnType.Player1Scratch:
@@ -141,12 +146,11 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 
     public void AddPopnMetadata(Event ev, DjmainChartEvent ce, bool swapStereo)
     {
-        var command = (DjmainEventType) (ce.Param0 & 0xF);
+        var command = (DjmainEventType)(ce.Param0 & 0xF);
         var param0 = ce.Param0 >> 4;
         var param1 = ce.Param1;
 
-        ev[NumericData.SourceCommand] = ce.Param0;
-        ev[NumericData.SourceData] = ce.Param1;
+        SetSourceCommandAndData(ev, ce.Param0, ce.Param1);
 
         switch (command)
         {
@@ -167,5 +171,31 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
                 SetCommon(ev, command, param0, param1, swapStereo);
                 break;
         }
+    }
+
+    public void AddBeatmaniaCsMetadata(Event ev, DjmainChartEvent ce)
+    {
+        //
+        // PSX Beatmania uses the Metal Gear Solid sound system.
+        // In this system, IDs that are less than 128 map to a
+        // game-specific static table. However, all keysounds are
+        // mapped to 128-255 because they are dynamically loaded.
+        //
+        // Values 1-127 instead correspond to controller vibration
+        // values, which we ignore. The game ignores a value of 0.
+        //
+
+        var hasSoundId = (DjmainEventType)(ce.Param0 & 0xF) is DjmainEventType.Bgm or DjmainEventType.SoundSelect;
+
+        if (hasSoundId && ce.Param1 < 0x80)
+        {
+            SetSourceCommandAndData(ev, ce.Param0, ce.Param1);
+            return;
+        }
+
+        AddBeatmaniaMetadata(ev, ce, false);
+
+        if (ev[NumericData.LoadSound] is { } soundId)
+            ev[NumericData.LoadSound] = soundId + 1;
     }
 }

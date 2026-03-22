@@ -13,7 +13,6 @@ using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
-using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Riff.Converters;
 using RhythmCodex.Sounds.Riff.Streamers;
 using RhythmCodex.Sounds.Xa.Converters;
@@ -101,8 +100,6 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         var psxMgsSoundBankBlockReader = Resolve<IPsxMgsSoundBankBlockReader>();
         var psxMgsSoundTableBlockReader = Resolve<IPsxMgsSoundTableReader>();
-        var bmDataKeysoundBlockDecoder = Resolve<IPsxMgsSoundBankDecoder>();
-        var bmDataKeysoundDecoder = Resolve<IPsxBeatmaniaKeysoundDecoder>();
         var mgsDecoder = Resolve<IPsxMgsDecoder>();
         var bmDataPakFiles = psxBeatmaniaDecoder.DecodeBmData(bmDataPak, bmDataPak.Length);
         var bmDataGroups = psxBeatmaniaSongGrouper.GroupFiles(bmDataPakFiles);
@@ -164,6 +161,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     .Where(x => x.Type == PsxBeatmaniaFileType.Kst)
                     .Select((x, i) => (
                         Index: i,
+                        Map: x.Index,
                         Table: psxMgsSoundTableBlockReader.Read(new ReadOnlyMemoryStream(x.Data)),
                         soundBankBlocks[i % soundBankBlocks.Count].Bank
                     ))
@@ -176,6 +174,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
                         return (
                             f.Index,
+                            f.Map,
                             Sounds: sounds
                         );
                     });
@@ -184,6 +183,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 {
                     this.WriteSetSounds(new TestHelper.WriteSetConfig
                     {
+                        ChartSetId = keysoundSet.Map,
                         Sounds = keysoundSet.Sounds,
                         OutPath = groupPath,
                         RemapSounds = false,

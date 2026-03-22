@@ -11,6 +11,7 @@ using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Metadatas.Models;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
@@ -26,24 +27,7 @@ public sealed class PsxBeatmaniaDecoder(
     public Chart DecodeChart(Stream source)
     {
         var events = chartEventStreamReader.Read(source);
-
-        events.RemoveAll(ev =>
-        {
-            switch ((DjmainEventType)(ev.Param0 & 0xF))
-            {
-                case DjmainEventType.Bgm:
-                case DjmainEventType.SoundSelect:
-                {
-                    return ev.Param1 < 0x80;
-                }
-                default:
-                {
-                    return false;
-                }
-            }
-        });
-
-        var chart = djmainChartDecoder.Decode(events, DjmainChartType.Beatmania, false);
+        var chart = djmainChartDecoder.Decode(events, DjmainChartType.BeatmaniaCs, false);
         return chart;
     }
 

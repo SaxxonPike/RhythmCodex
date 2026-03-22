@@ -21,20 +21,19 @@ public class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
         // an address space.
         //
 
-        var ram = new byte[0x200000];
+        var ram = new byte[0x80000];
 
         foreach (var patch in block.Patches)
             patch.Data.Span.CopyTo(ram.AsSpan(patch.Address));
 
         //
-        // Once applied, parse the keysound table.
+        // Once applied, parse the keysound table. Only indices
+        // 128-255 are valid for keysound samples.
         //
 
-        const int count = 256;
-        var firstIndex = block.Patches.Min(x => x.Address) / 16;
         var infos = new Dictionary<int, PsxMgsSoundBankEntry>();
 
-        for (var i = 0; i < count; i++)
+        for (var i = 128; i < 256; i++)
         {
             var bytes = ram.AsSpan(i << 4, 16);
 

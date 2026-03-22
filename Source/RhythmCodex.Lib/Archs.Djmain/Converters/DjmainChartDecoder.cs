@@ -20,7 +20,7 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
         };
     }
 
-    public int GetFirstEventOffset(IEnumerable<DjmainChartEvent> inEvents) => 
+    public int GetFirstEventOffset(IEnumerable<DjmainChartEvent> inEvents) =>
         inEvents.TakeWhile(e => e.Offset == 0 && (e.Param0 & 0xF) == 0).Count();
 
     private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> inEvents, DjmainChartType chartType,
@@ -29,9 +29,15 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
         var events = inEvents.AsList();
         var eventStart = GetFirstEventOffset(events);
 
+        var timing = chartType switch
+        {
+            DjmainChartType.BeatmaniaCs => 60f,
+            _ => 58f
+        };
+
         foreach (var ev in events.Skip(eventStart))
         {
-            var offset = new BigRational(ev.Offset, 58);
+            var offset = (BigRational)ev.Offset / timing;
             var newEv = new Event
             {
                 [NumericData.SourceCommand] = ev.Param0,
@@ -44,6 +50,9 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
             {
                 case DjmainChartType.Beatmania:
                     djmainEventMetadataDecoder.AddBeatmaniaMetadata(newEv, ev, swapStereo);
+                    break;
+                case DjmainChartType.BeatmaniaCs:
+                    djmainEventMetadataDecoder.AddBeatmaniaCsMetadata(newEv, ev);
                     break;
                 case DjmainChartType.Popn:
                     djmainEventMetadataDecoder.AddPopnMetadata(newEv, ev, swapStereo);

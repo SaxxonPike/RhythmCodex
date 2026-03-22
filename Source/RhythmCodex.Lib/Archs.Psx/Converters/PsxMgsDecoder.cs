@@ -31,7 +31,7 @@ public sealed class PsxMgsDecoder(
             .Select(te =>
             {
                 var sound = psxMgsSoundScriptRenderer.Render(te, bankEntries, 1, sampleRate);
-                sound[NumericData.Id] = te.Index + 129;
+                sound[NumericData.Id] = te.Index;
                 return sound;
             })
             .ToList();

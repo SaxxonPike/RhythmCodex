@@ -23,7 +23,6 @@ public class PsxMgsSoundTableDecoder
         for (var i = 0; i < tableSpan.Length; i += 16)
         {
             var record = tableSpan.Slice(i, 16);
-            var flags = ReadInt32LittleEndian(record);
             var offsets = new[]
             {
 
@@ -65,9 +64,12 @@ public class PsxMgsSoundTableDecoder
 
             var script = new PsxMgsSoundScript
             {
-                Index = i >> 4,
+                Index = (i >> 4) + 128,
                 Channels = packetSets,
-                Flags = flags
+                Priority = record[0], // SETBL.pri
+                ChannelCount = record[1], // SETBL.tracks
+                Kind = record[2], // SETBL.kind
+                UniqueGroup = record[3] // SETBL.character
             };
 
             result.Add(script);

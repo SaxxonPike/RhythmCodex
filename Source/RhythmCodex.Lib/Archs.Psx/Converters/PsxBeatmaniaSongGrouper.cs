@@ -43,8 +43,3 @@ public class PsxBeatmaniaSongGrouper : IPsxBeatmaniaSongGrouper
         return groups;
     }
 }
-
-public interface IPsxBeatmaniaSongGrouper
-{
-    List<PsxBeatmaniaSongGroup> GroupFiles(IEnumerable<PsxBeatmaniaFile> files);
-}
