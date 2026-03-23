@@ -55,7 +55,7 @@ public class PsxMgsSoundTableDecoder
                     packetSpan = packetSpan[4..];
 
                     packets.Add(packet);
-                    if (packet.Command == PsxMgsSoundTablePacketType.EndBlock)
+                    if (packet.Command == PsxMgsSoundTablePacketType.End)
                         break;
                 }
 
