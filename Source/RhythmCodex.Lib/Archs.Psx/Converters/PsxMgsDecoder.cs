@@ -30,10 +30,12 @@ public sealed class PsxMgsDecoder(
             .Where(te => te.Channels.Count > 0)
             .Select(te =>
             {
-                var sound = psxMgsSoundScriptRenderer.Render(te, bankEntries, 1, sampleRate);
+                var sound = psxMgsSoundScriptRenderer.Render(te, bankEntries, sampleRate);
                 sound[NumericData.Id] = te.Index;
+                sound[NumericData.Volume] = 0.8f;
                 return sound;
             })
+            .Where(s => s.Samples.Count > 0 && s.Samples.Any(x => x.Data.Length > 0))
             .ToList();
     }
 }

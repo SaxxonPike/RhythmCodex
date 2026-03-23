@@ -65,7 +65,7 @@ public class XaDecodeIntegrationTests : BaseIntegrationFixture
             
         var streams = streamFinder.FindMode2(isoReader
             .Create(new MemoryStream(data), data.Length)
-            .Select(s => isoInfoDecoder.Decode(s)));
+            .Select(s => isoInfoDecoder.Decode(s)), false);
 
         var index = 0;
             

@@ -185,7 +185,9 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
         // values, which we ignore. The game ignores a value of 0.
         //
 
-        var hasSoundId = (DjmainEventType)(ce.Param0 & 0xF) is DjmainEventType.Bgm or DjmainEventType.SoundSelect;
+        var eventType = (DjmainEventType)(ce.Param0 & 0xF);
+        var hasSoundId = eventType is DjmainEventType.Bgm or DjmainEventType.SoundSelect;
+        var add1 = eventType is DjmainEventType.SoundSelect;
 
         if (hasSoundId && ce.Param1 < 0x80)
         {
@@ -195,7 +197,9 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 
         AddBeatmaniaMetadata(ev, ce, false);
 
-        if (ev[NumericData.LoadSound] is { } soundId)
-            ev[NumericData.LoadSound] = soundId + 1;
+        if (ev[NumericData.LoadSound] is { } loadSoundId)
+            ev[NumericData.LoadSound] = loadSoundId + 1;
+        else if (ev[NumericData.PlaySound] is { } playSoundId)
+            ev[NumericData.PlaySound] = playSoundId + 1;
     }
 }

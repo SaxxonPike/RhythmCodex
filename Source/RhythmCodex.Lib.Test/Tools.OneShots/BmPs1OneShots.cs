@@ -7,6 +7,7 @@ using RhythmCodex.Archs.Psx.Converters;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Charts.Bms.Converters;
+using RhythmCodex.Charts.Models;
 using RhythmCodex.FileSystems.Cd.Streamers;
 using RhythmCodex.FileSystems.Cue.Processors;
 using RhythmCodex.FileSystems.Cue.Streamers;
@@ -45,9 +46,10 @@ public class BmPs1OneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target)
     {
-        const bool extractAudio = true;
+        const bool extractKeysounds = true;
         const bool extractCharts = true;
         const bool extractRawBlock = false;
+        const bool extractBgm = true;
 
         //
         // Load in the CUE/BIN files.
@@ -108,89 +110,85 @@ public class BmPs1OneShots : BaseIntegrationFixture
         {
             var groupPath = Path.Combine(target, $"{songGroup.Index:d4}");
 
-            if (extractCharts)
-            {
-                //
-                // Convert charts.
-                //
+            //
+            // Convert charts.
+            //
 
-                var bmDataCharts = songGroup.Files
-                    .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
-                    .Select(f =>
-                    {
-                        using var chartStream = new ReadOnlyMemoryStream(f.Data);
-                        var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
-                        chart[NumericData.Id] = f.Index;
-                        return chart;
-                    });
-
-                //
-                // Save charts.
-                //
-
-                foreach (var chart in bmDataCharts)
+            var bmDataCharts = songGroup.Files
+                .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
+                .Select((f, i) =>
                 {
-                    var chartId = $"{(int)chart[NumericData.Id]!:d4}";
+                    using var chartStream = new ReadOnlyMemoryStream(f.Data);
+                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
+                    chart[NumericData.Id] = i;
+                    chart[NumericData.SourceIndex] = f.Index;
 
-                    this.WriteSetCharts(new TestHelper.WriteSetConfig
+                    // Start of BGM is not explicitly included in the chart file,
+                    // so it is added here.
+
+                    chart.Events.Add(new Event
                     {
-                        Charts = [chart],
-                        OutPath = groupPath,
-                        ChartType = BmsChartType.Beatmania,
-                        RemapSounds = false,
-                        Title = chartId
-                    });
-                }
-            }
-
-            if (extractAudio)
-            {
-                //
-                // Convert keysound folders.
-                //
-
-                var soundBankBlocks = songGroup.Files
-                    .Where(x => x.Type == PsxBeatmaniaFileType.Keysound)
-                    .Select((x, i) => (
-                        Index: i,
-                        Bank: psxMgsSoundBankBlockReader.Read(new ReadOnlyMemoryStream(x.Data))
-                    ))
-                    .ToList();
-
-                var soundTableMap = songGroup.Files
-                    .Where(x => x.Type == PsxBeatmaniaFileType.Kst)
-                    .Select((x, i) => (
-                        Index: i,
-                        Map: x.Index,
-                        Table: psxMgsSoundTableBlockReader.Read(new ReadOnlyMemoryStream(x.Data)),
-                        soundBankBlocks[i % soundBankBlocks.Count].Bank
-                    ))
-                    .ToList();
-
-                var bmDataKeysoundSets = soundTableMap
-                    .Select(f =>
-                    {
-                        var sounds = mgsDecoder.DecodeSounds(f.Bank, f.Table, 44100);
-
-                        return (
-                            f.Index,
-                            f.Map,
-                            Sounds: sounds
-                        );
+                        [NumericData.LinearOffset] = BigRational.Zero,
+                        [NumericData.MetricOffset] = BigRational.Zero,
+                        [NumericData.PlaySound] = 1
                     });
 
-                foreach (var keysoundSet in bmDataKeysoundSets)
+                    return chart;
+                })
+                .ToList();
+
+            //
+            // Convert keysound folders.
+            //
+
+            var soundBankBlocks = songGroup.Files
+                .Where(x => x.Type == PsxBeatmaniaFileType.Keysound)
+                .Select((x, i) => (
+                    Index: i,
+                    Bank: psxMgsSoundBankBlockReader.Read(new ReadOnlyMemoryStream(x.Data))
+                ))
+                .ToList();
+
+            var soundTableMap = songGroup.Files
+                .Where(x => x.Type == PsxBeatmaniaFileType.Kst)
+                .Select((x, i) => (
+                    Index: i,
+                    Map: x.Index,
+                    Table: psxMgsSoundTableBlockReader.Read(new ReadOnlyMemoryStream(x.Data)),
+                    soundBankBlocks[i % soundBankBlocks.Count].Bank
+                ))
+                .ToList();
+
+            var bmDataKeysoundSets = soundTableMap
+                .Select(f =>
                 {
-                    this.WriteSetSounds(new TestHelper.WriteSetConfig
-                    {
-                        ChartSetId = keysoundSet.Map,
-                        Sounds = keysoundSet.Sounds,
-                        OutPath = groupPath,
-                        RemapSounds = false,
-                        ResampleSounds = false
-                    });
-                }
-            }
+                    var sounds = mgsDecoder.DecodeSounds(f.Bank, f.Table, 44100);
+
+                    foreach (var sound in sounds)
+                        sound[NumericData.SampleMap] = f.Index;
+
+                    return (
+                        f.Index,
+                        f.Map,
+                        Sounds: sounds
+                    );
+                })
+                .Where(s => s.Sounds.Count > 0)
+                .ToList();
+
+            var writeSetConfig = new TestHelper.WriteSetConfig
+            {
+                OutPath = groupPath,
+                Charts = bmDataCharts.ToList(),
+                ChartSetId = songGroup.Index,
+                Sounds = bmDataKeysoundSets.SelectMany(s => s.Sounds).ToList(),
+                ChartType = BmsChartType.Beatmania,
+                WriteCharts = extractCharts,
+                WriteSounds = extractKeysounds,
+                RemoveMissingSounds = false
+            };
+
+            this.WriteSet(writeSetConfig);
         }
 
         if (extractRawBlock)
@@ -231,7 +229,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Decode XA BGM.
         //
 
-        if (extractAudio)
+        if (extractBgm)
         {
             List<XaChunk> xaChunks = [];
 
@@ -246,7 +244,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     var mchDataReader = cdSectorsFactory.Create(mchDataPak, mchDataPak.Length);
                     var mchDataSectors = mchDataReader.Select(isoInfoDecoder.Decode);
 
-                    xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors));
+                    xaChunks.AddRange(streamFinder.FindMode2(mchDataSectors, true));
                     break;
                 }
                 default:
@@ -277,7 +275,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     using var outStream = new MemoryStream();
                     writer.Write(outStream, encoded);
                     outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(outfolder, $"mchdata{index:000}.wav"), outStream.ToArray());
+                    File.WriteAllBytes(Path.Combine(outfolder, $"XA{xa.SourceChannel:00}{xa.SourceIndex:00}.wav"),
+                        outStream.ToArray());
                     index++;
                 }
             }

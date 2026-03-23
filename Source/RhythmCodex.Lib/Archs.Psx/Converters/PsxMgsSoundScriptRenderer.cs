@@ -2,10 +2,12 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Vag.Converters;
 using RhythmCodex.Sounds.Vag.Models;
@@ -15,7 +17,8 @@ namespace RhythmCodex.Archs.Psx.Converters;
 [Service]
 public class PsxMgsSoundScriptRenderer(
     IVagSplitter vagSplitter,
-    IBeatmaniaPs2FrequencyConverter beatmaniaPs2FrequencyConverter)
+    IBeatmaniaPs2FrequencyConverter beatmaniaPs2FrequencyConverter,
+    IAudioDsp audioDsp)
     : IPsxMgsSoundScriptRenderer
 {
     private Lazy<ReadOnlyMemory<int>> freqTbl = new(() => (int[])
@@ -35,25 +38,25 @@ public class PsxMgsSoundScriptRenderer(
     public Sound Render(
         PsxMgsSoundScript script,
         List<PsxMgsSoundBankEntryWithData> soundBank,
-        int track,
         int sampleRate)
     {
-        var samples = script.Channels
-            .Select(kv => RenderInternal(kv.Value, soundBank, track, sampleRate))
+        var sounds = script.Channels
+            .Select(kv => RenderInternal(kv.Value, soundBank, sampleRate))
             .ToList();
 
-        var result = new Sound
+        var output = sounds.Count switch
         {
-            Samples = samples
+            0 => new Sound(),
+            1 => sounds[0],
+            _ => audioDsp.Mix(sounds)
         };
 
-        return result;
+        return output;
     }
 
-    private Sample RenderInternal(
+    private Sound RenderInternal(
         List<PsxMgsSoundTablePacket> packets,
         List<PsxMgsSoundBankEntryWithData> soundBank,
-        int track,
         int sampleRate)
     {
         Sample? sourceSample = null;
@@ -64,14 +67,14 @@ public class PsxMgsSoundScriptRenderer(
         var sampleId = -1;
         var resolution = 1f;
 
-        var result = new SampleBuilder();
+        var result = new SoundBuilder(2);
 
-        var currentVolume = 0f;
-        var targetVolume = 0f;
+        var currentVolume = 1.0f;
+        var targetVolume = 1.0f;
         var volumeFadeTime = 0f;
 
-        var currentPanning = 0f;
-        var targetPanning = 0f;
+        var currentPanning = 0.5f;
+        var targetPanning = 0.5f;
         var panningFadeTime = 0f;
 
         var currentNote = 0f;
@@ -89,8 +92,8 @@ public class PsxMgsSoundScriptRenderer(
         var noteOn = false;
         var lastNoteOn = false;
         var finished = false;
-
-        PsxMgsSoundBankEntryWithData? sample = null;
+        var sampleL = result.Samples[0];
+        var sampleR = result.Samples[1];
 
         foreach (var packet in packets)
         {
@@ -165,7 +168,14 @@ public class PsxMgsSoundScriptRenderer(
                 case PsxMgsSoundTablePacketType.EndBlock:
                 {
                     finished = true;
-                    procMs = Math.Max(panningFadeTime, volumeFadeTime);
+
+                    var span = sourceSample != null ? sourceSample.Data.Span : [];
+
+                    procMs = Math.Max(
+                        Math.Max(panningFadeTime, volumeFadeTime),
+                        (span.Length - sourceSampleOffset) * 1000f / sampleRate
+                    );
+
                     break;
                 }
                 case var data1 when (int)data1 >= 0x80:
@@ -189,7 +199,7 @@ public class PsxMgsSoundScriptRenderer(
             if (setSample)
             {
                 setSample = false;
-                sample = soundBank.FirstOrDefault(x => x.Index == sampleId);
+                var sample = soundBank.FirstOrDefault(x => x.Index == sampleId);
                 sourceFineTune = unchecked((sbyte)(sample?.Entry.Tune ?? 0));
                 sourceTranspose = unchecked((sbyte)(sample?.Entry.Note ?? 0));
                 sourceSampleOffset = 0;
@@ -220,7 +230,8 @@ public class PsxMgsSoundScriptRenderer(
 
             var sampleCount = (int)MathF.Truncate(sampleRate * procMs / 1000);
             using var buffer = MemoryPool<float>.Shared.Rent(sampleCount);
-            var sampleFloats = buffer.Memory.Span[..sampleCount];
+            var sampleFloats0 = buffer.Memory.Span[..sampleCount];
+            var sampleFloats1 = buffer.Memory.Span[..sampleCount];
             var sourceSampleSpan = sourceSample != null ? sourceSample.Data.Span : [];
 
             //
@@ -233,7 +244,9 @@ public class PsxMgsSoundScriptRenderer(
                 {
                     using var silenceBuffer = MemoryPool<float>.Shared.Rent(pendingSilence);
                     silenceBuffer.Memory.Span[..pendingSilence].Clear();
-                    result.Append(silenceBuffer.Memory.Span[..pendingSilence]);
+                    var silenceSpan = silenceBuffer.Memory.Span[..pendingSilence];
+                    sampleL.Append(silenceSpan);
+                    sampleR.Append(silenceSpan);
                     pendingSilence = 0;
                 }
 
@@ -241,6 +254,9 @@ public class PsxMgsSoundScriptRenderer(
 
                 for (var i = 0; i < sampleCount; i++)
                 {
+                    ProcessFadeVars(ref currentVolume, targetVolume, ref volumeFadeTime, sampleRate);
+                    ProcessFadeVars(ref currentPanning, targetPanning, ref panningFadeTime, sampleRate);
+
                     var sourceSampleOffsetInt = (int)MathF.Truncate(sourceSampleOffset);
                     if (sourceSampleOffsetInt >= sourceSampleSpan.Length)
                     {
@@ -249,11 +265,17 @@ public class PsxMgsSoundScriptRenderer(
                         break;
                     }
 
-                    sampleFloats[i] = sourceSampleSpan[sourceSampleOffsetInt];
+                    var sampleDataVec = new Vector2(sourceSampleSpan[sourceSampleOffsetInt]) *
+                                        Vector2.SquareRoot(new Vector2(1 - currentPanning, currentPanning)) *
+                                        currentVolume;
+
+                    sampleFloats0[i] = sampleDataVec.X;
+                    sampleFloats1[i] = sampleDataVec.Y;
                     sourceSampleOffset += sourceSampleRate / sampleRate;
                 }
 
-                result.Append(sampleFloats[..populatedSampleCount]);
+                sampleL.Append(sampleFloats0[..populatedSampleCount]);
+                sampleR.Append(sampleFloats1[..populatedSampleCount]);
                 lastNoteOn = noteOn;
             }
 
@@ -261,7 +283,32 @@ public class PsxMgsSoundScriptRenderer(
         }
 
         result[NumericData.Id] = sampleId;
-        return result.ToSample();
+        result[NumericData.Volume] = 0.8f;
+        return result.ToSound();
+    }
+
+    private static void ProcessFadeVars(ref float value, float fadeTarget, ref float fadeMs, int sampleRate)
+    {
+        if (fadeMs <= 0)
+        {
+            value = fadeTarget;
+            fadeMs = 0;
+            return;
+        }
+
+        if (MathF.Abs(value - fadeTarget) <= float.Epsilon)
+        {
+            fadeMs = 0;
+            value = fadeTarget;
+            return;
+        }
+
+        var diffPerMs = (fadeTarget - value) / fadeMs;
+        var sampleTime = 1000f / sampleRate;
+        var adjust = diffPerMs * sampleTime;
+        fadeMs -= sampleTime;
+
+        value += adjust;
     }
 
     private float CalculateFrequency(int note, int macro, int micro)

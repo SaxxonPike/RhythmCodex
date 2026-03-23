@@ -46,6 +46,7 @@ public static class TestHelper
         public bool WriteCharts { get; set; } = true;
         public bool ResampleSounds { get; set; }
         public bool RemapSounds { get; set; } = true;
+        public bool RemoveMissingSounds { get; set; } = true;
     }
 
     private class WriteSetSoundsResult
@@ -250,7 +251,7 @@ public static class TestHelper
             };
         }
 
-        public void WriteSetCharts(WriteSetConfig config) => 
+        public void WriteSetCharts(WriteSetConfig config) =>
             resolver.WriteSetChartsInternal(config, new WriteSetSoundsResult());
 
         private void WriteSetChartsInternal(WriteSetConfig config, WriteSetSoundsResult soundsResult)
@@ -319,14 +320,14 @@ public static class TestHelper
                         {
                             WavNameTransformer = i =>
                             {
-                                string? fileName = null;
+                                var fileName = $"{i:D4}.wav";
 
                                 if (config.RemapSounds &&
                                     (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
                                      !soundHashFileMap.TryGetValue(sm, out fileName)))
-                                    return null;
+                                    return config.RemoveMissingSounds ? null : fileName;
 
-                                return fileName ?? $"{i:D4}.wav";
+                                return fileName;
                             },
                             ChartType = config.ChartType,
                             ModeHint = modeHint,
@@ -345,14 +346,14 @@ public static class TestHelper
                         {
                             WavNameTransformer = i =>
                             {
-                                string? fileName = null;
+                                var fileName = $"{i:D4}.wav";
 
                                 if (config.RemapSounds &&
                                     (!soundMap.TryGetValue(((int)(chart[NumericData.SampleMap] ?? 0), i), out var sm) ||
                                      !soundHashFileMap.TryGetValue(sm, out fileName)))
-                                    return null;
+                                    return config.RemoveMissingSounds ? null : fileName;
 
-                                return fileName ?? $"{i:D4}.wav";
+                                return fileName;
                             },
                             ChartType = config.ChartType
                         }));
