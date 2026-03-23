@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using RhythmCodex.Archs.Psx.Model;
-using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
@@ -17,11 +16,13 @@ namespace RhythmCodex.Archs.Psx.Converters;
 [Service]
 public class PsxMgsSoundScriptRenderer(
     IVagSplitter vagSplitter,
-    IBeatmaniaPs2FrequencyConverter beatmaniaPs2FrequencyConverter,
     IAudioDsp audioDsp)
     : IPsxMgsSoundScriptRenderer
 {
-    private Lazy<ReadOnlyMemory<int>> freqTbl = new(() => (int[])
+    /// <summary>
+    /// Frequency table used by the Metal Gear Solid sound system.
+    /// </summary>
+    private readonly Lazy<ReadOnlyMemory<int>> _freqTbl = new(() => (int[])
     [
         0x010B, 0x011B, 0x012C, 0x013E, 0x0151, 0x0165, 0x017A, 0x0191, 0x01A9, 0x01C2, 0x01DD, 0x01F9,
         0x0217, 0x0237, 0x0259, 0x027D, 0x02A3, 0x02CB, 0x02F5, 0x0322, 0x0352, 0x0385, 0x03BA, 0x03F3,
@@ -35,13 +36,14 @@ public class PsxMgsSoundScriptRenderer(
         0x0085, 0x008D, 0x0096, 0x009F, 0x00A8, 0x00B2, 0x00BD, 0x00C8, 0x00D4, 0x00E1, 0x00EE, 0x00FC
     ]);
 
+    /// <inheritdoc />
     public Sound Render(
         PsxMgsSoundScript script,
         List<PsxMgsSoundBankEntryWithData> soundBank,
         int sampleRate)
     {
         var sounds = script.Channels
-            .Select(kv => RenderInternal(kv.Value, soundBank, sampleRate))
+            .Select(kv => RenderPackets(kv.Value, soundBank, sampleRate))
             .ToList();
 
         var output = sounds.Count switch
@@ -54,7 +56,20 @@ public class PsxMgsSoundScriptRenderer(
         return output;
     }
 
-    private Sound RenderInternal(
+    /// <summary>
+    /// Renders an MGS audio packet stream.
+    /// </summary>
+    /// <param name="packets">
+    /// Packets to render.
+    /// </param>
+    /// <param name="soundBank">
+    /// Sound bank that will be used as the audio data source.
+    /// </param>
+    /// <param name="sampleRate">
+    /// Sampling rate for the output mix.
+    /// </param>
+    /// <returns></returns>
+    private Sound RenderPackets(
         List<PsxMgsSoundTablePacket> packets,
         List<PsxMgsSoundBankEntryWithData> soundBank,
         int sampleRate)
@@ -168,14 +183,7 @@ public class PsxMgsSoundScriptRenderer(
                 case PsxMgsSoundTablePacketType.EndBlock:
                 {
                     finished = true;
-
-                    var span = sourceSample != null ? sourceSample.Data.Span : [];
-
-                    procMs = Math.Max(
-                        Math.Max(panningFadeTime, volumeFadeTime),
-                        (span.Length - sourceSampleOffset) * 1000f / sampleRate
-                    );
-
+                    procMs = 0;
                     break;
                 }
                 case var data1 when (int)data1 >= 0x80:
@@ -254,39 +262,101 @@ public class PsxMgsSoundScriptRenderer(
 
                 for (var i = 0; i < sampleCount; i++)
                 {
+                    //
+                    // Process pending automation events.
+                    //
+
                     ProcessFadeVars(ref currentVolume, targetVolume, ref volumeFadeTime, sampleRate);
                     ProcessFadeVars(ref currentPanning, targetPanning, ref panningFadeTime, sampleRate);
 
-                    var sourceSampleOffsetInt = (int)MathF.Truncate(sourceSampleOffset);
-                    if (sourceSampleOffsetInt >= sourceSampleSpan.Length)
+                    //
+                    // If we are at the end of the sample, fill the buffer with silence.
+                    //
+
+                    var sourceSampleOffset0 = (int)MathF.Truncate(sourceSampleOffset);
+                    var sourceSampleOffset1 = sourceSampleOffset0 + 1;
+
+                    if (sourceSampleOffset1 > sourceSampleSpan.Length)
                     {
                         pendingSilence += sampleCount - i;
                         populatedSampleCount = i;
                         break;
                     }
 
-                    var sampleDataVec = new Vector2(sourceSampleSpan[sourceSampleOffsetInt]) *
+                    //
+                    // Calculate position for linear interpolation.
+                    // TODO: Playstation SPU actually uses Gaussian interpolation.
+                    //
+
+                    var sourceSample0 = sourceSampleOffset0 < sourceSampleSpan.Length
+                        ? sourceSampleSpan[sourceSampleOffset0]
+                        : 0;
+
+                    var sourceSample1 = sourceSampleOffset1 < sourceSampleSpan.Length
+                        ? sourceSampleSpan[sourceSampleOffset1]
+                        : 0;
+
+                    var sourceSampleWeight0 = sourceSampleOffset - sourceSampleOffset0;
+                    var sourceSampleWeight1 = 1 - sourceSampleWeight0;
+
+                    //
+                    // Calculate interpolated sample value.
+                    //
+
+                    var sourceInterpolatedSample = (sourceSampleWeight0 * sourceSample0 +
+                                                    sourceSampleWeight1 * sourceSample1) / 2;
+
+                    //
+                    // Calculate gain for left/right channels from panning and volume.
+                    //
+
+                    var sampleDataVec = new Vector2(sourceInterpolatedSample) *
                                         Vector2.SquareRoot(new Vector2(1 - currentPanning, currentPanning)) *
                                         currentVolume;
+
+                    //
+                    // Write the sample.
+                    //
 
                     sampleFloats0[i] = sampleDataVec.X;
                     sampleFloats1[i] = sampleDataVec.Y;
                     sourceSampleOffset += sourceSampleRate / sampleRate;
                 }
 
+                //
+                // Append the rendered samples to the result.
+                //
+
                 sampleL.Append(sampleFloats0[..populatedSampleCount]);
                 sampleR.Append(sampleFloats1[..populatedSampleCount]);
                 lastNoteOn = noteOn;
             }
 
+            if (finished)
+                break;
+
             procMs -= sampleCount * 1000f / sampleRate;
         }
 
         result[NumericData.Id] = sampleId;
-        result[NumericData.Volume] = 0.8f;
         return result.ToSound();
     }
 
+    /// <summary>
+    /// Process automation.
+    /// </summary>
+    /// <param name="value">
+    /// Current value.
+    /// </param>
+    /// <param name="fadeTarget">
+    /// Target value.
+    /// </param>
+    /// <param name="fadeMs">
+    /// Amount of time remaining in the automation.
+    /// </param>
+    /// <param name="sampleRate">
+    /// Output sampling rate.
+    /// </param>
     private static void ProcessFadeVars(ref float value, float fadeTarget, ref float fadeMs, int sampleRate)
     {
         if (fadeMs <= 0)
@@ -311,6 +381,18 @@ public class PsxMgsSoundScriptRenderer(
         value += adjust;
     }
 
+    /// <summary>
+    /// Calculates the playback frequency of a note.
+    /// </summary>
+    /// <param name="note">
+    /// Base semitone.
+    /// </param>
+    /// <param name="macro">
+    /// Sample tuning (semitones.)
+    /// </param>
+    /// <param name="micro">
+    /// Sample tuning (1/128ths of semitones, signed.)
+    /// </param>
     private float CalculateFrequency(int note, int macro, int micro)
     {
         //
@@ -326,7 +408,7 @@ public class PsxMgsSoundScriptRenderer(
         // Use linear interpolation to convert the fine-tune value to whole cycles.
         //
 
-        var coarseFreqTable = freqTbl.Value.Span;
+        var coarseFreqTable = _freqTbl.Value.Span;
         float coarseTuneCycles = coarseFreqTable[coarseTune];
         var toneScale = coarseFreqTable[coarseTune + 1] - coarseTuneCycles;
 
