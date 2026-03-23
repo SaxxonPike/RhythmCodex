@@ -275,7 +275,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     using var outStream = new MemoryStream();
                     writer.Write(outStream, encoded);
                     outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(outfolder, $"XA{xa.SourceChannel:00}{xa.SourceIndex:00}.wav"),
+                    File.WriteAllBytes(Path.Combine(outfolder, $"XA{xa.SourceIndex:00}{xa.SourceChannel:00}.wav"),
                         outStream.ToArray());
                     index++;
                 }

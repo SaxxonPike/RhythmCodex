@@ -296,15 +296,13 @@ public class PsxMgsSoundScriptRenderer(
                         ? sourceSampleSpan[sourceSampleOffset1]
                         : 0;
 
-                    var sourceSampleWeight0 = sourceSampleOffset - sourceSampleOffset0;
-                    var sourceSampleWeight1 = 1 - sourceSampleWeight0;
+                    var weight = sourceSampleOffset - sourceSampleOffset0;
 
                     //
-                    // Calculate interpolated sample value.
+                    // Calculate interpolated sample value (Lerp function.)
                     //
-
-                    var sourceInterpolatedSample = (sourceSampleWeight0 * sourceSample0 +
-                                                    sourceSampleWeight1 * sourceSample1) / 2;
+                    
+                    var sourceInterpolatedSample = sourceSample0 + weight * (sourceSample1 - sourceSample0);
 
                     //
                     // Calculate gain for left/right channels from panning and volume.
