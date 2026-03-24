@@ -174,7 +174,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                                 pl => pl.Value
                                     .Select(p => $"{p.Data1:X2}{p.Data2:X2}{p.Data3:X2}{p.Data4:X2} " +
                                                  $"({p.Data1:d3},{p.Data2:d3},{p.Data3:d3},{p.Data4:d3}) " +
-                                                 $"[{p.Command.ToString()}]")
+                                                 $"[{(p.Data1 >= 0x80 ? p.Command.ToString() : $"NoteOn({p.Data1})")}]")
                                     .ToList())
                     );
 

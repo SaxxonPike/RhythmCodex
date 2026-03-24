@@ -79,6 +79,7 @@ public class Envelope
             {
                 PhaseProgress += timeToProcess / phaseTotalTime;
                 Output = left.Y + PhaseProgress * (right.Y - left.Y);
+                remaining -= timeToProcess;
             }
         }
 

@@ -149,7 +149,7 @@ public class PsxMgsSoundScriptRenderer(
                 }
                 case PsxMgsSoundTablePacketType.SetTimeResolution:
                 {
-                    resolutionMs = packet.Data2 * 10 / 128f;
+                    resolutionMs = packet.Data2 * 10 / 255f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.SetSoundBankIndex:
@@ -202,14 +202,14 @@ public class PsxMgsSoundScriptRenderer(
                 case PsxMgsSoundTablePacketType.SetPanning:
                 {
                     panningEnvelope = null;
-                    currentPanning = (Math.Clamp(packet.Data3 & 0xF, 1, 15) - 1) / 14f;
+                    currentPanning = Math.Clamp(0xF - (packet.Data3 & 0xF), 0, 14) / 14f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.AutomatePanning:
                 {
                     panningEnvelope = new Envelope(
                         new Vector2(0, currentPanning),
-                        new Vector2(packet.Data2 * resolutionMs, (packet.Data3 & 0xF) / 15f)
+                        new Vector2(packet.Data2 * resolutionMs, Math.Clamp(0xF - (packet.Data3 & 0xF), 0, 14) / 14f)
                     );
                     continue;
                 }
@@ -237,7 +237,7 @@ public class PsxMgsSoundScriptRenderer(
                 case PsxMgsSoundTablePacketType.Delay:
                 {
                     delayMs += packet.Data2 * resolutionMs;
-                    continue;
+                    break;
                 }
                 case PsxMgsSoundTablePacketType.End:
                 {
@@ -266,7 +266,7 @@ public class PsxMgsSoundScriptRenderer(
 
                     sourceFineTune = unchecked((sbyte)sample.Entry.Tune);
                     sourceTranspose = unchecked((sbyte)sample.Entry.Note);
-                    currentPanning = (Math.Clamp(sample.Entry.Pan & 0xF, 1, 15) - 1) / 14f;
+                    currentPanning = Math.Clamp(0xF - (packet.Data3 & 0xF), 0, 14) / 14f;
 
                     spuAr = sample.Entry.AttackRate & 0x7F;
                     spuAMode = sample.Entry.AttackMode & 0b111;
@@ -391,10 +391,10 @@ public class PsxMgsSoundScriptRenderer(
                     // If we are at the end of the sample, fill the buffer with silence.
                     //
 
-                    var sourceSampleOffset0 = (int)MathF.Truncate(sourceSampleOffset);
-                    var sourceSampleOffset1 = sourceSampleOffset0 + 1;
+                    var sourceSampleOffsetA = (int)MathF.Truncate(sourceSampleOffset);
+                    var sourceSampleOffsetB = sourceSampleOffsetA + 1;
 
-                    if (sourceSampleOffset1 > sourceSampleSpan.Length)
+                    if (sourceSampleOffsetB > sourceSampleSpan.Length)
                     {
                         pendingSilence += sampleCount - i;
                         populatedSampleCount = i;
@@ -406,15 +406,15 @@ public class PsxMgsSoundScriptRenderer(
                     // TODO: Playstation SPU actually uses Gaussian interpolation.
                     //
 
-                    var sourceSample0 = sourceSampleOffset0 < sourceSampleSpan.Length
-                        ? sourceSampleSpan[sourceSampleOffset0]
+                    var sourceSample0 = sourceSampleOffsetA < sourceSampleSpan.Length
+                        ? sourceSampleSpan[sourceSampleOffsetA]
                         : 0;
 
-                    var sourceSample1 = sourceSampleOffset1 < sourceSampleSpan.Length
-                        ? sourceSampleSpan[sourceSampleOffset1]
+                    var sourceSample1 = sourceSampleOffsetB < sourceSampleSpan.Length
+                        ? sourceSampleSpan[sourceSampleOffsetB]
                         : 0;
 
-                    var weight = sourceSampleOffset - sourceSampleOffset0;
+                    var weight = sourceSampleOffset - sourceSampleOffsetA;
 
                     //
                     // Calculate interpolated sample value (Lerp function.)
