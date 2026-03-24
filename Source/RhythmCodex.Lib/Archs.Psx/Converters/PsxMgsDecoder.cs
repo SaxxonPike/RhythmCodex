@@ -14,7 +14,7 @@ public sealed class PsxMgsDecoder(
     IPsxMgsSoundScriptRenderer psxMgsSoundScriptRenderer)
     : IPsxMgsDecoder
 {
-    public List<Sound> DecodeSounds(
+    public List<PsxMgsSoundDecodeResult> DecodeSounds(
         PsxMgsSoundBankBlock soundBank,
         PsxMgsSoundTableBlock soundTable,
         int sampleRate
@@ -33,9 +33,14 @@ public sealed class PsxMgsDecoder(
                 var sound = psxMgsSoundScriptRenderer.Render(te, bankEntries, sampleRate);
                 sound[NumericData.Id] = te.Index;
                 sound[NumericData.Volume] = 0.8f;
-                return sound;
+                return new PsxMgsSoundDecodeResult
+                {
+                    Index = te.Index,
+                    Packets = te.Channels,
+                    Sound = sound
+                };
             })
-            .Where(s => s.Samples.Count > 0 && s.Samples.Any(x => x.Data.Length > 0))
+            .Where(s => s.Sound.Samples.Count > 0 && s.Sound.Samples.Any(x => x.Data.Length > 0))
             .ToList();
     }
 }

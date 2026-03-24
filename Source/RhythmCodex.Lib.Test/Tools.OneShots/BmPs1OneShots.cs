@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using NUnit.Framework;
 using RhythmCodex.Archs.Psx.Converters;
 using RhythmCodex.Archs.Psx.Model;
@@ -162,7 +164,19 @@ public class BmPs1OneShots : BaseIntegrationFixture
             var bmDataKeysoundSets = soundTableMap
                 .Select(f =>
                 {
-                    var sounds = mgsDecoder.DecodeSounds(f.Bank, f.Table, 44100);
+                    var decodedSounds = mgsDecoder.DecodeSounds(f.Bank, f.Table, 44100);
+                    var sounds = decodedSounds.Select(s => s.Sound).ToList();
+                    var soundLog = decodedSounds.ToDictionary(
+                        s => s.Index,
+                        s => s.Packets
+                            .ToDictionary(
+                                pl => pl.Key,
+                                pl => pl.Value
+                                    .Select(p => $"{p.Data1:X2}{p.Data2:X2}{p.Data3:X2}{p.Data4:X2} " +
+                                                 $"({p.Data1:d3},{p.Data2:d3},{p.Data3:d3},{p.Data4:d3}) " +
+                                                 $"[{p.Command.ToString()}]")
+                                    .ToList())
+                    );
 
                     foreach (var sound in sounds)
                         sound[NumericData.SampleMap] = f.Index;
@@ -170,11 +184,24 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     return (
                         f.Index,
                         f.Map,
-                        Sounds: sounds
+                        Sounds: sounds,
+                        Log: soundLog
                     );
                 })
                 .Where(s => s.Sounds.Count > 0)
                 .ToList();
+
+            var keysoundLogSettings = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+
+            foreach (var bmDataKeysoundSet in bmDataKeysoundSets)
+            {
+                var soundLogJson = JsonSerializer.Serialize(bmDataKeysoundSet.Log, keysoundLogSettings);
+                this.WriteText(soundLogJson, Path.Combine(groupPath, $"{bmDataKeysoundSet.Map:d4}{bmDataKeysoundSet.Index:d2}.log"));
+            }
 
             var writeSetConfig = new TestHelper.WriteSetConfig
             {

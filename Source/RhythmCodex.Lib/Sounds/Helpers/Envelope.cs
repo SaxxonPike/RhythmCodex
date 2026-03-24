@@ -14,18 +14,6 @@ public class Envelope
     {
         Phases = points.ToList();
 
-        // foreach (var point in points.OrderBy(x => x.X))
-        // {
-        //     if (Phases.Count == 0)
-        //     {
-        //         Phases.Add(point);
-        //         continue;
-        //     }
-        //
-        //     var prevPoint = Phases[^1];
-        //     Phases.Add(prevPoint with { X = point.X - prevPoint.X });
-        // }
-
         //
         // Fail-safe in case we get an empty point set.
         //
@@ -43,11 +31,6 @@ public class Envelope
 
     public void SetPhase(int phase)
     {
-        if (Phase != 0)
-        {
-            
-        }
-        
         Phase = phase;
         PhaseProgress = 0;
     }

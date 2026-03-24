@@ -202,7 +202,7 @@ public class PsxMgsSoundScriptRenderer(
                 case PsxMgsSoundTablePacketType.SetPanning:
                 {
                     panningEnvelope = null;
-                    currentPanning = (packet.Data3 & 0xF) / 15f;
+                    currentPanning = (Math.Clamp(packet.Data3 & 0xF, 1, 15) - 1) / 14f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.AutomatePanning:
@@ -266,7 +266,7 @@ public class PsxMgsSoundScriptRenderer(
 
                     sourceFineTune = unchecked((sbyte)sample.Entry.Tune);
                     sourceTranspose = unchecked((sbyte)sample.Entry.Note);
-                    currentPanning = (sample.Entry.Pan & 0xF) / 15f;
+                    currentPanning = (Math.Clamp(sample.Entry.Pan & 0xF, 1, 15) - 1) / 14f;
 
                     spuAr = sample.Entry.AttackRate & 0x7F;
                     spuAMode = sample.Entry.AttackMode & 0b111;
@@ -352,9 +352,10 @@ public class PsxMgsSoundScriptRenderer(
             //
 
             var sampleCount = (int)MathF.Truncate(sampleRate * delayMs / 1000);
-            using var buffer = MemoryPool<float>.Shared.Rent(sampleCount);
-            var sampleFloats0 = buffer.Memory.Span[..sampleCount];
-            var sampleFloats1 = buffer.Memory.Span[..sampleCount];
+            using var buffer0 = MemoryPool<float>.Shared.Rent(sampleCount);
+            var sampleFloats0 = buffer0.Memory.Span[..sampleCount];
+            using var buffer1 = MemoryPool<float>.Shared.Rent(sampleCount);
+            var sampleFloats1 = buffer1.Memory.Span[..sampleCount];
             var sourceSampleSpan = sourceSample != null ? sourceSample.Data.Span : [];
             var timePerSample = 1000f / sampleRate;
 

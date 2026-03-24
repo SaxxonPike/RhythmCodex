@@ -6,6 +6,6 @@ namespace RhythmCodex.Archs.Psx.Converters;
 
 public interface IPsxMgsDecoder
 {
-    List<Sound> DecodeSounds(PsxMgsSoundBankBlock soundBank,
+    List<PsxMgsSoundDecodeResult> DecodeSounds(PsxMgsSoundBankBlock soundBank,
         PsxMgsSoundTableBlock soundTable, int sampleRate);
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace RhythmCodex.Archs.Psx.Model;
 
@@ -9,9 +10,6 @@ public record PsxMgsSoundTablePacket
     public byte Data3 { get; set; } // mdata3
     public byte Data4 { get; set; } // mdata4
 
-    public PsxMgsSoundTablePacketType Command
-    {
-        get => (PsxMgsSoundTablePacketType)Data1;
-        set => Data1 = unchecked((byte)value);
-    }
+    public PsxMgsSoundTablePacketType Command => 
+        (PsxMgsSoundTablePacketType)Data1;
 }
