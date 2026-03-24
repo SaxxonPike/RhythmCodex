@@ -2,7 +2,7 @@
 /*============================================================
 ** Class: BigRational
 **
-** Purpose: 
+** Purpose:
 ** --------
 ** This class is used to represent an arbitrary precision
 ** BigRational number
@@ -55,8 +55,8 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
 
     private const int DoubleMaxScale = 308;
     private static readonly BigInteger DoublePrecision = BigInteger.Pow(10, DoubleMaxScale);
-    private static readonly BigInteger DoubleMaxValue = (BigInteger) double.MaxValue;
-    private static readonly BigInteger DoubleMinValue = (BigInteger) double.MinValue;
+    private static readonly BigInteger DoubleMaxValue = (BigInteger)double.MaxValue;
+    private static readonly BigInteger DoubleMinValue = (BigInteger)double.MinValue;
 
     [StructLayout(LayoutKind.Explicit)]
     private struct DecimalUInt32
@@ -66,11 +66,11 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     }
 
     private const int DecimalScaleMask = 0x00FF0000;
-    private const int DecimalSignMask = unchecked((int) 0x80000000);
+    private const int DecimalSignMask = unchecked((int)0x80000000);
     private const int DecimalMaxScale = 28;
     private static readonly BigInteger DecimalPrecision = BigInteger.Pow(10, DecimalMaxScale);
-    private static readonly BigInteger DecimalMaxValue = (BigInteger) decimal.MaxValue;
-    private static readonly BigInteger DecimalMinValue = (BigInteger) decimal.MinValue;
+    private static readonly BigInteger DecimalMaxValue = (BigInteger)decimal.MaxValue;
+    private static readonly BigInteger DecimalMinValue = (BigInteger)decimal.MinValue;
 
     private const string Solidus = "/";
 
@@ -94,7 +94,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     ///     A pre-initialized BigRational with the value of negative one.
     /// </summary>
     public static BigRational MinusOne { get; } = new(BigInteger.MinusOne);
-        
+
     /// <summary>
     ///     A pre-initialized BigRational with the value of one half.
     /// </summary>
@@ -145,28 +145,22 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     /// <summary>
     ///     Gets the integer value.
     /// </summary>
-    public BigInteger GetWholePart()
-    {
-        return BigInteger.Divide(Numerator, Denominator);
-    }
+    public BigInteger GetWholePart() =>
+        BigInteger.Divide(Numerator, Denominator);
 
     /// <summary>
     ///     Gets the fractional value.
     /// </summary>
-    public BigRational GetFractionPart()
-    {
-        return new BigRational(BigInteger.Remainder(Numerator, Denominator), Denominator);
-    }
+    public BigRational GetFractionPart() =>
+        new(BigInteger.Remainder(Numerator, Denominator), Denominator);
 
     /// <inheritdoc />
-    public override bool Equals(object? obj)
-    {
-        return obj is BigRational br && Equals(br);
-    }
+    public override bool Equals(object? obj) =>
+        obj is BigRational br && Equals(br);
 
     /// <inheritdoc />
-    public override int GetHashCode() => 
-        unchecked(Numerator.GetHashCode() * 17 + Denominator.GetHashCode());
+    public override int GetHashCode() =>
+        HashCode.Combine(Numerator, Denominator);
 
     /// <inheritdoc />
     int IComparable.CompareTo(object? obj)
@@ -174,32 +168,25 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
         if (obj == null)
             return 1;
 
-        if (obj is not BigRational br)
-            throw new ArgumentException("Argument must be of type BigRational", nameof(obj));
-
-        return Compare(this, br);
+        return obj is not BigRational br
+            ? throw new ArgumentException($"Argument must be of type {nameof(BigRational)}", nameof(obj))
+            : Compare(this, br);
     }
 
     /// <inheritdoc />
-    public int CompareTo(BigRational other)
-    {
-        return Compare(this, other);
-    }
+    public int CompareTo(BigRational other) =>
+        Compare(this, other);
 
     /// <inheritdoc />
-    public override string ToString()
-    {
-        return $"{Numerator:R}{Solidus}{Denominator:R}";
-    }
+    public override string ToString() =>
+        $"{Numerator:R}{Solidus}{Denominator:R}";
 
     /// <inheritdoc />
-    public bool Equals(BigRational other)
-    {
+    public bool Equals(BigRational other) =>
         // a/b = c/d, iff ad = bc
-        return Denominator == other.Denominator
+        Denominator == other.Denominator
             ? Numerator == other.Numerator
             : Numerator * other.Denominator == Denominator * other.Numerator;
-    }
 
     #endregion Public Instance Methods
 
@@ -223,7 +210,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     {
         Numerator = BigInteger.Zero;
         Denominator = BigInteger.One;
-            
+
         if (double.IsPositiveInfinity(value))
         {
             Numerator = BigInteger.One;
@@ -236,7 +223,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
         }
         else
         {
-            var ratio = Init((decimal) value);
+            var ratio = Init((decimal)value);
             Numerator = ratio.Item1;
             Denominator = ratio.Item2;
         }
@@ -249,7 +236,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     {
         Numerator = BigInteger.Zero;
         Denominator = BigInteger.One;
-            
+
         var ratio = Init(value);
         Numerator = ratio.Item1;
         Denominator = ratio.Item2;
@@ -257,19 +244,32 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
 
     private (BigInteger, BigInteger) Init(decimal value)
     {
-        var bits = decimal.GetBits(value);
-        if (bits == null || bits.Length != 4 || (bits[3] & ~(DecimalSignMask | DecimalScaleMask)) != 0 ||
+        // Short circuits for known values and integers:
+
+        switch (value)
+        {
+            case -1:
+                return (BigInteger.MinusOne, BigInteger.One);
+            case 0:
+                return (BigInteger.Zero, BigInteger.One);
+            case 1:
+                return (BigInteger.One, BigInteger.One);
+            case var _ when decimal.IsInteger(value):
+                return ((BigInteger)value, BigInteger.One);
+        }
+
+        // For non-integers:
+
+        Span<int> bits = stackalloc int[4];
+        decimal.GetBits(value, bits);
+
+        if (bits is not { Length: 4 } || (bits[3] & ~(DecimalSignMask | DecimalScaleMask)) != 0 ||
             (bits[3] & DecimalScaleMask) > 28 << 16)
             throw new ArgumentException("Invalid Decimal", nameof(value));
 
-        if (value == decimal.Zero)
-        {
-            return (BigInteger.Zero, BigInteger.One);
-        }
-
         // build up the numerator
-        var ul = ((ulong) (uint) bits[2] << 32) | (uint) bits[1]; // (hi    << 32) | (mid)
-        var numerator = (new BigInteger(ul) << 32) | (uint) bits[0]; // (hiMid << 32) | (low)
+        var ul = ((ulong)(uint)bits[2] << 32) | (uint)bits[1]; // (hi    << 32) | (mid)
+        var numerator = (new BigInteger(ul) << 32) | (uint)bits[0]; // (hiMid << 32) | (low)
 
         var isNegative = (bits[3] & DecimalSignMask) != 0;
         if (isNegative)
@@ -355,91 +355,71 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     /// <summary>
     ///     Gets the absolute value of a BigRational object.
     /// </summary>
-    public static BigRational Abs(BigRational r)
-    {
-        return r.Numerator.Sign < 0
+    public static BigRational Abs(BigRational r) =>
+        r.Numerator.Sign < 0
             ? new BigRational(BigInteger.Abs(r.Numerator), r.Denominator)
             : r;
-    }
 
     /// <summary>
     ///     Negates a specified BigRational value.
     /// </summary>
-    public static BigRational Negate(BigRational r)
-    {
-        return new BigRational(BigInteger.Negate(r.Numerator), r.Denominator);
-    }
+    public static BigRational Negate(BigRational r) =>
+        new(BigInteger.Negate(r.Numerator), r.Denominator);
 
     /// <summary>
     ///     Reciprocates the BigRational value.
     /// </summary>
-    public static BigRational Invert(BigRational r)
-    {
-        return new BigRational(r.Denominator, r.Numerator);
-    }
+    public static BigRational Invert(BigRational r) =>
+        new(r.Denominator, r.Numerator);
 
     /// <summary>
     ///     Adds two BigRational values.
     /// </summary>
-    public static BigRational Add(BigRational x, BigRational y)
-    {
-        return x + y;
-    }
+    public static BigRational Add(BigRational x, BigRational y) =>
+        x + y;
 
     /// <summary>
     ///     Subtracts two BigRational values.
     /// </summary>
-    public static BigRational Subtract(BigRational x, BigRational y)
-    {
-        return x - y;
-    }
+    public static BigRational Subtract(BigRational x, BigRational y) =>
+        x - y;
 
     /// <summary>
     ///     Multiplies two BigRational values.
     /// </summary>
-    public static BigRational Multiply(BigRational x, BigRational y)
-    {
-        return x * y;
-    }
+    public static BigRational Multiply(BigRational x, BigRational y) =>
+        x * y;
 
     /// <summary>
     ///     Divides two BigRational values.
     /// </summary>
-    public static BigRational Divide(BigRational dividend, BigRational divisor)
-    {
-        return dividend / divisor;
-    }
+    public static BigRational Divide(BigRational dividend, BigRational divisor) =>
+        dividend / divisor;
 
     /// <summary>
     ///     Divides two BigRational values and returns the remainder.
     /// </summary>
-    public static BigRational Remainder(BigRational dividend, BigRational divisor)
-    {
-        return dividend % divisor;
-    }
+    public static BigRational Remainder(BigRational dividend, BigRational divisor) =>
+        dividend % divisor;
 
     /// <summary>
     ///     Returns the greater of two BigRational values.
     /// </summary>
-    public static BigRational Max(BigRational left, BigRational right)
-    {
-        return left > right ? left : right;
-    }
+    public static BigRational Max(BigRational left, BigRational right) =>
+        left > right ? left : right;
 
     /// <summary>
     ///     Returns the lesser of two BigRational values.
     /// </summary>
-    public static BigRational Min(BigRational left, BigRational right)
-    {
-        return left < right ? left : right;
-    }
+    public static BigRational Min(BigRational left, BigRational right) =>
+        left < right ? left : right;
 
     /// <summary>
     ///     Returns e raised to the specified power.
     /// </summary>
     public static BigRational Exp(BigRational val)
     {
-        var e = (double) val;
+        var e = (double)val;
         if (e > 700)
             e = 700;
 
@@ -451,7 +431,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     /// </summary>
     public static BigRational Sin(BigRational val)
     {
-        var e = (double) val;
+        var e = (double)val;
         return Math.Sin(e);
     }
 
@@ -460,27 +440,27 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     /// </summary>
     public static BigRational Cos(BigRational val)
     {
-        var e = (double) val;
+        var e = (double)val;
         return Math.Cos(e);
     }
 
     /// <summary>
     ///     Returns true if the BigRational is equal to NaN.
     /// </summary>
-    public static bool IsNaN(BigRational val)
-    {
-        const float zero = 0;
-        return val == zero / zero;
-    }
+    public static bool IsNaN(BigRational val) =>
+        val == double.NaN;
 
     /// <summary>
-    ///     Returns true if the BigRational is equal to infinity.
+    ///     Returns true if the BigRational is equal to positive infinity.
     /// </summary>
-    public static bool IsInfinity(BigRational val)
-    {
-        const float zero = 0;
-        return val == 1 / zero;
-    }
+    public static bool IsPositiveInfinity(BigRational val) =>
+        val == PositiveInfinity;
+
+    /// <summary>
+    ///     Returns true if the BigRational is equal to negative infinity.
+    /// </summary>
+    public static bool IsNegativeInfinity(BigRational val) =>
+        val == NegativeInfinity;
 
     /// <summary>
     ///     Divide two BigRational objects, returning the result and remainder.
@@ -508,7 +488,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
         if (baseValue < 0)
             throw new ArgumentException("Negative argument.");
 
-        // square roots of 0 and 1 are trivial and
+        // square roots of 0 and 1 are trivial, and
         // y == 0 will cause a divide-by-zero exception
         if (baseValue == 0 || baseValue == 1)
             return baseValue;
@@ -546,15 +526,17 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
             var sr2 = r2;
             var sr = r;
             // compute (r+(1<<b))**2, we have r**2 already.
-            r2 += (uint) ((r << (1 + b)) + (1 << (b + b)));
-            r += (uint) (1 << b);
+            r2 += (uint)((r << (1 + b)) + (1 << (b + b)));
+            r += (uint)(1 << b);
             if (r2 > x)
             {
                 r = sr;
                 r2 = sr2;
             }
+
             b--;
         }
+
         return r;
     }
 
@@ -564,17 +546,17 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     /// <exception cref="ArgumentException">Thrown if the base value is zero and the exponent is negative.</exception>
     public static BigRational Pow(BigRational baseValue, BigInteger exponent)
     {
-        if (exponent.Sign == 0)
-            return One;
-
-        if (exponent.Sign < 0)
+        switch (exponent.Sign)
         {
-            if (baseValue == Zero)
+            case 0:
+                return One;
+            case < 0 when baseValue == Zero:
                 throw new ArgumentException("Cannot raise zero to a negative power.", nameof(baseValue));
-
             // n^(-e) -> (1/n)^e
-            baseValue = Invert(baseValue);
-            exponent = BigInteger.Negate(exponent);
+            case < 0:
+                baseValue = Invert(baseValue);
+                exponent = BigInteger.Negate(exponent);
+                break;
         }
 
         var result = baseValue;
@@ -602,109 +584,77 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     /// <summary>
     ///     Returns the least common denominator of two BigRational values.
     /// </summary>
-    public static BigInteger LeastCommonDenominator(BigRational x, BigRational y)
-    {
+    public static BigInteger LeastCommonDenominator(BigRational x, BigRational y) =>
         // LCD( a/b, c/d ) == (bd) / gcd(b,d)
-        return x.Denominator * y.Denominator / BigInteger.GreatestCommonDivisor(x.Denominator, y.Denominator);
-    }
+        x.Denominator * y.Denominator / BigInteger.GreatestCommonDivisor(x.Denominator, y.Denominator);
 
     /// <summary>
     ///     Compares two BigRational values.
     /// </summary>
-    public static int Compare(BigRational r1, BigRational r2)
-    {
+    public static int Compare(BigRational r1, BigRational r2) =>
         //     a/b = c/d, iff ad = bc
-        return BigInteger.Compare(r1.Numerator * r2.Denominator, r2.Numerator * r1.Denominator);
-    }
+        BigInteger.Compare(r1.Numerator * r2.Denominator, r2.Numerator * r1.Denominator);
 
     #endregion Public Static Methods
 
     #region Operator Overloads
 
-    public static bool operator ==(BigRational x, BigRational y)
-    {
-        return Compare(x, y) == 0;
-    }
+    public static bool operator ==(BigRational x, BigRational y) =>
+        Compare(x, y) == 0;
 
-    public static bool operator !=(BigRational x, BigRational y)
-    {
-        return Compare(x, y) != 0;
-    }
+    public static bool operator !=(BigRational x, BigRational y) =>
+        Compare(x, y) != 0;
 
-    public static bool operator <(BigRational x, BigRational y)
-    {
-        return Compare(x, y) < 0;
-    }
+    public static bool operator <(BigRational x, BigRational y) =>
+        Compare(x, y) < 0;
 
-    public static bool operator <=(BigRational x, BigRational y)
-    {
-        return Compare(x, y) <= 0;
-    }
+    public static bool operator <=(BigRational x, BigRational y) =>
+        Compare(x, y) <= 0;
 
-    public static bool operator >(BigRational x, BigRational y)
-    {
-        return Compare(x, y) > 0;
-    }
+    public static bool operator >(BigRational x, BigRational y) =>
+        Compare(x, y) > 0;
 
-    public static bool operator >=(BigRational x, BigRational y)
-    {
-        return Compare(x, y) >= 0;
-    }
+    public static bool operator >=(BigRational x, BigRational y) =>
+        Compare(x, y) >= 0;
 
-    public static BigRational operator +(BigRational r)
-    {
-        return r;
-    }
+    public static BigRational operator +(BigRational r) =>
+        r;
 
-    public static BigRational operator -(BigRational r)
-    {
-        return new BigRational(-r.Numerator, r.Denominator);
-    }
+    public static BigRational operator -(BigRational r) =>
+        new(-r.Numerator, r.Denominator);
 
-    public static BigRational operator ++(BigRational r)
-    {
-        return r + One;
-    }
+    public static BigRational operator ++(BigRational r) =>
+        r + One;
 
-    public static BigRational operator --(BigRational r)
-    {
-        return r - One;
-    }
+    public static BigRational operator --(BigRational r) =>
+        r - One;
 
     // a/b + c/d  == (ad + bc)/bd
-    public static BigRational operator +(BigRational r1, BigRational r2)
-    {
-        return new BigRational(r1.Numerator * r2.Denominator + r1.Denominator * r2.Numerator,
+    public static BigRational operator +(BigRational r1, BigRational r2) =>
+        new(r1.Numerator * r2.Denominator + r1.Denominator * r2.Numerator,
             r1.Denominator * r2.Denominator);
-    }
 
     // a/b - c/d  == (ad - bc)/bd
-    public static BigRational operator -(BigRational r1, BigRational r2)
-    {
-        return new BigRational(r1.Numerator * r2.Denominator - r1.Denominator * r2.Numerator,
+    public static BigRational operator -(BigRational r1, BigRational r2) =>
+        new(r1.Numerator * r2.Denominator - r1.Denominator * r2.Numerator,
             r1.Denominator * r2.Denominator);
-    }
 
     // a/b * c/d  == (ac)/(bd)
-    public static BigRational operator *(BigRational r1, BigRational r2)
-    {
-        return new BigRational(r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator);
-    }
+    public static BigRational operator *(BigRational r1, BigRational r2) =>
+        new(r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator);
 
     // a/b / c/d  == (ad)/(bc)
-    public static BigRational operator /(BigRational r1, BigRational r2)
-    {
-        return new BigRational(r1.Numerator * r2.Denominator, r1.Denominator * r2.Numerator);
-    }
+    public static BigRational operator /(BigRational r1, BigRational r2) =>
+        new(r1.Numerator * r2.Denominator, r1.Denominator * r2.Numerator);
 
     // a/b % c/d  == (ad % bc)/bd
-    public static BigRational operator %(BigRational r1, BigRational r2)
-    {
-        return new BigRational(r1.Numerator * r2.Denominator % (r1.Denominator * r2.Numerator),
+    public static BigRational operator %(BigRational r1, BigRational r2) =>
+        new(r1.Numerator * r2.Denominator % (r1.Denominator * r2.Numerator),
             r1.Denominator * r2.Denominator);
-    }
-        
-    public static BigRational PositiveInfinity => new(BigInteger.One, BigInteger.Zero, true);
+
+    public static BigRational PositiveInfinity { get; } = new(BigInteger.One, BigInteger.Zero, true);
+
+    public static BigRational NegativeInfinity { get; } = new(BigInteger.MinusOne, BigInteger.Zero, true);
 
     #endregion Operator Overloads
 
@@ -712,75 +662,58 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
 
     #region explicit conversions from BigRational
 
-    public static explicit operator sbyte(BigRational value)
-    {
-        return (sbyte) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator sbyte(BigRational value) =>
+        (sbyte)BigInteger.Divide(value.Numerator, value.Denominator);
 
-    public static explicit operator ushort(BigRational value)
-    {
-        return (ushort) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator ushort(BigRational value) =>
+        (ushort)BigInteger.Divide(value.Numerator, value.Denominator);
 
-    public static explicit operator uint(BigRational value)
-    {
-        return (uint) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator uint(BigRational value) =>
+        (uint)BigInteger.Divide(value.Numerator, value.Denominator);
 
-    public static explicit operator ulong(BigRational value)
-    {
-        return (ulong) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator ulong(BigRational value) =>
+        (ulong)BigInteger.Divide(value.Numerator, value.Denominator);
 
-    public static explicit operator byte(BigRational value)
-    {
-        return (byte) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator byte(BigRational value) =>
+        (byte)BigInteger.Divide(value.Numerator, value.Denominator);
 
-    public static explicit operator short(BigRational value)
-    {
-        return (short) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator short(BigRational value) =>
+        (short)BigInteger.Divide(value.Numerator, value.Denominator);
 
-    public static explicit operator int(BigRational value)
-    {
-        return (int) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator int(BigRational value) =>
+        (int)BigInteger.Divide(value.Numerator, value.Denominator);
 
-    public static explicit operator long(BigRational value)
-    {
-        return (long) BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator int?(BigRational? nullable) =>
+        nullable is { } value ? (int)BigInteger.Divide(value.Numerator, value.Denominator) : null;
 
-    public static explicit operator BigInteger(BigRational value)
-    {
-        return BigInteger.Divide(value.Numerator, value.Denominator);
-    }
+    public static explicit operator long(BigRational value) =>
+        (long)BigInteger.Divide(value.Numerator, value.Denominator);
+
+    public static explicit operator BigInteger(BigRational value) =>
+        BigInteger.Divide(value.Numerator, value.Denominator);
 
     // The Single value type represents a single-precision 32-bit number with
     // values ranging from negative 3.402823e38 to positive 3.402823e38      
     // values that do not fit into this range are returned as Infinity
-    public static explicit operator float(BigRational value)
-    {
-        return (float) (double) value;
-    }
+    public static explicit operator float(BigRational value) =>
+        (float)(double)value;
 
     // The Double value type represents a double-precision 64-bit number with
     // values ranging from -1.79769313486232e308 to +1.79769313486232e308
     // values that do not fit into this range are returned as +/-Infinity
     public static explicit operator double(BigRational value)
     {
-        if (IsInfinity(value))
+        if (IsPositiveInfinity(value))
             return value.Sign == 1 ? double.PositiveInfinity : double.NegativeInfinity;
-            
+
         if (SafeCastToDouble(value.Numerator) && SafeCastToDouble(value.Denominator))
-            return (double) value.Numerator / (double) value.Denominator;
+            return (double)value.Numerator / (double)value.Denominator;
 
         // scale the numerator to preserve the fraction part through the integer division
         var denormalized = value.Numerator * DoublePrecision / value.Denominator;
         if (denormalized.IsZero)
             return value.Sign < 0
-                ? BitConverter.Int64BitsToDouble(unchecked((long) 0x8000000000000000))
+                ? BitConverter.Int64BitsToDouble(unchecked((long)0x8000000000000000))
                 : 0d; // underflow to -+0
 
         double result = 0;
@@ -792,13 +725,14 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
             if (!isDouble)
                 if (SafeCastToDouble(denormalized))
                 {
-                    result = (double) denormalized;
+                    result = (double)denormalized;
                     isDouble = true;
                 }
                 else
                 {
                     denormalized /= 10;
                 }
+
             result /= 10;
             scale--;
         }
@@ -814,7 +748,7 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
     public static explicit operator decimal(BigRational value)
     {
         if (SafeCastToDecimal(value.Numerator) && SafeCastToDecimal(value.Denominator))
-            return (decimal) value.Numerator / (decimal) value.Denominator;
+            return (decimal)value.Numerator / (decimal)value.Denominator;
 
         // scale the numerator to preserve the fraction part through the integer division
         var denormalized = value.Numerator * DecimalPrecision / value.Denominator;
@@ -828,10 +762,11 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
             }
             else
             {
-                var dec = new DecimalUInt32 {dec = (decimal) denormalized};
+                var dec = new DecimalUInt32 { dec = (decimal)denormalized };
                 dec.flags = (dec.flags & ~DecimalScaleMask) | (scale << 16);
                 return dec.dec;
             }
+
         throw new OverflowException("Value was either too large or too small for a Decimal.");
     }
 
@@ -841,65 +776,41 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
 
     #region implicit conversions to BigRational
 
-    public static implicit operator BigRational(sbyte value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(sbyte value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(ushort value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(ushort value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(uint value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(uint value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(ulong value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(ulong value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(byte value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(byte value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(short value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(short value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(int value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(int value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(long value)
-    {
-        return new BigRational((BigInteger) value);
-    }
+    public static implicit operator BigRational(long value) =>
+        new((BigInteger)value);
 
-    public static implicit operator BigRational(BigInteger value)
-    {
-        return new BigRational(value);
-    }
+    public static implicit operator BigRational(BigInteger value) =>
+        new(value);
 
-    public static implicit operator BigRational(float value)
-    {
-        return new BigRational(value);
-    }
+    public static implicit operator BigRational(float value) =>
+        new(value);
 
-    public static implicit operator BigRational(double value)
-    {
-        return new BigRational(value);
-    }
+    public static implicit operator BigRational(double value) =>
+        new(value);
 
-    public static implicit operator BigRational(decimal value)
-    {
-        return new BigRational(value);
-    }
+    public static implicit operator BigRational(decimal value) =>
+        new(value);
 
     #endregion implicit conversions to BigRational
 
@@ -930,15 +841,11 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
 
     #region static helper methods
 
-    private static bool SafeCastToDouble(BigInteger value)
-    {
-        return DoubleMinValue <= value && value <= DoubleMaxValue;
-    }
+    private static bool SafeCastToDouble(BigInteger value) =>
+        DoubleMinValue <= value && value <= DoubleMaxValue;
 
-    private static bool SafeCastToDecimal(BigInteger value)
-    {
-        return DecimalMinValue <= value && value <= DecimalMaxValue;
-    }
+    private static bool SafeCastToDecimal(BigInteger value) =>
+        DecimalMinValue <= value && value <= DecimalMaxValue;
 
     private static void SplitDoubleIntoParts(double dbl, out int sign, out int exp, out ulong man,
         out bool isFinite)
@@ -947,9 +854,9 @@ public struct BigRational : IComparable, IComparable<BigRational>, IEquatable<Bi
         du.uu = 0;
         du.dbl = dbl;
 
-        sign = 1 - ((int) (du.uu >> 62) & 2);
+        sign = 1 - ((int)(du.uu >> 62) & 2);
         man = du.uu & 0x000FFFFFFFFFFFFF;
-        exp = (int) (du.uu >> 52) & 0x7FF;
+        exp = (int)(du.uu >> 52) & 0x7FF;
 
         switch (exp)
         {
