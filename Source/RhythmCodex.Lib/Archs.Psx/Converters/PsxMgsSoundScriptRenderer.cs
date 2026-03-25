@@ -37,6 +37,16 @@ public class PsxMgsSoundScriptRenderer(
         0x0085, 0x008D, 0x0096, 0x009F, 0x00A8, 0x00B2, 0x00BD, 0x00C8, 0x00D4, 0x00E1, 0x00EE, 0x00FC
     ]);
 
+    /// <summary>
+    /// Panning table used by the Metal Gear Solid sound system.
+    /// </summary>
+    private readonly Lazy<ReadOnlyMemory<byte>> _panTbl = new(() => (byte[])
+    [
+        0, 2, 4, 7, 10, 13, 16, 20, 24, 28, 32, 36, 40, 45,
+        50, 55, 60, 65, 70, 75, 80, 84, 88, 92, 96, 100, 104, 107,
+        110, 112, 114, 116, 118, 120, 122, 123, 124, 125, 126, 127, 127
+    ]);
+
     [Flags]
     private enum PendingAction
     {
@@ -95,12 +105,14 @@ public class PsxMgsSoundScriptRenderer(
         var currentVolume = 1.0f;
         var currentPanning = 0.5f;
         var currentPitch = 0f;
+        var volumeScale = 1.0f;
 
         var playedNote = 0;
         var pendingSilence = 0;
         PendingAction action = default;
 
         var spuVolumeEnvelope = CalculateSpuEnvelope(0, 0, new Vector2(0, 1), 0);
+        var panTbl = _panTbl.Value.Span;
 
         Envelope? volumeEnvelope = null;
         Envelope? panningEnvelope = null;
@@ -123,6 +135,7 @@ public class PsxMgsSoundScriptRenderer(
         var finished = false;
         var sampleL = result.Samples[0];
         var sampleR = result.Samples[1];
+        var disableDefaultPan = false;
 
         foreach (var packet in packets)
         {
@@ -136,27 +149,40 @@ public class PsxMgsSoundScriptRenderer(
             {
                 case var data1 when (int)data1 < 0x80:
                 {
+                    //
                     // Note-on command.
+                    //
+
                     AttackSpuEnvelope(spuVolumeEnvelope);
                     delayMs += packet.Data2 * resolutionMs;
                     playedNote = packet.Data1;
+                    currentVolume = (packet.Data4 & 0x7F) / 127f;
                     sourceSampleRate = CalculateFrequency(
                         playedNote,
                         coarseTune + sourceTranspose,
                         fineTune + sourceFineTune
                     );
+
                     break;
                 }
                 case PsxMgsSoundTablePacketType.SetTimeResolution:
                 {
+                    //
+                    // Sets the time resolution (how much time each tick represents.)
+                    //
+
                     resolutionMs = packet.Data2 * 10 / 255f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.SetSoundBankIndex:
                 {
+                    //
+                    // Sets which sound bank entry to use for sample data.
+                    //
+
                     sampleId = packet.Data2;
                     action |= PendingAction.SetSampleIndex;
-                    
+
                     // In order for overrides to not get overridden themselves
                     // by defaults, we have to apply the sample change in this iteration.
 
@@ -164,20 +190,34 @@ public class PsxMgsSoundScriptRenderer(
                 }
                 case PsxMgsSoundTablePacketType.AutomateVolume:
                 {
+                    //
+                    // Starts a software volume envelope.
+                    //
+
                     volumeEnvelope = new Envelope(
                         new Vector2(currentVolume, 0),
                         new Vector2(packet.Data2 * resolutionMs, packet.Data3 / 255f)
                     );
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetVolume:
+                case PsxMgsSoundTablePacketType.SetVolumeScale:
                 {
+                    //
+                    // Sets the software volume scale. This will impact
+                    // the calculated volume but does not change anything
+                    // with the simulated SPU.
+                    //
+
                     volumeEnvelope = null;
-                    currentVolume = packet.Data2 / 255f;
+                    volumeScale = packet.Data2 / 255f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.SetAttackDecay:
                 {
+                    //
+                    // Sets the attack/decay + sustain level SPU registers.
+                    //
+
                     spuAMode = 1;
                     spuAr = ~packet.Data2 & 0x7F;
                     spuDr = ~packet.Data3 & 0x0F;
@@ -187,6 +227,10 @@ public class PsxMgsSoundScriptRenderer(
                 }
                 case PsxMgsSoundTablePacketType.SetSustainRate:
                 {
+                    //
+                    // Sets the sustain rate SPU register.
+                    //
+
                     spuSMode = 3;
                     spuSr = ~packet.Data2 & 0x7F;
                     action |= PendingAction.RebuildSpuEnvelope;
@@ -194,6 +238,10 @@ public class PsxMgsSoundScriptRenderer(
                 }
                 case PsxMgsSoundTablePacketType.SetReleaseRate:
                 {
+                    //
+                    // Sets the release rate SPU register.
+                    //
+
                     spuRMode = 3;
                     spuRr = ~packet.Data2 & 0x1F;
                     action |= PendingAction.RebuildSpuEnvelope;
@@ -201,12 +249,21 @@ public class PsxMgsSoundScriptRenderer(
                 }
                 case PsxMgsSoundTablePacketType.SetPanning:
                 {
+                    //
+                    // Sets the stereo panning.
+                    //
+
                     panningEnvelope = null;
+                    disableDefaultPan = packet.Data2 != 0;
                     currentPanning = Math.Clamp(0xF - (packet.Data3 & 0xF), 0, 14) / 14f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.AutomatePanning:
                 {
+                    //
+                    // Starts a panning envelope.
+                    //
+
                     panningEnvelope = new Envelope(
                         new Vector2(0, currentPanning),
                         new Vector2(packet.Data2 * resolutionMs, Math.Clamp(0xF - (packet.Data3 & 0xF), 0, 14) / 14f)
@@ -215,16 +272,28 @@ public class PsxMgsSoundScriptRenderer(
                 }
                 case PsxMgsSoundTablePacketType.SetCoarseTune:
                 {
+                    //
+                    // Sets the number of semitones to adjust played notes by.
+                    //
+
                     coarseTune = unchecked((sbyte)packet.Data2);
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.SetFineTune:
                 {
+                    //
+                    // Sets the detune in 1/128ths of a semitone.
+                    //
+
                     fineTune = unchecked((sbyte)packet.Data2);
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetPoramentoTime:
+                case PsxMgsSoundTablePacketType.SetPortamentoTime:
                 {
+                    //
+                    // Sets the portamento time.
+                    //
+
                     portamentoTime = packet.Data2 * resolutionMs;
                     continue;
                 }
@@ -236,18 +305,30 @@ public class PsxMgsSoundScriptRenderer(
                 }
                 case PsxMgsSoundTablePacketType.Delay:
                 {
+                    //
+                    // Delays processing the next script packet.
+                    //
+
                     delayMs += packet.Data2 * resolutionMs;
                     break;
                 }
                 case PsxMgsSoundTablePacketType.End:
                 {
+                    //
+                    // Indicates the end of script packets.
+                    //
+
                     finished = true;
                     delayMs = 0;
                     break;
                 }
                 case var data1 when (int)data1 >= 0x80:
                 {
-                    // unsupported command
+                    //
+                    // Values over 0x80 are script commands; this branch is
+                    // executed when the command is not yet supported.
+                    //
+
                     continue;
                 }
             }
@@ -266,7 +347,9 @@ public class PsxMgsSoundScriptRenderer(
 
                     sourceFineTune = unchecked((sbyte)sample.Entry.Tune);
                     sourceTranspose = unchecked((sbyte)sample.Entry.Note);
-                    currentPanning = Math.Clamp(0xF - (packet.Data3 & 0xF), 0, 14) / 14f;
+
+                    if (!disableDefaultPan)
+                        currentPanning = Math.Clamp((int)sample.Entry.Pan, 0, 20) / 20f;
 
                     spuAr = sample.Entry.AttackRate & 0x7F;
                     spuAMode = sample.Entry.AttackMode & 0b111;
@@ -337,7 +420,8 @@ public class PsxMgsSoundScriptRenderer(
                 var sustainLevelFloat = sustainLevel / 15f;
                 var attackPoint = CalculateSpuPoint(attackShift, attackStep, attackDir, 0, 1);
                 var decayPoint = CalculateSpuPoint(decayShift, decayStep, decayDir, 1, sustainLevelFloat);
-                var sustainPoint = CalculateSpuPoint(sustainShift, sustainStep, sustainDir, sustainLevelFloat, sustainLevelFloat);
+                var sustainPoint = CalculateSpuPoint(sustainShift, sustainStep, sustainDir, sustainLevelFloat,
+                    sustainLevelFloat);
                 var releasePoint = CalculateSpuPoint(releaseShift, releaseStep, releaseDir, sustainLevelFloat, 0);
 
                 spuVolumeEnvelope = CalculateSpuEnvelope(
@@ -423,11 +507,13 @@ public class PsxMgsSoundScriptRenderer(
                     var sourceInterpolatedSample = sourceSample0 + weight * (sourceSample1 - sourceSample0);
 
                     //
-                    // Calculate gain for left/right channels from panning and volume.
+                    // Calculate gain for left/right channels from panning table and volume.
                     //
 
-                    var panVec = Vector2.SquareRoot(new Vector2(1 - currentPanning, currentPanning));
-                    var sampleDataVec = panVec * sourceInterpolatedSample * currentVolume * spuVolumeValue;
+                    var panIdx = Math.Clamp((int)MathF.Truncate(currentPanning * 40), 0, 40);
+                    var panVec = new Vector2(panTbl[40 - panIdx], panTbl[panIdx]) / 127f;
+                    var sampleDataVec = panVec * sourceInterpolatedSample * (currentVolume * volumeScale) *
+                                        spuVolumeValue;
 
                     //
                     // Write the sample.
@@ -463,7 +549,7 @@ public class PsxMgsSoundScriptRenderer(
         var sustainX = decayX + decay;
         var releaseX = sustainX + sustain.X;
         var endX = releaseX + release;
-        
+
         return new Envelope(
             new Vector2(0, 0),
             new Vector2(decayX, 1),
@@ -476,7 +562,7 @@ public class PsxMgsSoundScriptRenderer(
     private static Vector2 CalculateSpuPoint(int shift, int step, int dir, float level, float target)
     {
         // Not entirely accurate, but good enough for what we're doing.
-        
+
         if (MathF.Abs(level - target) < float.Epsilon)
             return new Vector2(0, target);
 
@@ -496,62 +582,6 @@ public class PsxMgsSoundScriptRenderer(
     private static void ReleaseSpuEnvelope(Envelope? envelope)
     {
         envelope?.SetPhase(4);
-    }
-
-    /// <summary>
-    /// Configure automation.
-    /// </summary>
-    /// <param name="value">
-    /// </param>
-    /// <param name="fadeTarget">
-    /// </param>
-    /// <param name="fadeMs">
-    /// </param>
-    /// <param name="sampleRate"></param>
-    private static float CalculateFadeRate(float value, float fadeTarget, float fadeMs, int sampleRate)
-    {
-        var diff = fadeTarget - value;
-        var sampleCount = 1000f * sampleRate / fadeMs;
-        return diff / sampleCount;
-    }
-
-    /// <summary>
-    /// Process automation.
-    /// </summary>
-    /// <param name="value">
-    /// Current value.
-    /// </param>
-    /// <param name="fadeTarget">
-    /// Target value.
-    /// </param>
-    /// <param name="fadeMs">
-    /// Amount of time remaining in the automation.
-    /// </param>
-    /// <param name="sampleRate">
-    /// Output sampling rate.
-    /// </param>
-    private static void ProcessFadeVars(ref float value, float fadeTarget, ref float fadeMs, int sampleRate)
-    {
-        if (fadeMs <= 0)
-        {
-            value = fadeTarget;
-            fadeMs = 0;
-            return;
-        }
-
-        if (MathF.Abs(value - fadeTarget) <= float.Epsilon)
-        {
-            fadeMs = 0;
-            value = fadeTarget;
-            return;
-        }
-
-        var diffPerMs = (fadeTarget - value) / fadeMs;
-        var sampleTime = 1000f / sampleRate;
-        var adjust = diffPerMs * sampleTime;
-        fadeMs -= sampleTime;
-
-        value += adjust;
     }
 
     /// <summary>

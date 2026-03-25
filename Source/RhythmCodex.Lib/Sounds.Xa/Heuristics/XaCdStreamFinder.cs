@@ -120,6 +120,7 @@ public class XaCdStreamFinder : IXaCdStreamFinder
             {
                 chunk = new XaChunk
                 {
+                    SourceSector = sectorInfos.Min(s => s.Number),
                     SourceChannel = ch,
                     SourceIndex = sourceIndices[ch],
                     Channels = sectorInfos[0].AudioChannels!.Value,

@@ -21,6 +21,8 @@ namespace RhythmCodex;
 [PublicAPI]
 public static class TestHelper
 {
+    public const float DefaultKeysoundVolume = 0.7f;
+
     public class RenderSetConfig
     {
         public IEnumerable<Chart> Charts { get; set; }
@@ -48,12 +50,20 @@ public static class TestHelper
         public bool ResampleSounds { get; set; }
         public bool RemapSounds { get; set; } = true;
         public bool RemoveMissingSounds { get; set; } = true;
+        public bool DeduplicateSounds { get; set; } = true;
+        public float KeysoundVolume { get; set; } = DefaultKeysoundVolume;
     }
 
     private class WriteSetSoundsResult
     {
         public ConcurrentDictionary<int, string> HashMap { get; init; } = [];
         public Dictionary<(int SampleMap, int Index), int> Map { get; init; } = [];
+        public Dictionary<string, string> RemappedNames { get; init; } = [];
+    }
+
+    public class WriteSetResult
+    {
+        public Dictionary<string, string> RemappedSamples { get; init; } = [];
     }
 
     extension(IResolver resolver)
@@ -232,6 +242,7 @@ public static class TestHelper
             var soundHashFileMap = new ConcurrentDictionary<int, string>();
             var soundMap = new Dictionary<(int SampleMap, int Index), int>();
             var soundList = config.Sounds.ToList();
+            var remapped = new Dictionary<string, string>();
 
             foreach (var sound in soundList.Where(s => s.Samples.Count != 0))
             {
@@ -260,23 +271,30 @@ public static class TestHelper
                         .FirstOrDefault(r => r != null);
                 }
 
-                soundHashFileMap.AddOrUpdate(sound.CalculateSampleHash() ^ sound.CalculateSourceVolumePanHash(),
+                var fileName = IResolver.GetSoundOutputPathForSet(
+                    config,
+                    (int?)sound[NumericData.SampleMap] ?? 0,
+                    (int?)sound[NumericData.Id] ?? 0,
+                    "wav"
+                );
+
+                var sampleHash = config.DeduplicateSounds
+                    ? sound.CalculateSampleHash() ^ sound.CalculateSourceVolumePanHash()
+                    : soundHashFileMap.Count;
+                
+                soundHashFileMap.AddOrUpdate(sampleHash,
                     h =>
                     {
-                        var fileName = IResolver.GetSoundOutputPathForSet(
-                            config,
-                            (int?)sound[NumericData.SampleMap] ?? 0,
-                            (int?)sound[NumericData.Id] ?? 0,
-                            "wav"
-                        );
+                        if (config.WriteSounds)
+                            resolver.WriteSound(sound, Path.Combine(config.OutPath, fileName), config.KeysoundVolume);
 
-                        resolver.WriteSound(sound, Path.Combine(config.OutPath, fileName), 0.7f);
                         soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);
                         return fileName;
                     },
                     (h, val) =>
                     {
                         soundMap.Add(((int)(sound[NumericData.SampleMap] ?? 0), (int)sound[NumericData.Id]!), h);
+                        remapped.Add(fileName, val);
                         return val;
                     }
                 );
@@ -285,7 +303,8 @@ public static class TestHelper
             return new WriteSetSoundsResult
             {
                 HashMap = soundHashFileMap,
-                Map = soundMap
+                Map = soundMap,
+                RemappedNames = remapped
             };
         }
 
@@ -421,10 +440,15 @@ public static class TestHelper
             }
         }
 
-        public void WriteSet(WriteSetConfig config)
+        public WriteSetResult WriteSet(WriteSetConfig config)
         {
             var soundResult = resolver.WriteSetSoundsInternal(config);
             resolver.WriteSetChartsInternal(config, soundResult);
+
+            return new WriteSetResult
+            {
+                RemappedSamples = soundResult.RemappedNames
+            };
         }
     }
 

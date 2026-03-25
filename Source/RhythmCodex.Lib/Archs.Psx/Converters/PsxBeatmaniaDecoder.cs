@@ -116,6 +116,37 @@ public sealed class PsxBeatmaniaDecoder(
         ReadInt32LittleEndian(span[^4..]) == 0x00000000;
 
     /// <summary>
+    /// Returns true if the data is a GFX file.
+    /// </summary>
+    private static bool DetectGfx(ReadOnlySpan<byte> span) =>
+        span.Length >= 12 &&
+        ReadInt32LittleEndian(span) < span.Length &&
+        ReadInt32LittleEndian(span[8..]) == 0 &&
+        span[^1] == 0xFF;
+
+    /// <summary>
+    /// Returns true if the data is a VFX script file.
+    /// </summary>
+    private static bool DetectScript(ReadOnlySpan<byte> span)
+    {
+        if (span.Length < 64)
+            return false;
+
+        var offsetBytes = span[..64];
+        var lastOffset = -1;
+
+        for (var i = 0; i < 16; i++)
+        {
+            var thisOffset = ReadInt32LittleEndian(offsetBytes[(i << 2)..]);
+            if (thisOffset <= lastOffset)
+                return false;
+            lastOffset = thisOffset;
+        }
+
+        return true;
+    }
+    
+    /// <summary>
     /// Determines the type of the data and returns a <see cref="PsxBeatmaniaFile"/>
     /// populated with the detected type.
     /// </summary>
@@ -132,6 +163,10 @@ public sealed class PsxBeatmaniaDecoder(
             type = PsxBeatmaniaFileType.Kst;
         else if (DetectDat3(span))
             type = PsxBeatmaniaFileType.Dat3;
+        else if (DetectGfx(span))
+            type = PsxBeatmaniaFileType.Graphics;
+        else if (DetectScript(span))
+            type = PsxBeatmaniaFileType.Script;
 
         return new PsxBeatmaniaFile
         {

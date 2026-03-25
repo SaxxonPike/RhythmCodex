@@ -6,5 +6,7 @@ public enum PsxBeatmaniaFileType
     Chart,
     Keysound,
     Kst,
-    Dat3
+    Dat3,
+    Graphics,
+    Script
 }

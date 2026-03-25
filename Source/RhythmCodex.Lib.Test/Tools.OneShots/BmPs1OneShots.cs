@@ -16,6 +16,7 @@ using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Riff.Converters;
 using RhythmCodex.Sounds.Riff.Streamers;
 using RhythmCodex.Sounds.Xa.Converters;
@@ -49,10 +50,14 @@ public class BmPs1OneShots : BaseIntegrationFixture
     public void ExtractBms(string source, string target)
     {
         const bool extractKeysounds = true;
-        const bool extractCharts = true;
-        const bool extractRawBlock = false;
-        const bool extractBgm = true;
+        const bool extractCharts = false;
+        const bool extractRawBlock = true;
+        const bool extractBgm = false;
+        const float keyVolume = 0.9f;
+        const float xaVolume = 0.7f;
 
+        var audioDsp = Resolve<IAudioDsp>();
+        
         //
         // Load in the CUE/BIN files.
         //
@@ -113,33 +118,6 @@ public class BmPs1OneShots : BaseIntegrationFixture
             var groupPath = Path.Combine(target, $"{songGroup.Index:d4}");
 
             //
-            // Convert charts.
-            //
-
-            var bmDataCharts = songGroup.Files
-                .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
-                .Select((f, i) =>
-                {
-                    using var chartStream = new ReadOnlyMemoryStream(f.Data);
-                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
-                    chart[NumericData.Id] = i;
-                    chart[NumericData.SourceIndex] = f.Index;
-
-                    // Start of BGM is not explicitly included in the chart file,
-                    // so it is added here.
-
-                    chart.Events.Add(new Event
-                    {
-                        [NumericData.LinearOffset] = BigRational.Zero,
-                        [NumericData.MetricOffset] = BigRational.Zero,
-                        [NumericData.PlaySound] = 1
-                    });
-
-                    return chart;
-                })
-                .ToList();
-
-            //
             // Convert keysound folders.
             //
 
@@ -191,6 +169,60 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 .Where(s => s.Sounds.Count > 0)
                 .ToList();
 
+            //
+            // Convert charts.
+            //
+
+            var sampleMaps = bmDataKeysoundSets
+                .SelectMany(s => s.Sounds)
+                .Select(s => (int?)s[NumericData.SampleMap] ?? 0)
+                .ToHashSet();
+
+            sampleMaps.Add(0);
+
+            var chartFiles = songGroup.Files
+                .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
+                .ToList();
+
+            var chartsPerSampleMap = chartFiles.Count / sampleMaps.Count;
+
+            var bmDataCharts = chartFiles
+                .Select((f, i) =>
+                {
+                    using var chartStream = new ReadOnlyMemoryStream(f.Data);
+                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
+                    chart[NumericData.Id] = i;
+                    chart[NumericData.SourceIndex] = f.Index;
+                    chart[StringData.Title] = $"{f.Index:d4}";
+
+                    var players = chart.Events
+                        .Select(e => (int?)e[NumericData.Player] ?? 0)
+                        .ToHashSet();
+
+                    players.Add(0);
+
+                    var chartSampleMap = players.Max() / chartsPerSampleMap;
+
+                    // Start of BGM is not explicitly included in the chart file,
+                    // so it is added here.
+
+                    chart.Events.Add(new Event
+                    {
+                        [NumericData.LinearOffset] = BigRational.Zero,
+                        [NumericData.MetricOffset] = BigRational.Zero,
+                        [NumericData.PlaySound] = 1
+                    });
+
+                    chart[NumericData.SampleMap] = chartSampleMap;
+
+                    return chart;
+                })
+                .ToList();
+
+            //
+            // Generate logs.
+            //
+
             var keysoundLogSettings = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -200,7 +232,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
             foreach (var bmDataKeysoundSet in bmDataKeysoundSets)
             {
                 var soundLogJson = JsonSerializer.Serialize(bmDataKeysoundSet.Log, keysoundLogSettings);
-                this.WriteText(soundLogJson, Path.Combine(groupPath, $"{bmDataKeysoundSet.Map:d4}{bmDataKeysoundSet.Index:d2}.log"));
+                this.WriteText(soundLogJson,
+                    Path.Combine(groupPath, $"{bmDataKeysoundSet.Map:d4}{bmDataKeysoundSet.Index:d2}.log"));
             }
 
             var writeSetConfig = new TestHelper.WriteSetConfig
@@ -212,10 +245,16 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 ChartType = BmsChartType.Beatmania,
                 WriteCharts = extractCharts,
                 WriteSounds = extractKeysounds,
-                RemoveMissingSounds = false
+                RemoveMissingSounds = false,
+                DeduplicateSounds = false,
+                KeysoundVolume = keyVolume
             };
 
-            this.WriteSet(writeSetConfig);
+            var writeSetResult = this.WriteSet(writeSetConfig);
+            
+            var remappedSamplesJson = JsonSerializer.Serialize(writeSetResult.RemappedSamples, keysoundLogSettings);
+            if (remappedSamplesJson.Length > 2)
+                this.WriteText(remappedSamplesJson, Path.Combine(groupPath, $"remapped.log"));
         }
 
         if (extractRawBlock)
@@ -232,6 +271,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     PsxBeatmaniaFileType.Keysound => "ksb",
                     PsxBeatmaniaFileType.Kst => "kst",
                     PsxBeatmaniaFileType.Dat3 => "dat3",
+                    PsxBeatmaniaFileType.Graphics => "gfx",
+                    PsxBeatmaniaFileType.Script => "vfx",
                     _ => "bin"
                 };
 
@@ -295,14 +336,18 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 foreach (var sound in decoded)
                 {
                     sound![NumericData.Rate] = xa.Rate;
-                    var encoded = encoder.Encode(sound);
+                    sound[NumericData.Volume] = xaVolume;
+
+                    var dspProcessed = audioDsp.ApplyEffects(sound);
+                    var encoded = encoder.Encode(dspProcessed);
+
                     if (!Directory.Exists(outfolder))
                         Directory.CreateDirectory(outfolder);
 
                     using var outStream = new MemoryStream();
                     writer.Write(outStream, encoded);
                     outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(outfolder, $"XA{xa.SourceIndex:00}{xa.SourceChannel:00}.wav"),
+                    File.WriteAllBytes(Path.Combine(outfolder, $"XA{xa.SourceSector:d6}.wav"),
                         outStream.ToArray());
                     index++;
                 }

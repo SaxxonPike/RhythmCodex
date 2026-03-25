@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.IoC;
 
@@ -11,35 +12,55 @@ public class PsxBeatmaniaSongGrouper : IPsxBeatmaniaSongGrouper
     {
         var groups = new List<PsxBeatmaniaSongGroup>();
         var currentGroup = new List<PsxBeatmaniaFile>();
+        var groupNumber = 0;
         var groupIndex = 0;
-        var prevGroupType = PsxBeatmaniaFileType.Unknown;
+        var endOfGroup = false;
 
         foreach (var file in files)
         {
-            if (prevGroupType == PsxBeatmaniaFileType.Keysound && file.Type != PsxBeatmaniaFileType.Keysound)
+            if (endOfGroup)
             {
-                groups.Add(new PsxBeatmaniaSongGroup
+                if (file.Type is not (PsxBeatmaniaFileType.Keysound or PsxBeatmaniaFileType.Kst))
+                    Commit();
+            }
+            else
+            {
+                switch (file.Type)
                 {
-                    Index = groupIndex++,
-                    Files = currentGroup
-                });
-
-                currentGroup = [];
+                    case PsxBeatmaniaFileType.Graphics:
+                        Commit();
+                        break;
+                    case PsxBeatmaniaFileType.Keysound or PsxBeatmaniaFileType.Kst:
+                        endOfGroup = true;
+                        break;
+                }
             }
 
-            prevGroupType = file.Type;
-            currentGroup.Add(file);
-        }
-
-        if (currentGroup.Count > 0)
-        {
-            groups.Add(new PsxBeatmaniaSongGroup
+            currentGroup.Add(file with
             {
-                Index = groupIndex,
-                Files = currentGroup
+                Group = groupNumber,
+                GroupIndex = groupIndex++
             });
         }
 
+        Commit();
+
         return groups;
+
+        void Commit()
+        {
+            if (currentGroup.Count <= 0)
+                return;
+
+            groups.Add(new PsxBeatmaniaSongGroup
+            {
+                Index = groupNumber++,
+                Files = currentGroup
+            });
+
+            currentGroup = [];
+            endOfGroup = false;
+            groupIndex = 0;
+        }
     }
 }

@@ -38,12 +38,9 @@ public sealed class PsxMgsSoundTableReader : IPsxMgsSoundTableReader
         //
 
         var offsets = new List<int>();
-        
-        while (true)
-        {
-            if (ReadInt32LittleEndian(buffer[12..]) != -1)
-                break;
 
+        for (var i = 0; i < 128; i++)
+        {
             offsets.Add(ReadInt32LittleEndian(buffer[4..]));
             offsets.Add(ReadInt32LittleEndian(buffer[8..]));
             offsets.Add(ReadInt32LittleEndian(buffer[12..]));
