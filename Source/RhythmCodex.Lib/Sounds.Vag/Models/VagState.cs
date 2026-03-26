@@ -10,5 +10,4 @@ public class VagState
     public bool Enabled { get; set; } = true;
     public int? LoopStart { get; set; }
     public int? LoopEnd { get; set; }
-    public bool InLoop { get; set; }
 }

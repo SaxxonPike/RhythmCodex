@@ -27,17 +27,11 @@ public class VagDecrypter : IVagDecrypter
 
             var flags = input[inOffset + 1];
 
-            switch (flags & 2)
-            {
-                case 2 when !state.InLoop:
-                    state.InLoop = true;
-                    state.LoopStart = outOffset;
-                    break;
-                case 0 when state.InLoop:
-                    state.InLoop = false;
-                    state.LoopEnd = outOffset;
-                    break;
-            }
+            if ((flags & 5) == 4)
+                enabled = true;
+
+            if ((flags & 7) == 6)
+                state.LoopStart = outOffset;
 
             if (!enabled)
             {
@@ -56,17 +50,20 @@ public class VagDecrypter : IVagDecrypter
                     filter = 0;
                 }
 
+                magnitude += 16;
+
+                var coeff0 = table0[filter];
+                var coeff1 = table1[filter];
+
                 for (var i = 2; i < 16; i++)
                 {
                     var deltas = input[inOffset + i];
                     var delta0 = (deltas & 0x0F) << 28;
                     var delta1 = (deltas & 0xF0) << 24;
-                    var coeff0 = table0[filter];
-                    var coeff1 = table1[filter];
 
                     var filter0 = coeff0 * last0;
                     var filter1 = coeff1 * last1;
-                    var sample = int.Clamp((delta0 >> (magnitude + 16)) + ((filter0 + filter1) >> 6), 
+                    var sample = Math.Clamp((delta0 >> magnitude) + ((filter0 + filter1) >> 6), 
                         short.MinValue, short.MaxValue);
                     last1 = last0;
                     last0 = sample;
@@ -74,7 +71,7 @@ public class VagDecrypter : IVagDecrypter
 
                     filter0 = coeff0 * last0;
                     filter1 = coeff1 * last1;
-                    sample = int.Clamp((delta1 >> (magnitude + 16)) + ((filter0 + filter1) >> 6),
+                    sample = Math.Clamp((delta1 >> magnitude) + ((filter0 + filter1) >> 6),
                         short.MinValue, short.MaxValue);
                     last1 = last0;
                     last0 = sample;
@@ -85,8 +82,8 @@ public class VagDecrypter : IVagDecrypter
                     enabled = false;
             }
 
-            if ((flags & 5) == 4)
-                enabled = true;
+            if ((flags & 1) != 0 && state.LoopStart != null)
+                state.LoopEnd = outOffset;
 
             inOffset += 16;
         }
