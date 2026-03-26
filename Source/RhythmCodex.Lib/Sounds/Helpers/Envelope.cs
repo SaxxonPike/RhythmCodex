@@ -12,7 +12,7 @@ public class Envelope
 {
     public Envelope(params IEnumerable<Vector2> points)
     {
-        Phases = points.ToList();
+        Phases = points.OrderBy(x => x.X).ToList();
 
         //
         // Fail-safe in case we get an empty point set.
@@ -20,10 +20,13 @@ public class Envelope
 
         if (Phases.Count == 0)
             Phases.Add(Vector2.Zero);
+
+        Output = Phases[0].Y;
     }
 
     private int Phase { get; set; }
     private float PhaseProgress { get; set; }
+    private float PhaseElapsedMs { get; set; }
     private List<Vector2> Phases { get; set; }
 
     public float Output { get; private set; }
@@ -57,8 +60,7 @@ public class Envelope
             var right = rightPhase >= Phases.Count ? Phases[^1] : Phases[rightPhase];
 
             var phaseTotalTime = right.X - left.X;
-            var phaseElapsedTime = phaseTotalTime * PhaseProgress;
-            var phaseRemainingTime = phaseTotalTime - phaseElapsedTime;
+            var phaseRemainingTime = phaseTotalTime - PhaseElapsedMs;
             
             var timeToProcess = Math.Min(remaining, phaseRemainingTime);
 
@@ -66,6 +68,7 @@ public class Envelope
             {
                 Phase = rightPhase;
                 remaining -= phaseRemainingTime;
+                PhaseElapsedMs = 0;
                 Output = right.Y;
                 continue;
             }
@@ -77,9 +80,10 @@ public class Envelope
             }
             else
             {
-                PhaseProgress += timeToProcess / phaseTotalTime;
+                PhaseProgress = PhaseElapsedMs / phaseTotalTime;
                 Output = left.Y + PhaseProgress * (right.Y - left.Y);
                 remaining -= timeToProcess;
+                PhaseElapsedMs += timeToProcess;
             }
         }
 

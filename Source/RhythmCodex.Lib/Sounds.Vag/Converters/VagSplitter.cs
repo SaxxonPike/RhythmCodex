@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.IoC;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Vag.Models;
 
@@ -26,12 +27,13 @@ public class VagSplitter(IVagDecrypter vagDecrypter)
             var length = (int) (chunk.Length ?? chunk.Data.Length);
             var totalSamples = length * 28 / 16;
             var output = new float[totalSamples];
-            vagDecrypter.Decrypt(chunk.Data.Span, output, length, new VagState());
-                
-            yield return new Sample
+            var state = new VagState();
+            vagDecrypter.Decrypt(chunk.Data.Span, output, length, state);
+
+            yield return DecorateLoop(new Sample
             {
-                Data = output
-            };
+                Data = output,
+            }, state);
         }
         else
         {
@@ -57,11 +59,28 @@ public class VagSplitter(IVagDecrypter vagDecrypter)
                     offset += interval;
                 }
 
-                yield return new Sample
+                yield return DecorateLoop(new Sample
                 {
-                    Data = output
-                };
+                    Data = output,
+                }, state);
             }
+        }
+
+        yield break;
+
+        static Sample DecorateLoop(Sample sample, VagState state)
+        {
+            if (state.LoopStart is not { } loopStart) 
+                return sample;
+
+            sample[NumericData.LoopStart] = state.LoopStart;
+                
+            if (state.LoopEnd is {} loopEnd)
+                sample[NumericData.LoopLength] = loopEnd - loopStart;
+            else
+                sample[NumericData.LoopLength] = sample.Data.Length - loopStart;
+
+            return sample;
         }
     }
 }

@@ -51,10 +51,11 @@ public class BmPs1OneShots : BaseIntegrationFixture
     {
         const bool extractKeysounds = true;
         const bool extractCharts = false;
-        const bool extractRawBlock = true;
+        const bool extractRawBlock = false;
         const bool extractBgm = false;
-        const float keyVolume = 0.9f;
-        const float xaVolume = 0.7f;
+        const bool writeLogs = true;
+        const float keyVolume = 1f;
+        const float xaVolume = 0.75f;
 
         var audioDsp = Resolve<IAudioDsp>();
         
@@ -87,14 +88,14 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Determine where SYSDATA.PAK is located on the disc and load it.
         //
 
-        Log.WriteLine("Loading SYSDATA.PAK");
-        using var sysDataPak = cdFiles.Single(f => f.Name == "./SYSDATA.PAK;1").Open();
+        // Log.WriteLine("Loading SYSDATA.PAK");
+        // using var sysDataPak = cdFiles.Single(f => f.Name == "./SYSDATA.PAK;1").Open();
 
         //
         // Decode SYSDATA.PAK.
         //
 
-        var sysDataPakFiles = psxBeatmaniaDecoder.DecodeSysData(sysDataPak, sysDataPak.Length);
+        // var sysDataPakFiles = psxBeatmaniaDecoder.DecodeSysData(sysDataPak, sysDataPak.Length);
 
         //
         // Determine where BMDATA.PAK is located on the disc and load it.
@@ -220,21 +221,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 .ToList();
 
             //
-            // Generate logs.
+            // Export the set and generate logs.
             //
-
-            var keysoundLogSettings = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            };
-
-            foreach (var bmDataKeysoundSet in bmDataKeysoundSets)
-            {
-                var soundLogJson = JsonSerializer.Serialize(bmDataKeysoundSet.Log, keysoundLogSettings);
-                this.WriteText(soundLogJson,
-                    Path.Combine(groupPath, $"{bmDataKeysoundSet.Map:d4}{bmDataKeysoundSet.Index:d2}.log"));
-            }
 
             var writeSetConfig = new TestHelper.WriteSetConfig
             {
@@ -251,10 +239,26 @@ public class BmPs1OneShots : BaseIntegrationFixture
             };
 
             var writeSetResult = this.WriteSet(writeSetConfig);
-            
-            var remappedSamplesJson = JsonSerializer.Serialize(writeSetResult.RemappedSamples, keysoundLogSettings);
-            if (remappedSamplesJson.Length > 2)
-                this.WriteText(remappedSamplesJson, Path.Combine(groupPath, $"remapped.log"));
+
+            if (writeLogs)
+            {
+                var keysoundLogSettings = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                };
+
+                foreach (var bmDataKeysoundSet in bmDataKeysoundSets)
+                {
+                    var soundLogJson = JsonSerializer.Serialize(bmDataKeysoundSet.Log, keysoundLogSettings);
+                    this.WriteText(soundLogJson,
+                        Path.Combine(groupPath, $"{bmDataKeysoundSet.Map:d4}{bmDataKeysoundSet.Index:d2}.log"));
+                }
+                
+                var remappedSamplesJson = JsonSerializer.Serialize(writeSetResult.RemappedSamples, keysoundLogSettings);
+                if (remappedSamplesJson.Length > 2)
+                    this.WriteText(remappedSamplesJson, Path.Combine(groupPath, $"remapped.log"));
+            }
         }
 
         if (extractRawBlock)

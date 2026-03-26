@@ -14,9 +14,35 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
 {
     public Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType, bool swapStereo)
     {
+        var result = DecodeEvents(events, chartType, swapStereo).ToList();
+
+        //
+        // Account for fractional BPMs in some beatmania CS games.
+        //
+
+        if (chartType == DjmainChartType.BeatmaniaCs)
+        {
+            for (var i = 1; i < result.Count; i++)
+            {
+                var lastEvent = result[i - 1];
+                var currentEvent = result[i];
+
+                if (lastEvent[NumericData.Bpm] == null ||
+                    currentEvent[NumericData.Bpm] == null)
+                    continue;
+
+                // Caution: this works by coincidence
+                if (lastEvent[NumericData.Bpm] != currentEvent[NumericData.Bpm])
+                    lastEvent[NumericData.Bpm] += currentEvent[NumericData.Bpm] / 100;
+
+                result.RemoveAt(i);
+                i--;
+            }
+        }
+
         return new Chart
         {
-            Events = DecodeEvents(events, chartType, swapStereo).ToList()
+            Events = result
         };
     }
 

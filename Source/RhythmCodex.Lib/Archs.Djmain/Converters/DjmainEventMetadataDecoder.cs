@@ -187,7 +187,6 @@ public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 
         var eventType = (DjmainEventType)(ce.Param0 & 0xF);
         var hasSoundId = eventType is DjmainEventType.Bgm or DjmainEventType.SoundSelect;
-        var add1 = eventType is DjmainEventType.SoundSelect;
 
         if (hasSoundId && ce.Param1 < 0x80)
         {

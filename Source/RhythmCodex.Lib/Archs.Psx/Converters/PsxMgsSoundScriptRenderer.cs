@@ -100,6 +100,9 @@ public class PsxMgsSoundScriptRenderer(
         var sampleId = -1;
         var resolutionMs = 10f;
 
+        var sampleLoopStart = -1;
+        var sampleLoopEnd = -1;
+
         var result = new SoundBuilder(2);
 
         var currentVolume = 1.0f;
@@ -137,6 +140,8 @@ public class PsxMgsSoundScriptRenderer(
         var sampleR = result.Samples[1];
         var disableDefaultPan = false;
 
+        var effectsEnabled = false;
+
         foreach (var packet in packets)
         {
             //
@@ -162,6 +167,7 @@ public class PsxMgsSoundScriptRenderer(
                         coarseTune + sourceTranspose,
                         fineTune + sourceFineTune
                     );
+                    sourceSampleOffset = 0;
 
                     break;
                 }
@@ -171,7 +177,17 @@ public class PsxMgsSoundScriptRenderer(
                     // Sets the time resolution (how much time each tick represents.)
                     //
 
-                    resolutionMs = packet.Data2 * 10 / 255f;
+                    resolutionMs = (packet.Data2 + 1) * 10.45f / 255f;
+                    continue;
+                }
+                case PsxMgsSoundTablePacketType.AutomateTimeResolution:
+                {
+                    //
+                    // TODO: I don't know how to go about implementing this command
+                    // so the changes will be instantaneous for now.
+                    //
+
+                    resolutionMs = (packet.Data3 + 1) * 10.45f / 255f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.SetSoundBankIndex:
@@ -195,7 +211,7 @@ public class PsxMgsSoundScriptRenderer(
                     //
 
                     volumeEnvelope = new Envelope(
-                        new Vector2(currentVolume, 0),
+                        new Vector2(0, currentVolume),
                         new Vector2(packet.Data2 * resolutionMs, packet.Data3 / 255f)
                     );
                     continue;
@@ -319,8 +335,25 @@ public class PsxMgsSoundScriptRenderer(
                     //
 
                     finished = true;
-                    delayMs = 0;
                     break;
+                }
+                case PsxMgsSoundTablePacketType.SetEOff:
+                {
+                    //
+                    // Disable audio effects.
+                    //
+
+                    effectsEnabled = false;
+                    continue;
+                }
+                case PsxMgsSoundTablePacketType.SetEOn:
+                {
+                    //
+                    // Enable audio effects.
+                    //
+
+                    effectsEnabled = true;
+                    continue;
                 }
                 case var data1 when (int)data1 >= 0x80:
                 {
@@ -359,6 +392,12 @@ public class PsxMgsSoundScriptRenderer(
                     spuRr = sample.Entry.ReleaseRate & 0x1F;
                     spuRMode = sample.Entry.ReleaseMode & 0b111;
                     spuSl = sample.Entry.SustainLevel & 0x0F;
+
+                    sampleLoopStart = (int?)sourceSample?[NumericData.LoopStart] ?? -1;
+                    sampleLoopEnd = (int?)sourceSample?[NumericData.LoopLength] is { } loopLength &&
+                                    sampleLoopStart >= 0
+                        ? sampleLoopStart + loopLength
+                        : -1;
                 }
                 else
                 {
@@ -367,6 +406,8 @@ public class PsxMgsSoundScriptRenderer(
                     sourceTranspose = 0;
                     currentPanning = 0.5f;
                     currentVolume = 1f;
+                    sampleLoopStart = -1;
+                    sampleLoopEnd = -1;
                 }
 
                 sourceSampleOffset = 0;
@@ -444,21 +485,34 @@ public class PsxMgsSoundScriptRenderer(
             var timePerSample = 1000f / sampleRate;
 
             //
+            // Process any pending silence.
+            //
+            
+            if (pendingSilence > 0)
+            {
+                using var silenceBuffer = MemoryPool<float>.Shared.Rent(pendingSilence);
+                silenceBuffer.Memory.Span[..pendingSilence].Clear();
+                var silenceSpan = silenceBuffer.Memory.Span[..pendingSilence];
+                sampleL.Append(silenceSpan);
+                sampleR.Append(silenceSpan);
+                    
+                var silenceMs = pendingSilence * timePerSample;
+                    
+                if (volumeEnvelope != null)
+                    currentVolume = volumeEnvelope.Process(silenceMs);
+                    
+                if (panningEnvelope != null)
+                    currentPanning = panningEnvelope.Process(silenceMs);
+                    
+                pendingSilence = 0;
+            }
+
+            //
             // Populate the output.
             //
 
             if (sourceSampleOffset < sourceSampleSpan.Length)
             {
-                if (sourceSample != null && pendingSilence > 0)
-                {
-                    using var silenceBuffer = MemoryPool<float>.Shared.Rent(pendingSilence);
-                    silenceBuffer.Memory.Span[..pendingSilence].Clear();
-                    var silenceSpan = silenceBuffer.Memory.Span[..pendingSilence];
-                    sampleL.Append(silenceSpan);
-                    sampleR.Append(silenceSpan);
-                    pendingSilence = 0;
-                }
-
                 var populatedSampleCount = sampleCount;
 
                 for (var i = 0; i < sampleCount; i++)
@@ -468,17 +522,32 @@ public class PsxMgsSoundScriptRenderer(
                     //
 
                     var spuVolumeValue = spuVolumeEnvelope?.Process(timePerSample) ?? 1;
-                    currentVolume = volumeEnvelope?.Process(timePerSample) ?? currentVolume;
-                    currentPanning = panningEnvelope?.Process(timePerSample) ?? currentPanning;
+                    
+                    if (volumeEnvelope != null)
+                        currentVolume = volumeEnvelope.Process(timePerSample);
+                    
+                    if (panningEnvelope != null)
+                        currentPanning = panningEnvelope.Process(timePerSample);
+
+                    var sourceSampleOffsetA = (int)MathF.Truncate(sourceSampleOffset);
+                    var sourceSampleOffsetB = sourceSampleOffsetA + 1;
+                    var weight = sourceSampleOffset - sourceSampleOffsetA;
+
+                    //
+                    // If the sample loops, check to see if it needs to loop back.
+                    //
+                    
+                    if (sampleLoopEnd >= 0 && sourceSampleOffsetB >= sampleLoopEnd)
+                    {
+                        sourceSampleOffset -= sampleLoopEnd - sampleLoopStart;
+                        sourceSampleOffsetB = (int)MathF.Truncate(sourceSampleOffset);
+                    }
 
                     //
                     // If we are at the end of the sample, fill the buffer with silence.
                     //
 
-                    var sourceSampleOffsetA = (int)MathF.Truncate(sourceSampleOffset);
-                    var sourceSampleOffsetB = sourceSampleOffsetA + 1;
-
-                    if (sourceSampleOffsetB > sourceSampleSpan.Length)
+                    else if (sourceSampleOffsetB > sourceSampleSpan.Length)
                     {
                         pendingSilence += sampleCount - i;
                         populatedSampleCount = i;
@@ -497,8 +566,6 @@ public class PsxMgsSoundScriptRenderer(
                     var sourceSample1 = sourceSampleOffsetB < sourceSampleSpan.Length
                         ? sourceSampleSpan[sourceSampleOffsetB]
                         : 0;
-
-                    var weight = sourceSampleOffset - sourceSampleOffsetA;
 
                     //
                     // Calculate interpolated sample value (Lerp function.)

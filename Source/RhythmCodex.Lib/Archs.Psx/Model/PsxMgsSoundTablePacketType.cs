@@ -7,7 +7,7 @@ public enum PsxMgsSoundTablePacketType
     //
 
     SetTimeResolution = 0xD0,
-    MoveTempo = 0xD1,
+    AutomateTimeResolution = 0xD1,
     SetSoundBankIndex = 0xD2,
     SetSoundBankVolume = 0xD3,
     SetSoundBankPanning = 0xD4,

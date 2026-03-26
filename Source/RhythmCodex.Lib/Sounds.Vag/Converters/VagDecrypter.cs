@@ -27,13 +27,22 @@ public class VagDecrypter : IVagDecrypter
 
             var flags = input[inOffset + 1];
 
+            switch (flags & 2)
+            {
+                case 2 when !state.InLoop:
+                    state.InLoop = true;
+                    state.LoopStart = outOffset;
+                    break;
+                case 0 when state.InLoop:
+                    state.InLoop = false;
+                    state.LoopEnd = outOffset;
+                    break;
+            }
+
             if (!enabled)
             {
-                for (var i = 2; i < 16; i++)
-                {
-                    output[outOffset++] = 0;
-                    output[outOffset++] = 0;
-                }
+                output.Slice(outOffset, 28).Clear();
+                outOffset += 28;
             }
             else
             {
