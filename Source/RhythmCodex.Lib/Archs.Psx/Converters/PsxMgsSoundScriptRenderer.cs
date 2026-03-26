@@ -177,7 +177,7 @@ public class PsxMgsSoundScriptRenderer(
                     // Sets the time resolution (how much time each tick represents.)
                     //
 
-                    resolutionMs = (packet.Data2 + 1) * 10.45f / 255f;
+                    resolutionMs = MathF.Max(1f, packet.Data2) * 10.4f / 255f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.AutomateTimeResolution:
@@ -187,7 +187,7 @@ public class PsxMgsSoundScriptRenderer(
                     // so the changes will be instantaneous for now.
                     //
 
-                    resolutionMs = (packet.Data3 + 1) * 10.45f / 255f;
+                    resolutionMs = MathF.Max(1f, packet.Data3) * 10.4f / 255f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.SetSoundBankIndex:
