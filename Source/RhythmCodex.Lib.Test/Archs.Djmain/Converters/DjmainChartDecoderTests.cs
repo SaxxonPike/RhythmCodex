@@ -48,7 +48,7 @@ public class DjmainChartDecoderTests : BaseUnitTestFixture<DjmainChartDecoder, I
         };
 
         // Act.
-        var output = Subject.Decode(data, DjmainChartType.Beatmania, true);
+        var output = Subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -81,7 +81,7 @@ public class DjmainChartDecoderTests : BaseUnitTestFixture<DjmainChartDecoder, I
         };
 
         // Act.
-        var output = Subject.Decode(data, Create<DjmainChartType>(), true);
+        var output = Subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -102,7 +102,7 @@ public class DjmainChartDecoderTests : BaseUnitTestFixture<DjmainChartDecoder, I
         };
 
         // Act.
-        var output = Subject.Decode(data, Create<DjmainChartType>(), true);
+        var output = Subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);

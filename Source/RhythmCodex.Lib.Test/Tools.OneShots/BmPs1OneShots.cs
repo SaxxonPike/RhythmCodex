@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
+using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Archs.Psx.Converters;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Archs.Psx.Streamers;
@@ -50,9 +51,9 @@ public class BmPs1OneShots : BaseIntegrationFixture
     public void ExtractBms(string source, string target)
     {
         const bool extractKeysounds = true;
-        const bool extractCharts = false;
+        const bool extractCharts = true;
         const bool extractRawBlock = false;
-        const bool extractBgm = false;
+        const bool extractBgm = true;
         const bool writeLogs = true;
         const float keyVolume = 1f;
         const float xaVolume = 0.75f;
@@ -97,6 +98,16 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         // var sysDataPakFiles = psxBeatmaniaDecoder.DecodeSysData(sysDataPak, sysDataPak.Length);
 
+        //
+        // Determine the region of game.
+        //
+
+        var regionTiming = cdFiles.Single(f => f.Name.StartsWith("./SL")).Name[4..6] switch
+        {
+            "ES" => DjmainChartTiming.HomePal,
+            _ => DjmainChartTiming.HomeNtsc,
+        };
+        
         //
         // Determine where BMDATA.PAK is located on the disc and load it.
         //
@@ -191,7 +202,10 @@ public class BmPs1OneShots : BaseIntegrationFixture
                 .Select((f, i) =>
                 {
                     using var chartStream = new ReadOnlyMemoryStream(f.Data);
-                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream);
+                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream, new DjmainDecodeOptions
+                    {
+                        ChartTiming = regionTiming
+                    });
                     chart[NumericData.Id] = i;
                     chart[NumericData.SourceIndex] = f.Index;
                     chart[StringData.Title] = $"{f.Index:d4}";

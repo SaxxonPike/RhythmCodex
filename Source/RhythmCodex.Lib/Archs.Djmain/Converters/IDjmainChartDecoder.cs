@@ -6,6 +6,6 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 
 public interface IDjmainChartDecoder
 {
-    Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType, bool swapStereo);
+    Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainDecodeOptions options);
     int GetFirstEventOffset(IEnumerable<DjmainChartEvent> events);
 }

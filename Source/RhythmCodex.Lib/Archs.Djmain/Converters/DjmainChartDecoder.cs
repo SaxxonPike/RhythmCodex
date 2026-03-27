@@ -12,15 +12,15 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 [Service]
 public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataDecoder) : IDjmainChartDecoder
 {
-    public Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainChartType chartType, bool swapStereo)
+    public Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainDecodeOptions options)
     {
-        var result = DecodeEvents(events, chartType, swapStereo).ToList();
+        var result = DecodeEvents(events, options).ToList();
 
         //
         // Account for fractional BPMs in some beatmania CS games.
         //
 
-        if (chartType == DjmainChartType.BeatmaniaCs)
+        if (options.ChartType == DjmainChartType.BeatmaniaCs)
         {
             for (var i = 1; i < result.Count; i++)
             {
@@ -49,15 +49,15 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
     public int GetFirstEventOffset(IEnumerable<DjmainChartEvent> inEvents) =>
         inEvents.TakeWhile(e => e.Offset == 0 && (e.Param0 & 0xF) == 0).Count();
 
-    private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> inEvents, DjmainChartType chartType,
-        bool swapStereo)
+    private IEnumerable<Event> DecodeEvents(IEnumerable<DjmainChartEvent> inEvents, DjmainDecodeOptions options)
     {
         var events = inEvents.AsList();
         var eventStart = GetFirstEventOffset(events);
 
-        var timing = chartType switch
+        var timing = options.ChartTiming switch
         {
-            DjmainChartType.BeatmaniaCs => 60f,
+            DjmainChartTiming.HomeNtsc => 60f,
+            DjmainChartTiming.HomePal => 50f,
             _ => 58f
         };
 
@@ -72,16 +72,16 @@ public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataD
                 [NumericData.LinearOffset] = offset
             };
 
-            switch (chartType)
+            switch (options.ChartType)
             {
                 case DjmainChartType.Beatmania:
-                    djmainEventMetadataDecoder.AddBeatmaniaMetadata(newEv, ev, swapStereo);
+                    djmainEventMetadataDecoder.AddBeatmaniaMetadata(newEv, ev, options.SwapStereo);
                     break;
                 case DjmainChartType.BeatmaniaCs:
                     djmainEventMetadataDecoder.AddBeatmaniaCsMetadata(newEv, ev);
                     break;
                 case DjmainChartType.Popn:
-                    djmainEventMetadataDecoder.AddPopnMetadata(newEv, ev, swapStereo);
+                    djmainEventMetadataDecoder.AddPopnMetadata(newEv, ev, options.SwapStereo);
                     break;
             }
 

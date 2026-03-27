@@ -58,7 +58,7 @@ public class DjmainDecoder(
             .Select((offset, index) => new KeyValuePair<int, int>(index, offset))
             .ToDictionary(kv => kv.Key, kv => kv.Value);
         var rawCharts = ExtractCharts(stream, chunk.Format);
-        var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format, options.SwapStereo);
+        var decodedCharts = DecodeCharts(rawCharts, chartSoundMap, chunk.Format, options);
         
         //
         // Sound data uses byte swapped blocks.
@@ -141,10 +141,13 @@ public class DjmainDecoder(
         Dictionary<int, List<DjmainChartEvent>> events,
         Dictionary<int, int> chartSoundMap,
         DjmainChunkFormat chunkFormat,
-        bool swapStereo) =>
+        DjmainDecodeOptions options) =>
         events.ToDictionary(x => x.Key, x =>
         {
-            var chart = chartDecoder.Decode(x.Value, GetChartType(chunkFormat), swapStereo);
+            var chart = chartDecoder.Decode(x.Value, options with
+            {
+                ChartType = GetChartType(chunkFormat)
+            });
             chart[NumericData.Id] = x.Key;
             chart[NumericData.SampleMap] = chartSoundMap[x.Key];
             chart[NumericData.PriorityChannels] = 8;

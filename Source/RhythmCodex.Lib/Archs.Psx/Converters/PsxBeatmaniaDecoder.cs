@@ -24,10 +24,14 @@ public sealed class PsxBeatmaniaDecoder(
 ) : IPsxBeatmaniaDecoder
 {
     /// <inheritdoc />
-    public Chart DecodeChart(Stream source)
+    public Chart DecodeChart(Stream source, DjmainDecodeOptions options)
     {
         var events = chartEventStreamReader.Read(source);
-        var chart = djmainChartDecoder.Decode(events, DjmainChartType.BeatmaniaCs, false);
+        var chart = djmainChartDecoder.Decode(events, options with
+        {
+            ChartType = DjmainChartType.BeatmaniaCs,
+            SwapStereo = false
+        });
         return chart;
     }
 

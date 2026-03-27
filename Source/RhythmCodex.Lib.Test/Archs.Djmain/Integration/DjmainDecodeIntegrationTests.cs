@@ -56,22 +56,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
             Resolve<IRiffStreamWriter>().Write(stream, sound);
         }
     }
-        
-    [Test]
-    [Explicit]
-    public void Test2()
-    {
-        var streamer = Resolve<IDjmainChunkStreamReader>();
-        using var stream = File.OpenRead(@"Z:\User Data\Bemani\Beatmania Non-PC\bm1stmix.zip");
-        using var zipStream = new ZipArchive(stream, ZipArchiveMode.Read);
-        var entry = zipStream.Entries.Single();
-        using var entryStream = entry.Open();
-        var chunks = streamer.Read(entryStream);
 
-        foreach (var chunk in chunks.AsParallel())
-            this.WriteFile(chunk.Data, Path.Combine("djmain1st", $"{chunk.Id:D4}.djmain"));
-    }
-        
     [Test]
     public void Decode_DecodesBgm(
         [Values(0x05, 0x15, 0x25, 0x35, 0x45, 0x55, 0x65, 0x75, 0x85, 0x95, 0xA5, 0xB5, 0xC5, 0xD5, 0xE5, 0xF5)] byte param0, 
@@ -93,7 +78,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, Create<DjmainChartType>(), true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -121,7 +106,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, Create<DjmainChartType>(), true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -149,7 +134,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -178,7 +163,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -215,7 +200,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -253,7 +238,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -283,7 +268,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -314,7 +299,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, DjmainChartType.Beatmania, true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
@@ -353,7 +338,7 @@ public class DjmainDecodeIntegrationTests : BaseIntegrationFixture
         };
 
         // Act.
-        var output = subject.Decode(data, Create<DjmainChartType>(), true);
+        var output = subject.Decode(data, new DjmainDecodeOptions());
 
         // Assert.
         output.Events.Count.ShouldBe(1);
