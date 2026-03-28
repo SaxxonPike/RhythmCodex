@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using RhythmCodex.Archs.S573.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Archs.S573.Converters;
 
@@ -69,8 +70,8 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         var output = new byte[length];
 
         var keyBytes = new byte[4];
-        WriteInt16LittleEndian(keyBytes, unchecked((short)keyList[0]));
-        WriteInt16LittleEndian(keyBytes.AsSpan(2), unchecked((short)keyList[1]));
+        keyBytes.WriteS16L(unchecked((short)keyList[0]));
+        keyBytes.AsSpan(2).WriteS16L(unchecked((short)keyList[1]));
 
         var key1 = keyList[0];
         var key2 = keyList[1];
@@ -86,7 +87,7 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
                 3, 1, 2, 0
             );
 
-            var v = DecryptCommon(ReadUInt16LittleEndian(input[i..]), m);
+            var v = DecryptCommon(input[i..].AsU16L(), m);
 
             v ^= BitSwap16(
                 key3,
@@ -122,13 +123,13 @@ public class Digital573AudioDecrypter : IDigital573AudioDecrypter
         var output = new byte[length];
 
         var keyBytes = new byte[4];
-        WriteInt32LittleEndian(keyBytes, key);
+        keyBytes.WriteS32L(key);
 
         var key1 = key;
 
         for (var i = 0; i < length; i += 2)
         {
-            var v = DecryptCommon(ReadUInt16LittleEndian(data[i..]), key1);
+            var v = DecryptCommon(data[i..].AsU16L(), key1);
             WriteUInt16BigEndian(output.AsSpan(i), unchecked((ushort)v));
             key1 = ((key1 << 1) | (key1 >> 15)) & 0xFFFF;
         }

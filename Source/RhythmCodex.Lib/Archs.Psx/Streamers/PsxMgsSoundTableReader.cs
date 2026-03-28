@@ -30,6 +30,7 @@ public sealed class PsxMgsSoundTableReader : IPsxMgsSoundTableReader
             if (buffer[4..].AsS32L() == 0 &&
                 buffer[12..].AsS32L() == -1)
                 break;
+
             header.Write(buffer[..16]);
             stream.ReadExactly(buffer[..16]);
         }
@@ -42,9 +43,9 @@ public sealed class PsxMgsSoundTableReader : IPsxMgsSoundTableReader
 
         for (var i = 0; i < 128; i++)
         {
-            offsets.Add(ReadInt32LittleEndian(buffer[4..]));
-            offsets.Add(ReadInt32LittleEndian(buffer[8..]));
-            offsets.Add(ReadInt32LittleEndian(buffer[12..]));
+            offsets.Add(buffer[4..].AsS32L());
+            offsets.Add(buffer[8..].AsS32L());
+            offsets.Add(buffer[12..].AsS32L());
             data.Write(buffer[..16]);
             stream.ReadExactly(buffer[..16]);
         }
