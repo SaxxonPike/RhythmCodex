@@ -11,23 +11,23 @@ using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
-using RhythmCodex.Metadatas.Models;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
 /// <inheritdoc />
 [Service]
 public sealed class PsxBeatmaniaDecoder(
-    IPsxBeatmaniaFileStreamReader psxBeatmaniaFileStreamReader,
+    IPsxBeatmaniaFileStreamReader fileStreamReader,
     IDjmainChartEventStreamReader chartEventStreamReader,
-    IDjmainChartDecoder djmainChartDecoder
+    IDjmainChartDecoder chartDecoder,
+    IPsxBeatmaniaFileFormatService fileFormatService
 ) : IPsxBeatmaniaDecoder
 {
     /// <inheritdoc />
     public Chart DecodeChart(Stream source, DjmainDecodeOptions options)
     {
         var events = chartEventStreamReader.Read(source);
-        var chart = djmainChartDecoder.Decode(events, options with
+        var chart = chartDecoder.Decode(events, options with
         {
             ChartType = DjmainChartType.BeatmaniaCs,
             SwapStereo = false
@@ -62,8 +62,8 @@ public sealed class PsxBeatmaniaDecoder(
                 try
                 {
                     pak.Position = i;
-                    var bmDataPakDirectory = psxBeatmaniaFileStreamReader.ReadDirectory(pak);
-                    var bmFiles = psxBeatmaniaFileStreamReader.ReadEntries(pak, bmDataPakDirectory);
+                    var bmDataPakDirectory = fileStreamReader.ReadDirectory(pak);
+                    var bmFiles = fileStreamReader.ReadEntries(pak, bmDataPakDirectory);
                     files.AddRange(bmFiles.Select((x, idx) => CreateFile(x) with
                     {
                         Index = fileIdx++,
@@ -82,95 +82,12 @@ public sealed class PsxBeatmaniaDecoder(
     }
 
     /// <summary>
-    /// Returns true if the data is a note chart.
-    /// </summary>
-    private static bool DetectChart(ReadOnlySpan<byte> span) =>
-        span.Length >= 4 &&
-        (span.Length & 3) == 0 &&
-        ReadInt32LittleEndian(span[^4..]) == 0x00007FFF;
-
-    /// <summary>
-    /// Returns true if the data is a keysound block.
-    /// </summary>
-    private static bool DetectKeysound(ReadOnlySpan<byte> span) =>
-        span.Length >= 16 &&
-        (span.Length & 7) == 0 &&
-        ReadInt32BigEndian(span) < 0x1000 &&
-        ReadInt32BigEndian(span) >= 0x0800 &&
-        ReadInt32BigEndian(span) != 0 &&
-        (ReadInt32BigEndian(span[4..]) & 7) == 0 &&
-        ReadInt32BigEndian(span[4..]) != 0 &&
-        span[8..16].IndexOfAnyExcept((byte)0x00) < 0;
-
-    /// <summary>
-    /// Returns true if the data is a keysound table.
-    /// </summary>
-    private static bool DetectKst(ReadOnlySpan<byte> span) =>
-        span.Length >= 4 &&
-        (span.Length & 3) == 0 &&
-        ReadInt32BigEndian(span[^4..]) == 0x0000FEFF;
-
-    /// <summary>
-    /// Returns true if the data is a DAT3 file.
-    /// </summary>
-    private static bool DetectDat3(ReadOnlySpan<byte> span) =>
-        span.Length >= 8 &&
-        (span.Length & 3) == 0 &&
-        ReadInt32LittleEndian(span[^8..]) == 0x00000001 &&
-        ReadInt32LittleEndian(span[^4..]) == 0x00000000;
-
-    /// <summary>
-    /// Returns true if the data is a GFX file.
-    /// </summary>
-    private static bool DetectGfx(ReadOnlySpan<byte> span) =>
-        span.Length >= 12 &&
-        ReadInt32LittleEndian(span) < span.Length &&
-        ReadInt32LittleEndian(span[8..]) == 0 &&
-        span[^1] == 0xFF;
-
-    /// <summary>
-    /// Returns true if the data is a VFX script file.
-    /// </summary>
-    private static bool DetectScript(ReadOnlySpan<byte> span)
-    {
-        if (span.Length < 64)
-            return false;
-
-        var offsetBytes = span[..64];
-        var lastOffset = -1;
-
-        for (var i = 0; i < 16; i++)
-        {
-            var thisOffset = ReadInt32LittleEndian(offsetBytes[(i << 2)..]);
-            if (thisOffset <= lastOffset)
-                return false;
-            lastOffset = thisOffset;
-        }
-
-        return true;
-    }
-    
-    /// <summary>
     /// Determines the type of the data and returns a <see cref="PsxBeatmaniaFile"/>
     /// populated with the detected type.
     /// </summary>
-    private static PsxBeatmaniaFile CreateFile(ReadOnlyMemory<byte> data)
+    private PsxBeatmaniaFile CreateFile(ReadOnlyMemory<byte> data)
     {
-        var span = data.Span;
-        var type = PsxBeatmaniaFileType.Unknown;
-
-        if (DetectChart(span))
-            type = PsxBeatmaniaFileType.Chart;
-        else if (DetectKeysound(span))
-            type = PsxBeatmaniaFileType.Keysound;
-        else if (DetectKst(span))
-            type = PsxBeatmaniaFileType.Kst;
-        else if (DetectDat3(span))
-            type = PsxBeatmaniaFileType.Dat3;
-        else if (DetectGfx(span))
-            type = PsxBeatmaniaFileType.Graphics;
-        else if (DetectScript(span))
-            type = PsxBeatmaniaFileType.Script;
+        var type = fileFormatService.DetectFormat(data.Span);
 
         return new PsxBeatmaniaFile
         {
