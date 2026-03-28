@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.IoC;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Archs.Psx.Streamers;
 
@@ -26,8 +27,8 @@ public sealed class PsxMgsSoundTableReader : IPsxMgsSoundTableReader
 
         while (true)
         {
-            if (ReadInt32LittleEndian(buffer[4..]) == 0 &&
-                ReadInt32LittleEndian(buffer[12..]) == -1)
+            if (buffer[4..].AsS32L() == 0 &&
+                buffer[12..].AsS32L() == -1)
                 break;
             header.Write(buffer[..16]);
             stream.ReadExactly(buffer[..16]);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.IoC;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
@@ -25,9 +26,8 @@ public sealed class PsxMgsSoundTableDecoder
             var record = tableSpan.Slice(i, 16);
             var offsets = new[]
             {
-
-                ReadInt32LittleEndian(record[4..]),
-                ReadInt32LittleEndian(record[8..])
+                record[4..].AsS32L(),
+                record[8..].AsS32L()
             };
 
             var packetSets = new Dictionary<int, List<PsxMgsSoundTablePacket>>();

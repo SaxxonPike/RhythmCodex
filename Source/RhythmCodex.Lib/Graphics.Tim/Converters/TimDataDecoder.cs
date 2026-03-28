@@ -1,5 +1,6 @@
 using System;
 using RhythmCodex.IoC;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Graphics.Tim.Converters;
 
@@ -41,7 +42,7 @@ public class TimDataDecoder : ITimDataDecoder
 
         for (var i = 0; i < size; i++)
         {
-            result[i] = ReadUInt16LittleEndian(data[sourceIdx..]);
+            result[i] = data[sourceIdx..].AsU16L();
             sourceIdx += 2;
         }
 

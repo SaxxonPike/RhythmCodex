@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using RhythmCodex.IoC;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
@@ -67,7 +68,7 @@ public sealed class DjmainAudioStreamReader : IDjmainAudioStreamReader
                 inBuffer[1] = 0x80;
             }
 
-            buffer1 |= (long)ReadUInt16LittleEndian(inBuffer) << 48;
+            buffer1 |= (long)inBuffer.AsU16L() << 48;
         }
     }
 

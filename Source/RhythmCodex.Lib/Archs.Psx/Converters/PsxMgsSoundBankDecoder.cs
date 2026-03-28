@@ -5,6 +5,7 @@ using System.Linq;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Streamers;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 
@@ -39,7 +40,7 @@ public sealed class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
 
             var info = new PsxMgsSoundBankEntry
             {
-                Offset = ReadInt32LittleEndian(bytes),
+                Offset = bytes.AsS32L(),
                 Note = bytes[0x4],
                 Tune = bytes[0x5],
                 AttackMode = bytes[0x6],

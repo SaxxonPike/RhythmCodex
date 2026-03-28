@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.IoC;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
@@ -29,11 +30,11 @@ public sealed class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
             var result = new DjmainSampleInfo
             {
                 Channel = buffer[0],
-                Frequency = ReadUInt16LittleEndian(buffer[1..]),
+                Frequency = buffer[1..].AsU16L(),
                 ReverbVolume = buffer[3],
                 Volume = buffer[4],
                 Panning = buffer[5],
-                Offset = ReadUInt16LittleEndian(buffer[6..]) | ((uint) buffer[8] << 16),
+                Offset = buffer[6..].AsU16L() | ((uint) buffer[8] << 16),
                 SampleType = buffer[9],
                 Flags = buffer[10]
             };

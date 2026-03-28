@@ -11,7 +11,7 @@ public static class ByteSpanExtensions
     // ***************************************************
 
     #region ReadOnlySpan
-    
+
     extension(ReadOnlySpan<byte> span)
     {
         [DebuggerStepThrough]
@@ -213,6 +213,60 @@ public static class ByteSpanExtensions
             span[..Math.Min(span.Length, count)].CopyTo(target);
             return span[count..];
         }
+
+        [DebuggerStepThrough]
+        public byte AsU8() => span[0];
+
+        [DebuggerStepThrough]
+        public sbyte AsS8() => unchecked((sbyte)span[0]);
+
+        [DebuggerStepThrough]
+        public ushort AsU16L() => ReadUInt16LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public short AsS16L() => ReadInt16LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public ushort AsU16B() => ReadUInt16BigEndian(span);
+
+        [DebuggerStepThrough]
+        public short AsS16B() => ReadInt16BigEndian(span);
+
+        [DebuggerStepThrough]
+        public uint AsU24L() => ((uint)ReadUInt16LittleEndian(span[1..]) << 8) | span[0];
+
+        [DebuggerStepThrough]
+        public int AsS24L() => (ReadUInt16LittleEndian(span[1..]) << 8) | span[0];
+
+        [DebuggerStepThrough]
+        public uint AsU24B() => ((uint)ReadUInt16BigEndian(span) << 8) | span[2];
+
+        [DebuggerStepThrough]
+        public int AsS24B() => (ReadUInt16BigEndian(span) << 8) | span[2];
+
+        [DebuggerStepThrough]
+        public uint AsU32L() => ReadUInt32LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public int AsS32L() => ReadInt32LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public uint AsU32B() => ReadUInt32BigEndian(span);
+
+        [DebuggerStepThrough]
+        public int AsS32B() => ReadInt32BigEndian(span);
+
+        [DebuggerStepThrough]
+        public float AsF32L() => ReadSingleLittleEndian(span);
+
+        [DebuggerStepThrough]
+        public float AsF32B() => ReadSingleBigEndian(span);
+
+        [DebuggerStepThrough]
+        public double AsF64L() => ReadDoubleLittleEndian(span);
+
+        [DebuggerStepThrough]
+        public double AsF64B() => ReadDoubleBigEndian(span);
     }
 
     #endregion
@@ -584,6 +638,60 @@ public static class ByteSpanExtensions
             val[..count].CopyTo(span);
             return span[count..];
         }
+
+        [DebuggerStepThrough]
+        public byte AsU8() => span[0];
+
+        [DebuggerStepThrough]
+        public sbyte AsS8() => unchecked((sbyte)span[0]);
+
+        [DebuggerStepThrough]
+        public ushort AsU16L() => ReadUInt16LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public short AsS16L() => ReadInt16LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public ushort AsU16B() => ReadUInt16BigEndian(span);
+
+        [DebuggerStepThrough]
+        public short AsS16B() => ReadInt16BigEndian(span);
+
+        [DebuggerStepThrough]
+        public uint AsU24L() => ((uint)ReadUInt16LittleEndian(span[1..]) << 8) | span[0];
+
+        [DebuggerStepThrough]
+        public int AsS24L() => (ReadUInt16LittleEndian(span[1..]) << 8) | span[0];
+
+        [DebuggerStepThrough]
+        public uint AsU24B() => ((uint)ReadUInt16BigEndian(span) << 8) | span[2];
+
+        [DebuggerStepThrough]
+        public int AsS24B() => (ReadUInt16BigEndian(span) << 8) | span[2];
+
+        [DebuggerStepThrough]
+        public uint AsU32L() => ReadUInt32LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public int AsS32L() => ReadInt32LittleEndian(span);
+
+        [DebuggerStepThrough]
+        public uint AsU32B() => ReadUInt32BigEndian(span);
+
+        [DebuggerStepThrough]
+        public int AsS32B() => ReadInt32BigEndian(span);
+
+        [DebuggerStepThrough]
+        public float AsF32L() => ReadSingleLittleEndian(span);
+
+        [DebuggerStepThrough]
+        public float AsF32B() => ReadSingleBigEndian(span);
+
+        [DebuggerStepThrough]
+        public double AsF64L() => ReadDoubleLittleEndian(span);
+
+        [DebuggerStepThrough]
+        public double AsF64B() => ReadDoubleBigEndian(span);
     }
 
     #endregion
@@ -605,7 +713,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<ushort> ToU16L(
         this Span<byte> span) =>
-        ToU16L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToU16L();
 
     [DebuggerStepThrough]
     public static Memory<ushort> ToU16B(
@@ -620,7 +728,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<ushort> ToU16B(
         this Span<byte> span) =>
-        ToU16B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToU16B();
 
     [DebuggerStepThrough]
     public static Memory<short> ToS16L(
@@ -635,7 +743,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<short> ToS16L(
         this Span<byte> span) =>
-        ToS16L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToS16L();
 
     [DebuggerStepThrough]
     public static Memory<short> ToS16B(
@@ -650,7 +758,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<short> ToS16B(
         this Span<byte> span) =>
-        ToS16B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToS16B();
 
     [DebuggerStepThrough]
     public static Memory<uint> ToU32L(
@@ -665,7 +773,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<uint> ToU32L(
         this Span<byte> span) =>
-        ToU32L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToU32L();
 
     [DebuggerStepThrough]
     public static Memory<uint> ToU32B(
@@ -680,7 +788,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<uint> ToU32B(
         this Span<byte> span) =>
-        ToU32B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToU32B();
 
     [DebuggerStepThrough]
     public static Memory<int> ToS32L(
@@ -695,7 +803,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<int> ToS32L(
         this Span<byte> span) =>
-        ToS32L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToS32L();
 
     [DebuggerStepThrough]
     public static Memory<int> ToS32B(
@@ -710,7 +818,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<int> ToS32B(
         this Span<byte> span) =>
-        ToS32B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToS32B();
 
     [DebuggerStepThrough]
     public static Memory<float> ToF32L(
@@ -725,7 +833,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<float> ToF32L(
         this Span<byte> span) =>
-        ToF32L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToF32L();
 
     [DebuggerStepThrough]
     public static Memory<float> ToF32B(
@@ -740,7 +848,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<float> ToF32B(
         this Span<byte> span) =>
-        ToF32B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToF32B();
 
     [DebuggerStepThrough]
     public static Memory<ulong> ToU64L(
@@ -755,7 +863,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<ulong> ToU64L(
         this Span<byte> span) =>
-        ToU64L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToU64L();
 
     [DebuggerStepThrough]
     public static Memory<ulong> ToU64B(
@@ -770,7 +878,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<ulong> ToU64B(
         this Span<byte> span) =>
-        ToU64B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToU64B();
 
     [DebuggerStepThrough]
     public static Memory<long> ToS64L(
@@ -785,7 +893,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<long> ToS64L(
         this Span<byte> span) =>
-        ToS64L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToS64L();
 
     [DebuggerStepThrough]
     public static Memory<long> ToS64B(
@@ -800,7 +908,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<long> ToS64B(
         this Span<byte> span) =>
-        ToS64B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToS64B();
 
     [DebuggerStepThrough]
     public static Memory<double> ToF64L(
@@ -815,7 +923,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<double> ToF64L(
         this Span<byte> span) =>
-        ToF64L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToF64L();
 
     [DebuggerStepThrough]
     public static Memory<double> ToF64B(
@@ -830,7 +938,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<double> ToF64B(
         this Span<byte> span) =>
-        ToF64B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).ToF64B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -845,7 +953,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<ushort> span) =>
-        ToU8L((ReadOnlySpan<ushort>)span);
+        ((ReadOnlySpan<ushort>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -860,7 +968,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<short> span) =>
-        ToU8L((ReadOnlySpan<short>)span);
+        ((ReadOnlySpan<short>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -875,7 +983,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<uint> span) =>
-        ToU8L((ReadOnlySpan<uint>)span);
+        ((ReadOnlySpan<uint>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -890,7 +998,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<int> span) =>
-        ToU8L((ReadOnlySpan<int>)span);
+        ((ReadOnlySpan<int>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -905,7 +1013,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<float> span) =>
-        ToU8L((ReadOnlySpan<float>)span);
+        ((ReadOnlySpan<float>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -920,7 +1028,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<ulong> span) =>
-        ToU8L((ReadOnlySpan<ulong>)span);
+        ((ReadOnlySpan<ulong>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -935,7 +1043,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<long> span) =>
-        ToU8L((ReadOnlySpan<long>)span);
+        ((ReadOnlySpan<long>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
@@ -950,7 +1058,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(
         this Span<double> span) =>
-        ToU8L((ReadOnlySpan<double>)span);
+        ((ReadOnlySpan<double>)span).ToU8L();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -965,7 +1073,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<ushort> span) =>
-        ToU8B((ReadOnlySpan<ushort>)span);
+        ((ReadOnlySpan<ushort>)span).ToU8B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -980,7 +1088,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<short> span) =>
-        ToU8B((ReadOnlySpan<short>)span);
+        ((ReadOnlySpan<short>)span).ToU8B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -995,7 +1103,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<uint> span) =>
-        ToU8B((ReadOnlySpan<uint>)span);
+        ((ReadOnlySpan<uint>)span).ToU8B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -1010,7 +1118,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<int> span) =>
-        ToU8B((ReadOnlySpan<int>)span);
+        ((ReadOnlySpan<int>)span).ToU8B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -1025,7 +1133,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<float> span) =>
-        ToU8B((ReadOnlySpan<float>)span);
+        ((ReadOnlySpan<float>)span).ToU8B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -1040,7 +1148,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<ulong> span) =>
-        ToU8B((ReadOnlySpan<ulong>)span);
+        ((ReadOnlySpan<ulong>)span).ToU8B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -1055,7 +1163,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<long> span) =>
-        ToU8B((ReadOnlySpan<long>)span);
+        ((ReadOnlySpan<long>)span).ToU8B();
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
@@ -1070,7 +1178,7 @@ public static class ByteSpanExtensions
     [DebuggerStepThrough]
     public static Memory<byte> ToU8B(
         this Span<double> span) =>
-        ToU8B((ReadOnlySpan<double>)span);
+        ((ReadOnlySpan<double>)span).ToU8B();
 
     #endregion
 
@@ -1083,386 +1191,386 @@ public static class ByteSpanExtensions
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, ushort>(span)
-            : ToU16L(span).Span;
+            : span.ToU16L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<ushort> CastU16L(
         this Span<byte> span) =>
-        CastU16L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastU16L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<ushort> CastU16B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, ushort>(span)
-            : ToU16B(span).Span;
+            : span.ToU16B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<ushort> CastU16B(
         this Span<byte> span) =>
-        CastU16B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastU16B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<short> CastS16L(
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, short>(span)
-            : ToS16L(span).Span;
+            : span.ToS16L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<short> CastS16L(
         this Span<byte> span) =>
-        CastS16L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastS16L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<short> CastS16B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, short>(span)
-            : ToS16B(span).Span;
+            : span.ToS16B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<short> CastS16B(
         this Span<byte> span) =>
-        CastS16B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastS16B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<uint> CastU32L(
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, uint>(span)
-            : ToU32L(span).Span;
+            : span.ToU32L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<uint> CastU32L(
         this Span<byte> span) =>
-        CastU32L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastU32L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<uint> CastU32B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, uint>(span)
-            : ToU32B(span).Span;
+            : span.ToU32B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<uint> CastU32B(
         this Span<byte> span) =>
-        CastU32B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastU32B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<int> CastS32L(
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, int>(span)
-            : ToS32L(span).Span;
+            : span.ToS32L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<int> CastS32L(
         this Span<byte> span) =>
-        CastS32L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastS32L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<int> CastS32B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, int>(span)
-            : ToS32B(span).Span;
+            : span.ToS32B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<int> CastS32B(
         this Span<byte> span) =>
-        CastS32B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastS32B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<float> CastF32L(
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, float>(span)
-            : ToF32L(span).Span;
+            : span.ToF32L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<float> CastF32L(
         this Span<byte> span) =>
-        CastF32L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastF32L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<float> CastF32B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, float>(span)
-            : ToF32L(span).Span;
+            : span.ToF32L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<float> CastF32B(
         this Span<byte> span) =>
-        CastF32B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastF32B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<ulong> CastU64L(
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, ulong>(span)
-            : ToU64L(span).Span;
+            : span.ToU64L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<ulong> CastU64L(
         this Span<byte> span) =>
-        CastU64L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastU64L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<ulong> CastU64B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, ulong>(span)
-            : ToU64B(span).Span;
+            : span.ToU64B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<ulong> CastU64B(
         this Span<byte> span) =>
-        CastU64B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastU64B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<long> CastS64L(
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, long>(span)
-            : ToS64L(span).Span;
+            : span.ToS64L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<long> CastS64L(
         this Span<byte> span) =>
-        CastS64L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastS64L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<long> CastS64B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, long>(span)
-            : ToS64B(span).Span;
+            : span.ToS64B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<long> CastS64B(
         this Span<byte> span) =>
-        CastS64B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastS64B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<double> CastF64L(
         this ReadOnlySpan<byte> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, double>(span)
-            : ToF64L(span).Span;
+            : span.ToF64L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<double> CastF64L(
         this Span<byte> span) =>
-        CastF64L((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastF64L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<double> CastF64B(
         this ReadOnlySpan<byte> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<byte, double>(span)
-            : ToF64B(span).Span;
+            : span.ToF64B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<double> CastF64B(
         this Span<byte> span) =>
-        CastF64B((ReadOnlySpan<byte>)span);
+        ((ReadOnlySpan<byte>)span).CastF64B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<ushort> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<ushort, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<ushort> span) =>
-        CastU8L((ReadOnlySpan<ushort>)span);
+        ((ReadOnlySpan<ushort>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<short> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<short, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<short> span) =>
-        CastU8L((ReadOnlySpan<short>)span);
+        ((ReadOnlySpan<short>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<uint> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<uint, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<uint> span) =>
-        CastU8L((ReadOnlySpan<uint>)span);
+        ((ReadOnlySpan<uint>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<int> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<int, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<int> span) =>
-        CastU8L((ReadOnlySpan<int>)span);
+        ((ReadOnlySpan<int>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<float> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<float, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<float> span) =>
-        CastU8L((ReadOnlySpan<float>)span);
+        ((ReadOnlySpan<float>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<ulong> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<ulong, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<ulong> span) =>
-        CastU8L((ReadOnlySpan<ulong>)span);
+        ((ReadOnlySpan<ulong>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<long> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<long, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<long> span) =>
-        CastU8L((ReadOnlySpan<long>)span);
+        ((ReadOnlySpan<long>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this ReadOnlySpan<double> span) =>
         BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<double, byte>(span)
-            : ToU8L(span).Span;
+            : span.ToU8L().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(
         this Span<double> span) =>
-        CastU8L((ReadOnlySpan<double>)span);
+        ((ReadOnlySpan<double>)span).CastU8L();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<ushort> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<ushort, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<ushort> span) =>
-        CastU8B((ReadOnlySpan<ushort>)span);
+        ((ReadOnlySpan<ushort>)span).CastU8B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<short> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<short, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<short> span) =>
-        CastU8B((ReadOnlySpan<short>)span);
+        ((ReadOnlySpan<short>)span).CastU8B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<uint> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<uint, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<uint> span) =>
-        CastU8B((ReadOnlySpan<uint>)span);
+        ((ReadOnlySpan<uint>)span).CastU8B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<int> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<int, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<int> span) =>
-        CastU8B((ReadOnlySpan<int>)span);
+        ((ReadOnlySpan<int>)span).CastU8B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<float> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<float, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<float> span) =>
-        CastU8B((ReadOnlySpan<float>)span);
+        ((ReadOnlySpan<float>)span).CastU8B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<ulong> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<ulong, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<ulong> span) =>
-        CastU8B((ReadOnlySpan<ulong>)span);
+        ((ReadOnlySpan<ulong>)span).CastU8B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<long> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<long, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<long> span) =>
-        CastU8B((ReadOnlySpan<long>)span);
+        ((ReadOnlySpan<long>)span).CastU8B();
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this ReadOnlySpan<double> span) =>
         !BitConverter.IsLittleEndian
             ? MemoryMarshal.Cast<double, byte>(span)
-            : ToU8B(span).Span;
+            : span.ToU8B().Span;
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8B(
         this Span<double> span) =>
-        CastU8B((ReadOnlySpan<double>)span);
+        ((ReadOnlySpan<double>)span).CastU8B();
 
     #endregion
-    
+
     // ***************************************************
 }

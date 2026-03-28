@@ -8,6 +8,7 @@ using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
 using RhythmCodex.Sounds.Models;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Archs.Firebeat.Converters;
 
@@ -20,7 +21,7 @@ public sealed class FirebeatSoundDecoder(
     {
         for (var j = data.Length - 4; j >= 0; j -= 4)
         {
-            var val = ReadUInt32LittleEndian(data[j..]);
+            var val = data[j..].AsU32L();
 
             if (val is 0x80008000u or 0x00800080u or 0x0A0A0A0Au or 0x00000000u)
                 continue;
