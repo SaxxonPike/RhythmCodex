@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 using NUnit.Framework;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Archs.Psx.Converters;
-using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Charts.Models;
@@ -15,6 +14,8 @@ using RhythmCodex.FileSystems.Cd.Streamers;
 using RhythmCodex.FileSystems.Cue.Processors;
 using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
+using RhythmCodex.Games.Beatmania.Psx.Converters;
+using RhythmCodex.Games.Beatmania.Psx.Models;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
@@ -51,9 +52,9 @@ public class BmPs1OneShots : BaseIntegrationFixture
     public void ExtractBms(string source, string target)
     {
         const bool extractKeysounds = true;
-        const bool extractCharts = true;
+        const bool extractCharts = false;
         const bool extractRawBlock = false;
-        const bool extractBgm = true;
+        const bool extractBgm = false;
         const bool writeLogs = true;
         const float keyVolume = 1f;
         const float xaVolume = 0.75f;
@@ -84,19 +85,6 @@ public class BmPs1OneShots : BaseIntegrationFixture
         var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), target);
         var psxBeatmaniaDecoder = Resolve<IPsxBeatmaniaDecoder>();
         var psxBeatmaniaSongGrouper = Resolve<IPsxBeatmaniaSongGrouper>();
-
-        //
-        // Determine where SYSDATA.PAK is located on the disc and load it.
-        //
-
-        // Log.WriteLine("Loading SYSDATA.PAK");
-        // using var sysDataPak = cdFiles.Single(f => f.Name == "./SYSDATA.PAK;1").Open();
-
-        //
-        // Decode SYSDATA.PAK.
-        //
-
-        // var sysDataPakFiles = psxBeatmaniaDecoder.DecodeSysData(sysDataPak, sysDataPak.Length);
 
         //
         // Determine the region of game.

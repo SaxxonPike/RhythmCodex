@@ -1,8 +1,8 @@
 using System;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Beatmania.Psx.Models;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Beatmania.Psx.Converters;
 
 /// <inheritdoc />
 [Service]

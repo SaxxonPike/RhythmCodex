@@ -1,7 +1,7 @@
 using System;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Beatmania.Psx.Models;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Beatmania.Psx.Converters;
 
 /// <summary>
 /// Determines the format of PSX Beatmania files using heuristics.

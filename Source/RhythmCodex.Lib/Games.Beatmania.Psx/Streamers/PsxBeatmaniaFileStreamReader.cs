@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Beatmania.Psx.Models;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Archs.Psx.Streamers;
+namespace RhythmCodex.Games.Beatmania.Psx.Streamers;
 
 /// <inheritdoc />
 [Service]

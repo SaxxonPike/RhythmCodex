@@ -1,4 +1,4 @@
-namespace RhythmCodex.Archs.Psx.Streamers;
+namespace RhythmCodex.Games.Beatmania.Psx.Streamers;
 
 public interface IPsxBeatmaniaSysFileStreamReader
 {

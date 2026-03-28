@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.Archs.Djmain.Model;
-using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Charts.Models;
+using RhythmCodex.Games.Beatmania.Psx.Models;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Beatmania.Psx.Converters;
 
 public interface IPsxBeatmaniaDecoder
 {

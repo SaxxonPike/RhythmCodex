@@ -1,4 +1,4 @@
-namespace RhythmCodex.Archs.Psx.Model;
+namespace RhythmCodex.Games.Beatmania.Psx.Models;
 
 public enum PsxBeatmaniaFileType
 {

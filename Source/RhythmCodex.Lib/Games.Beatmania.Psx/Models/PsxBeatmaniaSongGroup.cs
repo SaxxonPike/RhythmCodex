@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using RhythmCodex.Infrastructure;
 
-namespace RhythmCodex.Archs.Psx.Model;
+namespace RhythmCodex.Games.Beatmania.Psx.Models;
 
 [Model]
 public record PsxBeatmaniaSongGroup

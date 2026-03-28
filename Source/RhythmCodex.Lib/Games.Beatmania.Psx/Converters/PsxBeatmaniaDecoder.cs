@@ -6,13 +6,13 @@ using System.Linq;
 using RhythmCodex.Archs.Djmain.Converters;
 using RhythmCodex.Archs.Djmain.Model;
 using RhythmCodex.Archs.Djmain.Streamers;
-using RhythmCodex.Archs.Psx.Model;
-using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Charts.Models;
+using RhythmCodex.Games.Beatmania.Psx.Models;
+using RhythmCodex.Games.Beatmania.Psx.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Beatmania.Psx.Converters;
 
 /// <inheritdoc />
 [Service]

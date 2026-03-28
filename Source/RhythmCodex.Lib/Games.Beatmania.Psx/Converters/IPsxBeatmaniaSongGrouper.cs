@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Beatmania.Psx.Models;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Beatmania.Psx.Converters;
 
 public interface IPsxBeatmaniaSongGrouper
 {
