@@ -11,312 +11,216 @@ public static class ArrayExtensions
 
     #region Array
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU8(
-        this byte[] arr,
-        out byte val) =>
-        arr.AsMemory().ReadU8(out val);
+    extension(byte[] arr)
+    {
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU8(out byte val) =>
+            arr.AsMemory().ReadU8(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU8(
-        this byte[] arr,
-        byte val) =>
-        arr.AsMemory().WriteU8(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU8(byte val) =>
+            arr.AsMemory().WriteU8(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS8(
-        this byte[] arr,
-        out sbyte val) =>
-        arr.AsMemory().ReadS8(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS8(out sbyte val) =>
+            arr.AsMemory().ReadS8(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS8(
-        this byte[] arr,
-        sbyte val) =>
-        arr.AsMemory().WriteS8(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS8(sbyte val) =>
+            arr.AsMemory().WriteS8(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU16L(
-        this byte[] arr,
-        out ushort val) =>
-        arr.AsMemory().ReadU16L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU16L(out ushort val) =>
+            arr.AsMemory().ReadU16L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU16L(
-        this byte[] arr,
-        ushort val) =>
-        arr.AsMemory().WriteU16L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU16L(ushort val) =>
+            arr.AsMemory().WriteU16L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS16L(
-        this byte[] arr,
-        out short val) =>
-        arr.AsMemory().ReadS16L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS16L(out short val) =>
+            arr.AsMemory().ReadS16L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS16L(
-        this byte[] arr,
-        short val) =>
-        arr.AsMemory().WriteS16L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS16L(short val) =>
+            arr.AsMemory().WriteS16L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU16B(
-        this byte[] arr,
-        out ushort val) =>
-        arr.AsMemory().ReadU16B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU16B(out ushort val) =>
+            arr.AsMemory().ReadU16B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU16B(
-        this byte[] arr,
-        ushort val) =>
-        arr.AsMemory().WriteU16B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU16B(ushort val) =>
+            arr.AsMemory().WriteU16B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS16B(
-        this byte[] arr,
-        out short val) =>
-        arr.AsMemory().ReadS16B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS16B(out short val) =>
+            arr.AsMemory().ReadS16B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS16B(
-        this byte[] arr,
-        short val) =>
-        arr.AsMemory().WriteS16B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS16B(short val) =>
+            arr.AsMemory().WriteS16B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU32L(
-        this byte[] arr,
-        out uint val) =>
-        arr.AsMemory().ReadU32L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU32L(out uint val) =>
+            arr.AsMemory().ReadU32L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU32L(
-        this byte[] arr,
-        uint val) =>
-        arr.AsMemory().WriteU32L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU32L(uint val) =>
+            arr.AsMemory().WriteU32L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS32L(
-        this byte[] arr,
-        out int val) =>
-        arr.AsMemory().ReadS32L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS32L(out int val) =>
+            arr.AsMemory().ReadS32L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS32L(
-        this byte[] arr,
-        int val) =>
-        arr.AsMemory().WriteS32L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS32L(int val) =>
+            arr.AsMemory().WriteS32L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU32B(
-        this byte[] arr,
-        out uint val) =>
-        arr.AsMemory().ReadU32B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU32B(out uint val) =>
+            arr.AsMemory().ReadU32B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU32B(
-        this byte[] arr,
-        uint val) =>
-        arr.AsMemory().WriteU32B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU32B(uint val) =>
+            arr.AsMemory().WriteU32B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS32B(
-        this byte[] arr,
-        out int val) =>
-        arr.AsMemory().ReadS32B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS32B(out int val) =>
+            arr.AsMemory().ReadS32B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS32B(
-        this byte[] arr,
-        int val) =>
-        arr.AsMemory().WriteS32B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS32B(int val) =>
+            arr.AsMemory().WriteS32B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF32L(
-        this byte[] arr,
-        out float val) =>
-        arr.AsMemory().ReadF32L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF32L(out float val) =>
+            arr.AsMemory().ReadF32L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF32L(
-        this byte[] arr,
-        float val) =>
-        arr.AsMemory().WriteF32L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF32L(float val) =>
+            arr.AsMemory().WriteF32L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF32B(
-        this byte[] arr,
-        out float val) =>
-        arr.AsMemory().ReadF32B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF32B(out float val) =>
+            arr.AsMemory().ReadF32B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF32B(
-        this byte[] arr,
-        float val) =>
-        arr.AsMemory().WriteF32B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF32B(float val) =>
+            arr.AsMemory().WriteF32B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU64L(
-        this byte[] arr,
-        out ulong val) =>
-        arr.AsMemory().ReadU64L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU64L(out ulong val) =>
+            arr.AsMemory().ReadU64L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU64L(
-        this byte[] arr,
-        ulong val) =>
-        arr.AsMemory().WriteU64L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU64L(ulong val) =>
+            arr.AsMemory().WriteU64L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS64L(
-        this byte[] arr,
-        out long val) =>
-        arr.AsMemory().ReadS64L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS64L(out long val) =>
+            arr.AsMemory().ReadS64L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS64L(
-        this byte[] arr,
-        long val) =>
-        arr.AsMemory().WriteS64L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS64L(long val) =>
+            arr.AsMemory().WriteS64L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadU64B(
-        this byte[] arr,
-        out ulong val) =>
-        arr.AsMemory().ReadU64B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadU64B(out ulong val) =>
+            arr.AsMemory().ReadU64B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteU64B(
-        this byte[] arr,
-        ulong val) =>
-        arr.AsMemory().WriteU64B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteU64B(ulong val) =>
+            arr.AsMemory().WriteU64B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadS64B(
-        this byte[] arr,
-        out long val) =>
-        arr.AsMemory().ReadS64B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadS64B(out long val) =>
+            arr.AsMemory().ReadS64B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteS64B(
-        this byte[] arr,
-        long val) =>
-        arr.AsMemory().WriteS64B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteS64B(long val) =>
+            arr.AsMemory().WriteS64B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF64L(
-        this byte[] arr,
-        out double val) =>
-        arr.AsMemory().ReadF64L(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF64L(out double val) =>
+            arr.AsMemory().ReadF64L(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF64L(
-        this byte[] arr,
-        double val) =>
-        arr.AsMemory().WriteF64L(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF64L(double val) =>
+            arr.AsMemory().WriteF64L(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> ReadF64B(
-        this byte[] arr,
-        out double val) =>
-        arr.AsMemory().ReadF64B(out val);
+        [DebuggerStepThrough]
+        public Memory<byte> ReadF64B(out double val) =>
+            arr.AsMemory().ReadF64B(out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> WriteF64B(
-        this byte[] arr,
-        double val) =>
-        arr.AsMemory().WriteF64B(val);
+        [DebuggerStepThrough]
+        public Memory<byte> WriteF64B(double val) =>
+            arr.AsMemory().WriteF64B(val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Skip(
-        this byte[] arr,
-        [NonNegativeValue] int count) =>
-        arr.AsMemory().Skip(count);
+        [DebuggerStepThrough]
+        public Memory<byte> Skip([NonNegativeValue] int count) =>
+            arr.AsMemory().Skip(count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Extract(
-        this byte[] arr,
-        [NonNegativeValue] int count,
-        out Memory<byte> val) =>
-        arr.AsMemory().Extract(count, out val);
+        [DebuggerStepThrough]
+        public Memory<byte> Extract([NonNegativeValue] int count,
+            out Memory<byte> val) =>
+            arr.AsMemory().Extract(count, out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryExtract(
-        this byte[] arr,
-        [NonNegativeValue] int count,
-        out Memory<byte> val) =>
-        arr.AsMemory().TryExtract(count, out val);
+        [DebuggerStepThrough]
+        public Memory<byte> TryExtract([NonNegativeValue] int count,
+            out Memory<byte> val) =>
+            arr.AsMemory().TryExtract(count, out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Read(
-        this byte[] arr,
-        [NonNegativeValue] int count,
-        out byte[] val) =>
-        arr.AsMemory().Read(count, out val);
+        [DebuggerStepThrough]
+        public Memory<byte> Read([NonNegativeValue] int count,
+            out byte[] val) =>
+            arr.AsMemory().Read(count, out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Read(
-        this byte[] arr,
-        Memory<byte> target,
-        [NonNegativeValue] out int count) =>
-        arr.AsMemory().Read(target, out count);
+        [DebuggerStepThrough]
+        public Memory<byte> Read(Memory<byte> target,
+            [NonNegativeValue] out int count) =>
+            arr.AsMemory().Read(target, out count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Read(
-        this byte[] arr,
-        Span<byte> target,
-        [NonNegativeValue] out int count) =>
-        arr.AsMemory().Read(target, out count);
+        [DebuggerStepThrough]
+        public Memory<byte> Read(Span<byte> target,
+            [NonNegativeValue] out int count) =>
+            arr.AsMemory().Read(target, out count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryRead(
-        this byte[] arr,
-        [NonNegativeValue] int count,
-        out byte[] val) =>
-        arr.AsMemory().TryRead(count, out val);
+        [DebuggerStepThrough]
+        public Memory<byte> TryRead([NonNegativeValue] int count,
+            out byte[] val) =>
+            arr.AsMemory().TryRead(count, out val);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryRead(
-        this byte[] arr,
-        Memory<byte> target,
-        [NonNegativeValue] out int count) =>
-        arr.AsMemory().TryRead(target, out count);
+        [DebuggerStepThrough]
+        public Memory<byte> TryRead(Memory<byte> target,
+            [NonNegativeValue] out int count) =>
+            arr.AsMemory().TryRead(target, out count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryRead(
-        this byte[] arr,
-        Span<byte> target,
-        [NonNegativeValue] out int count) =>
-        arr.AsMemory().TryRead(target, out count);
+        [DebuggerStepThrough]
+        public Memory<byte> TryRead(Span<byte> target,
+            [NonNegativeValue] out int count) =>
+            arr.AsMemory().TryRead(target, out count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Write(
-        this byte[] arr,
-        ReadOnlySpan<byte> val,
-        out int count) =>
-        arr.AsMemory().Write(val, out count);
+        [DebuggerStepThrough]
+        public Memory<byte> Write(ReadOnlySpan<byte> val,
+            out int count) =>
+            arr.AsMemory().Write(val, out count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> Write(
-        this byte[] arr,
-        ReadOnlyMemory<byte> val,
-        out int count) =>
-        arr.AsMemory().Write(val, out count);
+        [DebuggerStepThrough]
+        public Memory<byte> Write(ReadOnlyMemory<byte> val,
+            out int count) =>
+            arr.AsMemory().Write(val, out count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryWrite(
-        this byte[] arr,
-        ReadOnlySpan<byte> val,
-        out int count) =>
-        arr.AsMemory().Write(val, out count);
+        [DebuggerStepThrough]
+        public Memory<byte> TryWrite(ReadOnlySpan<byte> val,
+            out int count) =>
+            arr.AsMemory().Write(val, out count);
 
-    [DebuggerStepThrough]
-    public static Memory<byte> TryWrite(
-        this byte[] arr,
-        ReadOnlyMemory<byte> val,
-        out int count) =>
-        arr.AsMemory().Write(val, out count);
-
+        [DebuggerStepThrough]
+        public Memory<byte> TryWrite(ReadOnlyMemory<byte> val,
+            out int count) =>
+            arr.AsMemory().Write(val, out count);
+    }
 
     #endregion
 
@@ -324,69 +228,72 @@ public static class ArrayExtensions
 
     #region Conversions
 
-    [DebuggerStepThrough]
-    public static Memory<ushort> ToU16L(this byte[] arr) =>
-        arr.AsSpan().ToU16L();
+    extension(byte[] arr)
+    {
+        [DebuggerStepThrough]
+        public Memory<ushort> ToU16L() =>
+            arr.AsSpan().ToU16L();
 
-    [DebuggerStepThrough]
-    public static Memory<ushort> ToU16B(this byte[] arr) =>
-        arr.AsSpan().ToU16B();
+        [DebuggerStepThrough]
+        public Memory<ushort> ToU16B() =>
+            arr.AsSpan().ToU16B();
 
-    [DebuggerStepThrough]
-    public static Memory<short> ToS16L(this byte[] arr) =>
-        arr.AsSpan().ToS16L();
+        [DebuggerStepThrough]
+        public Memory<short> ToS16L() =>
+            arr.AsSpan().ToS16L();
 
-    [DebuggerStepThrough]
-    public static Memory<short> ToS16B(this byte[] arr) =>
-        arr.AsSpan().ToS16B();
+        [DebuggerStepThrough]
+        public Memory<short> ToS16B() =>
+            arr.AsSpan().ToS16B();
 
-    [DebuggerStepThrough]
-    public static Memory<uint> ToU32L(this byte[] arr) =>
-        arr.AsSpan().ToU32L();
+        [DebuggerStepThrough]
+        public Memory<uint> ToU32L() =>
+            arr.AsSpan().ToU32L();
 
-    [DebuggerStepThrough]
-    public static Memory<uint> ToU32B(this byte[] arr) =>
-        arr.AsSpan().ToU32B();
+        [DebuggerStepThrough]
+        public Memory<uint> ToU32B() =>
+            arr.AsSpan().ToU32B();
 
-    [DebuggerStepThrough]
-    public static Memory<int> ToS32L(this byte[] arr) =>
-        arr.AsSpan().ToS32L();
+        [DebuggerStepThrough]
+        public Memory<int> ToS32L() =>
+            arr.AsSpan().ToS32L();
 
-    [DebuggerStepThrough]
-    public static Memory<int> ToS32B(this byte[] arr) =>
-        arr.AsSpan().ToS32B();
+        [DebuggerStepThrough]
+        public Memory<int> ToS32B() =>
+            arr.AsSpan().ToS32B();
 
-    [DebuggerStepThrough]
-    public static Memory<float> ToF32L(this byte[] arr) =>
-        arr.AsSpan().ToF32L();
+        [DebuggerStepThrough]
+        public Memory<float> ToF32L() =>
+            arr.AsSpan().ToF32L();
 
-    [DebuggerStepThrough]
-    public static Memory<float> ToF32B(this byte[] arr) =>
-        arr.AsSpan().ToF32B();
+        [DebuggerStepThrough]
+        public Memory<float> ToF32B() =>
+            arr.AsSpan().ToF32B();
 
-    [DebuggerStepThrough]
-    public static Memory<ulong> ToU64L(this byte[] arr) =>
-        arr.AsSpan().ToU64L();
+        [DebuggerStepThrough]
+        public Memory<ulong> ToU64L() =>
+            arr.AsSpan().ToU64L();
 
-    [DebuggerStepThrough]
-    public static Memory<ulong> ToU64B(this byte[] arr) =>
-        arr.AsSpan().ToU64B();
+        [DebuggerStepThrough]
+        public Memory<ulong> ToU64B() =>
+            arr.AsSpan().ToU64B();
 
-    [DebuggerStepThrough]
-    public static Memory<long> ToS64L(this byte[] arr) =>
-        arr.AsSpan().ToS64L();
+        [DebuggerStepThrough]
+        public Memory<long> ToS64L() =>
+            arr.AsSpan().ToS64L();
 
-    [DebuggerStepThrough]
-    public static Memory<long> ToS64B(this byte[] arr) =>
-        arr.AsSpan().ToS64B();
+        [DebuggerStepThrough]
+        public Memory<long> ToS64B() =>
+            arr.AsSpan().ToS64B();
 
-    [DebuggerStepThrough]
-    public static Memory<double> ToF64L(this byte[] arr) =>
-        arr.AsSpan().ToF64L();
+        [DebuggerStepThrough]
+        public Memory<double> ToF64L() =>
+            arr.AsSpan().ToF64L();
 
-    [DebuggerStepThrough]
-    public static Memory<double> ToF64B(this byte[] arr) =>
-        arr.AsSpan().ToF64B();
+        [DebuggerStepThrough]
+        public Memory<double> ToF64B() =>
+            arr.AsSpan().ToF64B();
+    }
 
     [DebuggerStepThrough]
     public static Memory<byte> ToU8L(this ushort[] arr) =>
@@ -458,69 +365,72 @@ public static class ArrayExtensions
 
     #region Interpretations
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<ushort> CastU16L(this byte[] arr) =>
-        arr.AsSpan().CastU16L();
+    extension(byte[] arr)
+    {
+        [DebuggerStepThrough]
+        public ReadOnlySpan<ushort> CastU16L() =>
+            arr.AsSpan().CastU16L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<ushort> CastU16B(this byte[] arr) =>
-        arr.AsSpan().CastU16B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<ushort> CastU16B() =>
+            arr.AsSpan().CastU16B();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<short> CastS16L(this byte[] arr) =>
-        arr.AsSpan().CastS16L();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<short> CastS16L() =>
+            arr.AsSpan().CastS16L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<short> CastS16B(this byte[] arr) =>
-        arr.AsSpan().CastS16B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<short> CastS16B() =>
+            arr.AsSpan().CastS16B();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<uint> CastU32L(this byte[] arr) =>
-        arr.AsSpan().CastU32L();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<uint> CastU32L() =>
+            arr.AsSpan().CastU32L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<uint> CastU32B(this byte[] arr) =>
-        arr.AsSpan().CastU32B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<uint> CastU32B() =>
+            arr.AsSpan().CastU32B();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<int> CastS32L(this byte[] arr) =>
-        arr.AsSpan().CastS32L();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<int> CastS32L() =>
+            arr.AsSpan().CastS32L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<int> CastS32B(this byte[] arr) =>
-        arr.AsSpan().CastS32B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<int> CastS32B() =>
+            arr.AsSpan().CastS32B();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<float> CastF32L(this byte[] arr) =>
-        arr.AsSpan().CastF32L();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<float> CastF32L() =>
+            arr.AsSpan().CastF32L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<float> CastF32B(this byte[] arr) =>
-        arr.AsSpan().CastF32B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<float> CastF32B() =>
+            arr.AsSpan().CastF32B();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<ulong> CastU64L(this byte[] arr) =>
-        arr.AsSpan().CastU64L();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<ulong> CastU64L() =>
+            arr.AsSpan().CastU64L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<ulong> CastU64B(this byte[] arr) =>
-        arr.AsSpan().CastU64B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<ulong> CastU64B() =>
+            arr.AsSpan().CastU64B();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<long> CastS64L(this byte[] arr) =>
-        arr.AsSpan().CastS64L();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<long> CastS64L() =>
+            arr.AsSpan().CastS64L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<long> CastS64B(this byte[] arr) =>
-        arr.AsSpan().CastS64B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<long> CastS64B() =>
+            arr.AsSpan().CastS64B();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<double> CastF64L(this byte[] arr) =>
-        arr.AsSpan().CastF64L();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<double> CastF64L() =>
+            arr.AsSpan().CastF64L();
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<double> CastF64B(this byte[] arr) =>
-        arr.AsSpan().CastF64B();
+        [DebuggerStepThrough]
+        public ReadOnlySpan<double> CastF64B() =>
+            arr.AsSpan().CastF64B();
+    }
 
     [DebuggerStepThrough]
     public static ReadOnlySpan<byte> CastU8L(this ushort[] arr) =>

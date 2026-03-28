@@ -12,258 +12,207 @@ public static class ByteSpanExtensions
 
     #region ReadOnlySpan
     
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadU8(
-        this ReadOnlySpan<byte> span,
-        out byte val)
+    extension(ReadOnlySpan<byte> span)
     {
-        val = span[0];
-        return span[1..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadU8(out byte val)
+        {
+            val = span[0];
+            return span[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadS8(
-        this ReadOnlySpan<byte> span,
-        out sbyte val)
-    {
-        val = MemoryMarshal.Cast<byte, sbyte>(span)[0];
-        return span[1..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadS8(out sbyte val)
+        {
+            val = MemoryMarshal.Cast<byte, sbyte>(span)[0];
+            return span[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadU16L(
-        this ReadOnlySpan<byte> span,
-        out ushort val)
-    {
-        val = ReadUInt16LittleEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadU16L(out ushort val)
+        {
+            val = ReadUInt16LittleEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadS16L(
-        this ReadOnlySpan<byte> span,
-        out short val)
-    {
-        val = ReadInt16LittleEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadS16L(out short val)
+        {
+            val = ReadInt16LittleEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadU16B(
-        this ReadOnlySpan<byte> span,
-        out ushort val)
-    {
-        val = ReadUInt16BigEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadU16B(out ushort val)
+        {
+            val = ReadUInt16BigEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadS16B(
-        this ReadOnlySpan<byte> span,
-        out short val)
-    {
-        val = ReadInt16BigEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadS16B(out short val)
+        {
+            val = ReadInt16BigEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadU32L(
-        this ReadOnlySpan<byte> span,
-        out uint val)
-    {
-        val = ReadUInt32LittleEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadU32L(out uint val)
+        {
+            val = ReadUInt32LittleEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadS32L(
-        this ReadOnlySpan<byte> span,
-        out int val)
-    {
-        val = ReadInt32LittleEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadS32L(out int val)
+        {
+            val = ReadInt32LittleEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadU32B(
-        this ReadOnlySpan<byte> span,
-        out uint val)
-    {
-        val = ReadUInt32BigEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadU32B(out uint val)
+        {
+            val = ReadUInt32BigEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadS32B(
-        this ReadOnlySpan<byte> span,
-        out int val)
-    {
-        val = ReadInt32BigEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadS32B(out int val)
+        {
+            val = ReadInt32BigEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadF32L(
-        this ReadOnlySpan<byte> span,
-        out float val)
-    {
-        val = ReadSingleLittleEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadF32L(out float val)
+        {
+            val = ReadSingleLittleEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadF32B(
-        this ReadOnlySpan<byte> span,
-        out float val)
-    {
-        val = ReadSingleBigEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadF32B(out float val)
+        {
+            val = ReadSingleBigEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadU64L(
-        this ReadOnlySpan<byte> span,
-        out ulong val)
-    {
-        val = ReadUInt64LittleEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadU64L(out ulong val)
+        {
+            val = ReadUInt64LittleEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadS64L(
-        this ReadOnlySpan<byte> span,
-        out long val)
-    {
-        val = ReadInt64LittleEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadS64L(out long val)
+        {
+            val = ReadInt64LittleEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadU64B(
-        this ReadOnlySpan<byte> span,
-        out ulong val)
-    {
-        val = ReadUInt64BigEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadU64B(out ulong val)
+        {
+            val = ReadUInt64BigEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadS64B(
-        this ReadOnlySpan<byte> span,
-        out long val)
-    {
-        val = ReadInt64BigEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadS64B(out long val)
+        {
+            val = ReadInt64BigEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadF64L(
-        this ReadOnlySpan<byte> span,
-        out double val)
-    {
-        val = ReadDoubleLittleEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadF64L(out double val)
+        {
+            val = ReadDoubleLittleEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> ReadF64B(
-        this ReadOnlySpan<byte> span,
-        out double val)
-    {
-        val = ReadDoubleBigEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> ReadF64B(out double val)
+        {
+            val = ReadDoubleBigEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> Skip(
-        this ReadOnlySpan<byte> span,
-        [NonNegativeValue] int count)
-    {
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> Skip([NonNegativeValue] int count)
+        {
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> Extract(
-        this ReadOnlySpan<byte> span,
-        [NonNegativeValue] int count,
-        out ReadOnlySpan<byte> val)
-    {
-        val = span[..count];
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> Extract([NonNegativeValue] int count,
+            out ReadOnlySpan<byte> val)
+        {
+            val = span[..count];
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> TryExtract(
-        this ReadOnlySpan<byte> span,
-        int count,
-        out ReadOnlySpan<byte> val)
-    {
-        val = span[..Math.Min(span.Length, count)];
-        return span[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> TryExtract(int count,
+            out ReadOnlySpan<byte> val)
+        {
+            val = span[..Math.Min(span.Length, count)];
+            return span[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> Read(
-        this ReadOnlySpan<byte> span,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = span[..count].ToArray();
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> Read([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = span[..count].ToArray();
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> Read(
-        this ReadOnlySpan<byte> span,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        span[..count].CopyTo(target.Span);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> Read(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            span[..count].CopyTo(target.Span);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> Read(
-        this ReadOnlySpan<byte> span,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        span[..count].CopyTo(target);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> Read(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            span[..count].CopyTo(target);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> TryRead(
-        this ReadOnlySpan<byte> span,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = span[..Math.Min(span.Length, count)].ToArray();
-        return span[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> TryRead([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = span[..Math.Min(span.Length, count)].ToArray();
+            return span[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> TryRead(
-        this ReadOnlySpan<byte> span,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        span[..Math.Min(span.Length, count)].CopyTo(target.Span);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> TryRead(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            span[..Math.Min(span.Length, count)].CopyTo(target.Span);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static ReadOnlySpan<byte> TryRead(
-        this ReadOnlySpan<byte> span,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        span[..Math.Min(span.Length, count)].CopyTo(target);
-        return span[count..];
+        [DebuggerStepThrough]
+        public ReadOnlySpan<byte> TryRead(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            span[..Math.Min(span.Length, count)].CopyTo(target);
+            return span[count..];
+        }
     }
 
     #endregion
@@ -272,464 +221,369 @@ public static class ByteSpanExtensions
 
     #region Span
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadU8(
-        this Span<byte> span,
-        out byte val)
+    extension(Span<byte> span)
     {
-        val = span[0];
-        return span[1..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadU8(out byte val)
+        {
+            val = span[0];
+            return span[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteU8(
-        this Span<byte> span,
-        byte val)
-    {
-        span[0] = val;
-        return span[1..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteU8(byte val)
+        {
+            span[0] = val;
+            return span[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadS8(
-        this Span<byte> span,
-        out sbyte val)
-    {
-        val = MemoryMarshal.Cast<byte, sbyte>(span)[0];
-        return span[1..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadS8(out sbyte val)
+        {
+            val = MemoryMarshal.Cast<byte, sbyte>(span)[0];
+            return span[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteS8(
-        this Span<byte> span,
-        sbyte val)
-    {
-        MemoryMarshal.Cast<byte, sbyte>(span)[0] = val;
-        return span[1..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteS8(sbyte val)
+        {
+            MemoryMarshal.Cast<byte, sbyte>(span)[0] = val;
+            return span[1..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadU16L(
-        this Span<byte> span,
-        out ushort val)
-    {
-        val = ReadUInt16LittleEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadU16L(out ushort val)
+        {
+            val = ReadUInt16LittleEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteU16L(
-        this Span<byte> span,
-        ushort val)
-    {
-        WriteUInt16LittleEndian(span, val);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteU16L(ushort val)
+        {
+            WriteUInt16LittleEndian(span, val);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadS16L(
-        this Span<byte> span,
-        out short val)
-    {
-        val = ReadInt16LittleEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadS16L(out short val)
+        {
+            val = ReadInt16LittleEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteS16L(
-        this Span<byte> span,
-        short val)
-    {
-        WriteInt16LittleEndian(span, val);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteS16L(short val)
+        {
+            WriteInt16LittleEndian(span, val);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadU16B(
-        this Span<byte> span,
-        out ushort val)
-    {
-        val = ReadUInt16BigEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadU16B(out ushort val)
+        {
+            val = ReadUInt16BigEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteU16B(
-        this Span<byte> span,
-        ushort val)
-    {
-        WriteUInt16BigEndian(span, val);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteU16B(ushort val)
+        {
+            WriteUInt16BigEndian(span, val);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadS16B(
-        this Span<byte> span,
-        out short val)
-    {
-        val = ReadInt16BigEndian(span);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadS16B(out short val)
+        {
+            val = ReadInt16BigEndian(span);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteS16B(
-        this Span<byte> span,
-        short val)
-    {
-        WriteInt16BigEndian(span, val);
-        return span[2..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteS16B(short val)
+        {
+            WriteInt16BigEndian(span, val);
+            return span[2..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadU32L(
-        this Span<byte> span,
-        out uint val)
-    {
-        val = ReadUInt32LittleEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadU32L(out uint val)
+        {
+            val = ReadUInt32LittleEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteU32L(
-        this Span<byte> span,
-        uint val)
-    {
-        WriteUInt32LittleEndian(span, val);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteU32L(uint val)
+        {
+            WriteUInt32LittleEndian(span, val);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadS32L(
-        this Span<byte> span,
-        out int val)
-    {
-        val = ReadInt32LittleEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadS32L(out int val)
+        {
+            val = ReadInt32LittleEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteS32L(
-        this Span<byte> span,
-        int val)
-    {
-        WriteInt32LittleEndian(span, val);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteS32L(int val)
+        {
+            WriteInt32LittleEndian(span, val);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadU32B(
-        this Span<byte> span,
-        out uint val)
-    {
-        val = ReadUInt32BigEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadU32B(out uint val)
+        {
+            val = ReadUInt32BigEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteU32B(
-        this Span<byte> span,
-        uint val)
-    {
-        WriteUInt32BigEndian(span, val);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteU32B(uint val)
+        {
+            WriteUInt32BigEndian(span, val);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadS32B(
-        this Span<byte> span,
-        out int val)
-    {
-        val = ReadInt32BigEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadS32B(out int val)
+        {
+            val = ReadInt32BigEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteS32B(
-        this Span<byte> span,
-        int val)
-    {
-        WriteInt32BigEndian(span, val);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteS32B(int val)
+        {
+            WriteInt32BigEndian(span, val);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadF32L(
-        this Span<byte> span,
-        out float val)
-    {
-        val = ReadSingleLittleEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadF32L(out float val)
+        {
+            val = ReadSingleLittleEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteF32L(
-        this Span<byte> span,
-        float val)
-    {
-        WriteSingleLittleEndian(span, val);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteF32L(float val)
+        {
+            WriteSingleLittleEndian(span, val);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadF32B(
-        this Span<byte> span,
-        out float val)
-    {
-        val = ReadSingleBigEndian(span);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadF32B(out float val)
+        {
+            val = ReadSingleBigEndian(span);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteF32B(
-        this Span<byte> span,
-        float val)
-    {
-        WriteSingleBigEndian(span, val);
-        return span[4..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteF32B(float val)
+        {
+            WriteSingleBigEndian(span, val);
+            return span[4..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadU64L(
-        this Span<byte> span,
-        out ulong val)
-    {
-        val = ReadUInt64LittleEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadU64L(out ulong val)
+        {
+            val = ReadUInt64LittleEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteU64L(
-        this Span<byte> span,
-        ulong val)
-    {
-        WriteUInt64LittleEndian(span, val);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteU64L(ulong val)
+        {
+            WriteUInt64LittleEndian(span, val);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadS64L(
-        this Span<byte> span,
-        out long val)
-    {
-        val = ReadInt64LittleEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadS64L(out long val)
+        {
+            val = ReadInt64LittleEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteS64L(
-        this Span<byte> span,
-        long val)
-    {
-        WriteInt64LittleEndian(span, val);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteS64L(long val)
+        {
+            WriteInt64LittleEndian(span, val);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadU64B(
-        this Span<byte> span,
-        out ulong val)
-    {
-        val = ReadUInt64BigEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadU64B(out ulong val)
+        {
+            val = ReadUInt64BigEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteU64B(
-        this Span<byte> span,
-        ulong val)
-    {
-        WriteUInt64BigEndian(span, val);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteU64B(ulong val)
+        {
+            WriteUInt64BigEndian(span, val);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadS64B(
-        this Span<byte> span,
-        out long val)
-    {
-        val = ReadInt64BigEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadS64B(out long val)
+        {
+            val = ReadInt64BigEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteS64B(
-        this Span<byte> span,
-        long val)
-    {
-        WriteInt64BigEndian(span, val);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteS64B(long val)
+        {
+            WriteInt64BigEndian(span, val);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadF64L(
-        this Span<byte> span,
-        out double val)
-    {
-        val = ReadDoubleLittleEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadF64L(out double val)
+        {
+            val = ReadDoubleLittleEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteF64L(
-        this Span<byte> span,
-        double val)
-    {
-        WriteDoubleLittleEndian(span, val);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteF64L(double val)
+        {
+            WriteDoubleLittleEndian(span, val);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> ReadF64B(
-        this Span<byte> span,
-        out double val)
-    {
-        val = ReadDoubleBigEndian(span);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> ReadF64B(out double val)
+        {
+            val = ReadDoubleBigEndian(span);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> WriteF64B(
-        this Span<byte> span,
-        double val)
-    {
-        WriteDoubleBigEndian(span, val);
-        return span[8..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> WriteF64B(double val)
+        {
+            WriteDoubleBigEndian(span, val);
+            return span[8..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> Skip(
-        this Span<byte> span,
-        [NonNegativeValue] int count)
-    {
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> Skip([NonNegativeValue] int count)
+        {
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> Extract(
-        this Span<byte> span,
-        [NonNegativeValue] int count,
-        out Span<byte> val)
-    {
-        val = span[..count];
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> Extract([NonNegativeValue] int count,
+            out Span<byte> val)
+        {
+            val = span[..count];
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> TryExtract(
-        this Span<byte> span,
-        int count,
-        out Span<byte> val)
-    {
-        val = span[..Math.Min(span.Length, count)];
-        return span[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> TryExtract(int count,
+            out Span<byte> val)
+        {
+            val = span[..Math.Min(span.Length, count)];
+            return span[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> Read(
-        this Span<byte> span,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = span[..count].ToArray();
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> Read([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = span[..count].ToArray();
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> Read(
-        this Span<byte> span,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        span[..count].CopyTo(target);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> Read(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            span[..count].CopyTo(target);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> Read(
-        this Span<byte> span,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        span[..count].CopyTo(target.Span);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> Read(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            span[..count].CopyTo(target.Span);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> TryRead(
-        this Span<byte> span,
-        [NonNegativeValue] int count,
-        out byte[] val)
-    {
-        val = span[..Math.Min(span.Length, count)].ToArray();
-        return span[val.Length..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> TryRead([NonNegativeValue] int count,
+            out byte[] val)
+        {
+            val = span[..Math.Min(span.Length, count)].ToArray();
+            return span[val.Length..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> TryRead(
-        this Span<byte> span,
-        Span<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = Math.Min(span.Length, target.Length);
-        span[..count].CopyTo(target);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> TryRead(Span<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = Math.Min(span.Length, target.Length);
+            span[..count].CopyTo(target);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> TryRead(
-        this Span<byte> span,
-        Memory<byte> target,
-        [NonNegativeValue] out int count)
-    {
-        count = target.Length;
-        span[..Math.Min(span.Length, count)].CopyTo(target.Span);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> TryRead(Memory<byte> target,
+            [NonNegativeValue] out int count)
+        {
+            count = target.Length;
+            span[..Math.Min(span.Length, count)].CopyTo(target.Span);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> Write(
-        this Span<byte> span,
-        ReadOnlySpan<byte> val,
-        out int count)
-    {
-        count = val.Length;
-        val.CopyTo(span);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> Write(ReadOnlySpan<byte> val,
+            out int count)
+        {
+            count = val.Length;
+            val.CopyTo(span);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> Write(
-        this Span<byte> span,
-        ReadOnlyMemory<byte> val,
-        out int count)
-    {
-        count = val.Length;
-        val.Span.CopyTo(span);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> Write(ReadOnlyMemory<byte> val,
+            out int count)
+        {
+            count = val.Length;
+            val.Span.CopyTo(span);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> TryWrite(
-        this Span<byte> span,
-        ReadOnlyMemory<byte> val,
-        out int count)
-    {
-        count = Math.Min(span.Length, val.Length);
-        val[..count].Span.CopyTo(span);
-        return span[count..];
-    }
+        [DebuggerStepThrough]
+        public Span<byte> TryWrite(ReadOnlyMemory<byte> val,
+            out int count)
+        {
+            count = Math.Min(span.Length, val.Length);
+            val[..count].Span.CopyTo(span);
+            return span[count..];
+        }
 
-    [DebuggerStepThrough]
-    public static Span<byte> TryWrite(
-        this Span<byte> span,
-        ReadOnlySpan<byte> val,
-        out int count)
-    {
-        count = Math.Min(span.Length, val.Length);
-        val[..count].CopyTo(span);
-        return span[count..];
+        [DebuggerStepThrough]
+        public Span<byte> TryWrite(ReadOnlySpan<byte> val,
+            out int count)
+        {
+            count = Math.Min(span.Length, val.Length);
+            val[..count].CopyTo(span);
+            return span[count..];
+        }
     }
 
     #endregion
