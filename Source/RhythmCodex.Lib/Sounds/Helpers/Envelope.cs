@@ -36,6 +36,7 @@ public class Envelope
     {
         Phase = phase;
         PhaseProgress = 0;
+        Output = Phases[Phase].Y;
     }
 
     public float Process(float time)
