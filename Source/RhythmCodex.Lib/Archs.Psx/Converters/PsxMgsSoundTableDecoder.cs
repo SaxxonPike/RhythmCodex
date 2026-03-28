@@ -7,7 +7,7 @@ namespace RhythmCodex.Archs.Psx.Converters;
 
 /// <inheritdoc />
 [Service]
-public class PsxMgsSoundTableDecoder
+public sealed class PsxMgsSoundTableDecoder
     : IPsxMgsSoundTableDecoder
 {
     public List<PsxMgsSoundScript> Decode(PsxMgsSoundTableBlock block)

@@ -15,7 +15,7 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Archs.Psx.Converters;
 
 [Service]
-public class PsxMgsSoundScriptRenderer(
+public sealed class PsxMgsSoundScriptRenderer(
     IVagSplitter vagSplitter,
     IAudioDsp audioDsp)
     : IPsxMgsSoundScriptRenderer

@@ -7,7 +7,7 @@ namespace RhythmCodex.Archs.Psx.Streamers;
 
 /// <inheritdoc />
 [Service]
-public class PsxMgsSoundBankBlockReader : IPsxMgsSoundBankBlockReader
+public sealed class PsxMgsSoundBankBlockReader : IPsxMgsSoundBankBlockReader
 {
     /// <inheritdoc />
     public PsxMgsSoundBankBlock Read(Stream stream)

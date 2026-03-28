@@ -10,7 +10,7 @@ namespace RhythmCodex.Archs.Psx.Converters;
 
 /// <inheritdoc />
 [Service]
-public class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
+public sealed class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
     : IPsxMgsSoundBankDecoder
 {
     /// <inheritdoc />
