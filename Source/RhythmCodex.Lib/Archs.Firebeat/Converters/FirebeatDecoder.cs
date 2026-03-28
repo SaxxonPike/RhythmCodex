@@ -10,7 +10,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Archs.Firebeat.Converters;
 
 [Service]
-public class FirebeatDecoder(
+public sealed class FirebeatDecoder(
     IFirebeatChartDecoder chartDecoder,
     IFirebeatSoundDecoder soundDecoder,
     IFirebeatSampleDecoder sampleDecoder)

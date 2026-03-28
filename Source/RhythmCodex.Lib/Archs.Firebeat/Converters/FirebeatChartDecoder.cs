@@ -9,7 +9,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Archs.Firebeat.Converters;
 
 [Service]
-public class FirebeatChartDecoder : IFirebeatChartDecoder
+public sealed class FirebeatChartDecoder : IFirebeatChartDecoder
 {
     public Chart Decode(IEnumerable<FirebeatChartEvent> events)
     {

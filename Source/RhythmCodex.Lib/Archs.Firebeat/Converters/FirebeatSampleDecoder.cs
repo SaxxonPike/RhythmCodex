@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Firebeat.Converters;
 
 [Service]
-public class FirebeatSampleDecoder : IFirebeatSampleDecoder
+public sealed class FirebeatSampleDecoder : IFirebeatSampleDecoder
 {
     public Dictionary<int, FirebeatSample> Decode(
         ReadOnlySpan<byte> data,

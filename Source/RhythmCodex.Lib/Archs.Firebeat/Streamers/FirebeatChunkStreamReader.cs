@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Firebeat.Streamers;
 
 [Service]
-public class FirebeatChunkStreamReader : IFirebeatChunkStreamReader
+public sealed class FirebeatChunkStreamReader : IFirebeatChunkStreamReader
 {
     public const int ChunkSize = 0x2000000;
 

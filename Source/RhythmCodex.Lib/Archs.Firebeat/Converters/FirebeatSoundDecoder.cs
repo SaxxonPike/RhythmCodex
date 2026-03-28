@@ -12,7 +12,7 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Archs.Firebeat.Converters;
 
 [Service]
-public class FirebeatSoundDecoder(
+public sealed class FirebeatSoundDecoder(
     IBeatmaniaDspTranslator beatmaniaDspTranslator)
     : IFirebeatSoundDecoder
 {
