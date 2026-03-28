@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDescriptionHeuristic)
+public sealed class DjmainChunkStreamReader(IDjmainHddDescriptionHeuristic djmainHddDescriptionHeuristic)
     : IDjmainChunkStreamReader
 {
     public IEnumerable<DjmainChunk> Read(Stream stream)

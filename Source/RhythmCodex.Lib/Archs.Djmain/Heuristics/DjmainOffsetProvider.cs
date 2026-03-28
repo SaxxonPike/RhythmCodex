@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Heuristics;
 
 [Service]
-public class DjmainOffsetProvider : IDjmainOffsetProvider
+public sealed class DjmainOffsetProvider : IDjmainOffsetProvider
 {
     public List<int> GetSampleChartMap(DjmainChunkFormat format)
     {

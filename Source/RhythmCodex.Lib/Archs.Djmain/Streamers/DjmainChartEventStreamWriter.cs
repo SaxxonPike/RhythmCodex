@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainChartEventStreamWriter : IDjmainChartEventStreamWriter
+public sealed class DjmainChartEventStreamWriter : IDjmainChartEventStreamWriter
 {
     public int Write(Stream stream, IEnumerable<DjmainChartEvent> events)
     {

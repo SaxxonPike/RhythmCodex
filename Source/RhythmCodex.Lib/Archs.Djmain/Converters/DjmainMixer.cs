@@ -12,7 +12,7 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 /// Acts as a mixer for sounds extracted from a Djmain system.
 /// </summary>
 [Service]
-public class DjmainMixer : StereoMixer, IDjmainMixer
+public sealed class DjmainMixer : StereoMixer, IDjmainMixer
 {
     /// <summary>
     /// Returns unity gain. All mixing is done per sound in <see cref="GetSampleMix"/>.

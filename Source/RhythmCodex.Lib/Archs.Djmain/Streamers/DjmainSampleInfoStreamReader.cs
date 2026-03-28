@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
+public sealed class DjmainSampleInfoStreamReader : IDjmainSampleInfoStreamReader
 {
     public Dictionary<int, DjmainSampleInfo> Read(Stream stream, int maxSize)
     {

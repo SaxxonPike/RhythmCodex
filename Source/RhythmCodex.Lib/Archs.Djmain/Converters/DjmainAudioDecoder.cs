@@ -7,7 +7,7 @@ namespace RhythmCodex.Archs.Djmain.Converters;
 
 /// <inheritdoc />
 [Service]
-public class DjmainAudioDecoder : IDjmainAudioDecoder
+public sealed class DjmainAudioDecoder : IDjmainAudioDecoder
 {
     /// <summary>
     /// Delta values for 4-bit DPCM mode.

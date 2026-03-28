@@ -7,7 +7,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainChartMetadataDecoder : IDjmainChartMetadataDecoder
+public sealed class DjmainChartMetadataDecoder : IDjmainChartMetadataDecoder
 {
     public void AddMetadata(Chart chart, DjmainChunkFormat format, int index)
     {

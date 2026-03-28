@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainSampleDecoder(
+public sealed class DjmainSampleDecoder(
     IDjmainAudioStreamReader djmainAudioStreamReader)
     : IDjmainSampleDecoder
 {

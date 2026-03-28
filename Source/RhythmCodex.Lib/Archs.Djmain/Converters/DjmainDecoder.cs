@@ -18,7 +18,7 @@ using RhythmCodex.Streamers;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainDecoder(
+public sealed class DjmainDecoder(
     IDjmainChartDecoder chartDecoder,
     IDjmainChartEventStreamReader chartEventStreamReader,
     IDjmainOffsetProvider offsetProvider,

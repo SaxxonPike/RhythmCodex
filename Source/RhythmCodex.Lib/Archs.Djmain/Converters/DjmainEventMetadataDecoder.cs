@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
+public sealed class DjmainEventMetadataDecoder : IDjmainEventMetadataDecoder
 {
     private void SetSourceCommandAndData(Event ev, int param0, int param1)
     {

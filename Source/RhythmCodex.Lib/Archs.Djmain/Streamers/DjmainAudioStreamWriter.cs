@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainAudioStreamWriter : IDjmainAudioStreamWriter
+public sealed class DjmainAudioStreamWriter : IDjmainAudioStreamWriter
 {
     public void WriteDpcm(Stream stream, ReadOnlySpan<byte> data)
     {

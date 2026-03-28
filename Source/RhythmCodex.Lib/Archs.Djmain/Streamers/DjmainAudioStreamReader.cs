@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainAudioStreamReader : IDjmainAudioStreamReader
+public sealed class DjmainAudioStreamReader : IDjmainAudioStreamReader
 {
     public Memory<byte> ReadDpcm(Stream stream)
     {

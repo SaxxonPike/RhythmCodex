@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainChartEventStreamReader : IDjmainChartEventStreamReader
+public sealed class DjmainChartEventStreamReader : IDjmainChartEventStreamReader
 {
     private const int MaxEventCount = 0x1000;
 

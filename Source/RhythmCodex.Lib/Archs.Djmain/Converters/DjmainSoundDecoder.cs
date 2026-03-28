@@ -10,7 +10,7 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainSoundDecoder(
+public sealed class DjmainSoundDecoder(
     IDjmainAudioDecoder djmainAudioDecoder, 
     IBeatmaniaDspTranslator beatmaniaDspTranslator,
     IDjmainMixer djmainMixer

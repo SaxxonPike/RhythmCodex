@@ -10,7 +10,8 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataDecoder) : IDjmainChartDecoder
+public sealed class DjmainChartDecoder(IDjmainEventMetadataDecoder djmainEventMetadataDecoder)
+    : IDjmainChartDecoder
 {
     public Chart Decode(IEnumerable<DjmainChartEvent> events, DjmainDecodeOptions options)
     {

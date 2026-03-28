@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Heuristics;
 
 [Service]
-public class DjmainHddDescriptionHeuristic : IDjmainHddDescriptionHeuristic
+public sealed class DjmainHddDescriptionHeuristic : IDjmainHddDescriptionHeuristic
 {
     public DjmainHddDescription Get(byte[] chunk) =>
         Get(chunk.AsSpan());

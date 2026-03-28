@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Converters;
 
 [Service]
-public class DjmainUsedSampleFilter(IDjmainChartDecoder chartDecoder)
+public sealed class DjmainUsedSampleFilter(IDjmainChartDecoder chartDecoder)
     : IDjmainUsedSampleFilter
 {
     public Dictionary<int, DjmainSampleInfo> Filter(IDictionary<int, DjmainSampleInfo> samples,

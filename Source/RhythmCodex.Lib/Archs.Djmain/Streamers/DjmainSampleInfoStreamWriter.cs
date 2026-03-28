@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Djmain.Streamers;
 
 [Service]
-public class DjmainSampleInfoStreamWriter
+public sealed class DjmainSampleInfoStreamWriter
     : IDjmainSampleInfoStreamWriter
 {
     public void Write(Stream stream, IEnumerable<KeyValuePair<int, DjmainSampleInfo>> definitions, int size)
