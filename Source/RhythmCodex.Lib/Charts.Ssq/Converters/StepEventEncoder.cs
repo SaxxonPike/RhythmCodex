@@ -7,63 +7,62 @@ using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 
-namespace RhythmCodex.Charts.Ssq.Converters
+namespace RhythmCodex.Charts.Ssq.Converters;
+
+[Service]
+public class StepEventEncoder : IStepEventEncoder
 {
-    [Service]
-    public class StepEventEncoder : IStepEventEncoder
+    public IList<Step> Encode(IEnumerable<Event> events, IPanelMapper panelMapper)
     {
-        public IList<Step> Encode(IEnumerable<Event> events, IPanelMapper panelMapper)
-        {
-            var eventList = events
-                .Where(ev => ev[FlagData.Note] == true)
-                .GroupBy(ev => ev[NumericData.MetricOffset])
-                .OrderBy(g => g.Key).ToList();
+        var eventList = events
+            .Where(ev => ev[FlagData.Note] == true)
+            .GroupBy(ev => ev[NumericData.MetricOffset])
+            .OrderBy(g => g.Key).ToList();
 
-            return eventList
-                .SelectMany(g =>
+        return eventList
+            .SelectMany(g =>
+            {
+                var steps = new List<Step>();
+                var panelValue = 0;
+
+                foreach (var panel in g)
                 {
-                    var steps = new List<Step>();
-                    var panelValue = 0;
-
-                    foreach (var panel in g)
+                    var outPanel = panelMapper.Map(new PanelMapping
                     {
-                        var outPanel = panelMapper.Map(new PanelMapping
-                        {
-                            Panel = (int) (panel[NumericData.Column] ?? BigRational.Zero),
-                            Player = (int) (panel[NumericData.Player] ?? BigRational.Zero)
-                        });
+                        Panel = (int) (panel[NumericData.Column] ?? BigRational.Zero),
+                        Player = (int) (panel[NumericData.Player] ?? BigRational.Zero)
+                    });
 
-                        if (outPanel == null)
-                            continue;
+                    if (outPanel == null)
+                        continue;
 
-                        if (panel[FlagData.Freeze] == true)
-                        {
-                            steps.Add(new Step
-                            {
-                                MetricOffset = (int) (g.Key * SsqConstants.MeasureLength),
-                                Panels = 0x00,
-                                ExtraPanels = unchecked((byte) outPanel.Value),
-                                ExtraPanelInfo = 0x01
-                            });
-                            continue;
-                        }
-
-                        panelValue |= 1 << outPanel.Value;
-                    }
-
-                    if (panelValue != 0)
+                    if (panel[FlagData.Freeze] == true)
                     {
                         steps.Add(new Step
                         {
-                            MetricOffset = (int)(g.Key * SsqConstants.MeasureLength),
-                            Panels = unchecked((byte) panelValue),
-                            ExtraPanels = null,
-                            ExtraPanelInfo = null
+                            MetricOffset = (int) (g.Key * SsqConstants.MeasureLength),
+                            Panels = 0x00,
+                            ExtraPanels = unchecked((byte) outPanel.Value),
+                            ExtraPanelInfo = 0x01
                         });
+                        continue;
                     }
 
-                    return steps;
-                }).ToList();
-        }
+                    panelValue |= 1 << outPanel.Value;
+                }
+
+                if (panelValue != 0)
+                {
+                    steps.Add(new Step
+                    {
+                        MetricOffset = (int)(g.Key * SsqConstants.MeasureLength),
+                        Panels = unchecked((byte) panelValue),
+                        ExtraPanels = null,
+                        ExtraPanelInfo = null
+                    });
+                }
+
+                return steps;
+            }).ToList();
     }
 }

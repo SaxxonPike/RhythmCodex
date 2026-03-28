@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Charts.Ssq.Model;
 
-namespace RhythmCodex.Charts.Ssq.Converters
+namespace RhythmCodex.Charts.Ssq.Converters;
+
+public interface ITriggerEventEncoder
 {
-    public interface ITriggerEventEncoder
-    {
-        IList<Trigger> Encode(IEnumerable<Event> events);
-    }
+    IList<Trigger> Encode(IEnumerable<Event> events);
 }

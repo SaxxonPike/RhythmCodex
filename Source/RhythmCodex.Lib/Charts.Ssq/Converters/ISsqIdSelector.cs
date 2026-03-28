@@ -1,10 +1,9 @@
 using RhythmCodex.Charts.Models;
 
-namespace RhythmCodex.Charts.Ssq.Converters
+namespace RhythmCodex.Charts.Ssq.Converters;
+
+public interface ISsqIdSelector
 {
-    public interface ISsqIdSelector
-    {
-        int? SelectDifficulty(Chart metadata);
-        int? SelectType(Chart metadata);
-    }
+    int? SelectDifficulty(Chart metadata);
+    int? SelectType(Chart metadata);
 }

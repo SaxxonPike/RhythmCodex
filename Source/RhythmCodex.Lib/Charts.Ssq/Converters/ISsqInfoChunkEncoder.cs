@@ -1,9 +1,8 @@
 using RhythmCodex.Charts.Ssq.Model;
 
-namespace RhythmCodex.Charts.Ssq.Converters
+namespace RhythmCodex.Charts.Ssq.Converters;
+
+public interface ISsqInfoChunkEncoder
 {
-    public interface ISsqInfoChunkEncoder
-    {
-        SsqChunk Encode(SsqInfoChunk infoChunk);
-    }
+    SsqChunk Encode(SsqInfoChunk infoChunk);
 }
