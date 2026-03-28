@@ -5,7 +5,7 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Sounds.Vag.Converters;
 
 [Service]
-public class VagDecrypter : IVagDecrypter
+public sealed class VagDecrypter : IVagDecrypter
 {
     public int Decrypt(ReadOnlySpan<byte> input, Span<float> output, int length, VagState state)
     {

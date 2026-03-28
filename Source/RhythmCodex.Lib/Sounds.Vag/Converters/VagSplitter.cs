@@ -9,7 +9,7 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Sounds.Vag.Converters;
 
 [Service]
-public class VagSplitter(IVagDecrypter vagDecrypter)
+public sealed class VagSplitter(IVagDecrypter vagDecrypter)
     : IVagSplitter
 {
     public List<Sample> Split(VagChunk? chunk)

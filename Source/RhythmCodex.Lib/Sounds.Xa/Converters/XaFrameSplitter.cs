@@ -7,26 +7,26 @@ namespace RhythmCodex.Sounds.Xa.Converters;
 [Service]
 public class XaFrameSplitter : IXaFrameSplitter
 {
-    public int GetStatus(ReadOnlySpan<byte> frame, int channel) => 
+    public int GetStatus(ReadOnlySpan<byte> frame, int channel) =>
         frame[(channel & 7) + 4];
 
     public void Get4BitData(ReadOnlySpan<byte> frame, Span<byte> buffer, int channel)
     {
         if (buffer.Length != 28)
             throw new RhythmCodexException("Buffer must have a length of 28.");
-            
+
         var channelOffset = 0x10 + ((channel & 7) >> 1);
         var dataShift = (channel & 1) << 2;
 
         for (var i = 0; i < 28; i++)
             buffer[i] = unchecked((byte)((frame[channelOffset + (i << 2)] >> dataShift) & 0xF));
     }
-        
+
     public void Get8BitData(ReadOnlySpan<byte> frame, Span<byte> buffer, int channel)
     {
         if (buffer.Length != 28)
             throw new RhythmCodexException("Buffer must have a length of 28.");
-            
+
         var channelOffset = 0x10 + (channel & 3);
 
         for (var i = 0; i < 28; i++)

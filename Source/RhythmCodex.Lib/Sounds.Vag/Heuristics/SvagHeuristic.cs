@@ -9,7 +9,8 @@ using RhythmCodex.Sounds.Vag.Streamers;
 namespace RhythmCodex.Sounds.Vag.Heuristics;
 
 [Service]
-public class SvagHeuristic(IVagStreamReader vagStreamReader) : IReadableHeuristic<SvagContainer>
+public sealed class SvagHeuristic(IVagStreamReader vagStreamReader)
+    : IReadableHeuristic<SvagContainer>
 {
     public SvagContainer? Read(HeuristicResult result, Stream stream)
     {

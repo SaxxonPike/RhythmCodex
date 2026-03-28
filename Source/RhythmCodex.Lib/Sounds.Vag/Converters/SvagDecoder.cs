@@ -7,7 +7,7 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Sounds.Vag.Converters;
 
 [Service]
-public class SvagDecoder(IVagDecoder vagDecoder) : ISvagDecoder
+public sealed class SvagDecoder(IVagDecoder vagDecoder) : ISvagDecoder
 {
     public Sound Decode(SvagContainer container)
     {

@@ -20,7 +20,6 @@ public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
     {
         var sounds = new List<Sound?>();
         Span<float> buffer = stackalloc float[28];
-        //const int channels = 2;
         var channels = chunk.Channels;
 
         var states = Enumerable.Range(0, channels).Select(_ => new XaState()).ToList();

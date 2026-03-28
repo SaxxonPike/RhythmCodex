@@ -5,7 +5,7 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Sounds.Vag.Converters;
 
 [Service]
-public class VagDecoder(IVagSplitter vagSplitter) : IVagDecoder
+public sealed class VagDecoder(IVagSplitter vagSplitter) : IVagDecoder
 {
     public Sound Decode(VagChunk chunk)
     {
