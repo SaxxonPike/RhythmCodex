@@ -187,7 +187,7 @@ public class PsxMgsSoundScriptRenderer(
                     // so the changes will be instantaneous for now.
                     //
 
-                    resolutionMs = MathF.Max(1f, packet.Data3) * 10.4f / 255f;
+                    resolutionMs = MathF.Max(1f, packet.Data2) * 10.4f / 255f;
                     continue;
                 }
                 case PsxMgsSoundTablePacketType.SetSoundBankIndex:
