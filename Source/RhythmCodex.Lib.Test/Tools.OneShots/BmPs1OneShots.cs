@@ -30,46 +30,49 @@ namespace RhythmCodex.Tools.OneShots;
 
 public class BmPs1OneShots : BaseIntegrationFixture
 {
+    public const string ImageBasePath = "/Volumes/RidgeportHDD/User Data/Bemani/Playstation";
+        
     /// <summary>
     /// Renders a BMS set from each song on a PS1 beatmania disc.
     /// </summary>
     [Test]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-eu.cue", "ps1-bm-eu")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-jp-disc1.cue", "ps1-bm-jp-disc1")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm-jp-disc2.cue", "ps1-bm-jp-disc2")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm3rd.cue", "ps1-bm3rd")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm3rd-mini.cue", "ps1-bm3rd-mini")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm4th.cue", "ps1-bm4th")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm5th.cue", "ps1-bm5th")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bm6th.cue", "ps1-bm6th")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmbest.cue", "ps1-bmbest")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmclub.cue", "ps1-bmclub")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmdct.cue", "ps1-bmdct")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta.cue", "ps1-bmgotta")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmgotta2.cue", "ps1-bmgotta2")]
-    [TestCase("/Volumes/RidgeportHDD/User Data/Bemani/Playstation/bmsot.cue", "ps1-bmsot")]
+    [TestCase("bm-eu.cue", "ps1-bm-eu")]
+    [TestCase("bm-jp-disc1.cue", "ps1-bm-jp-disc1")]
+    [TestCase("bm-jp-disc2.cue", "ps1-bm-jp-disc2")]
+    [TestCase("bm3rd.cue", "ps1-bm3rd")]
+    [TestCase("bm3rd-mini.cue", "ps1-bm3rd-mini")]
+    [TestCase("bm4th.cue", "ps1-bm4th")]
+    [TestCase("bm5th.cue", "ps1-bm5th")]
+    [TestCase("bm6th.cue", "ps1-bm6th")]
+    [TestCase("bmbest.cue", "ps1-bmbest")]
+    [TestCase("bmclub.cue", "ps1-bmclub")]
+    [TestCase("bmdct.cue", "ps1-bmdct")]
+    [TestCase("bmgotta.cue", "ps1-bmgotta")]
+    [TestCase("bmgotta2.cue", "ps1-bmgotta2")]
+    [TestCase("bmsot.cue", "ps1-bmsot")]
     [Explicit]
     public void ExtractBms(string source, string target)
     {
         const bool extractKeysounds = true;
-        const bool extractCharts = false;
+        const bool extractCharts = true;
         const bool extractRawBlock = false;
-        const bool extractBgm = false;
+        const bool extractBgm = true;
         const bool writeLogs = true;
         const float keyVolume = 1f;
         const float xaVolume = 0.75f;
 
         var audioDsp = Resolve<IAudioDsp>();
-        
+
         //
         // Load in the CUE/BIN files.
         //
 
-        using var cueStream = File.OpenRead(source);
+        var sourcePath = Path.Combine(ImageBasePath, source);
+        using var cueStream = File.OpenRead(sourcePath);
         var cueReader = Resolve<ICueStreamReader>();
         var cue = cueReader.ReadCue(cueStream);
 
-        var cueFolder = Path.GetDirectoryName(source);
+        var cueFolder = Path.GetDirectoryName(sourcePath);
         var track = cue.Tracks.Single();
         track.FileType.ShouldBe("BINARY");
 
@@ -95,7 +98,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
             "ES" => DjmainChartTiming.HomePal,
             _ => DjmainChartTiming.HomeNtsc,
         };
-        
+
         //
         // Determine where BMDATA.PAK is located on the disc and load it.
         //
@@ -115,152 +118,157 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
         foreach (var songGroup in bmDataGroups)
         {
-            var groupPath = Path.Combine(target, $"{songGroup.Index:d4}");
-
-            //
-            // Convert keysound folders.
-            //
-
-            var soundBankBlocks = songGroup.Files
-                .Where(x => x.Type == PsxBeatmaniaFileType.Keysound)
-                .Select((x, i) => (
-                    Index: i,
-                    Bank: psxMgsSoundBankBlockReader.Read(new ReadOnlyMemoryStream(x.Data))
-                ))
-                .ToList();
-
-            var soundTableMap = songGroup.Files
-                .Where(x => x.Type == PsxBeatmaniaFileType.Kst)
-                .Select((x, i) => (
-                    Index: i,
-                    Map: x.Index,
-                    Table: psxMgsSoundTableBlockReader.Read(new ReadOnlyMemoryStream(x.Data)),
-                    soundBankBlocks[i % soundBankBlocks.Count].Bank
-                ))
-                .ToList();
-
-            var bmDataKeysoundSets = soundTableMap
-                .Select(f =>
-                {
-                    var decodedSounds = mgsDecoder.DecodeSounds(f.Bank, f.Table, 44100);
-                    var sounds = decodedSounds.Select(s => s.Sound).ToList();
-                    var soundLog = decodedSounds.ToDictionary(
-                        s => s.Index,
-                        s => s.Packets
-                            .ToDictionary(
-                                pl => pl.Key,
-                                pl => pl.Value
-                                    .Select(p => $"{p.Data1:X2}{p.Data2:X2}{p.Data3:X2}{p.Data4:X2} " +
-                                                 $"({p.Data1:d3},{p.Data2:d3},{p.Data3:d3},{p.Data4:d3}) " +
-                                                 $"[{(p.Data1 >= 0x80 ? p.Command.ToString() : $"NoteOn({p.Data1})")}]")
-                                    .ToList())
-                    );
-
-                    foreach (var sound in sounds)
-                        sound[NumericData.SampleMap] = f.Index;
-
-                    return (
-                        f.Index,
-                        f.Map,
-                        Sounds: sounds,
-                        Log: soundLog
-                    );
-                })
-                .Where(s => s.Sounds.Count > 0)
-                .ToList();
-
-            //
-            // Convert charts.
-            //
-
-            var sampleMaps = bmDataKeysoundSets
-                .SelectMany(s => s.Sounds)
-                .Select(s => (int?)s[NumericData.SampleMap] ?? 0)
-                .ToHashSet();
-
-            sampleMaps.Add(0);
-
-            var chartFiles = songGroup.Files
-                .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
-                .ToList();
-
-            var chartsPerSampleMap = chartFiles.Count / sampleMaps.Count;
-
-            var bmDataCharts = chartFiles
-                .Select((f, i) =>
-                {
-                    using var chartStream = new ReadOnlyMemoryStream(f.Data);
-                    var chart = psxBeatmaniaDecoder.DecodeChart(chartStream, new DjmainDecodeOptions
-                    {
-                        ChartTiming = regionTiming
-                    });
-                    chart[NumericData.Id] = i;
-                    chart[NumericData.SourceIndex] = f.Index;
-                    chart[StringData.Title] = $"{f.Index:d4}";
-
-                    var players = chart.Events
-                        .Select(e => (int?)e[NumericData.Player] ?? 0)
-                        .ToHashSet();
-
-                    players.Add(0);
-
-                    var chartSampleMap = players.Max() / chartsPerSampleMap;
-
-                    // Start of BGM is not explicitly included in the chart file,
-                    // so it is added here.
-
-                    chart.Events.Add(new Event
-                    {
-                        [NumericData.LinearOffset] = BigRational.Zero,
-                        [NumericData.MetricOffset] = BigRational.Zero,
-                        [NumericData.PlaySound] = 1
-                    });
-
-                    chart[NumericData.SampleMap] = chartSampleMap;
-
-                    return chart;
-                })
-                .ToList();
-
-            //
-            // Export the set and generate logs.
-            //
-
-            var writeSetConfig = new TestHelper.WriteSetConfig
+            RunAsync(() =>
             {
-                OutPath = groupPath,
-                Charts = bmDataCharts.ToList(),
-                ChartSetId = songGroup.Index,
-                Sounds = bmDataKeysoundSets.SelectMany(s => s.Sounds).ToList(),
-                ChartType = BmsChartType.Beatmania,
-                WriteCharts = extractCharts,
-                WriteSounds = extractKeysounds,
-                RemoveMissingSounds = false,
-                DeduplicateSounds = false,
-                KeysoundVolume = keyVolume
-            };
+                var groupPath = Path.Combine(target, $"{songGroup.Index:d4}");
 
-            var writeSetResult = this.WriteSet(writeSetConfig);
+                //
+                // Convert keysound folders.
+                //
 
-            if (writeLogs)
-            {
-                var keysoundLogSettings = new JsonSerializerOptions
+                var soundBankBlocks = songGroup.Files
+                    .Where(x => x.Type == PsxBeatmaniaFileType.Keysound)
+                    .Select((x, i) => (
+                        Index: i,
+                        Bank: psxMgsSoundBankBlockReader.Read(new ReadOnlyMemoryStream(x.Data))
+                    ))
+                    .ToList();
+
+                var soundTableMap = songGroup.Files
+                    .Where(x => x.Type == PsxBeatmaniaFileType.Kst)
+                    .Select((x, i) => (
+                        Index: i,
+                        Map: x.Index,
+                        Table: psxMgsSoundTableBlockReader.Read(new ReadOnlyMemoryStream(x.Data)),
+                        soundBankBlocks[i % soundBankBlocks.Count].Bank
+                    ))
+                    .ToList();
+
+                var bmDataKeysoundSets = soundTableMap
+                    .Select(f =>
+                    {
+                        var decodedSounds = mgsDecoder.DecodeSounds(f.Bank, f.Table, 44100);
+                        var sounds = decodedSounds.Select(s => s.Sound).ToList();
+                        var soundLog = decodedSounds.ToDictionary(
+                            s => s.Index,
+                            s => s.Packets
+                                .ToDictionary(
+                                    pl => pl.Key,
+                                    pl => pl.Value
+                                        .Select(p => $"{p.Data1:X2}{p.Data2:X2}{p.Data3:X2}{p.Data4:X2} " +
+                                                     $"({p.Data1:d3},{p.Data2:d3},{p.Data3:d3},{p.Data4:d3}) " +
+                                                     $"[{(p.Data1 >= 0x80 ? p.Command.ToString() : $"NoteOn({p.Data1})")}]")
+                                        .ToList())
+                        );
+
+                        foreach (var sound in sounds)
+                            sound[NumericData.SampleMap] = f.Index;
+
+                        return (
+                            f.Index,
+                            f.Map,
+                            Sounds: sounds,
+                            Log: soundLog
+                        );
+                    })
+                    .Where(s => s.Sounds.Count > 0)
+                    .ToList();
+
+                //
+                // Convert charts.
+                //
+
+                var sampleMaps = bmDataKeysoundSets
+                    .SelectMany(s => s.Sounds)
+                    .Select(s => (int?)s[NumericData.SampleMap] ?? 0)
+                    .ToHashSet();
+
+                sampleMaps.Add(0);
+
+                var chartFiles = songGroup.Files
+                    .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
+                    .ToList();
+
+                var chartsPerSampleMap = chartFiles.Count / sampleMaps.Count;
+
+                var bmDataCharts = chartFiles
+                    .Select((f, i) =>
+                    {
+                        using var chartStream = new ReadOnlyMemoryStream(f.Data);
+                        var chart = psxBeatmaniaDecoder.DecodeChart(chartStream, new DjmainDecodeOptions
+                        {
+                            ChartTiming = regionTiming
+                        });
+                        chart[NumericData.Id] = i;
+                        chart[NumericData.SourceIndex] = f.Index;
+                        chart[StringData.Title] = $"{f.Index:d4}";
+
+                        var players = chart.Events
+                            .Select(e => (int?)e[NumericData.Player] ?? 0)
+                            .ToHashSet();
+
+                        players.Add(0);
+
+                        var chartSampleMap = players.Max() / chartsPerSampleMap;
+
+                        // Start of BGM is not explicitly included in the chart file,
+                        // so it is added here.
+
+                        chart.Events.Add(new Event
+                        {
+                            [NumericData.LinearOffset] = BigRational.Zero,
+                            [NumericData.MetricOffset] = BigRational.Zero,
+                            [NumericData.PlaySound] = 1
+                        });
+
+                        chart[NumericData.SampleMap] = chartSampleMap;
+
+                        return chart;
+                    })
+                    .ToList();
+
+                //
+                // Export the set and generate logs.
+                //
+
+                var writeSetConfig = new TestHelper.WriteSetConfig
                 {
-                    WriteIndented = true,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                    OutPath = groupPath,
+                    Charts = bmDataCharts.ToList(),
+                    ChartSetId = songGroup.Index,
+                    Sounds = bmDataKeysoundSets.SelectMany(s => s.Sounds).ToList(),
+                    ChartType = BmsChartType.Beatmania,
+                    WriteCharts = extractCharts,
+                    WriteSounds = extractKeysounds,
+                    RemoveMissingSounds = false,
+                    DeduplicateSounds = false,
+                    KeysoundVolume = keyVolume
                 };
 
-                foreach (var bmDataKeysoundSet in bmDataKeysoundSets)
+                var writeSetResult = this.WriteSet(writeSetConfig);
+
+                if (writeLogs)
                 {
-                    var soundLogJson = JsonSerializer.Serialize(bmDataKeysoundSet.Log, keysoundLogSettings);
-                    this.WriteText(soundLogJson,
-                        Path.Combine(groupPath, $"{bmDataKeysoundSet.Map:d4}{bmDataKeysoundSet.Index:d2}.log"));
+                    var keysoundLogSettings = new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                    };
+
+                    foreach (var bmDataKeysoundSet in bmDataKeysoundSets)
+                    {
+                        var soundLogJson = JsonSerializer.Serialize(bmDataKeysoundSet.Log, keysoundLogSettings);
+                        this.WriteText(soundLogJson,
+                            Path.Combine(groupPath, $"{bmDataKeysoundSet.Map:d4}{bmDataKeysoundSet.Index:d2}.log"));
+                    }
+
+                    var remappedSamplesJson =
+                        JsonSerializer.Serialize(writeSetResult.RemappedSamples, keysoundLogSettings);
+
+                    if (remappedSamplesJson.Length > 2)
+                        this.WriteText(remappedSamplesJson, Path.Combine(groupPath, "remapped.log"));
                 }
-                
-                var remappedSamplesJson = JsonSerializer.Serialize(writeSetResult.RemappedSamples, keysoundLogSettings);
-                if (remappedSamplesJson.Length > 2)
-                    this.WriteText(remappedSamplesJson, Path.Combine(groupPath, $"remapped.log"));
-            }
+            });
         }
 
         if (extractRawBlock)
@@ -333,30 +341,33 @@ public class BmPs1OneShots : BaseIntegrationFixture
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
 
-            var index = 0;
-
             foreach (var xa in xaChunks)
             {
-                var decoded = decoder.Decode(xa);
-
-                foreach (var sound in decoded)
+                RunAsync(() =>
                 {
-                    sound![NumericData.Rate] = xa.Rate;
-                    sound[NumericData.Volume] = xaVolume;
+                    var decoded = decoder.Decode(xa);
 
-                    var dspProcessed = audioDsp.ApplyEffects(sound);
-                    var encoded = encoder.Encode(dspProcessed);
+                    foreach (var sound in decoded)
+                    {
+                        sound![NumericData.Rate] = xa.Rate;
+                        sound[NumericData.Volume] = xaVolume;
+                        sound.Skip(756);
 
-                    if (!Directory.Exists(outfolder))
-                        Directory.CreateDirectory(outfolder);
+                        var dspProcessed = audioDsp.ApplyEffects(sound);
+                        var encoded = encoder.Encode(dspProcessed);
 
-                    using var outStream = new MemoryStream();
-                    writer.Write(outStream, encoded);
-                    outStream.Flush();
-                    File.WriteAllBytes(Path.Combine(outfolder, $"XA{xa.SourceSector:d6}.wav"),
-                        outStream.ToArray());
-                    index++;
-                }
+                        sound.TrimSilence(trimStart: false);
+
+                        if (!Directory.Exists(outfolder))
+                            Directory.CreateDirectory(outfolder);
+
+                        using var outStream = new MemoryStream();
+                        writer.Write(outStream, encoded);
+                        outStream.Flush();
+                        File.WriteAllBytes(Path.Combine(outfolder, $"XA{xa.SourceSector:d6}.wav"),
+                            outStream.ToArray());
+                    }
+                });
             }
         }
     }

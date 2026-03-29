@@ -97,12 +97,12 @@ public class Sound : Metadata
     {
         var hc = new HashCode();
 
-        if (this[NumericData.SourceVolume] is {} sourceVol)
+        if (this[NumericData.SourceVolume] is { } sourceVol)
             hc.Add(sourceVol);
         else
             hc.Add(BigRational.One);
 
-        if (this[NumericData.SourcePanning] is {} sourcePan)
+        if (this[NumericData.SourcePanning] is { } sourcePan)
             hc.Add(sourcePan);
         else
             hc.Add(BigRational.OneHalf);
@@ -117,7 +117,7 @@ public class Sound : Metadata
     {
         var hc = new HashCode();
 
-        foreach (var sample in Samples) 
+        foreach (var sample in Samples)
             hc.AddBytes(MemoryMarshal.Cast<float, byte>(sample.Data.Span));
 
         return hc.ToHashCode();
@@ -138,6 +138,46 @@ public class Sound : Metadata
         while (Samples.Count < 2)
         {
             Samples.Add(Samples[0].Clone());
+        }
+    }
+
+    /// <summary>
+    /// Remove a number of audio samples from the start of the sound.
+    /// </summary>
+    /// <param name="count">
+    /// Number of audio samples to trim.
+    /// </param>
+    public void Skip(int count)
+    {
+        foreach (var sample in Samples)
+        {
+            sample.Data = sample.Data.Length >= count
+                ? sample.Data[count..]
+                : ReadOnlyMemory<float>.Empty;
+        }
+    }
+
+    /// <summary>
+    /// Remove zero value audio samples from the start and/or end of the sound.
+    /// </summary>
+    public void TrimSilence(bool trimStart = true, bool trimEnd = true)
+    {
+        foreach (var sample in Samples)
+        {
+            if (trimStart)
+            {
+                var newStart = sample.Data.Span.IndexOfAnyExcept(0f);
+                sample.Data = newStart < 0
+                    ? ReadOnlyMemory<float>.Empty
+                    : sample.Data[newStart..];
+            }
+
+            if (trimEnd)
+            {
+                var newEnd = sample.Data.Span.LastIndexOfAnyExcept(0f);
+                if (newEnd >= 0 && newEnd < sample.Data.Length - 1)
+                    sample.Data = sample.Data[(newEnd + 1)..];
+            }
         }
     }
 }
