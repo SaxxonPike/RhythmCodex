@@ -10,8 +10,6 @@ namespace RhythmCodex.FileSystems.Iso.Converters;
 [Service]
 public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
 {
-    private static readonly byte[] StandardIdentifier = [0x43, 0x44, 0x30, 0x30, 0x31];
-
     public List<IsoSectorInfo> Find(IEnumerable<IsoSectorInfo> sectors)
     {
         return FindInternal(sectors).ToList();
@@ -23,7 +21,7 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
         var mode1Sectors = sectors.Where(s => s.Mode == 1 ||
                                               s is { Mode: 2, Form: 1 }).ToList();
         var currentMinute = 0;
-        var currentSecond = 2;
+        var currentSecond = 0;
         var currentFrame = 16;
 
         while (true)
@@ -31,14 +29,18 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
             var descriptorSector = mode1Sectors.SingleOrDefault(s => s.Frames == currentFrame &&
                                                                      s.Seconds == currentSecond &&
                                                                      s.Minutes == currentMinute);
-                
+
             if (descriptorSector == null)
                 throw new RhythmCodexException($"Volume descriptors incomplete. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");
 
             var userData = descriptorSector.UserData.Span;
-                
-            if (!userData.Slice(0x0001, 5).SequenceEqual(StandardIdentifier))
-                throw new RhythmCodexException($"Standard identifier is incorrect. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");
+
+            if (!userData.Slice(0x0001, 5).SequenceEqual("CD001"u8))
+            {
+                currentSecond++;
+                continue;
+            }
+//                throw new RhythmCodexException($"Standard identifier is incorrect. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");
 
             result.Add(descriptorSector);
                 

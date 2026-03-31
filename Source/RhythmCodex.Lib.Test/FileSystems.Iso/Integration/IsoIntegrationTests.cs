@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.FileSystems.Iso.Streamers;
+using Shouldly;
 
 namespace RhythmCodex.FileSystems.Iso.Integration;
 
@@ -24,12 +26,18 @@ public class IsoIntegrationTests : BaseIntegrationFixture
 
         var sectors = reader.Create(mem, mem.Length);
         var files = decoder.Decode(sectors);
-        var file = files.First();
-        using var stream = file.Open();
-        var fileReader = new BinaryReader(stream);
-        var output = fileReader.ReadBytes((int)file.Length);
-        File.WriteAllBytes(
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                Path.GetFileName(file.Name)!), output);
+
+        var foundNames = files.Select(x => x.Name!).ToList();
+        var expectedNames = new List<string>
+        {
+            "./COMMAND.COM",
+            "./FDISK.EXE",
+            "./FORMAT.COM",
+            "./IO.SYS",
+            "./MSDOS.SYS",
+            "./SYS.COM"
+        };
+
+        foundNames.ShouldBeEquivalentTo(expectedNames);
     }
 }
