@@ -18,7 +18,7 @@ public enum BeatmaniaPs2FormatType
     IIDX13th,
     IIDX14th,
     IIDX15th,
-    IIDX16thDisc1,
-    IIDX16thDisc2,
+    IIDX16th,
+    IIDXPremiumBest,
     US
 }
