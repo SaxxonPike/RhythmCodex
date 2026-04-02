@@ -30,13 +30,13 @@ public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
               data[0x0007] == 0xFF &&
               data[0x0008] == 0xFF &&
               data[0x0009] == 0xFF &&
-              data[0x000A] == 0xFF &&
-              data[0x000B] == 0x00))
+              data[0x000A] == 0xFF /* &&
+              data[0x000B] == 0x00 */))
         {
             return result;
         }
 
-        result.Minutes = Bcd.Decode(data[0x000C]);
+        result.Minutes = Bcd.Decode(data[0x000C]) + Bcd.Decode(data[0x000B]) * 100 /* big-ass hack */;
         result.Seconds = Bcd.Decode(data[0x000D]);
         result.Frames = Bcd.Decode(data[0x000E]);
         result.Mode = data[0x000F];

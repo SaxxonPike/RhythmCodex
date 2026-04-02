@@ -19,7 +19,7 @@ public sealed class IsoSectorConverter : IIsoSectorConverter
         {
             0x00, 0xFF, 0xFF, 0xFF,
             0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0x00,
+            0xFF, 0xFF, 0xFF, Bcd.Encode(minute / 100) /* big-ass hack */,
             Bcd.Encode(minute), Bcd.Encode(second), Bcd.Encode(frame), (byte)mode
         }.AsSpan().CopyTo(data);
         return data;

@@ -27,7 +27,7 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
         {
             _isoSectorInfoDecoder = isoSectorInfoDecoder;
             _sectors = sectors;
-            _length = length ?? sectors.Count * (_raw ? CdSector.RawSectorSize : CdSector.CookedSectorSize);
+            _length = length ?? (long)sectors.Count * (_raw ? CdSector.RawSectorSize : CdSector.CookedSectorSize);
             _raw = raw;
         }
 
@@ -55,7 +55,7 @@ public class IsoSectorStreamFactory(IIsoSectorInfoDecoder isoSectorInfoDecoder) 
         private (IsoSectorInfo? Info, int Offset, ReadOnlyMemory<byte> Data) GetSector()
         {
             var sectorSize = _raw ? CdSector.RawSectorSize : CdSector.CookedSectorSize;
-            var sector = (int)_position / sectorSize;
+            var sector = (int)(_position / sectorSize);
 
             if (_currentSector == null || sector != _currentSector.Number)
             {

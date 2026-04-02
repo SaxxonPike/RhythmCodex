@@ -21,5 +21,5 @@ public class CdSectorRange(ICdSectorCollection sectors, int start, int count) : 
     public ICdSector this[int index] =>
         sectors[index + start];
 
-    public long Length => count * CdSector.RawSectorSize;
+    public long Length => count * (long)CdSector.RawSectorSize;
 }
