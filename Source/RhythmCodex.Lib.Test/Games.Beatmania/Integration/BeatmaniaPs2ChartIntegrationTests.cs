@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Encryptions.Blowfish.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Streamers;

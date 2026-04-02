@@ -1,11 +1,9 @@
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using NUnit.Framework;
 using RhythmCodex.Archs.Djmain.Converters;
 using RhythmCodex.Archs.Djmain.Model;
-using RhythmCodex.Archs.Djmain.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Riff.Converters;
