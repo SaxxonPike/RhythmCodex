@@ -122,7 +122,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Normal",
                     Players = 1,
                     Level = difficulties[0],
-                    Keysound = sets[0],
+                    Keysounds = sets[0],
                     Bgm = sets[2],
                     Movie = movies[0],
                     Chart = charts[0]
@@ -132,7 +132,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Normal",
                     Players = 2,
                     Level = difficulties[4],
-                    Keysound = sets[1],
+                    Keysounds = sets[1],
                     Bgm = sets[3],
                     Movie = movies[0],
                     Chart = charts[1]
@@ -142,7 +142,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Hyper",
                     Players = 1,
                     Level = difficulties[1],
-                    Keysound = sets[4],
+                    Keysounds = sets[4],
                     Bgm = sets[6],
                     Movie = movies[0],
                     Chart = charts[2]
@@ -152,7 +152,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Hyper",
                     Players = 2,
                     Level = difficulties[5],
-                    Keysound = sets[5],
+                    Keysounds = sets[5],
                     Bgm = sets[7],
                     Movie = movies[0],
                     Chart = charts[3]
@@ -162,7 +162,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Another",
                     Players = 1,
                     Level = difficulties[2],
-                    Keysound = sets[8],
+                    Keysounds = sets[8],
                     Bgm = sets[10],
                     Movie = movies[0],
                     Chart = charts[4]
@@ -172,7 +172,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Another",
                     Players = 2,
                     Level = difficulties[6],
-                    Keysound = sets[9],
+                    Keysounds = sets[9],
                     Bgm = sets[11],
                     Movie = movies[0],
                     Chart = charts[5]
@@ -182,7 +182,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Beginner",
                     Players = 1,
                     Level = difficulties[3],
-                    Keysound = sets[12],
+                    Keysounds = sets[12],
                     Bgm = sets[14],
                     Movie = movies[0],
                     Chart = charts[6]
@@ -192,7 +192,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Name = "Beginner",
                     Players = 2,
                     Level = difficulties[7],
-                    Keysound = sets[13],
+                    Keysounds = sets[13],
                     Bgm = sets[15],
                     Movie = movies[0],
                     Chart = charts[7]

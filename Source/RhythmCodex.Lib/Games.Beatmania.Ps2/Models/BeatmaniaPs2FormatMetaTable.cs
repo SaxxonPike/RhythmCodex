@@ -8,4 +8,5 @@ public struct BeatmaniaPs2FormatMetaTable
     public string? BlobFileName { get; init; }
     public long BlobOffset { get; init; }
     public int BaseIndex { get; init; }
+    public int BaseSongIndex { get; init; }
 }
