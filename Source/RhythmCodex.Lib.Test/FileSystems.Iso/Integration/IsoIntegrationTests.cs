@@ -13,7 +13,6 @@ namespace RhythmCodex.FileSystems.Iso.Integration;
 public class IsoIntegrationTests : BaseIntegrationFixture
 {
     [Test]
-    [Explicit]
     public void TestBoringIso()
     {
         var data = GetArchiveResource("Iso.test-iso.zip")

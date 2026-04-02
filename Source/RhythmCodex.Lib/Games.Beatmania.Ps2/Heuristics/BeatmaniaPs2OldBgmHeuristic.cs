@@ -5,6 +5,7 @@ using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Heuristics;
 using RhythmCodex.Sounds.Vag.Models;
 using RhythmCodex.Sounds.Vag.Streamers;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Heuristics;
 
@@ -22,7 +23,7 @@ public class BeatmaniaPs2OldBgmHeuristic(IVagStreamReader vagStreamReader) : IRe
         if (data.Length < 0x10)
             return null;
 
-        var length = Bitter.ToInt32S(data);
+        var length = data.AsS32B();
 
         if (length == 0)
             return null;
@@ -33,7 +34,7 @@ public class BeatmaniaPs2OldBgmHeuristic(IVagStreamReader vagStreamReader) : IRe
         if (data[0x05] == 0)
             return null;
 
-        var sampleRate = Bitter.ToInt16S(data, 6);
+        var sampleRate = data[6..].AsS16B();
         if (sampleRate == 0)
             return null;
 
