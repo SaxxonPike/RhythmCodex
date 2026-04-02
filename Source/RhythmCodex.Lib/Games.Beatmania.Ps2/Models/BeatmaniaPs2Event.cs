@@ -6,8 +6,7 @@ namespace RhythmCodex.Games.Beatmania.Ps2.Models;
 public class BeatmaniaPs2Event
 {
     public int LinearOffset { get; set; }
-    public byte Type { get; set; }
-    public byte Parameter0 { get; set; }
-    public byte Parameter1 { get; set; }
-    public short Value { get; set; }
+    public BeatmaniaPs2EventType Type { get; set; }
+    public int Parameter { get; set; }
+    public int Value { get; set; }
 }

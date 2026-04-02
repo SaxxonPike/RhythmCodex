@@ -32,11 +32,11 @@ public class BeatmaniaService(IServiceProvider services)
 
     public Chart ReadOldPs2Chart(Stream stream) =>
         Svc<IBeatmaniaPs2ChartDecoder>()
-            .Decode(Svc<IBeatmaniaPs2OldChartEventStreamReader>()
+            .Decode(Svc<IBeatmaniaPs2OldChartStreamReader>()
                 .Read(stream, stream.Length));
 
     public Chart ReadNewPs2Chart(Stream stream) =>
         Svc<IBeatmaniaPs2ChartDecoder>()
-            .Decode(Svc<IBeatmaniaPs2NewChartEventStreamReader>()
+            .Decode(Svc<IBeatmaniaPs2NewChartStreamReader>()
                 .Read(stream, stream.Length));
 }
