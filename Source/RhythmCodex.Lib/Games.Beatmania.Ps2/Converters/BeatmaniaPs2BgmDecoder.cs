@@ -19,9 +19,8 @@ public class BeatmaniaPs2BgmDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTransla
             return null;
 
         output[NumericData.Rate] = bgm.Rate;
-        output[NumericData.Channel] = bgm.Channels;
         output[NumericData.SourceVolume] = bgm.Volume;
-        output[NumericData.Volume] = beatmaniaDspTranslator.GetLinearVolume(bgm.Volume);
+        output[NumericData.Volume] = new BigRational(bgm.Volume, 64);
         output[NumericData.Panning] = BigRational.OneHalf;
         return output;
     }

@@ -105,7 +105,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
             {
                 return new BeatmaniaPs2Keysound
                 {
-                    Index = instrument.Index,
+                    Index = instrument.Index + 1,
                     SampleNumber = instrument.SampleNumber,
                     Channel = instrument.PlaybackChannel,
                     Volume = instrumentHeader.VolumeLeft,
@@ -132,7 +132,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
 
             return new BeatmaniaPs2Keysound
             {
-                Index = instrument.Index,
+                Index = instrument.Index + 1,
                 SampleNumber = instrument.SampleNumber,
                 Channel = instrument.PlaybackChannel,
                 Volume = instrumentHeader.VolumeLeft,

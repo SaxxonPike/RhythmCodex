@@ -8,10 +8,10 @@
     <ItemGroup>
         <PackageReference Include="Autofac" Version="8.4.0" />
         <PackageReference Include="AutoFixture" Version="4.18.1" />
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-        <PackageReference Include="NUnit" Version="4.4.0" />
-        <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+        <PackageReference Include="NUnit" Version="4.5.1" />
+        <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
         <PackageReference Include="ppy.SDL3-CS" Version="2025.920.0" />
         <PackageReference Include="ppy.SDL3_image-CS" Version="2025.920.0" />
         <PackageReference Include="ppy.SDL3_mixer-CS" Version="2025.920.0" />

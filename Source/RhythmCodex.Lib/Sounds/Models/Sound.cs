@@ -42,6 +42,21 @@ public class Sound : Metadata
     }
 
     /// <summary>
+    /// Creates a shallow clone of this sound, not allocating new copies of the sample data.
+    /// </summary>
+    public Sound ShallowClone()
+    {
+        var clone = new Sound
+        {
+            Samples = Samples.ToList(),
+            Mixer = Mixer
+        };
+
+        clone.CloneMetadataFrom(this);
+        return clone;
+    }
+
+    /// <summary>
     /// Creates a clone of this sound, setting the new samples collection to the specified data.
     /// </summary>
     public Sound CloneWithSamples(IEnumerable<Sample> samples)

@@ -331,6 +331,7 @@ public static class TestHelper
                 var modeHint = chart[StringData.Type] ?? (chartType: config.ChartType, playerCount, colCount) switch
                 {
                     (BmsChartType.Beatmania, 2, > 6) => "beat-14k",
+                    (BmsChartType.Beatmania, 1, > 6) => "beat-7k",
                     (BmsChartType.Beatmania, 1, > 0) => "beat-5k",
                     (BmsChartType.Beatmania, 2, > 0) => "beat-10k",
                     (BmsChartType.Beatmania, _, > 0) => "beat-7k",

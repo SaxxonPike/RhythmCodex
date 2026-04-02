@@ -32,6 +32,12 @@ public class CachedCdSectorCollection(ICdSectorCollection sectors)
     {
         ICdSector? sector;
 
+        if (_cache.Count > 256)
+        {
+            _cache.Remove(_cache.First().Key, out var wr);
+            wr?.SetTarget(null);
+        }
+
         if (!_cache.TryGetValue(index, out var weakRef))
         {
             sector = sectors[index];

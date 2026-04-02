@@ -103,16 +103,17 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
 
     private static BeatmaniaPs2SongInfo Decode2dxUs(ReadOnlySpan<byte> data)
     {
-        var name = GetString(data[..0x040]).Trim();
-        var difficulties = data[0x04A..0x052].ToArray();
-        var movies = GetShorts(data[0x05A..0x062]);
-        var charts = GetInts(data[0x130..0x150]);
-        var sets = GetShorts(data[0x150..0x170]);
-        var fiveKey = data[0x170..0x174].AsS32L() == 0;
+        var myData = data[..0x174];
+        var name = GetString(myData[..0x040]).Trim();
+        var difficulties = myData[0x04A..0x052].ToArray();
+        var movies = GetShorts(myData[0x05A..0x062]);
+        var charts = GetInts(myData[0x130..0x150]);
+        var sets = GetShorts(myData[0x150..0x170]);
+        var fiveKey = myData[0x170..0x174].AsS32L() == 0;
 
         var result = new BeatmaniaPs2SongInfo
         {
-            InfoSize = 0x174,
+            InfoSize = myData.Length,
             Name = name,
             IsFiveKey = fiveKey,
             Difficulties = new[]

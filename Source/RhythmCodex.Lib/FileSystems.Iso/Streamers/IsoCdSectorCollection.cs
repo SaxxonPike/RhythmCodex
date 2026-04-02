@@ -14,17 +14,22 @@ public sealed class IsoCdSectorCollection(Stream stream, IIsoSectorConverter iso
 {
     private sealed class IsoCdSector(int number, Stream stream, IIsoSectorConverter isoSectorConverter) : ICdSector
     {
+        private ReadOnlyMemory<byte> _data;
+
         public int Number { get; } = number;
 
-        public ReadOnlyMemory<byte> Data
+        public ReadOnlyMemory<byte> Data => GetData();
+
+        private ReadOnlyMemory<byte> GetData()
         {
-            get
-            {
-                Span<byte> data = stackalloc byte[CdSector.CookedSectorSize];
-                stream.Position = (long)Number * CdSector.CookedSectorSize;
-                stream.ReadExactly(data);
-                return isoSectorConverter.ConvertCookedToRawSector(Number, data);
-            }
+            if (!_data.IsEmpty)
+                return _data;
+
+            Span<byte> data = stackalloc byte[CdSector.CookedSectorSize];
+            stream.Position = (long)Number * CdSector.CookedSectorSize;
+            stream.ReadExactly(data);
+            _data = isoSectorConverter.ConvertCookedToRawSector(Number, data);
+            return _data;
         }
     }
 

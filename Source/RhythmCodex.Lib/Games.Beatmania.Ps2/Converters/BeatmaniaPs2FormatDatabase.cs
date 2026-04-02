@@ -8,27 +8,27 @@ namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 [Service]
 public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
 {
-    public BeatmaniaPs2FormatInfo? GetForExecutableName(string name) =>
+    public BeatmaniaPs2FormatType? GetTypeByExeName(string name) =>
         name.ToUpperInvariant() switch
         {
-            "SLPM_650.06" => GetForType(BeatmaniaPs2FormatType.IIDX3rd),
-            "SLPM_650.26" => GetForType(BeatmaniaPs2FormatType.IIDX4th),
-            "SLPM_650.49" => GetForType(BeatmaniaPs2FormatType.IIDX5th),
-            "SLPM_651.56" => GetForType(BeatmaniaPs2FormatType.IIDX6th),
-            "SLPM_655.93" => GetForType(BeatmaniaPs2FormatType.IIDX7th),
-            "SLPM_657.68" => GetForType(BeatmaniaPs2FormatType.IIDX8th),
-            "SLPM_659.46" => GetForType(BeatmaniaPs2FormatType.IIDX9th),
-            "SLPM_661.80" => GetForType(BeatmaniaPs2FormatType.IIDX10th),
-            "SLPM_664.26" => GetForType(BeatmaniaPs2FormatType.IIDX11th),
-            "SLPM_666.21" => GetForType(BeatmaniaPs2FormatType.IIDX12th),
-            "SLPM_668.28" => GetForType(BeatmaniaPs2FormatType.IIDX13th),
-            "SLPM_669.95" => GetForType(BeatmaniaPs2FormatType.IIDX14th),
-            "SLPM_551.17" => GetForType(BeatmaniaPs2FormatType.IIDX15th),
-            "SLUS_212.39" => GetForType(BeatmaniaPs2FormatType.US),
+            "SLPM_650.06" => BeatmaniaPs2FormatType.IIDX3rd,
+            "SLPM_650.26" => BeatmaniaPs2FormatType.IIDX4th,
+            "SLPM_650.49" => BeatmaniaPs2FormatType.IIDX5th,
+            "SLPM_651.56" => BeatmaniaPs2FormatType.IIDX6th,
+            "SLPM_655.93" => BeatmaniaPs2FormatType.IIDX7th,
+            "SLPM_657.68" => BeatmaniaPs2FormatType.IIDX8th,
+            "SLPM_659.46" => BeatmaniaPs2FormatType.IIDX9th,
+            "SLPM_661.80" => BeatmaniaPs2FormatType.IIDX10th,
+            "SLPM_664.26" => BeatmaniaPs2FormatType.IIDX11th,
+            "SLPM_666.21" => BeatmaniaPs2FormatType.IIDX12th,
+            "SLPM_668.28" => BeatmaniaPs2FormatType.IIDX13th,
+            "SLPM_669.95" => BeatmaniaPs2FormatType.IIDX14th,
+            "SLPM_551.17" => BeatmaniaPs2FormatType.IIDX15th,
+            "SLUS_212.39" => BeatmaniaPs2FormatType.US,
             _ => throw new ArgumentException($"Unknown executable name: {name}", nameof(name))
         };
 
-    public BeatmaniaPs2FormatInfo? GetForType(BeatmaniaPs2FormatType type) =>
+    public BeatmaniaPs2FormatInfo? GetFormatByType(BeatmaniaPs2FormatType type) =>
         type switch
         {
             BeatmaniaPs2FormatType.IIDX3rd => new BeatmaniaPs2FormatInfo
@@ -139,7 +139,7 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_659.46",
                         FileTableOffset = 0xBD230,
                         SongTableOffset = 0xC1500,
-                        BlobFileName = "DATA2.BIN"
+                        BlobFileName = "DATA2.DAT"
                     }
                 ]
             },
@@ -152,7 +152,7 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_661.80",
                         FileTableOffset = 0xCDC90,
                         SongTableOffset = 0x10BAE0,
-                        BlobFileName = "DATA2.BIN"
+                        BlobFileName = "DATA2.DAT"
                     }
                 ]
             },
@@ -165,7 +165,7 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_664.26",
                         FileTableOffset = 0xEE440,
                         SongTableOffset = 0x1C21F0,
-                        BlobFileName = "DATA2.BIN"
+                        BlobFileName = "DATA2.DAT"
                     }
                 ]
             },
@@ -272,7 +272,7 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLUS_212.39",
                         FileTableOffset = 0xBA710,
                         SongTableOffset = 0xBF510,
-                        BlobFileName = "DATA2.BIN"
+                        BlobFileName = "DATA2.DAT"
                     }
                 ]
             },

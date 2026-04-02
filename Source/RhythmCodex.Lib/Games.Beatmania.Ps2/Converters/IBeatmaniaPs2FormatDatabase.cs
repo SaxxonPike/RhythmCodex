@@ -4,6 +4,6 @@ namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
 public interface IBeatmaniaPs2FormatDatabase
 {
-    BeatmaniaPs2FormatInfo? GetForExecutableName(string name);
-    BeatmaniaPs2FormatInfo? GetForType(BeatmaniaPs2FormatType type);
+    BeatmaniaPs2FormatType? GetTypeByExeName(string name);
+    BeatmaniaPs2FormatInfo? GetFormatByType(BeatmaniaPs2FormatType type);
 }

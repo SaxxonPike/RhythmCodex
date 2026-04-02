@@ -17,7 +17,7 @@ public class BeatmaniaPs2SongInfoIntegrationTests : BaseIntegrationFixture
             .Value;
 
         var formatDb = Resolve<IBeatmaniaPs2FormatDatabase>();
-        var format = formatDb.GetForType(BeatmaniaPs2FormatType.US);
+        var format = formatDb.GetFormatByType(BeatmaniaPs2FormatType.US);
 
         var songInfoDecoder = Resolve<IBeatmaniaPs2SongInfoDecoder>();
         var observed = songInfoDecoder

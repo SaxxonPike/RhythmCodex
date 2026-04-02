@@ -7,6 +7,6 @@ namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
 public interface IBeatmaniaPs2Decoder
 {
-    List<BeatmaniaPs2ChartSet> Decode(Func<string, Stream> openFile,
+    IEnumerable<BeatmaniaPs2ChartSet> Decode(Func<string, Stream> openFile,
         BeatmaniaPs2FormatType type);
 }
