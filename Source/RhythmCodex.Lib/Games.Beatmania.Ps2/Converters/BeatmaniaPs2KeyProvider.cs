@@ -51,7 +51,7 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         "STANDARD EXPERT CLASS" // e4 9
     ];
 
-    public string GetKeyFor14thStyle()
+    public byte[] GetKeyFor14thStyle()
     {
         var key = new StringBuilder();
         key.Append(KeyParts14[1][8]);
@@ -70,10 +70,10 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         key.Append(KeyParts14[8][5]);
         key.Append(KeyParts14[1][9]);
         key.Append(KeyParts14[9][3]);
-        return key.ToString();
+        return ConvertToBytes(key);
     }
 
-    public string GetKeyFor15thStyle()
+    public byte[] GetKeyFor15thStyle()
     {
         var key = new StringBuilder();
         key.Append(KeyParts15[0][3]);
@@ -92,10 +92,10 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         key.Append(KeyParts15[8][6]);
         key.Append(KeyParts15[8][9]);
         key.Append(KeyParts15[9][4]);
-        return key.ToString();
+        return ConvertToBytes(key);
     }
 
-    public string GetKeyFor16thStyle()
+    public byte[] GetKeyFor16thStyle()
     {
         var key = new StringBuilder();
         key.Append(KeyParts16[7][10]);
@@ -114,6 +114,9 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         key.Append(KeyParts16[5][7]);
         key.Append(KeyParts16[1][3]);
         key.Append(KeyParts16[1][11]);
-        return key.ToString();
+        return ConvertToBytes(key);
     }
+
+    private static byte[] ConvertToBytes(StringBuilder s) => 
+        Encoding.ASCII.GetBytes(s.ToString());
 }
