@@ -17,6 +17,7 @@ public sealed class VagDecrypter : IVagDecrypter
         var last1 = state.Prev1;
         var enabled = state.Enabled;
         var maxLength = Math.Min(length, input.Length - 0x0F);
+        var cursor = input;
 
         while (inOffset < length)
         {
@@ -25,7 +26,7 @@ public sealed class VagDecrypter : IVagDecrypter
                 enabled = false;
             }
 
-            var flags = input[inOffset + 1];
+            var flags = cursor[1];
 
             if ((flags & 5) == 4)
                 enabled = true;
@@ -40,7 +41,7 @@ public sealed class VagDecrypter : IVagDecrypter
             }
             else
             {
-                var fm = input[inOffset];
+                var fm = cursor[0];
                 var filter = fm >> 4;
                 var magnitude = fm & 0xF;
 
@@ -57,7 +58,7 @@ public sealed class VagDecrypter : IVagDecrypter
 
                 for (var i = 2; i < 16; i++)
                 {
-                    var deltas = input[inOffset + i];
+                    var deltas = cursor[i];
                     var delta0 = (deltas & 0x0F) << 28;
                     var delta1 = (deltas & 0xF0) << 24;
 
@@ -65,16 +66,14 @@ public sealed class VagDecrypter : IVagDecrypter
                     var filter1 = coeff1 * last1;
                     var sample = Math.Clamp((delta0 >> magnitude) + ((filter0 + filter1) >> 6), 
                         short.MinValue, short.MaxValue);
-                    last1 = last0;
-                    last0 = sample;
+                    (last1, last0) = (last0, sample);
                     output[outOffset++] = sample / 32768f;
 
                     filter0 = coeff0 * last0;
                     filter1 = coeff1 * last1;
                     sample = Math.Clamp((delta1 >> magnitude) + ((filter0 + filter1) >> 6),
                         short.MinValue, short.MaxValue);
-                    last1 = last0;
-                    last0 = sample;
+                    (last1, last0) = (last0, sample);
                     output[outOffset++] = sample / 32768f;
                 }
 
@@ -86,6 +85,7 @@ public sealed class VagDecrypter : IVagDecrypter
                 state.LoopEnd = outOffset;
 
             inOffset += 16;
+            cursor = cursor[16..];
         }
 
         state.Prev0 = last0;

@@ -4,7 +4,7 @@ using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Models;
 
-public class BeatmaniaPs2ChartSet
+public record BeatmaniaPs2ChartSet
 {
     public int SongId { get; set; }
     public string? Name { get; set; }

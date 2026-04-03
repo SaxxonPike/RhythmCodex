@@ -1,6 +1,6 @@
 namespace RhythmCodex.Games.Beatmania.Ps2.Models;
 
-public class BeatmaniaPs2NewInstrument
+public record BeatmaniaPs2NewInstrument
 {
     public int Index { get; set; }
     
@@ -20,10 +20,10 @@ public class BeatmaniaPs2NewInstrument
     public int Unknown04 { get; set; }
     
     // 0x08
-    public byte VolumeLeft { get; set; }
+    public byte PanningLeft { get; set; }
     
     // 0x09
-    public byte VolumeRight { get; set; }
+    public byte PanningRight { get; set; }
     
     // 0x0A
     public ushort SampleNumber { get; set; }

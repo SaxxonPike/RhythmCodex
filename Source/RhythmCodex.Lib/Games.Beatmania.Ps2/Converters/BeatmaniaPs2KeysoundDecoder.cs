@@ -1,15 +1,18 @@
 using System.Linq;
 using RhythmCodex.Games.Beatmania.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
+using RhythmCodex.Sounds.Mixer.Converters;
 using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Vag.Converters;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
 [Service]
-public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
+public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator,
+    IBeatmaniaPs2Mixer mixer)
     : IBeatmaniaPs2KeysoundDecoder
 {
     public Sound Decode(BeatmaniaPs2Keysound keysound)
@@ -17,6 +20,11 @@ public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTr
         var samples = keysound.Data
             .SelectMany(d => vagDecoder.Decode(d)?.Samples ?? [])
             .ToList();
+
+        if (samples.Count == 1)
+        {
+            samples.Add(samples[0].Clone());
+        }
 
         var leftRate = keysound.FrequencyLeft == 0
             ? null
@@ -26,21 +34,32 @@ public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTr
             ? null
             : (int?)keysound.FrequencyRight;
 
-        var left = true;
-        foreach (var sample in samples)
+        for (var i = 0; i < samples.Count; i++)
         {
-            sample[NumericData.Rate] = left ? leftRate : rightRate;
-            left = !left;
+            samples[i][NumericData.Volume] = new BigRational(
+                (i & 1) == 0 ? keysound.VolumeLeft : keysound.VolumeRight, 127
+            );
+
+            samples[i][NumericData.SourceVolume] =
+                (i & 1) == 0 ? keysound.VolumeLeft : keysound.VolumeRight;
+
+            samples[i][NumericData.Panning] = new BigRational(
+                (i & 1) == 0 ? keysound.PanningLeft : keysound.PanningRight, 127
+            );
+
+            samples[i][NumericData.SourcePanning] =
+                (i & 1) == 0 ? keysound.PanningLeft : keysound.PanningRight;
+
+            samples[i][NumericData.Rate] = (i & 1) == 0
+                ? leftRate
+                : rightRate;
         }
 
         return new Sound
         {
             Samples = samples,
-            [NumericData.Volume] = beatmaniaDspTranslator.GetLinearVolume(keysound.Volume),
-            [NumericData.SourceVolume] = keysound.Volume,
-            [NumericData.Panning] = beatmaniaDspTranslator.GetBm2dxPanning(keysound.Panning),
-            [NumericData.SourcePanning] = keysound.Panning,
-            [NumericData.Channel] = keysound.Channel
+            [NumericData.Channel] = keysound.Channel,
+            Mixer = () => mixer
         };
     }
 }

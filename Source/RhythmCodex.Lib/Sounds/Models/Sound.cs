@@ -121,6 +121,9 @@ public class Sound : Metadata
             hc.Add(sourcePan);
         else
             hc.Add(BigRational.OneHalf);
+        
+        foreach (var sample in Samples)
+            hc.Add(sample.CalculateSourceVolumePanHash());
 
         return hc.ToHashCode();
     }

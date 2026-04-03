@@ -44,8 +44,8 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 Flags02 = instrumentTableReader.ReadByte(),
                 SampleChannelCount = instrumentTableReader.ReadByte(),
                 Unknown04 = instrumentTableReader.ReadInt32(),
-                VolumeLeft = instrumentTableReader.ReadByte(),
-                VolumeRight = instrumentTableReader.ReadByte(),
+                PanningLeft = instrumentTableReader.ReadByte(),
+                PanningRight = instrumentTableReader.ReadByte(),
                 SampleNumber = instrumentTableReader.ReadUInt16(),
                 Unknown0C = instrumentTableReader.ReadInt32()
             };
@@ -108,8 +108,10 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                     Index = instrument.Index + 1,
                     SampleNumber = instrument.SampleNumber,
                     Channel = instrument.PlaybackChannel,
-                    Volume = instrumentHeader.VolumeLeft,
-                    Panning = 0x40,
+                    VolumeLeft = instrumentHeader.VolumeLeft,
+                    VolumeRight = instrumentHeader.VolumeRight,
+                    PanningLeft = instrument.PanningLeft,
+                    PanningRight = instrument.PanningRight,
                     SampleType = instrument.Flags00,
                     Data = []
                 };
@@ -135,8 +137,10 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 Index = instrument.Index + 1,
                 SampleNumber = instrument.SampleNumber,
                 Channel = instrument.PlaybackChannel,
-                Volume = instrumentHeader.VolumeLeft,
-                Panning = 0x40,
+                VolumeLeft = instrumentHeader.VolumeLeft,
+                VolumeRight = instrumentHeader.VolumeRight,
+                PanningLeft = instrument.PanningLeft,
+                PanningRight = instrument.PanningRight,
                 SampleType = instrument.Flags00,
                 FrequencyLeft = roundedFreq,
                 FrequencyRight = roundedFreq,

@@ -5,14 +5,14 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Games.Beatmania.Ps2.Models;
 
 [Model]
-public class BeatmaniaPs2Keysound
+public record BeatmaniaPs2Keysound
 {
     public int Index { get; set; }
     public int SampleNumber { get; set; }
     public int Reserved0 { get; set; }
     public int Channel { get; set; }
-    public int Volume { get; set; }
-    public int Panning { get; set; }
+    public int PanningLeft { get; set; }
+    public int PanningRight { get; set; }
     public int VolumeLeft { get; set; }
     public int VolumeRight { get; set; }
     public int SampleType { get; set; }

@@ -32,4 +32,8 @@ public sealed class LazyCdSectorCollection(Func<int, ICdSector> accessor, int co
 
     /// <inheritdoc />
     public long Length => (long)count * CdSector.RawSectorSize;
+
+    public void Dispose()
+    {
+    }
 }

@@ -1,6 +1,6 @@
 namespace RhythmCodex.Games.Beatmania.Ps2.Models;
 
-public struct BeatmaniaPs2FormatMetaTable
+public record struct BeatmaniaPs2FormatMetaTable
 {
     public string? BinaryFileName { get; init; }
     public long FileTableOffset { get; init; }

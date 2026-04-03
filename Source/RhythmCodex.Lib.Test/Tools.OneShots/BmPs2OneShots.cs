@@ -2,17 +2,13 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.FileSystems.Cue.Processors;
-using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.FileSystems.Iso.Streamers;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.Sounds.Converters;
-using Shouldly;
 
 namespace RhythmCodex.Tools.OneShots;
 
-[NonParallelizable]
 public class BmPs2OneShots : BaseIntegrationFixture
 {
     public const string ImageBasePath = "/Volumes/RidgeportHDD/User Data/Bemani/Playstation 2";
@@ -21,6 +17,19 @@ public class BmPs2OneShots : BaseIntegrationFixture
     /// Renders a BMS set from each song on a PS1 beatmania disc.
     /// </summary>
     [Test]
+    [TestCase("beatmania IIDX 3rd style.iso", "ps2-bm-3rd")]
+    [TestCase("beatmania IIDX 4th style.iso", "ps2-bm-4th")]
+    [TestCase("beatmania IIDX 5th style.iso", "ps2-bm-5th")]
+    [TestCase("beatmania IIDX 6th style.iso", "ps2-bm-6th")]
+    [TestCase("beatmania IIDX 7th style.iso", "ps2-bm-7th")]
+    [TestCase("beatmania IIDX 8th style.iso", "ps2-bm-8th")]
+    [TestCase("beatmania IIDX 9th style.iso", "ps2-bm-9th")]
+    [TestCase("beatmania IIDX 10th style.iso", "ps2-bm-10th")]
+    [TestCase("beatmania IIDX 11th style.iso", "ps2-bm-11th")]
+    [TestCase("beatmania IIDX 12th style.iso", "ps2-bm-12th")]
+    [TestCase("beatmania IIDX 13th style.iso", "ps2-bm-13th")]
+    [TestCase("beatmania IIDX 14th style.iso", "ps2-bm-14th")]
+    [TestCase("beatmania IIDX 15th style.iso", "ps2-bm-15th")]
     [TestCase("beatmania US.iso", "ps2-bm-us")]
     [Explicit]
     public void ExtractBms(string source, string target)
@@ -63,17 +72,6 @@ public class BmPs2OneShots : BaseIntegrationFixture
             ?? throw new Exception($"Could not determine type for {exeName}.");
 
         //
-        // Create the adapter for the decoder to access the DVD file system.
-        //
-
-        Stream OpenFile(string fileName)
-        {
-            var actualFileName = $"./{fileName};1";
-            var cdFile = cdFiles.Single(x => x.Name == actualFileName);
-            return cdFile.Open();
-        }
-
-        //
         // Run the decoder.
         //
 
@@ -86,21 +84,34 @@ public class BmPs2OneShots : BaseIntegrationFixture
 
             // RunAsync(() =>
             // {
-            //     var setName = (set.Name ?? "")
-            //         .Replace('\\', '_')
-            //         .Replace('/', '_')
-            //         .Trim();
-            //     
-            //     var outPath = Path.Combine(target, $"{set.SongId:d4}{(setName.Length == 0 ? "" : $" {setName}")}");
-            //     var consolidatedSet = chartSetConsolidator.Consolidate(set);
-            //
-            //     this.WriteSet(new TestHelper.WriteSetConfig
-            //     {
-            //         OutPath = outPath,
-            //         Charts = consolidatedSet.Charts,
-            //         Sounds = consolidatedSet.Sounds,
-            //     });
+                var setName = (set.Name ?? "")
+                    .Replace('\\', '_')
+                    .Replace('/', '_')
+                    .Trim();
+                
+                var outPath = Path.Combine(target, $"{set.SongId:d4}{(setName.Length == 0 ? "" : $" {setName}")}");
+                var consolidatedSet = chartSetConsolidator.Consolidate(set);
+            
+                this.WriteSet(new TestHelper.WriteSetConfig
+                {
+                    OutPath = outPath,
+                    Charts = consolidatedSet.Charts,
+                    Sounds = consolidatedSet.Sounds
+                });
             // });
+        }
+
+        return;
+        
+        //
+        // Adapter for the decoder to access the DVD file system.
+        //
+
+        Stream OpenFile(string fileName)
+        {
+            var actualFileName = $"./{fileName};1";
+            var cdFile = cdFiles.Single(x => x.Name == actualFileName);
+            return cdFile.Open();
         }
     }
 }

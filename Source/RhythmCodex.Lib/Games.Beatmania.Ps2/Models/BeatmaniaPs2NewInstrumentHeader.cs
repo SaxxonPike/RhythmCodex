@@ -1,6 +1,6 @@
 namespace RhythmCodex.Games.Beatmania.Ps2.Models;
 
-public class BeatmaniaPs2NewInstrumentHeader
+public record BeatmaniaPs2NewInstrumentHeader
 {
     // 0x00
     public int Identifier { get; set; }

@@ -9,7 +9,8 @@ using RhythmCodex.Sounds.Vag.Converters;
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
 [Service]
-public class BeatmaniaPs2BgmDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator)
+public class BeatmaniaPs2BgmDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTranslator beatmaniaDspTranslator,
+    IBeatmaniaPs2Mixer mixer)
     : IBeatmaniaPs2BgmDecoder
 {
     public Sound? Decode(BeatmaniaPs2Bgm bgm)
@@ -20,8 +21,9 @@ public class BeatmaniaPs2BgmDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTransla
 
         output[NumericData.Rate] = bgm.Rate;
         output[NumericData.SourceVolume] = bgm.Volume;
-        output[NumericData.Volume] = new BigRational(bgm.Volume, 64);
+        output[NumericData.Volume] = new BigRational(bgm.Volume, 72);
         output[NumericData.Panning] = BigRational.OneHalf;
+        output.Mixer = () => mixer;
         return output;
     }
 }

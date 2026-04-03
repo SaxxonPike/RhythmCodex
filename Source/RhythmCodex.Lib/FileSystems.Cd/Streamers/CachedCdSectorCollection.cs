@@ -10,9 +10,9 @@ namespace RhythmCodex.FileSystems.Cd.Streamers;
 /// Wraps a cache around a collection of CD sectors.
 /// </summary>
 public class CachedCdSectorCollection(ICdSectorCollection sectors)
-    : ICdSectorCollection
+    : ICdSectorCollection, IDisposable
 {
-    private readonly Dictionary<int, WeakReference<ICdSector>> _cache = [];
+    private readonly Dictionary<int, ICdSector> _cache = [];
 
     public IEnumerator<ICdSector> GetEnumerator() =>
         Enumerable
@@ -30,28 +30,22 @@ public class CachedCdSectorCollection(ICdSectorCollection sectors)
 
     private ICdSector GetOrCacheSector(int index)
     {
-        ICdSector? sector;
-
-        if (_cache.Count > 256)
+        while (_cache.Count > 256)
         {
-            _cache.Remove(_cache.First().Key, out var wr);
-            wr?.SetTarget(null);
+            _cache.Remove(_cache.First().Key, out var removed);
+            (removed as IDisposable)?.Dispose();
         }
 
-        if (!_cache.TryGetValue(index, out var weakRef))
-        {
-            sector = sectors[index];
-            weakRef = new WeakReference<ICdSector>(sector);
-            _cache[index] = weakRef;
-        }
-        else if (!weakRef.TryGetTarget(out sector))
-        {
-            sector = sectors[index];
-            weakRef.SetTarget(sector);
-        }
+        if (_cache.TryGetValue(index, out var sector)) 
+            return sector;
 
+        sector = sectors[index];
+        _cache[index] = sector;
         return sector;
     }
 
     public long Length => sectors.Length;
+
+    public void Dispose() => 
+        (sectors as IDisposable)?.Dispose();
 }

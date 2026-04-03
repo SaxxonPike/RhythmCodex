@@ -4,7 +4,7 @@ using RhythmCodex.Infrastructure;
 namespace RhythmCodex.Games.Beatmania.Ps2.Models;
 
 [Model]
-public class BeatmaniaPs2Chart
+public record BeatmaniaPs2Chart
 {
     public Dictionary<int, int> NoteCounts { get; set; } = [];
     public BigRational Rate { get; set; }

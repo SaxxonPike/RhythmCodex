@@ -48,4 +48,8 @@ public sealed class IsoCdSectorCollection(Stream stream, IIsoSectorConverter iso
         new IsoCdSector(index, stream, isoSectorConverter);
 
     public long Length => Count * CdSector.RawSectorSize;
+
+    public void Dispose()
+    {
+    }
 }

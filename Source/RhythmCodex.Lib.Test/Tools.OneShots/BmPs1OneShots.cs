@@ -10,6 +10,7 @@ using RhythmCodex.Archs.Psx.Converters;
 using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Charts.Models;
+using RhythmCodex.FileSystems.Cd.Helpers;
 using RhythmCodex.FileSystems.Cd.Streamers;
 using RhythmCodex.FileSystems.Cue.Processors;
 using RhythmCodex.FileSystems.Cue.Streamers;
@@ -76,7 +77,8 @@ public class BmPs1OneShots : BaseIntegrationFixture
         var track = cue.Tracks.Single();
         track.FileType.ShouldBe("BINARY");
 
-        using var sectors = new CueCdSectorCollection(cue, f => File.OpenRead(Path.Combine(cueFolder!, f)));
+        using var sectors = new CueCdSectorCollection(cue, f => File.OpenRead(Path.Combine(cueFolder!, f))).Cached();
+
         var cdFileDecoder = Resolve<IIsoCdFileDecoder>();
 
         var cdFiles = cdFileDecoder.Decode(sectors);

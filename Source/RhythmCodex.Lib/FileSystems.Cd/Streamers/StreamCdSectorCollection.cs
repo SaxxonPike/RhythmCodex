@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.IoC;
 
@@ -25,7 +26,7 @@ public sealed class StreamCdSectorCollection(Stream stream, long? length = null)
         /// Holds the reference to the data. The data is discarded by the GC
         /// as necessary and refreshed on demand.
         /// </summary>
-        private WeakReference<byte[]>? _dataRef;
+        private byte[]? _data;
 
         /// <inheritdoc />
         public int Number { get; } = number;
@@ -35,19 +36,13 @@ public sealed class StreamCdSectorCollection(Stream stream, long? length = null)
         {
             get
             {
-                if (_dataRef != null && _dataRef.TryGetTarget(out var data))
-                    return data;
+                if (_data != null)
+                    return _data;
 
                 stream.Position = (long)Number * CdSector.RawSectorSize;
-                data = new byte[CdSector.RawSectorSize];
-                stream.ReadExactly(data.AsSpan());
-
-                if (_dataRef == null)
-                    _dataRef = new WeakReference<byte[]>(data);
-                else
-                    _dataRef.SetTarget(data);
-
-                return data;
+                _data = new byte[CdSector.RawSectorSize];
+                stream.ReadExactly(_data.AsSpan());
+                return _data;
             }
         }
     }
@@ -73,4 +68,13 @@ public sealed class StreamCdSectorCollection(Stream stream, long? length = null)
     /// <inheritdoc />
     public long Length =>
         length ?? stream.Length;
+
+    public void Dispose()
+    {
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await stream.DisposeAsync();
+    }
 }

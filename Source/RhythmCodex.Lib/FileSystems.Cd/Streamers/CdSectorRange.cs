@@ -22,4 +22,8 @@ public class CdSectorRange(ICdSectorCollection sectors, int start, int count) : 
         sectors[index + start];
 
     public long Length => count * (long)CdSector.RawSectorSize;
+
+    public void Dispose()
+    {
+    }
 }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.FileSystems.Cue.Model;
 
@@ -13,8 +12,6 @@ public class CueCdSectorCollection(CueFile cue, Func<string, Stream> openFile) :
 {
     private List<(int Start, string FileName, int BytesPerSector, string? Type)> _trackRanges = [];
     private readonly Dictionary<string, Stream> _streams = [];
-    private readonly Dictionary<int, WeakReference<ICdSector>> _sectorCache = [];
-    private readonly Mutex _mutex = new();
 
     private void EnsureCueCache()
     {
@@ -76,53 +73,6 @@ public class CueCdSectorCollection(CueFile cue, Func<string, Stream> openFile) :
         return sector;
     }
 
-    private ICdSector? GetOrCacheSector(int sectorNumber)
-    {
-        _mutex.WaitOne();
-
-        ICdSector? sector;
-        var weakRef = _sectorCache.GetValueOrDefault(sectorNumber);
-
-        //
-        // Not yet referenced.
-        //
-
-        if (weakRef == null)
-        {
-            sector = GetSector(sectorNumber);
-
-            if (sector == null)
-            {
-                _mutex.ReleaseMutex();
-                return null;
-            }
-
-            weakRef = new WeakReference<ICdSector>(sector);
-            _sectorCache[sectorNumber] = weakRef;
-            _mutex.ReleaseMutex();
-            return sector;
-        }
-
-        //
-        // Referenced and cached.
-        //
-
-        if (weakRef.TryGetTarget(out sector))
-        {
-            _mutex.ReleaseMutex();
-            return sector;
-        }
-
-        //
-        // Referenced but not cached.
-        //
-
-        sector = GetSector(sectorNumber);
-        weakRef.SetTarget(sector!);
-        _mutex.ReleaseMutex();
-        return sector;
-    }
-
     public void Dispose()
     {
         foreach (var stream in _streams.Values)
@@ -132,7 +82,7 @@ public class CueCdSectorCollection(CueFile cue, Func<string, Stream> openFile) :
     public IEnumerator<ICdSector> GetEnumerator() =>
         Enumerable
             .Range(0, 360000)
-            .Select(GetOrCacheSector)
+            .Select(GetSector)
             .TakeWhile(x => x != null)
             .GetEnumerator()!;
 
@@ -141,7 +91,7 @@ public class CueCdSectorCollection(CueFile cue, Func<string, Stream> openFile) :
     public int Count => 360000;
 
     public ICdSector this[int index] =>
-        GetOrCacheSector(index)!;
+        GetSector(index)!;
 
     public long Length => Count * (long)CdSector.RawSectorSize;
 }

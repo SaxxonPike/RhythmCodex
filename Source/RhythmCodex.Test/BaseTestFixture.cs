@@ -31,6 +31,7 @@ public abstract class BaseTestFixture
     [SetUp]
     public void __Setup()
     {
+        Console.SetOut(Log);
         _stopwatch = new Stopwatch();
         _stopwatch.Start();
     }

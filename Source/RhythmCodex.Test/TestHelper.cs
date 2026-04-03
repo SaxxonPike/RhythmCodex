@@ -281,7 +281,7 @@ public static class TestHelper
                 var sampleHash = config.DeduplicateSounds
                     ? sound.CalculateSampleHash() ^ sound.CalculateSourceVolumePanHash()
                     : soundHashFileMap.Count;
-                
+
                 soundHashFileMap.AddOrUpdate(sampleHash,
                     h =>
                     {
@@ -434,7 +434,7 @@ public static class TestHelper
                             },
                             ChartType = config.ChartType
                         }));
-                        
+
                         outStream.Flush();
                     }
                 }
