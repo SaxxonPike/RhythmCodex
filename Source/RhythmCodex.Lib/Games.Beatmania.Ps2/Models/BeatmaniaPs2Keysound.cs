@@ -13,7 +13,9 @@ public record BeatmaniaPs2Keysound
     public int Channel { get; set; }
     public int PanningLeft { get; set; }
     public int PanningRight { get; set; }
+    public int PanningScale { get; set; } = 127;
     public int Volume { get; set; }
+    public int VolumeScale { get; set; } = 127;
     public int SampleType { get; set; }
     public int FrequencyLeft { get; set; }
     public int FrequencyRight { get; set; }
