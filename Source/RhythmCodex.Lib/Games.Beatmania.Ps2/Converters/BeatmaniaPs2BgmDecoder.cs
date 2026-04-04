@@ -19,7 +19,9 @@ public class BeatmaniaPs2BgmDecoder(
         if (output == null)
             return null;
 
-        output.Skip(56);
+        if (bgm.Skip > 0)
+            output.Skip(bgm.Skip);
+
         output[NumericData.Rate] = bgm.Rate;
         output[NumericData.SourceVolume] = bgm.Volume;
         output[NumericData.Volume] = new BigRational(bgm.Volume, bgm.VolumeScale);
