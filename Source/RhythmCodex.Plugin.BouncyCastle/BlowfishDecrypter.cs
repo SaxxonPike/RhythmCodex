@@ -8,9 +8,9 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Plugin.BouncyCastle;
 
 [Service]
-public class BlowfishDecrypter : IBlowfishDecrypter
+public sealed class BlowfishDecrypter : IBlowfishDecrypter
 {
-    public Memory<byte> Decrypt(ReadOnlySpan<byte> data, byte[] key, byte padByte)
+    public Memory<byte> Decrypt(ReadOnlySpan<byte> data, ReadOnlySpan<byte> key)
     {
         //
         // Prepare the cipher. (The IV is blank for supported games that use this encryption method.)
@@ -18,7 +18,7 @@ public class BlowfishDecrypter : IBlowfishDecrypter
         // of the code that uses little endian instead.
         //
 
-        var keyBytes = key.AsSpan().ToArray();
+        var keyBytes = key.ToArray();
         var iv = new byte[8];
         var cipher = new CtsBlockCipher(new CbcBlockCipher(new BlowfishEngine()));
         cipher.Init(false, new ParametersWithIV(new KeyParameter(keyBytes), iv));
