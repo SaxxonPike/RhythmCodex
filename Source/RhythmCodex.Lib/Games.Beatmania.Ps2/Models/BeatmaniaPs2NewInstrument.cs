@@ -20,14 +20,20 @@ public record BeatmaniaPs2NewInstrument
     public int Unknown04 { get; set; }
     
     // 0x08
-    public byte PanningLeft { get; set; }
+    public byte SampleChannel0Pan { get; set; }
     
     // 0x09
-    public byte PanningRight { get; set; }
+    public byte SampleChannel1Pan { get; set; }
     
     // 0x0A
     public ushort SampleNumber { get; set; }
     
     // 0x0C
-    public int Unknown0C { get; set; }
+    public byte Volume { get; set; }
+    
+    // 0x0D
+    public byte Unknown0D { get; set; }
+    
+    // 0x0E
+    public ushort Unknown0E { get; set; }
 }

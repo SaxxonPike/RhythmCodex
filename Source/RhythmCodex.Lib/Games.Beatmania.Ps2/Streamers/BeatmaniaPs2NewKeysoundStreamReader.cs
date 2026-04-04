@@ -44,10 +44,12 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 Flags02 = instrumentTableReader.ReadByte(),
                 SampleChannelCount = instrumentTableReader.ReadByte(),
                 Unknown04 = instrumentTableReader.ReadInt32(),
-                PanningLeft = instrumentTableReader.ReadByte(),
-                PanningRight = instrumentTableReader.ReadByte(),
+                SampleChannel0Pan = instrumentTableReader.ReadByte(),
+                SampleChannel1Pan = instrumentTableReader.ReadByte(),
                 SampleNumber = instrumentTableReader.ReadUInt16(),
-                Unknown0C = instrumentTableReader.ReadInt32()
+                Volume = instrumentTableReader.ReadByte(),
+                Unknown0D = instrumentTableReader.ReadByte(),
+                Unknown0E = instrumentTableReader.ReadUInt16()
             };
 
             return result.SampleChannelCount == 0 ? null : result;
@@ -108,10 +110,10 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                     Index = instrument.Index + 1,
                     SampleNumber = instrument.SampleNumber,
                     Channel = instrument.PlaybackChannel,
-                    VolumeLeft = instrumentHeader.VolumeLeft,
-                    VolumeRight = instrumentHeader.VolumeRight,
-                    PanningLeft = instrument.PanningLeft,
-                    PanningRight = instrument.PanningRight,
+                    VolumeLeft = instrumentHeader.VolumeLeft * instrument.Volume / 0x7F,
+                    VolumeRight = instrumentHeader.VolumeRight * instrument.Volume / 0x7F,
+                    PanningLeft = instrument.SampleChannel0Pan,
+                    PanningRight = instrument.SampleChannel1Pan,
                     SampleType = instrument.Flags00,
                     Data = []
                 };
@@ -137,10 +139,10 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 Index = instrument.Index + 1,
                 SampleNumber = instrument.SampleNumber,
                 Channel = instrument.PlaybackChannel,
-                VolumeLeft = instrumentHeader.VolumeLeft,
-                VolumeRight = instrumentHeader.VolumeRight,
-                PanningLeft = instrument.PanningLeft,
-                PanningRight = instrument.PanningRight,
+                VolumeLeft = instrumentHeader.VolumeLeft * instrument.Volume / 0x7F,
+                VolumeRight = instrumentHeader.VolumeRight * instrument.Volume / 0x7F,
+                PanningLeft = instrument.SampleChannel0Pan,
+                PanningRight = instrument.SampleChannel1Pan,
                 SampleType = instrument.Flags00,
                 FrequencyLeft = roundedFreq,
                 FrequencyRight = roundedFreq,
