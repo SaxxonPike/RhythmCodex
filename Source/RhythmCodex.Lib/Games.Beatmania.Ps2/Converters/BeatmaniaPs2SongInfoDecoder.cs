@@ -1,25 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RhythmCodex.Compressions.BemaniLz.Processors;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
+using RhythmCodex.Games.Beatmania.Ps2.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
+using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
 [Service]
-public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs2FormatDatabase)
+public class BeatmaniaPs2SongInfoDecoder(
+    IBeatmaniaPs2OldChartStreamReader oldChartStreamReader,
+    IBemaniLzDecoder bemaniLzDecoder,
+    IBeatmaniaPs2ChartDecoder chartDecoder)
     : IBeatmaniaPs2SongInfoDecoder
 {
     public List<BeatmaniaPs2SongInfo> Decode(ReadOnlySpan<byte> data, int songInfoOffset, BeatmaniaPs2FormatType type)
     {
+        var temp = data.ToArray();
         var result = new List<BeatmaniaPs2SongInfo>();
         var offset = songInfoOffset;
 
         while (data[offset..].AsS32L() != 0)
         {
             var decoded = DecodeOne(data[offset..], type);
+            if (decoded == null)
+                break;
+            
             offset += decoded.InfoSize;
 
             if (decoded.NameRef > 0)
@@ -28,13 +38,31 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                 decoded.NameRef = 0;
             }
 
+            foreach (var difficulty in decoded.Difficulties)
+            {
+                if (difficulty.ChartRef > 0)
+                {
+                    var decompressedChart = bemaniLzDecoder.Decode(
+                        new ReadOnlyMemoryStream(temp.AsMemory(difficulty.ChartRef))
+                    );
+
+                    var decodedChart = chartDecoder.Decode(oldChartStreamReader.Read(
+                        new ReadOnlyMemoryStream(decompressedChart), decompressedChart.Length
+                    ));
+
+                    decodedChart[NumericData.SourceOffset] = difficulty.ChartRef;
+                    difficulty.Chart = decodedChart;
+                    difficulty.ChartRef = 0;
+                }
+            }
+
             result.Add(decoded);
         }
 
         return result;
     }
 
-    private static BeatmaniaPs2SongInfo DecodeOne(ReadOnlySpan<byte> data, BeatmaniaPs2FormatType type) =>
+    private static BeatmaniaPs2SongInfo? DecodeOne(ReadOnlySpan<byte> data, BeatmaniaPs2FormatType type) =>
         type switch
         {
             BeatmaniaPs2FormatType.IIDX3rd => Decode2dx3rd(data),
@@ -55,8 +83,92 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
             _ => throw new RhythmCodexException("Unrecognized format.")
         };
 
-    private static BeatmaniaPs2SongInfo Decode2dx3rd(ReadOnlySpan<byte> data) =>
-        throw new NotImplementedException();
+    private static BeatmaniaPs2SongInfo? Decode2dx3rd(ReadOnlySpan<byte> data)
+    {
+        var myData = data[..0x07C];
+        var nameRef = ReadInt32LittleEndian(myData[0x004..]) - 0xFF000;
+        var difficulties = myData[0x00C..0x010].ToArray();
+        var movies = GetShorts(myData[0x00A..0x00C]);
+        var charts = GetInts(myData[0x054..0x06C]);
+        var sets = GetShorts(myData[0x06C..0x078]);
+
+        if (nameRef <= 0)
+            nameRef = ReadInt32LittleEndian(myData) - 0xFF000;
+
+        if (nameRef <= 0 || nameRef >= data.Length)
+            return null;
+
+        var result = new BeatmaniaPs2SongInfo
+        {
+            InfoSize = myData.Length,
+            NameRef = nameRef,
+            Difficulties = new[]
+            {
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Hyper",
+                    Players = 1,
+                    Level = difficulties[1],
+                    Keysounds = sets[0],
+                    Bgm = sets[2],
+                    Movie = movies[0],
+                    ChartRef = charts[0] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Hyper",
+                    Players = 2,
+                    Level = difficulties[1],
+                    Keysounds = sets[1],
+                    Bgm = sets[3],
+                    Movie = movies[0],
+                    ChartRef = charts[1] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Another",
+                    Players = 1,
+                    Level = difficulties[0],
+                    Keysounds = sets[0],
+                    Bgm = sets[4],
+                    Movie = movies[0],
+                    ChartRef = charts[2] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Another",
+                    Players = 2,
+                    Level = difficulties[0],
+                    Keysounds = sets[0],
+                    Bgm = sets[4],
+                    Movie = movies[0],
+                    ChartRef = charts[3] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Normal",
+                    Players = 1,
+                    Level = difficulties[2],
+                    Keysounds = sets[0],
+                    Bgm = sets[2],
+                    Movie = movies[0],
+                    ChartRef = charts[4] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Normal",
+                    Players = 2,
+                    Level = difficulties[2],
+                    Keysounds = sets[1],
+                    Bgm = sets[3],
+                    Movie = movies[0],
+                    ChartRef = charts[5] - 0xFF000
+                }
+            }.Where(x => x.ChartRef > 0).ToList()
+        };
+        
+        return result;
+    }
 
     private static BeatmaniaPs2SongInfo Decode2dx4th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
@@ -96,7 +208,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[0],
                     Bgm = sets[2],
                     Movie = movies[0],
-                    Chart = charts[0]
+                    ChartId = charts[0]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -106,7 +218,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[1],
                     Bgm = sets[3],
                     Movie = movies[0],
-                    Chart = charts[1]
+                    ChartId = charts[1]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -116,7 +228,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[4],
                     Bgm = sets[6],
                     Movie = movies[0],
-                    Chart = charts[2]
+                    ChartId = charts[2]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -126,7 +238,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[5],
                     Bgm = sets[7],
                     Movie = movies[0],
-                    Chart = charts[3]
+                    ChartId = charts[3]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -136,7 +248,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[8],
                     Bgm = sets[10],
                     Movie = movies[0],
-                    Chart = charts[4]
+                    ChartId = charts[4]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -146,7 +258,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[9],
                     Bgm = sets[11],
                     Movie = movies[0],
-                    Chart = charts[5]
+                    ChartId = charts[5]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -156,7 +268,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[12],
                     Bgm = sets[14],
                     Movie = movies[0],
-                    Chart = charts[6]
+                    ChartId = charts[6]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -166,9 +278,9 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[13],
                     Bgm = sets[15],
                     Movie = movies[0],
-                    Chart = charts[7]
+                    ChartId = charts[7]
                 },
-            }.Where(x => x.Chart > 0).ToList()
+            }.Where(x => x.ChartId > 0).ToList()
         };
         
         return result;
@@ -178,7 +290,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
     {
         var myData = data[..0x140];
         var name = GetString(myData[..0x040]).Trim();
-        var difficulties = myData[0x04A..0x052].ToArray();
+        var difficulties = myData[0x4C..0x54].ToArray();
         var movies = GetShorts(myData[0x05A..0x062]);
         var charts = GetInts(myData[0x100..0x120]);
         var sets = GetShorts(myData[0x120..0x140]);
@@ -197,7 +309,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[0],
                     Bgm = sets[2],
                     Movie = movies[0],
-                    Chart = charts[0]
+                    ChartId = charts[0]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -207,7 +319,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[1],
                     Bgm = sets[3],
                     Movie = movies[0],
-                    Chart = charts[1]
+                    ChartId = charts[1]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -217,7 +329,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[4],
                     Bgm = sets[6],
                     Movie = movies[0],
-                    Chart = charts[2]
+                    ChartId = charts[2]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -227,7 +339,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[5],
                     Bgm = sets[7],
                     Movie = movies[0],
-                    Chart = charts[3]
+                    ChartId = charts[3]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -237,7 +349,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[8],
                     Bgm = sets[10],
                     Movie = movies[0],
-                    Chart = charts[4]
+                    ChartId = charts[4]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -247,7 +359,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[9],
                     Bgm = sets[11],
                     Movie = movies[0],
-                    Chart = charts[5]
+                    ChartId = charts[5]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -257,7 +369,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[12],
                     Bgm = sets[14],
                     Movie = movies[0],
-                    Chart = charts[6]
+                    ChartId = charts[6]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -267,9 +379,9 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[13],
                     Bgm = sets[15],
                     Movie = movies[0],
-                    Chart = charts[7]
+                    ChartId = charts[7]
                 },
-            }.Where(x => x.Chart > 0).ToList()
+            }.Where(x => x.ChartId > 0).ToList()
         };
         
         return result;
@@ -318,7 +430,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[0],
                     Bgm = sets[2],
                     Movie = movies[0],
-                    Chart = charts[0]
+                    ChartId = charts[0]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -328,7 +440,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[1],
                     Bgm = sets[3],
                     Movie = movies[0],
-                    Chart = charts[1]
+                    ChartId = charts[1]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -338,7 +450,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[4],
                     Bgm = sets[6],
                     Movie = movies[0],
-                    Chart = charts[2]
+                    ChartId = charts[2]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -348,7 +460,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[5],
                     Bgm = sets[7],
                     Movie = movies[0],
-                    Chart = charts[3]
+                    ChartId = charts[3]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -358,7 +470,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[8],
                     Bgm = sets[10],
                     Movie = movies[0],
-                    Chart = charts[4]
+                    ChartId = charts[4]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -368,7 +480,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[9],
                     Bgm = sets[11],
                     Movie = movies[0],
-                    Chart = charts[5]
+                    ChartId = charts[5]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -378,7 +490,7 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[12],
                     Bgm = sets[14],
                     Movie = movies[0],
-                    Chart = charts[6]
+                    ChartId = charts[6]
                 },
                 new BeatmaniaPs2DifficultyInfo
                 {
@@ -388,9 +500,9 @@ public class BeatmaniaPs2SongInfoDecoder(IBeatmaniaPs2FormatDatabase beatmaniaPs
                     Keysounds = sets[13],
                     Bgm = sets[15],
                     Movie = movies[0],
-                    Chart = charts[7]
+                    ChartId = charts[7]
                 },
-            }.Where(x => x.Chart > 0).ToList()
+            }.Where(x => x.ChartId > 0).ToList()
         };
         
         return result;

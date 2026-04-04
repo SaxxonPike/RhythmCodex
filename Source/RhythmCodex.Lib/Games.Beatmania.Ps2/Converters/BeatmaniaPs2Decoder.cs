@@ -111,12 +111,12 @@ public sealed class BeatmaniaPs2Decoder(
                     Data: ReadKeysounds(new MemoryStream(ReadFromBlob(x.Item)), formatInfo.UseOldReaders, songId)));
 
             var chartMap = songInfo.Difficulties
-                .Select(x => (x.Chart, x.Bgm, x.Keysounds, x.Level, x.Name))
+                .Select(x => (x.ChartId, x.Chart, x.Bgm, x.Keysounds, x.Level, x.Name))
                 .Index()
-                .Where(x => x.Item.Chart >= 0)
+                .Where(x => x.Item.ChartId >= 0)
                 .ToDictionary(x => x.Index, x => (
                     ChartId: x.Item,
-                    Chart: ReadChart(new MemoryStream(ReadFromBlob(x.Item.Chart)), formatInfo.UseOldReaders),
+                    Chart: x.Item.Chart ?? ReadChart(new MemoryStream(ReadFromBlob(x.Item.ChartId)), formatInfo.UseOldReaders),
                     x.Item.Name,
                     x.Item.Level,
                     Bgm: x.Item.Bgm < 0 ? bgmMap.First().Value.SetId : bgmMap[x.Item.Bgm].SetId,
@@ -138,7 +138,7 @@ public sealed class BeatmaniaPs2Decoder(
                 );
 
                 chartInfo.Chart[NumericData.Id] = chartIndex;
-                chartInfo.Chart[NumericData.SourceIndex] = chartInfo.ChartId.Chart;
+                chartInfo.Chart[NumericData.SourceIndex] = chartInfo.ChartId.ChartId;
                 chartInfo.Chart[NumericData.PlayLevel] = chartInfo.Level;
                 chartInfo.Chart[StringData.Description] = chartInfo.Name;
                 chartInfo.Chart[StringData.Title] = songInfo.Name;
@@ -181,7 +181,6 @@ public sealed class BeatmaniaPs2Decoder(
             var bgm = bgmDecoder.Decode(isOld
                 ? oldBgmStreamReader.Read(stream)
                 : newBgmStreamReader.Read(stream));
-            bgm?[NumericData.Id] = 0;
             return bgm;
         }
 

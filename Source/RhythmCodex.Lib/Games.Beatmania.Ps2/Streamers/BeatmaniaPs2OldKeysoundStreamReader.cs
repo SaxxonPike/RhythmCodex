@@ -25,7 +25,6 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
 
             var result = new BeatmaniaPs2Keysound
             {
-                Index = i,
                 SampleNumber = hunkReader.ReadInt16(),
                 Reserved0 = hunkReader.ReadInt16(),
                 Channel = hunkReader.ReadByte(),
@@ -40,6 +39,7 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
                 PseudoRight = hunkReader.ReadInt32()
             };
 
+            result.Index = result.SampleNumber;
             result.PanningRight = result.PanningLeft;
 
             switch (result.SampleType)

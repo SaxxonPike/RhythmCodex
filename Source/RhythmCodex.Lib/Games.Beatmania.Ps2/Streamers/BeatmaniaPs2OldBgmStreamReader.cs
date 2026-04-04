@@ -28,7 +28,9 @@ public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : 
         {
             Data = data,
             Volume = volume,
-            Rate = rate
+            VolumeScale = 100,
+            Rate = rate,
+            Index = 1
         };
     }
 }

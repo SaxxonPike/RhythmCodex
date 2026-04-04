@@ -24,6 +24,7 @@ public class BeatmaniaPs2BgmDecoder(
         output[NumericData.SourceVolume] = bgm.Volume;
         output[NumericData.Volume] = new BigRational(bgm.Volume, bgm.VolumeScale);
         output[NumericData.Panning] = BigRational.OneHalf;
+        output[NumericData.Id] = bgm.Index;
         output.Mixer = () => mixer;
         return output;
     }

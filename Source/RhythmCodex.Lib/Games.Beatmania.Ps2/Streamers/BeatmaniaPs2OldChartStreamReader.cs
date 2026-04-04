@@ -17,12 +17,11 @@ public class BeatmaniaPs2OldChartStreamReader : IBeatmaniaPs2OldChartStreamReade
         if (length < 4)
             throw new RhythmCodexException("Invalid chart length.");
 
-        stream.ReadExactly(buffer);
-        var offset = 4;
-
-        var rate = new BigRational(buffer.AsS32L(), 1000000);
+        var offset = 0;
+        var rate = new BigRational(16716, TimeSpan.MicrosecondsPerSecond);
         var events = new List<BeatmaniaPs2Event>();
         var noteCounts = new Dictionary<int, int>();
+        var playedBgm = false;
 
         while (offset < length)
         {
@@ -45,6 +44,12 @@ public class BeatmaniaPs2OldChartStreamReader : IBeatmaniaPs2OldChartStreamReade
 
             switch (command)
             {
+                case BeatmaniaPs2EventType.Bgm when value == 1:
+                    if (!playedBgm)
+                        playedBgm = true;
+                    else
+                        value = 0;
+                    break;
                 case BeatmaniaPs2EventType.Tempo:
                     value |= param << 8;
                     param = 0;

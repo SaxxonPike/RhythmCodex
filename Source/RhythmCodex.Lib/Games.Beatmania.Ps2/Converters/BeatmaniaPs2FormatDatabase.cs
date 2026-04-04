@@ -40,9 +40,10 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_650.06",
                         FileTableOffset = 0x145CD0,
                         SongTableOffset = 0x77FC8,
-                        BlobFileName = "BM2DX3.BIN"
+                        BlobFileName = "DX2_3/BM2DX3.BIN"
                     }
-                ]
+                ],
+                UseOldReaders = true
             },
             BeatmaniaPs2FormatType.IIDX4th => new BeatmaniaPs2FormatInfo
             {
@@ -53,9 +54,10 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_650.26",
                         FileTableOffset = 0x137450,
                         SongTableOffset = 0x8BC98,
-                        BlobFileName = "BM2DX4.BIN"
+                        BlobFileName = "DX2_4/BM2DX4.BIN"
                     }
-                ]
+                ],
+                UseOldReaders = true
             },
             BeatmaniaPs2FormatType.IIDX5th => new BeatmaniaPs2FormatInfo
             {
@@ -66,9 +68,10 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_650.49",
                         FileTableOffset = 0x1837D8,
                         SongTableOffset = 0xAE520,
-                        BlobFileName = "BM2DX5.BIN"
+                        BlobFileName = "DX2_5/BM2DX5.BIN"
                     }
-                ]
+                ],
+                UseOldReaders = true
             },
             BeatmaniaPs2FormatType.IIDX6th => new BeatmaniaPs2FormatInfo
             {
@@ -79,16 +82,17 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_651.56",
                         FileTableOffset = 0x180058,
                         SongTableOffset = 0x1885B8,
-                        BlobFileName = "BM2DX6A.BIN"
+                        BlobFileName = "DX2_6/BM2DX6A.BIN"
                     },
                     new BeatmaniaPs2FormatMetaTable
                     {
                         BinaryFileName = "SLPM_651.56",
                         FileTableOffset = 0x1815E8,
                         SongTableOffset = 0x1885B8,
-                        BlobFileName = "BM2DX6B.BIN"
+                        BlobFileName = "DX2_6/BM2DX6B.BIN"
                     }
-                ]
+                ],
+                UseOldReaders = true
             },
             BeatmaniaPs2FormatType.IIDX7th => new BeatmaniaPs2FormatInfo
             {
@@ -99,14 +103,14 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_655.93",
                         FileTableOffset = 0x1B7460,
                         SongTableOffset = 0x1C1AF0,
-                        BlobFileName = "BM2DX7B.BIN"
+                        BlobFileName = "DX2_7/BM2DX7B.BIN"
                     },
                     new BeatmaniaPs2FormatMetaTable
                     {
                         BinaryFileName = "SLPM_655.93",
                         FileTableOffset = 0x1B9A30,
                         SongTableOffset = 0x1C1AF0,
-                        BlobFileName = "BM2DX7C.BIN"
+                        BlobFileName = "DX2_7/BM2DX7C.BIN"
                     }
                 ]
             },
@@ -119,14 +123,14 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
                         BinaryFileName = "SLPM_657.68",
                         FileTableOffset = 0x19A940,
                         SongTableOffset = 0x1A4060,
-                        BlobFileName = "BM2DX8B.BIN"
+                        BlobFileName = "DX2_8/BM2DX8B.BIN"
                     },
                     new BeatmaniaPs2FormatMetaTable
                     {
                         BinaryFileName = "SLPM_657.68",
                         FileTableOffset = 0x19B080,
                         SongTableOffset = 0x1A4060,
-                        BlobFileName = "BM2DX8C.BIN"
+                        BlobFileName = "DX2_8/BM2DX8C.BIN"
                     }
                 ]
             },
