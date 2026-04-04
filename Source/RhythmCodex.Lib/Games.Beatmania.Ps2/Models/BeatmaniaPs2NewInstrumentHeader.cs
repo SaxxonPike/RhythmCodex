@@ -9,10 +9,10 @@ public record BeatmaniaPs2NewInstrumentHeader
     public int BlockCount { get; set; }
     
     // 0x08
-    public byte VolumeLeft { get; set; }
+    public byte Volume { get; set; }
     
     // 0x09
-    public byte VolumeRight { get; set; }
+    public byte Unknown09 { get; set; }
     
     // 0x0A
     public ushort Unknown0A { get; set; }

@@ -36,12 +36,8 @@ public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaDspTr
 
         for (var i = 0; i < samples.Count; i++)
         {
-            samples[i][NumericData.Volume] = new BigRational(
-                (i & 1) == 0 ? keysound.VolumeLeft : keysound.VolumeRight, 127
-            );
-
-            samples[i][NumericData.SourceVolume] =
-                (i & 1) == 0 ? keysound.VolumeLeft : keysound.VolumeRight;
+            samples[i][NumericData.Volume] = new BigRational(keysound.Volume, 127);
+            samples[i][NumericData.SourceVolume] = keysound.Volume;
 
             samples[i][NumericData.Panning] = new BigRational(
                 (i & 1) == 0 ? keysound.PanningLeft : keysound.PanningRight, 127

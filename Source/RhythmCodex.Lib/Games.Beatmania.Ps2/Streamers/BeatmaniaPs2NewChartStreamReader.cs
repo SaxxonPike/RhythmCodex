@@ -143,7 +143,7 @@ public sealed class BeatmaniaPs2NewChartStreamReader(IBemaniLzDecoder bemaniLzDe
 
         return new BeatmaniaPs2Chart
         {
-            Rate = rate,
+            Rate = rate, //* new BigRational(5999, 6000),
             Events = events,
             NoteCounts = noteCounts
         };

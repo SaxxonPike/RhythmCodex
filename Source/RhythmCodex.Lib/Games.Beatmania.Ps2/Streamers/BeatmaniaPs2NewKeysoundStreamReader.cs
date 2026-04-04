@@ -24,8 +24,8 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
         {
             Identifier = reader.ReadInt32(),
             BlockCount = reader.ReadInt32(),
-            VolumeLeft = reader.ReadByte(),
-            VolumeRight = reader.ReadByte(),
+            Volume = reader.ReadByte(),
+            Unknown09 = reader.ReadByte(),
             Unknown0A = reader.ReadUInt16(),
             Unknown0C = reader.ReadInt32()
         };
@@ -110,8 +110,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                     Index = instrument.Index + 1,
                     SampleNumber = instrument.SampleNumber,
                     Channel = instrument.PlaybackChannel,
-                    VolumeLeft = instrumentHeader.VolumeLeft * instrument.Volume / 0x7F,
-                    VolumeRight = instrumentHeader.VolumeRight * instrument.Volume / 0x7F,
+                    Volume = instrumentHeader.Volume * instrument.Volume / 0x7F,
                     PanningLeft = instrument.SampleChannel0Pan,
                     PanningRight = instrument.SampleChannel1Pan,
                     SampleType = instrument.Flags00,
@@ -139,8 +138,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 Index = instrument.Index + 1,
                 SampleNumber = instrument.SampleNumber,
                 Channel = instrument.PlaybackChannel,
-                VolumeLeft = instrumentHeader.VolumeLeft * instrument.Volume / 0x7F,
-                VolumeRight = instrumentHeader.VolumeRight * instrument.Volume / 0x7F,
+                Volume = instrumentHeader.Volume * instrument.Volume / 0x7F,
                 PanningLeft = instrument.SampleChannel0Pan,
                 PanningRight = instrument.SampleChannel1Pan,
                 SampleType = instrument.Flags00,
