@@ -15,8 +15,8 @@ namespace RhythmCodex.Games.Beatmania.Integration;
 [TestFixture]
 public class BeatmaniaPs2ChartIntegrationTests : BaseIntegrationFixture
 {
-    [Theory]
-    public void Test1([Range(0, 255)] byte padByte)
+    [Test]
+    public void Test1()
     {
         var archive = GetArchiveResource("BeatmaniaPs2.bm2dxps2encchart.zip");
         var input = archive["01C ZERO.raw"];
@@ -24,19 +24,10 @@ public class BeatmaniaPs2ChartIntegrationTests : BaseIntegrationFixture
 
         var keyProvider = Resolve<IBeatmaniaPs2KeyProvider>();
         var key = keyProvider.GetKeyFor14thStyle();
-
         var blowfish = Resolve<IBlowfishDecrypter>();
 
-        var observed = blowfish.Decrypt(input, key, padByte).ToArray();
-        //var decoded = Resolve<IBemaniLzDecoder>().Decode(new MemoryStream(observed)).ToArray();
-        //this.WriteFile(observed, "out.bmlz");
-        observed[..9736].ShouldBeEquivalentTo(expected[..9736]);
-        observed[9743].ShouldBe((byte)0x08);
-        observed[9744].ShouldBe((byte)0xFF);
-        observed[9745].ShouldBe((byte)0x7F);
-        observed[9746].ShouldBe((byte)0x00);
-        observed[9747].ShouldBe((byte)0x02);
-        observed[9748].ShouldBe((byte)0x00);
+        var observed = blowfish.Decrypt(input, key, 0).ToArray();
+        observed.ShouldBeEquivalentTo(expected);
     }
 
     [Test]

@@ -8,7 +8,6 @@
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     </ItemGroup>
     <ItemGroup>
