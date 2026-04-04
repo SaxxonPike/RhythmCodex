@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using RhythmCodex.Compressions.BemaniLz.Processors;
 using RhythmCodex.Encryptions.Blowfish.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Streamers;

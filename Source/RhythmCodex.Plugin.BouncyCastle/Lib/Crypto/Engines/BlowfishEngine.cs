@@ -326,12 +326,12 @@ public sealed class BlowfishEngine
         bool forEncryption,
         ICipherParameters parameters)
     {
-        if (parameters is not KeyParameter)
+        if (parameters is not KeyParameter parameter)
             throw new ArgumentException(
                 $"invalid parameter passed to Blowfish init - {Platform.GetTypeName(parameters)}");
 
         encrypting = forEncryption;
-        workingKey = ((KeyParameter)parameters).GetKey();
+        workingKey = parameter.GetKey();
         SetKey(workingKey);
     }
 
@@ -340,25 +340,25 @@ public sealed class BlowfishEngine
         get { return "Blowfish"; }
     }
 
-    public int ProcessBlock(byte[] input, int inOff, byte[] output, int outOff)
-    {
-        if (workingKey == null)
-            throw new InvalidOperationException("Blowfish not initialised");
-
-        Check.DataLength(input, inOff, BLOCK_SIZE, "input buffer too short");
-        Check.OutputLength(output, outOff, BLOCK_SIZE, "output buffer too short");
-
-        if (encrypting)
-        {
-            EncryptBlock(input.AsSpan(inOff), output.AsSpan(outOff));
-        }
-        else
-        {
-            DecryptBlock(input.AsSpan(inOff), output.AsSpan(outOff));
-        }
-
-        return BLOCK_SIZE;
-    }
+    // public int ProcessBlock(byte[] input, int inOff, byte[] output, int outOff)
+    // {
+    //     if (workingKey == null)
+    //         throw new InvalidOperationException("Blowfish not initialised");
+    //
+    //     Check.DataLength(input, inOff, BLOCK_SIZE, "input buffer too short");
+    //     Check.OutputLength(output, outOff, BLOCK_SIZE, "output buffer too short");
+    //
+    //     if (encrypting)
+    //     {
+    //         EncryptBlock(input.AsSpan(inOff), output.AsSpan(outOff));
+    //     }
+    //     else
+    //     {
+    //         DecryptBlock(input.AsSpan(inOff), output.AsSpan(outOff));
+    //     }
+    //
+    //     return BLOCK_SIZE;
+    // }
 
     public int ProcessBlock(ReadOnlySpan<byte> input, Span<byte> output)
     {
@@ -400,7 +400,7 @@ public sealed class BlowfishEngine
     private void ProcessTable(
         uint xl,
         uint xr,
-        uint[] table)
+        Span<uint> table)
     {
         var size = table.Length;
 
@@ -424,7 +424,7 @@ public sealed class BlowfishEngine
         }
     }
 
-    private void SetKey(byte[] key)
+    private void SetKey(ReadOnlySpan<byte> key)
     {
         if (key.Length is < 4 or > 56)
         {
