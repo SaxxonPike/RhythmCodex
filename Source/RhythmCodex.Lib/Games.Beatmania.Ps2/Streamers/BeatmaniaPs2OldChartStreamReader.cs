@@ -18,7 +18,14 @@ public class BeatmaniaPs2OldChartStreamReader : IBeatmaniaPs2OldChartStreamReade
             throw new RhythmCodexException("Invalid chart length.");
 
         var offset = 0;
-        var rate = new BigRational(16716, TimeSpan.MicrosecondsPerSecond);
+
+        //
+        // Rate is tied to the non-interlaced video refresh rate of an NTSC PlayStation GPU:
+        // 9000000 / 572 / 263 = 59.82610545hz or 16.7151(...)ms.
+        //
+
+        var rate = new BigRational(100000000L, 5982610545L);
+
         var events = new List<BeatmaniaPs2Event>();
         var noteCounts = new Dictionary<int, int>();
         var playedBgm = false;
