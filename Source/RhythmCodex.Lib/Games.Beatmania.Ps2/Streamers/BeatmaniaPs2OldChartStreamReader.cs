@@ -20,8 +20,15 @@ public class BeatmaniaPs2OldChartStreamReader : IBeatmaniaPs2OldChartStreamReade
         var offset = 0;
 
         //
-        // Rate is tied to the non-interlaced video refresh rate of an NTSC PlayStation GPU:
+        // Rate is tied to the non-interlaced video refresh rate
+        // of an NTSC PlayStation GPU:
         // 9000000 / 572 / 263 = 59.82610545hz or 16.7151(...)ms.
+        //
+        // The previous rate of 16.716ms was a guess based on some
+        // of the other chart data from later games, but because it
+        // seems that one in-game microsecond is not quite exactly
+        // one real microsecond, (I suspect) the difference is to
+        // compensate for the timing mismatch.
         //
 
         var rate = new BigRational(100000000L, 5982610545L);
