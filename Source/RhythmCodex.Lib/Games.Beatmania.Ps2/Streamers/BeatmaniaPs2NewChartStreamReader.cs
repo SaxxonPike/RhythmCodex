@@ -54,10 +54,13 @@ public sealed class BeatmaniaPs2NewChartStreamReader(IBemaniLzDecoder bemaniLzDe
         var noteCounts = new Dictionary<int, int>();
 
         //
-        // This chart format contains the "tick rate" in microseconds.
+        // This chart format contains the "tick rate" in microseconds. I suspect some of the original
+        // charts had some rounding error in the rate calculation, so we bias the rate a little faster
+        // to compensate.
         //
 
-        var rate = new BigRational(buffer[4..].AsS32L(), TimeSpan.MicrosecondsPerSecond);
+        var rateValue = buffer[4..].AsS32L() * 2 - 1;
+        var rate = new BigRational(rateValue, TimeSpan.MicrosecondsPerSecond * 2);
 
         //
         // Convert each chart event.
@@ -143,7 +146,7 @@ public sealed class BeatmaniaPs2NewChartStreamReader(IBemaniLzDecoder bemaniLzDe
 
         return new BeatmaniaPs2Chart
         {
-            Rate = rate, //* new BigRational(5999, 6000),
+            Rate = rate,
             Events = events,
             NoteCounts = noteCounts
         };
