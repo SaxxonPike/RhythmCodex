@@ -18,31 +18,37 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
     private static List<IsoSectorInfo> FindInternal(IEnumerable<IsoSectorInfo> sectors)
     {
         var result = new List<IsoSectorInfo>();
-        var mode1Sectors = sectors.Where(s => s.Mode == 1 ||
-                                              s is { Mode: 2, Form: 1 }).ToList();
+
+        var sectorEnumerator = sectors
+            .SkipWhile(s => s is not { Frames: 16, Seconds: 0, Minutes: 0 })
+            .Where(s => s.Mode == 1 || s is { Mode: 2, Form: 1 })
+            .GetEnumerator();
+
         var currentMinute = 0;
         var currentSecond = 0;
         var currentFrame = 16;
 
-        while (true)
+        while (sectorEnumerator.MoveNext())
         {
-            var descriptorSector = mode1Sectors.SingleOrDefault(s => s.Frames == currentFrame &&
-                                                                     s.Seconds == currentSecond &&
-                                                                     s.Minutes == currentMinute);
+            var sector = sectorEnumerator.Current;
 
-            if (descriptorSector == null)
+            if (sector.Frames != currentFrame ||
+                sector.Seconds != currentSecond ||
+                sector.Minutes != currentMinute)
+                continue;
+
+            if (sector == null)
                 throw new RhythmCodexException($"Volume descriptors incomplete. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");
 
-            var userData = descriptorSector.UserData.Span;
+            var userData = sector.UserData.Span;
 
             if (!userData.Slice(0x0001, 5).SequenceEqual("CD001"u8))
             {
                 currentSecond++;
                 continue;
             }
-//                throw new RhythmCodexException($"Standard identifier is incorrect. MSF={currentMinute:000}:{currentSecond:00}:{currentFrame:00}");
 
-            result.Add(descriptorSector);
+            result.Add(sector);
                 
             if (userData[0x0000] == 255)
                 break;

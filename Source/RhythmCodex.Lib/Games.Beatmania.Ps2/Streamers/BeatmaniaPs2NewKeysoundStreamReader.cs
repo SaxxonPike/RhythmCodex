@@ -120,12 +120,14 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
             }
 
             var sampleWaves = new List<VagChunk>();
+            Span<int> sampleOffsets = stackalloc int[sample.ChannelCount];
 
             if (sample.SampleLength > 0)
             {
                 for (var i = 0; i < sample.ChannelCount; i++)
                 {
                     sampleWaveStream.Position = sample.SampleOffset + i * sample.SampleLength;
+                    sampleOffsets[i] = (int)sampleWaveStream.Position;
                     if (vagStreamReader.Read(sampleWaveStream, 1, 0) is { } vag)
                         sampleWaves.Add(vag);
                 }
@@ -146,10 +148,8 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 SampleType = instrument.Flags00,
                 FrequencyLeft = roundedFreq,
                 FrequencyRight = roundedFreq,
-                OffsetLeft = 0,
-                OffsetRight = 0,
-                PseudoLeft = 0,
-                PseudoRight = 0,
+                OffsetLeft = sampleOffsets.Length > 0 ? sampleOffsets[0] : 0,
+                OffsetRight = sampleOffsets.Length > 1 ? sampleOffsets[1] : 0,
                 Data = sampleWaves
             };
         }).ToList();
