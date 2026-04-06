@@ -184,9 +184,12 @@ public sealed class BeatmaniaPs2Service(
 
         Sound? ReadBgm(Stream stream, bool isOld)
         {
-            var bgm = bgmDecoder.Decode(isOld
+            var data = isOld
                 ? oldBgmStreamReader.Read(stream)
-                : newBgmStreamReader.Read(stream));
+                : newBgmStreamReader.Read(stream);
+
+            var bgm = data != null ? bgmDecoder.Decode(data) : null;
+
             return bgm;
         }
 

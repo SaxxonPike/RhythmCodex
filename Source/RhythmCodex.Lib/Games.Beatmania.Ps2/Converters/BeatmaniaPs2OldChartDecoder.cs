@@ -22,22 +22,20 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
         // bits 20..23: parameter
         // bits 24..31: value
         //
-        // Rate is tied to the non-interlaced video refresh rate
+        // Ordinarily the refresh rate of the game is synced to that
         // of an NTSC PlayStation GPU:
         // 9000000 / 572 / 263 = 59.82610545hz or 16.7151(...)ms.
         //
-        // The previous rate of 16.716ms was a guess based on some
-        // of the other chart data from later games, but because it
-        // seems that one in-game microsecond is not quite exactly
-        // one real microsecond, (I suspect) the difference is to
-        // compensate for the timing mismatch.
+        // However, the team doing conversions for the "old" chart
+        // style chose to use 16.716ms.
         //
 
-        var rate = new BigRational(100000000L, 5982610545L);
+        var rate = new BigRational(16716, 1000000);
 
         var events = new List<BeatmaniaPs2Event>();
         var noteCounts = new Dictionary<int, int>();
         var playedBgm = false;
+        var bgmStartTime = 0;
 
         //
         // Convert each chart event.
@@ -48,7 +46,7 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
         while (cursor.Length >= 4)
         {
             var skip = false;
-            var linearTime = cursor.AsU16L();
+            int linearTime = cursor.AsU16L();
             var command = (BeatmaniaPs2EventType)(byte)(cursor[2] & 0xF);
             var param = unchecked((byte)(cursor[2] >> 4));
             var value = (int)cursor[3];
@@ -97,9 +95,14 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
 
                 case BeatmaniaPs2EventType.Bgm when value == 1:
                     if (!playedBgm)
+                    {
                         playedBgm = true;
+                        bgmStartTime = linearTime;
+                    }
                     else
+                    {
                         skip = true;
+                    }
                     break;
 
                 //

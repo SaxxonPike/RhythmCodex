@@ -6,7 +6,6 @@ using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.FileSystems.Iso.Streamers;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Services;
-using RhythmCodex.Sounds.Converters;
 
 namespace RhythmCodex.Tools.OneShots;
 
@@ -89,6 +88,7 @@ public class BmPs2OneShots : BaseIntegrationFixture
                 var outPath = Path.Combine(target, $"{set.SongId:d4}{(setName.Length == 0 ? "" : $" {setName}")}");
                 var consolidatedSet = chartSetConsolidator.Consolidate(set);
             
+                Log.WriteLine($"Writing set for song {set.SongId}");
                 this.WriteSet(new TestHelper.WriteSetConfig
                 {
                     OutPath = outPath,

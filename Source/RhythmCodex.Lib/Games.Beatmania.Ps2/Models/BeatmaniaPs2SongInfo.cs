@@ -10,4 +10,5 @@ public record BeatmaniaPs2SongInfo
     public IReadOnlyList<BeatmaniaPs2DifficultyInfo> Difficulties { get; set; } = [];
     public bool IsFiveKey { get; set; }
     public int ChartRef { get; set; }
+    public int Adjust { get; set; }
 }

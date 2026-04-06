@@ -9,7 +9,7 @@ namespace RhythmCodex.Games.Beatmania.Ps2.Streamers;
 [Service]
 public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : IBeatmaniaPs2OldBgmStreamReader
 {
-    public BeatmaniaPs2Bgm Read(Stream stream)
+    public BeatmaniaPs2Bgm? Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
         var length = reader.ReadInt32S();
@@ -17,7 +17,13 @@ public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : 
         var volume = reader.ReadByte();
         var rate = reader.ReadUInt16S();
         var channels = reader.ReadByte();
-            
+
+        if (length < 0)
+        {
+            var flags0 = (length >> 28) & 0xF;
+            length &= 0x0FFFFFFF;
+        }
+
         // skip the rest of the header
         reader.Skip(0x800 - 9);
 

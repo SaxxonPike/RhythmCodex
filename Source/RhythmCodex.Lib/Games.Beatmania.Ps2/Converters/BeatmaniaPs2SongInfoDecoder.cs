@@ -198,8 +198,93 @@ public class BeatmaniaPs2SongInfoDecoder(
     /// <summary>
     /// Decodes a song list entry from beatmaniaIIDX 4thstyle.
     /// </summary>
-    private static BeatmaniaPs2SongInfo Decode2dx4th(ReadOnlySpan<byte> data) =>
-        throw new NotImplementedException();
+    private static BeatmaniaPs2SongInfo Decode2dx4th(ReadOnlySpan<byte> data)
+    {
+        var myData = data[..0x090];
+        var nameRef = ReadInt32LittleEndian(myData[0x004..]) - 0xFF000;
+        var difficulties = myData[0x008..0x00E].ToArray();
+        var movies = GetShorts(myData[0x00E..0x010]);
+        var charts = GetInts(myData[0x058..0x070]);
+        var sets = GetShorts(myData[0x070..0x088]);
+
+        if (nameRef <= 0)
+            nameRef = ReadInt32LittleEndian(myData) - 0xFF000;
+
+        if (nameRef <= 0 || nameRef >= data.Length)
+            return null;
+
+        var result = new BeatmaniaPs2SongInfo
+        {
+            InfoSize = myData.Length,
+            NameRef = nameRef,
+            Adjust = myData[138..].AsS16L(),
+            Difficulties = new[]
+            {
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Hyper",
+                    Players = 1,
+                    Level = difficulties[1],
+                    Keysounds = sets[0],
+                    Bgm = sets[2],
+                    Movie = movies[0],
+                    ChartRef = charts[0] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Hyper",
+                    Players = 2,
+                    Level = difficulties[1],
+                    Keysounds = sets[1],
+                    Bgm = sets[3],
+                    Movie = movies[0],
+                    ChartRef = charts[1] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Another",
+                    Players = 1,
+                    Level = difficulties[0],
+                    Keysounds = sets[0],
+                    Bgm = sets[4],
+                    Movie = movies[0],
+                    ChartRef = charts[2] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Another",
+                    Players = 2,
+                    Level = difficulties[0],
+                    Keysounds = sets[0],
+                    Bgm = sets[4],
+                    Movie = movies[0],
+                    ChartRef = charts[3] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Normal",
+                    Players = 1,
+                    Level = difficulties[2],
+                    Keysounds = sets[0],
+                    Bgm = sets[2],
+                    Movie = movies[0],
+                    ChartRef = charts[4] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Normal",
+                    Players = 2,
+                    Level = difficulties[2],
+                    Keysounds = sets[1],
+                    Bgm = sets[3],
+                    Movie = movies[0],
+                    ChartRef = charts[5] - 0xFF000
+                }
+            }.Where(x => x.ChartRef > 0).ToList()
+        };
+
+        return result;
+    }
 
     /// <summary>
     /// Decodes a song list entry from beatmaniaIIDX 5thstyle.

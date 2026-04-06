@@ -5,5 +5,5 @@ namespace RhythmCodex.Games.Beatmania.Ps2.Streamers;
 
 public interface IBeatmaniaPs2OldBgmStreamReader
 {
-    BeatmaniaPs2Bgm Read(Stream stream);
+    BeatmaniaPs2Bgm? Read(Stream stream);
 }
