@@ -1,8 +1,10 @@
+using System;
 using System.IO;
 using RhythmCodex.Extensions;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Streamers;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Streamers;
 
@@ -12,11 +14,13 @@ public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : 
     public BeatmaniaPs2Bgm? Read(Stream stream)
     {
         var reader = new BinaryReader(stream);
-        var length = reader.ReadInt32S();
-        reader.ReadByte();
-        var volume = reader.ReadByte();
-        var rate = reader.ReadUInt16S();
-        var channels = reader.ReadByte();
+        Span<byte> header = stackalloc byte[32];
+        reader.ReadExactly(header);
+        
+        var length = header.AsS32B();
+        var volume = header[5];
+        var rate = header[6..].AsU16B();
+        var channels = header[8];
 
         if (length < 0)
         {
@@ -24,8 +28,13 @@ public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : 
             length &= 0x0FFFFFFF;
         }
 
+        if (channels <= 0)
+        {
+            
+        }
+
         // skip the rest of the header
-        reader.Skip(0x800 - 9);
+        reader.Skip(0x800 - header.Length);
 
         var source = reader.ReadBytes(length);
         using var mem = new MemoryStream(source);

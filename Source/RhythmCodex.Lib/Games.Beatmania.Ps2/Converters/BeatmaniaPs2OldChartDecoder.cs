@@ -30,7 +30,23 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
         // style chose to use 16.716ms.
         //
 
-        var rate = new BigRational(16716, 1000000);
+        var rateValue = 16716;
+        var rateDiv = TimeSpan.MicrosecondsPerSecond;
+        var cursor = data;
+
+        //
+        // It is possible starting with 5thstyle to specify a custom rate.
+        // This should follow the same rules as "new" charts.
+        // 
+
+        if (data.AsS32L() == 8)
+        {
+            rateValue = data[4..].AsS32L() * 2 - 1;
+            rateDiv *= 2;
+            cursor = data[8..];
+        }
+
+        var rate = new BigRational(rateValue, rateDiv);
 
         var events = new List<BeatmaniaPs2Event>();
         var noteCounts = new Dictionary<int, int>();
@@ -40,8 +56,6 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
         //
         // Convert each chart event.
         //
-
-        var cursor = data;
 
         while (cursor.Length >= 4)
         {

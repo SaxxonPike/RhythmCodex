@@ -83,6 +83,12 @@ public class BmPs2OneShots : BaseIntegrationFixture
                 var setName = (set.Name ?? "")
                     .Replace('\\', '_')
                     .Replace('/', '_')
+                    .Replace('*', '_')
+                    .Replace('?', '_')
+                    .Replace('&', '_')
+                    .Replace('<', '_')
+                    .Replace('>', '_')
+                    .Replace('|', '_')
                     .Trim();
                 
                 var outPath = Path.Combine(target, $"{set.SongId:d4}{(setName.Length == 0 ? "" : $" {setName}")}");

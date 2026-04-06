@@ -289,8 +289,113 @@ public class BeatmaniaPs2SongInfoDecoder(
     /// <summary>
     /// Decodes a song list entry from beatmaniaIIDX 5thstyle.
     /// </summary>
-    private static BeatmaniaPs2SongInfo Decode2dx5th(ReadOnlySpan<byte> data) =>
-        throw new NotImplementedException();
+    private static BeatmaniaPs2SongInfo Decode2dx5th(ReadOnlySpan<byte> data)
+    {
+        var myData = data[..0x0A4];
+        var nameRef = ReadInt32LittleEndian(myData[0x004..]) - 0xFF000;
+        var difficulties = myData[0x008..0x010].ToArray();
+        var movies = GetShorts(myData[0x010..0x012]);
+        var charts = GetInts(myData[0x05C..0x07C]);
+        var sets = GetShorts(myData[0x07C..0x0A4]);
+
+        if (nameRef <= 0)
+            nameRef = ReadInt32LittleEndian(myData) - 0xFF000;
+
+        if (nameRef <= 0 || nameRef >= data.Length)
+            return null;
+
+        var result = new BeatmaniaPs2SongInfo
+        {
+            InfoSize = myData.Length,
+            NameRef = nameRef,
+            Adjust = myData[138..].AsS16L(),
+            Difficulties = new[]
+            {
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Hyper",
+                    Players = 1,
+                    Level = difficulties[2],
+                    Keysounds = sets[0],
+                    Bgm = sets[2],
+                    Movie = movies[0],
+                    ChartRef = charts[0] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Hyper",
+                    Players = 2,
+                    Level = difficulties[3],
+                    Keysounds = sets[1],
+                    Bgm = sets[3],
+                    Movie = movies[0],
+                    ChartRef = charts[1] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Another",
+                    Players = 1,
+                    Level = difficulties[0],
+                    Keysounds = sets[4],
+                    Bgm = sets[6],
+                    Movie = movies[0],
+                    ChartRef = charts[2] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Another",
+                    Players = 2,
+                    Level = difficulties[1],
+                    Keysounds = sets[5],
+                    Bgm = sets[7],
+                    Movie = movies[0],
+                    ChartRef = charts[3] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Normal",
+                    Players = 1,
+                    Level = difficulties[4],
+                    Keysounds = sets[8],
+                    Bgm = sets[10],
+                    Movie = movies[0],
+                    ChartRef = charts[4] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Normal",
+                    Players = 2,
+                    Level = difficulties[5],
+                    Keysounds = sets[9],
+                    Bgm = sets[11],
+                    Movie = movies[0],
+                    ChartRef = charts[5] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Beginner",
+                    Players = 1,
+                    Level = difficulties[7],
+                    Keysounds = sets[12],
+                    Bgm = sets[14],
+                    Movie = movies[0],
+                    ChartRef = charts[6] - 0xFF000
+                },
+                new BeatmaniaPs2DifficultyInfo
+                {
+                    Name = "Beginner",
+                    Players = 2,
+                    Level = difficulties[7],
+                    Keysounds = sets[13],
+                    Bgm = sets[15],
+                    Movie = movies[0],
+                    ChartRef = charts[7] - 0xFF000
+                }
+            }.Where(x => x.ChartRef > 0).ToList()
+        };
+
+        return result;
+    }
 
     /// <summary>
     /// Decodes a song list entry from beatmaniaIIDX 6thstyle.
