@@ -5,9 +5,11 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
 public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
 {
+    /// <inheritdoc />
     public BeatmaniaPs2FormatType? GetTypeByExeName(string name) =>
         name.ToUpperInvariant() switch
         {
@@ -28,6 +30,7 @@ public sealed class BeatmaniaPs2FormatDatabase : IBeatmaniaPs2FormatDatabase
             _ => throw new ArgumentException($"Unknown executable name: {name}", nameof(name))
         };
 
+    /// <inheritdoc />
     public BeatmaniaPs2FormatInfo? GetFormatByType(BeatmaniaPs2FormatType type) =>
         type switch
         {

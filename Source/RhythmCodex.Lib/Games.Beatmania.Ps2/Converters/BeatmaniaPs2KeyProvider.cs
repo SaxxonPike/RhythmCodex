@@ -3,11 +3,11 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
 public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
 {
-    // credit: windyfairy
-    // reference: https://github.com/windyfairy/iidx-ps2tools/blob/master/plugins
+    // Thanks to windyfairy for providing the key construction methods.
 
     private static readonly string[] KeyParts14 =
     [
@@ -51,6 +51,7 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         "STANDARD EXPERT CLASS" // e4 9
     ];
 
+    /// <inheritdoc />
     public byte[] GetKeyFor14thStyle()
     {
         var key = new StringBuilder();
@@ -73,6 +74,7 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         return ConvertToBytes(key);
     }
 
+    /// <inheritdoc />
     public byte[] GetKeyFor15thStyle()
     {
         var key = new StringBuilder();
@@ -95,6 +97,7 @@ public class BeatmaniaPs2KeyProvider : IBeatmaniaPs2KeyProvider
         return ConvertToBytes(key);
     }
 
+    /// <inheritdoc />
     public byte[] GetKeyFor16thStyle()
     {
         var key = new StringBuilder();

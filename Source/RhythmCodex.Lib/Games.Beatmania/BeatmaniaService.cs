@@ -15,7 +15,7 @@ namespace RhythmCodex.Games.Beatmania;
 
 /// <inheritdoc cref="IBeatmaniaService"/>
 [Service]
-public class BeatmaniaService(IServiceProvider services) 
+public class BeatmaniaService(IServiceProvider services)
     : RhythmCodexServiceBase(services), IBeatmaniaService
 {
     public List<Chart> ReadPcCharts(Stream stream, BigRational rate) =>
@@ -30,13 +30,21 @@ public class BeatmaniaService(IServiceProvider services)
             .Select(sound => sound!)
             .ToList();
 
-    public Chart ReadOldPs2Chart(Stream stream) =>
-        Svc<IBeatmaniaPs2ChartDecoder>()
-            .Decode(Svc<IBeatmaniaPs2OldChartStreamReader>()
-                .Read(stream, stream.Length));
+    public Chart ReadOldPs2Chart(Stream stream)
+    {
+        var reader = Svc<IBeatmaniaPs2OldChartStreamReader>();
+        var decoder = Svc<IBeatmaniaPs2OldChartDecoder>();
+        var converter = Svc<IBeatmaniaPs2ChartConverter>();
 
-    public Chart ReadNewPs2Chart(Stream stream) =>
-        Svc<IBeatmaniaPs2ChartDecoder>()
-            .Decode(Svc<IBeatmaniaPs2NewChartStreamReader>()
-                .Read(stream, stream.Length));
+        return converter.Convert(decoder.Decode(reader.Read(stream, stream.Length).Span));
+    }
+
+    public Chart ReadNewPs2Chart(Stream stream)
+    {
+        var reader = Svc<IBeatmaniaPs2NewChartStreamReader>();
+        var decoder = Svc<IBeatmaniaPs2NewChartDecoder>();
+        var converter = Svc<IBeatmaniaPs2ChartConverter>();
+
+        return converter.Convert(decoder.Decode(reader.Read(stream, stream.Length).Span));
+    }
 }

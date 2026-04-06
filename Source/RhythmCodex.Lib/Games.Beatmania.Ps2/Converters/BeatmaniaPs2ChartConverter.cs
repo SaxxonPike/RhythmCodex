@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charts.Models;
@@ -8,10 +7,12 @@ using RhythmCodex.Metadatas.Models;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
-public class BeatmaniaPs2ChartDecoder : IBeatmaniaPs2ChartDecoder
+public sealed class BeatmaniaPs2ChartConverter : IBeatmaniaPs2ChartConverter
 {
-    public Chart Decode(BeatmaniaPs2Chart chart)
+    /// <inheritdoc />
+    public Chart Convert(BeatmaniaPs2Chart chart)
     {
         var events = new List<Event>();
 

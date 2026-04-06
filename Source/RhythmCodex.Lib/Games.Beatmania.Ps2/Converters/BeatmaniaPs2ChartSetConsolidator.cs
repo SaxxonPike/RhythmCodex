@@ -8,9 +8,11 @@ using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
 public sealed class BeatmaniaPs2ChartSetConsolidator : IBeatmaniaPs2ChartSetConsolidator
 {
+    /// <inheritdoc />
     public (List<Chart> Charts, List<Sound> Sounds) Consolidate(BeatmaniaPs2ChartSet chartSet)
     {
         var uniqueSets = chartSet.ChartMaps
@@ -46,9 +48,4 @@ public sealed class BeatmaniaPs2ChartSetConsolidator : IBeatmaniaPs2ChartSetCons
 
         return (masterChartList, masterSoundList);
     }
-}
-
-public interface IBeatmaniaPs2ChartSetConsolidator
-{
-    (List<Chart> Charts, List<Sound> Sounds) Consolidate(BeatmaniaPs2ChartSet chartSet);
 }

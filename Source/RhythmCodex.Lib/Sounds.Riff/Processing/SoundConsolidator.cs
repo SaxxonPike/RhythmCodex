@@ -119,8 +119,6 @@ public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
             if (a.Where((t, i) => t.Offset != b[i].Offset || t.Panning == b[i].Panning).Any())
                 return false;
 
-            Debug.WriteLine("Combined");
-
             return true;
         }
 

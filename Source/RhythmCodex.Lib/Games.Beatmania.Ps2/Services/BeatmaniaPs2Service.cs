@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Charts.Models;
+using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
 using RhythmCodex.Games.Beatmania.Ps2.Streamers;
 using RhythmCodex.Infrastructure;
@@ -10,10 +11,11 @@ using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Models;
 
-namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
+namespace RhythmCodex.Games.Beatmania.Ps2.Services;
 
+/// <inheritdoc />
 [Service]
-public sealed class BeatmaniaPs2Decoder(
+public sealed class BeatmaniaPs2Service(
     IBeatmaniaPs2FormatDatabase formatDatabase,
     IBeatmaniaPs2DataFileInfoDecoder dataFileInfoDecoder,
     IBeatmaniaPs2SongInfoDecoder songInfoDecoder,
@@ -25,9 +27,12 @@ public sealed class BeatmaniaPs2Decoder(
     IBeatmaniaPs2OldKeysoundStreamReader oldKeysoundStreamReader,
     IBeatmaniaPs2KeysoundDecoder keysoundDecoder,
     IBeatmaniaPs2BgmDecoder bgmDecoder,
-    IBeatmaniaPs2ChartDecoder chartDecoder)
-    : IBeatmaniaPs2Decoder
+    IBeatmaniaPs2ChartConverter chartConverter,
+    IBeatmaniaPs2OldChartDecoder oldChartDecoder,
+    IBeatmaniaPs2NewChartDecoder newChartDecoder)
+    : IBeatmaniaPs2Service
 {
+    /// <inheritdoc />
     public IEnumerable<BeatmaniaPs2ChartSet> Decode(Func<string, Stream> openFile, BeatmaniaPs2FormatType type)
     {
         if (formatDatabase.GetFormatByType(type) is not { } formatInfo)
@@ -116,7 +121,8 @@ public sealed class BeatmaniaPs2Decoder(
                 .Where(x => x.Item.ChartId >= 0)
                 .ToDictionary(x => x.Index, x => (
                     ChartId: x.Item,
-                    Chart: x.Item.Chart ?? ReadChart(new MemoryStream(ReadFromBlob(x.Item.ChartId)), formatInfo.UseOldReaders),
+                    Chart: x.Item.Chart ?? ReadChart(new MemoryStream(ReadFromBlob(x.Item.ChartId)),
+                        formatInfo.UseOldReaders),
                     x.Item.Name,
                     x.Item.Level,
                     Bgm: x.Item.Bgm < 0 ? bgmMap.First().Value.SetId : bgmMap[x.Item.Bgm].SetId,
@@ -194,10 +200,6 @@ public sealed class BeatmaniaPs2Decoder(
                 ? oldKeysoundStreamReader.Read(stream)
                 : newKeysoundStreamReader.Read(stream)).Keysounds;
 
-            if (songId == 16)
-                foreach (var item in keysounds)
-                    Console.WriteLine(item);
-            
             return keysounds.ToDictionary(x => x.Index, x =>
             {
                 var decoded = keysoundDecoder.Decode(x);
@@ -210,9 +212,17 @@ public sealed class BeatmaniaPs2Decoder(
         // Reads a chart block.
         //
 
-        Chart ReadChart(Stream stream, bool isOld) =>
-            chartDecoder.Decode(isOld
+        Chart ReadChart(Stream stream, bool isOld)
+        {
+            var chartData = isOld
                 ? oldChartStreamReader.Read(stream, stream.Length)
-                : newChartStreamReader.Read(stream, stream.Length));
+                : newChartStreamReader.Read(stream, stream.Length);
+
+            var decodedData = isOld
+                ? oldChartDecoder.Decode(chartData.Span)
+                : newChartDecoder.Decode(chartData.Span);
+
+            return chartConverter.Convert(decodedData);
+        }
     }
 }

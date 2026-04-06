@@ -7,9 +7,11 @@ using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
 public sealed class BeatmaniaPs2DataFileInfoDecoder : IBeatmaniaPs2DataFileInfoDecoder
 {
+    /// <inheritdoc />
     public List<BeatmaniaPs2DataFileInfo> Decode(
         ReadOnlySpan<byte> data, 
         int dataFileInfoOffset, 

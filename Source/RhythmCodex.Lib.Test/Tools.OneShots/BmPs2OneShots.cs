@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.FileSystems.Iso.Streamers;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
+using RhythmCodex.Games.Beatmania.Ps2.Services;
 using RhythmCodex.Sounds.Converters;
 
 namespace RhythmCodex.Tools.OneShots;
@@ -37,12 +38,8 @@ public class BmPs2OneShots : BaseIntegrationFixture
         const bool extractKeysounds = true;
         const bool extractCharts = true;
         const bool extractRawBlock = false;
-        const bool extractBgm = true;
         const bool writeLogs = true;
-        const float keyVolume = 0.75f;
-        const float xaVolume = 0.75f;
-
-        var audioDsp = Resolve<IAudioDsp>();
+        const float keyVolume = 0.7f;
 
         //
         // Load in the ISO files.
@@ -75,7 +72,7 @@ public class BmPs2OneShots : BaseIntegrationFixture
         // Run the decoder.
         //
 
-        var decoder = Resolve<IBeatmaniaPs2Decoder>();
+        var decoder = Resolve<IBeatmaniaPs2Service>();
         var chartSetConsolidator = Resolve<IBeatmaniaPs2ChartSetConsolidator>();
 
         foreach (var decodedSet in decoder.Decode(OpenFile, formatType))
@@ -96,7 +93,10 @@ public class BmPs2OneShots : BaseIntegrationFixture
                 {
                     OutPath = outPath,
                     Charts = consolidatedSet.Charts,
-                    Sounds = consolidatedSet.Sounds
+                    Sounds = consolidatedSet.Sounds,
+                    WriteCharts = extractCharts,
+                    WriteSounds = extractKeysounds,
+                    KeysoundVolume = keyVolume
                 });
             // });
         }

@@ -8,10 +8,12 @@ using RhythmCodex.Sounds.Vag.Converters;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
 public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaPs2Mixer mixer)
     : IBeatmaniaPs2KeysoundDecoder
 {
+    /// <inheritdoc />
     public Sound Decode(BeatmaniaPs2Keysound keysound)
     {
         var samples = keysound.Data

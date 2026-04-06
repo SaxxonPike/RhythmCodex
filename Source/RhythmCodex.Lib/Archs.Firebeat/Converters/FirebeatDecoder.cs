@@ -198,8 +198,6 @@ public sealed class FirebeatDecoder(
                 Flags10 = (FirebeatBeatmaniaChartHeaderFlags10)ReadInt16BigEndian(headerData[0x10..])
             };
 
-            Debug.WriteLine(JsonSerializer.Serialize(header));
-
             //
             // The first two bytes of event data will always be zero, followed by a non-zero byte.
             //

@@ -44,9 +44,6 @@ public class BmsRandomResolver(IRandomizer randomizer) : IBmsRandomResolver
                         {
                             scope.Satisfied = true;
                             var innerScopeCommands = pendingScopeCommands.Skip(1).ToArray();
-                            Console.WriteLine("Processing inner scope:");
-                            Console.WriteLine(string.Join(Environment.NewLine,
-                                innerScopeCommands.Select(isc => $"{isc}")));
                             var innerScopeOutput =
                                 ResolveScope(innerScopeCommands, pendingScope, false).ToArray();
                             foreach (var innerCommand in innerScopeOutput)

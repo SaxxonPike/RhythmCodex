@@ -11,26 +11,38 @@ using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
 public class BeatmaniaPs2SongInfoDecoder(
     IBeatmaniaPs2OldChartStreamReader oldChartStreamReader,
     IBemaniLzDecoder bemaniLzDecoder,
-    IBeatmaniaPs2ChartDecoder chartDecoder)
+    IBeatmaniaPs2ChartConverter chartConverter,
+    IBeatmaniaPs2OldChartDecoder oldChartDecoder)
     : IBeatmaniaPs2SongInfoDecoder
 {
+    /// <inheritdoc />
     public List<BeatmaniaPs2SongInfo> Decode(ReadOnlySpan<byte> data, int songInfoOffset, BeatmaniaPs2FormatType type)
     {
         var temp = data.ToArray();
         var result = new List<BeatmaniaPs2SongInfo>();
         var offset = songInfoOffset;
 
+        //
+        // Decode each entry in the song list.
+        //
+
         while (data[offset..].AsS32L() != 0)
         {
             var decoded = DecodeOne(data[offset..], type);
             if (decoded == null)
                 break;
-            
+
             offset += decoded.InfoSize;
+
+            //
+            // If the title is referenced by a pointer instead of included in the record,
+            // read the title.
+            //
 
             if (decoded.NameRef > 0)
             {
@@ -40,18 +52,24 @@ public class BeatmaniaPs2SongInfoDecoder(
 
             foreach (var difficulty in decoded.Difficulties)
             {
+                //
+                // If the chart is referenced by a pointer instead of included in the
+                // data blob, read the chart. Only old format charts are stored this way.
+                //
+
                 if (difficulty.ChartRef > 0)
                 {
-                    var decompressedChart = bemaniLzDecoder.Decode(
-                        new ReadOnlyMemoryStream(temp.AsMemory(difficulty.ChartRef))
-                    );
+                    using var chartMem = new ReadOnlyMemoryStream(temp.AsMemory(difficulty.ChartRef));
+                    var decompressedChart = bemaniLzDecoder.Decode(chartMem);
 
-                    var decodedChart = chartDecoder.Decode(oldChartStreamReader.Read(
-                        new ReadOnlyMemoryStream(decompressedChart), decompressedChart.Length
-                    ));
+                    using var rawChartMem = new ReadOnlyMemoryStream(decompressedChart);
+                    var rawChart = oldChartStreamReader.Read(rawChartMem, decompressedChart.Length);
 
-                    decodedChart[NumericData.SourceOffset] = difficulty.ChartRef;
-                    difficulty.Chart = decodedChart;
+                    var decodedChart = oldChartDecoder.Decode(rawChart.Span);
+                    var convertedChart = chartConverter.Convert(decodedChart);
+
+                    convertedChart[NumericData.SourceOffset] = difficulty.ChartRef;
+                    difficulty.Chart = convertedChart;
                     difficulty.ChartRef = 0;
                 }
             }
@@ -62,6 +80,10 @@ public class BeatmaniaPs2SongInfoDecoder(
         return result;
     }
 
+    /// <summary>
+    /// Decodes a song list entry from the specified span. The format is determined
+    /// by the specified type.
+    /// </summary>
     private static BeatmaniaPs2SongInfo? DecodeOne(ReadOnlySpan<byte> data, BeatmaniaPs2FormatType type) =>
         type switch
         {
@@ -83,6 +105,9 @@ public class BeatmaniaPs2SongInfoDecoder(
             _ => throw new RhythmCodexException("Unrecognized format.")
         };
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX 3rdstyle.
+    /// </summary>
     private static BeatmaniaPs2SongInfo? Decode2dx3rd(ReadOnlySpan<byte> data)
     {
         var myData = data[..0x07C];
@@ -166,25 +191,43 @@ public class BeatmaniaPs2SongInfoDecoder(
                 }
             }.Where(x => x.ChartRef > 0).ToList()
         };
-        
+
         return result;
     }
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX 4thstyle.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx4th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX 5thstyle.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx5th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX 6thstyle.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx6th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX 7thstyle.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx7th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX 8thstyle.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx8th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX 9thstyle or 10thstyle.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx9th(ReadOnlySpan<byte> data)
     {
         var myData = data[..0x16C];
@@ -282,10 +325,13 @@ public class BeatmaniaPs2SongInfoDecoder(
                 },
             }.Where(x => x.ChartId > 0).ToList()
         };
-        
+
         return result;
     }
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX RED.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx11th(ReadOnlySpan<byte> data)
     {
         var myData = data[..0x140];
@@ -383,28 +429,49 @@ public class BeatmaniaPs2SongInfoDecoder(
                 },
             }.Where(x => x.ChartId > 0).ToList()
         };
-        
+
         return result;
     }
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX HAPPYSKY.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx12th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX DistorteD.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx13th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX GOLD.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx14th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX DJ TROOPERS.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx15th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX EMPRESS (disc 1).
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dx16th(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmaniaIIDX EMPRESS (disc 2).
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dxPremiumBest(ReadOnlySpan<byte> data) =>
         throw new NotImplementedException();
 
+    /// <summary>
+    /// Decodes a song list entry from beatmania US.
+    /// </summary>
     private static BeatmaniaPs2SongInfo Decode2dxUs(ReadOnlySpan<byte> data)
     {
         var myData = data[..0x174];
@@ -504,10 +571,13 @@ public class BeatmaniaPs2SongInfoDecoder(
                 },
             }.Where(x => x.ChartId > 0).ToList()
         };
-        
+
         return result;
     }
 
+    /// <summary>
+    /// Converts a byte span to 16-bit integers.
+    /// </summary>
     private static short[] GetShorts(ReadOnlySpan<byte> bytes)
     {
         var result = new short[bytes.Length / sizeof(short)];
@@ -516,6 +586,9 @@ public class BeatmaniaPs2SongInfoDecoder(
         return result;
     }
 
+    /// <summary>
+    /// Converts a byte span to 32-bit integers.
+    /// </summary>
     private static int[] GetInts(ReadOnlySpan<byte> bytes)
     {
         var result = new int[bytes.Length / sizeof(int)];
@@ -524,6 +597,11 @@ public class BeatmaniaPs2SongInfoDecoder(
         return result;
     }
 
+    /// <summary>
+    /// Converts a byte span to a null-terminated string using CP932 encoding.
+    /// </summary>
+    /// <param name="bytes"></param>
+    /// <returns></returns>
     private static string GetString(ReadOnlySpan<byte> bytes)
     {
         var zeroOffset = bytes.IndexOf((byte)0x00);

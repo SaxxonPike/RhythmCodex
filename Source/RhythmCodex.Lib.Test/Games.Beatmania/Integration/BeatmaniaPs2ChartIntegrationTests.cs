@@ -14,7 +14,7 @@ namespace RhythmCodex.Games.Beatmania.Integration;
 public class BeatmaniaPs2ChartIntegrationTests : BaseIntegrationFixture
 {
     [Test]
-    public void Test1()
+    public void Test_Blowfish()
     {
         var archive = GetArchiveResource("BeatmaniaPs2.bm2dxps2encchart.zip");
         var input = archive["01C ZERO.raw"];
@@ -35,15 +35,16 @@ public class BeatmaniaPs2ChartIntegrationTests : BaseIntegrationFixture
         var input = archive.Single().Value;
         var inputMem = new MemoryStream(input);
         var newChartReader = Resolve<IBeatmaniaPs2NewChartStreamReader>();
+        var newChartDecoder = Resolve<IBeatmaniaPs2NewChartDecoder>();
 
-        var observed = newChartReader.Read(inputMem, inputMem.Length);
+        var observed = newChartDecoder.Decode(newChartReader.Read(inputMem, inputMem.Length).Span);
 
         observed.NoteCounts.ShouldBeEquivalentTo(new Dictionary<int, int>
         {
             { 0, 323 }
         });
 
-        observed.Rate.ShouldBeEquivalentTo(new BigRational(16683, 1000000));
+        observed.Rate.ShouldBeEquivalentTo(new BigRational(16683 * 2 - 1, 1000000 * 2));
     }
 
     [Test]
@@ -53,11 +54,12 @@ public class BeatmaniaPs2ChartIntegrationTests : BaseIntegrationFixture
         var input = archive.Single().Value;
         var inputMem = new MemoryStream(input);
         var newChartReader = Resolve<IBeatmaniaPs2NewChartStreamReader>();
-        var decoder = Resolve<IBeatmaniaPs2ChartDecoder>();
+        var newChartDecoder = Resolve<IBeatmaniaPs2NewChartDecoder>();
+        var decoder = Resolve<IBeatmaniaPs2ChartConverter>();
         
-        var chart = newChartReader.Read(inputMem, inputMem.Length);
-        var decoded = decoder.Decode(chart);
+        var chart = newChartDecoder.Decode(newChartReader.Read(inputMem, inputMem.Length).Span);
+        var decoded = decoder.Convert(chart);
 
-        decoded.Events.Count.ShouldBe(443);
+        decoded.Events.Count.ShouldBe(444);
     }
 }

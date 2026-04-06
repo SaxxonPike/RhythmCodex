@@ -3,9 +3,11 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Converters;
 
+/// <inheritdoc />
 [Service]
 public sealed class BeatmaniaPs2FrequencyConverter : IBeatmaniaPs2FrequencyConverter
 {
+    /// <inheritdoc />
     public double Convert(int coarse, int fine)
     {
         //
