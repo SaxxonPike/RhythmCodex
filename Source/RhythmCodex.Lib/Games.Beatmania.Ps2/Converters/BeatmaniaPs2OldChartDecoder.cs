@@ -31,7 +31,6 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
         //
 
         var rateValue = 16716;
-        var rateDiv = TimeSpan.MicrosecondsPerSecond;
         var cursor = data;
 
         //
@@ -41,12 +40,11 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
 
         if (data.AsS32L() == 8)
         {
-            rateValue = data[4..].AsS32L() * 2 - 1;
-            rateDiv *= 2;
+            rateValue = data[4..].AsS32L();
             cursor = data[8..];
         }
 
-        var rate = new BigRational(rateValue, rateDiv);
+        var rate = new BigRational(rateValue, TimeSpan.MicrosecondsPerSecond);
 
         var events = new List<BeatmaniaPs2Event>();
         var noteCounts = new Dictionary<int, int>();

@@ -29,6 +29,7 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
                 Reserved0 = hunkReader.ReadInt16(),
                 Channel = hunkReader.ReadByte(),
                 Volume = hunkReader.ReadByte(),
+                VolumeScale = 100,
                 PanningLeft = hunkReader.ReadByte(),
                 SampleType = hunkReader.ReadByte(),
                 FrequencyLeft = hunkReader.ReadInt32(),

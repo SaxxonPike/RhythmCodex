@@ -35,7 +35,7 @@ public class BmPs2OneShots : BaseIntegrationFixture
     public void ExtractBms(string source, string target)
     {
         const bool extractKeysounds = true;
-        const bool extractCharts = true;
+        const bool extractCharts = false;
         const bool extractRawBlock = false;
         const bool writeLogs = true;
         const float keyVolume = 0.7f;
