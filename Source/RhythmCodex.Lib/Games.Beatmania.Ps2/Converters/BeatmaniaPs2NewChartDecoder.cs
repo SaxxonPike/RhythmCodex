@@ -156,7 +156,8 @@ public sealed class BeatmaniaPs2NewChartDecoder : IBeatmaniaPs2NewChartDecoder
         {
             Rate = rate,
             Events = events,
-            NoteCounts = noteCounts
+            NoteCounts = noteCounts,
+            SpeedMult = 1
         };
     }
 }

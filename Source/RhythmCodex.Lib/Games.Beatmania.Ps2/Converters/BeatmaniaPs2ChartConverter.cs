@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 
@@ -15,6 +16,7 @@ public sealed class BeatmaniaPs2ChartConverter : IBeatmaniaPs2ChartConverter
     public Chart Convert(BeatmaniaPs2Chart chart)
     {
         var events = new List<Event>();
+        var rateMod = BigRational.One / chart.SpeedMult;
 
         foreach (var ev in chart.Events)
         {
@@ -23,7 +25,7 @@ public sealed class BeatmaniaPs2ChartConverter : IBeatmaniaPs2ChartConverter
                 [NumericData.SourceCommand] = (int)ev.Type | (ev.Parameter << 8),
                 [NumericData.SourceData] = ev.Value,
                 [NumericData.SourceOffset] = ev.LinearOffset,
-                [NumericData.LinearOffset] = ev.LinearOffset * chart.Rate
+                [NumericData.LinearOffset] = ev.LinearOffset * chart.Rate * rateMod
             };
 
             events.Add(output);

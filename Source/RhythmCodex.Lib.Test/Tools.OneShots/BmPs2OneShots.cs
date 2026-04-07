@@ -34,8 +34,8 @@ public class BmPs2OneShots : BaseIntegrationFixture
     [Explicit]
     public void ExtractBms(string source, string target)
     {
-        const bool extractKeysounds = true;
-        const bool extractCharts = false;
+        const bool extractKeysounds = false;
+        const bool extractCharts = true;
         const bool extractRawBlock = false;
         const bool writeLogs = true;
         const float keyVolume = 0.7f;
@@ -55,8 +55,6 @@ public class BmPs2OneShots : BaseIntegrationFixture
         Log.WriteLine("Files found:");
         foreach (var file in cdFiles)
             Log.WriteLine($"    {file.Name}");
-
-        var outfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), target);
 
         //
         // Find the executable file, which determines which game we are working with.
@@ -78,8 +76,8 @@ public class BmPs2OneShots : BaseIntegrationFixture
         {
             var set = decodedSet;
 
-            // RunAsync(() =>
-            // {
+            RunAsync(() =>
+            {
                 var setName = (set.Name ?? "")
                     .Replace('\\', '_')
                     .Replace('/', '_')
@@ -104,7 +102,7 @@ public class BmPs2OneShots : BaseIntegrationFixture
                     WriteSounds = extractKeysounds,
                     KeysoundVolume = keyVolume
                 });
-            // });
+            });
         }
 
         return;

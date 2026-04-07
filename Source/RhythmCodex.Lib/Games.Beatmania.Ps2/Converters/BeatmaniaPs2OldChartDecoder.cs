@@ -32,6 +32,7 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
 
         var rateValue = 16716;
         var cursor = data;
+        var mult = 1d;
 
         //
         // It is possible starting with 5thstyle to specify a custom rate.
@@ -42,6 +43,7 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
         {
             rateValue = data[4..].AsS32L();
             cursor = data[8..];
+            mult = 1.00035d;
         }
 
         var rate = new BigRational(rateValue, TimeSpan.MicrosecondsPerSecond);
@@ -105,7 +107,7 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
                 // that attempt to replay the main BGM.
                 //
 
-                case BeatmaniaPs2EventType.Bgm when value == 1:
+                case BeatmaniaPs2EventType.Bgm when value <= 2:
                     if (!playedBgm)
                     {
                         playedBgm = true;
@@ -149,7 +151,8 @@ public sealed class BeatmaniaPs2OldChartDecoder : IBeatmaniaPs2OldChartDecoder
         {
             Rate = rate,
             Events = events,
-            NoteCounts = noteCounts
+            NoteCounts = noteCounts,
+            SpeedMult = mult
         };
     }
 }

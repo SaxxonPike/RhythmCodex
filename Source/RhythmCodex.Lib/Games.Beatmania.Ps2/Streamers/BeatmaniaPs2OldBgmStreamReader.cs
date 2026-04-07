@@ -30,7 +30,7 @@ public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : 
 
         if (channels <= 0)
         {
-            
+            return null;
         }
 
         // skip the rest of the header
@@ -43,7 +43,7 @@ public class BeatmaniaPs2OldBgmStreamReader(IVagStreamReader vagStreamReader) : 
         {
             Data = data,
             Volume = volume,
-            VolumeScale = 100,
+            VolumeScale = 90,
             Rate = rate,
             Index = 1
         };
