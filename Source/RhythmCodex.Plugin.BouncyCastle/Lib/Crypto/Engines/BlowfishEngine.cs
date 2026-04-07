@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Utilities;
 using static System.Buffers.Binary.BinaryPrimitives;

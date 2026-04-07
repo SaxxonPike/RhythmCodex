@@ -1,6 +1,3 @@
-using System;
-using System.Text.Json.Serialization;
-
 namespace RhythmCodex.Archs.Psx.Model;
 
 public record PsxMgsSoundTablePacket

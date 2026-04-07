@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.Intrinsics;
-using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Extensions;
 

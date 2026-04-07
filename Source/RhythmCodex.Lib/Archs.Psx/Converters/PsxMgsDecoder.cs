@@ -3,7 +3,6 @@ using System.Linq;
 using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
-using RhythmCodex.Sounds.Models;
 
 namespace RhythmCodex.Archs.Psx.Converters;
 

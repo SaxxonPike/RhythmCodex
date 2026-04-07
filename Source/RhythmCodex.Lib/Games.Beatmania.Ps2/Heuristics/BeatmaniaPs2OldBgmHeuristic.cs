@@ -1,6 +1,5 @@
 using System.IO;
 using RhythmCodex.Heuristics;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Heuristics;
 using RhythmCodex.Sounds.Vag.Models;

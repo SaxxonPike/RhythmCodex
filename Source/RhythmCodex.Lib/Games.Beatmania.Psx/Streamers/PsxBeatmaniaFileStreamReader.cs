@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using RhythmCodex.Archs.Psx.Model;
 using RhythmCodex.Games.Beatmania.Psx.Models;
 using RhythmCodex.IoC;
 

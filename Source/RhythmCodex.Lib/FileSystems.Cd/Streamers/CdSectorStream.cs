@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using RhythmCodex.FileSystems.Cd.Model;
 using RhythmCodex.IoC;

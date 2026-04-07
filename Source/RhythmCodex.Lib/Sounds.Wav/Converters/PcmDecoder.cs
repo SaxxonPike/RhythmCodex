@@ -1,5 +1,4 @@
 using System;
-using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Utils.Cursors;
 
