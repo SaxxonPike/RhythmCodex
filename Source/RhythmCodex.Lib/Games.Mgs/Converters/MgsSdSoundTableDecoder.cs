@@ -10,6 +10,7 @@ namespace RhythmCodex.Games.Mgs.Converters;
 public sealed class MgsSdSoundTableDecoder
     : IMgsSdSoundTableDecoder
 {
+    /// <inheritdoc />
     public List<MgsSdSoundScript> Decode(MgsSdSoundTableBlock block)
     {
         //

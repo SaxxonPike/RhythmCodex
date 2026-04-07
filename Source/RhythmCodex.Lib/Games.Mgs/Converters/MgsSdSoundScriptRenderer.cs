@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using RhythmCodex.Archs.Psx.Processors;
 using RhythmCodex.Games.Mgs.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
@@ -17,26 +18,11 @@ namespace RhythmCodex.Games.Mgs.Converters;
 [Service]
 public sealed class MgsSdSoundScriptRenderer(
     IVagSplitter vagSplitter,
-    IAudioDsp audioDsp)
+    IAudioDsp audioDsp,
+    IMgsSdSoundFrequencyCalculator frequencyCalculator,
+    IPsxGaussianInterpolation psxGaussianInterpolation)
     : IMgsSdSoundScriptRenderer
 {
-    /// <summary>
-    /// Frequency table used by the Metal Gear Solid sound system.
-    /// </summary>
-    private static readonly Lazy<ReadOnlyMemory<int>> FreqTbl = new(() => (int[])
-    [
-        0x010B, 0x011B, 0x012C, 0x013E, 0x0151, 0x0165, 0x017A, 0x0191, 0x01A9, 0x01C2, 0x01DD, 0x01F9,
-        0x0217, 0x0237, 0x0259, 0x027D, 0x02A3, 0x02CB, 0x02F5, 0x0322, 0x0352, 0x0385, 0x03BA, 0x03F3,
-        0x042F, 0x046F, 0x04B2, 0x04FA, 0x0546, 0x0596, 0x05EB, 0x0645, 0x06A5, 0x070A, 0x0775, 0x07E6,
-        0x085F, 0x08DE, 0x0965, 0x09F4, 0x0A8C, 0x0B2C, 0x0BD6, 0x0C8B, 0x0D4A, 0x0E14, 0x0EEA, 0x0FCD,
-        0x10BE, 0x11BD, 0x12CB, 0x13E9, 0x1518, 0x1659, 0x17AD, 0x1916, 0x1A94, 0x1C28, 0x1DD5, 0x1F9B,
-        0x217C, 0x237A, 0x2596, 0x27D2, 0x2A30, 0x2CB2, 0x2F5A, 0x322C, 0x3528, 0x3850, 0x3BAC, 0x3F36,
-
-        0x0021, 0x0023, 0x0026, 0x0028, 0x002A, 0x002D, 0x002F, 0x0032, 0x0035, 0x0038, 0x003C, 0x003F,
-        0x0042, 0x0046, 0x004B, 0x004F, 0x0054, 0x0059, 0x005E, 0x0064, 0x006A, 0x0070, 0x0077, 0x007E,
-        0x0085, 0x008D, 0x0096, 0x009F, 0x00A8, 0x00B2, 0x00BD, 0x00C8, 0x00D4, 0x00E1, 0x00EE, 0x00FC
-    ]);
-
     /// <summary>
     /// Panning table used by the Metal Gear Solid sound system.
     /// </summary>
@@ -141,6 +127,8 @@ public sealed class MgsSdSoundScriptRenderer(
         var disableDefaultPan = false;
 
         var effectsEnabled = false;
+        Span<float> interpolateBuffer = stackalloc float[4];
+        var lastInterpIndex = -1;
 
         foreach (var packet in packets)
         {
@@ -159,10 +147,12 @@ public sealed class MgsSdSoundScriptRenderer(
                     //
 
                     AttackSpuEnvelope(spuVolumeEnvelope);
+                    lastInterpIndex = -1;
+                    interpolateBuffer.Clear();
                     delayMs += packet.Data2 * resolutionMs;
                     playedNote = packet.Data1;
                     currentVolume = (packet.Data4 & 0x7F) / 127f;
-                    sourceSampleRate = CalculateFrequency(
+                    sourceSampleRate = frequencyCalculator.Calculate(
                         playedNote,
                         coarseTune + sourceTranspose,
                         fineTune + sourceFineTune
@@ -529,25 +519,23 @@ public sealed class MgsSdSoundScriptRenderer(
                     if (panningEnvelope != null)
                         currentPanning = panningEnvelope.Process(timePerSample);
 
-                    var sourceSampleOffsetA = (int)MathF.Truncate(sourceSampleOffset);
-                    var sourceSampleOffsetB = sourceSampleOffsetA + 1;
-                    var weight = sourceSampleOffset - sourceSampleOffsetA;
+                    var interpIndex = (int)MathF.Truncate(sourceSampleOffset);
 
                     //
                     // If the sample loops, check to see if it needs to loop back.
                     //
                     
-                    if (sampleLoopEnd >= 0 && sourceSampleOffsetB >= sampleLoopEnd)
+                    if (sampleLoopEnd >= 0 && interpIndex >= sampleLoopEnd)
                     {
                         sourceSampleOffset -= sampleLoopEnd - sampleLoopStart;
-                        sourceSampleOffsetB = (int)MathF.Truncate(sourceSampleOffset);
+                        interpIndex = (int)MathF.Truncate(sourceSampleOffset);
                     }
 
                     //
                     // If we are at the end of the sample, fill the buffer with silence.
                     //
 
-                    else if (sourceSampleOffsetB > sourceSampleSpan.Length)
+                    else if (interpIndex > sourceSampleSpan.Length)
                     {
                         pendingSilence += sampleCount - i;
                         populatedSampleCount = i;
@@ -555,23 +543,25 @@ public sealed class MgsSdSoundScriptRenderer(
                     }
 
                     //
-                    // Calculate position for linear interpolation.
-                    // TODO: Playstation SPU actually uses Gaussian interpolation.
+                    // Perform sample interpolation.
                     //
 
-                    var sourceSample0 = sourceSampleOffsetA < sourceSampleSpan.Length
-                        ? sourceSampleSpan[sourceSampleOffsetA]
-                        : 0;
+                    if (interpIndex != lastInterpIndex)
+                    {
+                        interpolateBuffer[1..].CopyTo(interpolateBuffer);
+                        interpolateBuffer[3] = interpIndex < sourceSampleSpan.Length
+                            ? sourceSampleSpan[interpIndex]
+                            : 0;
+                        lastInterpIndex = interpIndex;
+                    }
 
-                    var sourceSample1 = sourceSampleOffsetB < sourceSampleSpan.Length
-                        ? sourceSampleSpan[sourceSampleOffsetB]
-                        : 0;
-
-                    //
-                    // Calculate interpolated sample value (Lerp function.)
-                    //
-
-                    var sourceInterpolatedSample = sourceSample0 + weight * (sourceSample1 - sourceSample0);
+                    var sourceInterpolatedSample = psxGaussianInterpolation.InterpolateOne(
+                        interpolateBuffer[0],
+                        interpolateBuffer[1],
+                        interpolateBuffer[2],
+                        interpolateBuffer[3],
+                        sourceSampleOffset - MathF.Truncate(sourceSampleOffset)
+                    );
 
                     //
                     // Calculate gain for left/right channels from panning table and volume.
@@ -623,7 +613,7 @@ public sealed class MgsSdSoundScriptRenderer(
             sustain with { X = sustainX },
             sustain with { X = releaseX },
             new Vector2(endX, 0)
-        ) { Sustain = 3 };
+        ) { SustainIndex = 3 };
     }
 
     private static Vector2 CalculateSpuPoint(int shift, int step, int dir, float level, float target)
@@ -649,46 +639,5 @@ public sealed class MgsSdSoundScriptRenderer(
     private static void ReleaseSpuEnvelope(Envelope? envelope)
     {
         envelope?.SetPhase(4);
-    }
-
-    /// <summary>
-    /// Calculates the playback frequency of a note.
-    /// </summary>
-    /// <param name="note">
-    /// Base semitone.
-    /// </param>
-    /// <param name="macro">
-    /// Sample tuning (semitones.)
-    /// </param>
-    /// <param name="micro">
-    /// Sample tuning (1/128ths of semitones, signed.)
-    /// </param>
-    private float CalculateFrequency(int note, int macro, int micro)
-    {
-        //
-        // Determine the coarse and fine-tune components.
-        //
-
-        var noteTune = ((note + macro) << 8) + (micro << 1);
-        var adjustedTune = noteTune;
-        var fineTune = unchecked((byte)adjustedTune);
-        var coarseTune = (adjustedTune >> 8) & 0x7F;
-
-        //
-        // Use linear interpolation to convert the fine-tune value to whole cycles.
-        //
-
-        var coarseFreqTable = FreqTbl.Value.Span;
-        float coarseTuneCycles = coarseFreqTable[coarseTune];
-        var toneScale = coarseFreqTable[coarseTune + 1] - coarseTuneCycles;
-
-        if (toneScale < 0)
-            toneScale = 0xC9;
-
-        var fineTuneCycles = fineTune / 128f * toneScale;
-        var totalCycles = Math.Clamp(MathF.Round(coarseTuneCycles + fineTuneCycles), 0, 16384f);
-
-        var result = 44100f * totalCycles / 0x1000;
-        return result;
     }
 }

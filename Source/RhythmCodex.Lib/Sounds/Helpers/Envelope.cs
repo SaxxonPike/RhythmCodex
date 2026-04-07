@@ -30,7 +30,9 @@ public class Envelope
     private List<Vector2> Phases { get; set; }
 
     public float Output { get; private set; }
-    public int? Sustain { get; set; }
+    public int? SustainIndex { get; init; }
+    public int? ReleaseIndex { get; init; }
+    public bool Released { get; set; }
 
     public void SetPhase(int phase)
     {
@@ -47,9 +49,9 @@ public class Envelope
         {
             var leftPhase = Phase;
 
-            if (leftPhase == Sustain)
+            if (leftPhase == SustainIndex && !Released)
                 break;
-                
+
             if (leftPhase >= Phases.Count)
             {
                 Output = Phases[^1].Y;
@@ -62,7 +64,7 @@ public class Envelope
 
             var phaseTotalTime = right.X - left.X;
             var phaseRemainingTime = phaseTotalTime - PhaseElapsedMs;
-            
+
             var timeToProcess = Math.Min(remaining, phaseRemainingTime);
 
             if (timeToProcess >= phaseRemainingTime)
@@ -74,23 +76,46 @@ public class Envelope
                 continue;
             }
 
-            if (leftPhase == Sustain)
+            if (leftPhase == SustainIndex)
             {
                 PhaseProgress = 0;
                 Output = left.Y;
             }
-            else
+            else if (phaseTotalTime > 0)
             {
                 PhaseProgress = PhaseElapsedMs / phaseTotalTime;
                 Output = left.Y + PhaseProgress * (right.Y - left.Y);
                 remaining -= timeToProcess;
                 PhaseElapsedMs += timeToProcess;
             }
+            else
+            {
+                PhaseProgress = 1;
+                Output = right.Y;
+
+                if (rightPhase < Phases.Count)
+                    continue;
+
+                PhaseElapsedMs += timeToProcess;
+                break;
+            }
         }
 
         return Output;
     }
 
-    public void Reset() =>
-        Phase = 0;
+    public void Reset()
+    {
+        SetPhase(0);
+        Released = false;
+    }
+
+    public void Release()
+    {
+        if (ReleaseIndex is { } phase)
+            SetPhase(phase);
+        else
+            SetPhase(Phases.Count - 1);
+        Released = true;
+    }
 }

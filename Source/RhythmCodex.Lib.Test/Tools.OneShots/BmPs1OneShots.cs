@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
 using RhythmCodex.Archs.Djmain.Model;
+using RhythmCodex.Archs.Psx.Processors;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.FileSystems.Cd.Helpers;
@@ -20,6 +21,7 @@ using RhythmCodex.Games.Mgs.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
+using RhythmCodex.Sounds.Resampler.Resamplers;
 using RhythmCodex.Sounds.Riff.Converters;
 using RhythmCodex.Sounds.Riff.Streamers;
 using RhythmCodex.Sounds.Xa.Converters;
@@ -191,7 +193,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                     .Where(f => f.Type == PsxBeatmaniaFileType.Chart)
                     .ToList();
 
-                var chartsPerSampleMap = chartFiles.Count / sampleMaps.Count;
+                var chartsPerSampleMap = Math.Max(1, chartFiles.Count / sampleMaps.Count);
 
                 var bmDataCharts = chartFiles
                     .Select((f, i) =>
@@ -342,6 +344,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
             var decoder = Resolve<IXaDecoder>();
             var encoder = Resolve<IRiffPcm16SoundEncoder>();
             var writer = Resolve<IRiffStreamWriter>();
+            var psxResampler = Resolve<IPsxGaussianResampler>();
 
             foreach (var xa in xaChunks)
             {
@@ -351,9 +354,17 @@ public class BmPs1OneShots : BaseIntegrationFixture
 
                     foreach (var sound in decoded)
                     {
-                        sound![NumericData.Rate] = xa.Rate;
+                        sound!.Skip(756);
+
+                        for (var i = 0; i < sound.Samples.Count; i++)
+                        {
+                            var sample = sound.Samples[i];
+                            sound.Samples[i] = sample.CloneWithData(psxResampler
+                                .Resample(sample.Data.Span, xa.Rate, 44100));
+                        }
+                        
+                        sound[NumericData.Rate] = 44100;
                         sound[NumericData.Volume] = xaVolume;
-                        sound.Skip(756);
 
                         var dspProcessed = audioDsp.ApplyEffects(sound);
                         var encoded = encoder.Encode(dspProcessed);
