@@ -18,6 +18,7 @@
         <None Remove="*.DotSettings" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Games.Mgs\" />
       <Folder Include="Sounds.ImaAdpcm\" />
       <Folder Include="FileSystems.Chd\" />
       <Folder Include="Charts.Sm\" />

@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Mgs.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Utils.Cursors;
 
-namespace RhythmCodex.Archs.Psx.Streamers;
+namespace RhythmCodex.Games.Mgs.Streamers;
 
 [Service]
-public sealed class PsxMgsSoundTableReader : IPsxMgsSoundTableReader
+public sealed class MgsSdSoundTableReader : IMgsSdSoundTableReader
 {
-    public PsxMgsSoundTableBlock Read(Stream stream)
+    public MgsSdSoundTableBlock Read(Stream stream)
     {
         Span<byte> buffer = stackalloc byte[0x800];
 
@@ -80,7 +80,7 @@ public sealed class PsxMgsSoundTableReader : IPsxMgsSoundTableReader
                 break;
         }
 
-        return new PsxMgsSoundTableBlock
+        return new MgsSdSoundTableBlock
         {
             Header = header.ToArray(),
             Table = data.ToArray(),

@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Mgs.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
@@ -12,18 +12,18 @@ using RhythmCodex.Sounds.Models;
 using RhythmCodex.Sounds.Vag.Converters;
 using RhythmCodex.Sounds.Vag.Models;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Mgs.Converters;
 
 [Service]
-public sealed class PsxMgsSoundScriptRenderer(
+public sealed class MgsSdSoundScriptRenderer(
     IVagSplitter vagSplitter,
     IAudioDsp audioDsp)
-    : IPsxMgsSoundScriptRenderer
+    : IMgsSdSoundScriptRenderer
 {
     /// <summary>
     /// Frequency table used by the Metal Gear Solid sound system.
     /// </summary>
-    private readonly Lazy<ReadOnlyMemory<int>> _freqTbl = new(() => (int[])
+    private static readonly Lazy<ReadOnlyMemory<int>> FreqTbl = new(() => (int[])
     [
         0x010B, 0x011B, 0x012C, 0x013E, 0x0151, 0x0165, 0x017A, 0x0191, 0x01A9, 0x01C2, 0x01DD, 0x01F9,
         0x0217, 0x0237, 0x0259, 0x027D, 0x02A3, 0x02CB, 0x02F5, 0x0322, 0x0352, 0x0385, 0x03BA, 0x03F3,
@@ -40,7 +40,7 @@ public sealed class PsxMgsSoundScriptRenderer(
     /// <summary>
     /// Panning table used by the Metal Gear Solid sound system.
     /// </summary>
-    private readonly Lazy<ReadOnlyMemory<byte>> _panTbl = new(() => (byte[])
+    private static readonly Lazy<ReadOnlyMemory<byte>> PanTbl = new(() => (byte[])
     [
         0, 2, 4, 7, 10, 13, 16, 20, 24, 28, 32, 36, 40, 45,
         50, 55, 60, 65, 70, 75, 80, 84, 88, 92, 96, 100, 104, 107,
@@ -56,8 +56,8 @@ public sealed class PsxMgsSoundScriptRenderer(
 
     /// <inheritdoc />
     public Sound Render(
-        PsxMgsSoundScript script,
-        List<PsxMgsSoundBankEntryWithData> soundBank,
+        MgsSdSoundScript script,
+        List<MgsSdSoundBankEntryWithData> soundBank,
         int sampleRate)
     {
         var sounds = script.Channels
@@ -88,8 +88,8 @@ public sealed class PsxMgsSoundScriptRenderer(
     /// </param>
     /// <returns></returns>
     private Sound RenderPackets(
-        List<PsxMgsSoundTablePacket> packets,
-        List<PsxMgsSoundBankEntryWithData> soundBank,
+        List<MgsSdSoundTablePacket> packets,
+        List<MgsSdSoundBankEntryWithData> soundBank,
         int sampleRate)
     {
         Sample? sourceSample = null;
@@ -115,7 +115,7 @@ public sealed class PsxMgsSoundScriptRenderer(
         PendingAction action = default;
 
         var spuVolumeEnvelope = CalculateSpuEnvelope(0, 0, new Vector2(0, 1), 0);
-        var panTbl = _panTbl.Value.Span;
+        var panTbl = PanTbl.Value.Span;
 
         Envelope? volumeEnvelope = null;
         Envelope? panningEnvelope = null;
@@ -171,7 +171,7 @@ public sealed class PsxMgsSoundScriptRenderer(
 
                     break;
                 }
-                case PsxMgsSoundTablePacketType.SetTimeResolution:
+                case MgsSdSoundTablePacketType.SetTimeResolution:
                 {
                     //
                     // Sets the time resolution (how much time each tick represents.)
@@ -180,7 +180,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     resolutionMs = MathF.Max(1f, packet.Data2) * 10.4f / 255f;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.AutomateTimeResolution:
+                case MgsSdSoundTablePacketType.AutomateTimeResolution:
                 {
                     //
                     // TODO: I don't know how to go about implementing this command
@@ -190,7 +190,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     resolutionMs = MathF.Max(1f, packet.Data2) * 10.4f / 255f;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetSoundBankIndex:
+                case MgsSdSoundTablePacketType.SetSoundBankIndex:
                 {
                     //
                     // Sets which sound bank entry to use for sample data.
@@ -204,7 +204,7 @@ public sealed class PsxMgsSoundScriptRenderer(
 
                     break;
                 }
-                case PsxMgsSoundTablePacketType.AutomateVolume:
+                case MgsSdSoundTablePacketType.AutomateVolume:
                 {
                     //
                     // Starts a software volume envelope.
@@ -216,7 +216,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     );
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetVolumeScale:
+                case MgsSdSoundTablePacketType.SetVolumeScale:
                 {
                     //
                     // Sets the software volume scale. This will impact
@@ -228,7 +228,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     volumeScale = packet.Data2 / 255f;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetAttackDecay:
+                case MgsSdSoundTablePacketType.SetAttackDecay:
                 {
                     //
                     // Sets the attack/decay + sustain level SPU registers.
@@ -241,7 +241,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     action |= PendingAction.RebuildSpuEnvelope;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetSustainRate:
+                case MgsSdSoundTablePacketType.SetSustainRate:
                 {
                     //
                     // Sets the sustain rate SPU register.
@@ -252,7 +252,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     action |= PendingAction.RebuildSpuEnvelope;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetReleaseRate:
+                case MgsSdSoundTablePacketType.SetReleaseRate:
                 {
                     //
                     // Sets the release rate SPU register.
@@ -263,7 +263,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     action |= PendingAction.RebuildSpuEnvelope;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetPanning:
+                case MgsSdSoundTablePacketType.SetPanning:
                 {
                     //
                     // Sets the stereo panning.
@@ -274,7 +274,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     currentPanning = Math.Clamp(0xF - (packet.Data3 & 0xF), 0, 14) / 14f;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.AutomatePanning:
+                case MgsSdSoundTablePacketType.AutomatePanning:
                 {
                     //
                     // Starts a panning envelope.
@@ -286,7 +286,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     );
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetCoarseTune:
+                case MgsSdSoundTablePacketType.SetCoarseTune:
                 {
                     //
                     // Sets the number of semitones to adjust played notes by.
@@ -295,7 +295,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     coarseTune = unchecked((sbyte)packet.Data2);
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetFineTune:
+                case MgsSdSoundTablePacketType.SetFineTune:
                 {
                     //
                     // Sets the detune in 1/128ths of a semitone.
@@ -304,7 +304,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     fineTune = unchecked((sbyte)packet.Data2);
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetPortamentoTime:
+                case MgsSdSoundTablePacketType.SetPortamentoTime:
                 {
                     //
                     // Sets the portamento time.
@@ -313,13 +313,13 @@ public sealed class PsxMgsSoundScriptRenderer(
                     portamentoTime = packet.Data2 * resolutionMs;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.NoteOffAndDelay:
+                case MgsSdSoundTablePacketType.NoteOffAndDelay:
                 {
                     ReleaseSpuEnvelope(spuVolumeEnvelope);
                     delayMs += packet.Data2 * resolutionMs;
                     break;
                 }
-                case PsxMgsSoundTablePacketType.Delay:
+                case MgsSdSoundTablePacketType.Delay:
                 {
                     //
                     // Delays processing the next script packet.
@@ -328,7 +328,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     delayMs += packet.Data2 * resolutionMs;
                     break;
                 }
-                case PsxMgsSoundTablePacketType.End:
+                case MgsSdSoundTablePacketType.End:
                 {
                     //
                     // Indicates the end of script packets.
@@ -337,7 +337,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     finished = true;
                     break;
                 }
-                case PsxMgsSoundTablePacketType.SetEOff:
+                case MgsSdSoundTablePacketType.SetEOff:
                 {
                     //
                     // Disable audio effects.
@@ -346,7 +346,7 @@ public sealed class PsxMgsSoundScriptRenderer(
                     effectsEnabled = false;
                     continue;
                 }
-                case PsxMgsSoundTablePacketType.SetEOn:
+                case MgsSdSoundTablePacketType.SetEOn:
                 {
                     //
                     // Enable audio effects.
@@ -678,7 +678,7 @@ public sealed class PsxMgsSoundScriptRenderer(
         // Use linear interpolation to convert the fine-tune value to whole cycles.
         //
 
-        var coarseFreqTable = _freqTbl.Value.Span;
+        var coarseFreqTable = FreqTbl.Value.Span;
         float coarseTuneCycles = coarseFreqTable[coarseTune];
         var toneScale = coarseFreqTable[coarseTune + 1] - coarseTuneCycles;
 

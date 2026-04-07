@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Mgs.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Streamers;
 using RhythmCodex.Utils.Cursors;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Mgs.Converters;
 
 /// <inheritdoc />
 [Service]
-public sealed class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
-    : IPsxMgsSoundBankDecoder
+public sealed class MgsSdSoundBankDecoder(IVagStreamReader vagStreamReader)
+    : IMgsSdSoundBankDecoder
 {
     /// <inheritdoc />
-    public List<PsxMgsSoundBankEntryWithData> Decode(PsxMgsSoundBankBlock block)
+    public List<MgsSdSoundBankEntryWithData> Decode(MgsSdSoundBankBlock block)
     {
         //
         // The keysound block consists of patches that are applied to
@@ -31,13 +31,13 @@ public sealed class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
         // 128-255 are valid for keysound samples.
         //
 
-        var infos = new Dictionary<int, PsxMgsSoundBankEntry>();
+        var infos = new Dictionary<int, MgsSdSoundBankEntry>();
 
         for (var i = 128; i < 256; i++)
         {
             var bytes = ram.AsSpan(i << 4, 16);
 
-            var info = new PsxMgsSoundBankEntry
+            var info = new MgsSdSoundBankEntry
             {
                 Offset = bytes.AsS32L(),
                 Note = bytes[0x4],
@@ -65,7 +65,7 @@ public sealed class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
         // audio chunk.
         //
 
-        var result = new List<PsxMgsSoundBankEntryWithData>();
+        var result = new List<MgsSdSoundBankEntryWithData>();
         using var ramStream = new MemoryStream(ram);
 
         foreach (var (id, info) in infos)
@@ -75,7 +75,7 @@ public sealed class PsxMgsSoundBankDecoder(IVagStreamReader vagStreamReader)
 
             if (audio != null)
             {
-                result.Add(new PsxMgsSoundBankEntryWithData
+                result.Add(new MgsSdSoundBankEntryWithData
                 {
                     Index = id,
                     Entry = info,

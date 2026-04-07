@@ -1,6 +1,9 @@
-namespace RhythmCodex.Archs.Psx.Model;
+using JetBrains.Annotations;
 
-public enum PsxMgsSoundTablePacketType
+namespace RhythmCodex.Games.Mgs.Models;
+
+[PublicAPI]
+public enum MgsSdSoundTablePacketType
 {
     //
     // ref: https://github.com/FoxdieTeam/mgs_reversing/blob/master/source/sd/sd_sub1.c

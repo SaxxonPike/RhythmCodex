@@ -6,8 +6,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
 using RhythmCodex.Archs.Djmain.Model;
-using RhythmCodex.Archs.Psx.Converters;
-using RhythmCodex.Archs.Psx.Streamers;
 using RhythmCodex.Charts.Bms.Converters;
 using RhythmCodex.Charts.Models;
 using RhythmCodex.FileSystems.Cd.Helpers;
@@ -17,6 +15,8 @@ using RhythmCodex.FileSystems.Cue.Streamers;
 using RhythmCodex.FileSystems.Iso.Converters;
 using RhythmCodex.Games.Beatmania.Psx.Converters;
 using RhythmCodex.Games.Beatmania.Psx.Models;
+using RhythmCodex.Games.Mgs.Converters;
+using RhythmCodex.Games.Mgs.Streamers;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
@@ -95,7 +95,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Determine the region of game.
         //
 
-        var regionTiming = cdFiles.Single(f => f.Name.StartsWith("./SL")).Name[4..6] switch
+        var regionTiming = cdFiles.Single(f => f.Name != null && f.Name.StartsWith("./SL")).Name![4..6] switch
         {
             "ES" => DjmainChartTiming.HomePal,
             _ => DjmainChartTiming.HomeNtsc,
@@ -112,9 +112,9 @@ public class BmPs1OneShots : BaseIntegrationFixture
         // Decode BMDATA.PAK.
         //
 
-        var psxMgsSoundBankBlockReader = Resolve<IPsxMgsSoundBankBlockReader>();
-        var psxMgsSoundTableBlockReader = Resolve<IPsxMgsSoundTableReader>();
-        var mgsDecoder = Resolve<IPsxMgsDecoder>();
+        var psxMgsSoundBankBlockReader = Resolve<IMgsSdSoundBankBlockReader>();
+        var psxMgsSoundTableBlockReader = Resolve<IMgsSdSoundTableReader>();
+        var mgsDecoder = Resolve<IMgsSdDecoder>();
         var bmDataPakFiles = psxBeatmaniaDecoder.DecodeBmData(bmDataPak, bmDataPak.Length);
         var bmDataGroups = psxBeatmaniaSongGrouper.GroupFiles(bmDataPakFiles);
 

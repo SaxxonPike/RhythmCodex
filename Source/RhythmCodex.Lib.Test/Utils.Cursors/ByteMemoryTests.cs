@@ -9,7 +9,7 @@ namespace RhythmCodex.Utils.Cursors;
 [Parallelizable(ParallelScope.None)]
 public class ByteMemoryTests : BaseTestFixture
 {
-    private byte[] _bytes;
+    private byte[] _bytes = [];
 
     private static IEnumerable<object> WithinBoundsCounts() =>
     [

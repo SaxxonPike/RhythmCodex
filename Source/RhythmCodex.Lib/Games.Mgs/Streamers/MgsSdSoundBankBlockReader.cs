@@ -1,23 +1,23 @@
 using System;
 using System.IO;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Mgs.Models;
 using RhythmCodex.IoC;
 
-namespace RhythmCodex.Archs.Psx.Streamers;
+namespace RhythmCodex.Games.Mgs.Streamers;
 
 /// <inheritdoc />
 [Service]
-public sealed class PsxMgsSoundBankBlockReader : IPsxMgsSoundBankBlockReader
+public sealed class MgsSdSoundBankBlockReader : IMgsSdSoundBankBlockReader
 {
     /// <inheritdoc />
-    public PsxMgsSoundBankBlock Read(Stream stream)
+    public MgsSdSoundBankBlock Read(Stream stream)
     {
         //
         // There are two patches in a block. The first describes the keysounds,
         // and the second contains the audio.
         //
 
-        return new PsxMgsSoundBankBlock
+        return new MgsSdSoundBankBlock
         {
             Patches =
             [
@@ -30,7 +30,7 @@ public sealed class PsxMgsSoundBankBlockReader : IPsxMgsSoundBankBlockReader
     /// <summary>
     /// Reads one patch from the block.
     /// </summary>
-    private static PsxMgsSoundBankBlockPatch ReadPatch(Stream stream)
+    private static MgsSdSoundBankBlockPatch ReadPatch(Stream stream)
     {
         Span<byte> patchHeader = stackalloc byte[0x10];
 
@@ -46,7 +46,7 @@ public sealed class PsxMgsSoundBankBlockReader : IPsxMgsSoundBankBlockReader
         
         stream.ReadExactly(data);
 
-        return new PsxMgsSoundBankBlockPatch
+        return new MgsSdSoundBankBlockPatch
         {
             Address = address,
             Length = length,

@@ -1,16 +1,16 @@
 using System.Collections.Generic;
-using RhythmCodex.Archs.Psx.Model;
+using RhythmCodex.Games.Mgs.Models;
 using RhythmCodex.IoC;
 using RhythmCodex.Utils.Cursors;
 
-namespace RhythmCodex.Archs.Psx.Converters;
+namespace RhythmCodex.Games.Mgs.Converters;
 
 /// <inheritdoc />
 [Service]
-public sealed class PsxMgsSoundTableDecoder
-    : IPsxMgsSoundTableDecoder
+public sealed class MgsSdSoundTableDecoder
+    : IMgsSdSoundTableDecoder
 {
-    public List<PsxMgsSoundScript> Decode(PsxMgsSoundTableBlock block)
+    public List<MgsSdSoundScript> Decode(MgsSdSoundTableBlock block)
     {
         //
         // Parse the scripts according to the table.
@@ -18,7 +18,7 @@ public sealed class PsxMgsSoundTableDecoder
 
         var tableSpan = block.Table.Span;
         var scriptSpan = block.Scripts.Span;
-        var result = new List<PsxMgsSoundScript>();
+        var result = new List<MgsSdSoundScript>();
 
         for (var i = 0; i < tableSpan.Length; i += 16)
         {
@@ -29,7 +29,7 @@ public sealed class PsxMgsSoundTableDecoder
                 record[8..].AsS32L()
             };
 
-            var packetSets = new Dictionary<int, List<PsxMgsSoundTablePacket>>();
+            var packetSets = new Dictionary<int, List<MgsSdSoundTablePacket>>();
 
             for (var j = 0; j < offsets.Length; j++)
             {
@@ -38,12 +38,12 @@ public sealed class PsxMgsSoundTableDecoder
                 if (offset < 0)
                     continue;
 
-                var packets = new List<PsxMgsSoundTablePacket>();
+                var packets = new List<MgsSdSoundTablePacket>();
                 var packetSpan = scriptSpan[offset..];
 
                 while (packetSpan.Length >= 4)
                 {
-                    var packet = new PsxMgsSoundTablePacket
+                    var packet = new MgsSdSoundTablePacket
                     {
                         Data1 = packetSpan[3],
                         Data2 = packetSpan[2],
@@ -54,14 +54,14 @@ public sealed class PsxMgsSoundTableDecoder
                     packetSpan = packetSpan[4..];
 
                     packets.Add(packet);
-                    if (packet.Command == PsxMgsSoundTablePacketType.End)
+                    if (packet.Command == MgsSdSoundTablePacketType.End)
                         break;
                 }
 
                 packetSets[j] = packets;
             }
 
-            var script = new PsxMgsSoundScript
+            var script = new MgsSdSoundScript
             {
                 Index = (i >> 4) + 128,
                 Channels = packetSets,
