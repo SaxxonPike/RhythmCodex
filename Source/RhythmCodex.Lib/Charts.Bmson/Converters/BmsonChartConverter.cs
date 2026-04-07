@@ -46,7 +46,7 @@ public class BmsonChartConverter : IBmsonChartConverter
                 ChartName = chart[StringData.Description],
                 Level = (long?)chart[NumericData.PlayLevel] ?? 0,
                 InitBpm = (double)bpm,
-                Resolution = 420
+                Resolution = 3840
             }
         };
 
