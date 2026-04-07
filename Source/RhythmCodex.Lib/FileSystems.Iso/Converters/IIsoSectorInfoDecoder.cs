@@ -5,5 +5,5 @@ namespace RhythmCodex.FileSystems.Iso.Converters;
 
 public interface IIsoSectorInfoDecoder
 {
-    IsoSectorInfo Decode(ICdSector sector);
+    IsoSectorInfo? Decode(ICdSector? sector);
 }

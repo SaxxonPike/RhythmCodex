@@ -29,7 +29,7 @@ public class IsoCdFileDecoder(
     private IEnumerable<ICdFile> DecodeInternal(ICdSectorCollection cdSectors)
     {
         var sectorInfos = isoDescriptorSectorFinder
-            .Find(cdSectors.Select(isoSectorInfoDecoder.Decode));
+            .Find(cdSectors.Where(s => s != null!).Select(isoSectorInfoDecoder.Decode)!);
 
         var storageMediums = isoStorageMediumDecoder.Decode(sectorInfos);
         foreach (var volume in storageMediums.Volumes)

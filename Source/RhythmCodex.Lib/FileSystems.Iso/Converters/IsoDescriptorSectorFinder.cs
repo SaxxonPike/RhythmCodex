@@ -20,10 +20,10 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
         var result = new List<IsoSectorInfo>();
 
         var sectorEnumerator = sectors
-            .SkipWhile(s => s is not { Frames: 16, Seconds: 0, Minutes: 0 })
             .Where(s => s.Mode == 1 || s is { Mode: 2, Form: 1 })
             .GetEnumerator();
 
+        var foundDescriptor = false;
         var currentMinute = 0;
         var currentSecond = 0;
         var currentFrame = 16;
@@ -32,9 +32,9 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
         {
             var sector = sectorEnumerator.Current;
 
-            if (sector.Frames != currentFrame ||
-                sector.Seconds != currentSecond ||
-                sector.Minutes != currentMinute)
+            if (foundDescriptor && (sector.Frames != currentFrame ||
+                                    sector.Seconds != currentSecond ||
+                                    sector.Minutes != currentMinute))
                 continue;
 
             if (sector == null)
@@ -44,11 +44,15 @@ public class IsoDescriptorSectorFinder : IIsoDescriptorSectorFinder
 
             if (!userData.Slice(0x0001, 5).SequenceEqual("CD001"u8))
             {
-                currentSecond++;
                 continue;
             }
 
+            foundDescriptor = true;
             result.Add(sector);
+
+            currentFrame = sector.Frames ?? 0;
+            currentSecond = sector.Seconds ?? 0;
+            currentMinute = sector.Minutes ?? 0;
                 
             if (userData[0x0000] == 255)
                 break;

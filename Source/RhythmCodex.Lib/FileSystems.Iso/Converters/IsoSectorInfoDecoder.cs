@@ -8,8 +8,11 @@ namespace RhythmCodex.FileSystems.Iso.Converters;
 [Service]
 public class IsoSectorInfoDecoder : IIsoSectorInfoDecoder
 {
-    public IsoSectorInfo Decode(ICdSector sector)
+    public IsoSectorInfo? Decode(ICdSector? sector)
     {
+        if (sector == null)
+            return null;
+
         var result = new IsoSectorInfo
         {
             Number = sector.Number,
