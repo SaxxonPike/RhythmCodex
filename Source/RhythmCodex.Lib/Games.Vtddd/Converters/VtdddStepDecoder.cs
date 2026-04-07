@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Games.Vtddd.Converters;
 
 [Service]
-public class VtdddStepDecoder : IVtdddStepDecoder
+public sealed class VtdddStepDecoder : IVtdddStepDecoder
 {
     public IEnumerable<Event> Decode(VtdddStep value)
     {

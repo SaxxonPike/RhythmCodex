@@ -9,7 +9,7 @@ using RhythmCodex.Sounds.Riff.Models;
 namespace RhythmCodex.Sounds.Riff.Converters;
 
 [Service]
-public class RiffPcm16SoundEncoder(
+public sealed class RiffPcm16SoundEncoder(
     IRiffFormatEncoder formatEncoder,
     IAudioDsp audioDsp
 ) : IRiffPcm16SoundEncoder

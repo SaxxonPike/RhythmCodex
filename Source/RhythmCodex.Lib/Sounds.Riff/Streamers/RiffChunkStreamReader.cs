@@ -6,7 +6,7 @@ using RhythmCodex.Sounds.Riff.Models;
 namespace RhythmCodex.Sounds.Riff.Streamers;
 
 [Service]
-public class RiffChunkStreamReader : IRiffChunkStreamReader
+public sealed class RiffChunkStreamReader : IRiffChunkStreamReader
 {
     public RiffChunk Read(Stream stream)
     {

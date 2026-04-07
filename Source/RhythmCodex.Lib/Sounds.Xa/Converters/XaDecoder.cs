@@ -9,7 +9,7 @@ using RhythmCodex.Sounds.Xa.Models;
 namespace RhythmCodex.Sounds.Xa.Converters;
 
 [Service]
-public class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
+public sealed class XaDecoder(IXaFrameSplitter xaFrameSplitter) : IXaDecoder
 {
     // Reference: https://github.com/kode54/vgmstream/blob/master/src/coding/xa_decoder.c
 

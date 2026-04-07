@@ -10,7 +10,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Xbox.Streamers;
 
 [Service]
-public class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXboxIsoStreamReader
+public sealed class XboxIsoStreamReader(IXboxIsoInfoDecoder xboxIsoInfoDecoder) : IXboxIsoStreamReader
 {
     private const string MediaSectorId = "MICROSOFT*XBOX*MEDIA";
 

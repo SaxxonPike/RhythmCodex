@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class NoteDecoder : INoteDecoder
+public sealed class NoteDecoder : INoteDecoder
 {
     public List<Event> Decode(IEnumerable<Note> events, int columns)
     {

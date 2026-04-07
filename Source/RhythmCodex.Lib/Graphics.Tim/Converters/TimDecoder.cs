@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Tim.Converters;
 
 [Service]
-public class TimDecoder(
+public sealed class TimDecoder(
     ITimBitmapDecoder bitmapDecoder,
     ITimStreamReader streamReader)
     : ITimDecoder

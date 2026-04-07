@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.FileSystems.Cd.Streamers;
 
 [Service]
-public class CdSectorCollectionFactory : ICdSectorCollectionFactory
+public sealed class CdSectorCollectionFactory : ICdSectorCollectionFactory
 {
     public ICdSectorCollection Create(Stream stream, long length) =>
         new StreamCdSectorCollection(stream, length).Cached();

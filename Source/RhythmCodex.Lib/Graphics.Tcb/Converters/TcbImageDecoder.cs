@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Tcb.Converters;
 
 [Service]
-public class TcbImageDecoder : ITcbImageDecoder
+public sealed class TcbImageDecoder : ITcbImageDecoder
 {
     public Bitmap Decode(TcbImage image)
     {

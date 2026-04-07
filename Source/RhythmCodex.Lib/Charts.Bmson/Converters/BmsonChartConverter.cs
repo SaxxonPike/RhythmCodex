@@ -11,7 +11,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Bmson.Converters;
 
 [Service]
-public class BmsonChartConverter : IBmsonChartConverter
+public sealed class BmsonChartConverter : IBmsonChartConverter
 {
     private record struct LaneId(int PlayerId, int ColumnId, bool Scratch, bool FootPedal);
     

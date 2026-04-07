@@ -7,7 +7,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Statistics;
 
 [Service]
-public class UsedSamplesCounter : IUsedSamplesCounter
+public sealed class UsedSamplesCounter : IUsedSamplesCounter
 {
     public ISet<int> GetUsedSamples(IEnumerable<Event> events)
     {

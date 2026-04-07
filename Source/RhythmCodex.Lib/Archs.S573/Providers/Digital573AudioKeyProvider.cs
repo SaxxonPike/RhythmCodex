@@ -11,7 +11,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.S573.Providers;
 
 [Service]
-public class Digital573AudioKeyProvider : IDigital573AudioKeyProvider
+public sealed class Digital573AudioKeyProvider : IDigital573AudioKeyProvider
 {
     private readonly Lazy<Dictionary<string, Digital573AudioKey>> _keys = new(() =>
     {

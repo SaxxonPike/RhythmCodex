@@ -10,7 +10,7 @@ namespace RhythmCodex.Archs.Xbox.Streamers;
 // TODO: make this work on forward-only streams
 
 [Service]
-public class XboxKasStreamReader : IXboxKasStreamReader
+public sealed class XboxKasStreamReader : IXboxKasStreamReader
 {
     public IEnumerable<XboxKasEntry> Read(Stream kasStream)
     {

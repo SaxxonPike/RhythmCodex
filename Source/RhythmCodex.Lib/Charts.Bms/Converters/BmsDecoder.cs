@@ -12,7 +12,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Bms.Converters;
 
 [Service]
-public class BmsDecoder : IBmsDecoder
+public sealed class BmsDecoder : IBmsDecoder
 {
     private static readonly Regex MeasureRegex = new("^[0-9]{3}[0-9A-F]{2}$");
 

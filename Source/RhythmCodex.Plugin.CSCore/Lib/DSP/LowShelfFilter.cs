@@ -11,7 +11,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 /// Used to apply a lowshelf-filter to a signal.
 /// </summary>
 [PublicAPI]
-public class LowShelfFilter : BiQuad
+public sealed class LowShelfFilter : BiQuad
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="LowShelfFilter"/> class.

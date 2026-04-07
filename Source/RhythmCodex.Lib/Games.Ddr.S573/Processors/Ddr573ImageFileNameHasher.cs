@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.S573.Processors;
 
 [Service]
-public class Ddr573ImageFileNameHasher : IDdr573ImageFileNameHasher
+public sealed class Ddr573ImageFileNameHasher : IDdr573ImageFileNameHasher
 {
     public int Calculate(string name)
     {

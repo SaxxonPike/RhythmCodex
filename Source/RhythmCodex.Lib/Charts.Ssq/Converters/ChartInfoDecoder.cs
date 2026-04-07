@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class ChartInfoDecoder(ILogger logger) : IChartInfoDecoder
+public sealed class ChartInfoDecoder(ILogger logger) : IChartInfoDecoder
 {
     public ChartInfo Decode(int param1)
     {

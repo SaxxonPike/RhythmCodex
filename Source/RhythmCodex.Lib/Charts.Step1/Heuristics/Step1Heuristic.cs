@@ -9,7 +9,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Step1.Heuristics;
 
 [Service]
-public class Step1Heuristic(IStep1StreamReader step1StreamReader) : IReadableHeuristic<IEnumerable<Step1Chunk>>
+public sealed class Step1Heuristic(IStep1StreamReader step1StreamReader)
+    : IReadableHeuristic<IEnumerable<Step1Chunk>>
 {
     public string Description => "DDR Step Sequence (older)";
     public string FileExtension => "step";

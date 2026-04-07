@@ -9,7 +9,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq;
 
 [Service]
-public class SsqHeuristic(ISsqStreamReader ssqStreamReader) : IReadableHeuristic<IEnumerable<SsqChunk>>
+public sealed class SsqHeuristic(ISsqStreamReader ssqStreamReader)
+    : IReadableHeuristic<IEnumerable<SsqChunk>>
 {
     public IEnumerable<SsqChunk> Read(HeuristicResult result, Stream stream)
     {

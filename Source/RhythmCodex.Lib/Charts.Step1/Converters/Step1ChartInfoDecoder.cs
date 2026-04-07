@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Step1.Converters;
 
 [Service]
-public class Step1ChartInfoDecoder(ILogger logger) : IStep1ChartInfoDecoder
+public sealed class Step1ChartInfoDecoder(ILogger logger) : IStep1ChartInfoDecoder
 {
     public ChartInfo Decode(int metadata, int playerCount, int panelCount)
     {

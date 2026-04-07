@@ -10,7 +10,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class NoteCommandStringEncoder(IQuantizer quantizer) : INoteCommandStringEncoder
+public sealed class NoteCommandStringEncoder(IQuantizer quantizer) : INoteCommandStringEncoder
 {
     private static readonly BigInteger MinimumQuantization = 4;
     private static readonly BigInteger MaximumQuantization = 192;

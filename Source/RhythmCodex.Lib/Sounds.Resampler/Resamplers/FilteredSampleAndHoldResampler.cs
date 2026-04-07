@@ -7,7 +7,7 @@ using RhythmCodex.Sounds.Resampler.Providers;
 namespace RhythmCodex.Sounds.Resampler.Resamplers;
 
 [Service]
-public class FilteredSampleAndHoldResampler(IFilterProvider filterProvider) : IResampler
+public sealed class FilteredSampleAndHoldResampler(IFilterProvider filterProvider) : IResampler
 {
     private readonly IResampler _baseResampler = new SampleAndHoldResampler();
 

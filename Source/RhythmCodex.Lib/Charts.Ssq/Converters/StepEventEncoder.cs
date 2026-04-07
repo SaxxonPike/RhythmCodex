@@ -10,7 +10,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class StepEventEncoder : IStepEventEncoder
+public sealed class StepEventEncoder : IStepEventEncoder
 {
     public IList<Step> Encode(IEnumerable<Event> events, IPanelMapper panelMapper)
     {

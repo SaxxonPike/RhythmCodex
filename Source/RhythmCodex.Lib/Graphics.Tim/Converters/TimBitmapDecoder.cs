@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Tim.Converters;
 
 [Service]
-public class TimBitmapDecoder(ITimColorDecoder colorDecoder, ITimDataDecoder dataDecoder) : ITimBitmapDecoder
+public sealed class TimBitmapDecoder(ITimColorDecoder colorDecoder, ITimDataDecoder dataDecoder) : ITimBitmapDecoder
 {
     public List<Bitmap> Decode(TimImage image) =>
         Enumerable.Range(0, image.Cluts.Count).Select(i => Decode(image, i)).ToList();

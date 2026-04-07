@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Statistics;
 
 [Service]
-public class EventCounter : IEventCounter
+public sealed class EventCounter : IEventCounter
 {
     public int CountCombos(ICollection<Event> events)
     {

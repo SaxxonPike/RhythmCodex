@@ -6,7 +6,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class SsqIdSelector : ISsqIdSelector
+public sealed class SsqIdSelector : ISsqIdSelector
 {
     public int? SelectType(Chart chart)
     {

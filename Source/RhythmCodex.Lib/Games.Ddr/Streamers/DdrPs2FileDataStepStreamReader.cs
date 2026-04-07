@@ -12,7 +12,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.Streamers;
 
 [Service]
-public class DdrPs2FileDataStepStreamReader(IBemaniLzDecoder bemaniLzDecoder, IHeuristicTester heuristicTester)
+public sealed class DdrPs2FileDataStepStreamReader(IBemaniLzDecoder bemaniLzDecoder, IHeuristicTester heuristicTester)
     : IDdrPs2FileDataStepStreamReader
 {
     public DdrPs2FileDataTableChunk? Read(Stream fileDataBinStream, long length)

@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Twinkle.Streamers;
 
 [Service]
-public class TwinkleBeatmaniaStreamReader : ITwinkleBeatmaniaStreamReader
+public sealed class TwinkleBeatmaniaStreamReader : ITwinkleBeatmaniaStreamReader
 {
     private const int ChunkSize = TwinkleConstants.ChunkSize;
     private const int DataStart = 0x8000000;

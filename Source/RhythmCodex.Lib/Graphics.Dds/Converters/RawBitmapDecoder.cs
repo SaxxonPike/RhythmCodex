@@ -4,7 +4,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Dds.Converters;
 
 [Service]
-public class RawBitmapDecoder : IRawBitmapDecoder
+public sealed class RawBitmapDecoder : IRawBitmapDecoder
 {
     public int[] Decode32Bit(ReadOnlySpan<byte> src, int width, int height)
     {

@@ -5,7 +5,7 @@ namespace RhythmCodex.Infrastructure;
 
 /// <inheritdoc />
 [Service]
-public class NumberFormatter : INumberFormatter
+public sealed class NumberFormatter : INumberFormatter
 {
     /// <inheritdoc />
     public string Format(BigRational value, int places)

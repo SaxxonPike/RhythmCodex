@@ -7,7 +7,7 @@ using RhythmCodex.Metadatas.Sif.Models;
 namespace RhythmCodex.Metadatas.Sif.Converters;
 
 [Service]
-public class SifSmMetadataChanger(ISmMetadataChanger smMetadataChanger) : ISifSmMetadataChanger
+public sealed class SifSmMetadataChanger(ISmMetadataChanger smMetadataChanger) : ISifSmMetadataChanger
 {
     public void Apply(ICollection<Command> commands, SifInfo sif)
     {

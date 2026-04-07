@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TriggerEventEncoder : ITriggerEventEncoder
+public sealed class TriggerEventEncoder : ITriggerEventEncoder
 {
     public IList<Trigger> Encode(IEnumerable<Event> events)
     {

@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Twinkle.Heuristics;
 
 [Service]
-public class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
+public sealed class TwinkleBeatmaniaChartHeuristic : ITwinkleBeatmaniaChartHeuristic
 {
     public string Description => "Twinkle Beatmania Chart";
 

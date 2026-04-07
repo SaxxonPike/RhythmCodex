@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.Processors;
 
 [Service]
-public class DdrMetadataDatabase : IDdrMetadataDatabase
+public sealed class DdrMetadataDatabase : IDdrMetadataDatabase
 {
     private readonly Lazy<DdrMetadataDatabaseEntry[]> _entries = new(Load);
 

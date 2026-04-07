@@ -5,7 +5,7 @@ using RhythmCodex.Sounds.Xact.Model;
 namespace RhythmCodex.Sounds.Xact.Streamers;
 
 [Service]
-public class XsbSoundRpcStreamReader : IXsbSoundRpcStreamReader
+public sealed class XsbSoundRpcStreamReader : IXsbSoundRpcStreamReader
 {
     public XsbSoundRpc Read(Stream stream)
     {

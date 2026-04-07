@@ -6,7 +6,7 @@ using RhythmCodex.Sounds.Riff.Models;
 namespace RhythmCodex.Sounds.Riff.Converters;
 
 [Service]
-public class RiffFormatDecoder : IRiffFormatDecoder
+public sealed class RiffFormatDecoder : IRiffFormatDecoder
 {
     public RiffFormat Decode(RiffChunk chunk)
     {

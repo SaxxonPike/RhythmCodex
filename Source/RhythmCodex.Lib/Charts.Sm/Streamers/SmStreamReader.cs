@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Sm.Streamers;
 
 [Service]
-public class SmStreamReader : ISmStreamReader
+public sealed class SmStreamReader : ISmStreamReader
 {
     public List<Command> Read(Stream source)
     {

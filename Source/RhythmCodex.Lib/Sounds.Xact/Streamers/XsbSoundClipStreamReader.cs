@@ -9,7 +9,7 @@ namespace RhythmCodex.Sounds.Xact.Streamers;
 // license: ms-pl
 
 [Service]
-public class XsbSoundClipStreamReader : IXsbSoundClipStreamReader
+public sealed class XsbSoundClipStreamReader : IXsbSoundClipStreamReader
 {
     public XsbSoundClip Read(Stream stream)
     {

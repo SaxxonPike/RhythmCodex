@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Sm.Streamers;
 
 [Service]
-public class SmStreamWriter : ISmStreamWriter
+public sealed class SmStreamWriter : ISmStreamWriter
 {
     public void Write(Stream stream, IEnumerable<Command> commands)
     {

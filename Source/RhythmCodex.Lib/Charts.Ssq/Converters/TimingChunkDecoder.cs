@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TimingChunkDecoder : ITimingChunkDecoder
+public sealed class TimingChunkDecoder : ITimingChunkDecoder
 {
     public List<Timing> Convert(ReadOnlyMemory<byte> data)
     {

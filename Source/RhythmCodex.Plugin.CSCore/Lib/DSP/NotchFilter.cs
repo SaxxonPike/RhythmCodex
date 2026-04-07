@@ -11,7 +11,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 /// Used to apply a notch-filter to a signal.
 /// </summary>
 [PublicAPI]
-public class NotchFilter : BiQuad
+public sealed class NotchFilter : BiQuad
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="NotchFilter"/> class.

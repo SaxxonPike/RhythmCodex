@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.S573.Converters;
 
 [Service]
-public class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
+public sealed class Ddr573DatabaseDecoder : IDdr573DatabaseDecoder
 {
     public List<DdrDatabaseEntry> Decode(ReadOnlySpan<byte> database)
     {

@@ -11,7 +11,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 /// Used to apply a bandpass-filter to a signal.
 /// </summary>
 [PublicAPI]
-public class BandpassFilter : BiQuad
+public sealed class BandpassFilter : BiQuad
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BandpassFilter"/> class.

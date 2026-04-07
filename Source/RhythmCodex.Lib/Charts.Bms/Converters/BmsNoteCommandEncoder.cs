@@ -12,7 +12,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Bms.Converters;
 
 [Service]
-public class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncoder
+public sealed class BmsNoteCommandEncoder(IQuantizer quantizer) : IBmsNoteCommandEncoder
 {
     public string Encode(IEnumerable<BmsEvent> events, Func<BigRational?, string> encodeValue,
         BigRational measureLength, int quantize)

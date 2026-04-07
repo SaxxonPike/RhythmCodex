@@ -5,7 +5,7 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Sounds.Vag.Streamers;
 
 [Service]
-public class Xa2StreamReader(IVagStreamReader vagStreamReader) : IXa2StreamReader
+public sealed class Xa2StreamReader(IVagStreamReader vagStreamReader) : IXa2StreamReader
 {
     public Xa2Container Read(Stream stream)
     {

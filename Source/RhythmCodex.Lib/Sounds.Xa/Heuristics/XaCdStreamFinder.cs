@@ -9,7 +9,7 @@ using RhythmCodex.Sounds.Xa.Models;
 namespace RhythmCodex.Sounds.Xa.Heuristics;
 
 [Service]
-public class XaCdStreamFinder : IXaCdStreamFinder
+public sealed class XaCdStreamFinder : IXaCdStreamFinder
 {
     public IEnumerable<XaChunk> FindMode2(IEnumerable<IsoSectorInfo> sectors, bool splitByEmpty)
     {

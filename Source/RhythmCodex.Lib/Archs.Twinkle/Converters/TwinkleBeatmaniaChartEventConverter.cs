@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Twinkle.Converters;
 
 [Service]
-public class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventConverter
+public sealed class TwinkleBeatmaniaChartEventConverter : ITwinkleBeatmaniaChartEventConverter
 {
     public List<BeatmaniaPc1Event> ConvertNoteCountsToBeatmaniaPc1(ReadOnlySpan<int> noteCounts)
     {

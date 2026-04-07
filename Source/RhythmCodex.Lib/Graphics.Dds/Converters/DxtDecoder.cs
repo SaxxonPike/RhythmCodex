@@ -4,7 +4,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Dds.Converters;
 
 [Service]
-public class DxtDecoder : IDxtDecoder
+public sealed class DxtDecoder : IDxtDecoder
 {
     public int[] DecodeDxt1(ReadOnlySpan<byte> src, int width, int height, bool useAlpha)
     {

@@ -6,7 +6,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Archs.Twinkle.Converters;
 
 [Service]
-public class TwinkleBeatmaniaChartMetadataDecoder : ITwinkleBeatmaniaChartMetadataDecoder
+public sealed class TwinkleBeatmaniaChartMetadataDecoder : ITwinkleBeatmaniaChartMetadataDecoder
 {
     public void AddMetadata(Chart chart, int index)
     {

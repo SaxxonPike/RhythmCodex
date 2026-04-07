@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Vtddd.Streamers;
 
 [Service]
-public class VtdddDanceXmlStreamReader : IVtdddDanceXmlStreamReader
+public sealed class VtdddDanceXmlStreamReader : IVtdddDanceXmlStreamReader
 {
     public VtdddDanceDb Read(Stream stream, string chartPrefix)
     {

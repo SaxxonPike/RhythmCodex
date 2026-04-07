@@ -7,7 +7,7 @@ using RhythmCodex.Sounds.Psf.Models;
 namespace RhythmCodex.Sounds.Psf.Streamers;
 
 [Service]
-public class PsfStreamReader(IZlibStreamFactory zlibStreamFactory) : IPsfStreamReader
+public sealed class PsfStreamReader(IZlibStreamFactory zlibStreamFactory) : IPsfStreamReader
 {
     public PsfChunk Read(Stream source)
     {

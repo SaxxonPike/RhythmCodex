@@ -15,7 +15,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Step1.Converters;
 
 [Service]
-public class Step1Decoder(
+public sealed class Step1Decoder(
     ITimingEventDecoder timingEventDecoder,
     IStepEventDecoder stepEventDecoder,
     IStep1TimingChunkDecoder timingChunkDecoder,

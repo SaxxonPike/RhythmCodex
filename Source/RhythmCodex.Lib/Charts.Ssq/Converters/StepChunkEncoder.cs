@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class StepChunkEncoder : IStepChunkEncoder
+public sealed class StepChunkEncoder : IStepChunkEncoder
 {
     public Memory<byte> Convert(IEnumerable<Step> steps)
     {

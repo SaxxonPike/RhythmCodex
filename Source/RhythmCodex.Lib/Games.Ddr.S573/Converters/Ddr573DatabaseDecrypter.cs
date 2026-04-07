@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.S573.Converters;
 
 [Service]
-public class Ddr573DatabaseDecrypter(IBemaniLzDecoder bemaniLzDecoder) : IDdr573DatabaseDecrypter
+public sealed class Ddr573DatabaseDecrypter(IBemaniLzDecoder bemaniLzDecoder) : IDdr573DatabaseDecrypter
 {
     public int FindKey(ReadOnlySpan<byte> database)
     {

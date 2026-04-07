@@ -12,7 +12,7 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Sounds.Riff.Processing;
 
 [Service]
-public class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
+public sealed class SoundConsolidator(IAudioDsp audioDsp) : ISoundConsolidator
 {
     private record struct PlayedEvent(int Index, BigRational Panning, BigRational Offset);
 

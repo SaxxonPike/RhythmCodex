@@ -11,7 +11,7 @@ namespace RhythmCodex.Archs.S573.Converters;
 // https://github.com/mamedev/mame/blob/master/src/mame/konami/k573fpga.cpp
 
 [Service]
-public class Digital573AudioDecrypter : IDigital573AudioDecrypter
+public sealed class Digital573AudioDecrypter : IDigital573AudioDecrypter
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int Bit(int value, int n) =>

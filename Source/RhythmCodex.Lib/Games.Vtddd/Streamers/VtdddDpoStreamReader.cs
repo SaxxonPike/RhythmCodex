@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Vtddd.Streamers;
 
 [Service]
-public class VtdddDpoStreamReader : IVtdddDpoStreamReader
+public sealed class VtdddDpoStreamReader : IVtdddDpoStreamReader
 {
     public VtdddDpoFile? Read(Stream stream, int length)
     {

@@ -11,7 +11,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Vtddd.Streamers;
 
 [Service]
-public class VtdddChartXmlStreamReader : IVtdddChartXmlStreamReader
+public sealed class VtdddChartXmlStreamReader : IVtdddChartXmlStreamReader
 {
     public List<VtdddStep> Read(Stream stream)
     {

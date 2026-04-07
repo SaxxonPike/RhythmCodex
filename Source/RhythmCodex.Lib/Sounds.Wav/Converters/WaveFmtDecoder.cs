@@ -7,7 +7,7 @@ using RhythmCodex.Sounds.Wav.Models;
 namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
-public class WaveFmtDecoder : IWaveFmtDecoder
+public sealed class WaveFmtDecoder : IWaveFmtDecoder
 {
     public WaveFmtChunk Decode(RiffChunk chunk)
     {

@@ -10,7 +10,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.Streamers;
 
 [Service]
-public class MusicDbXmlStreamReader : IMusicDbXmlStreamReader
+public sealed class MusicDbXmlStreamReader : IMusicDbXmlStreamReader
 {
     public IEnumerable<MusicDbEntry> Read(Stream stream)
     {

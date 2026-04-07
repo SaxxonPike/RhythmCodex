@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Dds.Converters;
 
 [Service]
-public class DdsBitmapDecoder(IDxtDecoder dxtDecoder, IRawBitmapDecoder rawBitmapDecoder) : IDdsBitmapDecoder
+public sealed class DdsBitmapDecoder(IDxtDecoder dxtDecoder, IRawBitmapDecoder rawBitmapDecoder) : IDdsBitmapDecoder
 {
     public Bitmap Decode(DdsImage image)
     {

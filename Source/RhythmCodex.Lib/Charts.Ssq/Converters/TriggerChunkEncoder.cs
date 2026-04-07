@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TriggerChunkEncoder : ITriggerChunkEncoder
+public sealed class TriggerChunkEncoder : ITriggerChunkEncoder
 {
     public Memory<byte> Convert(IEnumerable<Trigger> triggers)
     {

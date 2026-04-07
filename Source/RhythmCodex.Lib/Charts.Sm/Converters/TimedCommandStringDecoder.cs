@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class TimedCommandStringDecoder(ILogger logger) : ITimedCommandStringDecoder
+public sealed class TimedCommandStringDecoder(ILogger logger) : ITimedCommandStringDecoder
 {
     /// <inheritdoc />
     public List<TimedEvent> Decode(string events)

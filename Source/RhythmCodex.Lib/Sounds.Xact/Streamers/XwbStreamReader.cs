@@ -10,7 +10,7 @@ using RhythmCodex.Sounds.Xact.Model;
 namespace RhythmCodex.Sounds.Xact.Streamers;
 
 [Service]
-public class XwbStreamReader(
+public sealed class XwbStreamReader(
     IXwbHeaderStreamReader xwbHeaderStreamReader,
     IXwbDataStreamReader xwbDataStreamReader,
     IXwbEntryStreamReader xwbEntryStreamReader)

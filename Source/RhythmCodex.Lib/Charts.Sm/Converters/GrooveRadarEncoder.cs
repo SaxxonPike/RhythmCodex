@@ -4,7 +4,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class GrooveRadarEncoder : IGrooveRadarEncoder
+public sealed class GrooveRadarEncoder : IGrooveRadarEncoder
 {
     public string Encode(IMetadata metadata)
     {

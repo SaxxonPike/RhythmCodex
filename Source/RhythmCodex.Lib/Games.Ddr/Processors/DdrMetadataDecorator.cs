@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Games.Ddr.Processors;
 
 [Service]
-public class DdrMetadataDecorator : IDdrMetadataDecorator
+public sealed class DdrMetadataDecorator : IDdrMetadataDecorator
 {
     public void Decorate(ChartSet? chartSet, DdrDatabaseEntry? meta, MetadataDecoratorFileExtensions extensions)
     {

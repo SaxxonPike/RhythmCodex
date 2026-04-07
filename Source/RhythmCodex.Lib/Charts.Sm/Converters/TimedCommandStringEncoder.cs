@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class TimedCommandStringEncoder(INumberFormatter numberFormatter) : ITimedCommandStringEncoder
+public sealed class TimedCommandStringEncoder(INumberFormatter numberFormatter) : ITimedCommandStringEncoder
 {
     public string Encode(IEnumerable<TimedEvent> events)
     {

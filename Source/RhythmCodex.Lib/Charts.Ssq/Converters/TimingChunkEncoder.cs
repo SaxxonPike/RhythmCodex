@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TimingChunkEncoder : ITimingChunkEncoder
+public sealed class TimingChunkEncoder : ITimingChunkEncoder
 {
     public Memory<byte> Convert(IEnumerable<Timing> timings)
     {

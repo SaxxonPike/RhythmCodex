@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class NoteCommandStringDecoder : INoteCommandStringDecoder
+public sealed class NoteCommandStringDecoder : INoteCommandStringDecoder
 {
     private static readonly char[] SkippedChars = [' ', '\t', '\n', '\r'];
     private static readonly char[] Delimiters = [';', ','];

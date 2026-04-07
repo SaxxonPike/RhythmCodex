@@ -5,7 +5,7 @@ using RhythmCodex.Sounds.Streamers;
 namespace RhythmCodex.Plugin.Sdl3.Sounds;
 
 [Service]
-public class SoundStreamWriter : ISoundStreamWriter
+public sealed class SoundStreamWriter : ISoundStreamWriter
 {
     public void Write(Stream stream, Sound sound)
     {

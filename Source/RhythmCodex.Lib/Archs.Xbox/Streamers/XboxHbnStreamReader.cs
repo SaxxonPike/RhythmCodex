@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Xbox.Streamers;
 
 [Service]
-public class XboxHbnStreamReader : IXboxHbnStreamReader
+public sealed class XboxHbnStreamReader : IXboxHbnStreamReader
 {
     public IEnumerable<XboxHbnEntry> Read(Stream hbnStream, Stream binStream)
     {

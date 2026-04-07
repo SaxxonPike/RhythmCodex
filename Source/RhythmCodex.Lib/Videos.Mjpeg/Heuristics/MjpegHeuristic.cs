@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Videos.Mjpeg.Heuristics;
 
 [Service]
-public class MjpegHeuristic : IHeuristic
+public sealed class MjpegHeuristic : IHeuristic
 {
     public string Description => "MJPEG Movie";
     public string FileExtension => "mjpg";

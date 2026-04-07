@@ -7,7 +7,7 @@ using RhythmCodex.Sounds.Vag.Models;
 namespace RhythmCodex.Sounds.Vag.Streamers;
 
 [Service]
-public class VagStreamReader : IVagStreamReader
+public sealed class VagStreamReader : IVagStreamReader
 {
     public VagChunk Read(Stream stream, int channels, int interleave)
     {

@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Sounds.Xa.Converters;
 
 [Service]
-public class XaFrameSplitter : IXaFrameSplitter
+public sealed class XaFrameSplitter : IXaFrameSplitter
 {
     public int GetStatus(ReadOnlySpan<byte> frame, int channel) =>
         frame[(channel & 7) + 4];

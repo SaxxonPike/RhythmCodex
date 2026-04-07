@@ -5,7 +5,7 @@ using RhythmCodex.Utils.Cursors;
 namespace RhythmCodex.Graphics.Tim.Converters;
 
 [Service]
-public class TimDataDecoder : ITimDataDecoder
+public sealed class TimDataDecoder : ITimDataDecoder
 {
     public int[] Decode4Bit(ReadOnlySpan<byte> data, int stride, int height)
     {

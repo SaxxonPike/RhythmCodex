@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Psx.Heuristics;
 
 [Service]
-public class PsxExeHeuristic : IHeuristic
+public sealed class PsxExeHeuristic : IHeuristic
 {
     public string Description => "Playstation Executable (PS-X EXE)";
     public string FileExtension => "exe";

@@ -10,7 +10,8 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Step2.Converters;
 
 [Service]
-public class Step2Decoder(IStep2EventMapper step2EventMapper) : IStep2Decoder
+public sealed class Step2Decoder(IStep2EventMapper step2EventMapper) 
+    : IStep2Decoder
 {
     public Chart Decode(Step2Chunk chunk)
     {

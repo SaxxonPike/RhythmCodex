@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class ChartInfoEncoder : IChartInfoEncoder
+public sealed class ChartInfoEncoder : IChartInfoEncoder
 {
     public ChartInfo Suggest(IEnumerable<Event> events)
     {

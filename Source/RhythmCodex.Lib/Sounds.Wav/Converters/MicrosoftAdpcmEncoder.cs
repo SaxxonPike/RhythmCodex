@@ -8,7 +8,7 @@ using RhythmCodex.Sounds.Wav.Models;
 namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
-public class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
+public sealed class MicrosoftAdpcmEncoder : IMicrosoftAdpcmEncoder
 {
     public Memory<byte> Encode(Sound sound, int samplesPerBlock)
     {

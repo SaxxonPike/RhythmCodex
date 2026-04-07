@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Twinkle.Converters;
 
 [Service]
-public class TwinkleBeatmaniaSoundDefinitionDecoder : ITwinkleBeatmaniaSoundDefinitionDecoder
+public sealed class TwinkleBeatmaniaSoundDefinitionDecoder : ITwinkleBeatmaniaSoundDefinitionDecoder
 {
     public TwinkleBeatmaniaSoundDefinition? Decode(ReadOnlySpan<byte> data)
     {

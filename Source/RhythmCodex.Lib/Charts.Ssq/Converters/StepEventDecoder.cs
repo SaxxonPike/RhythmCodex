@@ -11,7 +11,8 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class StepEventDecoder(IStepPanelSplitter stepPanelSplitter) : IStepEventDecoder
+public sealed class StepEventDecoder(IStepPanelSplitter stepPanelSplitter)
+    : IStepEventDecoder
 {
     public List<Event> Decode(IEnumerable<Step> steps, IPanelMapper panelMapper)
     {

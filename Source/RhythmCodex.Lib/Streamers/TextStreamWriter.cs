@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Streamers;
 
 [Service]
-public class TextStreamWriter : ITextStreamWriter
+public sealed class TextStreamWriter : ITextStreamWriter
 {
     public void Write(Stream stream, IEnumerable<string> lines)
     {

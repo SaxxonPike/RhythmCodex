@@ -11,7 +11,7 @@ using static SDL.SDL3_mixer;
 namespace RhythmCodex.Plugin.Sdl3.Sounds;
 
 [Service]
-public class SoundStreamReader : ISoundStreamReader
+public sealed class SoundStreamReader : ISoundStreamReader
 {
     public Sound Read(Stream stream)
     {

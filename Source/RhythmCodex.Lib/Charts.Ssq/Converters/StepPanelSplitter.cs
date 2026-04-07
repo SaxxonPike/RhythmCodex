@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class StepPanelSplitter : IStepPanelSplitter
+public sealed class StepPanelSplitter : IStepPanelSplitter
 {
     public List<int> Split(int panels)
     {

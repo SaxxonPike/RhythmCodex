@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Streamers;
 
 [Service]
-public class TextStreamReader : ITextStreamReader
+public sealed class TextStreamReader : ITextStreamReader
 {
     public List<string> Read(Stream stream)
     {

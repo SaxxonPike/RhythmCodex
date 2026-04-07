@@ -9,7 +9,7 @@ using RhythmCodex.Sounds.Models;
 namespace RhythmCodex.Archs.Twinkle.Converters;
 
 [Service]
-public class TwinkleBeatmaniaSoundDecoder(
+public sealed class TwinkleBeatmaniaSoundDecoder(
     IBeatmaniaDspTranslator beatmaniaDspTranslator) 
     : ITwinkleBeatmaniaSoundDecoder
 {

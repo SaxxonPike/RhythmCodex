@@ -10,7 +10,7 @@ using static SDL.SDL3;
 namespace RhythmCodex.Plugin.Sdl3.Graphics;
 
 [Service]
-public class BitmapStreamReader : IBitmapStreamReader
+public sealed class BitmapStreamReader : IBitmapStreamReader
 {
     public Bitmap Read(Stream stream)
     {

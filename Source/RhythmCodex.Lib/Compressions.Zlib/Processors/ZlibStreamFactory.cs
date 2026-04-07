@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Compressions.Zlib.Processors;
 
 [Service]
-public class ZlibStreamFactory : IZlibStreamFactory
+public sealed class ZlibStreamFactory : IZlibStreamFactory
 {
     public Stream Create(Stream source)
     {

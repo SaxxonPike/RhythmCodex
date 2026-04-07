@@ -5,7 +5,7 @@ using RhythmCodex.Sounds.Filter.Providers;
 namespace RhythmCodex.Plugin.CSCore;
 
 [Service]
-public class LowPassAudioFilter : IFilter
+public sealed class LowPassAudioFilter : IFilter
 {
     public string Name => "lowpass";
     public int Priority => 0;

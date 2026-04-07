@@ -8,7 +8,7 @@ using RhythmCodex.Metadatas.Sif.Models;
 namespace RhythmCodex.Metadatas.Sif.Streamers;
 
 [Service]
-public class SifStreamReader(
+public sealed class SifStreamReader(
     IBinarySifDecoder binarySifDecoder,
     ITextSifDecoder textSifDecoder)
     : ISifStreamReader

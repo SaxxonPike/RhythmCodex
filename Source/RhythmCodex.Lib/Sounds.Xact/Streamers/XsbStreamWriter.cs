@@ -7,7 +7,7 @@ using RhythmCodex.Sounds.Xact.Processors;
 namespace RhythmCodex.Sounds.Xact.Streamers;
 
 [Service]
-public class XsbStreamWriter(
+public sealed class XsbStreamWriter(
     IXsbHeaderStreamWriter xsbHeaderStreamWriter,
     IXsbCueStreamWriter xsbCueStreamWriter,
     IXsbSoundStreamWriter xsbSoundStreamWriter,

@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Vtddd.Converters;
 
 [Service]
-public class VtdddChartDecoder(IVtdddStepDecoder stepDecoder) : IVtdddChartDecoder
+public sealed class VtdddChartDecoder(IVtdddStepDecoder stepDecoder) : IVtdddChartDecoder
 {
     public Chart Decode(IEnumerable<VtdddStep> steps)
     {

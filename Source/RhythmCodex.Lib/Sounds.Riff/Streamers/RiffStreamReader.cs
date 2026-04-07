@@ -7,7 +7,7 @@ using RhythmCodex.Sounds.Riff.Models;
 namespace RhythmCodex.Sounds.Riff.Streamers;
 
 [Service]
-public class RiffStreamReader(IRiffChunkStreamReader chunkStreamReader) : IRiffStreamReader
+public sealed class RiffStreamReader(IRiffChunkStreamReader chunkStreamReader) : IRiffStreamReader
 {
     public RiffContainer Read(Stream stream)
     {

@@ -15,9 +15,10 @@ public class BeatmaniaPs2BgmDecoder(
 {
     public Sound? Decode(BeatmaniaPs2Bgm bgm)
     {
-        var output = vagDecoder.Decode(bgm.Data);
-        if (output == null)
+        if (bgm.Data == null)
             return null;
+        
+        var output = vagDecoder.Decode(bgm.Data);
 
         if (bgm.Skip > 0)
             output.Skip(bgm.Skip);

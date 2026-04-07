@@ -10,7 +10,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class NoteEncoder(ILogger logger) : INoteEncoder
+public sealed class NoteEncoder(ILogger logger) : INoteEncoder
 {
     public List<Note> Encode(IEnumerable<Event> events)
     {

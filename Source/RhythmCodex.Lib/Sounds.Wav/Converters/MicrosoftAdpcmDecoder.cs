@@ -8,7 +8,7 @@ using RhythmCodex.Sounds.Wav.Models;
 namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
-public class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
+public sealed class MicrosoftAdpcmDecoder : IMicrosoftAdpcmDecoder
 {
     // Reference: https://wiki.multimedia.cx/index.php/Microsoft_ADPCM
 

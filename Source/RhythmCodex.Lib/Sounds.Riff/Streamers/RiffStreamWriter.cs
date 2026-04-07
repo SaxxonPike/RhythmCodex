@@ -8,7 +8,7 @@ using RhythmCodex.Sounds.Riff.Models;
 namespace RhythmCodex.Sounds.Riff.Streamers;
 
 [Service]
-public class RiffStreamWriter : IRiffStreamWriter
+public sealed class RiffStreamWriter : IRiffStreamWriter
 {
     public int Write(Stream stream, RiffContainer container)
     {

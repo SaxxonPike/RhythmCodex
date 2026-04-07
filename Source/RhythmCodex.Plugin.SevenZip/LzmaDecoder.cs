@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Plugin.SevenZip;
 
 [Service]
-public class LzmaDecoder : ILzmaDecoder
+public sealed class LzmaDecoder : ILzmaDecoder
 {
     public Memory<byte> Decode(Stream baseStream, int compressedLength, int decompressedLength,
         ReadOnlySpan<byte> decoderProperties = default)

@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Compressions.BemaniLz.Processors;
 
 [Service]
-public class BemaniLzEncoder : IBemaniLzEncoder
+public sealed class BemaniLzEncoder : IBemaniLzEncoder
 {
     private enum TokenType
     {

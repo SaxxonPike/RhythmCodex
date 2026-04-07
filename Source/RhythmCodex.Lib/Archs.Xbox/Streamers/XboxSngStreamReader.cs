@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Xbox.Streamers;
 
 [Service]
-public class XboxSngStreamReader : IXboxSngStreamReader
+public sealed class XboxSngStreamReader : IXboxSngStreamReader
 {
     public IEnumerable<XboxSngEntry> Read(Stream stream)
     {

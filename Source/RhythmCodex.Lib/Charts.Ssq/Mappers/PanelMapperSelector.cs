@@ -10,7 +10,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Mappers;
 
 [Service]
-public class PanelMapperSelector(
+public sealed class PanelMapperSelector(
     IEnumerable<IPanelMapper> panelMappers,
     IStepPanelSplitter stepPanelSplitter,
     ILogger logger)

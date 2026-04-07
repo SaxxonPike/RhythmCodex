@@ -10,7 +10,7 @@ namespace RhythmCodex.Charts.Filters;
 /// Filters out events.
 /// </summary>
 [Service]
-public class ChartEventFilter : IChartEventFilter
+public sealed class ChartEventFilter : IChartEventFilter
 {
     public IList<Event> GetBpms(IEnumerable<Event> events)
     {

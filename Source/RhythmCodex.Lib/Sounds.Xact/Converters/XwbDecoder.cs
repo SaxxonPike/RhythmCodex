@@ -12,7 +12,7 @@ using RhythmCodex.Sounds.Xact.Model;
 namespace RhythmCodex.Sounds.Xact.Converters;
 
 [Service]
-public class XwbDecoder(
+public sealed class XwbDecoder(
     IPcmDecoder pcmDecoder,
     IImaAdpcmDecoder imaAdpcmDecoder,
     IMicrosoftAdpcmDecoder microsoftAdpcmDecoder)

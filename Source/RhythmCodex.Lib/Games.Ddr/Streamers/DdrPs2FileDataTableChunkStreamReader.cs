@@ -10,7 +10,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.Streamers;
 
 [Service]
-public class DdrPs2FileDataTableChunkStreamReader(IBemaniLzDecoder bemaniLzDecoder)
+public sealed class DdrPs2FileDataTableChunkStreamReader(IBemaniLzDecoder bemaniLzDecoder)
     : IDdrPs2FileDataTableChunkStreamReader
 {
     public DdrPs2FileDataTableChunk? GetUnbound(Stream stream)

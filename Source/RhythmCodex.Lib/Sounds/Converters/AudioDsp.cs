@@ -14,7 +14,7 @@ using RhythmCodex.Sounds.Resampler.Providers;
 namespace RhythmCodex.Sounds.Converters;
 
 [Service]
-public class AudioDsp(IDefaultStereoMixer defaultStereoMixer) : IAudioDsp
+public sealed class AudioDsp(IDefaultStereoMixer defaultStereoMixer) : IAudioDsp
 {
     private static readonly BigRational Sqrt2 = BigRational.Sqrt(2);
 

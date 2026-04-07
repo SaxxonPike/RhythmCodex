@@ -3,7 +3,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Tim.Converters;
 
 [Service]
-public class TimColorDecoder : ITimColorDecoder
+public sealed class TimColorDecoder : ITimColorDecoder
 {
     public int Decode16Bit(int color)
     {

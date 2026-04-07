@@ -6,7 +6,7 @@ using RhythmCodex.Sounds.Xact.Model;
 namespace RhythmCodex.Sounds.Xact.Streamers;
 
 [Service]
-public class XsbCueStreamReader : IXsbCueStreamReader
+public sealed class XsbCueStreamReader : IXsbCueStreamReader
 {
     public IEnumerable<XsbCue> ReadSimple(Stream stream, int count)
     {

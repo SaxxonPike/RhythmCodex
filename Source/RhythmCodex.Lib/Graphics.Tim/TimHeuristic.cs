@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Tim;
 
 [Service]
-public class TimHeuristic(ITimStreamReader timStreamReader) : IReadableHeuristic<TimImage>
+public sealed class TimHeuristic(ITimStreamReader timStreamReader) : IReadableHeuristic<TimImage>
 {
     public TimImage Read(HeuristicResult result, Stream stream)
     {

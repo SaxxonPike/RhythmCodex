@@ -10,7 +10,7 @@ using RhythmCodex.Sounds.Wav.Models;
 namespace RhythmCodex.Sounds.Riff.Converters;
 
 [Service]
-public class RiffMicrosoftAdpcmSoundEncoder(
+public sealed class RiffMicrosoftAdpcmSoundEncoder(
     IRiffFormatEncoder riffFormatEncoder,
     IMicrosoftAdpcmEncoder microsoftAdpcmEncoder)
     : IRiffMicrosoftAdpcmSoundEncoder

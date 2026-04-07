@@ -7,7 +7,7 @@ using RhythmCodex.Utils.Cursors;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TriggerChunkDecoder : ITriggerChunkDecoder
+public sealed class TriggerChunkDecoder : ITriggerChunkDecoder
 {
     public List<Trigger> Convert(ReadOnlySpan<byte> data)
     {

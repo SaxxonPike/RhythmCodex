@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.S573.Processors;
 
 [Service]
-public class Ddr573AudioNameFinder : IDdr573AudioNameFinder
+public sealed class Ddr573AudioNameFinder : IDdr573AudioNameFinder
 {
     private static readonly Dictionary<char, char> NameMap = new()
     {

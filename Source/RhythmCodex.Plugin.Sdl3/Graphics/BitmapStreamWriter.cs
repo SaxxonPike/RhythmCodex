@@ -9,7 +9,7 @@ using static SDL.SDL3;
 namespace RhythmCodex.Plugin.Sdl3.Graphics;
 
 [Service]
-public class BitmapStreamWriter : IBitmapStreamWriter
+public sealed class BitmapStreamWriter : IBitmapStreamWriter
 {
     public void Write(Stream stream, Bitmap bitmap)
     {

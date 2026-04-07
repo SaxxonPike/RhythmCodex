@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Compressions.BemaniLzss2.Processors;
 
 [Service]
-public class BemaniLzss2Decoder : IBemaniLzss2Decoder
+public sealed class BemaniLzss2Decoder : IBemaniLzss2Decoder
 {
     private enum BemaniLzss2Type
     {

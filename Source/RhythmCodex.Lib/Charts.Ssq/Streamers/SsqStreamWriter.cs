@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Streamers;
 
 [Service]
-public class SsqStreamWriter(IChunkStreamWriter chunkStreamWriter) 
+public sealed class SsqStreamWriter(IChunkStreamWriter chunkStreamWriter) 
     : ISsqStreamWriter
 {
     public void Write(Stream stream, IEnumerable<SsqChunk> chunks)

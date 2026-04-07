@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Plugin.SharpZipLib;
 
 [Service]
-public class Bzip2StreamFactory : IBzip2StreamFactory
+public sealed class Bzip2StreamFactory : IBzip2StreamFactory
 {
     public Stream Create(Stream source) => 
         new BZip2InputStream(source);

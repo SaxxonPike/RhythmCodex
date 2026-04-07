@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.S573.Converters;
 
 [Service]
-public class Ddr573ImageDirectoryDecoder : IDdr573ImageDirectoryDecoder
+public sealed class Ddr573ImageDirectoryDecoder : IDdr573ImageDirectoryDecoder
 {
     private const int PsxIdString = 0x582D5350;
 

@@ -6,7 +6,7 @@ using RhythmCodex.Metadatas.Sif.Models;
 namespace RhythmCodex.Metadatas.Sif.Converters;
 
 [Service]
-public class TextSifDecoder : ITextSifDecoder
+public sealed class TextSifDecoder : ITextSifDecoder
 {
     public SifInfo Decode(IEnumerable<string> lines)
     {

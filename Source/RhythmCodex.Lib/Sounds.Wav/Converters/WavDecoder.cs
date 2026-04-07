@@ -14,7 +14,7 @@ using RhythmCodex.Sounds.Wav.Models;
 namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
-public class WavDecoder(
+public sealed class WavDecoder(
     IRiffStreamReader riffStreamReader,
     IPcmDecoder pcmDecoder,
     IWaveFmtDecoder waveFmtDecoder,

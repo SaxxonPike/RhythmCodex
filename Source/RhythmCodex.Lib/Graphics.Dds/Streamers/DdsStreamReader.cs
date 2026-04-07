@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Dds.Streamers;
 
 [Service]
-public class DdsStreamReader : IDdsStreamReader
+public sealed class DdsStreamReader : IDdsStreamReader
 {
     public const int MagicId = 0x20534444;
         

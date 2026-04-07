@@ -4,7 +4,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Sounds.Xact.Processors;
 
 [Service]
-public class Fcs16Calculator : IFcs16Calculator
+public sealed class Fcs16Calculator : IFcs16Calculator
 {
     // as defined in RFC 1662
 

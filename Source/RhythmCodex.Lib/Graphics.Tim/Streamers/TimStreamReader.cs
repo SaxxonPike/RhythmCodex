@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Tim.Streamers;
 
 [Service]
-public class TimStreamReader : ITimStreamReader
+public sealed class TimStreamReader : ITimStreamReader
 {
     public TimImage Read(Stream stream)
     {

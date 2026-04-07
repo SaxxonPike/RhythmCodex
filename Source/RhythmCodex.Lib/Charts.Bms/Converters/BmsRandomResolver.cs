@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Bms.Converters;
 
 [Service]
-public class BmsRandomResolver(IRandomizer randomizer) : IBmsRandomResolver
+public sealed class BmsRandomResolver(IRandomizer randomizer) : IBmsRandomResolver
 {
     public List<BmsCommand> Resolve(IEnumerable<BmsCommand> commands)
     {

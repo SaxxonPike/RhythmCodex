@@ -6,7 +6,7 @@ using RhythmCodex.Utils.Cursors;
 namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
-public class PcmDecoder : IPcmDecoder
+public sealed class PcmDecoder : IPcmDecoder
 {
     public float[] Decode8Bit(ReadOnlySpan<byte> bytes)
     {

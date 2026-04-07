@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Sounds.Xact.Heuristics;
 
 [Service]
-public class XwbHeuristic : IHeuristic
+public sealed class XwbHeuristic : IHeuristic
 {
     public string Description => "Xbox Wave Bank";
     public string FileExtension => "xwb";

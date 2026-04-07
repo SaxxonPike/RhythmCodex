@@ -7,7 +7,8 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Streamers;
 
 [Service]
-public class SsqStreamReader(IChunkStreamReader chunkStreamReader) : ISsqStreamReader
+public sealed class SsqStreamReader(IChunkStreamReader chunkStreamReader) 
+    : ISsqStreamReader
 {
     public List<SsqChunk> Read(Stream stream)
     {

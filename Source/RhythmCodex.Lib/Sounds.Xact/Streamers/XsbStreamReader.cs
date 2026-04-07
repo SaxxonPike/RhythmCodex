@@ -11,7 +11,7 @@ using RhythmCodex.Sounds.Xact.Processors;
 namespace RhythmCodex.Sounds.Xact.Streamers;
 
 [Service]
-public class XsbStreamReader(
+public sealed class XsbStreamReader(
     IXsbHeaderStreamReader xsbHeaderStreamReader,
     IXsbCueNameTableStreamReader xsbCueNameTableStreamReader,
     IXsbCueStreamReader xsbCueStreamReader,

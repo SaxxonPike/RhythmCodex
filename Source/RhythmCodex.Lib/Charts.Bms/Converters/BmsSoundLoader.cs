@@ -11,7 +11,7 @@ using RhythmCodex.Sounds.Streamers;
 namespace RhythmCodex.Charts.Bms.Converters;
 
 [Service]
-public class BmsSoundLoader(
+public sealed class BmsSoundLoader(
     ISoundStreamReader soundStreamReader
 ) : IBmsSoundLoader
 {

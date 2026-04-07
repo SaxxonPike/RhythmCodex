@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Archs.Xbox.Converters;
 
 [Service]
-public class XboxIsoInfoDecoder : IXboxIsoInfoDecoder
+public sealed class XboxIsoInfoDecoder : IXboxIsoInfoDecoder
 {
     public XboxIsoInfo Decode(ReadOnlySpan<byte> sector)
     {

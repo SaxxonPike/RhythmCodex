@@ -9,7 +9,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TriggerEventDecoder : ITriggerEventDecoder
+public sealed class TriggerEventDecoder : ITriggerEventDecoder
 {
     public List<Event> Decode(IEnumerable<Trigger> triggers) =>
         triggers.Select(trigger => new Event

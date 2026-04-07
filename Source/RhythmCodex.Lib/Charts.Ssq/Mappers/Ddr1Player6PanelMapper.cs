@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Mappers;
 
 [Service]
-public class Ddr1Player6PanelMapper : DdrPanelMapperBase
+public sealed class Ddr1Player6PanelMapper : DdrPanelMapperBase
 {
     public sealed override int PanelCount => 6;
     public sealed override int PlayerCount => 1;

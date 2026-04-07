@@ -13,7 +13,7 @@ namespace RhythmCodex.Games.Ddr.Streamers;
 // * uses a strange 0x1000 interleave block of 256 bytes at the end for some reason?
 
 [Service]
-public class Ddr573ImageStreamReader : IDdr573ImageStreamReader
+public sealed class Ddr573ImageStreamReader : IDdr573ImageStreamReader
 {
     public Ddr573Image Read(Stream gameDatStream, int gameDatLength)
     {

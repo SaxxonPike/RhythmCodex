@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class SsqInfoChunkDecoder : ISsqInfoChunkDecoder
+public sealed class SsqInfoChunkDecoder : ISsqInfoChunkDecoder
 {
     public SsqInfoChunk Decode(SsqChunk ssqChunk)
     {

@@ -12,7 +12,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class SsqEncoder : ISsqEncoder
+public sealed class SsqEncoder : ISsqEncoder
 {
     private readonly IChartEventFilter _chartEventFilter;
     private readonly ITimingEventEncoder _timingEventEncoder;

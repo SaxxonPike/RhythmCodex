@@ -9,7 +9,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Heuristics;
 
 [Service]
-public class HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger) : IHeuristicTester
+public sealed class HeuristicTester(IEnumerable<IHeuristic> heuristics, ILogger logger) : IHeuristicTester
 {
     public List<HeuristicResult> Match(Stream stream, long length, params Context[] contexts)
     {

@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Graphics.Converters;
 
 [Service]
-public class GraphicDsp : IGraphicDsp
+public sealed class GraphicDsp : IGraphicDsp
 {
     public Bitmap DeIndex(PaletteBitmap bitmap)
     {

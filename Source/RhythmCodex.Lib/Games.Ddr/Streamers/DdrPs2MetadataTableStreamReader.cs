@@ -11,7 +11,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.Streamers;
 
 [Service]
-public class DdrPs2MetadataTableStreamReader : IDdrPs2MetadataTableStreamReader
+public sealed class DdrPs2MetadataTableStreamReader : IDdrPs2MetadataTableStreamReader
 {
     private const int BufferCheckInterval = 0x010;
 

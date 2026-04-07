@@ -5,7 +5,7 @@ using RhythmCodex.Sounds.Xact.Model;
 namespace RhythmCodex.Sounds.Xact.Streamers;
 
 [Service]
-public class XwbMiniWaveFormatStreamReader : IXwbMiniWaveFormatStreamReader
+public sealed class XwbMiniWaveFormatStreamReader : IXwbMiniWaveFormatStreamReader
 {
     public XwbMiniWaveFormat Read(Stream source)
     {

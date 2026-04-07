@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Compressions.BemaniLzss.Processors;
 
 [Service]
-public class BemaniLzssDecoder : IBemaniLzssDecoder
+public sealed class BemaniLzssDecoder : IBemaniLzssDecoder
 {
     private const int BufferMask = 0x3FFF; // 14 bits window
     private const int BufferSize = 0x4000;

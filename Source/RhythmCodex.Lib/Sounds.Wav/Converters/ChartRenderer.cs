@@ -16,7 +16,7 @@ using RhythmCodex.Sounds.Wav.Models;
 namespace RhythmCodex.Sounds.Wav.Converters;
 
 [Service]
-public class ChartRenderer(
+public sealed class ChartRenderer(
     IAudioDsp audioDsp,
     IResamplerProvider resamplerProvider,
     IDefaultStereoMixer defaultStereoMixer

@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class SmMetadataChanger : ISmMetadataChanger
+public sealed class SmMetadataChanger : ISmMetadataChanger
 {
     private static void AddOrReplace(ICollection<Command> commands, string key, params string[] values)
     {

@@ -18,7 +18,7 @@ using RhythmCodex.Sounds.Riff.Streamers;
 namespace RhythmCodex.Archs.Twinkle.Converters;
 
 [Service]
-public class TwinkleBeatmaniaDecoder(
+public sealed class TwinkleBeatmaniaDecoder(
     ITwinkleBeatmaniaSoundDefinitionDecoder soundDefinitionDecoder,
     ITwinkleBeatmaniaSoundDecoder soundDecoder,
     ITwinkleBeatmaniaChartDecoder chartDecoder,

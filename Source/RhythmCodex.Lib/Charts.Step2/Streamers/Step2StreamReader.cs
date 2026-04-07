@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Step2.Streamers;
 
 [Service]
-public class Step2StreamReader : IStep2StreamReader
+public sealed class Step2StreamReader : IStep2StreamReader
 {
     public Step2Chunk Read(Stream stream, int length)
     {

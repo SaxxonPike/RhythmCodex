@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Bmson.Streamers;
 
 [Service]
-public class BmsonStreamReader : IBmsonStreamReader
+public sealed class BmsonStreamReader : IBmsonStreamReader
 {
     public BmsonFile Read(Stream source) =>
         JsonSerializer.Deserialize<BmsonFile>(source) ??

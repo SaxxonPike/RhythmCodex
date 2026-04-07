@@ -10,7 +10,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Sm.Converters;
 
 [Service]
-public class SmDecoder(
+public sealed class SmDecoder(
     ITimedCommandStringDecoder timedCommandStringDecoder,
     INoteCommandStringDecoder noteCommandStringDecoder,
     INoteDecoder noteDecoder,

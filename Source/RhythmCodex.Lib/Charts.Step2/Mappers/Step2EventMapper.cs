@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Step2.Mappers;
 
 [Service]
-public class Step2EventMapper : IStep2EventMapper
+public sealed class Step2EventMapper : IStep2EventMapper
 {
     public List<int> Map(int panels)
     {

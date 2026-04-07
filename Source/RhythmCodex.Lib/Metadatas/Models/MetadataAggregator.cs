@@ -4,7 +4,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Metadatas.Models;
 
 [Service]
-public class MetadataAggregator : IMetadataAggregator
+public sealed class MetadataAggregator : IMetadataAggregator
 {
     public IMetadata Aggregate(IEnumerable<IMetadata> metadatas)
     {

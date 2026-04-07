@@ -10,7 +10,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.S573.Converters;
 
 [Service]
-public class Ddr573ImageDecoder(
+public sealed class Ddr573ImageDecoder(
     IDdr573ImageDirectoryDecoder ddr573ImageDirectoryDecoder,
     IBemaniLzDecoder bemaniLzDecoder,
     ILogger logger,

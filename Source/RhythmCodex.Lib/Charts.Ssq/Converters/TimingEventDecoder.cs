@@ -9,7 +9,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TimingEventDecoder : ITimingEventDecoder
+public sealed class TimingEventDecoder : ITimingEventDecoder
 {
     public List<Event> Decode(TimingChunk timingChunk)
     {

@@ -9,7 +9,7 @@ using RhythmCodex.Metadatas.Sif.Models;
 namespace RhythmCodex.Metadatas.Sif.Converters;
 
 [Service]
-public class BinarySifDecoder : IBinarySifDecoder
+public sealed class BinarySifDecoder : IBinarySifDecoder
 {
     public SifInfo Decode(ReadOnlyMemory<byte> bytes)
     {

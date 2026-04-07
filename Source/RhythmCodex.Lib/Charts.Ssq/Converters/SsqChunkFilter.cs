@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class SsqChunkFilter(
+public sealed class SsqChunkFilter(
     ITimingChunkDecoder timingChunkDecoder,
     ITriggerChunkDecoder triggerChunkDecoder,
     IStepChunkDecoder stepChunkDecoder,

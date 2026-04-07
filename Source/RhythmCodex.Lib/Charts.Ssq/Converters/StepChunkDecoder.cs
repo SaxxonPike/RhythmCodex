@@ -8,7 +8,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class StepChunkDecoder : IStepChunkDecoder
+public sealed class StepChunkDecoder : IStepChunkDecoder
 {
     public List<Step> Convert(ReadOnlyMemory<byte> data)
     {

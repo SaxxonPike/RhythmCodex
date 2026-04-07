@@ -8,7 +8,7 @@ using RhythmCodex.Utils.Cursors;
 namespace RhythmCodex.Charts.Step1.Converters;
 
 [Service]
-public class Step1StepChunkDecoder : IStep1StepChunkDecoder
+public sealed class Step1StepChunkDecoder : IStep1StepChunkDecoder
 {
     public List<Step> Convert(ReadOnlySpan<byte> data)
     {

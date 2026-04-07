@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 
 namespace RhythmCodex.Plugin.DependencyInjection;
 
-public class RhythmCodexService : IRhythmCodexService, IDisposable
+public sealed class RhythmCodexService : IRhythmCodexService, IDisposable
 {
     private readonly IServiceProvider _services;
 

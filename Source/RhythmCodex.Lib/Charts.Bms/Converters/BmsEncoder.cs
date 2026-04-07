@@ -11,7 +11,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Bms.Converters;
 
 [Service]
-public class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEncoder)
+public sealed class BmsEncoder(ILogger logger, IBmsNoteCommandEncoder bmsNoteCommandEncoder)
     : IBmsEncoder
 {
     private static CultureInfo BmsCulture => CultureInfo.InvariantCulture;

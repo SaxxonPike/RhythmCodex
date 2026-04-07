@@ -11,7 +11,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 /// Used to apply a highpass-filter to a signal.
 /// </summary>
 [PublicAPI]
-public class HighpassFilter : BiQuad
+public sealed class HighpassFilter : BiQuad
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="HighpassFilter"/> class.

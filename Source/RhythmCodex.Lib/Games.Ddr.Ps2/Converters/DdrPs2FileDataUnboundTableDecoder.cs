@@ -7,7 +7,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Games.Ddr.Ps2.Converters;
 
 [Service]
-public class DdrPs2FileDataUnboundTableDecoder(IBemaniLzDecoder bemaniLzDecoder) : IDdrPs2FileDataUnboundTableDecoder
+public sealed class DdrPs2FileDataUnboundTableDecoder(IBemaniLzDecoder bemaniLzDecoder) : IDdrPs2FileDataUnboundTableDecoder
 {
     public List<DdrPs2FileDataTableEntry> Decode(DdrPs2FileDataTableChunk? chunk)
     {

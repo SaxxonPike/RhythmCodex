@@ -11,7 +11,7 @@ namespace RhythmCodex.Plugin.CSCore.Lib.DSP;
 /// Used to apply a peak-filter to a signal.
 /// </summary>
 [PublicAPI]
-public class PeakFilter : BiQuad
+public sealed class PeakFilter : BiQuad
 {
     /// <summary>
     /// Gets or sets the bandwidth.

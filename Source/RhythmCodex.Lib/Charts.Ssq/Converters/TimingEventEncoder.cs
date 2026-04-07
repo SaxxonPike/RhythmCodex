@@ -9,7 +9,7 @@ using RhythmCodex.Metadatas.Models;
 namespace RhythmCodex.Charts.Ssq.Converters;
 
 [Service]
-public class TimingEventEncoder : ITimingEventEncoder
+public sealed class TimingEventEncoder : ITimingEventEncoder
 {
     public TimingChunk Encode(IEnumerable<Event> events, int linearRate, BigRational metricLength,
         BigRational? offset, BigRational? startBpm)

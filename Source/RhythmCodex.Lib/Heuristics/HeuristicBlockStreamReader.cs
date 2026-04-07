@@ -6,7 +6,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Heuristics;
 
 [Service]
-public class HeuristicBlockStreamReader(IHeuristicTester heuristicTester) : IHeuristicBlockStreamReader
+public sealed class HeuristicBlockStreamReader(IHeuristicTester heuristicTester) : IHeuristicBlockStreamReader
 {
     public IEnumerable<HeuristicBlockResult> Find(Stream stream, long length, int blockSize,
         params Context[] contexts)

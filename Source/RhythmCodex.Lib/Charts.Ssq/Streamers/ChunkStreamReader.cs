@@ -5,7 +5,7 @@ using RhythmCodex.IoC;
 namespace RhythmCodex.Charts.Ssq.Streamers;
 
 [Service]
-public class ChunkStreamReader : IChunkStreamReader
+public sealed class ChunkStreamReader : IChunkStreamReader
 {
     public SsqChunk Read(Stream stream)
     {

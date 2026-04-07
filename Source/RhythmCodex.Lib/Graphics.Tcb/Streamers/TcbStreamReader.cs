@@ -7,7 +7,7 @@ namespace RhythmCodex.Graphics.Tcb.Streamers;
 // Source: https://github.com/root670/ddr-tools/blob/master/tcb-convert.c
 
 [Service]
-public class TcbStreamReader : ITcbStreamReader
+public sealed class TcbStreamReader : ITcbStreamReader
 {
     public TcbImage? Read(Stream stream)
     {
