@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
@@ -6,9 +5,11 @@ using RhythmCodex.Sounds.Vag.Models;
 
 namespace RhythmCodex.Sounds.Vag.Streamers;
 
+/// <inheritdoc />
 [Service]
 public sealed class VagStreamReader : IVagStreamReader
 {
+    /// <inheritdoc />
     public VagChunk Read(Stream stream, int channels, int interleave)
     {
         if (channels < 1)
@@ -24,7 +25,7 @@ public sealed class VagStreamReader : IVagStreamReader
 
         return new VagChunk
         {
-            Data = data.GetBuffer().AsMemory(0, (int)data.Length),
+            Data = data.ToArray(),
             Channels = channels,
             Interleave = interleave
         };

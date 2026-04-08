@@ -17,11 +17,11 @@ public record BeatmaniaPs2Keysound
     public int Volume { get; set; }
     public int VolumeScale { get; set; } = 127;
     public int SampleType { get; set; }
-    public int FrequencyLeft { get; set; }
-    public int FrequencyRight { get; set; }
+    public float FrequencyLeft { get; set; }
+    public float FrequencyRight { get; set; }
     public int OffsetLeft { get; set; }
     public int OffsetRight { get; set; }
-    public int PseudoLeft { get; set; }
-    public int PseudoRight { get; set; }
+    public int Reserved1 { get; set; }
+    public int Reserved2 { get; set; }
     public List<VagChunk> Data { get; set; } = [];
 }

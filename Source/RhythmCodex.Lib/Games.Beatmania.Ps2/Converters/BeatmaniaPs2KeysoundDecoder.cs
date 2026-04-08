@@ -26,11 +26,11 @@ public class BeatmaniaPs2KeysoundDecoder(IVagDecoder vagDecoder, IBeatmaniaPs2Mi
 
         var leftRate = keysound.FrequencyLeft == 0
             ? null
-            : (int?)keysound.FrequencyLeft;
+            : (float?)keysound.FrequencyLeft;
 
         var rightRate = keysound.FrequencyRight == 0
             ? null
-            : (int?)keysound.FrequencyRight;
+            : (float?)keysound.FrequencyRight;
 
         //
         // Perform resampling.

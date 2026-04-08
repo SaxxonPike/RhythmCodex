@@ -1,12 +1,15 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RhythmCodex.Games.Beatmania.Ps2.Converters;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Models;
 using RhythmCodex.Sounds.Vag.Streamers;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Streamers;
 
@@ -16,90 +19,145 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
     IBeatmaniaPs2FrequencyConverter frequencyConverter)
     : IBeatmaniaPs2NewKeysoundStreamReader
 {
+    private static List<BeatmaniaPs2NewInstrument> ReadInstrumentTable(
+        Stream stream,
+        BeatmaniaPs2NewInstrumentHeader instrumentHeader)
+    {
+        Span<byte> instrumentTableData = stackalloc byte[instrumentHeader.BlockCount * 0x800 - 0x10];
+        stream.ReadExactly(instrumentTableData);
+
+        var result = new List<BeatmaniaPs2NewInstrument>();
+        var count = instrumentTableData.Length / 0x10;
+
+        for (var i = 0; i < count; i++)
+        {
+            var item = instrumentTableData[(i * 0x10)..];
+            var sampleChannelCount = item[3];
+
+            if (sampleChannelCount == 0)
+                continue;
+
+            result.Add(new BeatmaniaPs2NewInstrument
+            {
+                Index = i,
+                Flags00 = item[0],
+                PlaybackChannel = item[1],
+                Flags02 = item[2],
+                SampleChannelCount = sampleChannelCount,
+                Unknown04 = item[4..].AsS32L(),
+                SampleChannel0Pan = item[8],
+                SampleChannel1Pan = item[9],
+                SampleNumber = item[10..].AsU16L(),
+                Volume = item[12],
+                Unknown0D = item[13],
+                Unknown0E = item[14..].AsU16L()
+            });
+        }
+
+        return result;
+    }
+
+    private static Dictionary<int, BeatmaniaPs2NewSample> ReadSampleTable(
+        Stream stream,
+        BeatmaniaPs2NewSampleHeader sampleHeader)
+    {
+        Span<byte> sampleTableData = stackalloc byte[sampleHeader.SampleCount * 0x10];
+        stream.ReadExactly(sampleTableData);
+
+        var result = new Dictionary<int, BeatmaniaPs2NewSample>();
+        var count = sampleTableData.Length / 0x10;
+
+        for (var i = 0; i < count; i++)
+        {
+            var item = sampleTableData[(i * 0x10)..];
+            var channelCount = item[8];
+
+            if (channelCount == 0)
+                continue;
+
+            result.Add(i, new BeatmaniaPs2NewSample
+            {
+                Index = i,
+                SampleOffset = item.AsS32L(),
+                SampleLength = item[4..].AsS32L(),
+                ChannelCount = channelCount,
+                Unknown09 = item[9],
+                FineFreq = item[10],
+                CoarseFreq = item[11],
+                Unknown0C = item[12..].AsS32L()
+            });
+        }
+
+        return result;
+    }
+
     public BeatmaniaPs2KeysoundSet Read(Stream stream)
     {
-        var reader = new BinaryReader(stream);
+        Span<byte> buffer = stackalloc byte[0x10];
+
+        //
+        // Read the instrument table.
+        //
+
+        stream.ReadExactly(buffer);
 
         var instrumentHeader = new BeatmaniaPs2NewInstrumentHeader
         {
-            Identifier = reader.ReadInt32(),
-            BlockCount = reader.ReadInt32(),
-            Volume = reader.ReadByte(),
-            Unknown09 = reader.ReadByte(),
-            Unknown0A = reader.ReadUInt16(),
-            Unknown0C = reader.ReadInt32()
+            Identifier = buffer.AsS32L(),
+            BlockCount = buffer[4..].AsS32L(),
+            Volume = buffer[8],
+            Unknown09 = buffer[9],
+            Unknown0A = buffer[10..].AsU16L(),
+            Unknown0C = buffer[12..].AsS32L()
         };
 
-        var instrumentTableData = reader.ReadBytes(instrumentHeader.BlockCount * 0x800 - 0x10);
+        var instruments = ReadInstrumentTable(stream, instrumentHeader);
 
-        using var instrumentTableReader = new BinaryReader(new MemoryStream(instrumentTableData));
+        //
+        // Read the sample table.
+        //
 
-        var instruments = Enumerable.Range(0, instrumentTableData.Length / 0x10).Select(i =>
-        {
-            var result = new BeatmaniaPs2NewInstrument
-            {
-                Index = i,
-                Flags00 = instrumentTableReader.ReadByte(),
-                PlaybackChannel = instrumentTableReader.ReadByte(),
-                Flags02 = instrumentTableReader.ReadByte(),
-                SampleChannelCount = instrumentTableReader.ReadByte(),
-                Unknown04 = instrumentTableReader.ReadInt32(),
-                SampleChannel0Pan = instrumentTableReader.ReadByte(),
-                SampleChannel1Pan = instrumentTableReader.ReadByte(),
-                SampleNumber = instrumentTableReader.ReadUInt16(),
-                Volume = instrumentTableReader.ReadByte(),
-                Unknown0D = instrumentTableReader.ReadByte(),
-                Unknown0E = instrumentTableReader.ReadUInt16()
-            };
-
-            return result.SampleChannelCount == 0 ? null : result;
-        }).Where(entry => entry != null).ToList();
+        stream.ReadExactly(buffer);
 
         var sampleHeader = new BeatmaniaPs2NewSampleHeader
         {
-            SampleCount = reader.ReadInt32(),
-            TotalSize = reader.ReadInt32(),
-            Unknown08 = reader.ReadInt32(),
-            Unknown0C = reader.ReadInt32()
+            SampleCount = buffer.AsS32L(),
+            TotalSize = buffer[4..].AsS32L(),
+            Unknown08 = buffer[8..].AsS32L(),
+            Unknown0C = buffer[12..].AsS32L()
         };
 
-        var sampleTableData = reader.ReadBytes(sampleHeader.SampleCount * 0x10);
-        var decryptKey = reader.ReadBytes(0x10);
-        var sampleWaveData = reader.ReadBytes(sampleHeader.TotalSize);
+        var samples = ReadSampleTable(stream, sampleHeader);
 
-        if (decryptKey[0] != 0 || decryptKey[1] != 0 || decryptKey[2] != 0 || decryptKey[3] != 0)
+        //
+        // Read the sample wave block. Decrypt if necessary.
+        //
+
+        stream.ReadExactly(buffer);
+
+        using var sampleWaveDataHandle = stream.ReadIntoPool(sampleHeader.TotalSize);
+        var sampleWaveDataMemory = sampleWaveDataHandle.Memory[..sampleHeader.TotalSize];
+        var sampleWaveData = sampleWaveDataMemory.Span;
+
+        if (buffer.AsS32L() != 0)
         {
             for (var i = 0; i < sampleWaveData.Length; i += 0x10)
             {
                 unchecked
                 {
-                    sampleWaveData[i + 0] ^= decryptKey[0];
-                    sampleWaveData[i + 1] ^= decryptKey[1];
-                    sampleWaveData[i + 2] -= decryptKey[2];
-                    sampleWaveData[i + 3] -= decryptKey[3];
+                    sampleWaveData[i + 0] ^= buffer[0];
+                    sampleWaveData[i + 1] ^= buffer[1];
+                    sampleWaveData[i + 2] -= buffer[2];
+                    sampleWaveData[i + 3] -= buffer[3];
                 }
             }
         }
 
-        var sampleTableReader = new BinaryReader(new MemoryStream(sampleTableData));
-        var sampleWaveStream = new MemoryStream(sampleWaveData);
+        //
+        // Convert the tables and sample wave block to a keysound dictionary.
+        //
 
-        var samples = Enumerable.Range(0, sampleHeader.SampleCount).Select(i =>
-        {
-            var result = new BeatmaniaPs2NewSample
-            {
-                Index = i,
-                SampleOffset = sampleTableReader.ReadInt32(),
-                SampleLength = sampleTableReader.ReadInt32(),
-                ChannelCount = sampleTableReader.ReadByte(),
-                Unknown09 = sampleTableReader.ReadByte(),
-                FineFreq = sampleTableReader.ReadByte(),
-                CoarseFreq = sampleTableReader.ReadByte(),
-                Unknown0C = sampleTableReader.ReadInt32()
-            };
-
-            return result.ChannelCount == 0 ? null : result;
-        }).Where(entry => entry != null).ToDictionary(x => x!.Index, x => x!);
+        var sampleWaveStream = new ReadOnlyMemoryStream(sampleWaveDataMemory);
 
         var keysounds = instruments.Select(instrument =>
         {
@@ -133,8 +191,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 }
             }
 
-
-            var roundedFreq = (int)Math.Round(frequencyConverter.Convert(sample.CoarseFreq, sample.FineFreq));
+            var calculatedFreq = (float)frequencyConverter.Convert(sample.CoarseFreq, sample.FineFreq);
 
             return new BeatmaniaPs2Keysound
             {
@@ -146,8 +203,8 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 PanningLeft = instrument.SampleChannel0Pan,
                 PanningRight = instrument.SampleChannel1Pan,
                 SampleType = instrument.Flags00,
-                FrequencyLeft = roundedFreq,
-                FrequencyRight = roundedFreq,
+                FrequencyLeft = calculatedFreq,
+                FrequencyRight = calculatedFreq,
                 OffsetLeft = sampleOffsets.Length > 0 ? sampleOffsets[0] : 0,
                 OffsetRight = sampleOffsets.Length > 1 ? sampleOffsets[1] : 0,
                 Data = sampleWaves

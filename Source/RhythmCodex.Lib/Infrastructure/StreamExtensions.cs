@@ -24,6 +24,17 @@ public static class StreamExtensions
             }
         }
 
+        public MemoryOwnerStream ReadIntoTempStream(int length) => 
+            new(stream.ReadIntoPool(length), length);
+
+        public IMemoryOwner<byte> ReadIntoPool(int length)
+        {
+            var handle = MemoryPool<byte>.Shared.Rent(length);
+            var span = handle.Memory.Span[..length];
+            stream.ReadExactly(span);
+            return handle;
+        }
+
         public long SkipBytes(long length)
         {
             using var bufferHandle = length < MaxBufferSize
@@ -36,7 +47,7 @@ public static class StreamExtensions
             while (remaining > 0)
             {
                 var size = (int)Math.Min(length, buffer.Length);
-                var amount = stream.ReadAtLeast(buffer, size, false);
+                var amount = stream.ReadAtLeast(buffer[..size], size, false);
                 if (amount < 1)
                     break;
                 remaining -= amount;

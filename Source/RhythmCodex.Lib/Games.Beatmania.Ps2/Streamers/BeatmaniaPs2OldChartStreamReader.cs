@@ -18,16 +18,13 @@ public sealed class BeatmaniaPs2OldChartStreamReader : IBeatmaniaPs2OldChartStre
         var offset = 0;
         var result = new MemoryStream();
 
-        var actualStream = stream;
-        var actualLength = length;
-
         //
         // Read until the end marker.
         //
 
-        while (offset < actualLength)
+        while (offset < length)
         {
-            actualStream.ReadExactly(buffer[..4]);
+            stream.ReadExactly(buffer[..4]);
 
             var linearTime = buffer.AsS32L();
             result.Write(buffer);
@@ -37,7 +34,7 @@ public sealed class BeatmaniaPs2OldChartStreamReader : IBeatmaniaPs2OldChartStre
             // End of file is indicated with FF 7F 00 00.
             //
 
-            if (linearTime == 0x7FFF) 
+            if (linearTime == 0x7FFF)
                 break;
         }
 

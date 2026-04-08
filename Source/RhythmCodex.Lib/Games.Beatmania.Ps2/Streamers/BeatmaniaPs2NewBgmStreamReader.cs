@@ -1,23 +1,34 @@
 using System;
+using System.Buffers;
 using System.IO;
 using RhythmCodex.Games.Beatmania.Ps2.Models;
+using RhythmCodex.Infrastructure;
 using RhythmCodex.IoC;
 using RhythmCodex.Sounds.Vag.Streamers;
+using RhythmCodex.Utils.Cursors;
 
 namespace RhythmCodex.Games.Beatmania.Ps2.Streamers;
 
 [Service]
-public class BeatmaniaPs2NewBgmStreamReader(IVagStreamReader vagStreamReader) : IBeatmaniaPs2NewBgmStreamReader
+public class BeatmaniaPs2NewBgmStreamReader(IVagStreamReader vagStreamReader)
+    : IBeatmaniaPs2NewBgmStreamReader
 {
     public BeatmaniaPs2Bgm Read(Stream stream)
     {
+        //
+        // Read the header.
+        //
+
         const int fieldCount = 12;
         const int headerSize = fieldCount * 4;
-            
-        var reader = new BinaryReader(stream);
+
         Span<int> header = stackalloc int[fieldCount];
+        Span<byte> buffer = stackalloc byte[headerSize];
+
+        stream.ReadExactly(buffer);
+
         for (var i = 0; i < fieldCount; i++)
-            header[i] = reader.ReadInt32();
+            header[i] = buffer[(i * 4)..].AsS32L();
 
         var headerLength = header[2];
         var dataLength = header[3];
@@ -28,10 +39,14 @@ public class BeatmaniaPs2NewBgmStreamReader(IVagStreamReader vagStreamReader) : 
         var interleave = header[9];
         var volume = header[10];
 
-        reader.ReadBytes(headerLength - headerSize);
+        stream.SkipBytes(headerLength - headerSize);
+        
+        //
+        // Read the audio data.
+        //
 
-        var data = reader.ReadBytes(dataLength);
-        using var mem = new MemoryStream(data);
+        using var mem = stream.ReadIntoTempStream(dataLength);
+
         return new BeatmaniaPs2Bgm
         {
             Channels = channels,
