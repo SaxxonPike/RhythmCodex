@@ -31,7 +31,7 @@ public static class StreamExtensions
         {
             var handle = MemoryPool<byte>.Shared.Rent(length);
             var span = handle.Memory.Span[..length];
-            stream.ReadExactly(span);
+            stream.ReadAtLeast(span, length, false);
             return handle;
         }
 
