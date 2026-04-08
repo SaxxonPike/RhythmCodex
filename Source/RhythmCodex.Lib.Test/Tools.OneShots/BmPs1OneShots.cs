@@ -34,7 +34,7 @@ namespace RhythmCodex.Tools.OneShots;
 public class BmPs1OneShots : BaseIntegrationFixture
 {
     public const string ImageBasePath = "/Volumes/RidgeportHDD/User Data/Bemani/Playstation";
-        
+
     /// <summary>
     /// Renders a BMS set from each song on a PS1 beatmania disc.
     /// </summary>
@@ -94,10 +94,16 @@ public class BmPs1OneShots : BaseIntegrationFixture
         var psxBeatmaniaSongGrouper = Resolve<IPsxBeatmaniaSongGrouper>();
 
         //
+        // Determine the game executable.
+        //
+
+        var gameExe = cdFiles.Single(f => f.Name != null && f.Name.StartsWith("./SL"));
+
+        //
         // Determine the region of game.
         //
 
-        var regionTiming = cdFiles.Single(f => f.Name != null && f.Name.StartsWith("./SL")).Name![4..6] switch
+        var regionTiming = gameExe.Name![4..6] switch
         {
             "ES" => DjmainChartTiming.HomePal,
             _ => DjmainChartTiming.HomeNtsc,
@@ -362,7 +368,7 @@ public class BmPs1OneShots : BaseIntegrationFixture
                             sound.Samples[i] = sample.CloneWithData(psxResampler
                                 .Resample(sample.Data.Span, xa.Rate, 44100));
                         }
-                        
+
                         sound[NumericData.Rate] = 44100;
                         sound[NumericData.Volume] = xaVolume;
 

@@ -16,6 +16,9 @@ public sealed class PsxGaussianResampler(IPsxGaussianInterpolation psxGaussianIn
 
     public float[] Resample(ReadOnlySpan<float> data, float sourceRate, float targetRate)
     {
+        if (targetRate == sourceRate)
+            return data.ToArray();
+        
         var desiredLength = data.Length + 3;
         using var mem = MemoryPool<float>.Shared.Rent(data.Length + 3);
         var memSpan = mem.Memory.Span[..desiredLength];

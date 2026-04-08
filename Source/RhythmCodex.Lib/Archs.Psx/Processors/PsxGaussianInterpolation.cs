@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using RhythmCodex.IoC;
@@ -76,7 +77,7 @@ public sealed class PsxGaussianInterpolation : IPsxGaussianInterpolation
         0x5997, 0x599E, 0x59A4, 0x59A9, 0x59AD, 0x59B0, 0x59B2, 0x59B3 //
     });
 
-    public int Interpolate(ReadOnlySpan<float> input, Span<float> output, double position, double targetRatio)
+    public int Interpolate(ReadOnlySpan<float> input, Span<float> output, float position, float targetRatio)
     {
         var sourceRate = 1 / targetRatio;
         var table = Table.Value.Span;
@@ -86,12 +87,12 @@ public sealed class PsxGaussianInterpolation : IPsxGaussianInterpolation
 
         while (position < input.Length && outOffset < output.Length)
         {
-            var inOffset = Math.Truncate(position);
-            var i = (int)(position * 256) & 0xFF;
-            var src = input[(int)(inOffset - 3)..];
-
+            var scaledInOffset = (long)(position * 256f);
+            var i = unchecked((byte)scaledInOffset);
+            var inOffset = (int)(scaledInOffset >> 8);
+            
             var inputSamples = Vector128.ClampNative(
-                Vector128.LoadUnsafe(ref MemoryMarshal.GetReference(src)),
+                Vector128.LoadUnsafe(ref Unsafe.Add(ref MemoryMarshal.GetReference(input), inOffset - 3)),
                 Vector128.Create(-1f),
                 Vector128.Create(1f)
             );
@@ -117,7 +118,9 @@ public sealed class PsxGaussianInterpolation : IPsxGaussianInterpolation
     public float InterpolateOne(float s3, float s2, float s1, float s0, float position)
     {
         var table = Table.Value.Span;
-        var i = (int)(position * 256f) & 0xFF;
+        
+        var scaledInOffset = (long)(position * 256f);
+        var i = unchecked((byte)scaledInOffset);
 
         var inputSamples = Vector128.ClampNative(
             Vector128.Create(s3, s2, s1, s0),

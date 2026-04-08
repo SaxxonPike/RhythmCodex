@@ -7,8 +7,8 @@ public interface IPsxGaussianInterpolation
     int Interpolate(
         ReadOnlySpan<float> input,
         Span<float> output,
-        double position,
-        double targetRatio
+        float position,
+        float targetRatio
     );
 
     float InterpolateOne(
