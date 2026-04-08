@@ -20,7 +20,7 @@ public record BeatmaniaPs2NewSample
     public byte CoarseFreq { get; set; }
     
     // 0x0B
-    public byte FineFreq { get; set; }
+    public sbyte FineFreq { get; set; }
     
     // 0x0C
     public int Unknown0C { get; set; }

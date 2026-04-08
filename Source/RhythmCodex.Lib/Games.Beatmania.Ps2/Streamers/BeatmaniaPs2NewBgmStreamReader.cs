@@ -52,7 +52,7 @@ public class BeatmaniaPs2NewBgmStreamReader(IVagStreamReader vagStreamReader)
             Channels = channels,
             Rate = rate,
             Volume = volume,
-            VolumeScale = 100,
+            VolumeScale = 127,
             Data = vagStreamReader.Read(mem, channels, interleave),
             Index = 0
         };

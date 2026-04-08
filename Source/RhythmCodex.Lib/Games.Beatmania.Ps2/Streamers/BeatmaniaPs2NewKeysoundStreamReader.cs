@@ -82,7 +82,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 SampleLength = item[4..].AsS32L(),
                 ChannelCount = channelCount,
                 Unknown09 = item[9],
-                FineFreq = item[10],
+                FineFreq = unchecked((sbyte)item[10]),
                 CoarseFreq = item[11],
                 Unknown0C = item[12..].AsS32L()
             });
@@ -199,7 +199,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 SampleNumber = instrument.SampleNumber,
                 Channel = instrument.PlaybackChannel,
                 Volume = instrumentHeader.Volume * instrument.Volume,
-                VolumeScale = 10000,
+                VolumeScale = 16000,
                 PanningLeft = instrument.SampleChannel0Pan,
                 PanningRight = instrument.SampleChannel1Pan,
                 SampleType = instrument.Flags00,

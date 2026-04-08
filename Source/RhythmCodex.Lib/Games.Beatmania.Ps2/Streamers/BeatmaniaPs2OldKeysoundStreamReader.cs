@@ -76,6 +76,7 @@ public class BeatmaniaPs2OldKeysoundStreamReader(IVagStreamReader vagStreamReade
                 Reserved0 = item[2..].AsS16L(),
                 Channel = item[4],
                 Volume = item[5],
+                VolumeScale = 200,
                 PanningLeft = item[6],
                 SampleType = sampleType,
                 FrequencyLeft = item[8..].AsS32L(),
