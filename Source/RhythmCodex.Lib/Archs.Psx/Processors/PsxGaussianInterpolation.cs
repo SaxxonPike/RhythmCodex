@@ -84,17 +84,19 @@ public sealed class PsxGaussianInterpolation : IPsxGaussianInterpolation
         var outOffset = 0;
         var result = 0;
         var basePosition = position;
+        var minusOne = Vector128.Create(-1f);
+        var one = Vector128.Create(1f);
 
         while (position < input.Length && outOffset < output.Length)
         {
             var scaledInOffset = (long)(position * 256f);
             var i = unchecked((byte)scaledInOffset);
             var inOffset = (int)(scaledInOffset >> 8);
-            
+
             var inputSamples = Vector128.ClampNative(
                 Vector128.LoadUnsafe(ref Unsafe.Add(ref MemoryMarshal.GetReference(input), inOffset - 3)),
-                Vector128.Create(-1f),
-                Vector128.Create(1f)
+                minusOne,
+                one
             );
 
             var intSamples = Vector128.ConvertToInt32Native(inputSamples * 32768f);
@@ -118,7 +120,7 @@ public sealed class PsxGaussianInterpolation : IPsxGaussianInterpolation
     public float InterpolateOne(float s3, float s2, float s1, float s0, float position)
     {
         var table = Table.Value.Span;
-        
+
         var scaledInOffset = (long)(position * 256f);
         var i = unchecked((byte)scaledInOffset);
 
