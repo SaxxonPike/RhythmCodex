@@ -199,7 +199,7 @@ public class BeatmaniaPs2NewKeysoundStreamReader(
                 SampleNumber = instrument.SampleNumber,
                 Channel = instrument.PlaybackChannel,
                 Volume = instrumentHeader.Volume * instrument.Volume,
-                VolumeScale = 16000,
+                VolumeScale = 14000,
                 PanningLeft = instrument.SampleChannel0Pan,
                 PanningRight = instrument.SampleChannel1Pan,
                 SampleType = instrument.Flags00,

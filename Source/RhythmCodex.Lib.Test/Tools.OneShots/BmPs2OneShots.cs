@@ -38,7 +38,7 @@ public class BmPs2OneShots : BaseIntegrationFixture
         const bool extractCharts = true;
         const bool extractRawBlock = false;
         const bool writeLogs = true;
-        const float keyVolume = 0.7f;
+        const float keyVolume = 1.0f;
 
         //
         // Load in the ISO files.
