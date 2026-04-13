@@ -162,4 +162,10 @@ public class Metadata : IMetadata
         return
             $"{GetType().Name}: {string.Join(", ", output.OrderBy(kv => kv.Key).Select(kv => $"{kv.Key}={kv.Value}"))}";
     }
+
+    public Dictionary<object, object> MetadataToDictionary() =>
+        (_numericDatas ?? []).OrderBy(x => x.Key).Select(x => ((object)x.Key, (object)x.Value))
+        .Concat((_flagDatas ?? []).OrderBy(x => x.Key).Select(x => ((object)x.Key, (object)x.Value)))
+        .Concat((_stringDatas ?? []).OrderBy(x => x.Key).Select(x => ((object)x.Key, (object)x.Value)))
+        .ToDictionary(x => x.Item1, x => x.Item2);
 }

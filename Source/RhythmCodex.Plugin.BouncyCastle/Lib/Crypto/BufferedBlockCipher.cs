@@ -15,7 +15,7 @@ namespace Org.BouncyCastle.Crypto;
 * OFB one the last block may not be a multiple of the block size.
 * </p>
 */
-internal class BufferedBlockCipher
+internal abstract class BufferedBlockCipher
     : BufferedCipherBase
 {
     internal byte[] Buf = [];

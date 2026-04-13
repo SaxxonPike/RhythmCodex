@@ -9,7 +9,7 @@ namespace Org.BouncyCastle.Crypto.Modes;
 * A Cipher Text Stealing (CTS) mode cipher. CTS allows block ciphers to
 * be used to produce cipher text which is the same outLength as the plain text.
 */
-internal class CtsBlockCipher
+internal sealed class CtsBlockCipher
     : BufferedBlockCipher
 {
     private readonly int _blockSize;

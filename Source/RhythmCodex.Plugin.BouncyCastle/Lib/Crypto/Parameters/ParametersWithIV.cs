@@ -4,7 +4,7 @@ using System;
 
 namespace Org.BouncyCastle.Crypto.Parameters;
 
-internal class ParametersWithIv(ICipherParameters parameters, ReadOnlySpan<byte> iv)
+internal sealed class ParametersWithIv(ICipherParameters parameters, ReadOnlySpan<byte> iv)
     : ICipherParameters
 {
     private readonly byte[] _iv = iv.ToArray();

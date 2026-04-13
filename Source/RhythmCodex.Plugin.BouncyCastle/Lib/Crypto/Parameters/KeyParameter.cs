@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Org.BouncyCastle.Crypto.Parameters;
 
-internal class KeyParameter(ReadOnlySpan<byte> key) : ICipherParameters
+internal sealed class KeyParameter(ReadOnlySpan<byte> key) : ICipherParameters
 {
     private readonly byte[] _key = key.ToArray();
 
