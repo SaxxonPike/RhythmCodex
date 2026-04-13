@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.Intrinsics;
+using JetBrains.Annotations;
 
 namespace RhythmCodex.Extensions;
 
+[PublicAPI]
 [DebuggerStepThrough]
 public static class ByteArrayExtensions
 {

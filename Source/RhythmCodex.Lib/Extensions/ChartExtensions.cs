@@ -18,7 +18,7 @@ public static class ChartExtensions
         if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
             throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
 
-        if (!chart.Events.Any() ||
+        if (chart.Events.Count == 0 ||
             !chart.Events.Any(ev => ev[FlagData.Measure] == true || ev[FlagData.End] == true))
             return;
             
@@ -72,149 +72,152 @@ public static class ChartExtensions
         }
     }
 
-    public static void QuantizeMetricOffsets(this Chart chart, BigRational quantization)
+    extension(Chart chart)
     {
-        if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
-            throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
-
-        foreach (var ev in chart.Events)
+        public void QuantizeMetricOffsets(BigRational quantization)
         {
-            var temp = ev[NumericData.MetricOffset]!;
-            temp *= quantization;
-            temp = temp.Value.GetWholePart();
-            temp /= quantization;
-            ev[NumericData.MetricOffset] = temp;
-        }
-    }
+            if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
+                throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
 
-    public static void PopulateMetricOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null, bool normalizeMeasures = true)
-    {
-        if (chart.Events.Any(ev => ev[NumericData.LinearOffset] == null))
-            throw new RhythmCodexException($"All events must have a {nameof(NumericData.LinearOffset)}.");
-
-        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.LinearOffset]);
-            
-        var bpm = chart[NumericData.Bpm] ??
-                  chart.Events.FirstOrDefault(
-                      ev => ev[NumericData.Bpm] != null &&
-                            ev[NumericData.Bpm] > BigRational.Zero)?[NumericData.Bpm];
-
-        if (bpm == null)
-            throw new RhythmCodexException(
-                $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
-
-        referenceMetric ??= BigRational.Zero;
-        referenceLinear ??= BigRational.Zero;
-        var linearRate = GetLinearRate(bpm.Value);
-
-        foreach (var ev in orderedEvents)
-        {
-            ev[NumericData.MetricOffset] = (ev[NumericData.LinearOffset] - referenceLinear) / linearRate +
-                                           referenceMetric;
-
-            if (ev[NumericData.Stop] is BigRational newStop && newStop > BigRational.Zero)
+            foreach (var ev in chart.Events)
             {
-                referenceLinear += newStop;
-            }
-
-            if (ev[NumericData.Bpm] is BigRational newTempo && newTempo > BigRational.Zero)
-            {
-                linearRate = GetLinearRate(newTempo);
-                referenceMetric = ev[NumericData.MetricOffset];
-                referenceLinear = ev[NumericData.LinearOffset];
+                var temp = ev[NumericData.MetricOffset]!;
+                temp *= quantization;
+                temp = temp.Value.GetWholePart();
+                temp /= quantization;
+                ev[NumericData.MetricOffset] = temp;
             }
         }
 
-        if (normalizeMeasures)
-            NormalizeMetricOffsets(chart);
-    }
-
-    public static void PopulateLinearOffsets(this Chart chart, BigRational? referenceLinear = null, BigRational? referenceMetric = null)
-    {
-        if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
-            throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
-
-        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]);
-            
-        var bpm = chart[NumericData.Bpm] ??
-                  orderedEvents.FirstOrDefault(
-                      ev => ev[NumericData.Bpm] != null &&
-                            ev[NumericData.Bpm] > BigRational.Zero)?[NumericData.Bpm];
-
-        if (bpm == null)
-            throw new RhythmCodexException(
-                $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
-
-        referenceMetric = referenceMetric ?? BigRational.Zero;
-        referenceLinear = referenceLinear ?? BigRational.Zero;
-        var linearRate = GetLinearRate(bpm.Value);
-        var pendingStop = BigRational.Zero;
-
-        foreach (var ev in orderedEvents)
+        public void PopulateMetricOffsets(BigRational? referenceLinear = null, BigRational? referenceMetric = null, bool normalizeMeasures = true)
         {
-            if (pendingStop != BigRational.Zero && ev[NumericData.MetricOffset] > referenceMetric)
+            if (chart.Events.Any(ev => ev[NumericData.LinearOffset] == null))
+                throw new RhythmCodexException($"All events must have a {nameof(NumericData.LinearOffset)}.");
+
+            var orderedEvents = chart.Events.OrderBy(e => e[NumericData.LinearOffset]);
+            
+            var bpm = chart[NumericData.Bpm] ??
+                      chart.Events.FirstOrDefault(
+                          ev => ev[NumericData.Bpm] != null &&
+                                ev[NumericData.Bpm] > BigRational.Zero)?[NumericData.Bpm];
+
+            if (bpm == null)
+                throw new RhythmCodexException(
+                    $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
+
+            referenceMetric ??= BigRational.Zero;
+            referenceLinear ??= BigRational.Zero;
+            var linearRate = GetLinearRate(bpm.Value);
+
+            foreach (var ev in orderedEvents)
             {
-                referenceLinear += pendingStop;
-                pendingStop = BigRational.Zero;
+                ev[NumericData.MetricOffset] = (ev[NumericData.LinearOffset] - referenceLinear) / linearRate +
+                                               referenceMetric;
+
+                if (ev[NumericData.Stop] is { } newStop && newStop > BigRational.Zero)
+                {
+                    referenceLinear += newStop;
+                }
+
+                if (ev[NumericData.Bpm] is { } newTempo && newTempo > BigRational.Zero)
+                {
+                    linearRate = GetLinearRate(newTempo);
+                    referenceMetric = ev[NumericData.MetricOffset];
+                    referenceLinear = ev[NumericData.LinearOffset];
+                }
             }
 
-            ev[NumericData.LinearOffset] = (ev[NumericData.MetricOffset] - referenceMetric) * linearRate +
-                                           referenceLinear;
+            if (normalizeMeasures)
+                NormalizeMetricOffsets(chart);
+        }
 
-            if (ev[NumericData.Stop] is BigRational newStop && newStop > BigRational.Zero)
-            {
-                pendingStop = newStop;
-                referenceMetric = ev[NumericData.MetricOffset];
-                referenceLinear = ev[NumericData.LinearOffset];
-            }
+        public void PopulateLinearOffsets(BigRational? referenceLinear = null, BigRational? referenceMetric = null)
+        {
+            if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
+                throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
 
-            if (ev[NumericData.Bpm] is BigRational newTempo && newTempo > BigRational.Zero)
+            var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]).ToList();
+            
+            var bpm = chart[NumericData.Bpm] ??
+                      orderedEvents.FirstOrDefault(
+                          ev => ev[NumericData.Bpm] != null &&
+                                ev[NumericData.Bpm] > BigRational.Zero)?[NumericData.Bpm];
+
+            if (bpm == null)
+                throw new RhythmCodexException(
+                    $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
+
+            referenceMetric = referenceMetric ?? BigRational.Zero;
+            referenceLinear = referenceLinear ?? BigRational.Zero;
+            var linearRate = GetLinearRate(bpm.Value);
+            var pendingStop = BigRational.Zero;
+
+            foreach (var ev in orderedEvents)
             {
-                linearRate = GetLinearRate(newTempo);
-                referenceMetric = ev[NumericData.MetricOffset];
-                referenceLinear = ev[NumericData.LinearOffset];
+                if (pendingStop != BigRational.Zero && ev[NumericData.MetricOffset] > referenceMetric)
+                {
+                    referenceLinear += pendingStop;
+                    pendingStop = BigRational.Zero;
+                }
+
+                ev[NumericData.LinearOffset] = (ev[NumericData.MetricOffset] - referenceMetric) * linearRate +
+                                               referenceLinear;
+
+                if (ev[NumericData.Stop] is { } newStop && newStop > BigRational.Zero)
+                {
+                    pendingStop = newStop;
+                    referenceMetric = ev[NumericData.MetricOffset];
+                    referenceLinear = ev[NumericData.LinearOffset];
+                }
+
+                if (ev[NumericData.Bpm] is { } newTempo && newTempo > BigRational.Zero)
+                {
+                    linearRate = GetLinearRate(newTempo);
+                    referenceMetric = ev[NumericData.MetricOffset];
+                    referenceLinear = ev[NumericData.LinearOffset];
+                }
             }
         }
-    }
 
-    public static BigRational GetZeroLinearReference(this Chart chart, BigRational? referenceLinear = null,
-        BigRational? referenceMetric = null)
-    {
-        if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
-            throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
+        public BigRational GetZeroLinearReference(BigRational? referenceLinear = null,
+            BigRational? referenceMetric = null)
+        {
+            if (chart.Events.Any(ev => ev[NumericData.MetricOffset] == null))
+                throw new RhythmCodexException($"All events must have a {nameof(NumericData.MetricOffset)}.");
 
-        var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]);
+            var orderedEvents = chart.Events.OrderBy(e => e[NumericData.MetricOffset]).ToList();
             
-        var bpm = chart[NumericData.Bpm] ??
-                  orderedEvents.FirstOrDefault(
-                      ev => ev[NumericData.Bpm] != null &&
-                            ev[NumericData.Bpm] > BigRational.Zero)?[NumericData.Bpm];
+            var bpm = chart[NumericData.Bpm] ??
+                      orderedEvents.FirstOrDefault(
+                          ev => ev[NumericData.Bpm] != null &&
+                                ev[NumericData.Bpm] > BigRational.Zero)?[NumericData.Bpm];
 
-        if (bpm == null)
-            throw new RhythmCodexException(
-                $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
+            if (bpm == null)
+                throw new RhythmCodexException(
+                    $"Either the chart or an event must specify {nameof(NumericData.Bpm)}.");
             
-        referenceMetric ??= BigRational.Zero;
-        referenceLinear ??= BigRational.Zero;
-        var linearRate = GetLinearRate(bpm.Value);
-        return ((BigRational.Zero - referenceMetric) * linearRate + referenceLinear).Value;
-    }
-    
-    public static BigRational GetMetricLength(this Chart chart)
-    {
-        if (chart.Events == null)
-            return BigRational.Zero;
+            referenceMetric ??= BigRational.Zero;
+            referenceLinear ??= BigRational.Zero;
+            var linearRate = GetLinearRate(bpm.Value);
+            return ((BigRational.Zero - referenceMetric) * linearRate + referenceLinear).Value;
+        }
 
-        var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.MetricOffset] != null);
-        return eventsWithOffset.Max(ev => ev[NumericData.MetricOffset]) ?? BigRational.Zero;
-    }
+        public BigRational GetMetricLength()
+        {
+            if (chart.Events == null)
+                return BigRational.Zero;
 
-    public static BigRational GetLinearLength(this Chart chart)
-    {
-        if (chart.Events == null)
-            return BigRational.Zero;
+            var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.MetricOffset] != null);
+            return eventsWithOffset.Max(ev => ev[NumericData.MetricOffset]) ?? BigRational.Zero;
+        }
 
-        var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.LinearOffset] != null);
-        return eventsWithOffset.Max(ev => ev[NumericData.LinearOffset]) ?? BigRational.Zero;
+        public BigRational GetLinearLength()
+        {
+            if (chart.Events == null)
+                return BigRational.Zero;
+
+            var eventsWithOffset = chart.Events.Where(ev => ev?[NumericData.LinearOffset] != null);
+            return eventsWithOffset.Max(ev => ev[NumericData.LinearOffset]) ?? BigRational.Zero;
+        }
     }
 }

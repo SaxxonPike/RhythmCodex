@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using System.IO;
+using JetBrains.Annotations;
 using RhythmCodex.Infrastructure;
 
 namespace RhythmCodex.Extensions;
 
+[PublicAPI]
 [DebuggerStepThrough]
 internal static class BinaryReaderExtensions
 {
