@@ -1,12 +1,13 @@
-using Org.BouncyCastle.Utilities;
+using System;
+using System.Linq;
 
 // ReSharper disable once CheckNamespace
 
 namespace Org.BouncyCastle.Crypto.Parameters;
 
-public class KeyParameter(byte[] key) : ICipherParameters
+internal class KeyParameter(ReadOnlySpan<byte> key) : ICipherParameters
 {
-    private readonly byte[] m_key = Arrays.CopyBuffer(key);
+    private readonly byte[] _key = key.ToArray();
 
-    public byte[] GetKey() => Arrays.InternalCopyBuffer(m_key);
+    public byte[] GetKey() => _key.ToArray();
 }

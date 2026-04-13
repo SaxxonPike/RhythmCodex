@@ -11,7 +11,7 @@ namespace Org.BouncyCastle.Crypto;
 /// In general this exception will get thrown rather than an <see cref="IndexOutOfRangeException"/>.
 /// </remarks>
 [Serializable]
-public class DataLengthException
+internal class DataLengthException
     : CryptoException
 {
     public DataLengthException()

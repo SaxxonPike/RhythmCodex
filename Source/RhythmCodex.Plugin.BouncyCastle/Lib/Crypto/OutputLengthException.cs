@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Org.BouncyCastle.Crypto;
 
 [Serializable]
-public class OutputLengthException
+internal class OutputLengthException
     : DataLengthException
 {
     public OutputLengthException()

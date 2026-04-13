@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Org.BouncyCastle.Crypto;
 
 [Serializable]
-public class CryptoException
+internal class CryptoException
     : Exception
 {
     public CryptoException()

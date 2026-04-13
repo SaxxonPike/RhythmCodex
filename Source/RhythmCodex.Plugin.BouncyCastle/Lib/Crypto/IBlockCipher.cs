@@ -5,7 +5,7 @@ using System;
 namespace Org.BouncyCastle.Crypto;
 
 /// <remarks>Base interface for a symmetric key block cipher.</remarks>
-public interface IBlockCipher
+internal interface IBlockCipher
 {
     /// <summary>The name of the algorithm this cipher implements.</summary>
     string AlgorithmName { get; }
@@ -13,7 +13,7 @@ public interface IBlockCipher
     /// <summary>Initialise the cipher.</summary>
     /// <param name="forEncryption">Initialise for encryption if true, for decryption if false.</param>
     /// <param name="parameters">The key or other data required by the cipher.</param>
-    void Init(bool forEncryption, ICipherParameters parameters);
+    void Init(bool forEncryption, ICipherParameters? parameters);
 
     /// <returns>The block size for this cipher, in bytes.</returns>
     int GetBlockSize();

@@ -21,7 +21,7 @@ public sealed class BlowfishDecrypter : IBlowfishDecrypter
         var keyBytes = key.ToArray();
         var iv = new byte[8];
         var cipher = new CtsBlockCipher(new CbcBlockCipher(new BlowfishEngine()));
-        cipher.Init(false, new ParametersWithIV(new KeyParameter(keyBytes), iv));
+        cipher.Init(false, new ParametersWithIv(new KeyParameter(keyBytes), iv));
 
         //
         // Pad the input buffer if necessary.

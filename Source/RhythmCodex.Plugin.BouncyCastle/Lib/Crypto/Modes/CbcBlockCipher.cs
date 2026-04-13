@@ -1,6 +1,5 @@
 using System;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Utilities;
 
 // ReSharper disable CheckNamespace
 
@@ -9,12 +8,13 @@ namespace Org.BouncyCastle.Crypto.Modes;
 /**
 * implements Cipher-Block-Chaining (CBC) mode on top of a simple cipher.
 */
-public sealed class CbcBlockCipher
+internal sealed class CbcBlockCipher
     : IBlockCipherMode
 {
-    private byte[] IV, cbcV, cbcNextV;
-    private int blockSize;
-    private bool encrypting;
+    private readonly byte[] _iv;
+    private byte[] _cbcV, _cbcNextV;
+    private readonly int _blockSize;
+    private bool _encrypting;
 
     /**
     * Basic constructor.
@@ -25,11 +25,11 @@ public sealed class CbcBlockCipher
         IBlockCipher cipher)
     {
         UnderlyingCipher = cipher;
-        blockSize = cipher.GetBlockSize();
+        _blockSize = cipher.GetBlockSize();
 
-        IV = new byte[blockSize];
-        cbcV = new byte[blockSize];
-        cbcNextV = new byte[blockSize];
+        _iv = new byte[_blockSize];
+        _cbcV = new byte[_blockSize];
+        _cbcNextV = new byte[_blockSize];
     }
 
     /**
@@ -46,27 +46,27 @@ public sealed class CbcBlockCipher
     * @param forEncryption if true the cipher is initialised for
     *  encryption, if false for decryption.
     * @param param the key and other data required by the cipher.
-    * @exception ArgumentException if the parameters argument is
+    * @exception ArgumentException if the 'parameters' argument is
     * inappropriate.
     */
-    public void Init(bool forEncryption, ICipherParameters parameters)
+    public void Init(bool forEncryption, ICipherParameters? parameters)
     {
-        var oldEncrypting = encrypting;
+        var oldEncrypting = _encrypting;
 
-        encrypting = forEncryption;
+        _encrypting = forEncryption;
 
-        if (parameters is ParametersWithIV ivParam)
+        if (parameters is ParametersWithIv ivParam)
         {
-            if (ivParam.IVLength != blockSize)
+            if (ivParam.IvLength != _blockSize)
                 throw new ArgumentException("initialisation vector must be the same length as block size");
 
-            ivParam.CopyIVTo(IV, 0, blockSize);
+            ivParam.CopyIvTo(_iv, 0, _blockSize);
 
             parameters = ivParam.Parameters;
         }
         else
         {
-            Arrays.Fill(IV, 0x00);
+            _iv.AsSpan().Clear();
         }
 
         Reset();
@@ -74,9 +74,9 @@ public sealed class CbcBlockCipher
         // if null it's an IV changed only (key is to be reused).
         if (parameters != null)
         {
-            UnderlyingCipher.Init(encrypting, parameters);
+            UnderlyingCipher.Init(_encrypting, parameters);
         }
-        else if (oldEncrypting != encrypting)
+        else if (oldEncrypting != _encrypting)
         {
             throw new ArgumentException("cannot change encrypting state without providing key.");
         }
@@ -87,39 +87,23 @@ public sealed class CbcBlockCipher
     *
     * @return the name of the underlying algorithm followed by "/CBC".
     */
-    public string AlgorithmName
-    {
-        get { return $"{UnderlyingCipher.AlgorithmName}/CBC"; }
-    }
+    public string AlgorithmName => 
+        $"{UnderlyingCipher.AlgorithmName}/CBC";
 
-    public bool IsPartialBlockOkay
-    {
-        get { return false; }
-    }
+    public bool IsPartialBlockOkay => false;
 
     /**
     * return the block size of the underlying cipher.
     *
     * @return the block size of the underlying cipher.
     */
-    public int GetBlockSize()
-    {
-        return UnderlyingCipher.GetBlockSize();
-    }
+    public int GetBlockSize() => 
+        UnderlyingCipher.GetBlockSize();
 
-    public int ProcessBlock(byte[] input, int inOff, byte[] output, int outOff)
-    {
-        return encrypting
-            ? EncryptBlock(input.AsSpan(inOff), output.AsSpan(outOff))
-            : DecryptBlock(input.AsSpan(inOff), output.AsSpan(outOff));
-    }
-
-    public int ProcessBlock(ReadOnlySpan<byte> input, Span<byte> output)
-    {
-        return encrypting
+    public int ProcessBlock(ReadOnlySpan<byte> input, Span<byte> output) =>
+        _encrypting
             ? EncryptBlock(input, output)
             : DecryptBlock(input, output);
-    }
 
     /**
     * reset the chaining vector back to the IV and reset the underlying
@@ -127,42 +111,42 @@ public sealed class CbcBlockCipher
     */
     public void Reset()
     {
-        Array.Copy(IV, 0, cbcV, 0, IV.Length);
-        Array.Clear(cbcNextV, 0, cbcNextV.Length);
+        Array.Copy(_iv, 0, _cbcV, 0, _iv.Length);
+        Array.Clear(_cbcNextV, 0, _cbcNextV.Length);
     }
 
     private int EncryptBlock(ReadOnlySpan<byte> input, Span<byte> output)
     {
-        Check.DataLength(input, blockSize, "input buffer too short");
-        Check.OutputLength(output, blockSize, "output buffer too short");
+        Check.DataLength(input, _blockSize, "input buffer too short");
+        Check.OutputLength(output, _blockSize, "output buffer too short");
 
-        for (var i = 0; i < blockSize; i++)
+        for (var i = 0; i < _blockSize; i++)
         {
-            cbcV[i] ^= input[i];
+            _cbcV[i] ^= input[i];
         }
 
-        var length = UnderlyingCipher.ProcessBlock(cbcV, output);
+        var length = UnderlyingCipher.ProcessBlock(_cbcV, output);
 
-        output[..blockSize].CopyTo(cbcV);
+        output[.._blockSize].CopyTo(_cbcV);
 
         return length;
     }
 
     private int DecryptBlock(ReadOnlySpan<byte> input, Span<byte> output)
     {
-        Check.DataLength(input, blockSize, "input buffer too short");
-        Check.OutputLength(output, blockSize, "output buffer too short");
+        Check.DataLength(input, _blockSize, "input buffer too short");
+        Check.OutputLength(output, _blockSize, "output buffer too short");
 
-        input[..blockSize].CopyTo(cbcNextV);
+        input[.._blockSize].CopyTo(_cbcNextV);
 
         var length = UnderlyingCipher.ProcessBlock(input, output);
 
-        for (var i = 0; i < blockSize; i++)
+        for (var i = 0; i < _blockSize; i++)
         {
-            output[i] ^= cbcV[i];
+            output[i] ^= _cbcV[i];
         }
 
-        (cbcV, cbcNextV) = (cbcNextV, cbcV);
+        (_cbcV, _cbcNextV) = (_cbcNextV, _cbcV);
 
         return length;
     }

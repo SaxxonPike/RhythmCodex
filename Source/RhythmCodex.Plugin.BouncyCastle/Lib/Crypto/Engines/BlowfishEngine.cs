@@ -13,10 +13,10 @@ namespace Org.BouncyCastle.Crypto.Engines;
 * All the algorithms herein are from Applied Cryptography
 * and implement a simplified cryptography interface.
 */
-public sealed class BlowfishEngine
+internal sealed class BlowfishEngine
     : IBlockCipher
 {
-    private static readonly uint[] KP =
+    private static readonly uint[] Kp =
         [
             0x243F6A88, 0x85A308D3, 0x13198A2E, 0x03707344,
             0xA4093822, 0x299F31D0, 0x082EFA98, 0xEC4E6C89,
@@ -24,7 +24,7 @@ public sealed class BlowfishEngine
             0xC0AC29B7, 0xC97C50DD, 0x3F84D5B5, 0xB5470917,
             0x9216D5D9, 0x8979FB1B
         ],
-        KS0 =
+        Ks0 =
         [
             0xD1310BA6, 0x98DFB5AC, 0x2FFD72DB, 0xD01ADFB7,
             0xB8E1AFED, 0x6A267E96, 0xBA7C9045, 0xF12C7F99,
@@ -91,7 +91,7 @@ public sealed class BlowfishEngine
             0xB6636521, 0xE7B9F9B6, 0xFF34052E, 0xC5855664,
             0x53B02D5D, 0xA99F8FA1, 0x08BA4799, 0x6E85076A
         ],
-        KS1 =
+        Ks1 =
         [
             0x4B7A70E9, 0xB5B32944, 0xDB75092E, 0xC4192623,
             0xAD6EA6B0, 0x49A7DF7D, 0x9CEE60B8, 0x8FEDB266,
@@ -158,7 +158,7 @@ public sealed class BlowfishEngine
             0xC5C43465, 0x713E38D8, 0x3D28F89E, 0xF16DFF20,
             0x153E21E7, 0x8FB03D4A, 0xE6E39F2B, 0xDB83ADF7
         ],
-        KS2 =
+        Ks2 =
         [
             0xE93D5A68, 0x948140F7, 0xF64C261C, 0x94692934,
             0x411520F7, 0x7602D4F7, 0xBCF46B2E, 0xD4A20068,
@@ -225,7 +225,7 @@ public sealed class BlowfishEngine
             0x6FD5C7E7, 0x56E14EC4, 0x362ABFCE, 0xDDC6C837,
             0xD79A3234, 0x92638212, 0x670EFA8E, 0x406000E0
         ],
-        KS3 =
+        Ks3 =
         [
             0x3A39CE37, 0xD3FAF5CF, 0xABC27737, 0x5AC52D1B,
             0x5CB0679E, 0x4FA33742, 0xD3822740, 0x99BC9BBE,
@@ -297,21 +297,21 @@ public sealed class BlowfishEngine
     // Useful constants
     //====================================
 
-    private static readonly int ROUNDS = 16;
-    private const int BLOCK_SIZE = 8; // bytes = 64 bits
-    private static readonly int SBOX_SK = 256;
-    private static readonly int P_SZ = ROUNDS + 2;
+    private const int Rounds = 16;
+    private const int BlockSize = 8; // bytes = 64 bits
+    private static readonly int SboxSk = 256;
+    private static readonly int PSz = Rounds + 2;
 
-    private readonly uint[] S0 = new uint[SBOX_SK],
-        S1 = new uint[SBOX_SK],
-        S2 = new uint[SBOX_SK],
-        S3 = new uint[SBOX_SK]; // the s-boxes
+    private readonly uint[] _s0 = new uint[SboxSk],
+        _s1 = new uint[SboxSk],
+        _s2 = new uint[SboxSk],
+        _s3 = new uint[SboxSk]; // the s-boxes
 
-    private readonly uint[] P = new uint[P_SZ]; // the p-array
+    private readonly uint[] _p = new uint[PSz]; // the p-array
 
-    private bool encrypting;
+    private bool _encrypting;
 
-    private byte[] workingKey;
+    private byte[] _workingKey = null!;
 
     /**
     * initialise a Blowfish cipher.
@@ -323,51 +323,28 @@ public sealed class BlowfishEngine
     */
     public void Init(
         bool forEncryption,
-        ICipherParameters parameters)
+        ICipherParameters? parameters)
     {
         if (parameters is not KeyParameter parameter)
             throw new ArgumentException(
                 $"invalid parameter passed to Blowfish init - {Platform.GetTypeName(parameters)}");
 
-        encrypting = forEncryption;
-        workingKey = parameter.GetKey();
-        SetKey(workingKey);
+        _encrypting = forEncryption;
+        _workingKey = parameter.GetKey();
+        SetKey(_workingKey);
     }
 
-    public string AlgorithmName
-    {
-        get { return "Blowfish"; }
-    }
-
-    // public int ProcessBlock(byte[] input, int inOff, byte[] output, int outOff)
-    // {
-    //     if (workingKey == null)
-    //         throw new InvalidOperationException("Blowfish not initialised");
-    //
-    //     Check.DataLength(input, inOff, BLOCK_SIZE, "input buffer too short");
-    //     Check.OutputLength(output, outOff, BLOCK_SIZE, "output buffer too short");
-    //
-    //     if (encrypting)
-    //     {
-    //         EncryptBlock(input.AsSpan(inOff), output.AsSpan(outOff));
-    //     }
-    //     else
-    //     {
-    //         DecryptBlock(input.AsSpan(inOff), output.AsSpan(outOff));
-    //     }
-    //
-    //     return BLOCK_SIZE;
-    // }
+    public string AlgorithmName => "Blowfish";
 
     public int ProcessBlock(ReadOnlySpan<byte> input, Span<byte> output)
     {
-        if (workingKey == null)
+        if (_workingKey == null)
             throw new InvalidOperationException("Blowfish not initialised");
 
-        Check.DataLength(input, BLOCK_SIZE, "input buffer too short");
-        Check.OutputLength(output, BLOCK_SIZE, "output buffer too short");
+        Check.DataLength(input, BlockSize, "input buffer too short");
+        Check.OutputLength(output, BlockSize, "output buffer too short");
 
-        if (encrypting)
+        if (_encrypting)
         {
             EncryptBlock(input, output);
         }
@@ -376,12 +353,12 @@ public sealed class BlowfishEngine
             DecryptBlock(input, output);
         }
 
-        return BLOCK_SIZE;
+        return BlockSize;
     }
 
     public int GetBlockSize()
     {
-        return BLOCK_SIZE;
+        return BlockSize;
     }
 
     //==================================
@@ -390,7 +367,7 @@ public sealed class BlowfishEngine
 
     private uint F(uint x)
     {
-        return (((S0[x >> 24] + S1[(x >> 16) & 0xff]) ^ S2[(x >> 8) & 0xff]) + S3[x & 0xff]);
+        return ((_s0[x >> 24] + _s1[(x >> 16) & 0xff]) ^ _s2[(x >> 8) & 0xff]) + _s3[x & 0xff];
     }
 
     /**
@@ -405,15 +382,15 @@ public sealed class BlowfishEngine
 
         for (var s = 0; s < size; s += 2)
         {
-            xl ^= P[0];
+            xl ^= _p[0];
 
-            for (var i = 1; i < ROUNDS; i += 2)
+            for (var i = 1; i < Rounds; i += 2)
             {
-                xr ^= F(xl) ^ P[i];
-                xl ^= F(xr) ^ P[i + 1];
+                xr ^= F(xl) ^ _p[i];
+                xl ^= F(xr) ^ _p[i + 1];
             }
 
-            xr ^= P[ROUNDS + 1];
+            xr ^= _p[Rounds + 1];
 
             table[s] = xr;
             table[s + 1] = xl;
@@ -439,12 +416,12 @@ public sealed class BlowfishEngine
          * Initialise the S-boxes and the P-array, with a fixed string
          * This string contains the hexadecimal digits of pi (3.141...)
          */
-        Array.Copy(KS0, 0, S0, 0, SBOX_SK);
-        Array.Copy(KS1, 0, S1, 0, SBOX_SK);
-        Array.Copy(KS2, 0, S2, 0, SBOX_SK);
-        Array.Copy(KS3, 0, S3, 0, SBOX_SK);
+        Array.Copy(Ks0, 0, _s0, 0, SboxSk);
+        Array.Copy(Ks1, 0, _s1, 0, SboxSk);
+        Array.Copy(Ks2, 0, _s2, 0, SboxSk);
+        Array.Copy(Ks3, 0, _s3, 0, SboxSk);
 
-        Array.Copy(KP, 0, P, 0, P_SZ);
+        Array.Copy(Kp, 0, _p, 0, PSz);
 
         /*
          * (2)
@@ -456,14 +433,14 @@ public sealed class BlowfishEngine
         var keyLength = key.Length;
         var keyIndex = 0;
 
-        for (var i = 0; i < P_SZ; i++)
+        for (var i = 0; i < PSz; i++)
         {
             // Get the 32 bits of the key, in 4 * 8 bit chunks
             uint data = 0x0000000;
             for (var j = 0; j < 4; j++)
             {
-                // create a 32 bit block
-                data = (data << 8) | (uint)key[keyIndex++];
+                // create a 32-bit block
+                data = (data << 8) | key[keyIndex++];
 
                 // wrap when we get to the end of the key
                 if (keyIndex >= keyLength)
@@ -472,8 +449,8 @@ public sealed class BlowfishEngine
                 }
             }
 
-            // XOR the newly created 32 bit chunk onto the P-array
-            P[i] ^= data;
+            // XOR the newly created 32-bit chunk onto the P-array
+            _p[i] ^= data;
         }
 
         /*
@@ -497,11 +474,11 @@ public sealed class BlowfishEngine
          * continuously changing Blowfish algorithm
          */
 
-        ProcessTable(0, 0, P);
-        ProcessTable(P[P_SZ - 2], P[P_SZ - 1], S0);
-        ProcessTable(S0[SBOX_SK - 2], S0[SBOX_SK - 1], S1);
-        ProcessTable(S1[SBOX_SK - 2], S1[SBOX_SK - 1], S2);
-        ProcessTable(S2[SBOX_SK - 2], S2[SBOX_SK - 1], S3);
+        ProcessTable(0, 0, _p);
+        ProcessTable(_p[PSz - 2], _p[PSz - 1], _s0);
+        ProcessTable(_s0[SboxSk - 2], _s0[SboxSk - 1], _s1);
+        ProcessTable(_s1[SboxSk - 2], _s1[SboxSk - 1], _s2);
+        ProcessTable(_s2[SboxSk - 2], _s2[SboxSk - 1], _s3);
     }
 
     private void EncryptBlock(ReadOnlySpan<byte> input, Span<byte> output)
@@ -509,15 +486,15 @@ public sealed class BlowfishEngine
         var xl = ReadUInt32LittleEndian(input);
         var xr = ReadUInt32LittleEndian(input[4..]);
 
-        xl ^= P[0];
+        xl ^= _p[0];
 
-        for (var i = 1; i < ROUNDS; i += 2)
+        for (var i = 1; i < Rounds; i += 2)
         {
-            xr ^= F(xl) ^ P[i];
-            xl ^= F(xr) ^ P[i + 1];
+            xr ^= F(xl) ^ _p[i];
+            xl ^= F(xr) ^ _p[i + 1];
         }
 
-        xr ^= P[ROUNDS + 1];
+        xr ^= _p[Rounds + 1];
 
         WriteUInt32LittleEndian(output, xr);
         WriteUInt32LittleEndian(output[4..], xl);
@@ -528,15 +505,15 @@ public sealed class BlowfishEngine
         var xl = ReadUInt32LittleEndian(input);
         var xr = ReadUInt32LittleEndian(input[4..]);
 
-        xl ^= P[ROUNDS + 1];
+        xl ^= _p[Rounds + 1];
 
-        for (var i = ROUNDS; i > 0; i -= 2)
+        for (var i = Rounds; i > 0; i -= 2)
         {
-            xr ^= F(xl) ^ P[i];
-            xl ^= F(xr) ^ P[i - 1];
+            xr ^= F(xl) ^ _p[i];
+            xl ^= F(xr) ^ _p[i - 1];
         }
 
-        xr ^= P[0];
+        xr ^= _p[0];
 
         WriteUInt32LittleEndian(output, xr);
         WriteUInt32LittleEndian(output[4..], xl);

@@ -2,7 +2,7 @@
 
 namespace Org.BouncyCastle.Crypto.Modes;
 
-public interface IBlockCipherMode
+internal interface IBlockCipherMode
     : IBlockCipher
 {
     /// <summary>Return the <code cref="IBlockCipher"/> underlying this cipher mode.</summary>
