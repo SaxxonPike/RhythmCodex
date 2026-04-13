@@ -15,10 +15,8 @@ public sealed class PsxExeHeuristic : IHeuristic
     {
         Span<byte> data = stackalloc byte[8];
 
-        if (reader.Read(data) < 8)
-            return null;
-
-        if (Encodings.Cp437.GetString(data[..8]) != "PS-X EXE")
+        if (reader.Read(data) < 8 ||
+            !data[..8].SequenceEqual("PS-X EXE"u8))
             return null;
 
         return new HeuristicResult(this);
