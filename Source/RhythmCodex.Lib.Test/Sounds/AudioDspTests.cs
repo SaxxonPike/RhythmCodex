@@ -1,6 +1,8 @@
+using Moq;
 using NUnit.Framework;
 using RhythmCodex.Metadatas.Models;
 using RhythmCodex.Sounds.Converters;
+using RhythmCodex.Sounds.Mixer.Converters;
 using RhythmCodex.Sounds.Models;
 using Shouldly;
 
@@ -12,6 +14,8 @@ public class AudioDspTests : BaseUnitTestFixture<AudioDsp>
     [Test]
     public void ApplyEffects_AppliesMonoGain()
     {
+        Inject<IDefaultStereoMixer>(new DefaultStereoMixer());
+        
         var sound = new Sound
         {
             Samples =
@@ -37,6 +41,8 @@ public class AudioDspTests : BaseUnitTestFixture<AudioDsp>
     [Test]
     public void ApplyEffects_AppliesStereoGain()
     {
+        Inject<IDefaultStereoMixer>(new DefaultStereoMixer());
+        
         var sound = new Sound
         {
             Samples =
