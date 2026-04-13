@@ -24,6 +24,7 @@ public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder, IStep
 
         var panelMapper = Mock<IPanelMapper>(mock =>
         {
+            mock.Setup(x => x.Map(It.IsAny<int>())).Returns<int>(_ => null);
             mock.Setup(x => x.Map(0)).Returns<int>(_ => new PanelMapping {Panel = 11, Player = 1});
             mock.Setup(x => x.Map(1)).Returns<int>(_ => new PanelMapping {Panel = 22, Player = 2});
             mock.Setup(x => x.Map(2)).Returns<int>(_ => new PanelMapping {Panel = 33, Player = 3});
@@ -98,9 +99,14 @@ public class StepEventDecoderTests : BaseUnitTestFixture<StepEventDecoder, IStep
         var result = Subject.Decode(steps, panelMapper.Object);
 
         // Assert.
-        result.Count.ShouldBe(expected.Length);
-        var resultMatches = Enumerable.Range(0, expected.Length)
-            .Select(i => result[i].MetadataEquals(expected[i]));
-        resultMatches.ShouldBe(Enumerable.Repeat(true, expected.Length));
+        var expectedDict = expected.Select(x => x.MetadataToDictionary()).ToList();
+        var observedDict = result.Select(x => x.MetadataToDictionary()).ToList();
+        
+        observedDict.ShouldBeEquivalentTo(expectedDict);
+        //
+        // result.Count.ShouldBe(expected.Length);
+        // var resultMatches = Enumerable.Range(0, expected.Length)
+        //     .Select(i => result[i].MetadataToDictionary() .MetadataEquals(expected[i]));
+        // resultMatches.ShouldBe(Enumerable.Repeat(true, expected.Length));
     }
 }
