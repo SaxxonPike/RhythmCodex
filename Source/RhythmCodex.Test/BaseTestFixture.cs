@@ -2,8 +2,10 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using AutoFixture;
+using AutoFixture.AutoMoq;
 using AutoFixture.Dsl;
 using JetBrains.Annotations;
+using Moq;
 using NUnit.Framework.Internal;
 using RhythmCodex.Data;
 
@@ -18,7 +20,7 @@ public abstract class BaseTestFixture
 {
     private static readonly ConcurrentDictionary<string, Fixture> Fixtures = [];
     private static readonly ConcurrentDictionary<string, HashSet<Task>> AsyncTasks = [];
-    private static SemaphoreSlim AsyncSemaphore = new SemaphoreSlim(Environment.ProcessorCount);
+    private static SemaphoreSlim AsyncSemaphore = new(Environment.ProcessorCount);
 
     private Stopwatch _stopwatch;
 
@@ -70,6 +72,7 @@ public abstract class BaseTestFixture
         {
             var fixture = new Fixture();
             new SupportMutableValueTypesCustomization().Customize(fixture);
+            new AutoMoqCustomization().Customize(fixture);
             return fixture;
         });
 
@@ -141,6 +144,18 @@ public abstract class BaseTestFixture
     protected static ICustomizationComposer<T> Build<T>()
     {
         return GetFixture().Build<T>();
+    }
+
+    protected static Mock<T> Freeze<T>() 
+        where T : class
+    {
+        return GetFixture().Freeze<Mock<T>>();
+    }
+
+    protected static void Inject<T>(T implementation) 
+        where T : class
+    {
+        GetFixture().Inject(implementation);
     }
 
     /// <summary>

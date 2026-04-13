@@ -23,7 +23,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         };
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -47,12 +47,11 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "ENDIF" }
         };
 
-        var randomizer = new Mock<IRandomizer>();
+        var randomizer = Freeze<IRandomizer>();
         randomizer.Setup(x => x.GetInt(It.IsAny<int>())).Returns(3 - 1);
-        Mocker.Inject(randomizer);
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -78,12 +77,11 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "ENDIF" }
         };
 
-        var randomizer = new Mock<IRandomizer>();
+        var randomizer = Freeze<IRandomizer>();
         randomizer.Setup(x => x.GetInt(It.IsAny<int>())).Returns(3 - 1);
-        Mocker.Inject(randomizer);
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -109,12 +107,11 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "ENDIF" }
         };
 
-        var randomizer = new Mock<IRandomizer>();
+        var randomizer = Freeze<IRandomizer>();
         randomizer.Setup(x => x.GetInt(It.IsAny<int>())).Returns(3 - 1);
-        Mocker.Inject(randomizer);
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -144,12 +141,11 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "ENDSW" }
         };
 
-        var randomizer = new Mock<IRandomizer>();
+        var randomizer = Freeze<IRandomizer>();
         randomizer.Setup(x => x.GetInt(It.IsAny<int>())).Returns(3 - 1);
-        Mocker.Inject(randomizer);
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -176,12 +172,11 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "ENDSW" }
         };
 
-        var randomizer = new Mock<IRandomizer>();
+        var randomizer = Freeze<IRandomizer>();
         randomizer.Setup(x => x.GetInt(It.IsAny<int>())).Returns(3 - 1);
-        Mocker.Inject(randomizer);
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -210,12 +205,11 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
             new BmsCommand { Name = "ENDSW" }
         };
 
-        var randomizer = new Mock<IRandomizer>();
+        var randomizer = Freeze<IRandomizer>();
         randomizer.Setup(x => x.GetInt(It.IsAny<int>())).Returns(3 - 1);
-        Mocker.Inject(randomizer);
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -248,7 +242,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         };
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.
@@ -281,7 +275,7 @@ public class BmsRandomResolverUnitTests : BaseUnitTestFixture
         };
 
         // Act.
-        var subject = Mocker.Create<BmsRandomResolver>();
+        var subject = Create<BmsRandomResolver>();
         var output = subject.Resolve(commands);
 
         // Assert.

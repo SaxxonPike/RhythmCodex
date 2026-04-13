@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using Moq;
-using Moqzilla;
 
 namespace RhythmCodex;
 
@@ -10,20 +9,18 @@ namespace RhythmCodex;
 [PublicAPI]
 public abstract class BaseUnitTestFixture : BaseTestFixture
 {
-    private readonly Lazy<Mocker> _mocker = new(() => new Mocker());
-
-    protected Mocker Mocker => _mocker.Value;
-
-    protected Mock<TMock> Mock<TMock>()
+    protected static Mock<TMock> Mock<TMock>()
         where TMock : class
     {
-        return Mocker.Mock<TMock>();
+        return Freeze<TMock>();
     }
 
-    protected Mock<TMock> Mock<TMock>(Action<Mock<TMock>> func)
+    protected static Mock<TMock> Mock<TMock>(Action<Mock<TMock>> func)
         where TMock : class
     {
-        return Mocker.Mock(func);
+        var mock = Freeze<TMock>();
+        func(mock);
+        return mock;
     }
 }
 
@@ -39,7 +36,7 @@ public abstract class BaseUnitTestFixture<TSubject, TInterface> : BaseUnitTestFi
 
     protected BaseUnitTestFixture()
     {
-        _subject = new Lazy<TInterface>(() => Mocker.Create<TSubject>());
+        _subject = new Lazy<TInterface>(Create<TSubject>);
     }
 
     protected TInterface Subject => _subject.Value;

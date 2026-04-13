@@ -41,8 +41,8 @@ public class ChunkStreamReaderTests
         var heuristic = Build<DjmainHddDescription>()
             .With(x => x.BytesAreSwapped, false)
             .Create();
-        
-        Mocker.Implement<IDjmainHddDescriptionHeuristic>(
+
+        Inject<IDjmainHddDescriptionHeuristic>(
             new DjmainHddDescriptionHeuristicStub(_ => heuristic));
 
         // Act.
@@ -76,7 +76,7 @@ public class ChunkStreamReaderTests
             .With(x => x.BytesAreSwapped, false)
             .Create();
 
-        Mocker.Implement<IDjmainHddDescriptionHeuristic>(
+        Inject<IDjmainHddDescriptionHeuristic>(
             new DjmainHddDescriptionHeuristicStub(_ => heuristic));
         
         // Act.
