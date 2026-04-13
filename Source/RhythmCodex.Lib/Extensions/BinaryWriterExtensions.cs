@@ -10,93 +10,85 @@ namespace RhythmCodex.Extensions;
 [DebuggerStepThrough]
 internal static class BinaryWriterExtensions
 {
-    public static void Skip(this BinaryWriter writer, long offset) => 
-        writer.BaseStream.Skip(offset);
-
-    public static void Write24(this BinaryWriter writer, int value)
+    extension(BinaryWriter writer)
     {
-        writer.Write((byte)(value & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)((value >> 16) & 0xFF));
-    }
+        public void Skip(long offset) => 
+            writer.BaseStream.Skip(offset);
 
-    public static void Write24(this BinaryWriter writer, uint value)
-    {
-        writer.Write((byte)(value & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)((value >> 16) & 0xFF));
-    }
+        public void Write24(int value)
+        {
+            Span<byte> buffer = stackalloc byte[4];
+            WriteInt32LittleEndian(buffer, value);
+            writer.Write(buffer[..3]);
+        }
 
-    public static void Write24S(this BinaryWriter writer, int value)
-    {
-        writer.Write((byte)((value >> 16) & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void Write24(uint value)
+        {
+            Span<byte> buffer = stackalloc byte[4];
+            WriteUInt32LittleEndian(buffer, value);
+            writer.Write(buffer[..3]);
+        }
 
-    public static void Write24S(this BinaryWriter writer, uint value)
-    {
-        writer.Write((byte)((value >> 16) & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void Write24S(int value)
+        {
+            Span<byte> buffer = stackalloc byte[4];
+            WriteInt32BigEndian(buffer, value);
+            writer.Write(buffer[1..]);
+        }
 
-    public static void WriteS(this BinaryWriter writer, short value)
-    {
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void Write24S(uint value)
+        {
+            Span<byte> buffer = stackalloc byte[4];
+            WriteUInt32BigEndian(buffer, value);
+            writer.Write(buffer[1..]);
+        }
 
-    public static void WriteS(this BinaryWriter writer, int value)
-    {
-        writer.Write((byte)((value >> 24) & 0xFF));
-        writer.Write((byte)((value >> 16) & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void WriteS(short value)
+        {
+            Span<byte> buffer = stackalloc byte[2];
+            WriteInt16BigEndian(buffer, value);
+            writer.Write(buffer);
+        }
 
-    public static void WriteS(this BinaryWriter writer, long value)
-    {
-        writer.Write((byte)((value >> 56) & 0xFF));
-        writer.Write((byte)((value >> 48) & 0xFF));
-        writer.Write((byte)((value >> 40) & 0xFF));
-        writer.Write((byte)((value >> 32) & 0xFF));
-        writer.Write((byte)((value >> 24) & 0xFF));
-        writer.Write((byte)((value >> 16) & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void WriteS(int value)
+        {
+            Span<byte> buffer = stackalloc byte[4];
+            WriteInt32BigEndian(buffer, value);
+            writer.Write(buffer);
+        }
 
-    public static void WriteS(this BinaryWriter writer, ushort value)
-    {
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void WriteS(long value)
+        {
+            Span<byte> buffer = stackalloc byte[8];
+            WriteInt64BigEndian(buffer, value);
+            writer.Write(buffer);
+        }
 
-    public static void WriteS(this BinaryWriter writer, uint value)
-    {
-        writer.Write((byte)((value >> 24) & 0xFF));
-        writer.Write((byte)((value >> 16) & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void WriteS(ushort value)
+        {
+            Span<byte> buffer = stackalloc byte[2];
+            WriteUInt16BigEndian(buffer, value);
+            writer.Write(buffer);
+        }
 
-    public static void WriteS(this BinaryWriter writer, ulong value)
-    {
-        writer.Write((byte)((value >> 56) & 0xFF));
-        writer.Write((byte)((value >> 48) & 0xFF));
-        writer.Write((byte)((value >> 40) & 0xFF));
-        writer.Write((byte)((value >> 32) & 0xFF));
-        writer.Write((byte)((value >> 24) & 0xFF));
-        writer.Write((byte)((value >> 16) & 0xFF));
-        writer.Write((byte)((value >> 8) & 0xFF));
-        writer.Write((byte)(value & 0xFF));
-    }
+        public void WriteS(uint value)
+        {
+            Span<byte> buffer = stackalloc byte[4];
+            WriteUInt32BigEndian(buffer, value);
+            writer.Write(buffer);
+        }
 
-    public static void WriteS(this BinaryWriter writer, ReadOnlySpan<byte> value)
-    {
-        for (var i = value.Length - 1; i >= 0; i--)
-            writer.Write(value[i]);
+        public void WriteS(ulong value)
+        {
+            Span<byte> buffer = stackalloc byte[8];
+            WriteUInt64BigEndian(buffer, value);
+            writer.Write(buffer);
+        }
+
+        public void WriteS(ReadOnlySpan<byte> value)
+        {
+            for (var i = value.Length - 1; i >= 0; i--)
+                writer.Write(value[i]);
+        }
     }
-    
 }

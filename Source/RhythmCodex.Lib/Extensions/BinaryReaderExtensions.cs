@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using JetBrains.Annotations;
@@ -25,88 +26,50 @@ internal static class BinaryReaderExtensions
 
         public short ReadInt16S()
         {
-            var input = reader.ReadBytes(2);
-            int result = input[0];
-            result <<= 8;
-            result |= input[1];
-            return unchecked((short) result);
+            Span<byte> buffer = stackalloc byte[2];
+            reader.ReadExactly(buffer);
+            return ReadInt16BigEndian(buffer);
         }
 
         public int ReadInt24()
         {
-            var input = reader.ReadBytes(3);
-            int result = input[2];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[0];
-            return result;
+            Span<byte> buffer = stackalloc byte[4];
+            reader.ReadExactly(buffer);
+            return (ReadInt32LittleEndian(buffer) << 8) >> 8;
         }
 
         public int ReadInt24S()
         {
-            var input = reader.ReadBytes(3);
-            int result = input[0];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[2];
-            return result;
+            Span<byte> buffer = stackalloc byte[4];
+            reader.ReadExactly(buffer[1..]);
+            return (ReadInt32BigEndian(buffer) << 8) >> 8;
         }
 
         public int ReadInt32S()
         {
-            var input = reader.ReadBytes(4);
-            int result = input[0];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[2];
-            result <<= 8;
-            result |= input[3];
-            return result;
+            Span<byte> buffer = stackalloc byte[4];
+            reader.ReadExactly(buffer);
+            return ReadInt32BigEndian(buffer);
         }
 
         public long ReadInt64S()
         {
-            var input = reader.ReadBytes(8);
-            long result = input[0];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[2];
-            result <<= 8;
-            result |= input[3];
-            result <<= 8;
-            result |= input[4];
-            result <<= 8;
-            result |= input[5];
-            result <<= 8;
-            result |= input[6];
-            result <<= 8;
-            result |= input[7];
-            return result;
+            Span<byte> buffer = stackalloc byte[8];
+            reader.ReadExactly(buffer);
+            return ReadInt64BigEndian(buffer);
         }
 
-        public byte[] ReadMD5()
-        {
-            return reader.ReadBytes(16);
-        }
+        public byte[] ReadMD5() => 
+            reader.ReadBytes(16);
 
-        public byte[] ReadMD5S()
-        {
-            return reader.ReadBytesS(16);
-        }
+        public byte[] ReadMD5S() => 
+            reader.ReadBytesS(16);
 
-        public byte[] ReadSHA1()
-        {
-            return reader.ReadBytes(20);
-        }
+        public byte[] ReadSHA1() => 
+            reader.ReadBytes(20);
 
-        public byte[] ReadSHA1S()
-        {
-            return reader.ReadBytesS(20);
-        }
+        public byte[] ReadSHA1S() => 
+            reader.ReadBytesS(20);
 
         public long ReadValue(int bytes)
         {
@@ -140,72 +103,37 @@ internal static class BinaryReaderExtensions
 
         public ushort ReadUInt16S()
         {
-            var input = reader.ReadBytes(2);
-            ushort result = input[0];
-            result <<= 8;
-            result |= input[1];
-
-            return result;
+            Span<byte> buffer = stackalloc byte[2];
+            reader.ReadExactly(buffer);
+            return ReadUInt16BigEndian(buffer);
         }
 
         public uint ReadUInt24()
         {
-            var input = reader.ReadBytes(3);
-            uint result = input[2];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[0];
-
-            return result;
+            Span<byte> buffer = stackalloc byte[4];
+            reader.ReadExactly(buffer);
+            return ReadUInt32LittleEndian(buffer) & 0x00FFFFFFU;
         }
 
         public uint ReadUInt24S()
         {
-            var input = reader.ReadBytes(3);
-            uint result = input[0];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[2];
-
-            return result;
+            Span<byte> buffer = stackalloc byte[4];
+            reader.ReadExactly(buffer[1..]);
+            return ReadUInt32BigEndian(buffer) & 0x00FFFFFFU;
         }
 
         public uint ReadUInt32S()
         {
-            var input = reader.ReadBytes(4);
-            uint result = input[0];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[2];
-            result <<= 8;
-            result |= input[3];
-
-            return result;
+            Span<byte> buffer = stackalloc byte[4];
+            reader.ReadExactly(buffer);
+            return ReadUInt32BigEndian(buffer);
         }
 
         public ulong ReadUInt64S()
         {
-            var input = reader.ReadBytes(8);
-            ulong result = input[0];
-            result <<= 8;
-            result |= input[1];
-            result <<= 8;
-            result |= input[2];
-            result <<= 8;
-            result |= input[3];
-            result <<= 8;
-            result |= input[4];
-            result <<= 8;
-            result |= input[5];
-            result <<= 8;
-            result |= input[6];
-            result <<= 8;
-            result |= input[7];
-
-            return result;
+            Span<byte> buffer = stackalloc byte[8];
+            reader.ReadExactly(buffer);
+            return ReadUInt64BigEndian(buffer);
         }
 
         public ulong ReadUValue(int bytes)
