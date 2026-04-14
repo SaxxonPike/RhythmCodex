@@ -76,7 +76,3 @@ public sealed class DjmainMixer : StereoMixer, IDjmainMixer
         );
     }
 }
-
-public interface IDjmainMixer : IStereoMixer
-{
-}
