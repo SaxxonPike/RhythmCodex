@@ -53,6 +53,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.Dependen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhythmCodex.Plugin.Sdl3", "RhythmCodex.Plugin.Sdl3\RhythmCodex.Plugin.Sdl3.csproj", "{5612041C-37A0-41B1-A81B-DFFE736F12F7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Formats", "Formats", "{A32AE9ED-01AA-4458-9389-A5B6816DC0EF}"
+	ProjectSection(SolutionItems) = preProject
+		..\Docs\Formats\Djmain.Chart.md = ..\Docs\Formats\Djmain.Chart.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -250,5 +255,6 @@ Global
 		{6D428D79-7BB1-42E3-9783-D5BA284D32A5} = {CA5B22D7-6992-4458-A162-3AC980DC032C}
 		{7E92C74E-B6A6-45C0-86FD-8EF3363B8B46} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
 		{5612041C-37A0-41B1-A81B-DFFE736F12F7} = {DA4CAEFE-6816-430B-908B-C6D0F8796AEC}
+		{A32AE9ED-01AA-4458-9389-A5B6816DC0EF} = {44A45635-5452-4399-99D9-40F6A496A2C1}
 	EndGlobalSection
 EndGlobal
