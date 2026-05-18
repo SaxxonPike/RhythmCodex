@@ -38,7 +38,7 @@ public sealed class RiffStreamWriter : IRiffStreamWriter
             
         // Start writing out our data.
 
-        var length = container.Chunks.Sum(c => c.Data.Length + 8);
+        var length = container.Chunks.Sum(c => c.Data.Length + 8) + 4;
             
         writer.Write("RIFF".GetBytes());
         writer.Write(length);
