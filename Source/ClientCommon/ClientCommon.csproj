@@ -6,7 +6,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\RhythmCodex.Lib\RhythmCodex.csproj"/>
